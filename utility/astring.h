@@ -16,8 +16,8 @@
   See comments in astring.c
 ***********************************************************************/
 
-#ifndef FC__ASTRING_H
-#define FC__ASTRING_H
+#ifndef WC_UTILITY_ASTRING_H
+#define WC_UTILITY_ASTRING_H
 
 #include <stddef.h>             /* size_t */
 
@@ -47,4 +47,4 @@ size_t astr_size(struct astring *astr);
 size_t astr_capacity(struct astring *astr);
 const char *astr_get_data(struct astring *astr);
 
-#endif  /* FC__ASTRING_H */
+#endif  /* WC_UTILITY_ASTRING_H */

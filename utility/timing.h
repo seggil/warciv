@@ -13,8 +13,8 @@
 
 /* Measuring times; original author: David Pfitzner <dwp@mso.anu.edu.au> */
 
-#ifndef FC__TIMING_H
-#define FC__TIMING_H
+#ifndef WC_UTILITY_TIMING_H
+#define WC_UTILITY_TIMING_H
 
 #include "shared.h"             /* bool type */
 
@@ -65,4 +65,4 @@ double read_timer_seconds_free(struct timer *t);
 void usleep_since_timer_start(struct timer *t, long usec);
 void usleep_since_timer_start_free(struct timer *t, long usec);
 
-#endif  /* FC__TIMER_H */
+#endif  /* WC_UTILITY_TIMING_H */

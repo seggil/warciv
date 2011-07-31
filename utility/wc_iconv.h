@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__FCICONV_H
-#define FC__FCICONV_H
+#ifndef WC_UTILITY_FCICONV_H
+#define WC_UTILITY_FCICONV_H
 
 #include <stdio.h>
 
@@ -40,4 +40,4 @@ void fc_fprintf(FILE *stream, const char *format, ...)
 
 size_t get_internal_string_length(const char *text);
 
-#endif /* FC__FCICONV_H */
+#endif  /* WC_UTILITY_FCICONV_H */

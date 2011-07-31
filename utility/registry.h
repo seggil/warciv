@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__REGISTRY_H
-#define FC__REGISTRY_H
+#ifndef WC_UTILITY_REGISTRY_H
+#define WC_UTILITY_REGISTRY_H
 
 #include "ioz.h"
 #include "shared.h"             /* bool type and fc__attribute */
@@ -120,4 +120,4 @@ bool secfilehash_hashash(struct section_file *file);
 void secfilehash_build(struct section_file *file, bool allow_duplicates);
 void secfilehash_free(struct section_file *file);
 
-#endif  /* FC__REGISTRY_H */
+#endif  /* WC_UTILITY_REGISTRY_H */

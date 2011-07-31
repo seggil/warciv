@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__RAND_H
-#define FC__RAND_H
+#ifndef WC_UTILITY_RAND_H
+#define WC_UTILITY_RAND_H
 
 #include "shared.h"             /* bool type */
 
@@ -35,4 +35,4 @@ void set_myrand_state(RANDOM_STATE state);
 
 void test_random1(int n);
 
-#endif  /* FC__RAND_H */
+#endif  /* WC_UTILITY_RAND_H */

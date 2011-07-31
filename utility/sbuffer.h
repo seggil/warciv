@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SBUFFER_H
-#define FC__SBUFFER_H
+#ifndef WC_UTILITY_SBUFFER_H
+#define WC_UTILITY_SBUFFER_H
 
 #include <stddef.h>             /* size_t */
 
@@ -28,4 +28,4 @@ char *sbuf_strdup(struct sbuffer *sb, const char *str);
    to deallocated memory, so should not be used */
 void sbuf_free(struct sbuffer *sb);
 
-#endif /* FC__SBUFFER_H */
+#endif  /* WC_UTILITY_SBUFFER_H */

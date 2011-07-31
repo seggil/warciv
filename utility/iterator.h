@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__ITERATOR_H
-#define FC__ITERATOR_H
+#ifndef WC_UTILITY_ITERATOR_H
+#define WC_UTILITY_ITERATOR_H
 
 #include "shared.h"     /* bool type. */
 
@@ -116,4 +116,4 @@ do {\
   }\
 } while (FALSE)
 
-#endif /* FC__ITERATOR_H */
+#endif  /* WC_UTILITY_ITERATOR_H */

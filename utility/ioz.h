@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__IOZ_H
-#define FC__IOZ_H
+#ifndef WC_UTILITY_IOZ_H
+#define WC_UTILITY_IOZ_H
 
 /********************************************************************** 
   An IO layer to support transparent compression/uncompression.
@@ -41,4 +41,4 @@ int fz_fprintf(fz_FILE *fp, const char *format, ...)
 int fz_ferror(fz_FILE *fp);     
 const char *fz_strerror(fz_FILE *fp);
 
-#endif  /* FC__IOZ_H */
+#endif  /* WC_UTILITY_IOZ_H */

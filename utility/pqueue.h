@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PQUEUE_H
-#define FC__PQUEUE_H
+#ifndef WC_UTILITY_PQUEUE_H
+#define WC_UTILITY_PQUEUE_H
 
 #include "shared.h"
 

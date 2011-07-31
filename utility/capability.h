@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CAPABILITY_H
-#define FC__CAPABILITY_H
+#ifndef WC_UTILITY_CAPABILITY_H
+#define WC_UTILITY_CAPABILITY_H
 
 #include "shared.h"             /* bool type */
 
@@ -20,4 +20,4 @@ bool has_capability(const char *cap, const char *capstr);
 bool has_capabilities(const char *us, const char *them);
 bool has_svn_revision(int svnrev, const char *capstr);
 
-#endif  /* FC__CAPABILITY_H */
+#endif  /* WC_UTILITY_CAPABILITY_H */

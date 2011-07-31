@@ -16,8 +16,8 @@
   See comments in inputfile.c
 ***********************************************************************/
 
-#ifndef FC__INPUTFILE_H
-#define FC__INPUTFILE_H
+#ifndef WC_UTILITY_INPUTFILE_H
+#define WC_UTILITY_INPUTFILE_H
 
 #include "ioz.h"
 #include "shared.h"             /* bool type */
@@ -51,4 +51,4 @@ int inf_discard_tokens(struct inputfile *inf, enum inf_token_type type);
 
 void inf_log(struct inputfile *inf, int loglevel, const char *message);
 
-#endif  /* FC__INPUTFILE_H */
+#endif  /* WC_UTILITY_INPUTFILE_H */
