@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__DATAIO_H
-#define FC__DATAIO_H
+#ifndef WC_COMMON_DATAIO_H
+#define WC_COMMON_DATAIO_H
 
 #include "shared.h"             /* bool type */
 
@@ -106,4 +106,4 @@ void dio_put_uint16_vec8(struct data_out *dout, int *values, int stop_value);
 #define DIO_BV_PUT(pdout, bv) \
   dio_put_memory((pdout), (bv).vec, sizeof((bv).vec))
 
-#endif  /* FC__PACKETS_H */
+#endif  /* WC_COMMON_DATAIO_H */

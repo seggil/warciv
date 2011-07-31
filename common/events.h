@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__EVENTS_H
-#define FC__EVENTS_H
+#ifndef WC_COMMON_EVENTS_H
+#define WC_COMMON_EVENTS_H
 
 enum event_type {
   E_NOEVENT = -1,
@@ -115,4 +115,4 @@ enum event_type {
   E_LAST
 };
 
-#endif /* FC__EVENTS_H */
+#endif  /* WC_COMMON_EVENTS_H */

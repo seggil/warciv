@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PACKETS_H
-#define FC__PACKETS_H
+#ifndef WC_COMMON_PACKETS_H
+#define WC_COMMON_PACKETS_H
 
 struct connection;
 struct data_in;
@@ -134,4 +134,4 @@ void post_send_packet_game_state(struct connection *pc,
 int send_packet_data(struct connection *pconn, unsigned char *data, int len);
 void check_packet(struct data_in *din, struct connection *pconn);
 
-#endif  /* FC__PACKETS_H */
+#endif  /* WC_COMMON_PACKETS_H */

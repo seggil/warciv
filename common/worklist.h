@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__WORKLIST_H
-#define FC__WORKLIST_H
+#ifndef WC_COMMON_WORKLIST_H
+#define WC_COMMON_WORKLIST_H
 
 #include "shared.h"             /* MAX_LEN_NAME */
 
@@ -51,4 +51,4 @@ bool are_worklists_equal(const struct worklist *wlist1,
                          const struct worklist *wlist2);
 
 
-#endif /* FC__WORKLIST_H */
+#endif  /* WC_COMMON_WORKLIST_H */

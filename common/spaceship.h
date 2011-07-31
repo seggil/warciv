@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SPACESHIP_H
-#define FC__SPACESHIP_H
+#ifndef WC_COMMON_SPACESHIP_H
+#define WC_COMMON_SPACESHIP_H
 
 #include "shared.h"             /* bool type */
 
@@ -116,4 +116,4 @@ extern const struct sship_part_info modules_info[NUM_SS_MODULES];
 void spaceship_init(struct player_spaceship *ship);
 int num_spaceship_structurals_placed(struct player_spaceship *ship);
 
-#endif /* FC__SPACESHIP_H */
+#endif  /* WC_COMMON_SPACESHIP_H */

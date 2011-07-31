@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CAPSTR_H
-#define FC__CAPSTR_H
+#ifndef WC_COMMON_CAPSTR_H
+#define WC_COMMON_CAPSTR_H
 
 extern const char * const our_capability;
 

@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__DIPTREATY_H
-#define FC__DIPTREATY_H
+#ifndef WC_COMMON_DIPTREATY_H
+#define WC_COMMON_DIPTREATY_H
 
 #include "shared.h"             /* bool type */
 
@@ -56,4 +56,4 @@ bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
                    enum clause_type type, int val);
 void treaty_free(struct Treaty *ptreaty);
 
-#endif /* FC__DIPTREATY_H */
+#endif  /* WC_COMMON_DIPTREATY_H */
