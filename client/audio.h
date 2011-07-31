@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AUDIO_H
-#define FC__AUDIO_H
+#ifndef WC_CLIENT_AUDIO_H
+#define WC_CLIENT_AUDIO_H
 
 #ifdef SDL
 /* SDL is currently the only plugin able to modify the volume. */
@@ -66,4 +66,4 @@ void audio_set_volume(int volume);
 void audio_change_volume(struct client_option *option);
 #endif /* AUDIO_VOLUME */
 
-#endif                          /* FC__AUDIO_H */
+#endif  /* WC_CLIENT_AUDIO_H */

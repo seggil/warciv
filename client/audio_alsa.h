@@ -11,9 +11,9 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__AUDIO_ALSA_H
-#define FC__AUDIO_ALSA_H
+#ifndef WC_CLIENT_AUDIO_ALSA_H
+#define WC_CLIENT_AUDIO_ALSA_H
 
 void audio_alsa_init (void);
 
-#endif  /* FC__AUDIO_ALSA_H */
+#endif  /* WC_CLIENT_AUDIO_ALSA_H */

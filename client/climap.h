@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CLIMAP_H
-#define FC__CLIMAP_H
+#ifndef WC_CLIENT_CLIMAP_H
+#define WC_CLIENT_CLIMAP_H
 
 #include "map.h"                /* enum direction8 */
 #include "terrain.h"            /* enum known_type */

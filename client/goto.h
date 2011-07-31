@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GOTO_H
-#define FC__GOTO_H
+#ifndef WC_CLIENT_GOTO_H
+#define WC_CLIENT_GOTO_H
 
 #include "map.h"
 
@@ -45,4 +45,4 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit);
 int calculate_move_cost(struct unit *punit, struct tile *dest_tile);
 struct tile *find_nearest_city(struct unit *punit, bool allies);
 
-#endif /* FC__GOTO_H */
+#endif  /* WC_CLIENT_GOTO_H */

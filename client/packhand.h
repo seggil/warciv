@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PACKHAND_H
-#define FC__PACKHAND_H
+#ifndef WC_CLIENT_PACKHAND_H
+#define WC_CLIENT_PACKHAND_H
 
 #include "map.h"
 
@@ -29,4 +29,4 @@ void target_government_init(void);
 void set_government_choice(int government);
 void start_revolution(void);
 
-#endif /* FC__PACKHAND_H */
+#endif /* WC_CLIENT_PACKHAND_H */

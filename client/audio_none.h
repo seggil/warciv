@@ -10,9 +10,9 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AUDIO_NONE_H
-#define FC__AUDIO_NONE_H
+#ifndef WC_CLIENT_AUDIO_NONE_H
+#define WC_CLIENT_AUDIO_NONE_H
 
 void audio_none_init(void);
 
-#endif                          /* FC__AUDIO_NONE_H */
+#endif  /* WC_CLIENT_AUDIO_NONE_H */

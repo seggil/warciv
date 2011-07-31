@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__MAPCTRL_COMMON_H
-#define FC__MAPCTRL_COMMON_H
+#ifndef WC_CLIENT_MAPCTRL_COMMON_H
+#define WC_CLIENT_MAPCTRL_COMMON_H
 
 #include "map.h"                /* enum direction8 */
 #include "shared.h"             /* bool type */
@@ -71,4 +71,4 @@ void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list);
 
 extern struct city *city_workers_display;
 
-#endif /* FC__MAPCTRL_COMMON_H */
+#endif /* WC_CLIENT_MAPCTRL_COMMON_H */

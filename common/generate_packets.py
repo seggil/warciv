@@ -1485,8 +1485,8 @@ static int stats_total_sent;
 
     f=my_open("../server/hand_gen.h")
     f.write('''
-#ifndef FC__HAND_GEN_H
-#define FC__HAND_GEN_H
+#ifndef WC_SERVER_HAND_GEN_H
+#define WC_SERVER_HAND_GEN_H
 
 #include "shared.h"
 
@@ -1518,14 +1518,14 @@ bool server_handle_packet(enum packet_type type, void *packet,
                 else:
                     f.write('void handle_%s(struct player *pplayer%s);\n'%(a,b))
     f.write('''
-#endif /* FC__HAND_GEN_H */
+#endif /* WC_SERVER_HAND_GEN_H */
 ''')
     f.close()
 
     f=my_open("../client/packhand_gen.h")
     f.write('''
-#ifndef FC__PACKHAND_GEN_H
-#define FC__PACKHAND_GEN_H
+#ifndef WC_CLIENT_PACKHAND_GEN_H
+#define WC_CLIENT_PACKHAND_GEN_H
 
 #include "packets.h"
 #include "shared.h"
@@ -1549,7 +1549,7 @@ bool client_handle_packet(enum packet_type type, void *packet);
         else:
             f.write('void handle_%s(%s);\n'%(a,b))
     f.write('''
-#endif /* FC__PACKHAND_GEN_H */
+#endif /* WC_CLINET_PACKHAND_GEN_H */
 ''')
     f.close()
 

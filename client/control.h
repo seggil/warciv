@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CONTROL_H
-#define FC__CONTROL_H
+#ifndef WC_CLIENT_CONTROL_H
+#define WC_CLIENT_CONTROL_H
 
 #include "packets.h"
 
@@ -293,4 +293,4 @@ void put_unit_focus(struct unit *punit);
 void lie_unit_focus_init(void);
 void put_last_unit_focus(void);
 
-#endif  /* FC__CONTROL_H */
+#endif  /* WC_CLIENT_CONTROL_H */

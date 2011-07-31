@@ -10,9 +10,9 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AUDIO_WINMM_H
-#define FC__AUDIO_WINMM_H
+#ifndef WC_CLIENT_AUDIO_WINMM_H
+#define WC_CLIENT_AUDIO_WINMM_H
 
 void audio_winmm_init(void);
 
-#endif                          /* FC__AUDIO_WINMM_H */
+#endif  /* WC_CLIENT_AUDIO_WINMM_H */

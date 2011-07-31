@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MULTISELECT_H
-#define FC__MULTISELECT_H
+#ifndef WC_CLIENT_MULTISELECT_H
+#define WC_CLIENT_MULTISELECT_H
 
 #include "shared.h"
 #include "unit.h"
@@ -300,4 +300,4 @@ void request_auto_airlift_source_selection_with_airport(void);
 void do_airlift_for(int aq, struct city *pcity);
 void do_airlift(struct tile *ptile);
 
-#endif /* FC__MULTISELECT_H */
+#endif /* WC_CLIENT_MULTISELECT_H */

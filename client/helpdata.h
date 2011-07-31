@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__HELPDATA_H
-#define FC__HELPDATA_H
+#ifndef WC_CLIENT_HELPDATA_H
+#define WC_CLIENT_HELPDATA_H
 
 #include "helpdlg_g.h"          /* enum help_page_type */
 
@@ -46,4 +46,4 @@ char *helptext_unit_upkeep_str(int i);
         while((pitem=help_iter_next())) {
 #define help_items_iterate_end }}
 
-#endif  /* FC__HELPDATA_H */
+#endif  /* WC_CLIENT_HELPDATA_H */

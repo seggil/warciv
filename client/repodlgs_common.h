@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__REPODLGS_COMMON_H
-#define FC__REPODLGS_COMMON_H
+#ifndef WC_CLIENT_REPODLGS_COMMON_H
+#define WC_CLIENT_REPODLGS_COMMON_H
 
 #include "improvement.h"
 #include "unittype.h"
@@ -36,7 +36,7 @@ void get_economy_report_data(struct improvement_entry *entries,
                              int *total_income);
 /* This function returns an array with the gold upkeeped units.
  * FIXME: Many clients doesn't yet use this function and show also only the
- * buildings in the economy reports 
+ * buildings in the economy reports
  * I think that there should be only one function which returns an array of
  * char* arrays like some other common functions but that means updating all
  * client simultaneously and I simply can't */
@@ -78,4 +78,4 @@ void sell_all_improvements(Impr_Type_id impr, bool obsolete_only,
 void disband_all_units(Unit_Type_id type, bool in_cities_only,
                        char *message, size_t message_sz);
 
-#endif /* FC__REPODLGS_COMMON_H */
+#endif  /* WC_CLIENT_REPODLGS_COMMON_H */

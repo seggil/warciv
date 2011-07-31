@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CIVCLIENT_H
-#define FC__CIVCLIENT_H
+#ifndef WC_CLIENT_CIVCLIENT_H
+#define WC_CLIENT_CIVCLIENT_H
 
 #include "game.h"               /* enum client_states */
 #include "packets.h"            /* enum report_type */
@@ -67,4 +67,4 @@ void ui_exit(void);
 struct player *get_player_ptr(void);
 int get_player_idx(void);
 
-#endif  /* FC__CIVCLIENT_H */
+#endif  /* WC_CLIENT_CIVCLIENT_H */

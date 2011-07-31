@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__MESSAGEWIN_COMMON_H
-#define FC__MESSAGEWIN_COMMON_H
+#ifndef WC_CLIENT_MESSAGEWIN_COMMON_H
+#define WC_CLIENT_MESSAGEWIN_COMMON_H
 
 #include "events.h"
 #include "packets.h"

@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__TRADE_H
-#define FC__TRADE_H
+#ifndef WC_CLIENT_TRADE_H
+#define WC_CLIENT_TRADE_H
 
 #include "city.h"
 #include "unit.h"
@@ -52,4 +52,4 @@ void delayed_trade_routes_add(int city, int trade[OLD_NUM_TRADEROUTES],
                               int trade_value[OLD_NUM_TRADEROUTES]);
 void delayed_trade_routes_build(void);
 
-#endif /* FC__TRADE_H */
+#endif  /* WC_CLIENT_TRADE_H */

@@ -10,8 +10,8 @@ Freeciv - Copyright (C) 2003 - The Freeciv Project
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CONNECTDLG_COMMON_H
-#define FC__CONNECTDLG_COMMON_H
+#ifndef WC_CLIENT_CONNECTDLG_COMMON_H
+#define WC_CLIENT_CONNECTDLG_COMMON_H
 
 #include "shared.h"
 
@@ -44,4 +44,4 @@ enum skill_levels {
 
 extern const char *skill_level_names[NUM_SKILL_LEVELS];
 
-#endif  /* FC__CONNECTDLG_COMMON_H */
+#endif  /* WC_CLIENT_CONNECTDLG_COMMON_H */

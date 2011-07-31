@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CLINET_H
-#define FC__CLINET_H
+#ifndef WC_CLINET_CLINET_H
+#define WC_CLINET_CLINET_H
 
 #define DEFAULT_SOCK_PORT 5555
 #define DEFAULT_METALIST_ADDR "http://meta.freeciv.org/metaserver.phtml"
@@ -96,4 +96,4 @@ void *cancel_async_server_list_request(int id);
 
 bool is_warserver(void);
 
-#endif  /* FC__CLINET_H */
+#endif  /* WC_CLINET_CLINET_H */

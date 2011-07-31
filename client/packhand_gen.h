@@ -7,8 +7,8 @@
  ****************************************************************************/
 
 
-#ifndef FC__PACKHAND_GEN_H
-#define FC__PACKHAND_GEN_H
+#ifndef WC_CLIENT_PACKHAND_GEN_H
+#define WC_CLIENT_PACKHAND_GEN_H
 
 #include "packets.h"
 #include "shared.h"
@@ -124,4 +124,4 @@ struct packet_city_manager_param;
 void handle_city_manager_param(struct packet_city_manager_param *packet);
 void handle_city_no_manager_param(int id);
 
-#endif /* FC__PACKHAND_GEN_H */
+#endif /* WC_CLIENT_PACKHAND_GEN_H */

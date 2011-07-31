@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__OPTIONS_H
-#define FC__OPTIONS_H
+#ifndef WC_CLIENT_OPTIONS_H
+#define WC_CLIENT_OPTIONS_H
 
 #include "events.h"
 #include "registry.h"
@@ -277,4 +277,4 @@ bool check_global_worklist(struct worklist *pwl);
 int revert_str_accessor(const char *(*str_accessor)(int), const char *str);
 filter filter_revert_str_accessor(const char *(*str_accessor)(filter),
                                   const char *str);
-#endif  /* FC__OPTIONS_H */
+#endif  /* WC_CLIENT_OPTIONS_H */
