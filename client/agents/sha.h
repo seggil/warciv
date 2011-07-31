@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - A. Gorshenev
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,14 +11,14 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CLIENT_AGENTS_SIMPLE_HISTORIAN_H
-#define FC__CLIENT_AGENTS_SIMPLE_HISTORIAN_H
+#ifndef WC_CLIENT_AGENTS_SIMPLE_HISTORIAN_H
+#define WC_CLIENT_AGENTS_SIMPLE_HISTORIAN_H
 
 void simple_historian_init(void);
 
 struct tile* sha_tile_recall(struct tile *ptile);
 struct unit* sha_unit_recall(int id);
 
-#endif /* header guard */
+#endif  /* WC_CLIENT_AGENTS_SIMPLE_HISTORIAN_H */
 
 

@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CMAFEC_H
-#define FC__CMAFEC_H
+#ifndef WC_CLINET_AGENTS_CMAFEC_H
+#define WC_CLINET_AGENTS_CMAFEC_H
 
 #include "cma_core.h"
 

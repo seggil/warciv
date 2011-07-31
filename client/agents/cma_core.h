@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CLIENT_AGENTS_CITY_MANAGEMENT_H
-#define FC__CLIENT_AGENTS_CITY_MANAGEMENT_H
+#ifndef WC_CLIENT_AGENTS_CITY_MANAGEMENT_H
+#define WC_CLIENT_AGENTS_CITY_MANAGEMENT_H
 
 /*
  * CM stands for citizen management.
