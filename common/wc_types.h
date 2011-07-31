@@ -49,14 +49,14 @@ enum sset_type {
   SSET_BOOL, SSET_INT, SSET_STRING
 };
 
-enum server_states { 
-  PRE_GAME_STATE, 
-  SELECT_RACES_STATE, 
+enum server_states {
+  PRE_GAME_STATE,
+  SELECT_RACES_STATE,
   RUN_GAME_STATE,
   GAME_OVER_STATE
 };
 
-enum client_states { 
+enum client_states {
   CLIENT_BOOT_STATE,
   CLIENT_PRE_GAME_STATE,
   CLIENT_SELECT_RACE_STATE,
@@ -112,7 +112,7 @@ enum specialist_type {
 #define CITY_MAP_RADIUS 2
 
 /* Diameter of the workable city area.  Some places harcdode this number. */
-#define CITY_MAP_SIZE (CITY_MAP_RADIUS * 2 + 1) 
+#define CITY_MAP_SIZE (CITY_MAP_RADIUS * 2 + 1)
 
 enum cm_stat {
   CM_FOOD,
