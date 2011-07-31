@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PF_TOOLS_H
-#define FC__PF_TOOLS_H
+#ifndef WC_COMMON_AICORE_PF_TOOLS_H
+#define WC_COMMON_AICORE_PF_TOOLS_H
 
 #include "path_finding.h"
 
@@ -36,4 +36,4 @@ enum tile_behavior no_fights(const struct tile *ptile, enum known_type known,
 
 #define pf_iterator_end }}
 
-#endif                  /* FC__PF_TOOLS_H */
+#endif  /* WC_COMMON_AICORE_PF_TOOLS_H */

@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PATH_FINDING_H
-#define FC__PATH_FINDING_H
+#ifndef WC_COMMON_AICORE_PATH_FINDING_H
+#define WC_COMMON_AICORE_PATH_FINDING_H
 
 #include "../map.h"
 #include "../terrain.h"
@@ -430,4 +430,4 @@ struct pf_position *pf_last_position(struct pf_path *path);
 /* Return the current parameters for the given map. */
 struct pf_parameter *pf_get_parameter(struct path_finding_map *map);
 
-#endif
+#endif  /* WC_COMMON_AICORE_PATH_FINDING_H */
