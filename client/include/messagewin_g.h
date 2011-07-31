@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MESSAGEWIN_G_H
-#define FC__MESSAGEWIN_G_H
+#ifndef WC_CLIENT_INCLUDE_MESSAGEWIN_G_H
+#define WC_CLIENT_INCLUDE_MESSAGEWIN_G_H
 
 #include "packets.h"
 
@@ -21,4 +21,4 @@ void popup_meswin_dialog(void);
 bool is_meswin_open(void);
 void real_update_meswin_dialog(void);
 
-#endif  /* FC__MESSAGEWIN_G_H */
+#endif  /* WC_CLIENT_INCLUDE_MESSAGEWIN_G_H */

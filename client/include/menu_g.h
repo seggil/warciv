@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MENU_G_H
-#define FC__MENU_G_H
+#ifndef WC_CLIENT_INCLUDE_MENU_G_H
+#define WC_CLIENT_INCLUDE_MENU_G_H
 
 void update_menus(void);
 void init_menus(void);
@@ -25,4 +25,4 @@ void update_multi_selection_menu(int i);
 void update_miscellaneous_menu(void);
 void start_turn_menus_udpate(void);
 
-#endif  /* FC__MENU_G_H */
+#endif  /* WC_CLIENT_INCLUDE_MENU_G_H */

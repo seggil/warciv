@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GRAPHICS_G_H
-#define FC__GRAPHICS_G_H
+#ifndef WC_CLIENT_INCLUDE_GRAPHICS_G_H
+#define WC_CLIENT_INCLUDE_GRAPHICS_G_H
 
 #include "shared.h"             /* bool type */
 
@@ -35,4 +35,4 @@ struct Sprite *crop_sprite(struct Sprite *source,
 void get_sprite_dimensions(struct Sprite *sprite, int *width, int *height);
 void free_sprite(struct Sprite *s);
 
-#endif  /* FC__GRAPHICS_G_H */
+#endif  /* WC_CLIENT_INCLUDE_GRAPHICS_G_H */

@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__COLORS_G_H
-#define FC__COLORS_G_H
+#ifndef WC_CLIENT_INCLUDE_COLORS_G_H
+#define WC_CLIENT_INCLUDE_COLORS_G_H
 
 enum color_std {
   COLOR_STD_BLACK, COLOR_STD_WHITE, COLOR_STD_RED,
@@ -43,4 +43,4 @@ enum Display_color_type get_visual(void);
 void init_color_system(void);
 void free_color_system(void);
 
-#endif  /* FC__COLORS_G_H */
+#endif  /* WC_CLIENT_INCLUDE_COLORS_G_H */

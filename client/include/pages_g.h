@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PAGES_G_H
-#define FC__PAGES_G_H
+#ifndef WC_CLIENT_INCLUDE_PAGES_G_H
+#define WC_CLIENT_INCLUDE_PAGES_G_H
 
 /**************************************************************************
   Toplevel window pages modes.
@@ -36,4 +36,4 @@ void append_network_statusbar(const char *text);
 
 void voteinfo_gui_update(void);
 
-#endif  /* FC__PAGES_G_H */
+#endif  /* WC_CLIENT_INCLUDE_PAGES_G_H */

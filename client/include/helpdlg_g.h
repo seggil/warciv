@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__HELPDLG_G_H
-#define FC__HELPDLG_G_H
+#ifndef WC_CLIENT_INCLUDE_HELPDLG_G_H
+#define WC_CLIENT_INCLUDE_HELPDLG_G_H
 
 enum help_page_type { HELP_ANY, HELP_TEXT, HELP_UNIT, HELP_IMPROVEMENT,
                       HELP_WONDER, HELP_TECH, HELP_TERRAIN,
@@ -42,4 +42,4 @@ void popdown_help_dialog(void);
 #define HELP_ABOUT_ITEM "About"
 #define HELP_WARCLIENT_ITEM "Warclient"
 
-#endif  /* FC__HELPDLG_G_H */
+#endif  /* WC_CLIENT_INCLUDE_HELPDLG_G_H */

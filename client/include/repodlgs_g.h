@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__REPODLGS_G_H
-#define FC__REPODLGS_G_H
+#ifndef WC_CLIENT_INCLUDE_REPODLGS_G_H
+#define WC_CLIENT_INCLUDE_REPODLGS_G_H
 
 #include "packets.h"
 #include "shared.h"             /* bool type */
@@ -29,4 +29,4 @@ void popup_activeunits_report_dialog(bool make_modal);
 void popup_endgame_report_dialog(struct packet_endgame_report *packet);
 void popup_settable_options_dialog(void);
 
-#endif  /* FC__REPODLGS_G_H */
+#endif  /* WC_CLIENT_INCLUDE_REPODLGS_G_H */

@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CHATLINE_G_H
-#define FC__CHATLINE_G_H
+#ifndef WC_CLIENT_INCLUDE_CHATLINE_G_H
+#define WC_CLIENT_INCLUDE_CHATLINE_G_H
 
 #include "../chatline_common.h"
 
@@ -25,4 +25,4 @@ void create_default_chatline_colors(void);
 void secfile_save_chatline_colors(struct section_file *sf);
 void secfile_load_chatline_colors(struct section_file *sf);
 
-#endif  /* FC__CHATLINE_G_H */
+#endif  /* WC_CLIENT_INCLUDE_CHATLINE_G_H */

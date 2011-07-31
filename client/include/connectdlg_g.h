@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CONNECTDLG_G_H
-#define FC__CONNECTDLG_G_H
+#ifndef WC_CLIENT_INCLUDE_CONNECTDLG_G_H
+#define WC_CLIENT_INCLUDE_CONNECTDLG_G_H
 
 void close_connection_dialog(void);
 void really_close_connection_dialog(void);
@@ -19,4 +19,4 @@ void really_close_connection_dialog(void);
 void gui_server_connect(void);
 void server_autoconnect(void);
 
-#endif  /* FC__CONNECTDLG_G_H */
+#endif  /* WC_CLIENT_INCLUDE_CONNECTDLG_G_H */

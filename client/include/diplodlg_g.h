@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__DIPLODLG_G_H
-#define FC__DIPLODLG_G_H
+#ifndef WC_CLIENT_INCLUDE_DIPLODLG_G_H
+#define WC_CLIENT_INCLUDE_DIPLODLG_G_H
 
 #include "shared.h"
 
@@ -28,4 +28,4 @@ void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted,
 
 void close_all_diplomacy_dialogs(void);
 
-#endif  /* FC__DIPLODLG_G_H */
+#endif  /* WC_CLIENT_INCLUDE_DIPLODLG_G_H */
