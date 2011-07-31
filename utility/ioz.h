@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #ifndef WC_UTILITY_IOZ_H
 #define WC_UTILITY_IOZ_H
 
-/********************************************************************** 
+/**********************************************************************
   An IO layer to support transparent compression/uncompression.
   (Currently only "required" functionality is supported.)
 ***********************************************************************/
@@ -38,7 +38,7 @@ char *fz_fgets(char *buffer, int size, fz_FILE *fp);
 int fz_fprintf(fz_FILE *fp, const char *format, ...)
      fc__attribute((__format__ (__printf__, 2, 3)));
 
-int fz_ferror(fz_FILE *fp);     
+int fz_ferror(fz_FILE *fp);
 const char *fz_strerror(fz_FILE *fp);
 
 #endif  /* WC_UTILITY_IOZ_H */
