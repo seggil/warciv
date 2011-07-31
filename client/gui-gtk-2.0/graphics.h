@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GRAPHICS_H
-#define FC__GRAPHICS_H
+#ifndef WC_CLIENT_GUI_GRAPHICS_H
+#define WC_CLIENT_GUI_GRAPHICS_H
 
 #include <gtk/gtk.h>
 
@@ -64,5 +64,4 @@ GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src);
  ********************************************************************/
 GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite);
 
-#endif  /* FC__GRAPHICS_H */
-
+#endif  /* WC_CLIENT_GUI_GRAPHICS_H */

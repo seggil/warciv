@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MY_CELL_RENDERER_COLOR_H
-#define FC__MY_CELL_RENDERER_COLOR_H
+#ifndef WC_CLIENT_GUI_MY_CELL_RENDERER_COLOR_H
+#define WC_CLIENT_GUI_MY_CELL_RENDERER_COLOR_H
 
 #include <gtk/gtk.h>
 
@@ -47,4 +47,4 @@ GType my_cell_renderer_color_get_type (void);
 GtkCellRenderer *my_cell_renderer_color_new (void);
 
 
-#endif /* FC__MY_CELL_RENDERER_COLOR_H */
+#endif  /* WC_CLIENT_GUI_MY_CELL_RENDERER_COLOR_H */

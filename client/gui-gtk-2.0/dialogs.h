@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__DIALOGS_H
-#define FC__DIALOGS_H
+#ifndef WC_CLIENT_GUI_DIALOGS_H
+#define WC_CLIENT_GUI_DIALOGS_H
 
 #include <gtk/gtk.h>
 
@@ -27,4 +27,4 @@ GtkWidget *popup_message_dialog(GtkWindow *parent, const gchar *dialogname,
 
 gboolean taxrates_callback(GtkWidget *w, GdkEventButton *ev, gpointer data);
 
-#endif  /* FC__DIALOGS_H */
+#endif  /* WC_CLIENT_GUI_DIALOGS_H */

@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__GTK_CMA_H
-#define FC__GTK_CMA_H
+#ifndef WC_CLIENT_GUI_GTK_CMA_H
+#define WC_CLIENT_GUI_GTK_CMA_H
 
 #include <gtk/gtk.h>
 

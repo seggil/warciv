@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__RATESDLG_H
-#define FC__RATESDLG_H
+#ifndef WC_CLIENT_GUI_RATESDLG_H
+#define WC_CLIENT_GUI_RATESDLG_H
 
 #include "../include/ratesdlg_g.h"
 
 /* nothing to add */
 
-#endif                          /* FC__RATESDLG_H */
+#endif  /* WC_CLIENT_GUI_RATESDLG_H */

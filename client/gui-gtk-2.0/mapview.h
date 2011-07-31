@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MAPVIEW_H
-#define FC__MAPVIEW_H
+#ifndef WC_CLIENT_GUI_MAPVIEW_H
+#define WC_CLIENT_GUI_MAPVIEW_H
 
 #include <gtk/gtk.h>
 
@@ -42,4 +42,4 @@ void update_map_canvas_scrollbars_size(void);
 
 void update_hover_cursor(void);
 
-#endif  /* FC__MAPVIEW_H */
+#endif  /* WC_CLIENT_GUI_MAPVIEW_H */

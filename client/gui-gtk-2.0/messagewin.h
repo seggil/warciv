@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MESSAGEWIN_H
-#define FC__MESSAGEWIN_H
+#ifndef WC_CLIENT_GUI_MESSAGEWIN_H
+#define WC_CLIENT_GUI_MESSAGEWIN_H
 
 #include "../include/messagewin_g.h"
 
@@ -20,4 +20,4 @@ void popdown_meswin_dialog(void);
 
 GtkWidget *get_split_message_window(void);
 
-#endif  /* FC__MESSAGEWIN_H */
+#endif  /* WC_CLIENT_GUI_MESSAGEWIN_H */

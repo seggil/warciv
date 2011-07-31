@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SPACESHIPDLG_H
-#define FC__SPACESHIPDLG_H
+#ifndef WC_CLIENT_GUI_SPACESHIPDLG_H
+#define WC_CLIENT_GUI_SPACESHIPDLG_H
 
 #include <gtk/gtk.h>
 
 #include "../include/spaceshipdlg_g.h"
 
-#endif  /* FC__SPACESHIPDLG_H */
+#endif  /* WC_CLIENT_GUI_SPACESHIPDLG_H */

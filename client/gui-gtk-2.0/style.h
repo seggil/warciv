@@ -10,9 +10,9 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__STYLE_H
-#define FC__STYLE_H
+#ifndef WC_CLIENT_GUI_STYLE_H
+#define WC_CLIENT_GUI_STYLE_H
 
 void popup_style_config_dialog(void);
 
-#endif  /* FC__STYLE_H */
+#endif  /* WC_CLIENT_GUI_STYLE_H */

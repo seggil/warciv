@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MESSAGEDLG_H
-#define FC__MESSAGEDLG_H
+#ifndef WC_CLIENT_GUI_MESSAGEDLG_H
+#define WC_CLIENT_GUI_MESSAGEDLG_H
 
 void apply_message_options(GtkWidget *widget);
 void refresh_message_options(GtkWidget *widget);
@@ -20,4 +20,4 @@ void reload_message_options(GtkWidget *widget, struct section_file *sf);
 
 GtkWidget *create_messages_configuration(void);
 
-#endif                          /* FC__MESSAGEDLG_H */
+#endif  /* WC_CLIENT_GUI_MESSAGEDLG_H */

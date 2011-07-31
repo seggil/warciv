@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__REPODLGS_H
-#define FC__REPODLGS_H
+#ifndef WC_CLIENT_GUI_REPODLGS_H
+#define WC_CLIENT_GUI_REPODLGS_H
 
 #include "../include/repodlgs_g.h"
 
@@ -22,4 +22,4 @@ void popdown_economy_report_dialog(void);
 void raise_activeunits_report_dialog(void);
 void popdown_activeunits_report_dialog(void);
 
-#endif  /* FC__REPODLGS_H */
+#endif  /* WC_CLIENT_GUI_REPODLGS_H */

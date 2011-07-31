@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GUI_STUFF_H
-#define FC__GUI_STUFF_H
+#ifndef WC_CLIENT_GUI_GUI_STUFF_H
+#define WC_CLIENT_GUI_GUI_STUFF_H
 
 #include <gtk/gtk.h>
 
@@ -109,4 +109,4 @@ void gui_dialog_response_set_callback(struct gui_dialog *dlg,
 const char *gui_dialog_get_title(const struct gui_dialog *dlg);
 struct gui_dialog *find_gui_dialog_by_title(const char *title);
 
-#endif  /* FC__GUI_STUFF_H */
+#endif  /* WC_CLIENT_GUI_GUI_STUFF_H*/

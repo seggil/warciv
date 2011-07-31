@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__FINDDLG_H
-#define FC__FINDDLG_H
+#ifndef WC_CLIENT_GUI_FINDDLG_H
+#define WC_CLIENT_GUI_FINDDLG_H
 
 # include "../include/finddlg_g.h"
 
 /* nothing to add */
 
-#endif  /* FC__FINDDLG_H */
+#endif  /* WC_CLIENT_GUI_FINDDLG_H */

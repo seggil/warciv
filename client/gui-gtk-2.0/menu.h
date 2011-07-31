@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MENU_H
-#define FC__MENU_H
+#ifndef WC_CLIENT_GUI_MENU_H
+#define WC_CLIENT_GUI_MENU_H
 
 #include <gtk/gtk.h>
 
@@ -19,4 +19,4 @@
 
 void setup_menus(GtkWidget *window, GtkWidget **menubar);
 
-#endif  /* FC__MENU_H */
+#endif  /* WC_CLIENT_GUI_MENU_H */

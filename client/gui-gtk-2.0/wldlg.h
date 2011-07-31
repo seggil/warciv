@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__WLDLG_H
-#define FC__WLDLG_H
+#ifndef WC_CLIENT_GUI_WLDLG_H
+#define WC_CLIENT_GUI_WLDLG_H
 
 #include <gtk/gtk.h>
 
@@ -39,4 +39,4 @@ void add_worklist_dnd_target(GtkWidget *w);
 
 void blank_max_unit_size(void);
 
-#endif                          /* FC__WLDLG_H */
+#endif  /* WC_CLIENT_GUI_WLDLG_H */

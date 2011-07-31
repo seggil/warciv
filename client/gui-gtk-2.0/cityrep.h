@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITYREP_H
-#define FC__CITYREP_H
+#ifndef WC_CLIENT_GUI_CITYREP_H
+#define WC_CLIENT_GUI_CITYREP_H
 
 #include "../include/cityrep_g.h"
 
@@ -19,4 +19,4 @@ void raise_city_report_dialog(void);
 void popdown_city_report_dialog(void);
 void popup_change_cma(void);
 
-#endif  /* FC__CITYREP_H */
+#endif  /* WC_CLIENT_GUI_CITYREP_H */

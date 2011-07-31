@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITYDLG_H
-#define FC__CITYDLG_H
+#ifndef WC_CLIENT_GUI_CITYDLG_H
+#define WC_CLIENT_GUI_CITYDLG_H
 
 #include "../include/citydlg_g.h"
 
 void reset_city_dialogs(void);
 
-#endif                          /* FC__CITYDLG_H */
+#endif  /* WC_CLIENT_GUI_CITYDLG_H */

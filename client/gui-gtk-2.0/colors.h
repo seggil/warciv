@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__COLORS_H
-#define FC__COLORS_H
+#ifndef WC_CLIENT_GUI_COLORS_H
+#define WC_CLIENT_GUI_COLORS_H
 
 #include <gtk/gtk.h>
 
@@ -20,4 +20,4 @@
 extern GdkColor *colors_standard[COLOR_STD_LAST];
 GdkColor *color_from_str(const char *str);
 
-#endif  /* FC__COLORS_H */
+#endif  /* WC_CLIENT_GUI_COLORS_H */

@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__HELPDLG_H
-#define FC__HELPDLG_H
+#ifndef WC_CLIENT_GUI_HELPDLG_H
+#define WC_CLIENT_GUI_HELPDLG_H
 
 #include "../include/helpdlg_g.h"
 
 /* nothing else */
 
-#endif  /* FC__HELPDLG_H */
+#endif  /* WC_CLIENT_GUI_HELPDLG_H */

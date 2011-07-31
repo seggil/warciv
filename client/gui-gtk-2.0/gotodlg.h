@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GOTODLG_H
-#define FC__GOTODLG_H
+#ifndef WC_CLIENT_GUI_GOTODLG_H
+#define WC_CLIENT_GUI_GOTODLG_H
 
 #include "../include/gotodlg_g.h"
 
 void popup_goto_dialog_action(void);
 
-#endif  /* FC__GOTODLG_H */
+#endif  /* WC_CLIENT_GUI_GOTODLG_H */

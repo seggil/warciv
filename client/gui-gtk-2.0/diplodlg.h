@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__DIPLODLG_H
-#define FC__DIPLODLG_H
+#ifndef WC_CLIENT_GUI_DIPLODLG_H
+#define WC_CLIENT_GUI_DIPLODLG_H
 
 #include <gtk/gtk.h>
 
 #include "../include/diplodlg_g.h"
 
-#endif  /* FC__DIPLODLG_H */
+#endif  /* WC_CLIENT_GUI_DIPLODLG_H */

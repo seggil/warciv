@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CHATLINE_H
-#define FC__CHATLINE_H
+#ifndef WC_CLIENT_GUI_CHATLINE_H
+#define WC_CLIENT_GUI_CHATLINE_H
 
 #include <gtk/gtk.h>
 
@@ -103,4 +103,4 @@ bool chatline_is_scrolled_to_bottom(void);
 
 bool chatline_autocomplement(GtkEditable *editable);
 
-#endif  /* FC__CHATLINE_H */
+#endif  /* WC_CLIENT_GUI_CHATLINE_H*/

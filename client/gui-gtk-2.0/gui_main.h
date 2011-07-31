@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GUI_MAIN_H
-#define FC__GUI_MAIN_H
+#ifndef WC_CLIENT_GUI_GUI_MAIN_H
+#define WC_CLIENT_GUI_GUI_MAIN_H
 
 #include <gtk/gtk.h>
 
@@ -126,4 +126,4 @@ void popup_quit_dialog(void);
 
 void queue_chatline_scroll_to_bottom(void);
 
-#endif  /* FC__GUI_MAIN_H */
+#endif  /* WC_CLIENT_GUI_GUI_MAIN_H */

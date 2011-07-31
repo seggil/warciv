@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__OPTIONDLG_H
-#define FC__OPTIONDLG_H
+#ifndef WC_CLIENT_GUI_OPTIONDLG_H
+#define WC_CLIENT_GUI_OPTIONDLG_H
 
 #include <gtk/gtk.h>
 
@@ -23,4 +23,4 @@ void map_scrollbars_callback(struct client_option *poption);
 void mapview_redraw_callback(struct client_option *poption);
 void split_message_window_callback(struct client_option *poption);
 
-#endif  /* FC__OPTIONDLG_H */
+#endif  /* WC_CLIENT_GUI_OPTIONDLG_H */

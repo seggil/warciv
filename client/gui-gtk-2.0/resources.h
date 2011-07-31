@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__RESOURCES_H
-#define FC__RESOURCES_H
+#ifndef WC_CLIENT_GUI_RESOURCES_H
+#define WC_CLIENT_GUI_RESOURCES_H
 
 #include <gtk/gtk.h>
 
 extern gchar *fallback_resources;
 
-#endif  /* FC__RESOURCES_H */
+#endif  /* WC_CLIENT_GUI_RESOURCES_H */

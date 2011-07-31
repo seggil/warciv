@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PAGES_H
-#define FC__PAGES_H
+#ifndef WC_CLIENT_GUI_PAGES_H
+#define WC_CLIENT_GUI_PAGES_H
 
 #include <gtk/gtk.h>
 
@@ -31,5 +31,4 @@ GtkWidget *create_statusbar(void);
 void append_network_statusbar(const char *text);
 void popup_save_dialog(void);
 
-#endif  /* FC__PAGES_H */
-
+#endif  /* WC_CLIENT_GUI_PAGES_H */

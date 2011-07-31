@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CONNECTDLG_H
-#define FC__CONNECTDLG_H
+#ifndef WC_CLIENT_GUI_CONNECTDLG_H
+#define WC_CLIENT_GUI_CONNECTDLG_H
 
 #include <gtk/gtk.h>
 
@@ -21,4 +21,4 @@
 
 GtkWidget *create_file_selection(const char *title, bool is_save);
 
-#endif  /* FC__CONNECTDLG_H */
+#endif  /* WC_CLIENT_GUI_CONNECTDLG_H */
