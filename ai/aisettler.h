@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AISETTLER_H
-#define FC__AISETTLER_H
+#ifndef WC_AI_AISETTLER_H
+#define WC_AI_AISETTLER_H
 
 struct citytile {
   int food, shield, trade, reserved;
@@ -42,4 +42,4 @@ void ai_settler_init(struct player *pplayer);
 void print_cityresult(struct player *pplayer, struct cityresult *cr,
                       struct ai_data *ai);
 
-#endif
+#endif  /* WC_AI_AISETTLER_H */
