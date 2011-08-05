@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__UNITHAND_H
-#define FC__UNITHAND_H
+#ifndef WC_SERVER_UNITHAND_H
+#define WC_SERVER_UNITHAND_H
 
 #include "packets.h"
 #include "unit.h"
@@ -23,4 +23,4 @@ bool handle_unit_move_request(struct unit *punit, struct tile *ptile,
 void handle_unit_activity_request(struct unit *punit,
                                   enum unit_activity new_activity);
 
-#endif  /* FC__UNITHAND_H */
+#endif  /* WC_SERVER_UNITHAND_H */

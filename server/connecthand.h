@@ -92,4 +92,4 @@ bool server_assign_random_nation(struct player *pplayer);
 void conn_reset_idle_time(struct connection *pconn);
 void check_idle_connections(void);
 
-#endif /* WC_SERVER_CONNECTHAND_H */
+#endif  /* WC_SERVER_CONNECTHAND_H */

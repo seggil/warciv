@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CONSOLE_H
-#define FC__CONSOLE_H
+#ifndef WC_SERVER_CONSOLE_H
+#define WC_SERVER_CONSOLE_H
 
 #include "shared.h"             /* bool type and fc__attribute */
 
@@ -85,4 +85,4 @@ void con_set_style(bool i);
 /* return server output style */
 bool con_get_style(void);
 
-#endif  /* FC__CONSOLE_H */
+#endif  /* WC_SERVER_CONSOLE_H */

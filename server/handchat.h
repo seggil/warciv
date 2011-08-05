@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__HANDCHAT_H
-#define FC__HANDCHAT_H
+#ifndef WC_SERVER_HANDCHAT_H
+#define WC_SERVER_HANDCHAT_H
 
 #define ALLIESCHAT_COMMAND_PREFIX '.'
 
@@ -20,4 +20,4 @@ struct connection;
 void handle_chat_msg_req(struct connection *pc, char *message);
 bool conn_is_ignored(struct connection *pconn, struct connection *dest);
 
-#endif  /* FC__HANDCHAT_H */
+#endif  /* WC_SERVER_HANDCHAT_H */

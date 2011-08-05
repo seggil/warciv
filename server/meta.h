@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__META_H
-#define FC__META_H
+#ifndef WC_SERVER_META_H
+#define WC_SERVER_META_H
 
 #include "shared.h"             /* bool type */
 
@@ -58,4 +58,4 @@ bool send_server_info_to_metaserver(enum meta_flag flag);
 int metaserver_get_socket(void);
 void metaserver_handle_write_ready(void);
 
-#endif /* FC__META_H */
+#endif  /* WC_SERVER_META_H */

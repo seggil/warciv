@@ -10,9 +10,9 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CIVSERVER_H
-#define FC__CIVSERVER_H
+#ifndef WC_SERVER_CIVSERVER_H
+#define WC_SERVER_CIVSERVER_H
 
 #include "version.h"
 
-#endif /* FC__CIVSERVER_H */
+#endif  /* WC_SERVER_CIVSERVER_H */

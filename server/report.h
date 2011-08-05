@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__REPORT_H
-#define FC__REPORT_H
+#ifndef WC_SERVER_REPORT_H
+#define WC_SERVER_PLRHAND_H
 
 #include "shared.h"             /* bool type */
 
@@ -32,4 +32,4 @@ void report_game_rankings(struct conn_list *dest);
 
 /* See also report_server_options() in stdinhand.h */
 
-#endif  /* FC__REPORT_H */
+#endif  /* WC_SERVER_PLRHAND_H */

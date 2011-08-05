@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SCRIPT_H
-#define FC__SCRIPT_H
+#ifndef WC_SERVER_SCRIPT_H
+#define WC_SERVER_SCRIPT_H
 
 
 int luaopen_freeciv(lua_State *L);
@@ -22,4 +22,4 @@ bool script_check_func(lua_State *L, const char *scriptname,
 bool script_call(lua_State *L, const char *func, const char *sig, ...)
                  fc__attribute((__format__ (__printf__, 3, 4)));
 
-#endif /* FC__SCRIPT_H */
+#endif /* WC_SERVER_SCRIPT_H */

@@ -10,6 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
+#ifndef WC_SERVER_SETTINGS_H
+#define WC_SERVER_SETTINGS_H
 
 #include "shared.h"
 
@@ -153,3 +155,4 @@ enum cmdlevel_id sset_access_level(int idx);
 
 void settings_init(void);
 void settings_reset(void);
+#endif  /* WC_SERVER_SETTINGS_H */

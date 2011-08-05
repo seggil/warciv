@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__STDINHAND_C_H
-#define FC__STDINHAND_C_H
+#ifndef WC_SERVER_STDINHAND_C_H
+#define WC_SERVER_STDINHAND_C_H
 
 bool sset_is_changeable(int idx);
 

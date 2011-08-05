@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__TRADE_HAND_H
-#define FC__TRADE_HAND_H
+#ifndef WC_SERVER_TRADE_HAND_H
+#define WC_SERVER_TRADE_HAND_H
 
 #include "traderoute.h"
 
@@ -29,4 +29,4 @@ void trade_free_unit(struct unit *punit);
 
 void reset_trade_route_planning(struct player *pplayer);
 
-#endif /* FC__TRADE_HAND_H */
+#endif /* WC_SERVER_TRADE_HAND_H */

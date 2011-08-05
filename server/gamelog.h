@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__GAMELOG_H
-#define FC__GAMELOG_H
+#ifndef WC_SERVER_GAMELOG_H
+#define WC_SERVER_GAMELOG_H
 
 #include "shared.h"             /* fc__attribute */
 
@@ -75,4 +75,4 @@ void gamelog(int level, ...);
 
 extern int gamelog_level;
 
-#endif  /* FC__GAMELOG_H */
+#endif  /* WC_SERVER_GAMELOG_H */

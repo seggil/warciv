@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GAMEHAND_H
-#define FC__GAMEHAND_H
+#ifndef WC_SERVER_GAMEHAND_H
+#define WC_SERVER_GAMEHAND_H
 
 struct section_file;
 struct connection;
@@ -39,4 +39,4 @@ void game_save_timeout(void);
 int game_get_saved_timeout(void);
 void game_restore_timeout(void);
 
-#endif  /* FC__GAMEHAND_H */
+#endif  /* WC_SERVER_GAMEHAND_H */

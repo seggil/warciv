@@ -7,8 +7,8 @@
  ****************************************************************************/
 
 
-#ifndef FC__HAND_GEN_H
-#define FC__HAND_GEN_H
+#ifndef WC_SERVER_HAND_GEN_H
+#define WC_SERVER_HAND_GEN_H
 
 #include "shared.h"
 
@@ -85,4 +85,4 @@ void handle_city_manager_param(struct player *pplayer, struct packet_city_manage
 void handle_city_no_manager_param(struct player *pplayer, int id);
 void handle_player_info_req(struct connection *pconn, int id);
 
-#endif /* FC__HAND_GEN_H */
+#endif /* WC_SERVER_HAND_GEN_H */

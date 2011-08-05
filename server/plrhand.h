@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PLRHAND_H
-#define FC__PLRHAND_H
+#ifndef WC_SERVER_PLRHAND_H
+#define WC_SERVER_PLRHAND_H
 
 #include <stdarg.h>
 
@@ -107,4 +107,4 @@ void civil_war(struct player *pplayer);
 
 void update_players_after_alliance_breakup(struct player* pplayer,
                                           struct player* pplayer2);
-#endif  /* FC__PLRHAND_H */
+#endif  /* WC_SERVER_PLRHAND_H */

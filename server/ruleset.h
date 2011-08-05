@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__RULESET_H
-#define FC__RULESET_H
+#ifndef WC_SERVER_RULESET_H
+#define WC_SERVER_RULESET_H
 
 #define MAX_NUM_RULESETS 32
 
@@ -25,4 +25,4 @@ bool is_valid_ruleset(const char *path, char *verror, size_t verror_size,
 char **get_rulesets_list(void);
 char *get_ruleset_description(const char *ruleset);
 
-#endif  /* FC__RULESET_H */
+#endif  /* WC_SERVER_RULESET_H */

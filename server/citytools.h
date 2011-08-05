@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITYTOOLS_H
-#define FC__CITYTOOLS_H
+#ifndef WC_SERVER_CITYTOOLS_H
+#define WC_SERVER_CITYTOOLS_H
 
 #include "city.h"
 #include "events.h"
@@ -112,4 +112,4 @@ void reset_city_manager_params(struct player *pplayer);
 void clear_rally_point(struct city *pcity, bool send_info);
 void reset_rally_points(struct player *pplayer);
 
-#endif  /* FC__CITYTOOLS_H */
+#endif  /* WC_SERVER_CITYTOOLS_H */

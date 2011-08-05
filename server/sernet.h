@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SERNET_H
-#define FC__SERNET_H
+#ifndef WC_SERVER_SERNET_H
+#define WC_SERVER_SERNET_H
 
 #include "connection.h"
 
@@ -30,4 +30,4 @@ void server_break_connection(struct connection *pconn, enum exit_state state);
 void init_connections(void);
 void handle_conn_pong(struct connection *pconn);
 
-#endif  /* FC__SERNET_H */
+#endif  /* WC_SERVER_SERNET_H */

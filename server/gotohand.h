@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GOTOHAND_H
-#define FC__GOTOHAND_H
+#ifndef WC_SERVER_GOTOHAND_H
+#define WC_SERVER_GOTOHAND_H
 
 #include "map.h"                /* MAP_MAX_ */
 
@@ -64,4 +64,4 @@ extern struct move_cost_map warmap;
 #define WARMAP_SEACOST(ptile) (warmap.seacost[(ptile)->index])
 #define WARMAP_VECTOR(ptile) (warmap.vector[(ptile)->index])
 
-#endif  /* FC__GOTOHAND_H */
+#endif  /* WC_SERVER_GOTOHAND_H */

@@ -11,6 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
+#ifndef WC_SERVER_COMMANDS_H
+#define WC_SERVER_COMMANDS_H
 enum echo_type {
   ECHO_NONE = 0,
   ECHO_USER,
@@ -143,3 +145,4 @@ enum command_id {
 extern const struct command commands[];
 
 enum cmdlevel_id command_access_level(enum command_id cmd);
+#endif  /* WC_SERVER_COMMANDS_H */

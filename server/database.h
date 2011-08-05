@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__DATABASE_H
-#define FC__DATABASE_H
+#ifndef WC_SERVER_DATABASE_H
+#define WC_SERVER_DATABASE_H
 
 #include "shared.h"
 
@@ -163,4 +163,4 @@ void fcdb_gamelist_free(struct fcdb_gamelist *fgl);
 struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user);
 void fcdb_aliaslist_free(struct fcdb_aliaslist *fal);
 
-#endif /* FC__DATABASE_H */
+#endif  /* WC_SERVER_DATABASE_H */

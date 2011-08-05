@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AUTOATTACK_H
-#define FC__AUTOATTACK_H
+#ifndef WC_SERVER_AUTOATTACK_H
+#define WC_SERVER_AUTOATTACK_H
 
 void auto_attack(void);
 bool auto_attack_with_unit(struct player *pplayer,
                                   struct unit *punit);
 
-#endif  /* FC__AUTOATTACK_H */
+#endif  /* WC_SERVER_AUTOATTACK_H */
