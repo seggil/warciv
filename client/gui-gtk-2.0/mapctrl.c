@@ -277,12 +277,12 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
      * select an unit without activation. */
     else if (ev->state & GDK_CONTROL_MASK) {
       if(pcity) {
-      action_button_pressed(ev->x, ev->y, SELECT_SEA);
+        action_button_pressed(ev->x, ev->y, SELECT_SEA);
       } else {
         struct unit *punit = find_visible_unit(ptile);
         if (punit && punit->owner == get_player_idx()) {
           set_unit_focus(punit);
-    }
+        }
       }
     }
     /* <SHIFT> + LMB: select unit(s if double click). */
