@@ -1659,7 +1659,7 @@ static void create_races_dialog(void)
   gtk_window_set_default_size(GTK_WINDOW(shell), -1, 310);
 
   cmd = gtk_dialog_add_button(GTK_DIALOG(shell),
-      GTK_STOCK_QUIT, GTK_RESPONSE_CLOSE);
+                              GTK_STOCK_QUIT, GTK_RESPONSE_CLOSE);
   gtk_button_box_set_child_secondary(
       GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area), cmd, TRUE);
   gtk_widget_show(cmd);
@@ -1686,8 +1686,9 @@ static void create_races_dialog(void)
 
   select = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
   g_signal_connect(select, "changed", G_CALLBACK(races_nation_callback), NULL);
-  gtk_tree_selection_set_select_function(select, races_selection_func,
-      NULL, NULL);
+  gtk_tree_selection_set_select_function(select,
+                                         races_selection_func,
+                                         NULL, NULL);
   label = g_object_new(GTK_TYPE_LABEL,
       "use-underline", TRUE,
       "mnemonic-widget", list,
@@ -1793,40 +1794,44 @@ static void create_races_dialog(void)
 
   /* City style. */
   store = gtk_list_store_new(3, G_TYPE_INT,
-      GDK_TYPE_PIXBUF, G_TYPE_STRING);
+                             GDK_TYPE_PIXBUF, G_TYPE_STRING);
 
   list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
   races_city_style_list = list;
   g_object_unref(store);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list), FALSE);
-  g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(list)), "changed",
-      G_CALLBACK(races_city_style_callback), NULL);
+  g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(list)),
+                   "changed",
+                   G_CALLBACK(races_city_style_callback),
+                   NULL);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-      GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+                                 GTK_POLICY_NEVER,
+                                 GTK_POLICY_NEVER);
   gtk_container_add(GTK_CONTAINER(sw), list);
   gtk_table_attach(GTK_TABLE(table), sw, 1, 3, 2, 4,
-      GTK_EXPAND|GTK_FILL, GTK_EXPAND|GTK_FILL, 0, 0);
+                   GTK_EXPAND|GTK_FILL,
+                   GTK_EXPAND|GTK_FILL, 0, 0);
 
   label = g_object_new(GTK_TYPE_LABEL,
-      "use-underline", TRUE,
-      "mnemonic-widget", list,
-      "label", _("_City Styles:"),
-      "xalign", 0.0,
-      "yalign", 0.5,
-      NULL);
+                       "use-underline", TRUE,
+                       "mnemonic-widget", list,
+                       "label", _("_City Styles:"),
+                       "xalign", 0.0,
+                       "yalign", 0.5,
+                       NULL);
   gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
 
   render = gtk_cell_renderer_pixbuf_new();
   column = gtk_tree_view_column_new_with_attributes(NULL, render,
-      "pixbuf", 1, NULL);
+                                                    "pixbuf", 1, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
   render = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes(NULL, render,
-      "text", 2, NULL);
+                                                    "text", 2, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
 
   gtk_table_set_row_spacing(GTK_TABLE(table), 1, 12);
@@ -1873,17 +1878,17 @@ static void create_races_dialog(void)
 
   /* Signals. */
   g_signal_connect(shell, "destroy",
-      G_CALLBACK(races_destroy_callback), NULL);
+                   G_CALLBACK(races_destroy_callback), NULL);
   g_signal_connect(shell, "response",
-      G_CALLBACK(races_response), NULL);
+                   G_CALLBACK(races_response), NULL);
 
   g_signal_connect(races_leader, "changed",
-      G_CALLBACK(races_leader_callback), NULL);
+                   G_CALLBACK(races_leader_callback), NULL);
 
   g_signal_connect(races_sex[0], "toggled",
-      G_CALLBACK(races_sex_callback), GINT_TO_POINTER(0));
+                   G_CALLBACK(races_sex_callback), GINT_TO_POINTER(0));
   g_signal_connect(races_sex[1], "toggled",
-      G_CALLBACK(races_sex_callback), GINT_TO_POINTER(1));
+                   G_CALLBACK(races_sex_callback), GINT_TO_POINTER(1));
 
   /* Init. */
   selected_nation = -1;
@@ -2017,7 +2022,7 @@ static void select_random_race(void)
 
       if (!chosen) {
         gtk_tree_view_set_cursor(GTK_TREE_VIEW(races_nation_list), path,
-            NULL, FALSE);
+                                 NULL, FALSE);
         gtk_tree_path_free(path);
         return;
       }
