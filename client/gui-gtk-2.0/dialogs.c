@@ -1632,7 +1632,7 @@ static void create_races_dialog(void)
   GtkWidget *shell;
   GtkWidget *cmd;
   GtkWidget *vbox, *hbox, *table;
-  GtkWidget *frame, *label;
+  GtkWidget *frame, *label, *style;
   GtkWidget *notebook, *text;
 
   GtkWidget *list, *sw;
@@ -1656,7 +1656,7 @@ static void create_races_dialog(void)
   setup_dialog(shell, toplevel);
 
   gtk_window_set_position(GTK_WINDOW(shell), GTK_WIN_POS_CENTER_ON_PARENT);
-  gtk_window_set_default_size(GTK_WINDOW(shell), -1, 310);
+  gtk_window_set_default_size(GTK_WINDOW(shell), -1, 350);
 
   cmd = gtk_dialog_add_button(GTK_DIALOG(shell),
                               GTK_STOCK_QUIT, GTK_RESPONSE_CLOSE);
@@ -1689,6 +1689,7 @@ static void create_races_dialog(void)
   gtk_tree_selection_set_select_function(select,
                                          races_selection_func,
                                          NULL, NULL);
+#if 0
   label = g_object_new(GTK_TYPE_LABEL,
       "use-underline", TRUE,
       "mnemonic-widget", list,
@@ -1697,6 +1698,7 @@ static void create_races_dialog(void)
       "yalign", 0.5,
       NULL);
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+#endif
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
@@ -1751,6 +1753,8 @@ static void create_races_dialog(void)
     g_value_unset(&value);
   }
 
+  style = gtk_radio_button_new_with_mnemonic(NULL, _("_Empty city style for others"));
+  gtk_box_pack_start(GTK_BOX(vbox), style, FALSE, FALSE, 0);
 
   /* Right side. */
   notebook = gtk_notebook_new();

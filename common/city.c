@@ -2516,8 +2516,12 @@ bool is_city_option_set(const struct city *pcity, enum city_options option)
 **************************************************************************/
 void city_styles_alloc(int num)
 {
-  city_styles = fc_calloc(num, sizeof(struct citystyle));
-  game.ruleset_control.style_count = num;
+  // idiosyncracy, visualization is server dependant
+  // server provides datas and allow client customization
+  // we are adding city_style "none"
+  city_styles = fc_calloc(num+1, sizeof(struct citystyle));
+  game.ruleset_control.style_count = num+1;
+  // see client/packethand.c, handle_ruleset_control()
 }
 
 /**************************************************************************

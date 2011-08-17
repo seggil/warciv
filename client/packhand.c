@@ -2388,6 +2388,7 @@ void handle_ruleset_control(struct packet_ruleset_control *packet)
   governments_alloc(packet->government_count);
   nations_alloc(packet->nation_count);
   city_styles_alloc(packet->style_count);
+  tilespec_alloc_city_tiles(packet->style_count+1);
   tilespec_alloc_city_tiles(game.ruleset_control.style_count);
 }
 
@@ -2827,10 +2828,45 @@ void handle_ruleset_city(struct packet_ruleset_city *packet)
   cs->name = cs->name_orig;
   sz_strlcpy(cs->graphic, packet->graphic);
   sz_strlcpy(cs->graphic_alt, packet->graphic_alt);
+#if 0
+  freelog(LOG_ERROR,"id=%d name=%s graphic=%s graphic_alt=%s",
+          id,
+          cs->name,
+          cs->graphic,
+          cs->graphic_alt);
+#endif
   sz_strlcpy(cs->citizens_graphic, packet->citizens_graphic);
   sz_strlcpy(cs->citizens_graphic_alt, packet->citizens_graphic_alt);
 
+#if 0
+  freelog(LOG_ERROR,"  citizens_graphic=%s citizens_graphic_alt=%s",
+          cs->citizens_graphic,
+          cs->citizens_graphic_alt);
+#endif
   tilespec_setup_city_tiles(id);
+  // client hack start, we want an empty city_style
+#if 1
+  if ( id == 7 )
+  {
+    // add one, until server provide one
+    // city_styles_alloc() has been increase by one for the hack
+    struct citystyle *cstyle;
+    cstyle = &city_styles[8];
+    cstyle->techreq = A_NONE;
+    cstyle->replaced_by = A_NONE;
+    sz_strlcpy(cstyle->name_orig,"none");
+    cstyle->name = cstyle->name_orig;
+    sz_strlcpy(cstyle->graphic, "city.none");
+    sz_strlcpy(cstyle->graphic_alt, "-");
+    sz_strlcpy(cstyle->citizens_graphic, "ancient");
+    sz_strlcpy(cstyle->citizens_graphic_alt, "generic");
+    freelog(LOG_ERROR,"handle_ruleset_control() %d %d",
+            game.ruleset_control.style_count,
+            packet->style_id);
+    tilespec_setup_city_tiles(8);
+  }
+  // hack end
+#endif
 }
 
 /**************************************************************************
