@@ -131,7 +131,7 @@ void load_intro_gfx(void)
   intro_gfx_sprite = load_gfxfile(main_intro_filename);
   tot=intro_gfx_sprite->width;
 
-  pango_layout_set_text(layout, freeciv_motto(), -1);
+  pango_layout_set_text(layout, warciv_motto(), -1);
   pango_layout_get_pixel_extents(layout, &rect, NULL);
 
   y = intro_gfx_sprite->height-45;

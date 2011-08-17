@@ -73,7 +73,7 @@ const char *warclient_name_version(void);
 const char *word_version(void);
 const char *fc_svn_revision(void);
 
-const char *freeciv_motto(void);
+const char *warciv_motto(void);
 
 /* If returns NULL, not a beta version. */
 const char *beta_message(void);

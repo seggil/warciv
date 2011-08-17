@@ -133,12 +133,12 @@ const char *beta_message(void)
 }
 
 /***************************************************************************
-  Return the Freeciv motto.
+  Return the Warciv motto.
   (The motto is common code:
    only one instance of the string in the source;
    only one time gettext needs to translate it. --jjm)
 ***************************************************************************/
-const char *freeciv_motto(void)
+const char *warciv_motto(void)
 {
   return _("'Cause civilization should be free!");
 }
