@@ -800,6 +800,34 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
           break;
         }
       }
+      if (ev->state & GDK_MOD2_MASK)
+      {
+        freelog(LOG_ERROR,"MOD2_MASK\n");
+      }
+      if (ev->state & GDK_MOD3_MASK)
+      {
+        freelog(LOG_ERROR,"MOD3_MASK\n");
+      }
+      if (ev->state & GDK_MOD4_MASK)
+      {
+        freelog(LOG_ERROR,"MOD4_MASK\n");
+      }
+      if (ev->state & GDK_MOD5_MASK)
+      {
+        freelog(LOG_ERROR,"MOD5_MASK\n");
+      }
+      if (ev->state & GDK_SUPER_MASK)
+      {
+        freelog(LOG_ERROR,"SUPER_MASK\n");
+      }
+      if (ev->state & GDK_HYPER_MASK)
+      {
+        freelog(LOG_ERROR,"HYPER_MASK\n");
+      }
+      if (ev->state & GDK_META_MASK)
+      {
+        freelog(LOG_ERROR,"META_MASK\n");
+      }
       /* Plain */
       if (hover_state == HOVER_AIRLIFT_DEST
           || hover_state == HOVER_DELAYED_AIRLIFT) {
