@@ -133,7 +133,7 @@ static void set_title_topic(char *topic)
       || strcmp(topic, _("About")) == 0) {
     char version[256];
     my_snprintf(version, sizeof(version), "%s %s",
-                freeciv_name_version(), warclient_name_version());
+                warciv_name_version(), warclient_name_version());
     gtk_frame_set_label(GTK_FRAME(help_frame), version);
   } else {
     gtk_frame_set_label(GTK_FRAME(help_frame), topic);

@@ -184,13 +184,13 @@ int main(int argc, char *argv[])
   }
 
   if (showvers && !showhelp) {
-    fc_fprintf(stderr, "%s %s server\n", freeciv_name_version(),
+    fc_fprintf(stderr, "%s %s server\n", warciv_name_version(),
                warclient_name_version());
     exit(EXIT_SUCCESS);
   }
   con_write(C_VERSION, _("This is the server for %s %s"),
-            freeciv_name_version(), warclient_name_version());
-  con_write(C_COMMENT, _("You can learn a lot about Freeciv at %s"),
+            warciv_name_version(), warclient_name_version());
+  con_write(C_COMMENT, _("You can learn a lot about Warciv at %s"),
             WEBSITE_URL);
 
   if (showhelp) {

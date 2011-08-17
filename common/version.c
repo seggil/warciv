@@ -32,7 +32,7 @@
   correctly modified for the client and server.
 
   The returned string should generally be added after the string from
-  freeciv_name_version().
+  warciv_name_version().
 ***********************************************************************/
 const char *warclient_name_version(void)
 {
@@ -53,7 +53,7 @@ const char *warclient_name_version(void)
 /**********************************************************************
   ...
 ***********************************************************************/
-const char *freeciv_name_version(void)
+const char *warciv_name_version(void)
 {
   static char msgbuf[128];
 

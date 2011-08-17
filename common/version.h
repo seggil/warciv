@@ -68,7 +68,7 @@
                                  VER_STRINGIFY(WARCLIENT_VERSION)
 
 /* version informational strings */
-const char *freeciv_name_version(void);
+const char *warciv_name_version(void);
 const char *warclient_name_version(void);
 const char *word_version(void);
 const char *fc_svn_revision(void);

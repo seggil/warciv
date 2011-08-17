@@ -1825,7 +1825,7 @@ void ui_main(int argc, char **argv)
 
   char version[256];
   my_snprintf(version, sizeof(version), "%s %s",
-              freeciv_name_version(), warclient_name_version());
+              warciv_name_version(), warclient_name_version());
   gtk_window_set_title(GTK_WINDOW (toplevel), version);
 
   g_signal_connect(toplevel, "delete_event",

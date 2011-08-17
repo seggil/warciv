@@ -364,11 +364,11 @@ void establish_new_connection(struct connection *pconn)
     /* The default. */
     if (my_gethostname(hostname, sizeof(hostname)) == 0) {
       notify_conn(dest, _("Welcome to the %s %s Server running at %s port %d."),
-                  freeciv_name_version(), warclient_name_version(),
+                  warciv_name_version(), warclient_name_version(),
                   hostname, srvarg.port);
     } else {
       notify_conn(dest, _("Welcome to the %s %s Server at port %d."),
-                  freeciv_name_version(), warclient_name_version(),
+                  warciv_name_version(), warclient_name_version(),
                   srvarg.port);
     }
   } else {
@@ -949,7 +949,7 @@ static int generate_welcome_message(char *buf, int buf_len,
         len = my_snprintf(out, rem, "%d", srvarg.port);
         break;
       case 'v':
-        len = my_snprintf(out, rem, "%s %s", freeciv_name_version(),
+        len = my_snprintf(out, rem, "%s %s", warciv_name_version(),
                           warclient_name_version());
         break;
       case 'd':
