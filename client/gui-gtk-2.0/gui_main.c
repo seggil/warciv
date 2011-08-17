@@ -1675,7 +1675,7 @@ static void setup_widgets(void)
 
   main_message_area = GTK_TEXT_VIEW(text);
 
-  set_output_window_text(_("Freeciv is free software and you are welcome"
+  set_output_window_text(_("Warciv is free software and you are welcome"
                            " to distribute copies of it\nunder certain"
                            " conditions; See the \"Copying\" item on"
                            " the Help menu.\nNow.. Go give'em hell!"));
@@ -1863,7 +1863,7 @@ void ui_main(int argc, char **argv)
   main_font = style->font_desc;
 
   style = gtk_rc_get_style_by_paths(gtksettings,
-                                    "Freeciv*.city productions",
+                                    "Warciv*.city productions",
                                     NULL, G_TYPE_NONE);
   if (!style) {
     style = gtk_style_new();

@@ -58,10 +58,10 @@ const char *warciv_name_version(void)
   static char msgbuf[128];
 
 #if IS_BETA_VERSION
-  my_snprintf(msgbuf, sizeof (msgbuf), _("Freeciv version %s %s"),
+  my_snprintf(msgbuf, sizeof (msgbuf), _("Warciv version %s %s"),
               VERSION_STRING, _("(beta version)"));
 #else
-  my_snprintf(msgbuf, sizeof (msgbuf), _("Freeciv version %s"),
+  my_snprintf(msgbuf, sizeof (msgbuf), _("Warciv version %s"),
               VERSION_STRING);
 #endif
 
@@ -119,7 +119,7 @@ const char *beta_message(void)
   };
   my_snprintf (msgbuf, sizeof (msgbuf),
                _("THIS IS A BETA VERSION\n"
-                 "Freeciv %s will be released in\n"
+                 "Warciv %s will be released in\n"
                  "%s, at %s"), /* No full stop here since it would be
                                   immediately following a URL, which
                                   would only cause confusion. */

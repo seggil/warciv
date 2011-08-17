@@ -93,7 +93,7 @@ time_t end_of_turn;
 
 char *logfile = NULL;
 char *scriptfile = NULL;
-bool auto_connect = FALSE; /* TRUE = skip "Connect to Freeciv Server" dialog */
+bool auto_connect = FALSE; /* TRUE = skip "Connect to Warciv Server" dialog */
 bool do_not_request_hack = FALSE;
 
 static enum client_states client_state = CLIENT_BOOT_STATE;
@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
   argc = 1 + ui_options;
 
   /* disallow running as root -- too dangerous */
-  dont_run_as_root(argv[0], "freeciv_client");
+  dont_run_as_root(argv[0], "warciv_client");
 
   log_init(logfile, loglevel, NULL);
 

@@ -129,7 +129,7 @@ static void help_command_callback(GtkWidget *w, gint response_id);
 *****************************************************************/
 static void set_title_topic(char *topic)
 {
-  if (strcmp(topic, "Freeciv") == 0 || strcmp(topic, "About") == 0
+  if (strcmp(topic, "Warciv") == 0 || strcmp(topic, "About") == 0
       || strcmp(topic, _("About")) == 0) {
     char version[256];
     my_snprintf(version, sizeof(version), "%s %s",
@@ -430,7 +430,7 @@ static void create_help_dialog(void)
   help_history = g_ptr_array_new();
   help_history_pos = -1;
 
-  help_dialog_shell = gtk_dialog_new_with_buttons(_("Freeciv Help Browser"),
+  help_dialog_shell = gtk_dialog_new_with_buttons(_("Warciv Help Browser"),
                                                   NULL,
                                                   0,
                                                   GTK_STOCK_GO_BACK,
@@ -443,7 +443,7 @@ static void create_help_dialog(void)
   setup_dialog(help_dialog_shell, toplevel);
   gtk_dialog_set_default_response(GTK_DIALOG(help_dialog_shell),
                                   GTK_RESPONSE_CLOSE);
-  gtk_widget_set_name(help_dialog_shell, "Freeciv");
+  gtk_widget_set_name(help_dialog_shell, "Warciv");
 
   g_signal_connect(help_dialog_shell, "response",
                    G_CALLBACK(help_command_callback), NULL);

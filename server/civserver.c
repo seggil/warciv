@@ -80,7 +80,7 @@ static void signal_handler(int sig)
 #endif
 
 /**************************************************************************
- Entry point for Freeciv server.  Basically, does two things:
+ Entry point for Warciv server.  Basically, does two things:
   1. Parses command-line arguments (possibly dialog, on mac).
   2. Calls the main server-loop routine.
 **************************************************************************/
@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
   }
 
   /* disallow running as root -- too dangerous */
-  dont_run_as_root(argv[0], "freeciv_server");
+  dont_run_as_root(argv[0], "warciv_server");
 
 #ifndef WIN32_NATIVE
   if (signal(SIGQUIT, signal_handler) == SIG_ERR) {

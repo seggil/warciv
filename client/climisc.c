@@ -1063,7 +1063,7 @@ void create_event(struct tile *ptile, enum event_type event,
 }
 
 /**************************************************************************
-  Writes the supplied string into the file civgame.log.
+  Writes the supplied string into the file wargame.log.
 **************************************************************************/
 void write_chatline_content(const char *txt)
 {
@@ -1074,10 +1074,10 @@ void write_chatline_content(const char *txt)
 
   now = time(NULL);
   nowtm = localtime(&now);
-  strftime(logname, sizeof(logname), "civgame-%y%m%d-%H%M%S.log", nowtm);
+  strftime(logname, sizeof(logname), "wargame-%y%m%d-%H%M%S.log", nowtm);
   fp = fopen(logname, "w");
 
-  append_output_window(_("Exporting output window to civgame.log ..."));
+  append_output_window(_("Exporting output window to wargame.log ..."));
   if (fp) {
     fputs(txt, fp);
     fclose(fp);
