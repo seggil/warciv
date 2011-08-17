@@ -72,7 +72,7 @@
 #include "../tilespec.h"
 
 
-#include "../include/freeciv.ico"
+#include "../include/warciv.ico"
 
 const char *client_string = "gui-gtk-2.0";
 
@@ -1032,8 +1032,8 @@ static void toggle_tearoff_window (GtkWidget *box,
   if (active) {
     w = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     setup_dialog(w, toplevel);
-    gtk_widget_set_name(w, "Freeciv");
-    gtk_window_set_title(GTK_WINDOW(w), _("Freeciv"));
+    gtk_widget_set_name(w, "Warciv");
+    gtk_window_set_title(GTK_WINDOW(w), _("Warciv"));
     gtk_window_set_position(GTK_WINDOW(w), GTK_WIN_POS_MOUSE);
     g_signal_connect(w, "destroy", G_CALLBACK(tearoff_destroy), box);
 
@@ -1841,8 +1841,8 @@ void ui_main(int argc, char **argv)
   display_color_type = get_visual();
   init_color_system();
 
-  icon_bitmap = gdk_bitmap_create_from_data(root_window, freeciv_bits,
-                                            freeciv_width, freeciv_height);
+  icon_bitmap = gdk_bitmap_create_from_data(root_window, warciv_bits,
+                                            warciv_width, warciv_height);
   gdk_window_set_icon(root_window, NULL, icon_bitmap, icon_bitmap);
 
   civ_gc = gdk_gc_new(root_window);
@@ -1854,7 +1854,7 @@ void ui_main(int argc, char **argv)
 
   /* font names shouldn't be in spec files! */
   style = gtk_rc_get_style_by_paths(gtksettings,
-                                    "Freeciv*.city names",
+                                    "Warciv*.city names",
                                     NULL, G_TYPE_NONE);
   if (!style) {
     style = gtk_style_new();
