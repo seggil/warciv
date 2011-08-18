@@ -97,7 +97,7 @@ typedef unsigned int fc_bool;
     ((this)<(lower)?(lower):(this)>(upper)?(upper):(this))
 
 /* Note: Solaris already has a WRAP macro that is completely different. */
-#define FC_WRAP(value, range)                                               \
+#define WC_WRAP(value, range)                                               \
     ((value) < 0                                                            \
      ? ((value) % (range) != 0 ? (value) % (range) + (range) : 0)           \
      : ((value) >= (range) ? (value) % (range) : (value)))

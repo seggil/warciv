@@ -376,10 +376,10 @@ static void normalize_gui_pos(int *gui_x, int *gui_y)
    * doesn't necessarily do. */
   MAP_TO_NATIVE_POS(&nat_x, &nat_y, map_x, map_y);
   if (topo_has_flag(TF_WRAPX)) {
-    nat_x = FC_WRAP(nat_x, map.info.xsize);
+    nat_x = WC_WRAP(nat_x, map.info.xsize);
   }
   if (topo_has_flag(TF_WRAPY)) {
-    nat_y = FC_WRAP(nat_y, map.info.ysize);
+    nat_y = WC_WRAP(nat_y, map.info.ysize);
   }
   NATIVE_TO_MAP_POS(&map_x, &map_y, nat_x, nat_y);
 
@@ -2615,12 +2615,12 @@ static void center_tile_overviewcanvas(struct tile *ptile)
        * basically necessary for the overview to be efficiently
        * updated. */
       if (topo_has_flag(TF_WRAPX)) {
-        overview.map_x0 = FC_WRAP(ntl_x - NATURAL_WIDTH / 2, NATURAL_WIDTH);
+        overview.map_x0 = WC_WRAP(ntl_x - NATURAL_WIDTH / 2, NATURAL_WIDTH);
       } else {
         overview.map_x0 = 0;
       }
       if (topo_has_flag(TF_WRAPY)) {
-        overview.map_y0 = FC_WRAP(ntl_y - NATURAL_HEIGHT / 2, NATURAL_HEIGHT);
+        overview.map_y0 = WC_WRAP(ntl_y - NATURAL_HEIGHT / 2, NATURAL_HEIGHT);
       } else {
         overview.map_y0 = 0;
       }
@@ -2643,7 +2643,7 @@ void map_to_overview_pos(int *overview_x, int *overview_y,
     int ovr_x = ntl_x - overview.map_x0, ovr_y = ntl_y - overview.map_y0;
 
     if (topo_has_flag(TF_WRAPX)) {
-      ovr_x = FC_WRAP(ovr_x, NATURAL_WIDTH);
+      ovr_x = WC_WRAP(ovr_x, NATURAL_WIDTH);
     } else {
       if (MAP_IS_ISOMETRIC) {
         /* HACK: For iso-maps that don't wrap in the X direction we clip
@@ -2655,7 +2655,7 @@ void map_to_overview_pos(int *overview_x, int *overview_y,
       }
     }
     if (topo_has_flag(TF_WRAPY)) {
-      ovr_y = FC_WRAP(ovr_y, NATURAL_HEIGHT);
+      ovr_y = WC_WRAP(ovr_y, NATURAL_HEIGHT);
     }
     *overview_x = OVERVIEW_TILE_SIZE * ovr_x;
     *overview_y = OVERVIEW_TILE_SIZE * ovr_y;

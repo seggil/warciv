@@ -409,10 +409,10 @@ static inline struct tile *base_native_pos_to_tile(int nat_x, int nat_y)
 
   /* Wrap in X and Y directions, as needed. */
   if (topo_has_flag(TF_WRAPX)) {
-    nat_x = FC_WRAP(nat_x, map.info.xsize);
+    nat_x = WC_WRAP(nat_x, map.info.xsize);
   }
   if (topo_has_flag(TF_WRAPY)) {
-    nat_y = FC_WRAP(nat_y, map.info.ysize);
+    nat_y = WC_WRAP(nat_y, map.info.ysize);
   }
 
   return map.tiles + native_pos_to_index(nat_x, nat_y);
@@ -1522,11 +1522,11 @@ void base_map_distance_vector(int *dx, int *dy,
     *dy = y1 - y0;
     if (topo_has_flag(TF_WRAPX)) {
       /* Wrap dx to be in [-map.info.xsize/2, map.info.xsize/2). */
-      *dx = FC_WRAP(*dx + map.info.xsize / 2, map.info.xsize) - map.info.xsize / 2;
+      *dx = WC_WRAP(*dx + map.info.xsize / 2, map.info.xsize) - map.info.xsize / 2;
     }
     if (topo_has_flag(TF_WRAPY)) {
       /* Wrap dy to be in [-map.info.ysize/2, map.info.ysize/2). */
-      *dy = FC_WRAP(*dy + map.info.ysize / 2, map.info.ysize) - map.info.ysize / 2;
+      *dy = WC_WRAP(*dy + map.info.ysize / 2, map.info.ysize) - map.info.ysize / 2;
     }
 
     /* Convert the native delta vector back to a pair of map positions. */
