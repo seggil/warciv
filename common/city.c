@@ -1530,7 +1530,7 @@ int city_turns_to_build(const struct city *pcity, int id, bool id_is_unit,
 
 /**************************************************************************
  Calculates the turns which are needed for the city to grow.  A value
- of FC_INFINITY means the city will never grow.  A value of 0 means
+ of WC_INFINITY means the city will never grow.  A value of 0 means
  city growth is blocked.  A negative value of -x means the city will
  shrink in x turns.  A positive value of x means the city will grow in
  x turns.
