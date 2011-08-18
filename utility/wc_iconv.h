@@ -17,7 +17,7 @@
 
 #include "shared.h"
 
-#define FC_DEFAULT_DATA_ENCODING "UTF-8"
+#define WC_DEFAULT_DATA_ENCODING "UTF-8"
 
 void init_character_encodings(char *internal_encoding,
                               bool use_transliteration);

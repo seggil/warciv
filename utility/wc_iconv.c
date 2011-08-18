@@ -73,7 +73,7 @@ void init_character_encodings(char *my_internal_encoding,
   data_encoding = getenv("FREECIV_DATA_ENCODING");
   if (!data_encoding) {
     /* Currently the rulesets are in latin1 (ISO-8859-1). */
-    data_encoding = FC_DEFAULT_DATA_ENCODING;
+    data_encoding = WC_DEFAULT_DATA_ENCODING;
   }
 
   /* Set the local encoding - first check $FREECIV_LOCAL_ENCODING,
