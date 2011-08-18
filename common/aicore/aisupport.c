@@ -15,15 +15,15 @@
 #  include "../../config.h"
 #endif
 
-#include "city.h"
-#include "game.h"
-#include "map.h"
-#include "player.h"
+#include "../city.h"
+#include "../game.h"
+#include "../map.h"
+#include "../player.h"
 #include "shared.h"
-#include "spaceship.h"
+#include "../spaceship.h"
 #include "support.h"
-#include "tech.h"
-#include "traderoute.h"
+#include "../tech.h"
+#include "../traderoute.h"
 
 #include "aisupport.h"
 
