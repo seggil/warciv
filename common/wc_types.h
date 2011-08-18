@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef WC_COMMON_FC_TYPES_H
-#define WC_COMMON_FC_TYPES_H
+#ifndef WC_COMMON_WC_TYPES_H
+#define WC_COMMON_WC_TYPES_H
 
 #include "shared.h"     /* bool type */
 
@@ -148,4 +148,4 @@ struct cm_parameter {
 #define UNIT_LINK_LETTER 'U'
 #define UNIT_LINK_PREFIX "@U"
 
-#endif  /* WC_COMMON_FC_TYPES_H */
+#endif  /* WC_COMMON_WC_TYPES_H */
