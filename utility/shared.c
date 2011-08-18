@@ -166,11 +166,11 @@ char *get_option(const char *option_name, char **argv, int *i, int argc)
         (*i)++;
         opt = argv[*i];
         if (strlen(opt)==0) {
-          fc_fprintf(stderr, _("Empty argument for \"%s\".\n"), option_name);
+          wc_fprintf(stderr, _("Empty argument for \"%s\".\n"), option_name);
           exit(EXIT_FAILURE);
         }
       } else {
-        fc_fprintf(stderr, _("Missing argument for \"%s\".\n"), option_name);
+        wc_fprintf(stderr, _("Missing argument for \"%s\".\n"), option_name);
         exit(EXIT_FAILURE);
       }
     }
@@ -1363,10 +1363,10 @@ void dont_run_as_root(const char *argv0, const char *fallback)
   return;
 #else
   if (getuid()==0 || geteuid()==0) {
-    fc_fprintf(stderr,
+    wc_fprintf(stderr,
                _("%s: Fatal error: you're trying to run me as superuser!\n"),
                (argv0 ? argv0 : fallback ? fallback : "freeciv"));
-    fc_fprintf(stderr, _("Use a non-privileged account instead.\n"));
+    wc_fprintf(stderr, _("Use a non-privileged account instead.\n"));
     exit(EXIT_FAILURE);
   }
 #endif

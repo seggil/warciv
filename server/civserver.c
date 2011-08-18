@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
     } else if (is_option("--version", argv[inx]))
       showvers = TRUE;
     else {
-      fc_fprintf(stderr, _("Error: unknown option '%s'\n"), argv[inx]);
+      wc_fprintf(stderr, _("Error: unknown option '%s'\n"), argv[inx]);
       showhelp = TRUE;
       break;
     }
@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
   }
 
   if (showvers && !showhelp) {
-    fc_fprintf(stderr, "%s %s server\n", warciv_name_version(),
+    wc_fprintf(stderr, "%s %s server\n", warciv_name_version(),
                warclient_name_version());
     exit(EXIT_SUCCESS);
   }
@@ -194,56 +194,56 @@ int main(int argc, char *argv[])
             WEBSITE_URL);
 
   if (showhelp) {
-    fc_fprintf(stderr,
+    wc_fprintf(stderr,
                _("Usage: %s [option ...]\nValid options are:\n"), argv[0]);
 #ifdef HAVE_MYSQL
-    fc_fprintf(stderr, _("  -a  --auth\t\tEnable server authentication.\n"));
-    fc_fprintf(stderr, _("  -G  --Guests\t\tAllow guests to "
+    wc_fprintf(stderr, _("  -a  --auth\t\tEnable server authentication.\n"));
+    wc_fprintf(stderr, _("  -G  --Guests\t\tAllow guests to "
                          "login if auth is enabled.\n"));
-    fc_fprintf(stderr, _("  -N  --Newusers\tAllow new users to "
+    wc_fprintf(stderr, _("  -N  --Newusers\tAllow new users to "
                          "login if auth is enabled.\n"));
 #endif
-    fc_fprintf(stderr, _("  -b  --bind ADDR\tListen for clients on ADDR\n"));
+    wc_fprintf(stderr, _("  -b  --bind ADDR\tListen for clients on ADDR\n"));
 #ifdef DEBUG
-    fc_fprintf(stderr, _("  -d, --debug NUM\tSet debug log level (0 to 4,"
+    wc_fprintf(stderr, _("  -d, --debug NUM\tSet debug log level (0 to 4,"
                       " or 4:file1,min,max:...)\n"));
 #else
-    fc_fprintf(stderr,
+    wc_fprintf(stderr,
                _("  -d, --debug NUM\tSet debug log level (0 to 3)\n"));
 #endif
-    fc_fprintf(stderr, _("  -f, --file FILE\tLoad saved game FILE\n"));
-    fc_fprintf(stderr,
+    wc_fprintf(stderr, _("  -f, --file FILE\tLoad saved game FILE\n"));
+    wc_fprintf(stderr,
                _("  -g, --gamelog FILE\tUse FILE as game logfile\n"));
-    fc_fprintf(stderr,
+    wc_fprintf(stderr,
                _("  -h, --help\t\tPrint a summary of the options\n"));
-    fc_fprintf(stderr, _("  -H, --Hack-off\tDisable hack challenge\n"));
-    fc_fprintf(stderr, _("  -l, --log FILE\tUse FILE as logfile\n"));
-    fc_fprintf(stderr, _("  -m, --meta\t\tNotify metaserver and "
+    wc_fprintf(stderr, _("  -H, --Hack-off\tDisable hack challenge\n"));
+    wc_fprintf(stderr, _("  -l, --log FILE\tUse FILE as logfile\n"));
+    wc_fprintf(stderr, _("  -m, --meta\t\tNotify metaserver and "
                          "send server's info\n"));
-    fc_fprintf(stderr, _("  -M, --Metaserver ADDR\tSet ADDR "
+    wc_fprintf(stderr, _("  -M, --Metaserver ADDR\tSet ADDR "
                          "as metaserver address\n"));
-    fc_fprintf(stderr, _("  -x, --xHost <fqdn hostname>\tSend this hostname "
+    wc_fprintf(stderr, _("  -x, --xHost <fqdn hostname>\tSend this hostname "
                     "to Metaserver\n"));
-    fc_fprintf(stderr, _("  -n, --no-dns-lookup\tDo not lookup "
+    wc_fprintf(stderr, _("  -n, --no-dns-lookup\tDo not lookup "
                          "the hostname of new connections\n"));
 
-    fc_fprintf(stderr, _("  -p, --port PORT\tListen for clients on "
+    wc_fprintf(stderr, _("  -p, --port PORT\tListen for clients on "
                          "port PORT\n"));
-    fc_fprintf(stderr, _("  -q, --quitidle TIME\tQuit if no players "
+    wc_fprintf(stderr, _("  -q, --quitidle TIME\tQuit if no players "
                          "for TIME seconds\n"));
-    fc_fprintf(stderr, _("  -e, --exit-on-end\t"
+    wc_fprintf(stderr, _("  -e, --exit-on-end\t"
                       "When a game ends, exit instead of restarting\n"));
-    fc_fprintf(stderr,
+    wc_fprintf(stderr,
                _("  -s, --saves DIR\tSave games to directory DIR\n"));
-    fc_fprintf(stderr,
+    wc_fprintf(stderr,
                _("  -S, --Serverid ID\tSets the server id to ID\n"));
-    fc_fprintf(stderr,
+    wc_fprintf(stderr,
              _("  -P, --Ppm\t\tSave ppms of the map when saving the game.\n"));
-    fc_fprintf(stderr, _("  -r, --read FILE\tRead startup script FILE\n"));
-    fc_fprintf(stderr, _("  -R, --Require CAP\tThe users will need this "
+    wc_fprintf(stderr, _("  -r, --read FILE\tRead startup script FILE\n"));
+    wc_fprintf(stderr, _("  -R, --Require CAP\tThe users will need this "
                       "capability(ies) to be able to play.\n"));
-    fc_fprintf(stderr, _("  -v, --version\t\tPrint the version number\n"));
-    fc_fprintf(stderr, _("Report bugs at %s.\n"), BUG_URL);
+    wc_fprintf(stderr, _("  -v, --version\t\tPrint the version number\n"));
+    wc_fprintf(stderr, _("Report bugs at %s.\n"), BUG_URL);
     exit(EXIT_SUCCESS);
   }
 
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
 
 #ifndef WIN32_NATIVE
   if (signal(SIGQUIT, signal_handler) == SIG_ERR) {
-    fc_fprintf(stderr, _("Failed to install SIGQUIT handler: %s\n"),
+    wc_fprintf(stderr, _("Failed to install SIGQUIT handler: %s\n"),
                mystrerror(myerrno()));
     exit(EXIT_FAILURE);
   }
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
   /* Ignore SIGPIPE, the error is handled by the return value
    * of the write call. */
   if (signal(SIGPIPE, signal_handler) == SIG_ERR) {
-    fc_fprintf(stderr, _("Failed to ignore SIGPIPE: %s\n"),
+    wc_fprintf(stderr, _("Failed to ignore SIGPIPE: %s\n"),
                mystrerror(myerrno()));
     exit(EXIT_FAILURE);
   }

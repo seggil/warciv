@@ -87,15 +87,15 @@ int log_parse_level_str(const char *level_str)
   }
   if (n == 0) {
     if (sscanf(level_str, "%d", &level) != 1) {
-      fc_fprintf(stderr, _("Bad log level \"%s\".\n"), level_str);
+      wc_fprintf(stderr, _("Bad log level \"%s\".\n"), level_str);
       return -1;
     }
     if (level >= LOG_FATAL && level <= max_level) {
       return level;
     } else {
-      fc_fprintf(stderr, _("Bad log level %d in \"%s\".\n"), level, level_str);
+      wc_fprintf(stderr, _("Bad log level %d in \"%s\".\n"), level, level_str);
       if (level == LOG_DEBUG && max_level < LOG_DEBUG) {
-        fc_fprintf(stderr, _("Freeciv must be compiled with the DEBUG flag"
+        wc_fprintf(stderr, _("Freeciv must be compiled with the DEBUG flag"
                              " to use debug level %d.\n"), LOG_DEBUG);
       }
       return -1;
@@ -106,12 +106,12 @@ int log_parse_level_str(const char *level_str)
   if (c[0] == ('0' + LOG_DEBUG) && c[1] == ':') {
     level = LOG_DEBUG;
     if (max_level < LOG_DEBUG) {
-      fc_fprintf(stderr, _("Freeciv must be compiled with the DEBUG flag"
+      wc_fprintf(stderr, _("Freeciv must be compiled with the DEBUG flag"
                            " to use debug level %d.\n"), LOG_DEBUG);
       return -1;
     }
   } else {
-    fc_fprintf(stderr, _("Badly formed log level argument \"%s\".\n"),
+    wc_fprintf(stderr, _("Badly formed log level argument \"%s\".\n"),
                level_str);
     return -1;
   }
@@ -123,7 +123,7 @@ int log_parse_level_str(const char *level_str)
   tok = strtok(dup, ":");
 
   if (!tok) {
-    fc_fprintf(stderr, _("Badly formed log level argument \"%s\".\n"),
+    wc_fprintf(stderr, _("Badly formed log level argument \"%s\".\n"),
                level_str);
     level = -1;
     goto out;
@@ -141,19 +141,19 @@ int log_parse_level_str(const char *level_str)
       if (d && *pc != '\0' && d[1] != '\0') {
         d[0] = '\0';
         if (sscanf(pc, "%d", &logd_files[i].min) != 1) {
-          fc_fprintf(stderr, _("Not an integer: '%s'\n"), pc);
+          wc_fprintf(stderr, _("Not an integer: '%s'\n"), pc);
           level = -1;
           goto out;
         }
         if (sscanf(d + 1, "%d", &logd_files[i].max) != 1) {
-          fc_fprintf(stderr, _("Not an integer: '%s'\n"), d + 1);
+          wc_fprintf(stderr, _("Not an integer: '%s'\n"), d + 1);
           level = -1;
           goto out;
         }
       }
     }
     if(strlen(tok)==0) {
-      fc_fprintf(stderr, _("Empty filename in log level argument \"%s\".\n"),
+      wc_fprintf(stderr, _("Empty filename in log level argument \"%s\".\n"),
                  level_str);
       level = -1;
       goto out;
@@ -164,7 +164,7 @@ int log_parse_level_str(const char *level_str)
   } while(tok);
 
   if (i!=logd_num_files) {
-    fc_fprintf(stderr, _("Badly formed log level argument \"%s\".\n"),
+    wc_fprintf(stderr, _("Badly formed log level argument \"%s\".\n"),
                level_str);
     level = -1;
     goto out;
@@ -253,7 +253,7 @@ static void log_write(FILE *fs, int level, char *message)
     timebuf = ctime(&ltime);
     timebuf[24]='\0';
 
-    fc_fprintf(fs, "%-8s: %-26s: %-12s: line %-5i: %-25s - %s\n", loglevelstr[level],timebuf,l_file, l_line, l_fncname, message);
+    wc_fprintf(fs, "%-8s: %-26s: %-12s: line %-5i: %-25s - %s\n", loglevelstr[level],timebuf,l_file, l_line, l_fncname, message);
     fflush(fs);
   }
 }
@@ -281,7 +281,7 @@ void vreal_freelog(int level, const char *message, va_list ap)
 
     if (log_filename) {
       if(!(fs=fopen(log_filename, "a"))) {
-        fc_fprintf(stderr, _("Couldn't open logfile: %s for appending.\n"),
+        wc_fprintf(stderr, _("Couldn't open logfile: %s for appending.\n"),
                 log_filename);
         exit(EXIT_FAILURE);
       }

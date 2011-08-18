@@ -319,7 +319,7 @@ static CONV_FUNC_STATIC(internal, local)
 /***************************************************************************
   Do a fprintf from the internal charset into the local charset.
 ***************************************************************************/
-void fc_fprintf(FILE *stream, const char *format, ...)
+void wc_fprintf(FILE *stream, const char *format, ...)
 {
   va_list ap;
   char string[4096];
@@ -328,7 +328,7 @@ void fc_fprintf(FILE *stream, const char *format, ...)
 
   /* The recursion variable is used to prevent a recursive loop.  If
    * an iconv conversion fails, then freelog will be called and an
-   * fc_fprintf will be done.  But below we do another iconv conversion
+   * wc_fprintf will be done.  But below we do another iconv conversion
    * on the error messages, which is of course likely to fail also. */
   if (recursion) {
     return;

@@ -231,7 +231,7 @@ void init_chat_buttons(void)
 **************************************************************************/
 static void log_callback_utf8(int level, const char *message)
 {
-  fc_fprintf(stderr, "%d: %s\n", level, message);
+  wc_fprintf(stderr, "%d: %s\n", level, message);
 }
 
 /**************************************************************************
@@ -241,7 +241,7 @@ static void log_callback_utf8(int level, const char *message)
 static void print_usage(const char *argv0)
 {
   /* add client-specific usage information here */
-  fc_fprintf(stderr, _("Report bugs at %s.\n"), BUG_URL);
+  wc_fprintf(stderr, _("Report bugs at %s.\n"), BUG_URL);
 }
 
 /**************************************************************************

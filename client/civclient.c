@@ -245,52 +245,52 @@ int main(int argc, char *argv[])
       argv[1 + ui_options] = argv[i];
       ui_options++;
     } else if (is_option("--help", argv[i])) {
-      fc_fprintf(stderr, _("Usage: %s [option ...]\n"
+      wc_fprintf(stderr, _("Usage: %s [option ...]\n"
                            "Valid options are:\n"), argv[0]);
-      fc_fprintf(stderr, _("  -a, --autoconnect\tSkip connect dialog\n"));
+      wc_fprintf(stderr, _("  -a, --autoconnect\tSkip connect dialog\n"));
 #ifdef DEBUG
-      fc_fprintf(stderr, _("  -d, --debug NUM\tSet debug log level (0 to 4,"
+      wc_fprintf(stderr, _("  -d, --debug NUM\tSet debug log level (0 to 4,"
                            " or 4:file1,min,max:...)\n"));
 #else
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -d, --debug NUM\tSet debug log level (0 to 3)\n"));
 #endif
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -h, --help\t\tPrint a summary of the options\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -l, --log FILE\tUse FILE as logfile "
                    "(spawned server also uses this)\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -m, --meta HOST\t"
                    "Connect to the metaserver at HOST\n"));
-      fc_fprintf(stderr, _("  -n, --name NAME\tUse NAME as name\n"));
-      fc_fprintf(stderr, _("  -N, --No-hack\t\tDo not send hack request\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr, _("  -n, --name NAME\tUse NAME as name\n"));
+      wc_fprintf(stderr, _("  -N, --No-hack\t\tDo not send hack request\n"));
+      wc_fprintf(stderr,
                  _("  -p, --port PORT\tConnect to server port PORT\n"));
-      fc_fprintf(stderr, _("  -P, --Plugin PLUGIN\tUse PLUGIN for sound "
+      wc_fprintf(stderr, _("  -P, --Plugin PLUGIN\tUse PLUGIN for sound "
                            "output %s\n"),
                  audio_get_all_plugin_names());
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -r, --read FILE\tRead startup script FILE "
                    "(for spawned server only)\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -s, --server HOST\tConnect to the server at HOST\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -S, --Sound FILE\tRead sound tags from FILE\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -t, --tiles FILE\t"
                    "Use data file FILE.tilespec for tiles\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -v, --version\t\tPrint the version number\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("  -w, --word PASS\tUse PASS as "
                    "password\n"));
-      fc_fprintf(stderr,
+      wc_fprintf(stderr,
                  _("      --\t\t" "Pass any following options to the UI.\n"
                    "\t\t\tTry \"%s -- --help\" for more.\n"), argv[0]);
       exit(EXIT_SUCCESS);
     } else if (is_option("--version", argv[i])) {
-      fc_fprintf(stderr, "%s %s %s client\n", warciv_name_version(),
+      wc_fprintf(stderr, "%s %s %s client\n", warciv_name_version(),
                  warclient_name_version(), client_string);
       exit(EXIT_SUCCESS);
     } else if ((option = get_option("--log", argv, &i, argc))) {
@@ -309,9 +309,9 @@ int main(int argc, char *argv[])
       sz_strlcpy(sound_plugin_name, option);
     } else if ((option = get_option("--port", argv, &i, argc))) {
       if (sscanf(option, "%d", &server_port) != 1) {
-        fc_fprintf(stderr, _("Invalid port \"%s\" specified with "
+        wc_fprintf(stderr, _("Invalid port \"%s\" specified with "
                              "--port option.\n"), option);
-        fc_fprintf(stderr, _("Try using --help.\n"));
+        wc_fprintf(stderr, _("Try using --help.\n"));
         exit(EXIT_FAILURE);
       }
     } else if ((option = get_option("--server", argv, &i, argc))) {
@@ -321,10 +321,10 @@ int main(int argc, char *argv[])
     } else if ((option = get_option("--debug", argv, &i, argc))) {
       loglevel = log_parse_level_str(option);
       if (loglevel == -1) {
-        fc_fprintf(stderr,
+        wc_fprintf(stderr,
                    _("Invalid debug level \"%s\" specified with --debug "
                      "option.\n"), option);
-        fc_fprintf(stderr, _("Try using --help.\n"));
+        wc_fprintf(stderr, _("Try using --help.\n"));
         exit(EXIT_FAILURE);
       }
     } else if ((option = get_option("--tiles", argv, &i, argc))) {
@@ -334,7 +334,7 @@ int main(int argc, char *argv[])
     } else if (is_option("--", argv[i])) {
       ui_separator = TRUE;
     } else {
-      fc_fprintf(stderr, _("Unrecognized option: \"%s\"\n"), argv[i]);
+      wc_fprintf(stderr, _("Unrecognized option: \"%s\"\n"), argv[i]);
       exit(EXIT_FAILURE);
     }
     i++;
