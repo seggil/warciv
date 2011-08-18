@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__LOCALLUACONF_H
-#define FC__LOCALLUACONF_H
+#ifndef WC_SERVER_LUA_SRC_LOCALLUACONF_H
+#define WC_SERVER_LUA_SRC_LOCALLUACONF_H
 
 #ifdef HAVE_CONFIG_H
 #  include "../../../config.h"
@@ -30,4 +30,4 @@
 #define LUA_USE_ULONGJMP
 #endif
 
-#endif /* FC__LOCALLUACONF_H */
+#endif /* WC_SERVER_LUA_SRC_LOCALLUACONF_H */
