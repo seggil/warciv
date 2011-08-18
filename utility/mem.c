@@ -83,7 +83,7 @@ void *wc_real_malloc(size_t size,
  Function used by fc_realloc macro, realloc() replacement
  No need to check return value.
 **********************************************************************/
-void *fc_real_realloc(void *ptr, size_t size,
+void *wc_real_realloc(void *ptr, size_t size,
                       const char *called_as, int line, const char *file)
 {
   void *new_ptr;
