@@ -59,7 +59,7 @@ typedef unsigned int fc_bool;
 /* Note: the capability string is now in capstr.c --dwp */
 /* Version stuff is now in version.h --dwp */
 
-#define WEBSITE_URL "http://www.freeciv.org/"
+#define WEBSITE_URL "http://gna.org/projects/freeciv-warclient"
 
 /* MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS <= 32 !!!! */
 #define MAX_NUM_PLAYERS  30
