@@ -39,7 +39,7 @@ const char *warclient_name_version(void)
   static char buf[256] = "";
   const char *progname = "Warclient";
 
-#if defined(SVNREV) && !defined(FC_SVNREV_OFF)
+#if defined(SVNREV) && !defined(WC_SVNREV_OFF)
   my_snprintf(buf, sizeof(buf), "%s %s (%s)", progname,
               WARCLIENT_VERSION_STRING, fc_svn_revision());
 #else
@@ -86,11 +86,11 @@ const char *word_version(void)
 ***********************************************************************/
 const char *fc_svn_revision(void)
 {
-#if defined(SVNREV) && !defined(FC_SVNREV_OFF)
-  return FC_SVNREV; /* Either revision, or modified revision */
-#else  /* FC_SVNREV_OFF */
+#if defined(SVNREV) && !defined(WC_SVNREV_OFF)
+  return WC_SVNREV; /* Either revision, or modified revision */
+#else  /* WC_SVNREV_OFF */
   return NULL;
-#endif /* FC_SVNREV_OFF */
+#endif /* WC_SVNREV_OFF */
 }
 
 /**********************************************************************
