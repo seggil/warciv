@@ -34,7 +34,7 @@ char *local_to_internal_string_malloc(const char *text);
 char *local_to_internal_string_buffer(const char *text,
                                       char *buf, size_t bufsz);
 
-#define fc_printf(...) fc_fprintf(stdout, __VA_ARGS__)
+#define wc_printf(...) wc_fprintf(stdout, __VA_ARGS__)
 void wc_fprintf(FILE *stream, const char *format, ...)
       fc__attribute((__format__ (__printf__, 2, 3)));
 

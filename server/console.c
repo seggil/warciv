@@ -100,12 +100,12 @@ static int con_dump(enum rfc_status rfc_status, const char *message, ...)
   va_end(args);
 
   if(console_prompt_is_showing) {
-    fc_printf("\n");
+    wc_printf("\n");
   }
   if ((console_rfcstyle) && (rfc_status >= 0)) {
-    fc_printf("%.3d %s", rfc_status, buf);
+    wc_printf("%.3d %s", rfc_status, buf);
   } else {
-    fc_printf("%s", buf);
+    wc_printf("%s", buf);
   }
   console_prompt_is_showing = FALSE;
   return (int) strlen(buf);
@@ -145,12 +145,12 @@ void con_puts(enum rfc_status rfc_status, const char *str)
   strftime (timestr, sizeof(timestr), "[%H:%M:%S] ", nowtm);
 
   if(console_prompt_is_showing) {
-    fc_printf("\n");
+    wc_printf("\n");
   }
   if ((console_rfcstyle) && (rfc_status >= 0)) {
-    fc_printf("%s%.3d %s\n", timestr, rfc_status, str);
+    wc_printf("%s%.3d %s\n", timestr, rfc_status, str);
   } else {
-    fc_printf("%s%s\n", timestr, str);
+    wc_printf("%s%s\n", timestr, str);
   }
   console_prompt_is_showing = FALSE;
   con_update_prompt();
