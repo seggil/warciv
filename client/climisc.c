@@ -1367,7 +1367,7 @@ static int an_generate_city_name(char *buf, int buflen,
 
   for (;;) {
     format = string_vector_get(city_name_formats, ad->format_index);
-    freelog(LOG_DEBUG, "%S   trying format \"%s\" [%d]", __FILE__, format,
+    freelog(LOG_DEBUG, "%s   trying format \"%s\" [%d]", __FILE__, format,
             ad->format_index);
 
     len = an_make_city_name(format, buf, buflen, ad);
