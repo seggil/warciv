@@ -18,7 +18,10 @@
 .#*
 .deps
 .svn
+.project
+.cproject
 CVS
+Debug
 Freeciv.h
 Makefile
 Makefile.in
