@@ -1413,7 +1413,7 @@ void *get_packet_from_connection_helper(struct connection *pconn, enum packet_ty
 
     output_c.write('''
 #ifdef HAVE_CONFIG_H
-# include "../<config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -1557,7 +1557,7 @@ bool client_handle_packet(enum packet_type type, void *packet);
     f.write('''
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include "packets.h"
@@ -1608,7 +1608,7 @@ bool server_handle_packet(enum packet_type type, void *packet,
     f.write('''
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include "packets.h"
