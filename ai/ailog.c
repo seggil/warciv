@@ -49,7 +49,7 @@ void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
 
   if (pplayer->debug) {
     minlevel = LOG_NORMAL;
-  } else if (minlevel > fc_log_level) {
+  } else if (minlevel > wc_log_level) {
     return;
   }
 
@@ -91,7 +91,7 @@ void CITY_LOG(int level, struct city *pcity, const char *msg, ...)
 
   if (pcity->server.debug) {
     minlevel = LOG_NORMAL;
-  } else if (minlevel > fc_log_level) {
+  } else if (minlevel > wc_log_level) {
     return;
   }
 
@@ -139,7 +139,7 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
         messwin = TRUE;
       }
     }
-    if (minlevel > fc_log_level) {
+    if (minlevel > wc_log_level) {
       return;
     }
   }
@@ -185,7 +185,7 @@ void BODYGUARD_LOG(int level, struct unit *punit, const char *msg)
 
   if (punit->debug) {
     minlevel = LOG_NORMAL;
-  } else if (minlevel > fc_log_level) {
+  } else if (minlevel > wc_log_level) {
     return;
   }
 

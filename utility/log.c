@@ -37,7 +37,7 @@ static int l_line;
 static const char *l_fncname;
 
 int logd_init_counter = 1;
-int fc_log_level;
+int wc_log_level;
 
 struct logd_fileinfo {
   char *name;
@@ -55,7 +55,7 @@ If everything goes ok, returns the level.
 If there was a parsing problem, prints to stderr, and returns -1.
 
 Also sets up the logd_files data structure and increments
-logd_init_counter.  Does _not_ set fc_log_level.
+logd_init_counter.  Does _not_ set wc_log_level.
 **************************************************************************/
 int log_parse_level_str(const char *level_str)
 {
@@ -183,7 +183,7 @@ int log_parse_level_str(const char *level_str)
 void log_init(const char *filename, int initial_level,
               log_callback_fn callback)
 {
-  fc_log_level = initial_level;
+  wc_log_level = initial_level;
   if (filename && strlen(filename) > 0) {
     log_filename = filename;
   } else {
@@ -199,7 +199,7 @@ Adjust the logging level after initial log_init().
 **************************************************************************/
 void log_set_level(int level)
 {
-  fc_log_level=level;
+  wc_log_level=level;
 }
 
 /**************************************************************************
@@ -260,7 +260,7 @@ static void log_write(FILE *fs, int level, char *message)
 
 /**************************************************************************
 Print a log message.
-Only prints if level <= fc_log_level.
+Only prints if level <= wc_log_level.
 For repeat message, may wait and print instead
 "last message repeated ..." at some later time.
 Calls log_callback if non-null, else prints to stderr.
@@ -276,7 +276,7 @@ void vreal_freelog(int level, const char *message, va_list ap)
   static unsigned int prev=0;   /* total on last update */
   static int prev_level=-1;     /* only count as repeat if same level  */
 
-  if(level<=fc_log_level) {
+  if(level<=wc_log_level) {
     FILE *fs;
 
     if (log_filename) {
