@@ -65,7 +65,7 @@ static void sanity_check_size(size_t size, const char *called_as,
  Function used by fc_malloc macro, malloc() replacement
  No need to check return value.
 **********************************************************************/
-void *fc_real_malloc(size_t size,
+void *wc_real_malloc(size_t size,
                      const char *called_as, int line, const char *file)
 {
   void *ptr;
@@ -89,7 +89,7 @@ void *fc_real_realloc(void *ptr, size_t size,
   void *new_ptr;
 
   if (!ptr) {
-    return fc_real_malloc(size, called_as, line, file);
+    return wc_real_malloc(size, called_as, line, file);
   }
 
   sanity_check_size(size, called_as, line, file);
@@ -117,7 +117,7 @@ void *fc_real_calloc(size_t nelem, size_t elsize,
   size_t size = nelem*elsize;   /* potential overflow */
   void *ptr;
 
-  ptr = fc_real_malloc(size, called_as, line, file);
+  ptr = wc_real_malloc(size, called_as, line, file);
   memset(ptr, 0, size);
   return ptr;
 }
@@ -129,7 +129,7 @@ void *fc_real_calloc(size_t nelem, size_t elsize,
 char *real_mystrdup(const char *str,
                     const char *called_as, int line, const char *file)
 {
-  char *dest = fc_real_malloc(strlen(str)+1, called_as, line, file);
+  char *dest = wc_real_malloc(strlen(str)+1, called_as, line, file);
 
   /* no need to check whether dest is non-NULL! */
   strcpy(dest, str);
