@@ -358,7 +358,7 @@ bool create_start_positions(enum start_mode mode)
   assert(game.info.nplayers <= data.count + sum);
 
   /* now search for the best place and set start_positions */
-  map.server.start_positions = fc_realloc(map.server.start_positions,
+  map.server.start_positions = wc_realloc(map.server.start_positions,
                                           game.info.nplayers
                                           * sizeof(*map.server.start_positions));
   while (data.count < game.info.nplayers) {

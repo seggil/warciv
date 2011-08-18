@@ -479,7 +479,7 @@ void allot_island_improvs(void)
   int i;
 
   players_iterate(pplayer) {
-    pplayer->island_improv = fc_realloc(pplayer->island_improv,
+    pplayer->island_improv = wc_realloc(pplayer->island_improv,
                                         (map.num_continents + 1)
                                         * game.ruleset_control.num_impr_types
                                         * sizeof(Impr_Status));

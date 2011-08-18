@@ -615,7 +615,7 @@ struct pf_path *pft_concat(struct pf_path *dest_path,
            src_path->positions[0].moves_left);
     dest_path->length += src_path->length - 1;
     dest_path->positions =
-        fc_realloc(dest_path->positions,
+        wc_realloc(dest_path->positions,
                    sizeof(*dest_path->positions) * dest_path->length);
     /* Be careful to include the first position of src_path, it contains
      * the direction (it is undefined in the last position of dest_path) */

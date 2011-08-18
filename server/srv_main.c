@@ -1884,7 +1884,7 @@ static void srv_loop(void)
     load_rulesets();
   }
 
-  nations_available = fc_realloc(nations_available,
+  nations_available = wc_realloc(nations_available,
                                  game.ruleset_control.nation_count *
                                  sizeof(*nations_available));
 

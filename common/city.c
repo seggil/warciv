@@ -179,7 +179,7 @@ void generate_city_map_indices(void)
   } city_map_iterate_end;
 
   /* Realloc is used because this function may be called multiple times. */
-  array = fc_realloc(array, CITY_TILES * sizeof(*array));
+  array = wc_realloc(array, CITY_TILES * sizeof(*array));
 
   for (dx = -CITY_MAP_RADIUS; dx <= CITY_MAP_RADIUS; dx++) {
     for (dy = -CITY_MAP_RADIUS; dy <= CITY_MAP_RADIUS; dy++) {

@@ -904,7 +904,7 @@ static const char **get_data_dirs(int *num_dirs)
       /* We could check whether the directory exists and
        * is readable etc?  Don't currently. */
       num++;
-      dirs = fc_realloc(dirs, num * sizeof(char*));
+      dirs = wc_realloc(dirs, num * sizeof(char*));
       dirs[num - 1] = mystrdup(tok);
       freelog(LOG_VERBOSE, "Data path component (%d): %s", num - 1, tok);
       if (i == -1) {
@@ -917,7 +917,7 @@ static const char **get_data_dirs(int *num_dirs)
   } while(tok);
 
   /* NULL-terminate the list. */
-  dirs = fc_realloc(dirs, (num + 1) * sizeof(char*));
+  dirs = wc_realloc(dirs, (num + 1) * sizeof(char*));
   dirs[num] = NULL;
 
   free(path2);
@@ -982,7 +982,7 @@ const char **datafilelist(const char* suffix)
            constant ammortized overhead. */
         if (num_matches >= list_size) {
           list_size = list_size > 0 ? list_size * 2 : 10;
-          file_list = fc_realloc(file_list, list_size * sizeof(*file_list));
+          file_list = wc_realloc(file_list, list_size * sizeof(*file_list));
         }
 
         /* Clip the suffix. */
@@ -1016,7 +1016,7 @@ const char **datafilelist(const char* suffix)
   num_matches = i;
 
   /* NULL-terminate the whole thing. */
-  file_list = fc_realloc(file_list, (num_matches + 1) * sizeof(*file_list));
+  file_list = wc_realloc(file_list, (num_matches + 1) * sizeof(*file_list));
   file_list[num_matches] = NULL;
 
   return (const char **)file_list;
@@ -1726,7 +1726,7 @@ void string_vector_reserve(struct string_vector *psv, size_t reserve)
     psv->vec = fc_calloc(reserve, sizeof(char *));
   } else if (reserve > psv->size) {
     /* Expand the vector. */
-    psv->vec = fc_realloc(psv->vec, reserve * sizeof(char *));
+    psv->vec = wc_realloc(psv->vec, reserve * sizeof(char *));
     memset(psv->vec + psv->size, 0, (reserve - psv->size) * sizeof(char *));
   } else {
     /* Shrink the vector: free the extra strings. */
@@ -1735,7 +1735,7 @@ void string_vector_reserve(struct string_vector *psv, size_t reserve)
     for (i = psv->size - 1; i >= reserve; i--) {
       string_free(psv->vec[i]);
     }
-    psv->vec = fc_realloc(psv->vec, reserve * sizeof(char *));
+    psv->vec = wc_realloc(psv->vec, reserve * sizeof(char *));
   }
   psv->size = reserve;
 }

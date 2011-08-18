@@ -30,7 +30,7 @@
   functions etc.
 
   Note one potential hazard: when the size is increased (astr_minsize()),
-  realloc (really fc_realloc) is used, which retains any data which
+  realloc (really wc_realloc) is used, which retains any data which
   was there previously, _but_: any external pointers into the allocated
   memory may then become wild.  So you cannot safely use such external
   pointers into the astring data, except strictly between times when
@@ -82,7 +82,7 @@ void astr_minsize(struct astring *astr, size_t n)
   /* allocated more if this is only a small increase on before: */
   n1 = (3*(astr->n_alloc+10)) / 2;
   astr->n_alloc = (n > n1) ? n : n1;
-  astr->str = (char *)fc_realloc(astr->str, astr->n_alloc);
+  astr->str = (char *)wc_realloc(astr->str, astr->n_alloc);
   if (was_null) {
     astr_clear(astr);
   }

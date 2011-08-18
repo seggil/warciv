@@ -2358,7 +2358,7 @@ void handle_select_races(void)
 
     /* Then clear the nations used.  They are filled by a
      * PACKET_NATION_UNAVAILABLE packet that follows. */
-    nations_used = fc_realloc(nations_used,
+    nations_used = wc_realloc(nations_used,
                               game.ruleset_control.playable_nation_count
                               * sizeof(nations_used));
     memset(nations_used, 0,
@@ -3079,7 +3079,7 @@ void set_reports_thaw_request(int request_id)
 
   reports_thaw_requests_size++;
   reports_thaw_requests =
-      fc_realloc(reports_thaw_requests,
+      wc_realloc(reports_thaw_requests,
                  reports_thaw_requests_size * sizeof(int));
   reports_thaw_requests[reports_thaw_requests_size - 1] = request_id;
 }

@@ -268,7 +268,7 @@ static void generate_map_indices(void)
                : (nat_center_y + map.info.ysize - 1));
   tiles = (nat_max_x - nat_min_x + 1) * (nat_max_y - nat_min_y + 1);
 
-  array = fc_realloc(array, tiles * sizeof(*array));
+  array = wc_realloc(array, tiles * sizeof(*array));
 
   for (nat_x = nat_min_x; nat_x <= nat_max_x; nat_x++) {
     for (nat_y = nat_min_y; nat_y <= nat_max_y; nat_y++) {

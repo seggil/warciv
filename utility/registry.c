@@ -1596,7 +1596,7 @@ static char *moutstr(char *str)
   }
   if (len > nalloc) {
     nalloc = 2 * len + 1;
-    buf = fc_realloc(buf, nalloc);
+    buf = wc_realloc(buf, nalloc);
   }
 
   dest = buf;

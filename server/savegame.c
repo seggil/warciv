@@ -533,7 +533,7 @@ static void map_startpos_load(struct section_file *file)
     }
     map.server.num_start_positions = j;
     if (map.server.num_start_positions > 0) {
-      map.server.start_positions = fc_realloc(map.server.start_positions,
+      map.server.start_positions = wc_realloc(map.server.start_positions,
                                        map.server.num_start_positions
                                        * sizeof(*map.server.start_positions));
       for (i = 0; i < j; i++) {

@@ -141,7 +141,7 @@ void init_settlers(void)
 {
   /* (Re)allocate map arrays.  Note that the server may run more than one
    * game so the realloc() is necessary. */
-  territory = fc_realloc(territory,
+  territory = wc_realloc(territory,
                          map.info.xsize * map.info.ysize * sizeof(*territory));
 }
 

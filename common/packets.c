@@ -410,7 +410,7 @@ void *get_packet_from_connection(struct connection *pc,
 
     if (buffer->ndata + decompressed_size > buffer->nsize) {
       buffer->nsize += decompressed_size;
-      buffer->data = fc_realloc(buffer->data, buffer->nsize);
+      buffer->data = wc_realloc(buffer->data, buffer->nsize);
     }
 
     /*

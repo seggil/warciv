@@ -79,8 +79,8 @@ void pq_insert(struct pqueue *q, pq_data_t datum, int datum_priority)
   if (q->size >= q->avail) {
     int newsize = q->size + q->step;
 
-    q->cells = fc_realloc(q->cells, sizeof(pq_data_t) * newsize);
-    q->priorities = fc_realloc(q->priorities, sizeof(int) * newsize);
+    q->cells = wc_realloc(q->cells, sizeof(pq_data_t) * newsize);
+    q->priorities = wc_realloc(q->priorities, sizeof(int) * newsize);
     q->avail = newsize;
   }
 

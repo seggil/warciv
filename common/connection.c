@@ -159,7 +159,7 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
     return FALSE;
   }
 
-  buf->data = (unsigned char *) fc_realloc(buf->data, buf->nsize);
+  buf->data = (unsigned char *) wc_realloc(buf->data, buf->nsize);
   return TRUE;
 }
 

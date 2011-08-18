@@ -110,7 +110,7 @@ static void grow_printf(char **buffer, size_t *buffer_size,
             (unsigned long)*buffer_size, (unsigned long)new_size, buf);
 
     *buffer_size = new_size;
-    *buffer = fc_realloc(*buffer, *buffer_size);
+    *buffer = wc_realloc(*buffer, *buffer_size);
   }
   mystrlcat(*buffer, buf, *buffer_size);
 }

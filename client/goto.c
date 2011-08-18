@@ -241,7 +241,7 @@ static void add_part(void)
 
   goto_map.num_parts++;
   goto_map.parts =
-      fc_realloc(goto_map.parts,
+      wc_realloc(goto_map.parts,
                  goto_map.num_parts * sizeof(*goto_map.parts));
   p = &goto_map.parts[goto_map.num_parts - 1];
 

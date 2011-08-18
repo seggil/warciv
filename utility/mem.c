@@ -80,7 +80,7 @@ void *wc_real_malloc(size_t size,
 }
 
 /**********************************************************************
- Function used by fc_realloc macro, realloc() replacement
+ Function used by wc_realloc macro, realloc() replacement
  No need to check return value.
 **********************************************************************/
 void *wc_real_realloc(void *ptr, size_t size,

@@ -197,11 +197,11 @@ Reset the movecosts of the warmap.
 static void init_warmap(struct tile *orig_tile, enum unit_move_type move_type)
 {
   if (warmap.size != MAX_MAP_INDEX) {
-    warmap.cost = fc_realloc(warmap.cost,
+    warmap.cost = wc_realloc(warmap.cost,
                              MAX_MAP_INDEX * sizeof(*warmap.cost));
-    warmap.seacost = fc_realloc(warmap.seacost,
+    warmap.seacost = wc_realloc(warmap.seacost,
                                 MAX_MAP_INDEX * sizeof(*warmap.seacost));
-    warmap.vector = fc_realloc(warmap.vector,
+    warmap.vector = wc_realloc(warmap.vector,
                                MAX_MAP_INDEX * sizeof(*warmap.vector));
     warmap.size = MAX_MAP_INDEX;
   }

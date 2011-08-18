@@ -2489,7 +2489,7 @@ static bool mapgenerator67(bool make_roads)
   }
 
   map.num_continents = 1;
-  map.server.start_positions = fc_realloc(map.server.start_positions,
+  map.server.start_positions = wc_realloc(map.server.start_positions,
                                    game.info.nplayers
                                    * sizeof(*map.server.start_positions));
   map.server.num_start_positions = game.info.nplayers;
@@ -2779,7 +2779,7 @@ void startpos_init(void)
 {
   map.server.num_start_positions = 0;
   map.server.start_positions =
-      fc_realloc(map.server.start_positions,
+      wc_realloc(map.server.start_positions,
                  game.info.nplayers * sizeof(*map.server.start_positions));
 }
 

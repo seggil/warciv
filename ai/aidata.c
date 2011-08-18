@@ -485,7 +485,7 @@ void ai_data_init(struct player *pplayer)
   int i;
 
   ai->govt_reeval = 0;
-  ai->government_want = fc_realloc(ai->government_want,
+  ai->government_want = wc_realloc(ai->government_want,
                                    ((game.ruleset_control.government_count + 1)
                                     * sizeof(*ai->government_want)));
   memset(ai->government_want, 0, (game.ruleset_control.government_count + 1)

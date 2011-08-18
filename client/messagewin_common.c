@@ -124,7 +124,7 @@ void add_notify_window(char *message, struct tile *ptile,
 
   if (messages_total + 2 > messages_alloc) {
     messages_alloc = messages_total + 32;
-    messages = fc_realloc(messages, messages_alloc * sizeof(*messages));
+    messages = wc_realloc(messages, messages_alloc * sizeof(*messages));
   }
 
   if (strncmp(message, game_prefix1, gp_len1) == 0) {
