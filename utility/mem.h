@@ -18,7 +18,7 @@
                                    might be more reliable? --dwp */
 
 /* wc_malloc, wc_realloc, wc_calloc:
- * fc_ stands for warciv; the return value is checked,
+ * wc_ stands for warciv; the return value is checked,
  * and freeciv-specific processing occurs if it is NULL:
  * a log message, possibly cleanup, and ending with exit(1)
  */
