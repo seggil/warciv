@@ -109,9 +109,9 @@
 #include "aidata.h"
 #include "aihand.h"
 #include "aisettler.h"
-#include "citymap.h"
+#include "aicore/citymap.h"
 
-#include "mapgen.h"
+#include "generator/mapgen.h"
 
 #include "srv_main.h"
 

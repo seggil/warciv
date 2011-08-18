@@ -47,7 +47,7 @@
 #include "cityturn.h"
 #include "connecthand.h" /* server_assign_random_nation */
 #include "diplhand.h"
-#include "mapgen.h"
+#include "generator/mapgen.h"
 #include "maphand.h"
 #include "meta.h"
 #include "plrhand.h"

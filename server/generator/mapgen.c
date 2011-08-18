@@ -33,13 +33,13 @@
 #include "nation.h"
 #include "player.h"
 
-#include "maphand.h" /* assign_continent_numbers(), MAP_NCONT */
-#include "srv_main.h"
+#include "../maphand.h" /* assign_continent_numbers(), MAP_NCONT */
+#include "../srv_main.h"
 
 #include "height_map.h"
 #include "mapgen.h"
 #include "mapgen_topology.h"
-#include "plrhand.h"
+#include "../plrhand.h"
 #include "startpos.h"
 #include "temperature_map.h"
 #include "utilities.h"

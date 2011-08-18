@@ -46,11 +46,12 @@
 #include "unittools.h"
 #include "unithand.h"
 
-#include "cm.h"
+#include "aicore/cm.h"
 
 #include "advdomestic.h"
 #include "aicity.h"
 #include "aidata.h"
+#include "gotohand.h"
 #include "ailog.h"
 #include "aitools.h"
 

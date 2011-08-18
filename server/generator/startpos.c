@@ -21,7 +21,7 @@
 #include "game.h"
 #include "map.h"
 
-#include "maphand.h"
+#include "../maphand.h"
 
 #include "mapgen_topology.h"
 #include "startpos.h"

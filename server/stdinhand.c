@@ -60,7 +60,7 @@
 #include "gamehand.h"
 #include "gamelog.h"
 #include "handchat.h"
-#include "mapgen.h"
+#include "generator/mapgen.h"
 #include "maphand.h"
 #include "meta.h"
 #include "plrhand.h"

@@ -20,7 +20,7 @@
 #include "game.h"
 #include "map.h"
 
-#include "plrhand.h"
+#include "../plrhand.h"
 
 #include "mapgen_topology.h"
 

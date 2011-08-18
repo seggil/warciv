@@ -30,7 +30,7 @@
 #include "map.h"
 #include "packets.h"
 
-#include "citymap.h"
+#include "aicore/citymap.h"
 
 #include "citytools.h"
 #include "gotohand.h"
