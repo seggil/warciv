@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_HELPDATA_H
 #define WC_CLIENT_HELPDATA_H
 
-#include "helpdlg_g.h"          /* enum help_page_type */
+#include "include/helpdlg_g.h"          /* enum help_page_type */
 
 struct help_item {
   char *topic, *text;

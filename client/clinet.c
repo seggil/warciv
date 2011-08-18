@@ -90,11 +90,11 @@
 #include "civclient.h"
 #include "climisc.h"
 #include "connectdlg_common.h"
-#include "connectdlg_g.h"
-#include "dialogs_g.h"          /* popdown_races_dialog() */
-#include "gui_main_g.h"         /* add_net_input(), remove_net_input() */
-#include "menu_g.h"
-#include "messagewin_g.h"
+#include "include/connectdlg_g.h"
+#include "include/dialogs_g.h"          /* popdown_races_dialog() */
+#include "include/gui_main_g.h"         /* add_net_input(), remove_net_input() */
+#include "include/menu_g.h"
+#include "include/messagewin_g.h"
 #include "options.h"
 #include "packhand.h"
 #include "include/pages_g.h"

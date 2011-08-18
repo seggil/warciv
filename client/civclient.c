@@ -50,7 +50,7 @@
 #include "cityrepdata.h"
 #include "climisc.h"
 #include "clinet.h"
-#include "cma_core.h"           /* kludge */
+#include "agents/cma_core.h"           /* kludge */
 #include "connectdlg_common.h"  /* client_kill_server() */
 #include "control.h"
 #include "goto.h"
