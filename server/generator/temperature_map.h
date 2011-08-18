@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__TEMPERATURE_MAP_H
-#define FC__TEMPERATURE_MAP_H
+#ifndef WC_SERVER_GENERATOR_TEMPERATURE_MAP_H
+#define WC_SERVER_GENERATOR_TEMPERATURE_MAP_H
 
 
 /*
@@ -37,4 +37,4 @@ bool is_temperature_type_near(const struct tile *ptile, temperature_type tt);
 void destroy_tmap(void);
 void create_tmap(bool real);
 
-#endif  /* FC__TEMPERATURE_MAP_H */
+#endif  /* WC_SERVER_GENERATOR_TEMPERATURE_MAP_H */

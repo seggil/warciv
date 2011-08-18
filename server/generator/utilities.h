@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__UTILITIES_H
-#define FC__UTILITIES_H
+#ifndef WC_SERVER_GENERATOR_UTILITIES_H
+#define WC_SERVER_GENERATOR_UTILITIES_H
 
 /* Provide a block to convert from native to map coordinates.  For instance
  *   do_in_map_pos(mx, my, xn, yn) {
@@ -93,4 +93,4 @@ void set_placed_near_pos(struct tile *ptile, int dist);
 
 
 
-#endif  /* FC__UTILITIES_H */
+#endif  /* WC_SERVER_GENERATOR_UTILITIES_H */

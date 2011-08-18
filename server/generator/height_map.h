@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__HEIGHT_MAP_H
-#define FC__HEIGHT_MAP_H
+#ifndef WC_SERVER_GENERATOR_HEIGHT_MAP_H
+#define WC_SERVER_GENERATOR_HEIGHT_MAP_H
 
 /* Wrappers for easy access.  They are a macros so they can be a lvalues.*/
 #define hmap(ptile) (height_map[(ptile)->index])
@@ -39,4 +39,4 @@ void renormalize_hmap_poles(void);
 void make_random_hmap(int smooth);
 void make_pseudofractal1_hmap(int extra_div);
 
-#endif  /* FC__HEIGHT__MAP_H */
+#endif  /* WC_SERVER_GENERATOR_HEIGHT_MAP_H */

@@ -10,9 +10,9 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MAPGEN_H
-#define FC__MAPGEN_H
+#ifndef WC_SERVER_GENERATOR_MAPGEN_H
+#define WC_SERVER_GENERATOR_MAPGEN_H
 
 void map_fractal_generate(bool autosize);
 
-#endif  /* FC__MAPGEN_H */
+#endif  /* WC_SERVER_GENERATOR_MAPGEN_H */
