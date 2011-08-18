@@ -314,7 +314,7 @@ static const char *cr_entry_growturns(const struct city *pcity)
 {
   static char buf[8];
   int turns = city_turns_to_grow(pcity);
-  if (turns == FC_INFINITY) {
+  if (turns == WC_INFINITY) {
     /* 'never' wouldn't be easily translatable here. */
     my_snprintf(buf, sizeof(buf), "-");
   } else {

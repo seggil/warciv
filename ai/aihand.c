@@ -158,7 +158,7 @@ static void ai_manage_taxes(struct player *pplayer)
     cmp.allow_disorder = FALSE;
     cmp.allow_specialists = TRUE;
     cmp.factor[CM_FOOD] = 20;
-    cmp.minimal_surplus[CM_GOLD] = -FC_INFINITY;
+    cmp.minimal_surplus[CM_GOLD] = -WC_INFINITY;
 
     city_list_iterate(pplayer->cities, pcity) {
       cm_clear_cache(pcity);

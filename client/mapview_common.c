@@ -2302,7 +2302,7 @@ void get_city_mapview_name_and_growth(struct city *pcity,
 
     if (turns == 0) {
       my_snprintf(growth_buffer, growth_buffer_len, "X");
-    } else if (turns == FC_INFINITY) {
+    } else if (turns == WC_INFINITY) {
       my_snprintf(growth_buffer, growth_buffer_len, "-");
     } else {
       /* Negative turns means we're shrinking, but that's handled

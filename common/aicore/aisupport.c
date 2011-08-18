@@ -33,7 +33,7 @@
 struct player *player_leading_spacerace(void)
 {
   struct player *best = NULL;
-  int best_arrival = FC_INFINITY;
+  int best_arrival = WC_INFINITY;
   enum spaceship_state best_state = SSHIP_NONE;
 
   if (game.info.spacerace == FALSE) {
@@ -83,7 +83,7 @@ int player_distance_to_player(struct player *pplayer, struct player *target)
 
   /* For all our cities, find the closest distance to an enemy city. */
   city_list_iterate(pplayer->cities, pcity) {
-    int min_dist = FC_INFINITY;
+    int min_dist = WC_INFINITY;
 
     city_list_iterate(target->cities, c2) {
       int dist = real_map_distance(c2->tile, pcity->tile);

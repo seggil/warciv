@@ -271,7 +271,7 @@ static int dist_from_home_continent(const struct unit *punit)
     } iterate_outward_end;
   }
 
-  return FC_INFINITY;
+  return WC_INFINITY;
 }
 
 /***************************************************************************

@@ -98,7 +98,7 @@ static int calculate_default_move_cost(struct city *pcity1, struct city *pcity2)
 
   if (!pf_get_position(pmap, pcity2->tile, &position)) {
     pf_destroy_map(pmap);
-    return FC_INFINITY;
+    return WC_INFINITY;
   }
 
   pf_destroy_map(pmap);
@@ -121,7 +121,7 @@ static int base_calculate_move_cost(struct unit *punit, struct tile *ptile1,
 
   if (!pf_get_position(pmap, ptile2, &position)) {
     pf_destroy_map(pmap);
-    return FC_INFINITY;
+    return WC_INFINITY;
   }
 
   pf_destroy_map(pmap);
@@ -138,7 +138,7 @@ static int base_calculate_trade_move_cost(struct unit *punit,
   if (punit->homecity == pcity1->id) {
     return base_calculate_move_cost(punit, punit->tile, pcity2->tile);
   } else if (punit->owner != pcity1->owner) {
-    return FC_INFINITY;
+    return WC_INFINITY;
   } else {
     return base_calculate_move_cost(punit, punit->tile, pcity1->tile)
            + base_calculate_move_cost(punit, pcity1->tile, pcity2->tile);
@@ -618,7 +618,7 @@ static struct trade_route *add_trade_route_in_planning(
   /* Change configuration */
   pcalc->ctlist[pconf->trade_routes_num++] = ptr;
   pconf->free_slots -= 2;
-  if (ptr->move_cost < FC_INFINITY) {
+  if (ptr->move_cost < WC_INFINITY) {
     pconf->moves += ptr->move_cost;
     pconf->turns += ptr->move_turns;
   } else {
@@ -832,8 +832,8 @@ struct trade_planning_calculation *trade_planning_calculation_new(
           ptr->move_cost = pos.total_MC;
           ptr->move_turns = COST_TO_TURNS(ptr);
         } else {
-          ptr->move_cost = FC_INFINITY;
-          ptr->move_turns = FC_INFINITY;
+          ptr->move_cost = WC_INFINITY;
+          ptr->move_turns = WC_INFINITY;
         }
         tcity1->trade_routes[j] = ptr;
         tcity2->trade_routes[i] = ptr;

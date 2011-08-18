@@ -459,7 +459,7 @@ static int tile_type_vector_find_equivalent(
 static int tile_type_num_tiles(const struct cm_tile_type *type)
 {
   if(type->is_specialist) {
-    return FC_INFINITY;
+    return WC_INFINITY;
   } else {
     return tile_vector_size(&type->tiles);
   }
@@ -528,7 +528,7 @@ static struct cm_fitness worst_fitness(void)
   struct cm_fitness f;
 
   f.sufficient = FALSE;
-  f.weighted = -FC_INFINITY;
+  f.weighted = -WC_INFINITY;
   return f;
 }
 
@@ -1017,10 +1017,10 @@ static void top_sort_lattice(struct tile_type_vector *lattice)
           break;
         } else {
           sumdepth += tile_type_num_tiles(better);
-          if (sumdepth >= FC_INFINITY) {
+          if (sumdepth >= WC_INFINITY) {
             /* if this is the case, then something better could
                always be used, and the same holds for our children */
-            sumdepth = FC_INFINITY;
+            sumdepth = WC_INFINITY;
             can_mark = TRUE;
             break;
           }
@@ -1948,7 +1948,7 @@ void cm_init_emergency_parameter(struct cm_parameter *dest)
   enum cm_stat stat;
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
-    dest->minimal_surplus[stat] = -FC_INFINITY;
+    dest->minimal_surplus[stat] = -WC_INFINITY;
     dest->factor[stat] = 1;
   }
 

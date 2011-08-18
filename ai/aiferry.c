@@ -301,7 +301,7 @@ static bool is_boat_free(struct unit *boat, struct unit *punit, int cap)
 ****************************************************************************/
 int aiferry_find_boat(struct unit *punit, int cap, struct pf_path **path)
 {
-  int best_turns = FC_INFINITY;
+  int best_turns = WC_INFINITY;
   int best_id = 0;
   struct pf_parameter param;
   struct path_finding_map *search_map;
@@ -634,7 +634,7 @@ static bool aiferry_find_interested_city(struct unit *pferry)
   struct path_finding_map *map;
   struct pf_parameter parameter;
   /* Early termination condition */
-  int turns_horizon = FC_INFINITY;
+  int turns_horizon = WC_INFINITY;
   /* Future return value */
   bool needed = FALSE;
 

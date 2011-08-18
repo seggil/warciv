@@ -918,7 +918,7 @@ bool can_cities_trade(const struct city *pc1, const struct city *pc2)
 int get_city_min_trade_route(const struct city *pcity,
                              struct trade_route **slot)
 {
-  int value = FC_INFINITY;
+  int value = WC_INFINITY;
 
   if (slot) {
     *slot = NULL;
@@ -1544,7 +1544,7 @@ int city_turns_to_grow(const struct city *pcity)
     /* turns before famine loss */
     return -1 + (pcity->food_stock / pcity->food_surplus);
   } else {
-    return FC_INFINITY;
+    return WC_INFINITY;
   }
 }
 

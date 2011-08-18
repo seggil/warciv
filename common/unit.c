@@ -609,7 +609,7 @@ int get_turns_for_activity_at(struct unit *punit,
   if (time >= 0 && speed >= 0) {
     return (time - 1) / speed + 1; /* round up */
   } else {
-    return FC_INFINITY;
+    return WC_INFINITY;
   }
 }
 

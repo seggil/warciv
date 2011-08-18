@@ -391,7 +391,7 @@ const char *popup_info_text(struct tile *ptile)
     }
 
     if (pfocus_unit) {
-      int att_chance = FC_INFINITY, def_chance = FC_INFINITY;
+      int att_chance = WC_INFINITY, def_chance = WC_INFINITY;
       bool found = FALSE;
 
       unit_list_iterate(ptile->units, tile_unit) {

@@ -234,7 +234,7 @@ void auto_arrange_workers(struct city *pcity)
   cmp.minimal_surplus[CM_FOOD] = 1;
   cmp.minimal_surplus[CM_SHIELD] = 1;
   cmp.minimal_surplus[CM_TRADE] = 0;
-  cmp.minimal_surplus[CM_GOLD] = -FC_INFINITY;
+  cmp.minimal_surplus[CM_GOLD] = -WC_INFINITY;
   cmp.minimal_surplus[CM_LUXURY] = 0;
   cmp.minimal_surplus[CM_SCIENCE] = 0;
 
@@ -269,7 +269,7 @@ void auto_arrange_workers(struct city *pcity)
     } else {
       cmp.minimal_surplus[CM_FOOD] = 0;
       cmp.minimal_surplus[CM_SHIELD] = 0;
-      cmp.minimal_surplus[CM_GOLD] = -FC_INFINITY;
+      cmp.minimal_surplus[CM_GOLD] = -WC_INFINITY;
       cm_query_result(pcity, &cmp, &cmr);
 
       if (!cmr.found_a_valid) {

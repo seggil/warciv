@@ -1165,7 +1165,7 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
 {
   if (!punit) {
-    return FC_INFINITY;
+    return WC_INFINITY;
   }
 
   if (is_air_unit(punit) || is_heli_unit(punit)) {
@@ -1175,7 +1175,7 @@ int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
   struct pf_parameter parameter;
   struct path_finding_map *map;
   struct pf_position pos;
-  int move_cost = FC_INFINITY;
+  int move_cost = WC_INFINITY;
 
   fill_client_goto_parameter(punit, &parameter);
   map = pf_create_map(&parameter);

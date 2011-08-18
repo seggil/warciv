@@ -1544,7 +1544,7 @@ static void city_dialog_update_information(GtkWidget **info_label,
   granaryturns = city_turns_to_grow(pcity);
   if (granaryturns == 0) {
     my_snprintf(buf[GROWTH], sizeof(buf[GROWTH]), _("blocked"));
-  } else if (granaryturns == FC_INFINITY) {
+  } else if (granaryturns == WC_INFINITY) {
     my_snprintf(buf[GROWTH], sizeof(buf[GROWTH]), _("never"));
   } else {
     /* A negative value means we'll have famine in that many turns.

@@ -252,18 +252,18 @@ bool ai_manage_explorer(struct unit *punit)
 
   /* The log of the want of the most desirable tile,
    * given nearby water, cities, etc. */
-  double log_most_desirable = -FC_INFINITY;
+  double log_most_desirable = -WC_INFINITY;
 
   /* The maximum distance we are willing to search. It decreases depending
    * on the want of already discovered tagets.  It is defined as the distance
    * at which a tile with BEST_POSSIBLE_SCORE would have to be found in
    * order to be better than the current most_desirable tile. */
-  int max_dist = FC_INFINITY;
+  int max_dist = WC_INFINITY;
 
   /* Coordinates of most desirable tile. Initialized to make
    * compiler happy. Also MC to the best tile. */
   struct tile *best_tile = NULL;
-  int best_MC = FC_INFINITY;
+  int best_MC = WC_INFINITY;
 
   /* Path-finding stuff */
   struct path_finding_map *map;

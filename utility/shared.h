@@ -74,9 +74,9 @@ typedef unsigned int fc_bool;
 #define MAX_VET_LEVELS 10
 #define MAX_LEN_PATH 4095
 
-/* Use FC_INFINITY to denote that a certain event will never occur or
+/* Use WC_INFINITY to denote that a certain event will never occur or
    another unreachable condition. */
-#define FC_INFINITY     (1000 * 1000 * 1000)
+#define WC_INFINITY     (1000 * 1000 * 1000)
 
 #ifdef TRUE
 #undef TRUE
