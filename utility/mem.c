@@ -111,7 +111,7 @@ void *wc_real_realloc(void *ptr, size_t size,
  can be expressing using a single size_t, but that's not likely
  to be a problem.
 **********************************************************************/
-void *fc_real_calloc(size_t nelem, size_t elsize,
+void *wc_real_calloc(size_t nelem, size_t elsize,
                      const char *called_as, int line, const char *file)
 {
   size_t size = nelem*elsize;   /* potential overflow */

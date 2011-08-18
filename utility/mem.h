@@ -27,7 +27,7 @@
                                           __LINE__, __FILE__)
 #define fc_realloc(ptr,sz) wc_real_realloc((ptr), (sz), "realloc", \
                                            __LINE__, __FILE__)
-#define fc_calloc(n,esz)   fc_real_calloc((n), (esz), "calloc", \
+#define fc_calloc(n,esz)   wc_real_calloc((n), (esz), "calloc", \
                                            __LINE__, __FILE__)
 
 #define mystrdup(str)      real_mystrdup((str), "strdup", \
@@ -42,7 +42,7 @@ void *wc_real_malloc(size_t size,
                      const char *called_as, int line, const char *file);
 void *wc_real_realloc(void *ptr, size_t size,
                       const char *called_as, int line, const char *file);
-void *fc_real_calloc(size_t nelem, size_t elsize,
+void *wc_real_calloc(size_t nelem, size_t elsize,
                      const char *called_as, int line, const char *file);
 
 char *real_mystrdup(const char *str,
