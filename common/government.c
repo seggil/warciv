@@ -284,7 +284,7 @@ void governments_alloc(int num)
 {
   int index;
 
-  governments = fc_calloc(num, sizeof(struct government));
+  governments = wc_calloc(num, sizeof(struct government));
   game.ruleset_control.government_count = num;
 
   for (index = 0; index < num; index++) {

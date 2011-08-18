@@ -204,7 +204,7 @@ struct nation_type *get_nation_by_idx(Nation_Type_id nation)
 ***************************************************************/
 void nations_alloc(int num)
 {
-  nations = (struct nation_type *)fc_calloc(num, sizeof(struct nation_type));
+  nations = (struct nation_type *)wc_calloc(num, sizeof(struct nation_type));
   game.ruleset_control.nation_count = num;
 }
 

@@ -579,8 +579,8 @@ static struct cm_fitness compute_fitness(const int surplus[CM_NUM_STATS],
 static void init_partial_solution(struct partial_solution *into,
                                   int ntypes, int idle)
 {
-  into->worker_counts = fc_calloc(ntypes, sizeof(*into->worker_counts));
-  into->prereqs_filled = fc_calloc(ntypes, sizeof(*into->prereqs_filled));
+  into->worker_counts = wc_calloc(ntypes, sizeof(*into->worker_counts));
+  into->prereqs_filled = wc_calloc(ntypes, sizeof(*into->prereqs_filled));
   memset(into->production, 0, sizeof(into->production));
   into->idle = idle;
 }

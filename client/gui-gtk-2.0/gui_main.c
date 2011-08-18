@@ -2393,7 +2393,7 @@ int add_net_input_callback(int sock,
     cond |= G_IO_HUP;
   }
 
-  ctx = fc_calloc(1, sizeof (struct net_input_ctx));
+  ctx = wc_calloc(1, sizeof (struct net_input_ctx));
   ctx->guard = NET_INPUT_CTX_MEMORY_GUARD;
 
   freelog(LOG_DEBUG, "anic new net_input_ctx %p", ctx);
@@ -2544,7 +2544,7 @@ struct voteinfo_bar *create_voteinfo_bar(void)
   struct voteinfo_bar *vib;
   const int BUTTON_HEIGHT = 12;
 
-  vib = fc_calloc(1, sizeof(struct voteinfo_bar));
+  vib = wc_calloc(1, sizeof(struct voteinfo_bar));
 
   hbox = gtk_hbox_new(FALSE, 4);
   vib->box = hbox;

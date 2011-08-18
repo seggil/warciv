@@ -2008,7 +2008,7 @@ static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
    * 0: not available
    * 1: available
    * 2: preferred choice */
-  nations_used = fc_calloc(game.ruleset_control.playable_nation_count, sizeof(int));
+  nations_used = wc_calloc(game.ruleset_control.playable_nation_count, sizeof(int));
 
   for (i = 0; i < game.ruleset_control.playable_nation_count; i++) {
     nations_used[i] = 1; /* Available (for now) */

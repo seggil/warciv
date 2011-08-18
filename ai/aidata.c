@@ -178,11 +178,11 @@ void ai_data_turn_init(struct player *pplayer)
 
   ai->num_continents    = map.num_continents;
   ai->num_oceans        = map.server.num_oceans;
-  ai->threats.continent = fc_calloc(ai->num_continents + 1, sizeof(bool));
+  ai->threats.continent = wc_calloc(ai->num_continents + 1, sizeof(bool));
   ai->threats.invasions = FALSE;
   ai->threats.air       = FALSE;
   ai->threats.nuclear   = 0; /* none */
-  ai->threats.ocean     = fc_calloc(ai->num_oceans + 1, sizeof(bool));
+  ai->threats.ocean     = wc_calloc(ai->num_oceans + 1, sizeof(bool));
   ai->threats.igwall    = FALSE;
 
   players_iterate(aplayer) {
@@ -264,8 +264,8 @@ void ai_data_turn_init(struct player *pplayer)
 
   ai->explore.land_done = TRUE;
   ai->explore.sea_done = TRUE;
-  ai->explore.continent = fc_calloc(ai->num_continents + 1, sizeof(bool));
-  ai->explore.ocean = fc_calloc(ai->num_oceans + 1, sizeof(bool));
+  ai->explore.continent = wc_calloc(ai->num_continents + 1, sizeof(bool));
+  ai->explore.ocean = wc_calloc(ai->num_oceans + 1, sizeof(bool));
   whole_map_iterate(ptile) {
     Continent_id continent = map_get_continent(ptile);
 
@@ -299,8 +299,8 @@ void ai_data_turn_init(struct player *pplayer)
 
   /*** Statistics ***/
 
-  ai->stats.workers = fc_calloc(ai->num_continents + 1, sizeof(int));
-  ai->stats.cities = fc_calloc(ai->num_continents + 1, sizeof(int));
+  ai->stats.workers = wc_calloc(ai->num_continents + 1, sizeof(int));
+  ai->stats.cities = wc_calloc(ai->num_continents + 1, sizeof(int));
   ai->stats.average_production = 0;
   city_list_iterate(pplayer->cities, pcity) {
     ai->stats.cities[(int)map_get_continent(pcity->tile)]++;

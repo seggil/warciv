@@ -1036,7 +1036,7 @@ new_bg_map_know_and_see_all_context(struct player *pplayer)
 {
   struct bg_map_know_and_see_all_context *context;
 
-  context = fc_calloc(1, sizeof(*context));
+  context = wc_calloc(1, sizeof(*context));
   context->player = pplayer;
 
   return context;

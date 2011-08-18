@@ -814,7 +814,7 @@ static struct kickinfo *kickinfo_new(struct connection *pconn)
 {
   struct kickinfo *ki;
 
-  ki = fc_calloc(1, sizeof(*ki));
+  ki = wc_calloc(1, sizeof(*ki));
   ki->time_of_kick = time(NULL);
   sz_strlcpy(ki->addr, pconn->server.ipaddr);
   sz_strlcpy(ki->user, pconn->username);

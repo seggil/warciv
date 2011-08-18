@@ -1757,7 +1757,7 @@ bool is_build_or_clean_activity(enum unit_activity activity)
 struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
                                  Unit_Type_id type, int veteran_level)
 {
-  struct unit *punit = fc_calloc(1, sizeof(struct unit));
+  struct unit *punit = wc_calloc(1, sizeof(struct unit));
 
   punit->type = type;
   punit->owner = pplayer->player_no;

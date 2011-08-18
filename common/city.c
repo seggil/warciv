@@ -2519,7 +2519,7 @@ void city_styles_alloc(int num)
   // idiosyncracy, visualization is server dependant
   // server provides datas and allow client customization
   // we are adding city_style "none"
-  city_styles = fc_calloc(num+1, sizeof(struct citystyle));
+  city_styles = wc_calloc(num+1, sizeof(struct citystyle));
   game.ruleset_control.style_count = num+1;
   // see client/packethand.c, handle_ruleset_control()
 }

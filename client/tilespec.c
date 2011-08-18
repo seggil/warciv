@@ -1375,7 +1375,7 @@ static void tilespec_lookup_sprite_tags(void)
   if (num_tiles_explode_unit==0) {
     sprites.explode.unit = NULL;
   } else {
-    sprites.explode.unit = fc_calloc(num_tiles_explode_unit,
+    sprites.explode.unit = wc_calloc(num_tiles_explode_unit,
                                      sizeof(struct Sprite *));
 
     for (i = 0; i < num_tiles_explode_unit; i++) {
@@ -2942,13 +2942,13 @@ void tilespec_alloc_city_tiles(int count)
   int i;
 
   if (is_isometric)
-    sprites.city.tile_wall = fc_calloc( count, sizeof(struct Sprite**) );
-  sprites.city.tile = fc_calloc( count, sizeof(struct Sprite**) );
+    sprites.city.tile_wall = wc_calloc( count, sizeof(struct Sprite**) );
+  sprites.city.tile = wc_calloc( count, sizeof(struct Sprite**) );
 
   for (i=0; i<count; i++) {
     if (is_isometric)
-      sprites.city.tile_wall[i] = fc_calloc(MAX_CITY_TILES+2, sizeof(struct Sprite*));
-    sprites.city.tile[i] = fc_calloc(MAX_CITY_TILES+2, sizeof(struct Sprite*));
+      sprites.city.tile_wall[i] = wc_calloc(MAX_CITY_TILES+2, sizeof(struct Sprite*));
+    sprites.city.tile[i] = wc_calloc(MAX_CITY_TILES+2, sizeof(struct Sprite*));
   }
 }
 

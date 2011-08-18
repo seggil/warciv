@@ -674,7 +674,7 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
 
     pserver->nvars = j;
     if (pserver->nvars > 0) {
-      pserver->vars = fc_calloc(pserver->nvars, sizeof(*pserver->vars));
+      pserver->vars = wc_calloc(pserver->nvars, sizeof(*pserver->vars));
     } else {
       pserver->vars = NULL;
     }
@@ -1218,7 +1218,7 @@ int create_server_list_async(char *errbuf, int n_errbuf,
     return -1;
   }
 
-  ctx = fc_calloc(1, sizeof(struct async_slist_ctx));
+  ctx = wc_calloc(1, sizeof(struct async_slist_ctx));
   freelog(LOG_DEBUG, "csla new async_slist_ctx %p", ctx);
   ctx->guard = ASYNC_SLIST_CTX_MEMORY_GUARD;
 

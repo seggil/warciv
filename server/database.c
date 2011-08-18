@@ -1326,7 +1326,7 @@ static char *etm_encode_terrain_map(void)
   }
 
   len = get_termap_len();
-  termap = fc_calloc(1, len);
+  termap = wc_calloc(1, len);
 
   termap[0] = FCDB_ETM_FILE_IDENTIFIER;
   termap[1] = FCDB_ETM_VERSION;
@@ -1373,7 +1373,7 @@ static char *etm_encode_turn_map(const char *termap,
   }
 
   len = get_turnmap_len();
-  turnmap = fc_calloc(1, len);
+  turnmap = wc_calloc(1, len);
 
   rdict = get_termap_rdict(termap);
 
@@ -2129,7 +2129,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
 
   fcdb_connect_or_return(sock, NULL);
 
-  fus = fc_calloc(1, sizeof(struct fcdb_user_stats));
+  fus = wc_calloc(1, sizeof(struct fcdb_user_stats));
 
   if (username == NULL || username[0] == '\0') {
     /* Don't bother searching for an empty user name,
@@ -2222,7 +2222,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
   res = mysql_store_result(sock);
   fus->num_game_types = mysql_num_rows(res);
   if (fus->num_game_types > 0) {
-    fus->gt_stats = fc_calloc(fus->num_game_types,
+    fus->gt_stats = wc_calloc(fus->num_game_types,
                               sizeof(struct game_type_stats));
     for (i = 0; i < fus->num_game_types; i++) {
       row = mysql_fetch_row(res);
@@ -2476,7 +2476,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
       id);
   fcdb_execute_or_return(sock, buf, NULL);
 
-  fgi = fc_calloc(1, sizeof(struct fcdb_game_info));
+  fgi = wc_calloc(1, sizeof(struct fcdb_game_info));
 
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) != 1) {
@@ -2552,7 +2552,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   res = mysql_store_result(sock);
   fgi->num_players = mysql_num_rows(res);
   if (fgi->num_players > 0) {
-    fgi->players = fc_calloc(fgi->num_players,
+    fgi->players = wc_calloc(fgi->num_players,
                              sizeof(struct fcdb_player_in_game_info));
     for (i = 0; i < fgi->num_players; i++) {
       row = mysql_fetch_row(res);
@@ -2669,7 +2669,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   res = mysql_store_result(sock);
   fgi->num_teams = mysql_num_rows(res);
   if (fgi->num_teams > 0) {
-    fgi->teams = fc_calloc(fgi->num_teams,
+    fgi->teams = wc_calloc(fgi->num_teams,
                            sizeof(struct fcdb_team_in_game_info));
     for (i = 0; i < fgi->num_teams; i++) {
       row = mysql_fetch_row(res);
@@ -2755,7 +2755,7 @@ struct fcdb_topten_info *fcdb_topten_info_new(int type)
   fcdb_execute_or_return(sock, buf, NULL);
 
   res = mysql_store_result(sock);
-  ftti = fc_calloc(1, sizeof(struct fcdb_topten_info));
+  ftti = wc_calloc(1, sizeof(struct fcdb_topten_info));
   ftti->count = mysql_num_rows(res);
 
   if (ftti->count <= 0) {
@@ -2764,7 +2764,7 @@ struct fcdb_topten_info *fcdb_topten_info_new(int type)
     return ftti;
   }
 
-  ftti->entries = fc_calloc(ftti->count,
+  ftti->entries = wc_calloc(ftti->count,
                             sizeof(struct fcdb_topten_info_entry));
 
   for (i = 0; i < ftti->count; i++) {
@@ -2858,7 +2858,7 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
 
   fcdb_connect_or_return(sock, NULL);
 
-  fgl = fc_calloc(1, sizeof(struct fcdb_gamelist));
+  fgl = wc_calloc(1, sizeof(struct fcdb_gamelist));
 
   if (first > 0 || last > 0) {
     if (first < 1) {
@@ -2935,7 +2935,7 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
   res = mysql_store_result(sock);
   fgl->count = mysql_num_rows(res);
   if (fgl->count > 0) {
-    fgl->entries = fc_calloc(fgl->count,
+    fgl->entries = wc_calloc(fgl->count,
                              sizeof(struct fcdb_gamelist_entry));
     for (i = fgl->count - 1; i >= 0; i--) {
       fgle = &fgl->entries[i];
@@ -3003,7 +3003,7 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
   fcdb_reset_escape_buffer();
   fcdb_execute_or_return(sock, buf, NULL);
 
-  fal = fc_calloc(1, sizeof(struct fcdb_aliaslist));
+  fal = wc_calloc(1, sizeof(struct fcdb_aliaslist));
 
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) != 1) {
@@ -3049,7 +3049,7 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
     fal->count = mysql_num_rows(res);
 
     if (fal->count > 0) {
-      fal->entries = fc_calloc(fal->count,
+      fal->entries = wc_calloc(fal->count,
                                sizeof(struct fcdb_aliaslist_entry));
       for (i = 0; i < fal->count; i++) {
         row = mysql_fetch_row(res);

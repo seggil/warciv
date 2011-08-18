@@ -343,7 +343,7 @@ void load_cursors(void)
 SPRITE *ctor_sprite_mask( GdkPixmap *mypixmap, GdkPixmap *mask,
                           int width, int height )
 {
-  SPRITE *mysprite = fc_calloc(1, sizeof(SPRITE));
+  SPRITE *mysprite = wc_calloc(1, sizeof(SPRITE));
 
   mysprite->pixmap= mypixmap;
   mysprite->fogged = NULL;
@@ -408,7 +408,7 @@ struct Sprite *load_gfxfile(const char *filename)
     exit(EXIT_FAILURE);
   }
 
-  mysprite = fc_calloc(1, sizeof(struct Sprite));
+  mysprite = wc_calloc(1, sizeof(struct Sprite));
 
   w = gdk_pixbuf_get_width(im);
   h = gdk_pixbuf_get_height(im);

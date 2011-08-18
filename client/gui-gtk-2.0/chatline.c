@@ -988,7 +988,7 @@ struct tag_pattern *tag_pattern_new(const char *name, const char *pattern,
   assert(pattern != NULL);
   assert(jump_target != NULL);
 
-  ptagpat = fc_calloc(1, sizeof(struct tag_pattern));
+  ptagpat = wc_calloc(1, sizeof(struct tag_pattern));
 
   ptagpat->tag_name = mystrdup(name);
   ptagpat->pattern = mystrdup(pattern);

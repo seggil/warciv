@@ -1339,7 +1339,7 @@ void put_nuke_mushroom_pixmaps(struct tile *ptile)
 
   if (clear_nuke_tid == 0) {
     struct nuke_graphic_info *ngi;
-    ngi = fc_calloc(1, sizeof(*ngi));
+    ngi = wc_calloc(1, sizeof(*ngi));
     ngi->x = canvas_x;
     ngi->y = canvas_y;
     ngi->width = width;

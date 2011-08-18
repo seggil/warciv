@@ -417,16 +417,16 @@ bool pf_next(struct path_finding_map *pf_map)
 ******************************************************************/
 static struct path_finding_map *create_map(bool with_danger)
 {
-  struct path_finding_map *pf_map = fc_calloc(1, sizeof(struct path_finding_map));
+  struct path_finding_map *pf_map = wc_calloc(1, sizeof(struct path_finding_map));
 
   pf_map->lattice = wc_malloc(sizeof(struct path_finding_node) * MAX_MAP_INDEX);
   pf_map->queue = pq_create(INITIAL_QUEUE_SIZE);
-  pf_map->status = fc_calloc(MAX_MAP_INDEX, sizeof(*(pf_map->status)));
+  pf_map->status = wc_calloc(MAX_MAP_INDEX, sizeof(*(pf_map->status)));
 
   if (with_danger) {
     /* Initialize stuff for dangerous positions.
      * Otherwise they stay NULL */
-    pf_map->d_lattice = fc_calloc(MAX_MAP_INDEX, sizeof(struct danger_node));
+    pf_map->d_lattice = wc_calloc(MAX_MAP_INDEX, sizeof(struct danger_node));
     pf_map->danger_queue = pq_create(INITIAL_QUEUE_SIZE);
   }
 

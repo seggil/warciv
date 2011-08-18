@@ -102,7 +102,7 @@ void *wc_real_realloc(void *ptr, size_t size,
 }
 
 /**********************************************************************
- Function used by fc_calloc macro, calloc() replacement
+ Function used by wc_calloc macro, calloc() replacement
  No need to check return value.
 
  I'm pretty sure only the product of nelem and elsize can ever

@@ -683,7 +683,7 @@ void dio_get_uint8_vec8(struct data_in *din, int **values, int stop_value)
 
   dio_get_uint8(din, &count);
   if (values) {
-    *values = fc_calloc((count + 1), sizeof(**values));
+    *values = wc_calloc((count + 1), sizeof(**values));
   }
   for (inx = 0; inx < count; inx++) {
     dio_get_uint8(din, values ? &((*values)[inx]) : NULL);
@@ -702,7 +702,7 @@ void dio_get_uint16_vec8(struct data_in *din, int **values, int stop_value)
 
   dio_get_uint8(din, &count);
   if (values) {
-    *values = fc_calloc((count + 1), sizeof(**values));
+    *values = wc_calloc((count + 1), sizeof(**values));
   }
   for (inx = 0; inx < count; inx++) {
     dio_get_uint16(din, values ? &((*values)[inx]) : NULL);

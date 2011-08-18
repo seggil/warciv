@@ -1978,7 +1978,7 @@ void voteinfo_queue_add(int vote_no,
     return;
   }
 
-  vi = fc_calloc(1, sizeof(struct voteinfo));
+  vi = wc_calloc(1, sizeof(struct voteinfo));
   vi->vote_no = vote_no;
   sz_strlcpy(vi->user, user);
   sz_strlcpy(vi->desc, desc);

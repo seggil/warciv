@@ -1913,7 +1913,7 @@ void handle_conn_info(struct packet_conn_info *pinfo)
       freelog(LOG_VERBOSE, "Server reports new connection %d %s",
               pinfo->id, pinfo->username);
 
-      pconn = fc_calloc(1, sizeof(struct connection));
+      pconn = wc_calloc(1, sizeof(struct connection));
       pconn->buffer = NULL;
       pconn->send_buffer = NULL;
       pconn->ping_time = -1.0;
@@ -2655,7 +2655,7 @@ void handle_ruleset_government(struct packet_ruleset_government *p)
   sz_strlcpy(gov->graphic_str, p->graphic_str);
   sz_strlcpy(gov->graphic_alt, p->graphic_alt);
 
-  gov->ruler_titles = fc_calloc(gov->num_ruler_titles,
+  gov->ruler_titles = wc_calloc(gov->num_ruler_titles,
                                 sizeof(struct ruler_title));
 
   gov->helptext = mystrdup(p->helptext);

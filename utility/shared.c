@@ -1723,7 +1723,7 @@ void string_vector_reserve(struct string_vector *psv, size_t reserve)
     return;
   } else if (!psv->vec) {
     /* Initial reserve */
-    psv->vec = fc_calloc(reserve, sizeof(char *));
+    psv->vec = wc_calloc(reserve, sizeof(char *));
   } else if (reserve > psv->size) {
     /* Expand the vector. */
     psv->vec = wc_realloc(psv->vec, reserve * sizeof(char *));

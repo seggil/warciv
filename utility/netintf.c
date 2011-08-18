@@ -292,7 +292,7 @@ int adns_lookup_full(const char *query_data,
   check_init_lookup_tables();
   assert(dns != NULL);
 
-  ctx = fc_calloc(1, sizeof(struct adns_ctx));
+  ctx = wc_calloc(1, sizeof(struct adns_ctx));
   freelog(LOG_DEBUG, "alf new adns_ctx %p", ctx);
   ctx->guard = ADNS_CTX_MEMORY_GUARD;
   ctx->callback = cb;
@@ -505,13 +505,13 @@ int net_lookup_service_async(const char *name, int port,
   freelog(LOG_DEBUG, "nlsa net_lookup_service_async name=\"%s\" port=%d "
           "cb=%p data=%p datafree=%p", name, port, cb, data, datafree);
 
-  ctx = fc_calloc(1, sizeof(struct net_lookup_ctx));
+  ctx = wc_calloc(1, sizeof(struct net_lookup_ctx));
   freelog(LOG_DEBUG, "nlsa new net_lookup_ctx %p", ctx);
   ctx->guard = NET_LOOKUP_CTX_MEMORY_GUARD;
   ctx->callback = cb;
   ctx->userdata = data;
   ctx->datafree = datafree;
-  ctx->addr = fc_calloc(1, sizeof(union my_sockaddr));
+  ctx->addr = wc_calloc(1, sizeof(union my_sockaddr));
   ctx->req_id = 0;
   ctx->adns_id = -1;
 

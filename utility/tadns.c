@@ -232,7 +232,7 @@ struct dns *dns_new(void)
   int rcvbufsiz = 64 * 1024;
   uint32_t seed;
 
-  dns = fc_calloc(1, sizeof(struct dns));
+  dns = wc_calloc(1, sizeof(struct dns));
   dns->sock = -1;
 
   if ((dns->sock = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
@@ -688,7 +688,7 @@ void dns_queue(struct dns *dns,
   }
 
   /* Allocate new query */
-  query = fc_calloc(1, sizeof(struct query));
+  query = wc_calloc(1, sizeof(struct query));
 
   freelog(LOG_DEBUG, "dq new query %p", query);
 
