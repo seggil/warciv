@@ -26,7 +26,7 @@
 #include "map.h"
 #include "mem.h"
 #include "packets.h"
-#include "pf_tools.h"
+//#include "aicore/pf_tools.h"
 #include "player.h"
 #include "rand.h"
 #include "shared.h"
@@ -43,8 +43,8 @@
 #include "unithand.h"
 #include "unittools.h"
 
-#include "path_finding.h"
-#include "pf_tools.h"
+#include "aicore/path_finding.h"
+#include "aicore/pf_tools.h"
 
 #include "advmilitary.h"
 #include "aiair.h"

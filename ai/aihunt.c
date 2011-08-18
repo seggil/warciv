@@ -22,7 +22,7 @@
 #include "game.h"
 #include "map.h"
 #include "log.h"
-#include "pf_tools.h"
+#include "aicore/pf_tools.h"
 #include "player.h"
 #include "unit.h"
 

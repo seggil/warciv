@@ -27,7 +27,7 @@
 #include "shared.h"
 #include "unit.h"
 
-#include "cm.h"
+#include "aicore/cm.h"
 
 #include "citytools.h"
 #include "cityturn.h"

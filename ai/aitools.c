@@ -29,9 +29,9 @@
 #include "shared.h"
 #include "unit.h"
 
-#include "citymap.h"
-#include "path_finding.h"
-#include "pf_tools.h"
+#include "aicore/citymap.h"
+#include "aicore/path_finding.h"
+#include "aicore/pf_tools.h"
 
 #include "airgoto.h"
 #include "barbarian.h"

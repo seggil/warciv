@@ -26,8 +26,8 @@
 #include "mem.h"
 #include "log.h"
 #include "packets.h"
-#include "path_finding.h"
-#include "pf_tools.h"
+#include "aicore/path_finding.h"
+#include "aicore/pf_tools.h"
 #include "player.h"
 #include "support.h"
 #include "timing.h"
@@ -44,7 +44,7 @@
 #include "ailog.h"
 #include "aitools.h"
 #include "aiunit.h"
-#include "citymap.h"
+#include "aicore/citymap.h"
 
 #include "aisettler.h"
 

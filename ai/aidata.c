@@ -15,7 +15,7 @@
 # include "../config.h"
 #endif
 
-#include "aisupport.h"
+#include "aicore/aisupport.h"
 #include "city.h"
 #include "effects.h"
 #include "game.h"

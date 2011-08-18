@@ -18,7 +18,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "aisupport.h"
+#include "aicore/aisupport.h"
 #include "city.h"
 #include "diptreaty.h"
 #include "events.h"

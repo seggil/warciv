@@ -21,8 +21,8 @@
 #include "player.h"
 #include "unit.h"
 
-#include "path_finding.h"
-#include "pf_tools.h"
+#include "aicore/path_finding.h"
+#include "aicore/pf_tools.h"
 
 #include "maphand.h"
 
