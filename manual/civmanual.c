@@ -39,7 +39,7 @@
 #include "version.h"
 
 #include "helpdata.h"
-#include "helpdlg_g.h"
+#include "include/helpdlg_g.h"
 
 #include "citytools.h"
 #include "connecthand.h"
