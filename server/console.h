@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_CONSOLE_H
 #define WC_SERVER_CONSOLE_H
 
-#include "shared.h"             /* bool type and fc__attribute */
+#include "shared.h"             /* bool type and wc__attribute */
 
 #define MAX_LEN_CONSOLE_LINE 512        /* closing \0 included */
 
@@ -55,7 +55,7 @@ void con_log_init(const char *log_filename, int log_level);
 
 /* write to console and add line-break, and show prompt if required. */
 void con_write(enum rfc_status rfc_status, const char *message, ...)
-     fc__attribute((__format__ (__printf__, 2, 3)));
+     wc__attribute((__format__ (__printf__, 2, 3)));
 
 /* write to console and add line-break, and show prompt if required.
    ie, same as con_write, but without the format string stuff. */

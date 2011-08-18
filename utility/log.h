@@ -15,7 +15,7 @@
 
 #include <stdarg.h>
 
-#include "shared.h"             /* bool type and fc__attribute */
+#include "shared.h"             /* bool type and wc__attribute */
 
 #define LOG_FATAL   0
 #define LOG_ERROR   1           /* non-fatal errors */
@@ -59,7 +59,7 @@ void log_set_callback(log_callback_fn callback);
 
 void real_freelog(int level, const char *file, int line,
                   const char *fncname, const char *message, ...)
-                  fc__attribute((__format__ (__printf__, 5, 6)));
+                  wc__attribute((__format__ (__printf__, 5, 6)));
 
 void vreal_freelog(int level, const char *message, va_list ap);
 

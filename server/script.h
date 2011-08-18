@@ -20,6 +20,6 @@ bool script_load(lua_State *L, const char *filename);
 bool script_check_func(lua_State *L, const char *scriptname,
                        const char *funcname);
 bool script_call(lua_State *L, const char *func, const char *sig, ...)
-                 fc__attribute((__format__ (__printf__, 3, 4)));
+                 wc__attribute((__format__ (__printf__, 3, 4)));
 
 #endif /* WC_SERVER_SCRIPT_H */

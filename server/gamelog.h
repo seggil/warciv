@@ -14,7 +14,7 @@
 #ifndef WC_SERVER_GAMELOG_H
 #define WC_SERVER_GAMELOG_H
 
-#include "shared.h"             /* fc__attribute */
+#include "shared.h"             /* wc__attribute */
 
 enum {
   GAMELOG_BEGIN,

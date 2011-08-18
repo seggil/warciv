@@ -36,7 +36,7 @@ char *local_to_internal_string_buffer(const char *text,
 
 #define wc_printf(...) wc_fprintf(stdout, __VA_ARGS__)
 void wc_fprintf(FILE *stream, const char *format, ...)
-      fc__attribute((__format__ (__printf__, 2, 3)));
+      wc__attribute((__format__ (__printf__, 2, 3)));
 
 size_t get_internal_string_length(const char *text);
 

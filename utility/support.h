@@ -28,7 +28,7 @@
 # include <sys/types.h>
 #endif
 
-#include "shared.h"             /* bool type and fc__attribute */
+#include "shared.h"             /* bool type and wc__attribute */
 
 int mystrcasecmp(const char *str0, const char *str1);
 int mystrncasecmp(const char *str0, const char *str1, size_t n);
@@ -48,7 +48,7 @@ size_t mystrlcat(char *dest, const char *src, size_t n);
 #define sz_strlcat(dest,src) ((void)mystrlcat((dest),(src),sizeof(dest)))
 
 int my_snprintf(char *str, size_t n, const char *format, ...)
-     fc__attribute((__format__ (__printf__, 3, 4)));
+     wc__attribute((__format__ (__printf__, 3, 4)));
 
 int my_vsnprintf(char *str, size_t n, const char *format, va_list ap );
 

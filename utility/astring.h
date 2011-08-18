@@ -42,7 +42,7 @@ void astr_free(struct astring *astr);
 void astr_clear(struct astring *astr);
 void astr_append(struct astring *astr, const char *s);
 void astr_append_printf(struct astring *astr, const char *format, ...)
-      fc__attribute((__format__(__printf__, 2, 3)));
+      wc__attribute((__format__(__printf__, 2, 3)));
 size_t astr_size(struct astring *astr);
 size_t astr_capacity(struct astring *astr);
 const char *astr_get_data(struct astring *astr);

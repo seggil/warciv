@@ -21,7 +21,7 @@
 
 #include <stdio.h>              /* FILE */
 
-#include "shared.h"             /* fc__attribute */
+#include "shared.h"             /* wc__attribute */
 
 struct fz_FILE_s;                 /* opaque */
 typedef struct fz_FILE_s fz_FILE;
@@ -36,7 +36,7 @@ fz_FILE *fz_from_stream(FILE *stream);
 int fz_fclose(fz_FILE *fp);
 char *fz_fgets(char *buffer, int size, fz_FILE *fp);
 int fz_fprintf(fz_FILE *fp, const char *format, ...)
-     fc__attribute((__format__ (__printf__, 2, 3)));
+     wc__attribute((__format__ (__printf__, 2, 3)));
 
 int fz_ferror(fz_FILE *fp);
 const char *fz_strerror(fz_FILE *fp);

@@ -15,7 +15,7 @@
 
 #include <stdarg.h>
 
-#include "shared.h"             /* fc__attribute */
+#include "shared.h"             /* wc__attribute */
 
 #include "events.h"
 #include "wc_types.h"
@@ -45,22 +45,22 @@ void send_player_info_c(struct player *src, struct conn_list *dest);
 
 void notify_conn_ex(struct conn_list *dest, struct tile *ptile,
                     enum event_type event, const char *format, ...)
-                    fc__attribute((__format__ (__printf__, 4, 5)));
+                    wc__attribute((__format__ (__printf__, 4, 5)));
 void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
                      enum event_type event, const char *format,
                      va_list vargs);
 void notify_conn(struct conn_list *dest, const char *format, ...)
-                 fc__attribute((__format__ (__printf__, 2, 3)));
+                 wc__attribute((__format__ (__printf__, 2, 3)));
 void notify_player_ex(const struct player *pplayer, struct tile *ptile,
                       enum event_type event, const char *format, ...)
-                      fc__attribute((__format__ (__printf__, 4, 5)));
+                      wc__attribute((__format__ (__printf__, 4, 5)));
 void notify_player(const struct player *pplayer, const char *format, ...)
-                   fc__attribute((__format__ (__printf__, 2, 3)));
+                   wc__attribute((__format__ (__printf__, 2, 3)));
 void notify_embassies(struct player *pplayer, struct player *exclude,
                       const char *format, ...)
-                      fc__attribute((__format__ (__printf__, 3, 4)));
+                      wc__attribute((__format__ (__printf__, 3, 4)));
 void notify_team(const struct team *pteam, const char *format, ...)
-                 fc__attribute((__format__ (__printf__, 2, 3)));
+                 wc__attribute((__format__ (__printf__, 2, 3)));
 void notify_enabled(bool yes);
 
 struct conn_list *player_reply_dest(struct player *pplayer);
