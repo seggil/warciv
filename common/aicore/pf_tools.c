@@ -601,10 +601,10 @@ struct pf_path *pft_concat(struct pf_path *dest_path,
                            const struct pf_path *src_path)
 {
   if (!dest_path) {
-    dest_path = fc_malloc(sizeof(*dest_path));
+    dest_path = wc_malloc(sizeof(*dest_path));
     dest_path->length = src_path->length;
     dest_path->positions =
-        fc_malloc(sizeof(*dest_path->positions) * dest_path->length);
+        wc_malloc(sizeof(*dest_path->positions) * dest_path->length);
     memcpy(dest_path->positions, src_path->positions,
            sizeof(*dest_path->positions) * dest_path->length);
   } else {

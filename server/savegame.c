@@ -435,7 +435,7 @@ free().
 ***************************************************************/
 static char *quote_block(const void *const data, int length)
 {
-  char *buffer = fc_malloc(length * 3 + 10);
+  char *buffer = wc_malloc(length * 3 + 10);
   size_t offset;
   int i;
 
@@ -1551,7 +1551,7 @@ static void load_player_units(struct player *plr, int plrno,
       if (len > 0) {
         char *orders_buf, *dir_buf, *act_buf;
 
-        punit->orders.list = fc_malloc(len * sizeof(*(punit->orders.list)));
+        punit->orders.list = wc_malloc(len * sizeof(*(punit->orders.list)));
         punit->orders.length = len;
         punit->orders.index = secfile_lookup_int_default(file, 0,
                         "player%d.u%d.orders_index", plrno, i);
@@ -2328,11 +2328,11 @@ static void player_load(struct player *plr, int plrno,
     size_t quoted_length;
     char *quoted;
 
-    plr->attribute_block.data = fc_malloc(plr->attribute_block.length);
+    plr->attribute_block.data = wc_malloc(plr->attribute_block.length);
 
     quoted_length = secfile_lookup_int
         (file, "player%d.attribute_v2_block_length_quoted", plrno);
-    quoted = fc_malloc(quoted_length + 1);
+    quoted = wc_malloc(quoted_length + 1);
     quoted[0] = '\0';
 
     parts =
@@ -2458,7 +2458,7 @@ static void player_map_load(struct player *plr, int plrno,
         nat_y = secfile_lookup_int(file, "player%d.dc%d.y", plrno, j);
         ptile = native_pos_to_tile(nat_x, nat_y);
 
-        pdcity = fc_malloc(sizeof(struct dumb_city));
+        pdcity = wc_malloc(sizeof(struct dumb_city));
         pdcity->id = secfile_lookup_int(file, "player%d.dc%d.id", plrno, j);
         sz_strlcpy(pdcity->name, secfile_lookup_str(file, "player%d.dc%d.name", plrno, j));
         pdcity->size = secfile_lookup_int(file, "player%d.dc%d.size", plrno, j);

@@ -114,7 +114,7 @@ void post_send_packet_game_state(struct connection *pc,
 
 #define RECEIVE_PACKET_START(type, result) \
   struct data_in din; \
-  struct type *result = fc_malloc(sizeof(*result)); \
+  struct type *result = wc_malloc(sizeof(*result)); \
   \
   dio_input_init(&din, pconn->buffer->data, 2); \
   { \

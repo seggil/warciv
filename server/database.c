@@ -981,7 +981,7 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
 
   len = get_termap_len();
   len_comp_max = 1001 * len / 1000 + 64;
-  tmap_comp = fc_malloc(len_comp_max);
+  tmap_comp = wc_malloc(len_comp_max);
 
   len_comp = len_comp_max; /* Satisfy zlib. */
 
@@ -1109,7 +1109,7 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
 
   len = get_turnmap_len();
   len_comp_max = 1001 * len / 1000 + 64;
-  tmap_comp = fc_malloc(len_comp_max);
+  tmap_comp = wc_malloc(len_comp_max);
 
   len_comp = len_comp_max; /* Satisfy zlib. */
 
@@ -1508,7 +1508,7 @@ static bool reload_termap()
     row = mysql_fetch_row(res);
     lengths = mysql_fetch_lengths(res);
     len = get_termap_len();
-    game.server.fcdb.termap = fc_malloc(len);
+    game.server.fcdb.termap = wc_malloc(len);
 
     switch (uncompress((unsigned char *)game.server.fcdb.termap, &len,
                        (unsigned char *)row[0], lengths[0])) {

@@ -341,7 +341,7 @@ static void tile_type_init(struct cm_tile_type *type)
 ****************************************************************************/
 static struct cm_tile_type *tile_type_dup(const struct cm_tile_type *oldtype)
 {
-  struct cm_tile_type *newtype = fc_malloc(sizeof(*newtype));
+  struct cm_tile_type *newtype = wc_malloc(sizeof(*newtype));
 
   memcpy(newtype, oldtype, sizeof(*oldtype));
   tile_vector_init(&newtype->tiles);
@@ -1715,7 +1715,7 @@ struct cm_state *cm_init_state(struct city *pcity)
 {
   int numtypes;
   enum cm_stat stat;
-  struct cm_state *state = fc_malloc(sizeof(*state));
+  struct cm_state *state = wc_malloc(sizeof(*state));
 
   freelog(LOG_CM_STATE, "creating cm_state for %s (size %d)",
           pcity->name, pcity->size);
@@ -1744,7 +1744,7 @@ struct cm_state *cm_init_state(struct city *pcity)
 
   /* Initialize the current solution and choice stack to empty */
   init_partial_solution(&state->current, numtypes, pcity->size);
-  state->choice.stack = fc_malloc(pcity->size
+  state->choice.stack = wc_malloc(pcity->size
                                   * sizeof(*state->choice.stack));
   state->choice.size = 0;
 

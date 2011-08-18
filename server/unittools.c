@@ -3213,7 +3213,7 @@ bool execute_orders(struct unit *punit)
           punit->orders.index = 0;
           punit->orders.repeat = FALSE;
           punit->orders.vigilant = FALSE;
-          punit->orders.list = fc_malloc(sizeof(order));
+          punit->orders.list = wc_malloc(sizeof(order));
           punit->orders.list[0] = order;
         }
         send_unit_info(NULL, punit);

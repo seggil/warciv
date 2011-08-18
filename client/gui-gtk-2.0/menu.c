@@ -512,7 +512,7 @@ static void take_screenshot(void)
   }
 
   len = strlen(homedir) + 64;
-  filepath = fc_malloc(len);
+  filepath = wc_malloc(len);
   my_snprintf(filepath, len, "%s%scivclient000.png",
               homedir, G_DIR_SEPARATOR_S);
   p = strrchr(filepath, '0') - 2;

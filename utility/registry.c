@@ -1410,7 +1410,7 @@ void secfilehash_build(struct section_file *file, bool allow_duplicates)
   struct hash_data *hashd;
   char buf[256];
 
-  hashd = file->hashd = fc_malloc(sizeof(struct hash_data));
+  hashd = file->hashd = wc_malloc(sizeof(struct hash_data));
   hashd->htbl = hash_new_nentries(hash_fval_string, hash_fcmp_string,
                                   file->num_entries);
 
@@ -1489,7 +1489,7 @@ int *secfile_lookup_int_vec(struct section_file *my_section_file,
   if (*dimen == 0) {
     return NULL;
   }
-  res = fc_malloc((*dimen)*sizeof(int));
+  res = wc_malloc((*dimen)*sizeof(int));
   for(j=0; j<(*dimen); j++) {
     res[j] = secfile_lookup_int(my_section_file, "%s,%d", buf, j);
   }
@@ -1521,7 +1521,7 @@ char **secfile_lookup_str_vec(struct section_file *my_section_file,
   if (*dimen == 0) {
     return NULL;
   }
-  res = fc_malloc((*dimen)*sizeof(char*));
+  res = wc_malloc((*dimen)*sizeof(char*));
   for(j=0; j<(*dimen); j++) {
     res[j] = secfile_lookup_str(my_section_file, "%s,%d", buf, j);
   }
@@ -1650,7 +1650,7 @@ char **secfile_get_secnames_prefix(struct section_file *my_section_file,
     return NULL;
   }
 
-  ret = fc_malloc((*num) * sizeof(char*));
+  ret = wc_malloc((*num) * sizeof(char*));
 
   i = 0;
   section_list_iterate(my_section_file->sections, psection) {
@@ -1691,7 +1691,7 @@ char **secfile_get_section_entries(struct section_file *my_section_file,
     return NULL;
   }
 
-  ret = fc_malloc((*num) * sizeof(*ret));
+  ret = wc_malloc((*num) * sizeof(*ret));
 
   i = 0;
   entry_list_iterate(psection->entries, pentry) {

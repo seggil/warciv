@@ -565,7 +565,7 @@ void gamelog(int level, ...)
     /* this is big, so it's special */
     {
       int nat_x, nat_y, i = 0;
-      char *mapline = fc_malloc(((map.info.xsize + 1) * map.info.ysize) + 1);
+      char *mapline = wc_malloc(((map.info.xsize + 1) * map.info.ysize) + 1);
 
       for (nat_y = 0; nat_y < map.info.ysize; nat_y++) {
         for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {

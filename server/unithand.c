@@ -1547,7 +1547,7 @@ void handle_unit_orders(struct player *pplayer,
   punit->orders.repeat = packet->repeat;
   punit->orders.vigilant = packet->vigilant;
   punit->orders.list
-    = fc_malloc(packet->length * sizeof(*(punit->orders.list)));
+    = wc_malloc(packet->length * sizeof(*(punit->orders.list)));
   for (i = 0; i < packet->length; i++) {
     punit->orders.list[i].order = packet->orders[i];
     punit->orders.list[i].dir = packet->dir[i];

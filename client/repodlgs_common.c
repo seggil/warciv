@@ -235,7 +235,7 @@ void handle_options_settable_control(
 
   settable_options_free();
 
-  options_categories = fc_malloc(packet->ncategories * sizeof(char *));
+  options_categories = wc_malloc(packet->ncategories * sizeof(char *));
   num_options_categories = packet->ncategories;
 
   for (i = 0; i < num_options_categories; i++) {
@@ -247,7 +247,7 @@ void handle_options_settable_control(
     return;
   }
 
-  settable_options = fc_malloc(packet->nids * sizeof(struct options_settable));
+  settable_options = wc_malloc(packet->nids * sizeof(struct options_settable));
   num_settable_options = packet->nids;
 
   for (i = 0; i < num_settable_options; i++) {

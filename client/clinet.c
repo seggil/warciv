@@ -616,7 +616,7 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
   for (i = 0; i < nservers; i++) {
     char *host, *port, *version, *state, *message, *nplayers, *patches;
     struct server *pserver =
-        (struct server *) fc_malloc(sizeof(struct server));
+        (struct server *) wc_malloc(sizeof(struct server));
 
     host = secfile_lookup_str_default(file, "", "server%d.host", i);
     pserver->host = mystrdup(host);
@@ -641,7 +641,7 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
 
     if (pserver->nplayers > 0) {
       pserver->players =
-        fc_malloc(pserver->nplayers * sizeof(*pserver->players));
+        wc_malloc(pserver->nplayers * sizeof(*pserver->players));
     } else {
       pserver->players = NULL;
     }
@@ -866,7 +866,7 @@ static void process_metaserver_response(struct async_slist_ctx *ctx)
     return;
   }
 
-  newbuf = fc_malloc(sizeof(ctx->buf));
+  newbuf = wc_malloc(sizeof(ctx->buf));
   newsize = ctx->buflen;
 
   /* Prevent \" sequences in files which would produce problem for secfile_lookup
@@ -1576,7 +1576,7 @@ struct server_list *get_lan_server_list(void)
     freelog(LOG_DEBUG,
             ("Received a valid announcement from a server on the LAN."));
 
-    pserver =  (struct server*)fc_malloc(sizeof(struct server));
+    pserver =  (struct server*)wc_malloc(sizeof(struct server));
     pserver->host = mystrdup(servername);
     pserver->port = mystrdup(port);
     pserver->version = mystrdup(version);

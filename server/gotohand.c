@@ -123,7 +123,7 @@ static struct mappos_array *get_empty_array(void)
 {
   struct mappos_array *parray;
   if (!mappos_arrays[array_count])
-    mappos_arrays[array_count] = fc_malloc(sizeof(struct mappos_array));
+    mappos_arrays[array_count] = wc_malloc(sizeof(struct mappos_array));
   parray = mappos_arrays[array_count++];
   parray->first_pos = 0;
   parray->last_pos = -1;

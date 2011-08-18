@@ -419,7 +419,7 @@ static struct path_finding_map *create_map(bool with_danger)
 {
   struct path_finding_map *pf_map = fc_calloc(1, sizeof(struct path_finding_map));
 
-  pf_map->lattice = fc_malloc(sizeof(struct path_finding_node) * MAX_MAP_INDEX);
+  pf_map->lattice = wc_malloc(sizeof(struct path_finding_node) * MAX_MAP_INDEX);
   pf_map->queue = pq_create(INITIAL_QUEUE_SIZE);
   pf_map->status = fc_calloc(MAX_MAP_INDEX, sizeof(*(pf_map->status)));
 
@@ -445,7 +445,7 @@ struct path_finding_map *pf_create_map(const struct pf_parameter *const paramete
   assert(parameter->get_MC != NULL);
 
   /* Copy parameters */
-  pf_map->params = fc_malloc(sizeof(struct pf_parameter));
+  pf_map->params = wc_malloc(sizeof(struct pf_parameter));
   *pf_map->params = *parameter;
 
   /* Initialise starting coordinates */
@@ -600,7 +600,7 @@ static struct pf_path* construct_path(const struct path_finding_map *pf_map,
   }
 
   ptile = dest_tile;
-  path = fc_malloc(sizeof(*path));
+  path = wc_malloc(sizeof(*path));
 
   /* 1: Count the number of steps to get here.
    * To do it, backtrack until we hit the starting point */
@@ -619,7 +619,7 @@ static struct pf_path* construct_path(const struct path_finding_map *pf_map,
 
   /* 2: Allocate the memory */
   path->length = i + 1;
-  path->positions = fc_malloc((i+1) * sizeof(*(path->positions)));
+  path->positions = wc_malloc((i+1) * sizeof(*(path->positions)));
 
   /* 3: Backtrack again and fill the positions this time */
   ptile = dest_tile;
@@ -783,7 +783,7 @@ static void create_danger_segment(struct path_finding_map *pf_map,
   }
 
   /* Allocate memory for segment */
-  d_node1->danger_segment = fc_malloc(length * sizeof(struct pf_danger_pos));
+  d_node1->danger_segment = wc_malloc(length * sizeof(struct pf_danger_pos));
 
   /* Reset tile and node pointers for main iteration */
   ptile = pf_map->tile;
@@ -1044,7 +1044,7 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
 static struct pf_path *danger_construct_path(const struct path_finding_map *pf_map,
                                              struct tile *ptile)
 {
-  struct pf_path *path = fc_malloc(sizeof(*path));
+  struct pf_path *path = wc_malloc(sizeof(*path));
   int i;
   enum direction8 dir_next = -1;
   struct pf_danger_pos *danger_seg = NULL;      /* For danger segments */
@@ -1092,7 +1092,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
 
   /* Allocate memory for path */
   path->positions
-    = fc_malloc(length * sizeof(struct pf_position));
+    = wc_malloc(length * sizeof(struct pf_position));
   path->length = length;
 
   /* Reset variables for main iteration */

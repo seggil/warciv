@@ -39,7 +39,7 @@ bool placed_map_is_initialized(void)
 void create_placed_map(void)
 {
   assert(!placed_map_is_initialized());
-  placed_map = fc_malloc (sizeof(bool) * MAX_MAP_INDEX);
+  placed_map = wc_malloc (sizeof(bool) * MAX_MAP_INDEX);
   INITIALIZE_ARRAY(placed_map, MAX_MAP_INDEX, FALSE );
 }
 

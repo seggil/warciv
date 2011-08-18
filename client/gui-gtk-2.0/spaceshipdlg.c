@@ -198,7 +198,7 @@ struct spaceship_dialog *create_spaceship_dialog(struct player *pplayer)
   struct spaceship_dialog *pdialog;
   GtkWidget *hbox, *frame;
 
-  pdialog=fc_malloc(sizeof(struct spaceship_dialog));
+  pdialog=wc_malloc(sizeof(struct spaceship_dialog));
   pdialog->pplayer=pplayer;
 
   gui_dialog_new(&pdialog->shell, GTK_NOTEBOOK(top_notebook));

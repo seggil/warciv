@@ -385,7 +385,7 @@ void *get_packet_from_connection(struct connection *pc,
      * here: an expansion by an factor of 100.
      */
     uLongf decompressed_size = 100 * compressed_size;
-    void *decompressed = fc_malloc(decompressed_size);
+    void *decompressed = wc_malloc(decompressed_size);
     int error;
     struct socket_packet_buffer *buffer = pc->buffer;
 
@@ -627,7 +627,7 @@ void generic_handle_player_attribute_chunk(struct player *pplayer,
       free(pplayer->attribute_block_buffer.data);
       pplayer->attribute_block_buffer.data = NULL;
     }
-    pplayer->attribute_block_buffer.data = fc_malloc(chunk->total_length);
+    pplayer->attribute_block_buffer.data = wc_malloc(chunk->total_length);
     pplayer->attribute_block_buffer.length = chunk->total_length;
   }
   memcpy((char *) (pplayer->attribute_block_buffer.data) + chunk->offset,

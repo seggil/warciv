@@ -121,7 +121,7 @@ char *create_centered_string(const char *s)
   if(maxlen<curlen)
     maxlen=curlen;
 
-  r=rn=fc_malloc(nlines*(maxlen+1));
+  r=rn=wc_malloc(nlines*(maxlen+1));
 
   curlen=0;
   for(cp0=cp=s; *cp != '\0'; cp++) {
@@ -287,7 +287,7 @@ int get_tokens_full(const char *str,
       }
     }
 
-    tokens[token] = fc_malloc(len + 1);
+    tokens[token] = wc_malloc(len + 1);
     (void) mystrlcpy(tokens[token], str, len + 1);      /* adds the '\0' */
 
     token++;
@@ -731,7 +731,7 @@ char *user_home_dir(void)
       freelog(LOG_VERBOSE, "HOME is %s", home_dir);
     } else {
 #ifdef WIN32_NATIVE
-      home_dir = fc_malloc(PATH_MAX);
+      home_dir = wc_malloc(PATH_MAX);
       if (!getcwd(home_dir, PATH_MAX)) {
         free(home_dir);
         home_dir = NULL;
@@ -891,7 +891,7 @@ static const char **get_data_dirs(int *num_dirs)
           i = 0;
         } else {
           int len = strlen(home) + i;      /* +1 -1 */
-          char *tmp = fc_malloc(len);
+          char *tmp = wc_malloc(len);
 
           my_snprintf(tmp, len, "%s%s", home, tok + 1);
           tok = tmp;
@@ -1169,11 +1169,11 @@ struct datafile_list *datafilelist_infix(const char *subpath,
         char *fullname;
         int len = strlen(path) + strlen(filename) + 2;
 
-        fullname = fc_malloc(len);
+        fullname = wc_malloc(len);
         my_snprintf(fullname, len, "%s/%s", path, filename);
 
         if (stat(fullname, &buf) == 0) {
-          file = fc_malloc(sizeof(struct datafile));
+          file = wc_malloc(sizeof(struct datafile));
 
           /* Clip the suffix. */
           *ptr = '\0';
@@ -1339,7 +1339,7 @@ void init_nls(void)
       }
       len++;
       free(grouping);
-      grouping = fc_malloc(len);
+      grouping = wc_malloc(len);
       memcpy(grouping, lc->grouping, len);
     }
     free(grouping_sep);
@@ -1694,7 +1694,7 @@ static char *string_duplicate(const char *string)
 **************************************************************************/
 struct string_vector *string_vector_new(void)
 {
-  struct string_vector *psv = fc_malloc(sizeof(struct string_vector));
+  struct string_vector *psv = wc_malloc(sizeof(struct string_vector));
 
   psv->vec = NULL;
   psv->size = 0;

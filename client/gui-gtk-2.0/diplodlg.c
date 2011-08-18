@@ -296,7 +296,7 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
     struct city **city_list_ptrs;
 
     if (n > 0) {
-      city_list_ptrs = fc_malloc(sizeof(struct city *) * n);
+      city_list_ptrs = wc_malloc(sizeof(struct city *) * n);
     } else {
       city_list_ptrs = NULL;
     }
@@ -463,7 +463,7 @@ static struct Diplomacy_dialog *create_diplomacy_dialog(struct player *plr0,
   struct Diplomacy_dialog *pdialog;
   char buf[256];
 
-  pdialog = fc_malloc(sizeof(*pdialog));
+  pdialog = wc_malloc(sizeof(*pdialog));
 
   dialog_list_prepend(dialog_list, pdialog);
   pdialog->treaty = treaty_new(plr0, plr1);

@@ -45,10 +45,10 @@ struct pqueue {
 ***********************************************************************/
 struct pqueue *pq_create(int initial_size)
 {
-  struct pqueue *q = fc_malloc(sizeof(struct pqueue));
+  struct pqueue *q = wc_malloc(sizeof(struct pqueue));
 
-  q->cells = fc_malloc(sizeof(pq_data_t) * initial_size);
-  q->priorities = fc_malloc(sizeof(int) * initial_size);
+  q->cells = wc_malloc(sizeof(pq_data_t) * initial_size);
+  q->priorities = wc_malloc(sizeof(int) * initial_size);
   q->avail = initial_size;
   q->step = initial_size;
   q->size = 1;

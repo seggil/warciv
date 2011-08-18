@@ -1019,11 +1019,11 @@ static bool welcome_file_command(struct connection *caller,
     return FALSE;
   }
   if (len == 0) {
-    buf = fc_malloc(1);
+    buf = wc_malloc(1);
     buf[0] = '\0';
   } else {
     int nb;
-    buf = fc_malloc(len + 1);
+    buf = wc_malloc(len + 1);
     nb = fread(buf, 1, len, f);
     if (ferror(f) || nb != len) {
       cmd_reply(CMD_WELCOME_FILE, caller, C_GENFAIL,
@@ -2033,7 +2033,7 @@ static char **create_team_names(int n)
     return NULL;
   }
 
-  team_names = fc_malloc(n * sizeof(char *));
+  team_names = wc_malloc(n * sizeof(char *));
 
   sfilename = datafilename(DEFAULT_TEAM_NAMES_FILE);
   if (sfilename && section_file_load_nodup(&sfile, sfilename)) {
@@ -2247,7 +2247,7 @@ static bool mute_command(struct connection *caller, char *str, bool check)
     return TRUE;
   }
 
-  mi = fc_malloc(sizeof(struct muteinfo));
+  mi = wc_malloc(sizeof(struct muteinfo));
   mi->turns_left = nturns;
   mi->conn_id = pconn->id;
   mi->addr = mystrdup(pconn->server.ipaddr);

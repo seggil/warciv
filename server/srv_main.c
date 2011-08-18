@@ -2176,7 +2176,7 @@ int register_background_function(background_func bf,
     return 0;
   }
 
-  bc = fc_malloc(sizeof(*bc));
+  bc = wc_malloc(sizeof(*bc));
   bc->bgfunc = bf;
   bc->context = context;
   bc->ctxfree = cff;

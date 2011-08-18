@@ -26,7 +26,7 @@ sbuffer: ("string buffer")
   Re-organised and modified to use "struct sbuffer" and placed
   in separate sbuffer module by David Pfitzner <dwp@mso.anu.edu.au>.
 
-  Uses fc_malloc() etc for allocations, so malloc failures
+  Uses wc_malloc() etc for allocations, so malloc failures
   are handled there; makes liberal use of assert().
 ***************************************************************************/
 
@@ -83,7 +83,7 @@ static void sbuf_expand(struct sbuffer *sb)
   assert(sb && (sb->size>0));
 
   prev_buffer = sb->buffer;
-  sb->buffer = fc_malloc(sb->size);
+  sb->buffer = wc_malloc(sb->size);
 
   /* store pointer to previous buffer: */
   *(char **)(sb->buffer) = (char*)prev_buffer;
@@ -114,7 +114,7 @@ static struct sbuffer *sbuf_new_size(size_t size)
 
   assert(size>2*SBUF_ALIGN_SIZE);
 
-  sb = (struct sbuffer *)fc_malloc(sizeof(*sb));
+  sb = (struct sbuffer *)wc_malloc(sizeof(*sb));
   sb->size = size;
   sb->buffer = NULL;            /* so pointer to prev buffer is NULL */
 

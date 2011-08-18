@@ -243,7 +243,7 @@ struct inputfile *inf_from_stream(fz_FILE * stream, datafilename_fn_t datafn)
   struct inputfile *inf;
 
   assert(stream != NULL);
-  inf = fc_malloc(sizeof(*inf));
+  inf = wc_malloc(sizeof(*inf));
   init_zeros(inf);
 
   inf->filename = NULL;

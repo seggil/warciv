@@ -78,7 +78,7 @@ fz_FILE *fz_from_file(const char *filename, const char *in_mode,
     return NULL;
   }
 
-  fp = (fz_FILE *)fc_malloc(sizeof(*fp));
+  fp = (fz_FILE *)wc_malloc(sizeof(*fp));
   sz_strlcpy(mode, in_mode);
 
   if (mode[0] == 'w') {
@@ -144,7 +144,7 @@ fz_FILE *fz_from_stream(FILE *stream)
     return NULL;
   }
 
-  fp = fc_malloc(sizeof(*fp));
+  fp = wc_malloc(sizeof(*fp));
   fp->method = FZ_PLAIN;
   fp->u.plain = stream;
   return fp;

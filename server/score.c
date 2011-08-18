@@ -167,19 +167,19 @@ static void build_landarea_map_new(struct claim_map *pcmap)
   int nbytes;
 
   nbytes = map.info.xsize * map.info.ysize * sizeof(struct claim_cell);
-  pcmap->claims = fc_malloc(nbytes);
+  pcmap->claims = wc_malloc(nbytes);
   memset(pcmap->claims, 0, nbytes);
 
   nbytes = game.info.nplayers * sizeof(int);
-  pcmap->player_landarea = fc_malloc(nbytes);
+  pcmap->player_landarea = wc_malloc(nbytes);
   memset(pcmap->player_landarea, 0, nbytes);
 
   nbytes = game.info.nplayers * sizeof(int);
-  pcmap->player_owndarea = fc_malloc(nbytes);
+  pcmap->player_owndarea = wc_malloc(nbytes);
   memset(pcmap->player_owndarea, 0, nbytes);
 
   nbytes = 2 * map.info.xsize * map.info.ysize * sizeof(*pcmap->edges);
-  pcmap->edges = fc_malloc(nbytes);
+  pcmap->edges = wc_malloc(nbytes);
 
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {

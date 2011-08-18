@@ -589,7 +589,7 @@ int sniff_packets(void)
   if (!no_input && !readline_initialized) {
     char *home_dir = user_home_dir();
     if (home_dir) {
-      history_file = fc_malloc(strlen(home_dir) + 1
+      history_file = wc_malloc(strlen(home_dir) + 1
                                + strlen(HISTORY_FILENAME) + 1);
       if (history_file) {
         strcpy(history_file, home_dir);

@@ -144,7 +144,7 @@ static struct help_item *new_help_item(int type)
 {
   struct help_item *pitem;
 
-  pitem = fc_malloc(sizeof(struct help_item));
+  pitem = wc_malloc(sizeof(struct help_item));
   pitem->topic = NULL;
   pitem->text = NULL;
   pitem->type = type;

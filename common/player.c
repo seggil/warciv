@@ -150,7 +150,7 @@ void player_init(struct player *plr)
   plr->island_improv = NULL;
 
   if (map.num_continents > 0 && game.ruleset_control.num_impr_types > 0) {
-    plr->island_improv = fc_malloc((map.num_continents + 1)
+    plr->island_improv = wc_malloc((map.num_continents + 1)
         * game.ruleset_control.num_impr_types * sizeof(Impr_Status));
     for (i = 1; i <= map.num_continents; i++) {
       improvement_status_init(&plr->island_improv[i
@@ -950,7 +950,7 @@ void player_set_turns_played(struct player *plr, const char *username,
 
   tp = hash_lookup_data(h, username);
   if (!tp) {
-    tp = fc_malloc(sizeof(*tp));
+    tp = wc_malloc(sizeof(*tp));
     sz_strlcpy(tp->username, username);
     hash_insert(h, tp->username, tp);
   }

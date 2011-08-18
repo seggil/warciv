@@ -503,7 +503,7 @@ void map_allocate(void)
           map.tiles, map.info.xsize, map.info.ysize);
 
   assert(map.tiles == NULL);
-  map.tiles = fc_malloc(map.info.xsize * map.info.ysize * sizeof(struct tile));
+  map.tiles = wc_malloc(map.info.xsize * map.info.ysize * sizeof(struct tile));
   whole_map_iterate(ptile) {
     int index, nat_x, nat_y, map_x, map_y;
 

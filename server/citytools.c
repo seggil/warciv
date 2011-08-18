@@ -1706,7 +1706,7 @@ bool update_dumb_city(struct player *pplayer, struct city *pcity)
   }
     if (!plrtile->city)
     {
-    pdcity = plrtile->city = fc_malloc(sizeof(struct dumb_city));
+    pdcity = plrtile->city = wc_malloc(sizeof(struct dumb_city));
     plrtile->city->id = pcity->id;
   }
     if (pdcity->id != pcity->id)

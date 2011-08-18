@@ -153,7 +153,7 @@ static struct trade_route *trade_route_new(struct city *pcity1,
                                            struct unit *punit,
                                            enum trade_route_status status)
 {
-  struct trade_route *ptr = fc_malloc(sizeof(struct trade_route));
+  struct trade_route *ptr = wc_malloc(sizeof(struct trade_route));
 
   ptr->pcity1 = pcity1;
   ptr->pcity2 = pcity2;
@@ -348,7 +348,7 @@ struct unit_order *make_unit_orders(struct trade_route *ptr, int *length)
   }
 
   /* Make a dynamic structure to return */
-  porders = fc_malloc(*length * sizeof(struct unit_order));
+  porders = wc_malloc(*length * sizeof(struct unit_order));
   for (i = 0; i < *length; i++) {
     porders[i] = orders[i];
   }
@@ -492,7 +492,7 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
     pc1->free_slots = game.traderoute_info.maxtraderoutes
       - get_real_trade_route_number(pc1->pcity);
     pc1->trade_routes_num = 0;
-    pc1->trade_routes = fc_malloc(size * sizeof(bool));
+    pc1->trade_routes = wc_malloc(size * sizeof(bool));
     memset(pc1->trade_routes, FALSE, size * sizeof(bool));
 
     /* Check for earlier cities in the list */
@@ -765,12 +765,12 @@ struct trade_planning_calculation *trade_planning_calculation_new(
   int i, j;
 
   /* Initialize */
-  pcalc = fc_malloc(sizeof(struct trade_planning_calculation));
+  pcalc = wc_malloc(sizeof(struct trade_planning_calculation));
   pcalc->size = city_list_size(pclist);
-  pcalc->tcities = fc_malloc(pcalc->size * sizeof(struct trade_city));
-  pcalc->ctlist = fc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
+  pcalc->tcities = wc_malloc(pcalc->size * sizeof(struct trade_city));
+  pcalc->ctlist = wc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
                             * sizeof(struct trade_route *) / 2);
-  pcalc->btlist = fc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
+  pcalc->btlist = wc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
                             * sizeof(struct trade_route *) / 2);
 #ifdef ASYNC_TRADE_PLANNING
   pcalc->state = TPC_INTERRUPTED;
@@ -778,7 +778,7 @@ struct trade_planning_calculation *trade_planning_calculation_new(
   pcalc->interrupted_point.uc_stack.ss_flags = 0;
 #endif  /* WIN32_NATIVE */
   pcalc->interrupted_point.uc_link = &pcalc->start_point;
-  pcalc->interrupted_point.uc_stack.ss_sp = fc_malloc(SIGSTKSZ);
+  pcalc->interrupted_point.uc_stack.ss_sp = wc_malloc(SIGSTKSZ);
   pcalc->interrupted_point.uc_stack.ss_size = SIGSTKSZ;
   getcontext(&pcalc->interrupted_point);
   makecontext(&pcalc->interrupted_point,
@@ -809,8 +809,8 @@ struct trade_planning_calculation *trade_planning_calculation_new(
                          - get_real_trade_route_number(pcity);
     tcity1->trade_routes_num = 0;
     tcity1->trade_routes =
-        fc_malloc(pcalc->size * sizeof(struct trade_route *));
-    tcity1->distance = fc_malloc(pcalc->size * sizeof(int));
+        wc_malloc(pcalc->size * sizeof(struct trade_route *));
+    tcity1->distance = wc_malloc(pcalc->size * sizeof(int));
 
     map = NULL;
     /* Check if a trade route is possible with the lower index cities */
@@ -1025,7 +1025,7 @@ struct trade_route_list *trade_planning_calculation_get_trade_routes(
   int i;
 
   for (i = 0; i < pcalc->btconf.trade_routes_num; i++) {
-    struct trade_route *ptr = fc_malloc(sizeof(struct trade_route));
+    struct trade_route *ptr = wc_malloc(sizeof(struct trade_route));
 
     *ptr = *pcalc->btlist[i];
     trade_route_list_append(trade_planning, ptr);

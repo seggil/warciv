@@ -103,7 +103,7 @@ static struct happiness_dialog *create_happiness_dialog(struct city *pcity)
   struct happiness_dialog *pdialog;
   GtkWidget *vbox;
 
-  pdialog = fc_malloc(sizeof(struct happiness_dialog));
+  pdialog = wc_malloc(sizeof(struct happiness_dialog));
   pdialog->pcity = pcity;
 
   pdialog->shell = gtk_vbox_new(FALSE, 0);

@@ -62,7 +62,7 @@ static void sanity_check_size(size_t size, const char *called_as,
 
 
 /**********************************************************************
- Function used by fc_malloc macro, malloc() replacement
+ Function used by wc_malloc macro, malloc() replacement
  No need to check return value.
 **********************************************************************/
 void *wc_real_malloc(size_t size,

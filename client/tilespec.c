@@ -321,7 +321,7 @@ static char *tilespec_fullname(const char *tileset_name)
     sz_strlcpy(default_tileset_name, tileset_name);
   }
 
-  fname = fc_malloc(strlen(tileset_name) + strlen(TILESPEC_SUFFIX) + 1);
+  fname = wc_malloc(strlen(tileset_name) + strlen(TILESPEC_SUFFIX) + 1);
   sprintf(fname, "%s%s", tileset_name, TILESPEC_SUFFIX);
 
   dname = datafilename(fname);
@@ -645,7 +645,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
 
     j = -1;
     while (section_file_lookup(file, "%s.tiles%d.tag", gridnames[i], ++j)) {
-      struct small_sprite *ss = fc_malloc(sizeof(*ss));
+      struct small_sprite *ss = wc_malloc(sizeof(*ss));
       int row, column;
       int x1, y1;
       char **tags;
@@ -695,7 +695,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
   /* Load "extra" sprites.  Each sprite is one file. */
   i = -1;
   while (secfile_lookup_str_default(file, NULL, "extra.sprites%d.tag", ++i)) {
-    struct small_sprite *ss = fc_malloc(sizeof(*ss));
+    struct small_sprite *ss = wc_malloc(sizeof(*ss));
     char **tags;
     char *filename;
     int num_tags, k;
@@ -741,7 +741,7 @@ static char *tilespec_gfx_filename(const char *gfx_filename)
   while((gfx_current_fileext = *gfx_fileexts++))
   {
     char *full_name =
-       fc_malloc(strlen(gfx_filename) + strlen(gfx_current_fileext) + 2);
+       wc_malloc(strlen(gfx_filename) + strlen(gfx_current_fileext) + 2);
     char *real_full_name;
 
     sprintf(full_name,"%s.%s",gfx_filename,gfx_current_fileext);
@@ -932,7 +932,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
   terrain_hash = hash_new(hash_fval_string, hash_fcmp_string);
 
   for (i = 0; i < num_terrains; i++) {
-    struct terrain_drawing_data *terr = fc_malloc(sizeof(*terr));
+    struct terrain_drawing_data *terr = wc_malloc(sizeof(*terr));
     char *cell_type;
     int l, j;
 
@@ -1064,7 +1064,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
   specfiles = specfile_list_new();
   small_sprites = small_sprite_list_new();
   for (i = 0; i < num_spec_files; i++) {
-    struct specfile *sf = fc_malloc(sizeof(*sf));
+    struct specfile *sf = wc_malloc(sizeof(*sf));
 
     freelog(LOG_DEBUG, "spec file %s", spec_filenames[i]);
 
@@ -1695,7 +1695,7 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
           const int number = NUM_CORNER_DIRS * count * count * count;
 
           draw->layer[l].cells
-            = fc_malloc(number * sizeof(*draw->layer[l].cells));
+            = wc_malloc(number * sizeof(*draw->layer[l].cells));
 
           for (i = 0; i < number; i++) {
             int value = i / NUM_CORNER_DIRS;

@@ -532,7 +532,7 @@ SPRITE* sprite_scale(SPRITE *src, int new_w, int new_h)
   original = sprite_get_pixbuf(src);
   im = gdk_pixbuf_scale_simple(original, new_w, new_h, GDK_INTERP_BILINEAR);
 
-  mysprite = fc_malloc(sizeof(struct Sprite));
+  mysprite = wc_malloc(sizeof(struct Sprite));
 
   gdk_pixbuf_render_pixmap_and_mask_for_colormap(im, colormap,
                                                  &mysprite->pixmap,

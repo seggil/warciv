@@ -442,7 +442,7 @@ static struct hash_table *hash_new_nbuckets(hash_val_fn_t fval,
   struct hash_table *h;
   unsigned i;
 
-  h = (struct hash_table *)fc_malloc(sizeof(struct hash_table));
+  h = (struct hash_table *)wc_malloc(sizeof(struct hash_table));
 
   freelog (LOG_DEBUG, "hash_new_nbuckets %p fval=%p fcmp=%p nbuckets=%u",
            h, fval, fcmp, nbuckets);
@@ -455,7 +455,7 @@ static struct hash_table *hash_new_nbuckets(hash_val_fn_t fval,
   h->fcmp = fcmp;
 
   h->buckets = (struct hash_bucket *)
-               fc_malloc(h->num_buckets*sizeof(struct hash_bucket));
+               wc_malloc(h->num_buckets*sizeof(struct hash_bucket));
 
   for(i=0; i<h->num_buckets; i++) {
     zero_hbucket(&h->buckets[i]);

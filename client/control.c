@@ -589,7 +589,7 @@ void process_caravan_arrival(struct unit *punit)
   }
 
   if (punit) {
-    p_id = fc_malloc(sizeof(int));
+    p_id = wc_malloc(sizeof(int));
     *p_id = punit->id;
     genlist_insert(arrival_queue, p_id, -1);
   }
@@ -659,7 +659,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
   }
 
   if (pdiplomat && victim_id != 0) {
-    p_ids = fc_malloc(2 * sizeof(int));
+    p_ids = wc_malloc(2 * sizeof(int));
     p_ids[0] = pdiplomat->id;
     p_ids[1] = victim_id;
     genlist_insert(arrival_queue, p_ids, -1);

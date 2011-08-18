@@ -1295,7 +1295,7 @@ static struct city_dialog *create_city_dialog(struct city *pcity,
     initialize_city_dialogs();
   }
 
-  pdialog = fc_malloc(sizeof(struct city_dialog));
+  pdialog = wc_malloc(sizeof(struct city_dialog));
   pdialog->pcity = pcity;
   pdialog->change_shell = NULL;
   pdialog->buy_shell = NULL;

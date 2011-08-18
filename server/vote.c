@@ -366,7 +366,7 @@ struct vote *vote_new(struct connection *caller,
   }
 
   /* Make a new vote */
-  pvote = fc_malloc(sizeof(struct vote));
+  pvote = wc_malloc(sizeof(struct vote));
   pvote->caller_id = caller ? caller->id : 0;
   pvote->command_id = command_id;
 
@@ -636,7 +636,7 @@ static struct vote_cast *vote_cast_new(struct vote *pvote)
 {
   assert(vote_list != NULL);
 
-  struct vote_cast *pvc = fc_malloc(sizeof(struct vote_cast));
+  struct vote_cast *pvc = wc_malloc(sizeof(struct vote_cast));
 
   pvc->conn_id = -1;
   pvc->vote_cast = VOTE_ABSTAIN;

@@ -2564,7 +2564,7 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
 {
   struct city *pcity;
 
-  pcity = fc_malloc(struct_city_size());
+  pcity = wc_malloc(struct_city_size());
 
   pcity->id = 0;
   pcity->owner = pplayer->player_no;

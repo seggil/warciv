@@ -822,7 +822,7 @@ static void make_rivers(void)
   create_placed_map(); /* needed bu rand_map_characteristic */
   set_all_ocean_tiles_placed();
 
-  river_map = fc_malloc(sizeof(int) * MAX_MAP_INDEX);
+  river_map = wc_malloc(sizeof(int) * MAX_MAP_INDEX);
 
   /* The main loop in this function. */
   while (current_riverlength < desirable_riverlength
@@ -1767,7 +1767,7 @@ static bool make_island(int islemass, int starters,
 **************************************************************************/
 static void initworld(struct gen234_state *pstate)
 {
-  height_map = fc_malloc(sizeof(int) * map.info.ysize * map.info.xsize);
+  height_map = wc_malloc(sizeof(int) * map.info.ysize * map.info.xsize);
   create_placed_map(); /* land tiles which aren't placed yet */
   create_tmap(FALSE);
 
@@ -2457,7 +2457,7 @@ static bool mapgenerator67(bool make_roads)
     return FALSE;
   }
 
-  height_map = fc_malloc(sizeof(int) * map.info.xsize * map.info.ysize);
+  height_map = wc_malloc(sizeof(int) * map.info.xsize * map.info.ysize);
 
   freelog(LOG_VERBOSE, "Creating temporary ocean");
   /* initialize everything to temp ocean */
@@ -2841,11 +2841,11 @@ void normalize_coord(struct gen8_map *pmap, int *x, int *y)
 *************************************************************************/
 struct gen8_tile **create_tiles_buffer(int xsize, int ysize)
 {
-  struct gen8_tile **buffer = fc_malloc(sizeof(struct gen8_tile *) * xsize);
+  struct gen8_tile **buffer = wc_malloc(sizeof(struct gen8_tile *) * xsize);
   int x, y;
 
   for (x = 0; x < xsize; x++) {
-    buffer[x] = fc_malloc(sizeof(struct gen8_tile) * ysize);
+    buffer[x] = wc_malloc(sizeof(struct gen8_tile) * ysize);
     for (y = 0; y < ysize; y++) {
       buffer[x][y].type = TYPE_UNASSIGNED;
       buffer[x][y].start_pos = 0;
@@ -2875,7 +2875,7 @@ void free_tiles_buffer(struct gen8_tile **buffer, int xsize)
 *************************************************************************/
 struct gen8_map *create_map(int xsize, int ysize)
 {
-  struct gen8_map *pmap = fc_malloc(sizeof(struct gen8_map));
+  struct gen8_map *pmap = wc_malloc(sizeof(struct gen8_map));
 
   pmap->xsize = xsize;
   pmap->ysize = ysize;
@@ -2999,8 +2999,8 @@ struct gen8_map *create_fair_island(int size, int startpos)
 
   /* Create an island of one tile */
   temp = create_map(size * 2 + 5, size * 2 + 5);
-  x = fc_malloc(sizeof(int) * temp->xsize * temp->ysize);
-  y = fc_malloc(sizeof(int) * temp->xsize * temp->ysize);
+  x = wc_malloc(sizeof(int) * temp->xsize * temp->ysize);
+  y = wc_malloc(sizeof(int) * temp->xsize * temp->ysize);
   xmin = xmax = x[0] = size + 2;
   ymin = ymax = y[0] = size + 2;
   temp->tiles[x[0]][y[0]].type = TYPE_LAND;

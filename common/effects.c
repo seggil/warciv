@@ -387,7 +387,7 @@ struct effect_group *effect_group_new(const char *name)
   struct effect_group *group;
 
   /* Create the group. */
-  group = fc_malloc(sizeof(*group));
+  group = wc_malloc(sizeof(*group));
   group->name = mystrdup(name);
   group->id = next_group_id++;
   group->elements = effect_group_element_list_new();
@@ -408,7 +408,7 @@ void effect_group_add_element(struct effect_group *group,
   struct effect_group_element *elt;
 
   /* Create the element. */
-  elt = fc_malloc(sizeof(*elt));
+  elt = wc_malloc(sizeof(*elt));
   elt->source_building = source_building;
   elt->range = range;
   elt->survives = survives;
@@ -575,7 +575,7 @@ void ruleset_cache_add(Impr_Type_id source, enum effect_type effect_type,
   struct effect *peffect;
 
   /* Create the effect. */
-  peffect = fc_malloc(sizeof(*peffect));
+  peffect = wc_malloc(sizeof(*peffect));
   peffect->range = range;
   peffect->survives = survives;
   peffect->value = eff_value;

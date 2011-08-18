@@ -63,7 +63,7 @@ fc__attribute((__format__(__printf__, 3, 4)));
   static size_t out_size = 0;   \
   if (!out) {                   \
     out_size = START_SIZE;      \
-    out = fc_malloc(out_size);  \
+    out = wc_malloc(out_size);  \
   }                             \
   out[0] = '\0';
 

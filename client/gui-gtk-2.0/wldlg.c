@@ -317,7 +317,7 @@ GtkWidget *create_worklists_report(void)
   vbox = gtk_vbox_new(FALSE, 0);
 
   /* Create the temporary worklists */
-  temp_worklists = fc_malloc(sizeof(global_worklists));
+  temp_worklists = wc_malloc(sizeof(global_worklists));
   memcpy(temp_worklists, global_worklists, sizeof(global_worklists));
   g_object_set_data(G_OBJECT(vbox), "worklists", temp_worklists);
   g_signal_connect(vbox, "destroy",
@@ -1208,7 +1208,7 @@ GtkWidget *create_worklist(void)
   struct worklist_data *ptr;
 
 
-  ptr = fc_malloc(sizeof(*ptr));
+  ptr = wc_malloc(sizeof(*ptr));
 
   src_store = gtk_list_store_new(1, G_TYPE_INT);
   dst_store = gtk_list_store_new(1, G_TYPE_INT);

@@ -580,7 +580,7 @@ static void precalc_one(int i, bool (*func_has)(Unit_Type_id, int))
   } unit_type_iterate_end;
 
   if(n_with_role[i] > 0) {
-    with_role[i] = fc_malloc(n_with_role[i]*sizeof(Unit_Type_id));
+    with_role[i] = wc_malloc(n_with_role[i]*sizeof(Unit_Type_id));
     j = 0;
     unit_type_iterate(u) {
       if(unit_type_exists(u) && func_has(u, i)) {

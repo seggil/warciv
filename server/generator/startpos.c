@@ -158,8 +158,8 @@ static void initialize_isle_data(void)
 {
   int nr;
 
-  islands = fc_malloc((map.num_continents + 1) * sizeof(*islands));
-  islands_index = fc_malloc((map.num_continents + 1)
+  islands = wc_malloc((map.num_continents + 1) * sizeof(*islands));
+  islands_index = wc_malloc((map.num_continents + 1)
                             * sizeof(*islands_index));
 
   /* islands[0] is unused. */

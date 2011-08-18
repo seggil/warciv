@@ -558,7 +558,7 @@ static void extra_option_new(GtkWidget *widget, GtkWidget *parent_box,
                              void (*reload_callback)(GtkWidget *,
                                                      struct section_file *))
 {
-  struct extra_option *o = fc_malloc(sizeof(struct extra_option));
+  struct extra_option *o = wc_malloc(sizeof(struct extra_option));
   GtkWidget *ebox, *frame;
 
   assert(NULL != widget);

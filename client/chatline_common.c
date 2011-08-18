@@ -220,7 +220,7 @@ void append_output_window_full(const char *astring, int conn_id)
   if (frozen_level == 0) {
     real_append_output_window(astring, conn_id);
   } else {
-    struct remaining *premain = fc_malloc(sizeof(*premain));
+    struct remaining *premain = wc_malloc(sizeof(*premain));
 
     remaining_list_append(remains, premain);
     premain->text = mystrdup(astring);

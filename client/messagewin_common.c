@@ -117,7 +117,7 @@ void add_notify_window(char *message, struct tile *ptile,
   const char *game_prefix2 = _("Game: ");
   size_t gp_len1 = strlen(game_prefix1);
   size_t gp_len2 = strlen(game_prefix2);
-  char *s = fc_malloc(MAX(strlen(message), min_msg_len) + 1);
+  char *s = wc_malloc(MAX(strlen(message), min_msg_len) + 1);
   int i, nspc;
 
   change = TRUE;

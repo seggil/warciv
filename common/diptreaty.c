@@ -81,7 +81,7 @@ bool could_intel_with_player(struct player *pplayer, struct player *aplayer)
 *****************************************************************/
 struct Treaty *treaty_new(struct player *plr0, struct player *plr1)
 {
-  struct Treaty *ptreaty = fc_malloc(sizeof(struct Treaty));
+  struct Treaty *ptreaty = wc_malloc(sizeof(struct Treaty));
 
   ptreaty->plr0 = plr0;
   ptreaty->plr1 = plr1;
@@ -193,7 +193,7 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
     }
   } clause_list_iterate_end;
 
-  pclause = (struct Clause *)fc_malloc(sizeof(struct Clause));
+  pclause = (struct Clause *)wc_malloc(sizeof(struct Clause));
 
   pclause->type = type;
   pclause->from = pfrom;

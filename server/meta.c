@@ -419,7 +419,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
 
   len = astr_size(&headers) + astr_size(&content);
   *pbuflen = len;
-  ret = fc_malloc(len);
+  ret = wc_malloc(len);
   memcpy(ret, astr_get_data(&headers), astr_size(&headers));
   memcpy(ret + astr_size(&headers), astr_get_data(&content),
          astr_size(&content));

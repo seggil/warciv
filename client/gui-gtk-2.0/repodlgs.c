@@ -1531,7 +1531,7 @@ static void create_settable_options_dialog(void)
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(win)->vbox), book, TRUE, TRUE, 2);
 
   /* create a number of notebook pages for each category */
-  vbox = fc_malloc(num_options_categories * sizeof(GtkWidget *));
+  vbox = wc_malloc(num_options_categories * sizeof(GtkWidget *));
 
   for (i = 0; i < num_options_categories; i++) {
     sw = gtk_scrolled_window_new(NULL, NULL);

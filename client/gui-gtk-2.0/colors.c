@@ -74,7 +74,7 @@ static void alloc_standard_colors (void)
   colormap = gdk_screen_get_default_colormap(screen);
 
   for (i = 0; i<COLOR_STD_LAST; i++) {
-    colors_standard[i]       = fc_malloc(sizeof(GdkColor));
+    colors_standard[i]       = wc_malloc(sizeof(GdkColor));
 
     colors_standard[i]->red  = colors_standard_rgb[i].r<<8;
     colors_standard[i]->green= colors_standard_rgb[i].g<<8;

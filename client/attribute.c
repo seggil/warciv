@@ -123,7 +123,7 @@ static enum attribute_serial serialize_hash( struct hash_table *hash,
   int *value_lengths;
   struct data_out dout;
 
-  value_lengths = fc_malloc(sizeof(int) * entries);
+  value_lengths = wc_malloc(sizeof(int) * entries);
 
   /*
    * Step 1: loop through all keys and fill value_lengths
@@ -154,7 +154,7 @@ static enum attribute_serial serialize_hash( struct hash_table *hash,
   /*
    * Step 3: allocate memory
    */
-  result = fc_malloc(total_length);
+  result = wc_malloc(total_length);
   dio_output_init(&dout, result, total_length);
 
   /*
@@ -248,7 +248,7 @@ static enum attribute_serial unserialize_hash( struct hash_table *hash,
           (unsigned int) data_length);
 
   for (i = 0; i < entries; i++) {
-    struct attr_key *pkey = fc_malloc(sizeof(*pkey));
+    struct attr_key *pkey = wc_malloc(sizeof(*pkey));
     void *pvalue;
     int value_length;
     struct data_out dout;
@@ -296,7 +296,7 @@ static enum attribute_serial unserialize_hash( struct hash_table *hash,
       free(pkey);
       return A_SERIAL_FAIL;
     }
-    pvalue = fc_malloc(value_length + 4);
+    pvalue = wc_malloc(value_length + 4);
 
     dio_output_init(&dout, pvalue, 4);
     dio_put_uint32(&dout, value_length);
@@ -389,7 +389,7 @@ void attribute_set(int key, int id, int x, int y, size_t data_length,
 
   assert(attribute_hash != NULL);
 
-  pkey = fc_malloc(sizeof(struct attr_key));
+  pkey = wc_malloc(sizeof(struct attr_key));
   pkey->key = key;
   pkey->id = id;
   pkey->x = x;
@@ -398,7 +398,7 @@ void attribute_set(int key, int id, int x, int y, size_t data_length,
   if (data_length != 0) {
     struct data_out dout;
 
-    pvalue = fc_malloc(data_length + 4);
+    pvalue = wc_malloc(data_length + 4);
 
     dio_output_init(&dout, pvalue, data_length + 4);
     dio_put_uint32(&dout, data_length);

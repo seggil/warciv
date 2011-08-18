@@ -1312,7 +1312,7 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
   if (!ptagpat->pattern[0]) {
     res = !(ptagpat->flags & TPF_NEGATE);
     if (res) {
-      pmres = fc_malloc(sizeof(struct match_result));
+      pmres = wc_malloc(sizeof(struct match_result));
       pmres->start = 0;
       pmres->end = textlen;
       match_result_list_append(matches, pmres);
@@ -1331,7 +1331,7 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
     }
     res = TRUE;
 
-    pmres = fc_malloc(sizeof(struct match_result));
+    pmres = wc_malloc(sizeof(struct match_result));
     match_result_list_append(matches, pmres);
     if (ptagpat->flags & TPF_APPLY_TO_MATCH) {
       pmres->start = g_utf8_pointer_to_offset(text, p);
@@ -1349,7 +1349,7 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
 
   res = (ptagpat->flags & TPF_NEGATE) ? !res : res;
   if (res && match_result_list_size(matches) == 0) {
-    pmres = fc_malloc(sizeof(struct match_result));
+    pmres = wc_malloc(sizeof(struct match_result));
     pmres->start = 0;
     pmres->end = textlen;
     match_result_list_append(matches, pmres);
@@ -1601,7 +1601,7 @@ struct tag_pattern_list *
 
   tpl = tag_pattern_list_new();
   for (i = 0; i < num; i++) {
-    ptagpat = fc_malloc(sizeof(struct tag_pattern));
+    ptagpat = wc_malloc(sizeof(struct tag_pattern));
     ptagpat->tag_name = mystrdup(
         secfile_lookup_str(file, "chatline.tagpat%d.tag_name", i));
     ptagpat->pattern = mystrdup(
@@ -2178,7 +2178,7 @@ void tag_pattern_list_free_all(struct tag_pattern_list *tpl)
 **************************************************************************/
 struct tag_pattern *tag_pattern_clone(struct tag_pattern *old)
 {
-  struct tag_pattern *new = fc_malloc(sizeof(struct tag_pattern));
+  struct tag_pattern *new = wc_malloc(sizeof(struct tag_pattern));
 
   new->tag_name = mystrdup(old->tag_name);
   new->pattern = mystrdup(old->pattern);
@@ -2225,7 +2225,7 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
   g_list_free(rows);
 
   len = tag_pattern_list_size(tmptagpats);
-  new_order = fc_malloc(sizeof(int) * len);
+  new_order = wc_malloc(sizeof(int) * len);
   for (i=0; i<len; i++)
     new_order[i] = i;
 
@@ -2248,7 +2248,7 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
     new_order[i] = tmp;
   }
 
-  tpv = fc_malloc(sizeof(struct tag_pattern *) * len);
+  tpv = wc_malloc(sizeof(struct tag_pattern *) * len);
   i = 0;
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     tpv[new_order[i++]] = ptagpat;

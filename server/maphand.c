@@ -1157,7 +1157,7 @@ void show_map_to_all(void)
 void player_map_allocate(struct player *pplayer)
 {
   pplayer->private_map =
-    fc_malloc(map.info.xsize * map.info.ysize * sizeof(struct player_tile));
+    wc_malloc(map.info.xsize * map.info.ysize * sizeof(struct player_tile));
   whole_map_iterate(ptile) {
     player_tile_init(ptile, pplayer);
   } whole_map_iterate_end;
@@ -1319,7 +1319,7 @@ static void really_give_tile_info_from_player_to_player(struct player *pfrom,
       /* Set and send new city info */
       if (from_tile->city) {
         if (!dest_tile->city) {
-          dest_tile->city = fc_malloc(sizeof(struct dumb_city));
+          dest_tile->city = wc_malloc(sizeof(struct dumb_city));
         }
         *dest_tile->city = *from_tile->city;
         send_city_info_at_tile(pdest, pdest->connections, NULL, ptile);

@@ -80,7 +80,7 @@ void create_tmap(bool real)
     return;
   }
 
-  temperature_map = fc_malloc(sizeof(int) * MAX_MAP_INDEX);
+  temperature_map = wc_malloc(sizeof(int) * MAX_MAP_INDEX);
   whole_map_iterate(ptile) {
 
      /* the base temperature is equal to base map_colatitude */

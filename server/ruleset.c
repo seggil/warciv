@@ -1284,7 +1284,7 @@ static void load_ruleset_buildings(struct section_file *file)
     b->bldg_req = lookup_impr_type(file, sec[i], "bldg_req", FALSE, filename, b->name);
 
     list = secfile_lookup_str_vec(file, &count, "%s.terr_gate", sec[i]);
-    b->terr_gate = fc_malloc((count + 1) * sizeof(b->terr_gate[0]));
+    b->terr_gate = wc_malloc((count + 1) * sizeof(b->terr_gate[0]));
     k = 0;
     for (j = 0; j < count; j++) {
       b->terr_gate[k] = get_terrain_by_name(list[j]);
@@ -1300,7 +1300,7 @@ static void load_ruleset_buildings(struct section_file *file)
     free(list);
 
     list = secfile_lookup_str_vec(file, &count, "%s.spec_gate", sec[i]);
-    b->spec_gate = fc_malloc((count + 1) * sizeof(b->spec_gate[0]));
+    b->spec_gate = wc_malloc((count + 1) * sizeof(b->spec_gate[0]));
     k = 0;
     for (j = 0; j < count; j++) {
       b->spec_gate[k] = get_special_by_name(list[j]);
@@ -1325,7 +1325,7 @@ static void load_ruleset_buildings(struct section_file *file)
     }
 
     list = secfile_lookup_str_vec(file, &count, "%s.equiv_dupl", sec[i]);
-    b->equiv_dupl = fc_malloc((count + 1) * sizeof(b->equiv_dupl[0]));
+    b->equiv_dupl = wc_malloc((count + 1) * sizeof(b->equiv_dupl[0]));
     k = 0;
     for (j = 0; j < count; j++) {
       b->equiv_dupl[k] = find_improvement_by_name(list[j]);
@@ -1341,7 +1341,7 @@ static void load_ruleset_buildings(struct section_file *file)
     free(list);
 
     list = secfile_lookup_str_vec(file, &count, "%s.equiv_repl", sec[i]);
-    b->equiv_repl = fc_malloc((count + 1) * sizeof(b->equiv_repl[0]));
+    b->equiv_repl = wc_malloc((count + 1) * sizeof(b->equiv_repl[0]));
     k = 0;
     for (j = 0; j < count; j++) {
       b->equiv_repl[k] = find_improvement_by_name(list[j]);
@@ -2299,7 +2299,7 @@ static void load_ruleset_nations(struct section_file *file)
       exit(EXIT_FAILURE);
     }
     pl->leader_count = dim;
-    pl->leaders = fc_malloc(sizeof(*pl->leaders) * pl->leader_count);
+    pl->leaders = wc_malloc(sizeof(*pl->leaders) * pl->leader_count);
     for(j = 0; j < dim; j++) {
       pl->leaders[j].name = mystrdup(leaders[j]);
       if (check_name(leaders[j])) {
@@ -2403,7 +2403,7 @@ static void load_ruleset_nations(struct section_file *file)
 
     civilwar_nations = secfile_lookup_str_vec(file, &dim,
                                               "%s.civilwar_nations", sec[i]);
-    pl->civilwar_nations = fc_malloc(sizeof(Nation_Type_id) * (dim + 1));
+    pl->civilwar_nations = wc_malloc(sizeof(Nation_Type_id) * (dim + 1));
 
     for (j = 0, k = 0; k < dim; j++, k++) {
       /* HACK: At this time, all the names are untranslated and the name_orig
@@ -2538,7 +2538,7 @@ static void load_ruleset_nations(struct section_file *file)
     }
 
     assert(sizeof(parents[0]) == sizeof(*pl->parent_nations));
-    pl->parent_nations = fc_malloc((count + 1) * sizeof(parents[0]));
+    pl->parent_nations = wc_malloc((count + 1) * sizeof(parents[0]));
     memcpy(pl->parent_nations, parents, count * sizeof(parents[0]));
     pl->parent_nations[count] = NO_NATION_SELECTED;
   }

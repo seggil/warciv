@@ -1000,7 +1000,7 @@ struct toggle_worker {
 static struct toggle_worker *toggle_worker_new(struct city *pcity,
                                                int cx, int cy)
 {
-  struct toggle_worker *ptw = fc_malloc(sizeof(struct toggle_worker));
+  struct toggle_worker *ptw = wc_malloc(sizeof(struct toggle_worker));
 
   ptw->pcity = pcity;
   ptw->cx = cx;
@@ -1364,7 +1364,7 @@ void delayed_trade_routes_add(int city, int trade[OLD_NUM_TRADEROUTES],
 
   for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
     if (trade[i] != 0) {
-      pdtr = fc_malloc(sizeof(struct delayed_trade_route));
+      pdtr = wc_malloc(sizeof(struct delayed_trade_route));
 
       pdtr->city1 = city;
       pdtr->city2 = trade[i];

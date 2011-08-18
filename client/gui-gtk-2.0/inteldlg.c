@@ -152,7 +152,7 @@ static struct intel_dialog *create_intel_dialog(struct player *p)
 
   int i;
 
-  pdialog = fc_malloc(sizeof(*pdialog));
+  pdialog = wc_malloc(sizeof(*pdialog));
   pdialog->pplayer = p;
 
   shell = gtk_dialog_new_with_buttons(NULL,

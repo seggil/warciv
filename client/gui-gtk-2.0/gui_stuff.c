@@ -392,7 +392,7 @@ void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
   screen = gdk_screen_get_default();
   gtksettings = gtk_settings_get_for_screen(screen);
 
-  dlg = fc_malloc(sizeof(*dlg));
+  dlg = wc_malloc(sizeof(*dlg));
 
   for (p = dialog_list; p != NULL; p = p->next) {
     struct gui_dialog *odlg = p->data;

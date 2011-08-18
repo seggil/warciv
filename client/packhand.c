@@ -132,7 +132,7 @@ static struct unit * unpackage_unit(struct packet_unit_info *packet)
     int i;
 
     punit->orders.list
-      = fc_malloc(punit->orders.length * sizeof(*punit->orders.list));
+      = wc_malloc(punit->orders.length * sizeof(*punit->orders.list));
     for (i = 0; i < punit->orders.length; i++) {
       punit->orders.list[i].order = packet->orders[i];
       punit->orders.list[i].dir = packet->orders_dirs[i];
@@ -2514,7 +2514,7 @@ void handle_ruleset_building(struct packet_ruleset_building *p)
   sz_strlcpy(b->soundtag_alt, p->soundtag_alt);
 
 #define T(elem,count,last) \
-  b->elem = fc_malloc(sizeof(*b->elem) * (p->count + 1)); \
+  b->elem = wc_malloc(sizeof(*b->elem) * (p->count + 1)); \
   for (i = 0; i < p->count; i++) { \
     b->elem[i] = p->elem[i]; \
   } \
@@ -2783,7 +2783,7 @@ void handle_ruleset_nation(struct packet_ruleset_nation *p)
   sz_strlcpy(pl->flag_graphic_str, p->graphic_str);
   sz_strlcpy(pl->flag_graphic_alt, p->graphic_alt);
   pl->leader_count = p->leader_count;
-  pl->leaders = fc_malloc(sizeof(*pl->leaders) * pl->leader_count);
+  pl->leaders = wc_malloc(sizeof(*pl->leaders) * pl->leader_count);
   for (i = 0; i < pl->leader_count; i++) {
     pl->leaders[i].name = mystrdup(p->leader_name[i]);
     pl->leaders[i].is_male = p->leader_sex[i];

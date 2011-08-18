@@ -217,7 +217,7 @@ static char *convert_string(const char *text,
     char *myresult;
 
     if (alloc) {
-      buf = fc_malloc(to_len);
+      buf = wc_malloc(to_len);
     }
 
     myresult = buf;

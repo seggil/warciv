@@ -377,7 +377,7 @@ void establish_new_connection(struct connection *pconn)
        in a truncated message. */
     int maxlen = strlen(welcome_message)
         + 64 * strchrcount(welcome_message, '%') + 1;
-    char *buf = fc_malloc(maxlen), *line, *p;
+    char *buf = wc_malloc(maxlen), *line, *p;
     generate_welcome_message(buf, maxlen, welcome_message);
 
     /* Send the welcome message line by line. This way we don't
@@ -993,7 +993,7 @@ struct user_action *user_action_new(const char *pattern, int type,
   assert(0 <= type && type < NUM_CONN_PATTERN_TYPES);
   assert(0 <= action && action < NUM_ACTION_TYPES);
 
-  pua = fc_malloc(sizeof(struct user_action));
+  pua = wc_malloc(sizeof(struct user_action));
   pua->conpat = conn_pattern_new(pattern, type);
   pua->action = action;
 

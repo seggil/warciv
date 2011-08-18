@@ -207,7 +207,7 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
   GtkTreeViewColumn *column;
 
   cmafec_get_fe_parameter(pcity, &param);
-  pdialog = fc_malloc(sizeof(struct cma_dialog));
+  pdialog = wc_malloc(sizeof(struct cma_dialog));
   pdialog->pcity = pcity;
   pdialog->shell = gtk_vbox_new(FALSE, 8);
   gtk_container_set_border_width(GTK_CONTAINER(pdialog->shell), 8);

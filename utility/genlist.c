@@ -52,7 +52,7 @@ static genlist_link *find_genlist_position(const genlist *pgenlist, int pos);
 ************************************************************************/
 genlist *genlist_new(void)
 {
-  genlist *pgenlist = fc_malloc(sizeof(*pgenlist));
+  genlist *pgenlist = wc_malloc(sizeof(*pgenlist));
 
   pgenlist->nelements = 0;
   pgenlist->head_link = NULL;
@@ -177,7 +177,7 @@ void genlist_insert(genlist *pgenlist, void *data, int pos)
 {
   if (pgenlist->nelements == 0) { /*list is empty, ignore pos */
 
-    genlist_link *plink = fc_malloc(sizeof(*plink));
+    genlist_link *plink = wc_malloc(sizeof(*plink));
 
     plink->dataptr = data;
     plink->next = NULL;
@@ -187,7 +187,7 @@ void genlist_insert(genlist *pgenlist, void *data, int pos)
     pgenlist->tail_link = plink;
 
   } else {
-    genlist_link *plink = fc_malloc(sizeof(*plink));
+    genlist_link *plink = wc_malloc(sizeof(*plink));
     plink->dataptr = data;
 
     if (pos == 0) {

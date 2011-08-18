@@ -1403,7 +1403,7 @@ static struct packet_authentication_req *receive_packet_authentication_req_100(s
     dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -1431,7 +1431,7 @@ static int send_packet_authentication_req_100(struct connection *pconn, const st
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -1568,7 +1568,7 @@ static struct packet_authentication_reply *receive_packet_authentication_reply_1
     dio_get_string(&din, real_packet->password, sizeof(real_packet->password));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -1596,7 +1596,7 @@ static int send_packet_authentication_reply_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -1798,7 +1798,7 @@ static struct packet_nation_unavailable *receive_packet_nation_unavailable_100(s
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -1826,7 +1826,7 @@ static int send_packet_nation_unavailable_100(struct connection *pconn, const st
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -2047,7 +2047,7 @@ static struct packet_nation_select_req *receive_packet_nation_select_req_100(str
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -2075,7 +2075,7 @@ static int send_packet_nation_select_req_100(struct connection *pconn, const str
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -2308,7 +2308,7 @@ static struct packet_game_state *receive_packet_game_state_100(struct connection
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -2337,7 +2337,7 @@ static int send_packet_game_state_100(struct connection *pconn, const struct pac
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -2754,7 +2754,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -2782,7 +2782,7 @@ static int send_packet_endgame_report_100(struct connection *pconn, const struct
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -3353,7 +3353,7 @@ static struct packet_tile_info *receive_packet_tile_info_100(struct connection *
     dio_get_string(&din, real_packet->spec_sprite, sizeof(real_packet->spec_sprite));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -3381,7 +3381,7 @@ static int send_packet_tile_info_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -3801,7 +3801,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -3829,7 +3829,7 @@ static int send_packet_game_info_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4221,7 +4221,7 @@ static struct packet_map_info *receive_packet_map_info_100(struct connection *pc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -4249,7 +4249,7 @@ static int send_packet_map_info_100(struct connection *pconn, const struct packe
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4403,7 +4403,7 @@ static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(struct co
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -4431,7 +4431,7 @@ static int send_packet_nuke_tile_info_100(struct connection *pconn, const struct
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4617,7 +4617,7 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(struct connection *pc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -4639,7 +4639,7 @@ static int send_packet_chat_msg_100(struct connection *pconn, const struct packe
   SEND_PACKET_START(PACKET_CHAT_MSG);
 
   {
-    struct packet_chat_msg *tmp = fc_malloc(sizeof(*tmp));
+    struct packet_chat_msg *tmp = wc_malloc(sizeof(*tmp));
 
     *tmp = *packet;
     pre_send_packet_chat_msg(pconn, tmp);
@@ -4654,7 +4654,7 @@ static int send_packet_chat_msg_100(struct connection *pconn, const struct packe
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4843,7 +4843,7 @@ static struct packet_chat_msg_req *receive_packet_chat_msg_req_100(struct connec
     dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -4871,7 +4871,7 @@ static int send_packet_chat_msg_req_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -5005,7 +5005,7 @@ static struct packet_city_remove *receive_packet_city_remove_100(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -5033,7 +5033,7 @@ static int send_packet_city_remove_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -5570,7 +5570,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -5598,7 +5598,7 @@ static int send_packet_city_info_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -6498,7 +6498,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -6526,7 +6526,7 @@ static int send_packet_city_info_101(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -7176,7 +7176,7 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -7204,7 +7204,7 @@ static int send_packet_city_short_info_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -7405,7 +7405,7 @@ static struct packet_city_sell *receive_packet_city_sell_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -7433,7 +7433,7 @@ static int send_packet_city_sell_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -7575,7 +7575,7 @@ static struct packet_city_buy *receive_packet_city_buy_100(struct connection *pc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -7603,7 +7603,7 @@ static int send_packet_city_buy_100(struct connection *pconn, const struct packe
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -7746,7 +7746,7 @@ static struct packet_city_change *receive_packet_city_change_100(struct connecti
   }
   real_packet->is_build_id_unit_id = BV_ISSET(fields, 2);
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -7774,7 +7774,7 @@ static int send_packet_city_change_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -7925,7 +7925,7 @@ static struct packet_city_worklist *receive_packet_city_worklist_100(struct conn
     dio_get_worklist(&din, &real_packet->worklist);
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -7953,7 +7953,7 @@ static int send_packet_city_worklist_100(struct connection *pconn, const struct 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -8111,7 +8111,7 @@ static struct packet_city_make_specialist *receive_packet_city_make_specialist_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -8139,7 +8139,7 @@ static int send_packet_city_make_specialist_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -8305,7 +8305,7 @@ static struct packet_city_make_worker *receive_packet_city_make_worker_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -8333,7 +8333,7 @@ static int send_packet_city_make_worker_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -8499,7 +8499,7 @@ static struct packet_city_change_specialist *receive_packet_city_change_speciali
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -8527,7 +8527,7 @@ static int send_packet_city_change_specialist_100(struct connection *pconn, cons
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -8680,7 +8680,7 @@ static struct packet_city_rename *receive_packet_city_rename_100(struct connecti
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -8708,7 +8708,7 @@ static int send_packet_city_rename_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -8858,7 +8858,7 @@ static struct packet_city_options_req *receive_packet_city_options_req_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -8886,7 +8886,7 @@ static int send_packet_city_options_req_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9028,7 +9028,7 @@ static struct packet_city_refresh *receive_packet_city_refresh_100(struct connec
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9056,7 +9056,7 @@ static int send_packet_city_refresh_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9190,7 +9190,7 @@ static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9218,7 +9218,7 @@ static int send_packet_city_incite_inq_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9360,7 +9360,7 @@ static struct packet_city_incite_info *receive_packet_city_incite_info_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9388,7 +9388,7 @@ static int send_packet_city_incite_info_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9530,7 +9530,7 @@ static struct packet_city_name_suggestion_req *receive_packet_city_name_suggesti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9558,7 +9558,7 @@ static int send_packet_city_name_suggestion_req_100(struct connection *pconn, co
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9695,7 +9695,7 @@ static struct packet_city_name_suggestion_info *receive_packet_city_name_suggest
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9723,7 +9723,7 @@ static int send_packet_city_name_suggestion_info_100(struct connection *pconn, c
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9893,7 +9893,7 @@ static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(s
     dio_get_bit_string(&din, real_packet->improvements, sizeof(real_packet->improvements));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9921,7 +9921,7 @@ static int send_packet_city_sabotage_list_100(struct connection *pconn, const st
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10067,7 +10067,7 @@ static struct packet_player_remove *receive_packet_player_remove_100(struct conn
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -10095,7 +10095,7 @@ static int send_packet_player_remove_100(struct connection *pconn, const struct 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10479,7 +10479,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -10507,7 +10507,7 @@ static int send_packet_player_info_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -11047,7 +11047,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -11075,7 +11075,7 @@ static int send_packet_player_info_101(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -11613,7 +11613,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -11641,7 +11641,7 @@ static int send_packet_player_info_102(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12171,7 +12171,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -12199,7 +12199,7 @@ static int send_packet_player_info_103(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12654,7 +12654,7 @@ static struct packet_player_rates *receive_packet_player_rates_100(struct connec
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -12682,7 +12682,7 @@ static int send_packet_player_rates_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12832,7 +12832,7 @@ static struct packet_player_change_government *receive_packet_player_change_gove
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -12860,7 +12860,7 @@ static int send_packet_player_change_government_100(struct connection *pconn, co
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12994,7 +12994,7 @@ static struct packet_player_research *receive_packet_player_research_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13022,7 +13022,7 @@ static int send_packet_player_research_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -13156,7 +13156,7 @@ static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13184,7 +13184,7 @@ static int send_packet_player_tech_goal_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -13412,7 +13412,7 @@ static struct packet_player_attribute_chunk *receive_packet_player_attribute_chu
       dio_get_memory(&din, real_packet->data, real_packet->chunk_length);
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13433,7 +13433,7 @@ static int send_packet_player_attribute_chunk_100(struct connection *pconn, cons
   SEND_PACKET_START(PACKET_PLAYER_ATTRIBUTE_CHUNK);
 
   {
-    struct packet_player_attribute_chunk *tmp = fc_malloc(sizeof(*tmp));
+    struct packet_player_attribute_chunk *tmp = wc_malloc(sizeof(*tmp));
 
     *tmp = *packet;
     pre_send_packet_player_attribute_chunk(pconn, tmp);
@@ -13448,7 +13448,7 @@ static int send_packet_player_attribute_chunk_100(struct connection *pconn, cons
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -13596,7 +13596,7 @@ static struct packet_unit_remove *receive_packet_unit_remove_100(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13624,7 +13624,7 @@ static int send_packet_unit_remove_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -14050,7 +14050,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -14078,7 +14078,7 @@ static int send_packet_unit_info_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -14686,7 +14686,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -14714,7 +14714,7 @@ static int send_packet_unit_info_101(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -15226,7 +15226,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -15254,7 +15254,7 @@ static int send_packet_unit_short_info_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -15497,7 +15497,7 @@ static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(struc
   }
   real_packet->make_winner_veteran = BV_ISSET(fields, 4);
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -15525,7 +15525,7 @@ static int send_packet_unit_combat_info_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -15699,7 +15699,7 @@ static struct packet_unit_move *receive_packet_unit_move_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -15727,7 +15727,7 @@ static int send_packet_unit_move_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -15880,7 +15880,7 @@ static struct packet_unit_build_city *receive_packet_unit_build_city_100(struct 
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -15908,7 +15908,7 @@ static int send_packet_unit_build_city_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -16050,7 +16050,7 @@ static struct packet_unit_disband *receive_packet_unit_disband_100(struct connec
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -16078,7 +16078,7 @@ static int send_packet_unit_disband_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -16220,7 +16220,7 @@ static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -16248,7 +16248,7 @@ static int send_packet_unit_change_homecity_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -16390,7 +16390,7 @@ static struct packet_unit_establish_trade *receive_packet_unit_establish_trade_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -16418,7 +16418,7 @@ static int send_packet_unit_establish_trade_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -16552,7 +16552,7 @@ static struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wond
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -16580,7 +16580,7 @@ static int send_packet_unit_help_build_wonder_100(struct connection *pconn, cons
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -16730,7 +16730,7 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -16758,7 +16758,7 @@ static int send_packet_unit_goto_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -16991,7 +16991,7 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17019,7 +17019,7 @@ static int send_packet_unit_orders_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -17253,7 +17253,7 @@ static struct packet_unit_auto *receive_packet_unit_auto_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17281,7 +17281,7 @@ static int send_packet_unit_auto_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -17423,7 +17423,7 @@ static struct packet_unit_load *receive_packet_unit_load_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17451,7 +17451,7 @@ static int send_packet_unit_load_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -17601,7 +17601,7 @@ static struct packet_unit_unload *receive_packet_unit_unload_100(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17629,7 +17629,7 @@ static int send_packet_unit_unload_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -17771,7 +17771,7 @@ static struct packet_unit_upgrade *receive_packet_unit_upgrade_100(struct connec
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17799,7 +17799,7 @@ static int send_packet_unit_upgrade_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -17933,7 +17933,7 @@ static struct packet_unit_nuke *receive_packet_unit_nuke_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17961,7 +17961,7 @@ static int send_packet_unit_nuke_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18111,7 +18111,7 @@ static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18139,7 +18139,7 @@ static int send_packet_unit_paradrop_to_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18297,7 +18297,7 @@ static struct packet_unit_airlift *receive_packet_unit_airlift_100(struct connec
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18325,7 +18325,7 @@ static int send_packet_unit_airlift_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18467,7 +18467,7 @@ static struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq_100(struct co
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18495,7 +18495,7 @@ static int send_packet_unit_bribe_inq_100(struct connection *pconn, const struct
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18637,7 +18637,7 @@ static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18665,7 +18665,7 @@ static int send_packet_unit_bribe_info_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18807,7 +18807,7 @@ static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(str
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18835,7 +18835,7 @@ static int send_packet_unit_type_upgrade_100(struct connection *pconn, const str
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18993,7 +18993,7 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19021,7 +19021,7 @@ static int send_packet_unit_diplomat_action_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -19187,7 +19187,7 @@ static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_po
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19215,7 +19215,7 @@ static int send_packet_unit_diplomat_popup_dialog_100(struct connection *pconn, 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -19390,7 +19390,7 @@ static struct packet_unit_change_activity *receive_packet_unit_change_activity_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19418,7 +19418,7 @@ static int send_packet_unit_change_activity_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -19568,7 +19568,7 @@ static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_m
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19596,7 +19596,7 @@ static int send_packet_diplomacy_init_meeting_req_100(struct connection *pconn, 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -19738,7 +19738,7 @@ static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19766,7 +19766,7 @@ static int send_packet_diplomacy_init_meeting_100(struct connection *pconn, cons
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -19925,7 +19925,7 @@ static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_canc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19953,7 +19953,7 @@ static int send_packet_diplomacy_cancel_meeting_req_100(struct connection *pconn
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20095,7 +20095,7 @@ static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_m
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20123,7 +20123,7 @@ static int send_packet_diplomacy_cancel_meeting_100(struct connection *pconn, co
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20306,7 +20306,7 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20334,7 +20334,7 @@ static int send_packet_diplomacy_create_clause_req_100(struct connection *pconn,
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20516,7 +20516,7 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20544,7 +20544,7 @@ static int send_packet_diplomacy_create_clause_100(struct connection *pconn, con
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20745,7 +20745,7 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20773,7 +20773,7 @@ static int send_packet_diplomacy_remove_clause_req_100(struct connection *pconn,
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20955,7 +20955,7 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20983,7 +20983,7 @@ static int send_packet_diplomacy_remove_clause_100(struct connection *pconn, con
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21160,7 +21160,7 @@ static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accep
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -21188,7 +21188,7 @@ static int send_packet_diplomacy_accept_treaty_req_100(struct connection *pconn,
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21324,7 +21324,7 @@ static struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_tr
   real_packet->I_accepted = BV_ISSET(fields, 1);
   real_packet->other_accepted = BV_ISSET(fields, 2);
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -21352,7 +21352,7 @@ static int send_packet_diplomacy_accept_treaty_100(struct connection *pconn, con
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21524,7 +21524,7 @@ static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -21552,7 +21552,7 @@ static int send_packet_diplomacy_cancel_pact_100(struct connection *pconn, const
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21697,7 +21697,7 @@ static struct packet_page_msg *receive_packet_page_msg_100(struct connection *pc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -21725,7 +21725,7 @@ static int send_packet_page_msg_100(struct connection *pconn, const struct packe
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21864,7 +21864,7 @@ static struct packet_report_req *receive_packet_report_req_100(struct connection
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -21892,7 +21892,7 @@ static int send_packet_report_req_100(struct connection *pconn, const struct pac
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -22073,7 +22073,7 @@ static struct packet_conn_info *receive_packet_conn_info_100(struct connection *
     dio_get_string(&din, real_packet->capability, sizeof(real_packet->capability));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -22101,7 +22101,7 @@ static int send_packet_conn_info_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -22313,7 +22313,7 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(struct co
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -22341,7 +22341,7 @@ static int send_packet_conn_ping_info_100(struct connection *pconn, const struct
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -22497,7 +22497,7 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(struct co
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -22525,7 +22525,7 @@ static int send_packet_conn_ping_info_101(struct connection *pconn, const struct
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -23015,7 +23015,7 @@ static struct packet_new_year *receive_packet_new_year_100(struct connection *pc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -23043,7 +23043,7 @@ static int send_packet_new_year_100(struct connection *pconn, const struct packe
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -23414,7 +23414,7 @@ static struct packet_spaceship_place *receive_packet_spaceship_place_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -23442,7 +23442,7 @@ static int send_packet_spaceship_place_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -23734,7 +23734,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -23762,7 +23762,7 @@ static int send_packet_spaceship_info_100(struct connection *pconn, const struct
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -24251,7 +24251,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
     DIO_BV_GET(&din, real_packet->roles);
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -24279,7 +24279,7 @@ static int send_packet_ruleset_unit_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -24931,7 +24931,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -24959,7 +24959,7 @@ static int send_packet_ruleset_game_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -25427,7 +25427,7 @@ static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_gove
     dio_get_string(&din, real_packet->female_title, sizeof(real_packet->female_title));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -25455,7 +25455,7 @@ static int send_packet_ruleset_government_ruler_title_100(struct connection *pco
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -25674,7 +25674,7 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connec
     dio_get_string(&din, real_packet->graphic_alt, sizeof(real_packet->graphic_alt));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -25702,7 +25702,7 @@ static int send_packet_ruleset_tech_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -26248,7 +26248,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
     dio_get_string(&din, real_packet->helptext, sizeof(real_packet->helptext));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -26276,7 +26276,7 @@ static int send_packet_ruleset_government_100(struct connection *pconn, const st
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -26851,7 +26851,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -26879,7 +26879,7 @@ static int send_packet_ruleset_terrain_control_100(struct connection *pconn, con
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -27215,7 +27215,7 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct co
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -27243,7 +27243,7 @@ static int send_packet_ruleset_nation_100(struct connection *pconn, const struct
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -27533,7 +27533,7 @@ static struct packet_ruleset_city *receive_packet_ruleset_city_100(struct connec
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -27561,7 +27561,7 @@ static int send_packet_ruleset_city_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -27933,7 +27933,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -27961,7 +27961,7 @@ static int send_packet_ruleset_building_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -28569,7 +28569,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
     dio_get_string(&din, real_packet->helptext, sizeof(real_packet->helptext));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -28597,7 +28597,7 @@ static int send_packet_ruleset_terrain_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -29155,7 +29155,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -29183,7 +29183,7 @@ static int send_packet_ruleset_control_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -29498,7 +29498,7 @@ static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_1
     dio_get_string(&din, real_packet->token, sizeof(real_packet->token));
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -29526,7 +29526,7 @@ static int send_packet_single_want_hack_req_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -29594,7 +29594,7 @@ static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -29622,7 +29622,7 @@ static int send_packet_single_want_hack_req_101(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -29744,7 +29744,7 @@ static struct packet_single_want_hack_reply *receive_packet_single_want_hack_rep
 
   real_packet->you_have_hack = BV_ISSET(fields, 0);
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -29772,7 +29772,7 @@ static int send_packet_single_want_hack_reply_100(struct connection *pconn, cons
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -29992,7 +29992,7 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -30020,7 +30020,7 @@ static int send_packet_game_load_100(struct connection *pconn, const struct pack
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -30342,7 +30342,7 @@ static struct packet_options_settable_control *receive_packet_options_settable_c
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -30370,7 +30370,7 @@ static int send_packet_options_settable_control_100(struct connection *pconn, co
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -30591,7 +30591,7 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -30619,7 +30619,7 @@ static int send_packet_options_settable_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -30876,7 +30876,7 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -30904,7 +30904,7 @@ static int send_packet_ruleset_cache_group_100(struct connection *pconn, const s
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -31170,7 +31170,7 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -31198,7 +31198,7 @@ static int send_packet_ruleset_cache_effect_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -31409,7 +31409,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -31437,7 +31437,7 @@ static int send_packet_traderoute_info_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -31557,7 +31557,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_101(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -31585,7 +31585,7 @@ static int send_packet_traderoute_info_101(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -31762,7 +31762,7 @@ static struct packet_extgame_info *receive_packet_extgame_info_100(struct connec
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -31790,7 +31790,7 @@ static int send_packet_extgame_info_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -31938,7 +31938,7 @@ static struct packet_extgame_info *receive_packet_extgame_info_101(struct connec
   real_packet->globalwarmingon = BV_ISSET(fields, 10);
   real_packet->nuclearwinteron = BV_ISSET(fields, 11);
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -31966,7 +31966,7 @@ static int send_packet_extgame_info_101(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -32173,7 +32173,7 @@ static struct packet_vote_new *receive_packet_vote_new_100(struct connection *pc
   }
   real_packet->is_poll = BV_ISSET(fields, 5);
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -32201,7 +32201,7 @@ static int send_packet_vote_new_100(struct connection *pconn, const struct packe
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -32391,7 +32391,7 @@ static struct packet_vote_update *receive_packet_vote_update_100(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -32419,7 +32419,7 @@ static int send_packet_vote_update_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -32572,7 +32572,7 @@ static struct packet_vote_remove *receive_packet_vote_remove_100(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -32600,7 +32600,7 @@ static int send_packet_vote_remove_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -32726,7 +32726,7 @@ static struct packet_vote_resolve *receive_packet_vote_resolve_100(struct connec
   }
   real_packet->passed = BV_ISSET(fields, 1);
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -32754,7 +32754,7 @@ static int send_packet_vote_resolve_100(struct connection *pconn, const struct p
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -32892,7 +32892,7 @@ static struct packet_vote_submit *receive_packet_vote_submit_100(struct connecti
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -32920,7 +32920,7 @@ static int send_packet_vote_submit_100(struct connection *pconn, const struct pa
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -33060,7 +33060,7 @@ static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -33088,7 +33088,7 @@ static int send_packet_trade_route_plan_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -33238,7 +33238,7 @@ static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(s
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -33266,7 +33266,7 @@ static int send_packet_trade_route_remove_100(struct connection *pconn, const st
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -33418,7 +33418,7 @@ static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -33446,7 +33446,7 @@ static int send_packet_unit_trade_route_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -33620,7 +33620,7 @@ static struct packet_trade_route_info *receive_packet_trade_route_info_100(struc
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -33648,7 +33648,7 @@ static int send_packet_trade_route_info_100(struct connection *pconn, const stru
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -33810,7 +33810,7 @@ static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -33838,7 +33838,7 @@ static int send_packet_city_set_rally_point_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -33988,7 +33988,7 @@ static struct packet_city_clear_rally_point *receive_packet_city_clear_rally_poi
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -34016,7 +34016,7 @@ static int send_packet_city_clear_rally_point_100(struct connection *pconn, cons
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -34166,7 +34166,7 @@ static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -34194,7 +34194,7 @@ static int send_packet_unit_air_patrol_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -34344,7 +34344,7 @@ static struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop_1
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -34372,7 +34372,7 @@ static int send_packet_unit_air_patrol_stop_100(struct connection *pconn, const 
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -34547,7 +34547,7 @@ static struct packet_city_manager_param *receive_packet_city_manager_param_100(s
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -34575,7 +34575,7 @@ static int send_packet_city_manager_param_100(struct connection *pconn, const st
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -34768,7 +34768,7 @@ static struct packet_city_no_manager_param *receive_packet_city_no_manager_param
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -34796,7 +34796,7 @@ static int send_packet_city_no_manager_param_100(struct connection *pconn, const
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -34924,7 +34924,7 @@ static struct packet_player_info_req *receive_packet_player_info_req_100(struct 
     }
   }
 
-  clone = fc_malloc(sizeof(*clone));
+  clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -34952,7 +34952,7 @@ static int send_packet_player_info_req_100(struct connection *pconn, const struc
   old = hash_lookup_data(*hash, real_packet);
   old_from_hash = (old != NULL);
   if (!old) {
-    old = fc_malloc(sizeof(*old));
+    old = wc_malloc(sizeof(*old));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }

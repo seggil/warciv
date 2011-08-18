@@ -506,11 +506,11 @@ struct socket_packet_buffer *new_socket_packet_buffer(void)
 {
   struct socket_packet_buffer *buf;
 
-  buf = (struct socket_packet_buffer *)fc_malloc(sizeof(*buf));
+  buf = (struct socket_packet_buffer *)wc_malloc(sizeof(*buf));
   buf->ndata = 0;
   buf->do_buffer_sends = 0;
   buf->nsize = 10*MAX_LEN_PACKET;
-  buf->data = (unsigned char *)fc_malloc(buf->nsize);
+  buf->data = (unsigned char *)wc_malloc(buf->nsize);
   return buf;
 }
 
@@ -638,9 +638,9 @@ static void init_packet_hashs(struct connection *pc)
 {
   enum packet_type i;
 
-  pc->phs.sent = fc_malloc(sizeof(*pc->phs.sent) * PACKET_LAST);
-  pc->phs.received = fc_malloc(sizeof(*pc->phs.received) * PACKET_LAST);
-  pc->phs.variant = fc_malloc(sizeof(*pc->phs.variant) * PACKET_LAST);
+  pc->phs.sent = wc_malloc(sizeof(*pc->phs.sent) * PACKET_LAST);
+  pc->phs.received = wc_malloc(sizeof(*pc->phs.received) * PACKET_LAST);
+  pc->phs.variant = wc_malloc(sizeof(*pc->phs.variant) * PACKET_LAST);
 
   for (i = 0; i < PACKET_LAST; i++) {
     pc->phs.sent[i] = NULL;
@@ -855,7 +855,7 @@ struct conn_pattern *conn_pattern_new(const char *pattern,
 
   assert(pattern != NULL);
 
-  cp = fc_malloc(sizeof(struct conn_pattern));
+  cp = wc_malloc(sizeof(struct conn_pattern));
   cp->pattern = mystrdup(pattern);
   cp->type = type;
 

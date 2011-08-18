@@ -138,7 +138,7 @@ static void enqueue_call(struct my_agent *agent,
   }
   va_end(ap);
 
-  pcall2 = fc_malloc(sizeof(struct call));
+  pcall2 = wc_malloc(sizeof(struct call));
 
   pcall2->agent = agent;
   pcall2->type = type;

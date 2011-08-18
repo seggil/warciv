@@ -17,13 +17,13 @@
 #include <stdlib.h>             /* size_t; actually stddef.h, but stdlib.h
                                    might be more reliable? --dwp */
 
-/* fc_malloc, fc_realloc, fc_calloc:
+/* wc_malloc, fc_realloc, fc_calloc:
  * fc_ stands for freeciv; the return value is checked,
  * and freeciv-specific processing occurs if it is NULL:
  * a log message, possibly cleanup, and ending with exit(1)
  */
 
-#define fc_malloc(sz)      Wc_real_malloc((sz), "malloc", \
+#define wc_malloc(sz)      wc_real_malloc((sz), "malloc", \
                                           __LINE__, __FILE__)
 #define fc_realloc(ptr,sz) wc_real_realloc((ptr), (sz), "realloc", \
                                            __LINE__, __FILE__)

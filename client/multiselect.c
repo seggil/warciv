@@ -599,7 +599,7 @@ void multi_select_spread(void)
               && get_city_bonus(pcity, EFT_AIRLIFT) == 0)) {
         continue;
       }
-      pscity = fc_malloc(sizeof(struct scity));
+      pscity = wc_malloc(sizeof(struct scity));
       pscity->tdv = pscity->rdv = pscity->tav = pscity->rav = 0;
       pscity->pcity = pcity;
       pscity->ulist = unit_list_new();
@@ -787,7 +787,7 @@ void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile)
   dgassert(dg);
 
   struct delayed_goto_data *dgd
-    = fc_malloc(sizeof(struct delayed_goto_data));
+    = wc_malloc(sizeof(struct delayed_goto_data));
 
   dgd->id = id;
   dgd->type = type;

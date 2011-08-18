@@ -364,7 +364,7 @@ void map_size_changed(void)
 **************************************************************************/
 struct canvas *canvas_create(int width, int height)
 {
-  struct canvas *result = fc_malloc(sizeof(*result));
+  struct canvas *result = wc_malloc(sizeof(*result));
 
   result->type = CANVAS_PIXMAP;
   result->v.pixmap = gdk_pixmap_new(root_window, width, height, -1);

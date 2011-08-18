@@ -1223,7 +1223,7 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
   pcontinent_counter = hash_lookup_data(an_continent_counter_table,
                                         INT_TO_PTR(ad->continent_id));
   if (!pcontinent_counter) {
-    pcontinent_counter = fc_malloc(sizeof(int));
+    pcontinent_counter = wc_malloc(sizeof(int));
     *pcontinent_counter = 0;
     hash_insert(an_continent_counter_table, INT_TO_PTR(ad->continent_id),
                 pcontinent_counter);
@@ -1347,7 +1347,7 @@ static int an_generate_city_name(char *buf, int buflen,
 
   ad = hash_lookup_data(an_city_autoname_data_table, INT_TO_PTR(pcity->id));
   if (!ad) {
-    ad = fc_malloc(sizeof(struct autoname_data));
+    ad = wc_malloc(sizeof(struct autoname_data));
     freelog(LOG_DEBUG, "agcn   new ad %p", ad);
     //printf("%s   new ad %p\n", __FILE__, ad);
     sz_strlcpy(ad->original_name, pcity->name);
@@ -1671,7 +1671,7 @@ static struct map_link *find_link_mark(enum tag_link_types type, int id)
 ***********************************************************************/
 static struct map_link *map_link_new(enum tag_link_types type, int id)
 {
-  struct map_link *pml = fc_malloc(sizeof(struct map_link));
+  struct map_link *pml = wc_malloc(sizeof(struct map_link));
 
   pml->type = type;
   pml->id = id;
