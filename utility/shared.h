@@ -19,7 +19,7 @@
 
 #ifdef HAVE_CONFIG_H
 #  ifndef WC_CONFIG_H            /* this should be defined in config.h */
-#    error Files including fcintl.h should also include config.h directly
+#    error Files including wc_intl.h should also include config.h directly
 #  endif
 #endif
 
