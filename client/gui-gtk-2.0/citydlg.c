@@ -1314,7 +1314,7 @@ static struct city_dialog *create_city_dialog(struct city *pcity,
   g_signal_connect(pdialog->shell, "destroy",
                    G_CALLBACK(city_destroy_callback), pdialog);
   gtk_window_set_position(GTK_WINDOW(pdialog->shell), GTK_WIN_POS_MOUSE);
-  gtk_widget_set_name(pdialog->shell, "Freeciv");
+  gtk_widget_set_name(pdialog->shell, "Warciv");
 
   gtk_widget_realize(pdialog->shell);
 

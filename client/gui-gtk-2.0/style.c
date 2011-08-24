@@ -53,67 +53,67 @@ struct styleconf{
 
 static struct styleconf styleconf[] = {
   {
-    N_("City"), "city_label", "Freeciv*.city label",
+    N_("City"), "city_label", "Warciv*.city label",
     NULL
   },
   {
-    N_("Notify"), "notify_label", "Freeciv*.notify label",
+    N_("Notify"), "notify_label", "Warciv*.notify label",
     NULL
   },
   {
-    N_("Spaceship"), "spaceship_label", "Freeciv*.spaceship label",
+    N_("Spaceship"), "spaceship_label", "Warciv*.spaceship label",
     NULL
   },
   {
-    N_("Help"), "help_label", "Freeciv*.help label",
+    N_("Help"), "help_label", "Warciv*.help label",
     NULL
   },
   {
-    N_("Help Links"), "help_link", "Freeciv*.help link",
+    N_("Help Links"), "help_link", "Warciv*.help link",
     NULL
   },
   {
-    N_("Help texts"), "help_text", "Freeciv*.help text",
+    N_("Help texts"), "help_text", "Warciv*.help text",
     NULL
   },
   {
-    N_("Chatline"), "chatline", "Freeciv*.chatline",
+    N_("Chatline"), "chatline", "Warciv*.chatline",
     NULL
   },
   {
-    N_("Beta"), "beta_label", "Freeciv*.beta label",
+    N_("Beta"), "beta_label", "Warciv*.beta label",
     NULL
   },
   {
-    N_("Small Font"), "small_font", "Freeciv*.small font",
+    N_("Small Font"), "small_font", "Warciv*.small font",
     NULL
   },
   {
-    N_("Comment"), "comment_label", "Freeciv*.comment label",
+    N_("Comment"), "comment_label", "Warciv*.comment label",
     NULL
   },
   {
-    N_("City Names Font"), "city_names_font", "Freeciv*.city names",
+    N_("City Names Font"), "city_names_font", "Warciv*.city names",
     NULL
   },
   {
-    N_("City Productions Font"), "city_productions_font", "Freeciv*.city productions",
+    N_("City Productions Font"), "city_productions_font", "Warciv*.city productions",
     NULL
   },
   {
-    N_("Vote Label"), "vote label", "Freeciv*.vote label",
+    N_("Vote Label"), "vote label", "Warciv*.vote label",
     NULL
   },
   {
-    N_("Vote Yes Button"), "vote yes button", "Freeciv*.vote yes button",
+    N_("Vote Yes Button"), "vote yes button", "Warciv*.vote yes button",
     NULL
   },
   {
-    N_("Vote No Button"), "vote no button", "Freeciv*.vote no button",
+    N_("Vote No Button"), "vote no button", "Warciv*.vote no button",
     NULL
   },
   {
-    N_("Vote Abstain Button"), "vote abstain button", "Freeciv*.vote abstain button",
+    N_("Vote Abstain Button"), "vote abstain button", "Warciv*.vote abstain button",
     NULL
   },
   {
@@ -274,7 +274,7 @@ static void reset_style(const char * stylebuf)
 
   /* font names shouldn't be in spec files! */
   style = gtk_rc_get_style_by_paths(gtksettings,
-                                    "Freeciv*.city names",
+                                    "Warciv*.city names",
                                     NULL, G_TYPE_NONE);
   if (!style) {
     style = gtk_style_new();
@@ -283,7 +283,7 @@ static void reset_style(const char * stylebuf)
   main_font = style->font_desc;
 
   style = gtk_rc_get_style_by_paths(gtksettings,
-                                    "Freeciv*.city productions",
+                                    "Warciv*.city productions",
                                     NULL, G_TYPE_NONE);
   if (!style) {
     style = gtk_style_new();
@@ -310,7 +310,7 @@ static void save_callback(GtkWidget *w,
   if (home) {
     gchar *str;
 
-    str = g_build_filename(home, ".freeciv.rc-2.0", NULL);
+    str = g_build_filename(home, ".warciv.rc-2.0", NULL);
     fp = fopen(str, "wr");
     fputs(stylebuf, fp);
     fclose(fp);
@@ -380,7 +380,7 @@ static GtkWidget *create_style_config_shell(void)
   gtk_window_set_decorated(GTK_WINDOW (dialog), TRUE);
   gtk_container_set_border_width (GTK_CONTAINER(dialog), 5);
 
-  gtk_widget_set_name(dialog, "Freeciv");
+  gtk_widget_set_name(dialog, "Warciv");
   setup_dialog(dialog, toplevel);
 
   g_signal_connect(dialog, "destroy",

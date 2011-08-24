@@ -427,13 +427,13 @@ static void handle_city(struct city *pcity)
 
     create_event(pcity->tile, E_CITY_CMA_RELEASE,
                  _("CMA: %s has changed multiple times. This may be "
-                   "an error in Freeciv or bad luck. The CMA will detach "
+                   "an error in Warciv or bad luck. The CMA will detach "
                    "itself from the city now."), pcity->name);
 
     cma_release_city(pcity);
 
     freelog(LOG_ERROR, "CMA: %s has changed multiple times due to "
-            "an error in Freeciv. Please send a savegame that can reproduce "
+            "an error in Warciv. Please send a savegame that can reproduce "
             "this bug at %s. Thank you.", pcity->name, BUG_URL);
   }
 

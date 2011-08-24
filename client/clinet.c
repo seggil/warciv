@@ -731,7 +731,7 @@ static int generate_server_list_http_request(char *buf, int buflen,
   len = my_snprintf(buf, buflen,
     "POST %s HTTP/1.1\r\n"
     "Host: %s:%d\r\n"
-    "User-Agent: Freeciv/%s %s %s\r\n"
+    "User-Agent: Warciv/%s %s %s\r\n"
     "Connection: close\r\n"
     "Content-Type: application/x-www-form-urlencoded; charset=\"utf-8\"\r\n"
     "Content-Length: %lu\r\n"
@@ -1384,7 +1384,7 @@ void delete_server_list(struct server_list *server_list)
 
 /**************************************************************************
   Broadcast an UDP package to all servers on LAN, requesting information
-  about the server. The packet is send to all Freeciv servers in the same
+  about the server. The packet is send to all Warciv servers in the same
   multicast group as the client.
 **************************************************************************/
 int begin_lanserver_scan(void)

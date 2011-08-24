@@ -1653,7 +1653,7 @@ static GtkWidget *create_help_dialog(GtkWidget *parent)
   gtk_window_set_resizable(GTK_WINDOW(dialog), TRUE);
   gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
-  gtk_widget_set_name(dialog, "Freeciv");
+  gtk_widget_set_name(dialog, "Warciv");
   setup_dialog(dialog, toplevel);
 
   g_signal_connect_swapped(dialog, "destroy",

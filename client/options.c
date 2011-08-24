@@ -622,7 +622,7 @@ static struct client_option client_options[] = {
                   COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(dialogs_on_top, N_("Keep dialogs on top"),
                   N_("If this option is set then dialog windows will always "
-                     "remain in front of the main Freeciv window. "
+                     "remain in front of the main Warciv window. "
                      "Disabling this has no effect in fullscreen mode."),
                   COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(enable_tabs, N_("Enable status report tabs"),
@@ -655,7 +655,7 @@ static struct client_option client_options[] = {
   GEN_STR_LIST_OPTION(default_sound_plugin_name, N_("Default sound plugin"),
                       N_("If you have a problem with sound, try changing the "
                          "sound plugin.  The new plugin won't take effect "
-                         "until you restart Freeciv.  Changing this is the "
+                         "until you restart Warciv.  Changing this is the "
                          "same as using the -P command-line option."),
                       COC_SOUND, "",
                       get_soundplugin_list, audio_change_plugin),
@@ -1359,7 +1359,7 @@ filter filter_revert_str_accessor(const char *(*str_accessor)(filter),
 
 /****************************************************************
  Returns pointer to static memory containing name of option file.
- Ie, based on FREECIV_OPT env var, and home dir. (or a
+ Ie, based on WARCIV_OPT env var, and home dir. (or a
  OPTION_FILE_NAME define defined in config.h)
  Or NULL if problem.
 *****************************************************************/
@@ -1368,7 +1368,7 @@ const char *option_file_name(void)
   static char name_buffer[256];
   char *name;
 
-  name = getenv("FREECIV_OPT");
+  name = getenv("WARCIV_OPT");
 
   if (name) {
     sz_strlcpy(name_buffer, name);

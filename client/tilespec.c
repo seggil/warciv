@@ -1242,7 +1242,7 @@ static void tilespec_setup_citizen_types(void)
 
 /**********************************************************************
   Initialize 'sprites' structure based on hardwired tags which
-  freeciv always requires.
+  warciv always requires.
 ***********************************************************************/
 static void tilespec_lookup_sprite_tags(void)
 {
@@ -3005,7 +3005,7 @@ static void classic_player_colors_init(void)
 }
 
 /**********************************************************************
-  Return color for overview map tile in classic freeciv style.
+  Return color for overview map tile in classic warciv style.
 ***********************************************************************/
 static enum color_std classic_overview_tile_color(struct tile *ptile)
 {

@@ -442,7 +442,7 @@ void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
 
   case GUI_DIALOG_WINDOW:
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_name(window, "Freeciv");
+    gtk_widget_set_name(window, "Warciv");
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_MOUSE);
     setup_dialog(window, toplevel);
 

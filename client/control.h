@@ -281,7 +281,7 @@ void key_unit_air_patrol_dest(void);
 void key_cycle_player_colors_modes(void);
 void update_hover_cursor(void);
 
-/* don't change this unless you also put more entries in data/Freeciv */
+/* don't change this unless you also put more entries in data/Warciv */
 #define MAX_NUM_UNITS_BELOW 4
 
 extern int num_units_below;

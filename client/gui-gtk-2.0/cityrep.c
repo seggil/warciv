@@ -279,8 +279,8 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
     row[i] = buf[i];
   }
 
-  g_object_set_data(G_OBJECT(menu), "freeciv_test_func", test_func);
-  g_object_set_data(G_OBJECT(menu), "freeciv_city_operation",
+  g_object_set_data(G_OBJECT(menu), "warciv_test_func", test_func);
+  g_object_set_data(G_OBJECT(menu), "warciv_city_operation",
                     GINT_TO_POINTER(city_operation));
 
   for (i = 0; i < 3; i++) {
@@ -450,9 +450,9 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
 {
   cid cid = GPOINTER_TO_INT(data);
   GObject *parent = G_OBJECT(w->parent);
-  TestCityFunc test_func = g_object_get_data(parent, "freeciv_test_func");
+  TestCityFunc test_func = g_object_get_data(parent, "warciv_test_func");
   enum city_operation_type city_operation =
-    GPOINTER_TO_INT(g_object_get_data(parent, "freeciv_city_operation"));
+    GPOINTER_TO_INT(g_object_get_data(parent, "warciv_city_operation"));
 
   /* if this is not a city operation: */
   if (city_operation == CO_NONE) {
@@ -563,7 +563,7 @@ static void select_cma_callback(GtkWidget * w, gpointer data)
   int idx = GPOINTER_TO_INT(data);
   GObject *parent = G_OBJECT(w->parent);
   bool change_cma =
-      GPOINTER_TO_INT(g_object_get_data(parent, "freeciv_change_cma"));
+      GPOINTER_TO_INT(g_object_get_data(parent, "warciv_change_cma"));
   struct cm_parameter parameter;
 
   /* If this is not the change button but the select cities button. */
@@ -706,7 +706,7 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
     }
   }
 
-  g_object_set_data(G_OBJECT(menu), "freeciv_change_cma",
+  g_object_set_data(G_OBJECT(menu), "warciv_change_cma",
                     GINT_TO_POINTER(change_cma));
   gtk_widget_show_all(menu);
 }

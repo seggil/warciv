@@ -232,7 +232,7 @@ bool client_start_server(void)
     argv[argc++] = "1";
     argv[argc++] = "-e";
     argv[argc++] = "--saves";
-    argv[argc++] = "~/.freeciv/saves";
+    argv[argc++] = "~/.warciv/saves";
     if (logfile) {
       argv[argc++] = "--debug";
       argv[argc++] = "3";
@@ -455,7 +455,7 @@ void send_client_wants_hack(const char *filename)
 
       /* get the full filename path */
       interpret_tilde(challenge_fullname, sizeof(challenge_fullname),
-          "~/.freeciv/");
+          "~/.warciv/");
       make_dir(challenge_fullname);
 
       sz_strlcat(challenge_fullname, filename);

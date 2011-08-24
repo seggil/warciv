@@ -1209,7 +1209,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
                    || punit->orders.index < punit->orders.length - 1) {
           /* This unit has been stopped.
            *
-           * This test is made to handle Freeciv hack about last move failure.
+           * This test is made to handle Warciv hack about last move failure.
            * Read note in file server/unittools.h, function execute_orders(). */
           need_free_trade = TRUE;
         }

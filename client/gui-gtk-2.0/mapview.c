@@ -599,7 +599,7 @@ static gboolean unqueue_flush(gpointer data)
 /**************************************************************************
   Called when a region is marked dirty, this function queues a flush event
   to be handled later by GTK.  The flush may end up being done
-  by freeciv before then, in which case it will be a wasted call.
+  by warciv before then, in which case it will be a wasted call.
 **************************************************************************/
 void queue_flush(void)
 {
