@@ -232,7 +232,7 @@ static int get_total_CC(struct path_finding_map *pf_map, int cost, int extra)
 }
 
 /**************************************************************************
-  Bare-bones Path Finding iterator.  All Freeciv rules logic is hidden in
+  Bare-bones Path Finding iterator.  All Warciv rules logic is hidden in
   get_costs callback (compare to pf_next function).
   Plan: 1. Process previous position
         2. Get new nearest position and return it

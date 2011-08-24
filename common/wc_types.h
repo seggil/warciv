@@ -40,7 +40,7 @@ struct unit;
 #define MAX_LEN_STARTUNIT (20 + 1)
 
 /*
- * Number of traderoutes a city can have in standard Freeciv.
+ * Number of traderoutes a city can have in standard Warciv.
  */
 #define OLD_NUM_TRADEROUTES     4
 

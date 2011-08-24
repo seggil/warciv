@@ -81,7 +81,7 @@
 /**********************************************************************
  The current packet functions don't handle signed values
  correct. This will probably lead to problems when compiling
- freeciv for a platform which has 64 bit ints. Also 16 and 8
+ warciv for a platform which has 64 bit ints. Also 16 and 8
  bits values cannot be signed without using tricks (look in e.g
  receive_packet_city_info() )
 
@@ -129,7 +129,7 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
     int size = len;
 
     if (!compression_level_initialized) {
-      char *s = getenv("FREECIV_COMPRESSION_LEVEL");
+      char *s = getenv("WARCIV_COMPRESSION_LEVEL");
       if (!s || sscanf(s, "%d", &compression_level) != 1
           || compression_level < -1 || compression_level > 9) {
         compression_level = -1;

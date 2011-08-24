@@ -241,7 +241,7 @@ end
 
 /************** Login/pregame/endgame packets **********************/
 
-# This packet is the first real (freeciv specific) packet send by the
+# This packet is the first real (warciv specific) packet send by the
 # client. The player hasn't been accepted yet.
 PACKET_SERVER_JOIN_REQ=4; cs, dsend,no-delta,no-handle
   STRING username[MAX_LEN_NAME];

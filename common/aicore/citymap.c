@@ -35,7 +35,7 @@
 /* CITYMAP - reserve space for cities
  *
  * The citymap is a large int double array that corresponds to
- * the freeciv main map. For each tile, it stores three different
+ * the warciv main map. For each tile, it stores three different
  * and exclusive values in a single int: A positive int tells you
  * how many cities can use this tile (a crowdedness inidicator). A
  * value of zero indicates that the tile is presently unused and

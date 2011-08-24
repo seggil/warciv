@@ -35,7 +35,7 @@ const char * const our_capability = our_capability_internal;
  * out if they can talk to each other, and using which protocol version,
  * and which features and behaviors to expect.  The string is a list of
  * words, separated by whitespace and/or commas, where each word indicates
- * a capability that this version of Freeciv understands.
+ * a capability that this version of Warciv understands.
  * If a capability word is mandatory, it should start with a "+".
  *
  * eg, #define CAPABILITY "+1.6, MapScroll, +AutoSettlers"
@@ -46,7 +46,7 @@ const char * const our_capability = our_capability_internal;
  * Each executable has a string our_capability (above), which gives the
  * capabilities of the running executable.  This is normally initialised
  * with CAPABILITY, but can be changed at run-time by setting the
- * FREECIV_CAPS environment variable, though that is probably mainly
+ * WARCIV_CAPS environment variable, though that is probably mainly
  * useful for testing purposes.
  *
  * For checking the connections of other executables, each
@@ -66,7 +66,7 @@ const char * const our_capability = our_capability_internal;
  * simplified; eg, the example string above could be replaced by "+1.7".
  * (This should probably only happen if a mandatory capability has
  * been introduced since the previous release.)
- * Whoever makes such a change has responsibility to search the Freeciv
+ * Whoever makes such a change has responsibility to search the Warciv
  * code, and look for places where people are using has_capability.
  * If you're taking a capability out of the string, because now every
  * client and server supports it, then you should take out the
@@ -121,7 +121,7 @@ void init_our_capability(void)
 {
   const char *s;
 
-  if ((s = getenv("FREECIV_CAPS"))) {
+  if ((s = getenv("WARCIV_CAPS"))) {
     sz_strlcpy(our_capability_internal, s);
   } else {
     sz_strlcpy(our_capability_internal, CAPABILITY_BASE);

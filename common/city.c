@@ -984,7 +984,7 @@ static int base_trade_between_cities(const struct city *pc1, int trade_tile1,
   int bonus = 0;
 
   if (game.traderoute_info.traderevenuestyle == 0) {
-    /* Classic Freeciv */
+    /* Classic Warciv */
     if (pc1 && pc2) {
       bonus = (trade_tile1 + trade_tile2 + 4) / 8;
 
@@ -1166,7 +1166,7 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
   double bonus = 0;
 
   if (game.traderoute_info.caravanbonusstyle == 0) {
-    /* Classic Freeciv */
+    /* Classic Warciv */
     /* Should this be real_map_distance? */
     tb = real_map_distance(pc1->tile, pc2->tile) + 10;
     tb = (tb * (max_trade_prod(pc1)
