@@ -596,7 +596,7 @@ static struct test_func test_funcs[NUM_TEST_FUNCTIONS] = {
  How to make a river path look natural
  =====================================
  Rivers always flow down. Thus rivers are best implemented on maps
- where every tile has an explicit height value. However, Freeciv has a
+ where every tile has an explicit height value. However, Warciv has a
  flat map. But there are certain things that help the user imagine
  differences in height between tiles. The selection of direction for
  rivers should confirm and even amplify the user's image of the map's

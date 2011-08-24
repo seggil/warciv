@@ -69,7 +69,7 @@ static const char *historian_name[]={
     N_("Pan Ku's")
 };
 
-static const char scorelog_magic[] = "#FREECIV SCORELOG2 ";
+static const char scorelog_magic[] = "#WARCIV SCORELOG2 ";
 
 struct player_score_entry {
   struct player *player;

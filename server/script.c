@@ -28,7 +28,7 @@
 #include "script.h"
 
 
-#define W_CONN_CLASS "freeciv wrapped connection"
+#define W_CONN_CLASS "warciv wrapped connection"
 struct w_conn {
   struct connection *pconn;
 };
@@ -99,7 +99,7 @@ static struct w_conn *check_w_conn(lua_State *L)
 {
   struct w_conn *wc;
   wc = (struct w_conn *) luaL_checkudata(L, 1, W_CONN_CLASS);
-  luaL_argcheck(L, wc != NULL, 1, "freeciv connection expected");
+  luaL_argcheck(L, wc != NULL, 1, "warciv connection expected");
   luaL_argcheck(L, conn_is_valid(wc->pconn), 1, "invalid connection");
   return wc;
 }
@@ -160,9 +160,9 @@ static int w_conn_get_salt(lua_State *L)
 /**************************************************************************
   ...
 **************************************************************************/
-int luaopen_freeciv(lua_State *L)
+int luaopen_warciv(lua_State *L)
 {
-  static const struct luaL_reg freeciv_funcs[] = {
+  static const struct luaL_reg warciv_funcs[] = {
     {"freelog", w_freelog},
     {NULL, NULL}
   };
@@ -182,7 +182,7 @@ int luaopen_freeciv(lua_State *L)
   lua_settable(L, -3);
   luaL_register(L, NULL, w_conn_methods);
 
-  luaL_register(L, "freeciv", freeciv_funcs);
+  luaL_register(L, "warciv", warciv_funcs);
 
 #define SET_ENUM(x)\
   lua_pushliteral(L, #x);\

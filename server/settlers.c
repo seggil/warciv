@@ -94,7 +94,7 @@ static bool ai_do_build_city(struct player *pplayer, struct unit *punit)
 }
 
 /**************************************************************************
-  Amortize means gradually paying off a cost or debt over time. In freeciv
+  Amortize means gradually paying off a cost or debt over time. In warciv
   terms this means we calculate how much less worth something is to us
   depending on how long it will take to complete.
 

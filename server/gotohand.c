@@ -245,7 +245,7 @@ until all tiles we can reach are visited. To avoid making the warmap
 potentially too big (heavy to calculate), the warmap is initialized with
 a maxcost value, limiting the maximum length.
 
-Note that this function is responsible for 20% of the CPU usage of freeciv...
+Note that this function is responsible for 20% of the CPU usage of warciv...
 
 This function is used by the AI in various cases when it is searching for
 something to do with a unit. Maybe we could make a version that processed
@@ -1548,7 +1548,7 @@ int air_can_move_between(int moves, struct tile *src_tile,
    * A* search. This distance estimator is used for the cost value in
    * the queue, but is not stored in the warmap itself.
    *
-   * Note, A* is possible here but not in a normal FreeCiv path
+   * Note, A* is possible here but not in a normal WarCiv path
    * finding because planes always take 1 movement unit to move -
    * which is not true of land units.
    */

@@ -602,7 +602,7 @@ int sniff_packets(void)
 
     rl_initialize();
     rl_callback_handler_install("> ", handle_readline_input_callback);
-    rl_attempted_completion_function = freeciv_completion;
+    rl_attempted_completion_function = warciv_completion;
     atexit(rl_callback_handler_remove);
 
     readline_initialized = TRUE;

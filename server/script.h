@@ -14,7 +14,7 @@
 #define WC_SERVER_SCRIPT_H
 
 
-int luaopen_freeciv(lua_State *L);
+int luaopen_warciv(lua_State *L);
 
 bool script_load(lua_State *L, const char *filename);
 bool script_check_func(lua_State *L, const char *scriptname,

@@ -73,9 +73,9 @@ void load_allow_state(struct section_file *file);
 
 #ifdef HAVE_LIBREADLINE
 #ifdef HAVE_NEWLIBREADLINE
-char **freeciv_completion(const char *text, int start, int end);
+char **warciv_completion(const char *text, int start, int end);
 #else
-char **freeciv_completion(char *text, int start, int end);
+char **warciv_completion(char *text, int start, int end);
 #endif
 #endif
 

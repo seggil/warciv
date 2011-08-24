@@ -68,11 +68,11 @@ struct fcdb_params fcdb = {
 
   /* Where our mysql database is located and how to get to it. */
   .host = "localhost",
-  .user = "freeciv",
+  .user = "warciv",
   .password = "password",
 
   /* The database where our tables are located. */
-  .dbname = "freeciv"
+  .dbname = "warciv"
 };
 
 #define AUTH_TABLE      "auth"
@@ -3172,7 +3172,7 @@ static int create_checksum(lua_State *L)
 /**************************************************************************
   ...
 **************************************************************************/
-static int luaopen_freeciv_database(lua_State *L)
+static int luaopen_warciv_database(lua_State *L)
 {
   static const struct luaL_reg database_funcs[] = {
     {"get_params", get_params},
@@ -3180,7 +3180,7 @@ static int luaopen_freeciv_database(lua_State *L)
     {NULL, NULL}
   };
 
-  luaL_register(L, "freeciv.database", database_funcs);
+  luaL_register(L, "warciv.database", database_funcs);
 
   return 1;
 }
@@ -3195,11 +3195,11 @@ void database_init(void)
 
   L = luaL_newstate();
   luaL_openlibs(L);
-  luaopen_freeciv(L);
+  luaopen_warciv(L);
 #ifdef HAVE_MYSQL
   luaopen_luasql_mysql(L);
 #endif
-  luaopen_freeciv_database(L);
+  luaopen_warciv_database(L);
 
 #define SET_ENUM(x)\
   lua_pushliteral(L, #x);\

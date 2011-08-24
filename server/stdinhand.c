@@ -1634,7 +1634,7 @@ static void write_init_script(char *script_filename)
       && (script_file = fopen(real_filename, "w"))) {
     int i;
     fprintf(script_file,
-            "#FREECIV SERVER COMMAND FILE, version %s\n", VERSION_STRING);
+            "#WARCIV SERVER COMMAND FILE, version %s\n", VERSION_STRING);
     fputs("# These are server options saved from a running civserver.\n",
           script_file);
 
@@ -7782,7 +7782,7 @@ static void show_help_intro(struct connection *caller,
 {
   /* This is formated like extra_help entries for settings and commands: */
   const char *help =
-      _("Welcome - this is the introductory help text for the Freeciv"
+      _("Welcome - this is the introductory help text for the Warciv"
         "server.\n\n"
         "Two important server concepts are Commands and Options.\n"
         "Commands, such as 'help', are used to interact with the server.\n"
@@ -9075,9 +9075,9 @@ in case we want to do some simple parsing.  Return the array of matches,
 or NULL if there aren't any.
 **************************************************************************/
 #ifdef HAVE_NEWLIBREADLINE
-char **freeciv_completion(const char *text, int start, int end)
+char **warciv_completion(const char *text, int start, int end)
 #else
-char **freeciv_completion(char *text, int start, int end)
+char **warciv_completion(char *text, int start, int end)
 #endif
 {
   char **matches = (char **) NULL;

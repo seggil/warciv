@@ -563,7 +563,7 @@ void save_ppm(void)
   }
 
   fprintf(fp, "P3\n# version:2\n# gameid: %s\n", game.server.id);
-  fprintf(fp, "# An intermediate map from saved Freeciv game %s%+05d\n",
+  fprintf(fp, "# An intermediate map from saved Warciv game %s%+05d\n",
           game.server.save_name, game.info.year);
 
 

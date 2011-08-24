@@ -681,7 +681,7 @@ const struct command commands[] = {
       "welcome message to the default. Otherwise sets the welcome message to "
       "the given string. The <string> argument may contain the following "
       "escape sequences:\n"
-      "  %v - Freeciv version running on the server\n"
+      "  %v - Warciv version running on the server\n"
       "  %p - Port the server is running on\n"
       "  %h - Hostname of the server (blank if it does not exist)\n"
       "  %d - Current date\n"

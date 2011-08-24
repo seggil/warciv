@@ -797,7 +797,7 @@ static const char *get_challenge_fullname(struct connection *pc)
 {
   static char fullname[MAX_LEN_PATH];
 
-  interpret_tilde(fullname, sizeof(fullname), "~/.freeciv/");
+  interpret_tilde(fullname, sizeof(fullname), "~/.warciv/");
   sz_strlcat(fullname, get_challenge_filename(pc));
 
   return fullname;

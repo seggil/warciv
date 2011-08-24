@@ -686,7 +686,7 @@ static void map_save(struct section_file *file)
    * are now always saved in game_save()
    */
 
-  /* Old freecivs expect map.is_earth to be present in the savegame. */
+  /* Old warcivs expect map.is_earth to be present in the savegame. */
   secfile_insert_bool(file, FALSE, "map.is_earth");
 
   secfile_insert_bool(file, game.server.save_options.save_starts,
@@ -2048,7 +2048,7 @@ static void player_load(struct player *plr, int plrno,
         }
       }
     } else {
-      /* Standard freeciv */
+      /* Standard warciv */
       for (j = 0; j < OLD_NUM_TRADEROUTES; j++) {
         struct city *pother_city;
         int cid;
@@ -2909,7 +2909,7 @@ static void player_save(struct player *plr, int plrno,
     /* Trade routes */
     j = 0;
     if (game.traderoute_info.maxtraderoutes <= OLD_NUM_TRADEROUTES) {
-      /* Then save like the standard freeciv.
+      /* Then save like the standard warciv.
        * If there are more trade routes, we cannot save or it will
        * crash the next standard server which will load this game. */
       established_trade_routes_iterate(pcity, ptr) {
