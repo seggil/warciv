@@ -95,7 +95,7 @@ int log_parse_level_str(const char *level_str)
     } else {
       wc_fprintf(stderr, _("Bad log level %d in \"%s\".\n"), level, level_str);
       if (level == LOG_DEBUG && max_level < LOG_DEBUG) {
-        wc_fprintf(stderr, _("Freeciv must be compiled with the DEBUG flag"
+        wc_fprintf(stderr, _("Warciv must be compiled with the DEBUG flag"
                              " to use debug level %d.\n"), LOG_DEBUG);
       }
       return -1;
@@ -106,7 +106,7 @@ int log_parse_level_str(const char *level_str)
   if (c[0] == ('0' + LOG_DEBUG) && c[1] == ':') {
     level = LOG_DEBUG;
     if (max_level < LOG_DEBUG) {
-      wc_fprintf(stderr, _("Freeciv must be compiled with the DEBUG flag"
+      wc_fprintf(stderr, _("Warciv must be compiled with the DEBUG flag"
                            " to use debug level %d.\n"), LOG_DEBUG);
       return -1;
     }

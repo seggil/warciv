@@ -13,7 +13,7 @@
 
 /**********************************************************************
 *
-* This module contains freeciv-specific memory management functions
+* This module contains warciv-specific memory management functions
 *
 **********************************************************************/
 

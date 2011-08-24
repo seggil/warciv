@@ -32,7 +32,7 @@
        *include "filename"
   includes the named file at that point.  (The '*' must be the
   first character on the line.) The file is found by looking in
-  FREECIV_PATH.  Non-infinite recursive includes are allowed.
+  WARCIV_PATH.  Non-infinite recursive includes are allowed.
 
   - A line with "[name]" labels the start of a section with
   that name; one of these must be the first non-comment line in
@@ -640,7 +640,7 @@ bool section_file_load_from_stream(struct section_file *my_section_file,
  (to give smaller savefiles).
  The start of a table is detected by an entry with name of the form:
     (alphabetical_component)(zero)(period)(alphanumeric_component)
- Eg: u0.id, or c0.id, in the freeciv savefile.
+ Eg: u0.id, or c0.id, in the warciv savefile.
  The alphabetical component is taken as the "name" of the table,
  and the component after the period as the first column name.
  This should be followed by the other column values for u0,

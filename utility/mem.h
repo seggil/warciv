@@ -19,7 +19,7 @@
 
 /* wc_malloc, wc_realloc, wc_calloc:
  * wc_ stands for warciv; the return value is checked,
- * and freeciv-specific processing occurs if it is NULL:
+ * and warciv-specific processing occurs if it is NULL:
  * a log message, possibly cleanup, and ending with exit(1)
  */
 

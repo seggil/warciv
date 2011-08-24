@@ -68,17 +68,17 @@ void init_character_encodings(char *my_internal_encoding,
     transliteration_string = "";
   }
 
-  /* Set the data encoding - first check $FREECIV_DATA_ENCODING,
+  /* Set the data encoding - first check $WARCIV_DATA_ENCODING,
    * then fall back to the default. */
-  data_encoding = getenv("FREECIV_DATA_ENCODING");
+  data_encoding = getenv("WARCIV_DATA_ENCODING");
   if (!data_encoding) {
     /* Currently the rulesets are in latin1 (ISO-8859-1). */
     data_encoding = WC_DEFAULT_DATA_ENCODING;
   }
 
-  /* Set the local encoding - first check $FREECIV_LOCAL_ENCODING,
+  /* Set the local encoding - first check $WARCIV_LOCAL_ENCODING,
    * then ask the system. */
-  local_encoding = getenv("FREECIV_LOCAL_ENCODING");
+  local_encoding = getenv("WARCIV_LOCAL_ENCODING");
   if (!local_encoding) {
 #ifdef HAVE_LIBCHARSET
     local_encoding = my_locale_charset();
@@ -105,10 +105,10 @@ void init_character_encodings(char *my_internal_encoding,
     }
   }
 
-  /* Set the internal encoding - first check $FREECIV_INTERNAL_ENCODING,
+  /* Set the internal encoding - first check $WARCIV_INTERNAL_ENCODING,
    * then check the passed-in default value, then fall back to the local
    * encoding. */
-  internal_encoding = getenv("FREECIV_INTERNAL_ENCODING");
+  internal_encoding = getenv("WARCIV_INTERNAL_ENCODING");
   if (!internal_encoding) {
     internal_encoding = my_internal_encoding;
 

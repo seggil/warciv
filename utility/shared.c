@@ -68,7 +68,7 @@
 /* If no default data path is defined use the default default one */
 #ifndef DEFAULT_DATA_PATH
 #define DEFAULT_DATA_PATH "." PATH_SEPARATOR "data" PATH_SEPARATOR \
-                          "~/.freeciv"
+                          "~/.warciv"
 #endif
 
 /* Both of these are stored in the local encoding.  The grouping_sep must
@@ -828,7 +828,7 @@ const char *user_username(void)
 /***************************************************************************
   Returns a list of data directory paths, in the order in which they should
   be searched.  These paths are specified internally or may be set as the
-  environment variable $FREECIV_PATH (a separated list of directories,
+  environment variable $WARCIV_PATH (a separated list of directories,
   where the separator itself is specified internally, platform-dependent).
   '~' at the start of a component (provided followed by '/' or '\0') is
   expanded as $HOME.
@@ -854,11 +854,11 @@ static const char **get_data_dirs(int *num_dirs)
     return dirs;
   }
 
-  path = getenv("FREECIV_PATH");
+  path = getenv("WARCIV_PATH");
   if (!path) {
     path = DEFAULT_DATA_PATH;
   } else if (*path == '\0') {
-    freelog(LOG_ERROR, _("FREECIV_PATH is set but empty; "
+    freelog(LOG_ERROR, _("WARCIV_PATH is set but empty; "
                          "using default path instead."));
     path = DEFAULT_DATA_PATH;
   }
@@ -1237,7 +1237,7 @@ char *datafilename_required(const char *filename)
     return dname;
   } else {
     freelog(LOG_ERROR, _("The data path may be set via"
-                         " the environment variable FREECIV_PATH."));
+                         " the environment variable WARCIV_PATH."));
     freelog(LOG_ERROR, _("Current data path is: \"%s\""), datafilename(NULL));
     freelog(LOG_FATAL,
                  _("The \"%s\" file is required ... aborting!"), filename);
@@ -1365,7 +1365,7 @@ void dont_run_as_root(const char *argv0, const char *fallback)
   if (getuid()==0 || geteuid()==0) {
     wc_fprintf(stderr,
                _("%s: Fatal error: you're trying to run me as superuser!\n"),
-               (argv0 ? argv0 : fallback ? fallback : "freeciv"));
+               (argv0 ? argv0 : fallback ? fallback : "warciv"));
     wc_fprintf(stderr, _("Use a non-privileged account instead.\n"));
     exit(EXIT_FAILURE);
   }
@@ -1509,7 +1509,7 @@ bool bv_are_equal(const unsigned char *vec1, const unsigned char *vec2,
 
 /***************************************************************************
   Returns string which gives the multicast group IP address for finding
-  servers on the LAN, as specified by $FREECIV_MULTICAST_GROUP.
+  servers on the LAN, as specified by $WARCIV_MULTICAST_GROUP.
   Gets value once, and then caches result.
 ***************************************************************************/
 char *get_multicast_group(void)
@@ -1519,7 +1519,7 @@ char *get_multicast_group(void)
   static char *default_multicast_group = "225.0.0.1";
 
   if (!init) {
-    char *env = getenv("FREECIV_MULTICAST_GROUP");
+    char *env = getenv("WARCIV_MULTICAST_GROUP");
     if (env) {
       group = mystrdup(env);
     } else {
