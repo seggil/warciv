@@ -136,7 +136,7 @@ static bool manual_command(void)
 
     switch (manuals) {
     case MANUAL_SETTINGS:
-      fprintf(doc, _("<h1>Freeciv %s server options</h1>\n\n"), VERSION_STRING);
+      fprintf(doc, _("<h1>Warciv %s server options</h1>\n\n"), VERSION_STRING);
       for (i = 0; settings[i].name; i++) {
 	struct settings_s *op = &settings[i];
 	static struct astring abuf = ASTRING_INIT;
@@ -197,7 +197,7 @@ static bool manual_command(void)
       break;
 
     case MANUAL_COMMANDS:
-      fprintf(doc, _("<h1>Freeciv %s server commands</h1>\n\n"),
+      fprintf(doc, _("<h1>Warciv %s server commands</h1>\n\n"),
 	      VERSION_STRING);
       for (i = 0; i < CMD_NUM; i++) {
 	const struct command *cmd = &commands[i];
@@ -230,7 +230,7 @@ static bool manual_command(void)
       break;
 
     case MANUAL_TERRAIN:
-      fprintf(doc, _("<h1>Freeciv %s terrain help</h1>\n\n"),
+      fprintf(doc, _("<h1>Warciv %s terrain help</h1>\n\n"),
 	      VERSION_STRING);
       fprintf(doc, _("<table border=1><tr><th>Terrain</th>"));
       fprintf(doc, _("<th>Food/ Shield/ Trade</th>"));
@@ -309,7 +309,7 @@ static bool manual_command(void)
       break;
 
     case MANUAL_BUILDINGS:
-      fprintf(doc, _("<h1>Freeciv %s buildings help</h1>\n\n"), VERSION_STRING);
+      fprintf(doc, _("<h1>Warciv %s buildings help</h1>\n\n"), VERSION_STRING);
       impr_type_iterate(id) {
 	struct impr_type *pimpr = get_improvement_type(id);
 	char buf[64000];
@@ -338,7 +338,7 @@ static bool manual_command(void)
       break;
 
     case MANUAL_WONDERS:
-      fprintf(doc, _("<h1>Freeciv %s wonders help</h1>\n\n"), VERSION_STRING);
+      fprintf(doc, _("<h1>Warciv %s wonders help</h1>\n\n"), VERSION_STRING);
       impr_type_iterate(id) {
 	struct impr_type *pimpr = get_improvement_type(id);
 	char buf[64000];
