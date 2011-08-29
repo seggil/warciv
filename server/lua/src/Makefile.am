@@ -2,7 +2,7 @@
 
 noinst_LIBRARIES = liblua.a
 
-AM_CPPFLAGS =
+AM_CPPFLAGS = -DLOCAL_LUA_CONF
 
 liblua_a_SOURCES = 	\
 	localluaconf.h	\
@@ -60,3 +60,4 @@ liblua_a_SOURCES = 	\
 	lzio.c		\
 	lzio.h		\
 	print.c
+

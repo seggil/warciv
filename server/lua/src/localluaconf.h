@@ -14,7 +14,9 @@
 #define WC_SERVER_LUA_SRC_LOCALLUACONF_H
 
 #ifdef HAVE_CONFIG_H
+# ifdef LOCAL_LUA_CONF
 #  include "../../../config.h"
+# endif
 #endif
 
 #ifdef HAVE_MKSTEMP

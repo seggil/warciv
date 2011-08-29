@@ -4,9 +4,14 @@ SUBDIRS = generator lua
 
 bin_PROGRAMS = civserver
 noinst_LIBRARIES = libcivserver.a
-AM_CPPFLAGS = -I$(top_srcdir)/utility -I$(srcdir)/../common \
-	      -I$(srcdir)/../ai -I../intl -I$(top_srcdir)/common/aicore \
-	      -I$(srcdir)/generator -I$(srcdir)/lua/src @MYSQL_CFLAGS@
+# -I$(top_srcdir)/common/aicore
+AM_CPPFLAGS = \
+    -I$(top_srcdir)/utility \
+    -I$(top_srcdir)/common \
+    -I$(top_srcdir)/ai \
+    -I../intl  \
+    -I$(srcdir)/generator \
+    -I$(srcdir)/lua/src @MYSQL_CFLAGS@
 
 
 ## Above, note -I../intl instead of -I$(top_srdir/intl) is deliberate.
