@@ -125,7 +125,8 @@ void init_our_capability(void)
     sz_strlcpy(our_capability_internal, s);
   } else {
     sz_strlcpy(our_capability_internal, CAPABILITY_BASE);
-#if defined(SVNREV) && !defined(WC_SVNREV_OFF)
+#if 0
+//#if defined(SVNREV) && !defined(WC_SVNREV_OFF)
     char svncap[64], *p;
     sz_strlcpy(svncap, WC_SVNREV);
     for (p = svncap; *p; p++) {

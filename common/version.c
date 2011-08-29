@@ -86,7 +86,8 @@ const char *word_version(void)
 ***********************************************************************/
 const char *fc_svn_revision(void)
 {
-#if defined(SVNREV) && !defined(WC_SVNREV_OFF)
+#if 0
+//#if defined(SVNREV) && !defined(WC_SVNREV_OFF)
   return WC_SVNREV; /* Either revision, or modified revision */
 #else  /* WC_SVNREV_OFF */
   return NULL;
