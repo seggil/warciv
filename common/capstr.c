@@ -21,7 +21,7 @@
 #include "support.h"
 
 #ifdef SVNREV
-#include "fc_svnrev_gen.h"
+#  include "wc_svnrev_gen.h"
 #endif /* SVNREV */
 
 #include "capstr.h"

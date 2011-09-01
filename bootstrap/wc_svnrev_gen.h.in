@@ -11,21 +11,22 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-/* common/fc_svnrev_gen.h is automatically generated from
- * bootstrap/fc_svnrev_gen.h.in. Do not edit fc_svnrev_gen.h, edit
- * fc_svnrev_gen.h.in */
+/* common/wc_svnrev_gen.h is automatically generated from
+ * bootstrap/wc_svnrev_gen.h.in. Do not edit wc_svnrev_gen.h, edit
+ * wc_svnrev_gen.h.in */
 
-#ifndef FC__FC_SVNREV_H
-#define FC__FC_SVNREV_H
+#ifndef WC_COMMON_WC_SVNREV_H
+#define WC_COMMON_WC_SVNREV_H
 
-/* One of the macros FC_SVNREV_OFF, FC_SVNREV_ON or FC_SVNREV_MOD defined.
- * If FC_SVNREV_ON is defined, FC_SVNREV contains valid svn revision number
+/* One of the macros WC_SVNREV_OFF, WC_SVNREV_ON or WC_SVNREV_MOD defined.
+ * If WC_SVNREV_ON is defined, WC_SVNREV contains valid svn revision number
  * string (currently starting with 'r')
- * If FC_SVNREV_MOD is defined, this seems to be modified svn checkout.
- * In that case FC_SVNREV contains revision number and word "modified".
- * If FC_SVNREV_OFF is defined, you should not use FC_SVNREV even though
+ * If WC_SVNREV_MOD is defined, this seems to be modified svn checkout.
+ * In that case WC_SVNREV contains revision number and word "modified".
+ * If WC_SVNREV_OFF is defined, you should not use WC_SVNREV even though
  * it does contain fallback string (currently "dist") */
-#define FC_SVNREV_<SVNREVSTATE>
-#define FC_SVNREV "<SVNREV>"
+#define WC_SVNREV_<SVNREVSTATE>
+#define WC_SVNREV "<SVNREV>"
 
-#endif /* FC__FC_SVNREV_H */
+#endif /* WC_COMMON_WC_SVNREV_H */
+

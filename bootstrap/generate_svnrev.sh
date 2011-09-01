@@ -2,8 +2,8 @@
 
 # Freeciv - Copyright (C) 2007 - The Freeciv Project
 
-# This script generates fc_svnrev_gen.h from fc_svnrev_gen.h.in.
-# See fc_svnrev_gen.h.in for details.
+# This script generates wc_svnrev_gen.h from wc_svnrev_gen.h.in.
+# See wc_svnrev_gen.h.in for details.
 
 # Parameters - $1 - top srcdir
 #              $2 - top builddir
@@ -54,9 +54,10 @@ fi
    fi
  fi
 
- sed -e "s,<SVNREV>,$REV," -e "s,<SVNREVSTATE>,$REVSTATE," fc_svnrev_gen.h.in > "$OUTPUTDIR/fc_svnrev_gen.h.tmp"
- if ! test -f "$OUTPUTDIR/fc_svnrev_gen.h" || ! cmp "$OUTPUTDIR/fc_svnrev_gen.h" "$OUTPUTDIR/fc_svnrev_gen.h.tmp" ; then
-   mv "$OUTPUTDIR/fc_svnrev_gen.h.tmp" "$OUTPUTDIR/fc_svnrev_gen.h"
+ sed -e "s,<SVNREV>,$REV," -e "s,<SVNREVSTATE>,$REVSTATE," wc_svnrev_gen.h.in > "$OUTPUTDIR/wc_svnrev_gen.h.tmp"
+ if ! test -f "$OUTPUTDIR/wc_svnrev_gen.h" || ! cmp "$OUTPUTDIR/wc_svnrev_gen.h" "$OUTPUTDIR/wc_svnrev_gen.h.tmp" ; then
+   mv "$OUTPUTDIR/wc_svnrev_gen.h.tmp" "$OUTPUTDIR/wc_svnrev_gen.h"
  fi
- rm -f "$OUTPUTDIR/fc_svnrev_gen.h.tmp"
+ rm -f "$OUTPUTDIR/wc_svnrev_gen.h.tmp"
 ) > /dev/null
+
