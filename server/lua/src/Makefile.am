@@ -4,6 +4,7 @@ noinst_LIBRARIES = liblua.a
 
 AM_CPPFLAGS = -DLOCAL_LUA_CONF
 
+#	luac.c		
 liblua_a_SOURCES = 	\
 	localluaconf.h	\
 	lapi.c		\
@@ -49,7 +50,6 @@ liblua_a_SOURCES = 	\
 	ltablib.c	\
 	ltm.c		\
 	ltm.h		\
-	luac.c		\
 	luaconf.h	\
 	lua.h		\
 	lualib.h	\

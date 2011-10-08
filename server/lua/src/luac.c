@@ -26,10 +26,10 @@
 #define PROGNAME    "luac"      /* default program name */
 #define OUTPUT      PROGNAME ".out" /* default output file */
 
+#if 0
 static int listing=0;           /* list bytecodes? */
 static int dumping=1;           /* dump bytecodes? */
 static int stripping=0;         /* strip debug information? */
-static char Output[]={ OUTPUT };    /* default output file name */
 static const char* output=Output;   /* actual output file name */
 static const char* progname=PROGNAME;   /* actual program name */
 
@@ -149,12 +149,14 @@ static int writer(lua_State* L, const void* p, size_t size, void* u)
  UNUSED(L);
  return (fwrite(p,size,1,(FILE*)u)!=1) && (size!=0);
 }
+#endif
 
 struct Smain {
  int argc;
  char** argv;
 };
 
+#if 0
 static int pmain(lua_State* L)
 {
  struct Smain* s = (struct Smain*)lua_touserdata(L, 1);
@@ -182,7 +184,7 @@ static int pmain(lua_State* L)
  }
  return 0;
 }
-#if 0
+
 int main(int argc, char* argv[])
 {
  lua_State* L;
