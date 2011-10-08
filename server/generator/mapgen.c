@@ -716,7 +716,7 @@ static bool make_river(struct tile *ptile)
 
     /* Mark all available cardinal directions as available. */
     memset(rd_direction_is_valid, 0, sizeof(rd_direction_is_valid));
-    cardinal_adjc_dir_iterate(ptile, tile1, dir) {
+    cardinal_adjc_dir_iterate2(ptile, dir) {
       rd_direction_is_valid[dir] = TRUE;
     } cardinal_adjc_dir_iterate_end;
 
@@ -743,7 +743,7 @@ static bool make_river(struct tile *ptile)
       }
 
       /* mark the less attractive directions as invalid */
-      cardinal_adjc_dir_iterate(ptile, tile1, dir) {
+      cardinal_adjc_dir_iterate2(ptile, dir) {
         if (rd_direction_is_valid[dir]) {
           if (rd_comparison_val[dir] != best_val) {
             rd_direction_is_valid[dir] = FALSE;
@@ -755,7 +755,7 @@ static bool make_river(struct tile *ptile)
     /* Directions evaluated with all functions. Now choose the best
        direction before going to the next iteration of the while loop */
     num_valid_directions = 0;
-    cardinal_adjc_dir_iterate(ptile, tile1, dir) {
+    cardinal_adjc_dir_iterate2(ptile, dir) {
       if (rd_direction_is_valid[dir]) {
         num_valid_directions++;
       }

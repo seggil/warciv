@@ -258,31 +258,31 @@ void reset_move_costs(struct tile *ptile);
   (CHECK_NATIVE_POS((nat_x), (nat_y)),                                      \
    (nat_x) + (nat_y) * map.info.xsize)
 #define index_to_native_pos(pnat_x, pnat_y, index)                          \
-  (*(pnat_x) = (index) % map.info.xsize,                                         \
+  (*(pnat_x) = (index) % map.info.xsize,                                    \
    *(pnat_y) = (index) / map.info.xsize)
 
 /* Obscure math.  See explanation in doc/HACKING. */
 #define NATIVE_TO_MAP_POS(pmap_x, pmap_y, nat_x, nat_y)                     \
   (MAP_IS_ISOMETRIC                                                         \
    ? (*(pmap_x) = ((nat_y) + ((nat_y) & 1)) / 2 + (nat_x),                  \
-      *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize)                          \
+      *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize)                     \
    : (*(pmap_x) = (nat_x), *(pmap_y) = (nat_y)))
 
 #define MAP_TO_NATIVE_POS(pnat_x, pnat_y, map_x, map_y)                     \
   (MAP_IS_ISOMETRIC                                                         \
-   ? (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                            \
+   ? (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                       \
       *(pnat_x) = (2 * (map_x) - *(pnat_y) - (*(pnat_y) & 1)) / 2)          \
    : (*(pnat_x) = (map_x), *(pnat_y) = (map_y)))
 
 #define NATURAL_TO_MAP_POS(pmap_x, pmap_y, nat_x, nat_y)                    \
   (MAP_IS_ISOMETRIC                                                         \
    ? (*(pmap_x) = ((nat_y) + (nat_x)) / 2,                                  \
-      *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize)                          \
+      *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize)                     \
    : (*(pmap_x) = (nat_x), *(pmap_y) = (nat_y)))
 
 #define MAP_TO_NATURAL_POS(pnat_x, pnat_y, map_x, map_y)                    \
   (MAP_IS_ISOMETRIC                                                         \
-   ? (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                            \
+   ? (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                       \
       *(pnat_x) = 2 * (map_x) - *(pnat_y))                                  \
    : (*(pnat_x) = (map_x), *(pnat_y) = (map_y)))
 
@@ -543,6 +543,10 @@ extern struct terrain_misc terrain_control;
   adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,                      \
                        map.cardinal_dirs, map.num_cardinal_dirs)
 
+#define cardinal_adjc_dir_iterate2(center_tile, dir_itr)           \
+  adjc_dirlist_iterate2(center_tile, dir_itr,                      \
+                       map.cardinal_dirs, map.num_cardinal_dirs)
+
 #define cardinal_adjc_dir_iterate_end adjc_dirlist_iterate_end
 
 /* Iterate through all tiles adjacent to a tile using the given list of
@@ -570,6 +574,25 @@ extern struct terrain_misc terrain_control;
       continue;                                                             \
     }                                                                       \
     itr_tile = map.tiles + map_pos_to_index(_x_itr, _y_itr);
+
+#define adjc_dirlist_iterate2(center_tile, dir_itr,                         \
+                              dirlist, dircount)                            \
+{                                                                           \
+  const struct tile *_center_tile = (center_tile);                          \
+  /*struct tile *itr_tile;*/                                                \
+  int _dir_index, _x_itr, _y_itr;                                           \
+  enum direction8 dir_itr;                                                  \
+  bool _is_border = is_border_tile(_center_tile, 1);                        \
+                                                                            \
+  for (_dir_index = 0; _dir_index < (dircount); _dir_index++) {             \
+    dir_itr = dirlist[_dir_index];                                          \
+    DIRSTEP(_x_itr, _y_itr, dir_itr);                                       \
+    _x_itr += _center_tile->x;                                              \
+    _y_itr += _center_tile->y;                                              \
+    if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
+      continue;                                                             \
+    }
+    //itr_tile = map.tiles + map_pos_to_index(_x_itr, _y_itr);
 
 #define adjc_dirlist_iterate_end                                            \
     }                                                                       \
