@@ -1779,7 +1779,7 @@ static void setup_widgets(void)
 /**************************************************************************
  called from main().
 **************************************************************************/
-void ui_init(void)
+void connection_init(void)
 {
   gchar *s;
 

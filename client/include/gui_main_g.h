@@ -17,7 +17,7 @@
 
 #include "wc_types.h"
 
-void ui_init(void);
+void connection_init(void);
 void ui_main(int argc, char *argv[]);
 void update_conn_list_dialog(void);
 void sound_bell(void);

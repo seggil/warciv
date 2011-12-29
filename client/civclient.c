@@ -370,7 +370,7 @@ int main(int argc, char *argv[])
   game.est_connections = conn_list_new();
   game.game_connections = conn_list_new();
 
-  ui_init();
+  connection_init();
   charsets_init();
   my_init_network();
   my_init_adns();
