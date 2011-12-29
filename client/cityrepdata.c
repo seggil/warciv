@@ -200,28 +200,18 @@ static const char *cr_entry_defense(const struct city *pcity)
 static const char *cr_entry_supported(const struct city *pcity)
 {
   static char buf[8];
-  int num_supported = 0;
-
-  unit_list_iterate(pcity->units_supported, punit) {
-    num_supported++;
-  } unit_list_iterate_end;
+  int num_supported = genlist_size(pcity->units_supported);
 
   my_snprintf(buf, sizeof(buf), "%2d", num_supported);
-
   return buf;
 }
 
 static const char *cr_entry_present(const struct city *pcity)
 {
   static char buf[8];
-  int num_present = 0;
-
-  unit_list_iterate(pcity->tile->units, punit) {
-    num_present++;
-  } unit_list_iterate_end;
+  int num_present = genlist_size(pcity->tile->units);
 
   my_snprintf(buf, sizeof(buf), "%2d", num_present);
-
   return buf;
 }
 
