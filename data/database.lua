@@ -1,23 +1,23 @@
-require 'freeciv'
+require 'warciv'
 require 'luasql'
 
 local AUTH_TABLE = 'auth'
 local LOGIN_TABLE = 'loginlog'
 
-local LOG_NORMAL = freeciv.LOG_NORMAL
-local LOG_ERROR = freeciv.LOG_ERROR
-local LOG_VERBOSE = freeciv.LOG_VERBOSE
+local LOG_NORMAL = warciv.LOG_NORMAL
+local LOG_ERROR = warciv.LOG_ERROR
+local LOG_VERBOSE = warciv.LOG_VERBOSE
 
 local env = luasql.mysql()
 local is_salted
 
 
 local function freelog(level, fmt, ...)
-  freeciv.freelog(level, fmt:format(...))
+  warciv.freelog(level, fmt:format(...))
 end
 
-local get_params = freeciv.database.get_params
-local create_checksum = freeciv.database.create_checksum
+local get_params = warciv.database.get_params
+local create_checksum = warciv.database.create_checksum
 
 local function connect()
   -- This gets the database parameters from the values
@@ -68,7 +68,7 @@ function load_user(conn)
 
   local numrows = res:numrows()
   if numrows < 1 then
-    return freeciv.AUTH_DB_NOT_FOUND
+    return warciv.AUTH_DB_NOT_FOUND
   end
 
   if numrows > 1 then
@@ -86,7 +86,7 @@ function load_user(conn)
   res:close()
   dbh:close()
 
-  return freeciv.AUTH_DB_SUCCESS
+  return warciv.AUTH_DB_SUCCESS
 end
 
 function save_user(conn)
