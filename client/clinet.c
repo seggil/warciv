@@ -1501,7 +1501,7 @@ struct server_list *get_lan_server_list(void)
   int fromlen;
 #endif
   union my_sockaddr fromend;
-  struct hostent *from;
+  //struct hostent *from;
   char msgbuf[128];
   int type;
   struct data_in din;
@@ -1560,7 +1560,7 @@ struct server_list *get_lan_server_list(void)
     dio_get_string(&din, message, sizeof(message));
 
     if (!mystrcasecmp("none", servername)) {
-      from = gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
+      /*from =*/ gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
                            sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
       sz_strlcpy(servername, inet_ntoa(fromend.sockaddr_in.sin_addr));
     }
