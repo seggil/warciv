@@ -757,7 +757,7 @@ static gboolean tree_view_callback(GtkWidget *view, GdkEventButton *event,
                                    gpointer data)
 {
   GtkWidget *menu, *item;
-  GtkTreeModel *model;
+  //GtkTreeModel *model;
   GtkTreePath *path;
 
   if (event->button != 3) {
@@ -765,7 +765,7 @@ static gboolean tree_view_callback(GtkWidget *view, GdkEventButton *event,
     return FALSE;
   }
 
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
+  //model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
 
   if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(view),
                                     (gint) event->x, (gint) event->y,
@@ -888,13 +888,14 @@ static bool string_vec_changed(struct client_option *o)
 {
   GtkTreeModel *model;
   GtkTreeIter iter;
-  size_t size, i;
+  //size_t size;
+  size_t i;
   const char *str, *n;
 
   assert(o != NULL && o->type == COT_STRING_VEC);
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(o->gui_data));
-  size = gtk_tree_model_iter_n_children(model, NULL);
+  //size = gtk_tree_model_iter_n_children(model, NULL);
 
   if (!gtk_tree_model_get_iter_first(model, &iter)
       && string_vector_size(*o->string_vec.pvector) == 0) {
