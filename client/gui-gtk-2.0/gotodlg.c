@@ -237,7 +237,7 @@ static struct city *get_selected_city(void)
 **************************************************************************/
 static void update_goto_dialog(GtkToggleButton *button)
 {
-  int i, j;
+  int i;
   GtkTreeIter it;
   gboolean all_cities;
 
@@ -245,7 +245,7 @@ static void update_goto_dialog(GtkToggleButton *button)
 
   gtk_list_store_clear(store);
 
-  for(i = 0, j = 0; i < game.info.nplayers; i++) {
+  for(i = 0; i < game.info.nplayers; i++) {
     if (!all_cities && i != get_player_idx())
       continue;
 
