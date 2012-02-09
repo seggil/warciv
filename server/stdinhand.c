@@ -3652,7 +3652,7 @@ static bool parse_set_arguments(const char *str, struct setting_value *sv)
   char *cptr_d;
   char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE];
   int val;
-  struct settings_s *op;
+  //struct settings_s *op;
 
   memset(sv, 0, sizeof(struct setting_value));
 
@@ -3682,7 +3682,7 @@ static bool parse_set_arguments(const char *str, struct setting_value *sv)
   if (sv->setting_idx < 0) {
     return FALSE;
   }
-  op = &settings[sv->setting_idx];
+  //op = &settings[sv->setting_idx];
 
   sz_strlcpy(sv->string_value, arg);
   if (sscanf(arg, "%d", &val) == 1) {
@@ -7693,7 +7693,8 @@ static struct user_action_list *load_action_list_v1(const char *filename)
 static struct user_action_list *load_action_list(const char *filename)
 {
   FILE *file;
-  char line[64], *p;
+  char line[64];
+  //char *p;
   int version;
 
   if (!(file = fopen(filename, "r"))) {
@@ -7702,7 +7703,8 @@ static struct user_action_list *load_action_list(const char *filename)
     return NULL;
   }
 
-  p = fgets(line, sizeof(line), file);
+  //p = 
+        fgets(line, sizeof(line), file);
   fclose(file);
   version = get_action_list_file_version(line);
   if (version == 0) {
