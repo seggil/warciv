@@ -538,7 +538,8 @@ void tilespec_reread_callback(struct client_option *option)
 **************************************************************************/
 static struct Sprite *load_gfx_file(const char *gfx_filename)
 {
-  const char **gfx_fileexts = gfx_fileextensions(), *gfx_fileext;
+  const char **gfx_fileexts = gfx_fileextensions();
+  const char *gfx_fileext;
   struct Sprite *s;
 
   /* Try out all supported file extensions to find one that works. */
