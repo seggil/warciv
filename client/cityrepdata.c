@@ -55,8 +55,12 @@ static const char *cr_entry_size(const struct city *pcity)
 static const char *cr_entry_hstate_concise(const struct city *pcity)
 {
   static char buf[4];
-  my_snprintf(buf, sizeof(buf), "%s", (city_celebrating(pcity) ? "*" :
-                                       (city_unhappy(pcity) ? "X" : " ")));
+  if ( city_celebrating(pcity) ) {
+    my_snprintf(buf, sizeof(buf), "%s", "*");
+  }
+  else {
+    my_snprintf(buf, sizeof(buf), "%s", city_unhappy(pcity) ? "X" : " ");
+  }
   return buf;
 }
 
@@ -200,7 +204,7 @@ static const char *cr_entry_defense(const struct city *pcity)
 static const char *cr_entry_supported(const struct city *pcity)
 {
   static char buf[8];
-  int num_supported = genlist_size(pcity->units_supported);
+  int num_supported = genlist_size((const struct genlist*)pcity->units_supported);
 
   my_snprintf(buf, sizeof(buf), "%2d", num_supported);
   return buf;
@@ -209,7 +213,7 @@ static const char *cr_entry_supported(const struct city *pcity)
 static const char *cr_entry_present(const struct city *pcity)
 {
   static char buf[8];
-  int num_present = genlist_size(pcity->tile->units);
+  int num_present = genlist_size((const struct genlist*)pcity->tile->units);
 
   my_snprintf(buf, sizeof(buf), "%2d", num_present);
   return buf;
