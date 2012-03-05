@@ -330,15 +330,14 @@ event_after(GtkWidget *text_view,
 **************************************************************************/
 static void
 set_cursor_if_appropriate(GtkTextView    *text_view,
-                           gint            x,
-                           gint            y)
+                          gint            x,
+                          gint            y)
 {
   GSList *tags = NULL, *tagp = NULL;
-  //GtkTextBuffer *buffer;
   GtkTextIter iter;
   gboolean hovering = FALSE;
-  //gint link_type;
-  gpointer *data;
+  gint link_type;
+  gpointer data;
   GdkDisplay *display;
   GdkScreen *screen;
 
@@ -352,17 +351,15 @@ set_cursor_if_appropriate(GtkTextView    *text_view,
     regular_cursor = gdk_cursor_new_for_display(display, GDK_XTERM);
   }
 
-  //buffer = gtk_text_view_get_buffer(text_view);
-
   gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
 
   tags = gtk_text_iter_get_tags(&iter);
   for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
     GtkTextTag *tag = tagp->data;
     data = g_object_get_data(G_OBJECT(tag), "link_type");
-    //link_type = GPOINTER_TO_INT(data);
+    link_type = GPOINTER_TO_INT(data);
 
-    if (data != 0) {
+    if (0 != link_type) {
       hovering = TRUE;
       break;
     }
@@ -449,7 +446,7 @@ static int parse_city_id_and_name_link(const char *str, GtkTextBuffer *buf,
   const char *p = str;
   char *q, idbuf[32];
   int id;
-  struct city *pcity;
+  city_t *pcity;
 
   if (strncmp(p, CITY_LINK_PREFIX, sizeof(CITY_LINK_PREFIX) - 1) != 0) {
     return 0;
@@ -1905,14 +1902,11 @@ static void toggle_pattern_flag(int flag, GtkTreeModel *model,
   GtkTreePath *path;
   gboolean flagval;
   struct tag_pattern *ptagpat;
-  //int i;
 
   path = gtk_tree_path_new_from_string(path_str);
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, column, &flagval,
                      COLUMN_TAG_PATTERN, &ptagpat, -1);
-
-  //i = gtk_tree_path_get_indices(path)[0];
 
   flagval ^= 1;
   ptagpat->flags = flagval ? ptagpat->flags | flag
@@ -1958,12 +1952,10 @@ static void cell_edited(GtkCellRendererText *cell, const gchar *path_string,
   GtkTreeModel *model = data;
   GtkTreePath *path = gtk_tree_path_new_from_string(path_string);
   GtkTreeIter iter;
-  //int i;
   struct tag_pattern *ptagpat;
   gint column = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cell), "column"));
   gtk_tree_model_get_iter(model, &iter, path);
 
-  //i = gtk_tree_path_get_indices(path)[0];
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, COLUMN_TAG_PATTERN, &ptagpat, -1);
 
@@ -2331,13 +2323,11 @@ static void add_tag_pattern(struct tag_pattern *ptagpat,
 static void add_control_callback(GtkWidget *w, gpointer user_data)
 {
   GtkWidget *dialog, *entry;
-  //struct tag_pattern_list *tmptagpats;
   struct tag_pattern *ptagpat;
   const char *newname = "";
 
   dialog = (GtkWidget *) user_data;
 
-  //tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   entry = g_object_get_data(G_OBJECT(dialog), "entry");
 
   newname = gtk_entry_get_text(GTK_ENTRY(entry));
@@ -2479,11 +2469,9 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
                                                gpointer error_label)
 {
   GtkTreeModel *model;
-  //GtkTreeSelection *selection;
   GtkTreePath *path;
   GtkTreeViewColumn *col;
   GtkTreeIter iter;
-  //int i;
   int column;
   struct tag_pattern *ptagpat;
   GList *rendlist;
@@ -2498,12 +2486,10 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
   }
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
-  //selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
   gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), event->x, event->y,
                                 &path, &col, NULL, NULL);
 
-  //i = gtk_tree_path_get_indices(path)[0];
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, COLUMN_TAG_PATTERN, &ptagpat, -1);
   gtk_tree_path_free(path);
