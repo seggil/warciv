@@ -119,3 +119,13 @@ citizens_graphic     = "postmodern"
 citizens_graphic_alt = "generic"
 tech        = "Superconductors"
 replaced_by = "-"
+
+[citystyle_none]
+name        = _("None")
+graphic     = "city.none"
+graphic_alt = "-"
+citizens_graphic     = "none"
+citizens_graphic_alt = "generic"
+tech        = "None"
+replaced_by = "-"
+
