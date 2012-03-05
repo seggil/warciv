@@ -27,12 +27,12 @@ void ai_manage_settler(struct player *pplayer, struct unit *punit);
 
 void init_settlers(void);
 
-int city_tile_value(struct city *pcity, int x, int y,
+int city_tile_value(city_t *pcity, int x, int y,
                     int foodneed, int prodneed);
 void initialize_infrastructure_cache(struct player *pplayer);
 
-void contemplate_terrain_improvements(struct city *pcity);
-void contemplate_new_city(struct city *pcity);
+void contemplate_terrain_improvements(city_t *pcity);
+void contemplate_new_city(city_t *pcity);
 
 struct unit *other_passengers(struct unit *punit);
 

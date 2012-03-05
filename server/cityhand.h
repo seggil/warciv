@@ -20,8 +20,8 @@
 struct connection;
 struct conn_list;
 
-void really_handle_city_sell(struct player *pplayer, struct city *pcity,
+void really_handle_city_sell(struct player *pplayer, city_t *pcity,
                              Impr_Type_id id);
-void really_handle_city_buy(struct player *pplayer, struct city *pcity);
+void really_handle_city_buy(struct player *pplayer, city_t *pcity);
 
 #endif  /* WC_AI_CITYHAND_H */

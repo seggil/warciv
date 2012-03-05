@@ -21,21 +21,21 @@
 struct conn_list;
 struct cm_result;
 
-void city_refresh(struct city *pcity);          /* call if city has changed */
+void city_refresh(city_t *pcity);          /* call if city has changed */
 void global_city_refresh(struct player *pplayer); /* tax/govt changed */
 
-void auto_arrange_workers(struct city *pcity); /* will arrange the workers */
-void apply_cmresult_to_city(struct city *pcity, struct cm_result *cmr);
+void auto_arrange_workers(city_t *pcity); /* will arrange the workers */
+void apply_cmresult_to_city(city_t *pcity, struct cm_result *cmr);
 
-bool city_reduce_size(struct city *pcity, int pop_loss);
+bool city_reduce_size(city_t *pcity, int pop_loss);
 void send_global_city_turn_notifications(struct conn_list *dest);
-void send_city_turn_notifications(struct conn_list *dest, struct city *pcity);
+void send_city_turn_notifications(struct conn_list *dest, city_t *pcity);
 void update_city_activities(struct player *pplayer);
-int city_incite_cost(struct player *pplayer, struct city *pcity);
-void remove_obsolete_buildings_city(struct city *pcity, bool refresh);
+int city_incite_cost(struct player *pplayer, city_t *pcity);
+void remove_obsolete_buildings_city(city_t *pcity, bool refresh);
 void remove_obsolete_buildings(struct player *pplayer);
 
-void advisor_choose_build(struct player *pplayer, struct city *pcity);
+void advisor_choose_build(struct player *pplayer, city_t *pcity);
 
-void nullify_prechange_production(struct city *pcity);
+void nullify_prechange_production(city_t *pcity);
 #endif  /* WC_SERVER_CITYTURN_H */

@@ -65,7 +65,7 @@ static void handle_unit_activity_request_targeted(struct unit *punit,
                                                   new_activity,
                                                   enum tile_special_type
                                                   new_target);
-static bool base_handle_unit_establish_trade(struct player *pplayer, int unit_id, struct city *pcity_dest);
+static bool base_handle_unit_establish_trade(struct player *pplayer, int unit_id, city_t *pcity_dest);
 static void how_to_declare_war(struct player *pplayer);
 static bool unit_bombard(struct unit *punit, struct tile *ptile);
 
@@ -100,7 +100,7 @@ void handle_unit_goto(struct player *pplayer, int unit_id, int x, int y)
 void handle_unit_airlift(struct player *pplayer, int unit_id, int city_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct city *pcity = find_city_by_id(city_id);
+  city_t *pcity = find_city_by_id(city_id);
 
   if (punit && pcity) {
     do_airlift(punit, pcity);
@@ -232,7 +232,7 @@ void handle_unit_diplomat_action(struct player *pplayer, int diplomat_id,
 {
   struct unit *pdiplomat = player_find_unit_by_id(pplayer, diplomat_id);
   struct unit *pvictim = find_unit_by_id(target_id);
-  struct city *pcity = find_city_by_id(target_id);
+  city_t *pcity = find_city_by_id(target_id);
 
   if (!pdiplomat || !unit_flag(pdiplomat, F_DIPLOMAT)) {
     return;
@@ -317,7 +317,7 @@ void handle_unit_change_homecity(struct player *pplayer, int unit_id,
                                  int city_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct city *old_pcity, *new_pcity =
+  city_t *old_pcity, *new_pcity =
       player_find_city_by_id(pplayer, city_id);
 
   if (!punit || !new_pcity
@@ -351,7 +351,7 @@ void handle_unit_change_homecity(struct player *pplayer, int unit_id,
 void handle_unit_disband(struct player *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct city *pcity;
+  city_t *pcity;
 
   if (!punit) {
     return;
@@ -389,7 +389,7 @@ static void city_add_or_build_error(struct player *pplayer,
 {
   /* Given that res came from test_unit_add_or_build_city, pcity will
      be non-null for all required status values. */
-  struct city *pcity = map_get_city(punit->tile);
+  city_t *pcity = map_get_city(punit->tile);
   const char *unit_name = unit_type(punit)->name;
 
   switch (res) {
@@ -464,11 +464,11 @@ static void city_add_or_build_error(struct player *pplayer,
 **************************************************************************/
 static void city_add_unit(struct player *pplayer, struct unit *punit)
 {
-  struct city *pcity = map_get_city(punit->tile);
+  city_t *pcity = map_get_city(punit->tile);
   const char *unit_name = unit_type(punit)->name;
 
   assert(unit_pop_value(punit->type) > 0);
-  pcity->size += unit_pop_value(punit->type);
+  pcity->pop_size += unit_pop_value(punit->type);
   /* Make the new people something, otherwise city fails the checks */
   pcity->specialists[SP_TAXMAN] += unit_pop_value(punit->type);
   auto_arrange_workers(pcity);
@@ -672,7 +672,7 @@ static void send_combat(struct unit *pattacker, struct unit *pdefender,
 static bool unit_bombard(struct unit *punit, struct tile *ptile)
 {
   struct player *pplayer = unit_owner(punit);
-  struct city *pcity = map_get_city(ptile);
+  city_t *pcity = map_get_city(ptile);
   int old_unit_vet;
 
   freelog(LOG_DEBUG, "Start bombard: %s's %s to %d, %d.",
@@ -707,7 +707,7 @@ static bool unit_bombard(struct unit *punit, struct tile *ptile)
   punit->moves_left = 0;
 
   if (pcity
-      && pcity->size > 1
+      && pcity->pop_size > 1
       && get_city_bonus(pcity, EFT_UNIT_NO_LOSE_POP) == 0
       && kills_citizen_after_attack(punit)) {
     city_reduce_size(pcity,1);
@@ -738,7 +738,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 {
   struct player *pplayer = unit_owner(punit);
   struct unit *plooser, *pwinner;
-  struct city *pcity;
+  city_t *pcity;
   int moves_used, def_moves_used;
   struct tile *def_tile = pdefender->tile;
   int old_unit_vet, old_defender_vet, vet;
@@ -807,7 +807,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 
   if (punit->hp > 0
       && (pcity = map_get_city(def_tile))
-      && pcity->size > 1
+      && pcity->pop_size > 1
       && get_city_bonus(pcity, EFT_UNIT_NO_LOSE_POP) == 0
       && kills_citizen_after_attack(punit)) {
     city_reduce_size(pcity,1);
@@ -994,7 +994,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
                               bool igzoc, bool move_diplomat_city)
 {
   struct player *pplayer = unit_owner(punit);
-  struct city *pcity = pdesttile->city;
+  city_t *pcity = pdesttile->city;
 
   /*** Phase 1: Basic checks ***/
 
@@ -1195,7 +1195,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
 void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct city *pcity_dest;
+  city_t *pcity_dest;
   const char *text;
 
   if (!punit || !unit_flag(punit, F_HELP_WONDER)) {
@@ -1235,10 +1235,10 @@ void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
 **************************************************************************/
 static bool base_handle_unit_establish_trade(struct player *pplayer,
                                              int unit_id,
-                                             struct city *pcity_dest)
+                                             city_t *pcity_dest)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct city *pcity_homecity;
+  city_t *pcity_homecity;
 
   if (!punit || !unit_flag(punit, F_TRADE_ROUTE)) {
     return FALSE;

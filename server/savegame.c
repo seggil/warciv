@@ -457,12 +457,15 @@ returns the actual length of the unquoted block.
 static int unquote_block(const char *const quoted_, void *dest,
                          int dest_length)
 {
-  int i, length, parsed, tmp;
+  int i, length, tmp;
   char *endptr;
   const char *quoted = quoted_;
 
-  parsed = sscanf(quoted, "%d", &length);
-  assert(parsed == 1);
+#ifdef NDEBUG
+  sscanf(quoted, "%d", &length);
+#else
+  assert(1 == sscanf(quoted, "%d", &length));
+#endif
 
   assert(length <= dest_length);
   quoted = strchr(quoted, ':');
@@ -1395,7 +1398,7 @@ static void load_player_units(struct player *plr, int plrno,
 
   for (i = 0; i < nunits; i++) {
     struct unit *punit;
-    struct city *pcity;
+    city_t *pcity;
     int nat_x, nat_y;
     const char* type_name;
     Unit_Type_id type;
@@ -1514,7 +1517,7 @@ static void load_player_units(struct player *plr, int plrno,
     */
 
     /* Trade route */
-    struct city *pcity1, *pcity2;
+    city_t *pcity1, *pcity2;
     if ((pcity1 = find_city_by_id(secfile_lookup_int_default(file, -1,
                                   "player%d.u%d.trade_route_c1", plrno, i)))
         && (pcity2 = find_city_by_id(secfile_lookup_int_default(file, -1,
@@ -1996,7 +1999,7 @@ static void player_load(struct player *plr, int plrno,
   }
 
   for (i = 0; i < ncities; i++) { /* read the cities */
-    struct city *pcity;
+    city_t *pcity;
     int nat_x = secfile_lookup_int(file, "player%d.c%d.x", plrno, i);
     int nat_y = secfile_lookup_int(file, "player%d.c%d.y", plrno, i);
     struct tile *ptile = native_pos_to_tile(nat_x, nat_y);
@@ -2016,7 +2019,7 @@ static void player_load(struct player *plr, int plrno,
     } else {
       pcity->server.original = plrno;
     }
-    pcity->size = secfile_lookup_int(file, "player%d.c%d.size", plrno, i);
+    pcity->pop_size = secfile_lookup_int(file, "player%d.c%d.size", plrno, i);
 
     pcity->server.steal = secfile_lookup_int(file, "player%d.c%d.steal", plrno, i);
 
@@ -2032,7 +2035,7 @@ static void player_load(struct player *plr, int plrno,
     if (k >= 0) {
       /* Was saved with warserver datas */
       for (j = 0; j < k; j++) {
-        struct city *pother_city;
+        city_t *pother_city;
         struct trade_route *ptr;
         int cid;
 
@@ -2050,7 +2053,7 @@ static void player_load(struct player *plr, int plrno,
     } else {
       /* Standard warciv */
       for (j = 0; j < OLD_NUM_TRADEROUTES; j++) {
-        struct city *pother_city;
+        city_t *pother_city;
         int cid;
 
         cid = secfile_lookup_int(file, "player%d.c%d.traderoute%d",
@@ -2324,7 +2327,6 @@ static void player_load(struct player *plr, int plrno,
     plr->attribute_block.length = 0;
   } else if (0 < plr->attribute_block.length) {
     int part_nr, parts;
-    size_t actual_length;
     size_t quoted_length;
     char *quoted;
 
@@ -2362,11 +2364,15 @@ static void player_load(struct player *plr, int plrno,
       assert(0);
     }
 
-    actual_length =
-        unquote_block(quoted,
-                      plr->attribute_block.data,
-                      plr->attribute_block.length);
-    assert(actual_length == plr->attribute_block.length);
+#ifndef NDEBUG
+    unquote_block(quoted,
+                  plr->attribute_block.data,
+                  plr->attribute_block.length);
+#else
+    assert(plr->attribute_block.length
+           == unquote_block(quoted, plr->attribute_block.data,
+                            plr->attribute_block.length));
+#endif
     free(quoted);
   }
 
@@ -2493,7 +2499,7 @@ static void player_map_load(struct player *plr, int plrno,
        without fog of war */
     whole_map_iterate(ptile) {
       if (map_is_known(ptile, plr)) {
-        struct city *pcity = map_get_city(ptile);
+        city_t *pcity = map_get_city(ptile);
         update_player_tile_last_seen(plr, ptile);
         update_player_tile_knowledge(plr, ptile);
         if (pcity)
@@ -2897,7 +2903,7 @@ static void player_save(struct player *plr, int plrno,
     secfile_insert_str(file, pcity->name, "player%d.c%d.name", plrno, i);
     secfile_insert_int(file, pcity->server.original, "player%d.c%d.original",
                        plrno, i);
-    secfile_insert_int(file, pcity->size, "player%d.c%d.size", plrno, i);
+    secfile_insert_int(file, pcity->pop_size, "player%d.c%d.size", plrno, i);
     secfile_insert_int(file, pcity->server.steal,
                        "player%d.c%d.steal", plrno, i);
     specialist_type_iterate(sp) {
@@ -3265,7 +3271,7 @@ static void apply_unit_ordering(void)
 /***************************************************************
 Old savegames have defects...
 ***************************************************************/
-static void check_city(struct city *pcity)
+static void check_city(city_t *pcity)
 {
   city_map_iterate(x, y) {
     bool res = city_can_work_tile(pcity, x, y);
@@ -3287,7 +3293,7 @@ static void check_city(struct city *pcity)
         ptile = city_map_to_map(pcity, x, y);
 
         map_city_radius_iterate(ptile, tile2) {
-          struct city *pcity2 = map_get_city(tile2);
+          city_t *pcity2 = map_get_city(tile2);
           if (pcity2)
             check_city(pcity2);
         } map_city_radius_iterate_end;

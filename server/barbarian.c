@@ -341,7 +341,7 @@ static void try_summon_barbarians(void)
   int i, boat, cap, dist, unit;
   int uprise = 1;
   int superbarb = 0;
-  struct city *pc;
+  struct city_s *pc;
   struct player *barbarians, *victim;
 
   /* We attempt the summons on a particular, random position.  If this is

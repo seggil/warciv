@@ -254,7 +254,7 @@ static void do_upgrade_effects(struct player *pplayer)
 ****************************************************************************/
 static int dist_from_home_continent(const struct unit *punit)
 {
-  const struct city *pcity;
+  const city_t *pcity;
 
   pcity = find_city_by_id(punit->homecity);
   if (pcity == NULL) {
@@ -464,7 +464,7 @@ static void unit_restore_hitpoints(struct player *pplayer, struct unit *punit)
   punit->hp += get_player_bonus(pplayer, EFT_UNIT_RECOVER);
 
   if(is_heli_unit(punit)) {
-    struct city *pcity = map_get_city(punit->tile);
+    city_t *pcity = map_get_city(punit->tile);
     if(!pcity && !map_has_special(punit->tile, S_AIRBASE)
        && punit->transported_by == -1) {
       punit->hp-=unit_type(punit)->hp/10;
@@ -517,7 +517,7 @@ void update_unit_activities(struct player *pplayer)
 static int hp_gain_coord(struct unit *punit)
 {
   int hp;
-  struct city *pcity;
+  city_t *pcity;
   if (unit_on_fortress(punit))
     hp=unit_type(punit)->hp/4;
   else
@@ -1032,7 +1032,7 @@ static void update_unit_activity(struct unit *punit)
 static char *get_location_str(struct player *pplayer, struct tile *ptile, bool use_at)
 {
   static char buffer[MAX_LEN_NAME+64];
-  struct city *incity, *nearcity;
+  city_t *incity, *nearcity;
 
   incity = map_get_city(ptile);
   if (incity) {
@@ -1107,7 +1107,7 @@ enum goto_move_restriction get_activity_move_restriction(enum unit_activity acti
 /**************************************************************************
 ...
 **************************************************************************/
-static bool find_a_good_partisan_spot(struct city *pcity, int u_type,
+static bool find_a_good_partisan_spot(city_t *pcity, int u_type,
                                       struct tile **dst_tile)
 {
   int bestvalue = 0;
@@ -1142,7 +1142,7 @@ static bool find_a_good_partisan_spot(struct city *pcity, int u_type,
 /**************************************************************************
   finds a spot around pcity and place a partisan.
 **************************************************************************/
-static void place_partisans(struct city *pcity, int count)
+static void place_partisans(city_t *pcity, int count)
 {
   struct tile *ptile = NULL;
   int u_type = get_role_unit(L_PARTISAN, 0);
@@ -1166,7 +1166,7 @@ static void place_partisans(struct city *pcity, int count)
   3) The player must know about communism and gunpowder
   4) the player must run either a democracy or a communist society.
 **************************************************************************/
-void make_partisans(struct city *pcity)
+void make_partisans(city_t *pcity)
 {
   struct player *pplayer;
   int i, partisans;
@@ -1189,7 +1189,7 @@ void make_partisans(struct city *pcity)
     /* Was A_COMMUNISM and A_GUNPOWDER */
   }
 
-  partisans = myrand(1 + pcity->size/2) + 1;
+  partisans = myrand(1 + pcity->pop_size/2) + 1;
   if (partisans > 8)
     partisans = 8;
 
@@ -1207,7 +1207,7 @@ bool enemies_at(struct unit *punit, struct tile *ptile)
 {
   int a = 0, d, db;
   struct player *pplayer = unit_owner(punit);
-  struct city *pcity = ptile->city;
+  city_t *pcity = ptile->city;
 
   if (pcity && pplayers_allied(city_owner(pcity), unit_owner(punit))
       && !is_non_allied_unit_tile(ptile, pplayer)) {
@@ -1248,7 +1248,7 @@ Teleport punit to city at cost specified.  Returns success.
 (If specified cost is -1, then teleportation costs all movement.)
                          - Kris Bubendorfer
 **************************************************************************/
-bool teleport_unit_to_city(struct unit *punit, struct city *pcity,
+bool teleport_unit_to_city(struct unit *punit, city_t *pcity,
                           int move_cost, bool verbose)
 {
   struct tile *src_tile = punit->tile, *dst_tile = pcity->tile;
@@ -1279,7 +1279,7 @@ bool teleport_unit_to_city(struct unit *punit, struct city *pcity,
 void bounce_unit(struct unit *punit, bool verbose)
 {
   struct player *pplayer = unit_owner(punit);
-  struct city *pcity = find_closest_owned_city(pplayer, punit->tile,
+  city_t *pcity = find_closest_owned_city(pplayer, punit->tile,
                                                is_sailing_unit(punit), NULL);
 
   if (pcity) {
@@ -1500,7 +1500,7 @@ struct unit *create_unit_full(struct player *pplayer, struct tile *ptile,
                               struct unit *ptrans)
 {
   struct unit *punit = create_unit_virtual(pplayer, NULL, type, veteran_level);
-  struct city *pcity;
+  city_t *pcity;
 
   /* Register unit */
   punit->id = get_next_id_number();
@@ -1560,7 +1560,7 @@ struct unit *create_unit_full(struct player *pplayer, struct tile *ptile,
 
   /* The unit may have changed the available tiles in nearby cities. */
   map_city_radius_iterate(ptile, ptile1) {
-    struct city *acity = map_get_city(ptile1);
+    city_t *acity = map_get_city(ptile1);
 
     if (acity) {
       update_city_tile_status_map(acity, ptile);
@@ -1578,8 +1578,8 @@ and the city it was in.
 **************************************************************************/
 static void server_remove_unit(struct unit *punit, bool ignore_gameloss)
 {
-  struct city *pcity = map_get_city(punit->tile);
-  struct city *phomecity = find_city_by_id(punit->homecity);
+  city_t *pcity = map_get_city(punit->tile);
+  city_t *phomecity = find_city_by_id(punit->homecity);
   struct tile *unit_tile = punit->tile;
   struct player *unitowner = unit_owner(punit);
   struct packet_unit_remove packet = {.unit_id = punit->id};
@@ -1637,7 +1637,7 @@ static void server_remove_unit(struct unit *punit, bool ignore_gameloss)
 
   /* This unit may have blocked tiles of adjacent cities. Update them. */
   map_city_radius_iterate(unit_tile, ptile1) {
-    struct city *pcity = map_get_city(ptile1);
+    city_t *pcity = map_get_city(ptile1);
     if (pcity) {
       update_city_tile_status_map(pcity, unit_tile);
     }
@@ -1701,7 +1701,7 @@ void wipe_unit_spec_safe(struct unit *punit,
   if (wipe_cargo
       && is_ocean(map_get_terrain(ptile))
       && !map_get_city(ptile)) {
-    struct city *pcity = NULL;
+    city_t *pcity = NULL;
     int capacity = ground_unit_transporter_capacity(ptile, pplayer);
 
     /* Get rid of excess standard units. */
@@ -2150,7 +2150,7 @@ static void sentry_transported_idle_units(struct unit *ptrans)
 **************************************************************************/
 static void do_nuke_tile(struct player *pplayer, struct tile *ptile)
 {
-  struct city *pcity = map_get_city(ptile);
+  city_t *pcity = map_get_city(ptile);
   struct player *owner;
 
   unit_list_iterate(ptile->units, punit) {
@@ -2183,7 +2183,7 @@ static void do_nuke_tile(struct player *pplayer, struct tile *ptile)
                        pcity->name);
     }
 
-    city_reduce_size(pcity, pcity->size / 2);
+    city_reduce_size(pcity, pcity->pop_size / 2);
     send_city_info(NULL, pcity);
   }
 
@@ -2246,10 +2246,10 @@ bool try_move_unit(struct unit *punit, struct tile *dst_tile)
 /**************************************************************************
   ...
 **************************************************************************/
-bool do_airlift(struct unit *punit, struct city *city2)
+bool do_airlift(struct unit *punit, city_t *city2)
 {
   struct tile *src_tile = punit->tile;
-  struct city *city1 = src_tile->city;
+  city_t *city1 = src_tile->city;
 
   if (!city1) {
     return FALSE;
@@ -2649,9 +2649,9 @@ static void handle_unit_move_consequences(struct unit *punit,
                                           struct tile *src_tile,
                                           struct tile *dst_tile)
 {
-  struct city *fromcity = map_get_city(src_tile);
-  struct city *tocity = map_get_city(dst_tile);
-  struct city *homecity = NULL;
+  city_t *fromcity = map_get_city(src_tile);
+  city_t *tocity = map_get_city(dst_tile);
+  city_t *homecity = NULL;
   struct player *pplayer = unit_owner(punit);
   /*  struct government *g = get_gov_pplayer(pplayer);*/
   bool refresh_homecity = FALSE;
@@ -2719,7 +2719,7 @@ static void handle_unit_move_consequences(struct unit *punit,
 
   /* First check cities near the source. */
   map_city_radius_iterate(src_tile, tile1) {
-    struct city *pcity = map_get_city(tile1);
+    city_t *pcity = map_get_city(tile1);
 
     if (pcity && update_city_tile_status_map(pcity, src_tile)) {
       auto_arrange_workers(pcity);
@@ -2728,7 +2728,7 @@ static void handle_unit_move_consequences(struct unit *punit,
   } map_city_radius_iterate_end;
   /* Then check cities near the destination. */
   map_city_radius_iterate(dst_tile, tile1) {
-    struct city *pcity = map_get_city(tile1);
+    city_t *pcity = map_get_city(tile1);
     if (pcity && update_city_tile_status_map(pcity, dst_tile)) {
       auto_arrange_workers(pcity);
       send_city_info(NULL, pcity);
@@ -2775,7 +2775,7 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
 {
   struct player *pplayer = unit_owner(punit);
   struct tile *psrctile = punit->tile;
-  struct city *pcity;
+  city_t *pcity;
   struct unit *ptransporter = NULL;
   /* This is to check whether unit survived auto attack. */
   bool bunitsurvived = TRUE;

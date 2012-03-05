@@ -22,9 +22,9 @@ void send_trade_route_info(struct conn_list *dest, struct trade_route *ptr);
 void send_trade_route_remove(struct conn_list *dest, struct trade_route *ptr);
 void server_remove_trade_route(struct trade_route *ptr);
 
-void server_establish_trade_route(struct city *pcity1, struct city *pcity2);
-void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
-                                struct city *pcity2);
+void server_establish_trade_route(city_t *pcity1, city_t *pcity2);
+void unit_establish_trade_route(struct unit *punit, city_t *pcity1,
+                                city_t *pcity2);
 void trade_free_unit(struct unit *punit);
 
 void reset_trade_route_planning(struct player *pplayer);

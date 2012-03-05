@@ -33,8 +33,8 @@ bool is_dist_finite(int dist);
 enum goto_result do_unit_goto(struct unit *punit,
                               enum goto_move_restriction restriction,
                               bool trigger_special_ability);
-void generate_warmap(struct city *pcity, struct unit *punit);
-void really_generate_warmap(struct city *pcity, struct unit *punit,
+void generate_warmap(city_t *pcity, struct unit *punit);
+void really_generate_warmap(city_t *pcity, struct unit *punit,
                             enum unit_move_type move_type);
 int calculate_move_cost(struct unit *punit, struct tile *dst_tile);
 int air_can_move_between(int moves, struct tile *src_tile,
@@ -53,7 +53,7 @@ struct move_cost_map {
   unsigned char *vector;
   int size;
 
-  struct city *warcity; /* so we know what we're dealing with here */
+  city_t *warcity; /* so we know what we're dealing with here */
   struct unit *warunit; /* so we know what we're dealing with here */
   struct tile *orig_tile;
 };

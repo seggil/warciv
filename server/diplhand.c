@@ -140,7 +140,7 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
     /* Check that player who accepts can keep what (s)he promises. */
 
     clause_list_iterate(ptreaty->clauses, pclause) {
-      struct city *pcity = NULL;
+      city_t *pcity = NULL;
 
       if (pclause->from == pplayer) {
         switch(pclause->type) {
@@ -275,7 +275,7 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
        (s)he promised to give. */
 
     clause_list_iterate(ptreaty->clauses, pclause) {
-      struct city *pcity;
+      city_t *pcity;
       if (pclause->from == pother) {
         switch (pclause->type) {
         case CLAUSE_CITY:
@@ -430,7 +430,7 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
         break;
       case CLAUSE_CITY:
         {
-          struct city *pcity = find_city_by_id(pclause->value);
+          city_t *pcity = find_city_by_id(pclause->value);
 
           if (!pcity) {
             freelog(LOG_NORMAL,
@@ -623,7 +623,7 @@ void handle_diplomacy_create_clause_req(struct player *pplayer,
      *                           - Kris Bubendorfer
      */
     if (type == CLAUSE_CITY) {
-      struct city *pcity = find_city_by_id(value);
+      city_t *pcity = find_city_by_id(value);
 
       if (pcity && !map_is_known_and_seen(pcity->tile, pother))
         give_citymap_from_player_to_player(pcity, pplayer, pother);

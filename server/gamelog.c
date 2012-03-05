@@ -125,16 +125,16 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
   GAMELOG_TEAM
     struct team *
   GAMELOG_WONDER
-    struct city *
+    city_t *
   GAMELOG_FOUNDCITY
-    struct city *
+    city_t *
   GAMELOG_LOSECITY
     struct player *
     struct player *
-    struct city *
+    city_t *
     char *
   GAMELOG_DISBANDCITY
-    struct city *
+    city_t *
   GAMELOG_TECH
     struct player *
     struct player * (can be NULL)
@@ -142,7 +142,7 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
     char * (only present if second player is not NULL)
   GAMELOG_EMBASSY
     struct player *
-    struct city *
+    city_t *
   GAMELOG_GOVERNMENT
     struct player *
   GAMELOG_REVOLT
@@ -153,7 +153,7 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
     int
     struct player *
     struct player *
-    struct city *   (can be NULL, present only if int is GL_CITY)
+    city_t *   (can be NULL, present only if int is GL_CITY)
   GAMELOG_DIPLSTATE
     struct player *
     struct player *
@@ -171,7 +171,7 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
   GAMELOG_UNITGAMELOSS
     struct unit *
   GAMELOG_BUILD
-    struct city *
+    city_t *
   GAMELOG_RATECHANGE
     struct player *
   GAMELOG_EVERYTHING
@@ -186,7 +186,7 @@ void gamelog(int level, ...)
   char buf[4096] = "", msg[512] = "";
   char *word = NULL;
   struct player *pplayer = NULL, *pplayer2 = NULL;
-  struct city *pcity = NULL;
+  city_t *pcity = NULL;
   struct unit *punit = NULL;
   struct team *pteam = NULL;
   int num;
@@ -227,7 +227,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "rev");
     break;
   case GAMELOG_FOUNDCITY:
-    pcity = va_arg(args, struct city *);
+    pcity = va_arg(args, city_t *);
 
     my_snprintf(buf, sizeof(buf), "<n>%d</n><name>%s</name>"
                 "<x>%d</x><y>%d</y><m>%s (%d,%d) founded by the %s</m>",
@@ -240,7 +240,7 @@ void gamelog(int level, ...)
   case GAMELOG_LOSECITY:
     pplayer = va_arg(args, struct player *);
     pplayer2 = va_arg(args, struct player *);
-    pcity = va_arg(args, struct city *);
+    pcity = va_arg(args, city_t *);
     word = va_arg(args, char *);
 
     my_snprintf(buf, sizeof(buf), "<n1>%d</n1><n2>%d</n2>"
@@ -254,7 +254,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "cityl");
     break;
   case GAMELOG_DISBANDCITY:
-    pcity = va_arg(args, struct city *);
+    pcity = va_arg(args, city_t *);
 
     my_snprintf(buf, sizeof(buf), "<n>%d</n><name>%s</name>"
                 "<x>%d</x><y>%d</y><m>%s (%d, %d) disbanded by the %s</m>",
@@ -286,7 +286,7 @@ void gamelog(int level, ...)
       sz_strlcpy(msg, "<m>Treaty - Seamap given to the %s from the %s</m>");
       break;
     case GL_CITY:
-      pcity = va_arg(args, struct city *);
+      pcity = va_arg(args, city_t *);
       sz_strlcpy(msg,
                  "<m>Treaty - City (%s) given to the %s from the %s</m>");
       break;
@@ -405,7 +405,7 @@ void gamelog(int level, ...)
     break;
   case GAMELOG_EMBASSY:
     pplayer = va_arg(args, struct player *);
-    pcity = va_arg(args, struct city *);
+    pcity = va_arg(args, city_t *);
 
     my_snprintf(buf, sizeof(buf),
                 "<n1>%d</n1><n2>%d</n2><name>%s</name><x>%d</x><y>%d</y>"
@@ -420,7 +420,7 @@ void gamelog(int level, ...)
     break;
   case GAMELOG_BUILD:
   case GAMELOG_WONDER:
-    pcity = va_arg(args, struct city *);
+    pcity = va_arg(args, city_t *);
 
     my_snprintf(buf, sizeof(buf),
                 "<n>%d</n><city>%s</city><u>%d</u>"

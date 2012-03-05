@@ -261,7 +261,7 @@ possible cost the first time.
 This would be done by inserting the tiles in a list after their move_cost
 as they were found.
 **************************************************************************/
-void really_generate_warmap(struct city *pcity, struct unit *punit,
+void really_generate_warmap(city_t *pcity, struct unit *punit,
                             enum unit_move_type move_type)
 {
   int move_cost;
@@ -366,7 +366,7 @@ pcity and/or punit is nun-NULL.
 FIXME: Why is the movetype not used initialized on the warmap? Leaving it
 for now.
 **************************************************************************/
-void generate_warmap(struct city *pcity, struct unit *punit)
+void generate_warmap(city_t *pcity, struct unit *punit)
 {
   freelog(LOG_DEBUG, "Generating warmap, pcity = %s, punit = %s",
           (pcity ? pcity->name : "NULL"),
@@ -963,7 +963,7 @@ static int find_a_direction(struct unit *punit,
   adjc_dir_iterate(punit->tile, ptile, dir) {
     int defence_multiplier, num_of_allied_units, best_friendly_defence,
         base_move_cost;
-    struct city *pcity = map_get_city(ptile);
+    city_t *pcity = map_get_city(ptile);
     struct unit *best_ally;
 
     /*

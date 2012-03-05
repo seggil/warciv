@@ -38,9 +38,9 @@ void update_unit_activities(struct player *pplayer);
 char *get_location_str_in(struct player *pplayer, struct tile *ptile);
 char *get_location_str_at(struct player *pplayer, struct tile *ptile);
 enum goto_move_restriction get_activity_move_restriction(enum unit_activity activity);
-void make_partisans(struct city *pcity);
+void make_partisans(city_t *pcity);
 bool enemies_at(struct unit *punit, struct tile *ptile);
-bool teleport_unit_to_city(struct unit *punit, struct city *pcity, int move_cost,
+bool teleport_unit_to_city(struct unit *punit, city_t *pcity, int move_cost,
                           bool verbose);
 void resolve_unit_stacks(struct player *pplayer, struct player *aplayer,
                          bool verbose);
@@ -77,7 +77,7 @@ void unit_goes_out_of_sight(struct player *pplayer, struct unit *punit);
 /* doing a unit activity */
 void do_nuclear_explosion(struct player *pplayer, struct tile *ptile);
 bool try_move_unit(struct unit *punit, struct tile *ptile);
-bool do_airlift(struct unit *punit, struct city *city2);
+bool do_airlift(struct unit *punit, city_t *city2);
 bool do_paradrop(struct unit *punit, struct tile *ptile);
 void load_unit_onto_transporter(struct unit *punit, struct unit *ptrans);
 void unload_unit_from_transporter(struct unit *punit);

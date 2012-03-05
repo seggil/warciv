@@ -287,7 +287,7 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
   bool bonus_tech_hack = FALSE;
   bool was_first = FALSE;
   bool had_embassy[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
-  struct city *pcity;
+  city_t *pcity;
 
   players_iterate(aplr) {
     had_embassy[aplr->player_no]
@@ -1901,7 +1901,7 @@ void make_contact(struct player *pplayer1, struct player *pplayer2,
 void maybe_make_contact(struct tile *ptile, struct player *pplayer)
 {
   square_iterate(ptile, 1, tile1) {
-    struct city *pcity = tile1->city;
+    city_t *pcity = tile1->city;
     if (pcity) {
       make_contact(pplayer, city_owner(pcity), ptile);
     }

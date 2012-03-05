@@ -58,7 +58,7 @@ void global_warming(int effect);
 void nuclear_winter(int effect);
 void give_map_from_player_to_player(struct player *pfrom, struct player *pdest);
 void give_seamap_from_player_to_player(struct player *pfrom, struct player *pdest);
-void give_citymap_from_player_to_player(struct city *pcity,
+void give_citymap_from_player_to_player(city_t *pcity,
                                         struct player *pfrom, struct player *pdest);
 void send_all_known_tiles(struct conn_list *dest);
 void send_tile_info(struct conn_list *dest, struct tile *ptile);
@@ -68,8 +68,8 @@ void unfog_area(struct player *pplayer, struct tile *ptile, int len);
 void fog_area(struct player *pplayer, struct tile *ptile, int len);
 void upgrade_city_rails(struct player *pplayer, bool discovery);
 void send_map_info(struct conn_list *dest);
-void map_fog_city_area(struct city *pcity);
-void map_unfog_city_area(struct city *pcity);
+void map_fog_city_area(city_t *pcity);
+void map_unfog_city_area(city_t *pcity);
 void remove_unit_sight_points(struct unit *punit);
 void show_area(struct player *pplayer,struct tile *ptile, int len);
 void map_unfog_pseudo_city_area(struct player *pplayer, struct tile *ptile);
@@ -99,7 +99,7 @@ void enable_fog_of_war(void);
 void disable_fog_of_war(void);
 
 void map_update_borders_city_destroyed(struct tile *ptile);
-void map_update_borders_city_change(struct city *pcity);
+void map_update_borders_city_change(city_t *pcity);
 void map_update_borders_landmass_change(struct tile *ptile);
 void map_calculate_borders(void);
 

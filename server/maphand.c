@@ -386,7 +386,7 @@ void give_seamap_from_player_to_player(struct player *pfrom, struct player *pdes
 /**************************************************************************
 ...
 **************************************************************************/
-void give_citymap_from_player_to_player(struct city *pcity,
+void give_citymap_from_player_to_player(city_t *pcity,
                                         struct player *pfrom, struct player *pdest)
 {
   buffer_shared_vision(pdest);
@@ -639,7 +639,7 @@ void conceal_hidden_units(struct player *pplayer, struct tile *ptile)
 **************************************************************************/
 static void really_unfog_area(struct player *pplayer, struct tile *ptile)
 {
-  struct city *pcity;
+  city_t *pcity;
   bool old_known = map_is_known(ptile, pplayer);
 
   freelog(LOG_DEBUG, "really unfogging %d,%d\n", TILE_XY(ptile));
@@ -773,7 +773,7 @@ void send_map_info(struct conn_list *dest)
 /**************************************************************************
 ...
 **************************************************************************/
-void map_fog_city_area(struct city *pcity)
+void map_fog_city_area(city_t *pcity)
 {
   if (!pcity) {
     freelog(LOG_ERROR, "Attempting to fog non-existent city");
@@ -786,7 +786,7 @@ void map_fog_city_area(struct city *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-void map_unfog_city_area(struct city *pcity)
+void map_unfog_city_area(city_t *pcity)
 {
   if (!pcity) {
     freelog(LOG_ERROR, "Attempting to unfog non-existent city");
@@ -870,7 +870,7 @@ shown
 **************************************************************************/
 static void really_show_area(struct player *pplayer, struct tile *ptile)
 {
-  struct city *pcity;
+  city_t *pcity;
   bool old_known = map_is_known(ptile, pplayer);
 
   freelog(LOG_DEBUG, "Showing %i,%i", TILE_XY(ptile));
@@ -1328,7 +1328,7 @@ static void really_give_tile_info_from_player_to_player(struct player *pfrom,
       reveal_pending_seen(pdest, ptile, 0);
 
       map_city_radius_iterate(ptile, tile1) {
-        struct city *pcity = map_get_city(tile1);
+        city_t *pcity = map_get_city(tile1);
         if (pcity && city_owner(pcity) == pdest) {
           update_city_tile_status_map(pcity, ptile);
         }
@@ -1627,9 +1627,9 @@ enum ocean_land_change check_terrain_ocean_land_change(struct tile *ptile,
   Return pointer to the oldest adjacent city to this tile.  If
   there is a city on the exact tile, that is returned instead.
 *************************************************************************/
-static struct city *map_get_adjc_city(struct tile *ptile)
+static city_t *map_get_adjc_city(struct tile *ptile)
 {
-  struct city *closest = NULL;   /* Closest city */
+  city_t *closest = NULL;   /* Closest city */
 
   if (ptile->city) {
     return ptile->city;
@@ -1702,9 +1702,9 @@ static bool is_claimed_ocean(struct tile *ptile, Continent_id *contp)
   NOTE: The behaviour of this function will eventually depend
   upon some planned ruleset options.
 *************************************************************************/
-static struct city *map_get_closest_city(struct tile *ptile)
+static city_t *map_get_closest_city(struct tile *ptile)
 {
-  struct city *closest;  /* Closest city */
+  city_t *closest;  /* Closest city */
 
   closest = map_get_adjc_city(ptile);
   if (!closest) {
@@ -1756,7 +1756,7 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
 
   if (game.ruleset_control.borders > 0) {
     iterate_outward(ptile, game.ruleset_control.borders, tile1) {
-      struct city *pccity = map_get_closest_city(tile1);
+      city_t *pccity = map_get_closest_city(tile1);
       struct player *new_owner = pccity ? get_player(pccity->owner) : NULL;
 
       if (new_owner != map_get_owner(tile1)) {
@@ -1769,7 +1769,7 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
         /* Update happiness */
         if (game.ruleset_control.happyborders > 0) {
           unit_list_iterate(tile1->units, unit) {
-            struct city *homecity = find_city_by_id(unit->homecity);
+            city_t *homecity = find_city_by_id(unit->homecity);
             bool already_listed = FALSE;
 
             if (!homecity) {
@@ -1828,7 +1828,7 @@ void map_update_borders_landmass_change(struct tile *ptile)
   ownership.
   Tile worker states are updated as necessary, but not sync'd with client.
 *************************************************************************/
-void map_update_borders_city_change(struct city *pcity)
+void map_update_borders_city_change(city_t *pcity)
 {
   map_update_borders_recalculate_position(pcity->tile);
 }
@@ -1856,7 +1856,7 @@ static void map_calculate_territory(void)
     cities_iterate(pcity) {
       /* Loop over all map tiles within this city's sphere of influence. */
       iterate_outward(pcity->tile, game.ruleset_control.borders, ptile) {
-        struct city *pccity = map_get_closest_city(ptile);
+        city_t *pccity = map_get_closest_city(ptile);
 
         if (pccity) {
           map_set_owner(ptile, get_player(pccity->owner));

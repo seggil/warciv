@@ -47,9 +47,9 @@ static bool diplomat_success_vs_defender(struct unit *patt, struct unit *pdef,
 static bool diplomat_infiltrate_tile(struct player *pplayer, struct player *cplayer,
                                      struct unit *pdiplomat, struct tile *ptile);
 static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
-                            const struct city *pcity);
+                            const city_t *pcity);
 static void maybe_cause_incident(enum diplomat_actions action, struct player *offender,
-                                 struct unit *victim_unit, struct city *victim_city);
+                                 struct unit *victim_unit, city_t *victim_city);
 
 /******************************************************************************
   Poison a city's water supply.
@@ -64,7 +64,7 @@ static void maybe_cause_incident(enum diplomat_actions action, struct player *of
   - The poisoner may be captured and executed, or escape to its home town.
 ****************************************************************************/
 void spy_poison(struct player *pplayer, struct unit *pdiplomat,
-                struct city *pcity)
+                city_t *pcity)
 {
   struct player *cplayer;
 
@@ -90,7 +90,7 @@ void spy_poison(struct player *pplayer, struct unit *pdiplomat,
   freelog (LOG_DEBUG, "poison: infiltrated");
 
   /* If city is too small, can't poison. */
-  if (pcity->size < 2) {
+  if (pcity->pop_size < 2) {
     notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
                      _("Game: Your %s could not poison the water"
                        " supply in %s."),
@@ -135,7 +135,7 @@ void spy_poison(struct player *pplayer, struct unit *pdiplomat,
   - Spies always survive.  There is no risk.
 ****************************************************************************/
 void diplomat_investigate(struct player *pplayer, struct unit *pdiplomat,
-                          struct city *pcity)
+                          city_t *pcity)
 {
   struct player *cplayer;
   bool first_packet;
@@ -205,7 +205,7 @@ void diplomat_investigate(struct player *pplayer, struct unit *pdiplomat,
   Only send back to the originating connection, if there is one. (?)
 ****************************************************************************/
 void spy_get_sabotage_list(struct player *pplayer, struct unit *pdiplomat,
-                           struct city *pcity)
+                           city_t *pcity)
 {
   struct packet_city_sabotage_list packet;
   char *p;
@@ -239,7 +239,7 @@ void spy_get_sabotage_list(struct player *pplayer, struct unit *pdiplomat,
   - Spies always survive.
 ****************************************************************************/
 void diplomat_embassy(struct player *pplayer, struct unit *pdiplomat,
-                      struct city *pcity)
+                      city_t *pcity)
 {
   struct player *cplayer;
 
@@ -538,7 +538,7 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
   not at war with
 ****************************************************************************/
 void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
-                       struct city  *pcity, int technology)
+                       city_t  *pcity, int technology)
 {
   struct player *cplayer;
   int count, /*which,*/ target;
@@ -753,7 +753,7 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
   - The provocateur may be captured and executed, or escape to its home town.
 **************************************************************************/
 void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
-                     struct city *pcity)
+                     city_t *pcity)
 {
   struct player *cplayer;
   int revolt_cost;
@@ -834,7 +834,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   /* Subvert the city to your cause... */
 
   /* City loses some population. */
-  if (pcity->size > 1) {
+  if (pcity->pop_size > 1) {
     city_reduce_size(pcity, 1);
   }
 
@@ -895,7 +895,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   - The saboteur may be captured and executed, or escape to its home town.
 **************************************************************************/
 void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
-                       struct city *pcity, Impr_Type_id improvement)
+                       city_t *pcity, Impr_Type_id improvement)
 {
   struct player *cplayer;
   int count, which, target;
@@ -1177,7 +1177,7 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
                                      struct unit *pdiplomat,
                                      struct tile *ptile)
 {
-  struct city *pcity = ptile->city;
+  city_t *pcity = ptile->city;
 
   /* We don't need a _safe iterate since no transporters should be
    * destroyed. */
@@ -1267,12 +1267,12 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
     - Escapee may become a veteran.
 **************************************************************************/
 static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
-                            const struct city *pcity)
+                            const city_t *pcity)
 {
   struct tile *ptile;
   int escapechance;
   bool vet;
-  struct city *spyhome;
+  city_t *spyhome;
 
   escapechance = game.server.spyreturnchance + pdiplomat->veteran * 5;
 
@@ -1333,7 +1333,7 @@ static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
 ...
 **************************************************************************/
 static void maybe_cause_incident(enum diplomat_actions action, struct player *offender,
-                                 struct unit *victim_unit, struct city *victim_city)
+                                 struct unit *victim_unit, city_t *victim_city)
 {
   struct player *victim_player = 0;
   struct tile *victim_tile = NULL;
@@ -1441,14 +1441,14 @@ int unit_bribe_cost(struct unit *punit)
 {
   struct government *g = get_gov_pplayer(unit_owner(punit));
   int cost;
-  struct city *capital;
+  city_t *capital;
   int dist;
   int default_hp = unit_type(punit)->hp;
   int shield_cost = unit_build_shield_cost(punit->type);
 
   if (game.ext_info.experimentalbribingcost) {
     /* Experimental cost. */
-    struct city *pcity = map_get_city(punit->tile);
+    city_t *pcity = map_get_city(punit->tile);
 
     /* Base cost. */
     cost = 2 * shield_cost + (shield_cost * shield_cost) / 20;

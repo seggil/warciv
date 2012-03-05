@@ -113,7 +113,7 @@ void server_remove_trade_route(struct trade_route *ptr)
 {
   struct packet_trade_route_remove packet;
   struct packet_city_info pci1, pci2;
-  struct city *pcity1 = ptr->pcity1, *pcity2 = ptr->pcity2;
+  city_t *pcity1 = ptr->pcity1, *pcity2 = ptr->pcity2;
   bool pci1_computed = FALSE, pci2_computed = FALSE;
   enum trade_route_status status = ptr->status;
 
@@ -174,7 +174,7 @@ void server_remove_trade_route(struct trade_route *ptr)
 /****************************************************************************
   Establish a new trade route (for savegame.c)
 ****************************************************************************/
-void server_establish_trade_route(struct city *pcity1, struct city *pcity2)
+void server_establish_trade_route(city_t *pcity1, city_t *pcity2)
 {
   if (!pcity1 || !pcity2) {
     return;
@@ -202,12 +202,12 @@ void server_establish_trade_route(struct city *pcity1, struct city *pcity2)
 /****************************************************************************
   Establish a trade route - Must be the only issue
 ****************************************************************************/
-void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
-                                struct city *pcity2)
+void unit_establish_trade_route(struct unit *punit, city_t *pcity1,
+                                city_t *pcity2)
 {
   struct player *pplayer = unit_owner(punit);
   struct trade_route *out_of_home = NULL, *out_of_dest = NULL;
-  struct city *pcity_out_of_home = NULL, *pcity_out_of_dest = NULL;
+  city_t *pcity_out_of_home = NULL, *pcity_out_of_dest = NULL;
   bool can_establish = !have_cities_trade_route(pcity1, pcity2);
   int revenue;
 
@@ -378,7 +378,7 @@ void trade_free_unit(struct unit *punit)
 ****************************************************************************/
 void handle_trade_route_plan(struct player *pplayer, int city1, int city2)
 {
-  struct city *pcity1, *pcity2;
+  city_t *pcity1, *pcity2;
   struct trade_route *ptr;
 
   if (!(pcity1 = player_find_city_by_id(pplayer, city1))) {
@@ -421,7 +421,7 @@ void handle_trade_route_plan(struct player *pplayer, int city1, int city2)
 ****************************************************************************/
 void handle_trade_route_remove(struct player *pplayer, int city1, int city2)
 {
-  struct city *pcity1, *pcity2;
+  city_t *pcity1, *pcity2;
   struct trade_route *ptr;
 
   if (!(pcity1 = player_find_city_by_id(pplayer, city1))) {
@@ -453,7 +453,7 @@ void handle_unit_trade_route(struct player *pplayer, int unit_id,
                              int city1, int city2)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct city *pcity1, *pcity2;
+  city_t *pcity1, *pcity2;
   struct trade_route *ptr = NULL;
 
   if (!punit) {

@@ -77,7 +77,7 @@ struct player_score_entry {
 };
 
 struct city_score_entry {
-  struct city *city;
+  city_t *city;
   int value;
 };
 
@@ -220,7 +220,7 @@ static void historian_generic(enum historian_type which_news)
 /**************************************************************************
  Returns the number of wonders the given city has.
 **************************************************************************/
-static int nr_wonders(struct city *pcity)
+static int nr_wonders(city_t *pcity)
 {
   int result = 0;
 
@@ -252,7 +252,7 @@ void report_top_five_cities(struct conn_list *dest)
 
   shuffled_players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
-      int value_of_pcity = pcity->size + nr_wonders(pcity) * WONDER_FACTOR;
+      int value_of_pcity = pcity->pop_size + nr_wonders(pcity) * WONDER_FACTOR;
 
       if (value_of_pcity > size[NUM_BEST_CITIES - 1].value) {
         size[NUM_BEST_CITIES - 1].value = value_of_pcity;
@@ -278,7 +278,7 @@ void report_top_five_cities(struct conn_list *dest)
     cat_snprintf(buffer, sizeof(buffer),
                  _("%2d: The %s City of %s of size %d, "), i + 1,
                  get_nation_name(city_owner(size[i].city)->nation),
-                 size[i].city->name, size[i].city->size);
+                 size[i].city->name, size[i].city->pop_size);
 
     wonders = nr_wonders(size[i].city);
     if (wonders == 0) {
@@ -304,7 +304,7 @@ void report_wonders_of_the_world(struct conn_list *dest)
 
   impr_type_iterate(i) {
     if (is_wonder(i)) {
-      struct city *pcity = find_city_wonder(i);
+      city_t *pcity = find_city_wonder(i);
 
       if (pcity) {
         cat_snprintf(buffer, sizeof(buffer), _("%s in %s (%s)\n"),

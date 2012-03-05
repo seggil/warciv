@@ -37,8 +37,8 @@
 #include "log.h"
 #include "timing.h"
 
-#include "combat.h"
 #include "city.h"
+#include "combat.h"
 #include "events.h"
 #include "game.h"
 #include "map.h"

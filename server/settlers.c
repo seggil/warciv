@@ -64,7 +64,7 @@ static bool is_already_assigned(struct unit *myunit, struct player *pplayer,
 static bool ai_do_build_city(struct player *pplayer, struct unit *punit)
 {
   struct tile *ptile = punit->tile;
-  struct city *pcity;
+  city_t *pcity;
 
   assert(pplayer == unit_owner(punit));
   handle_unit_activity_request(punit, ACTIVITY_IDLE);
@@ -186,7 +186,7 @@ static bool is_already_assigned(struct unit *myunit, struct player *pplayer,
 
   FIXME: foodneed and prodneed are always 0.
 **************************************************************************/
-int city_tile_value(struct city *pcity, int x, int y,
+int city_tile_value(city_t *pcity, int x, int y,
                     int foodneed, int prodneed)
 {
  int food = city_get_food_tile(x, y, pcity);
@@ -224,7 +224,7 @@ int city_tile_value(struct city *pcity, int x, int y,
   city_tile_value(); note that this depends on the AI's weighting
   values).
 **************************************************************************/
-static int ai_calc_pollution(struct city *pcity, int city_x, int city_y,
+static int ai_calc_pollution(city_t *pcity, int city_x, int city_y,
                              int best, struct tile *ptile)
 {
   int goodness;
@@ -253,7 +253,7 @@ static int ai_calc_pollution(struct city *pcity, int city_x, int city_y,
   city_tile_value(); note that this depends on the AI's weighting
   values).
 **************************************************************************/
-static int ai_calc_fallout(struct city *pcity, struct player *pplayer,
+static int ai_calc_fallout(city_t *pcity, struct player *pplayer,
                            int city_x, int city_y, int best,
                            struct tile *ptile)
 {
@@ -343,7 +343,7 @@ static bool is_wet_or_is_wet_cardinal_around(struct player *pplayer,
   city_tile_value(); note that this depends on the AI's weighting
   values).
 **************************************************************************/
-static int ai_calc_irrigate(struct city *pcity, struct player *pplayer,
+static int ai_calc_irrigate(city_t *pcity, struct player *pplayer,
                             int city_x, int city_y, struct tile *ptile)
 {
   int goodness;
@@ -406,7 +406,7 @@ static int ai_calc_irrigate(struct city *pcity, struct player *pplayer,
   city_tile_value(); note that this depends on the AI's weighting
   values).
 **************************************************************************/
-static int ai_calc_mine(struct city *pcity,
+static int ai_calc_mine(city_t *pcity,
                         int city_x, int city_y, struct tile *ptile)
 {
   int goodness;
@@ -458,7 +458,7 @@ static int ai_calc_mine(struct city *pcity,
   city_tile_value(); note that this depends on the AI's weighting
   values).
 **************************************************************************/
-static int ai_calc_transform(struct city *pcity,
+static int ai_calc_transform(city_t *pcity,
                              int city_x, int city_y, struct tile *ptile)
 {
   int goodness;
@@ -642,7 +642,7 @@ static int road_bonus(struct tile *ptile, enum tile_special_type special)
   move units (i.e., of connecting the civilization).  See road_bonus() for
   that calculation.
 **************************************************************************/
-static int ai_calc_road(struct city *pcity, struct player *pplayer,
+static int ai_calc_road(city_t *pcity, struct player *pplayer,
                         int city_x, int city_y, struct tile *ptile)
 {
   int goodness;
@@ -683,7 +683,7 @@ static int ai_calc_road(struct city *pcity, struct player *pplayer,
   move units (i.e., of connecting the civilization).  See road_bonus() for
   that calculation.
 **************************************************************************/
-static int ai_calc_railroad(struct city *pcity, struct player *pplayer,
+static int ai_calc_railroad(city_t *pcity, struct player *pplayer,
                             int city_x, int city_y, struct tile *ptile)
 {
   int goodness;
@@ -831,14 +831,14 @@ static int unit_foodbox_cost(struct unit *punit)
 
   if (punit->id == 0) {
     /* It is a virtual unit, so must start in a city... */
-    struct city *pcity = map_get_city(punit->tile);
+    city_t *pcity = map_get_city(punit->tile);
 
     /* The default is to lose 100%.  The growth bonus reduces this. */
     int foodloss_pct = 100 - get_city_bonus(pcity, EFT_GROWTH_FOOD);
 
     foodloss_pct = CLIP(0, foodloss_pct, 100);
     assert(pcity != NULL);
-    cost = city_granary_size(pcity->size);
+    cost = city_granary_size(pcity->pop_size);
     cost = cost * foodloss_pct / 100;
   }
 
@@ -871,7 +871,7 @@ static int evaluate_improvements(struct unit *punit,
                                  enum unit_activity *best_act,
                                  struct tile **best_tile)
 {
-  struct city *mycity = map_get_city(punit->tile);
+  city_t *mycity = map_get_city(punit->tile);
   struct player *pplayer = unit_owner(punit);
   bool in_use;                  /* true if the target square is being used
                                    by one of our cities */
@@ -1172,7 +1172,7 @@ static void auto_settler_findwork(struct player *pplayer, struct unit *punit)
 /**************************************************************************
   Returns city_tile_value of the best tile worked by or available to pcity.
 **************************************************************************/
-static int best_worker_tile_value(struct city *pcity)
+static int best_worker_tile_value(city_t *pcity)
 {
   int best = 0;
 
@@ -1436,7 +1436,7 @@ void auto_settlers_init(void)
   Return want for city settler. Note that we rely here on the fact that
   ai_settler_init() has been run while doing autosettlers.
 **************************************************************************/
-void contemplate_new_city(struct city *pcity)
+void contemplate_new_city(city_t *pcity)
 {
   int MIN_FOUNDER_WANT_MODIFIER = 40;
   int FOUNDER_WANT_MULTIPLIER = 1;
@@ -1486,7 +1486,7 @@ void contemplate_new_city(struct city *pcity)
 
   TODO: AI does not ship F_SETTLERS around, only F_CITIES - Per
 **************************************************************************/
-void contemplate_terrain_improvements(struct city *pcity)
+void contemplate_terrain_improvements(city_t *pcity)
 {
   struct player *pplayer = city_owner(pcity);
   struct unit *virtualunit;
