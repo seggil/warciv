@@ -34,13 +34,13 @@ void popup_unit_select_dialog(struct tile *ptile);
 void races_toggles_set_sensitive(bool *nations_used);
 
 void popup_caravan_dialog(struct unit *punit,
-                          struct city *phomecity, struct city *pdestcity);
+                          city_t *phomecity, city_t *pdestcity);
 bool caravan_dialog_is_open(void);
 void popup_diplomat_dialog(struct unit *punit, struct tile *ptile);
 bool diplomat_dialog_is_open(void);
-void popup_incite_dialog(struct city *pcity, int cost);
+void popup_incite_dialog(city_t *pcity, int cost);
 void popup_bribe_dialog(struct unit *punit, int cost);
-void popup_sabotage_dialog(struct city *pcity);
+void popup_sabotage_dialog(city_t *pcity);
 void popup_pillage_dialog(struct unit *punit,
                           enum tile_special_type may_pillage);
 

@@ -19,10 +19,10 @@
 
 void popup_city_report_dialog(bool make_modal);
 void city_report_dialog_update(void);
-void city_report_dialog_update_city(struct city *pcity);
+void city_report_dialog_update_city(city_t *pcity);
 
 /* Area Selection on canvas */
 void hilite_cities_from_canvas(void);
-void toggle_city_hilite(struct city *pcity, bool on_off);
+void toggle_city_hilite(city_t *pcity, bool on_off);
 
 #endif  /* WC_CLINET_INCLUDE_CITYREP_G_H */

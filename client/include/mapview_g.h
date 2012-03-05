@@ -35,7 +35,7 @@ void canvas_free(struct canvas *store);
 struct canvas *get_overview_window(void);
 
 void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
-                    struct city *pcity, int *width, int *height);
+                    city_t *pcity, int *width, int *height);
 
 void canvas_put_sprite(struct canvas *pcanvas,
                        int canvas_x, int canvas_y, struct Sprite *sprite,
