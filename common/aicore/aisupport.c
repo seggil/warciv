@@ -102,11 +102,11 @@ int player_distance_to_player(struct player *pplayer, struct player *target)
 /**********************************************************************
   Rough calculation of the worth of pcity in gold.
 ***********************************************************************/
-int city_gold_worth(struct city *pcity)
+int city_gold_worth(city_t *pcity)
 {
   int worth;
 
-  worth = pcity->size * 150; /* reasonable base cost */
+  worth = pcity->pop_size * 150; /* reasonable base cost */
   unit_list_iterate(pcity->units_supported, punit) {
     if (same_pos(punit->tile, pcity->tile)) {
       Unit_Type_id id = unit_type(punit)->obsoleted_by;

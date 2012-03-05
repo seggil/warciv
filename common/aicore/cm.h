@@ -52,7 +52,7 @@ void cm_free(void);
  * should test result->found_a_valid. cm_query_result will not change
  * the actual city setting.
  */
-void cm_query_result(struct city *pcity,
+void cm_query_result(city_t *pcity,
                      const struct cm_parameter *const parameter,
                      struct cm_result *result);
 
@@ -60,7 +60,7 @@ void cm_query_result(struct city *pcity,
  * Call this function if the city has changed. To be safe call it
  * everytime before you call cm_query_result.
  */
-void cm_clear_cache(struct city *pcity);
+void cm_clear_cache(city_t *pcity);
 
 /***************** utility methods *************************************/
 const char *cm_get_stat_name(enum cm_stat stat);
@@ -71,13 +71,14 @@ void cm_copy_parameter(struct cm_parameter *dest,
 void cm_init_parameter(struct cm_parameter *dest);
 void cm_init_emergency_parameter(struct cm_parameter *dest);
 
-void cm_print_city(const struct city *pcity);
-void cm_print_result(const struct city *pcity,
+void cm_print_city(const city_t *pcity);
+void cm_print_result(const city_t *pcity,
                      const struct cm_result *result);
-int cm_count_worker(const struct city * pcity,
+int cm_count_worker(const city_t * pcity,
                     const struct cm_result *result);
-int cm_count_specialist(const struct city *pcity,
+int cm_count_specialist(const city_t *pcity,
                         const struct cm_result *result);
-void cm_copy_result_from_city(const struct city *pcity,
+void cm_copy_result_from_city(const city_t *pcity,
                               struct cm_result *result);
 #endif  /* WC_COMMON_AICORE_CM_H */
+
