@@ -850,7 +850,7 @@ static int num_continent_buildings(const struct player *pplayer,
                                    int continent, Impr_Type_id building)
 {
   if (is_wonder(building)) {
-    const struct city *pcity;
+    const city_t *pcity;
 
     pcity = player_find_city_by_id(pplayer, game.info.global_wonders[building]);
     if (pcity && map_get_continent(pcity->tile) == continent) {
@@ -867,7 +867,7 @@ static int num_continent_buildings(const struct player *pplayer,
 /**************************************************************************
   Returns the number of buildings of a certain type in a city.
 **************************************************************************/
-static int num_city_buildings(const struct city *pcity, Impr_Type_id id)
+static int num_city_buildings(const city_t *pcity, Impr_Type_id id)
 {
   return (city_got_building(pcity, id) ? 1 : 0);
 }
@@ -913,7 +913,7 @@ static bool is_target_possible(enum target_type target,
 **************************************************************************/
 static int count_sources_in_range(enum target_type target,
                                   const struct player *target_player,
-                                  const struct city *target_city,
+                                  const city_t *target_city,
                                   Impr_Type_id target_building,
                                   enum effect_range range, bool survives,
                                   Impr_Type_id source)
@@ -975,7 +975,7 @@ static int count_sources_in_range(enum target_type target,
 **************************************************************************/
 static bool is_effect_redundant(enum target_type target,
                                 const struct player *target_player,
-                                const struct city *target_city,
+                                const city_t *target_city,
                                 Impr_Type_id target_building,
                                 Impr_Type_id source,
                                 const struct effect *peffect)
@@ -1021,7 +1021,7 @@ static bool is_effect_redundant(enum target_type target,
 **************************************************************************/
 static bool are_effect_reqs_active(enum target_type target,
                                    const struct player *target_player,
-                                   const struct city *target_city,
+                                   const city_t *target_city,
                                    Impr_Type_id target_building,
                                    const struct tile *target_tile,
                                    Impr_Type_id source,
@@ -1086,7 +1086,7 @@ static bool are_effect_reqs_active(enum target_type target,
 **************************************************************************/
 bool is_effect_useful(enum target_type target,
                       const struct player *target_player,
-                      const struct city *target_city,
+                      const city_t *target_city,
                       Impr_Type_id target_building,
                       const struct tile *target_tile,
                       Impr_Type_id source, const struct effect *peffect)
@@ -1114,7 +1114,7 @@ bool is_effect_useful(enum target_type target,
 **************************************************************************/
 static bool is_effect_active(enum target_type target,
                              const struct player *plr,
-                             const struct city *pcity,
+                             const city_t *pcity,
                              Impr_Type_id building,
                              const struct tile *ptile,
                              Impr_Type_id source,
@@ -1132,7 +1132,7 @@ static bool is_effect_active(enum target_type target,
   Returns TRUE if a building is replaced.  To be replaced, all its effects
   must be made redundant by groups that it is in.
 **************************************************************************/
-bool is_building_replaced(const struct city *pcity, Impr_Type_id building)
+bool is_building_replaced(const city_t *pcity, Impr_Type_id building)
 {
   bool groups_present = FALSE;
 
@@ -1166,7 +1166,7 @@ bool is_building_replaced(const struct city *pcity, Impr_Type_id building)
 **************************************************************************/
 static int get_effect_value(enum target_type target,
                             const struct player *target_player,
-                            const struct city *target_city,
+                            const city_t *target_city,
                             Impr_Type_id target_building,
                             const struct tile *target_tile,
                             Impr_Type_id source,
@@ -1203,7 +1203,7 @@ static int get_effect_value(enum target_type target,
 static int get_target_bonus_sources(struct effect_source_vector *sources,
                                     enum target_type target,
                                     const struct player *target_player,
-                                    const struct city *target_city,
+                                    const city_t *target_city,
                                     Impr_Type_id target_building,
                                     const struct tile *target_tile,
                                     enum effect_type effect_type)
@@ -1253,7 +1253,7 @@ int get_player_bonus(const struct player *pplayer,
 /**************************************************************************
   Returns the effect bonus at a city.
 **************************************************************************/
-int get_city_bonus(const struct city *pcity, enum effect_type effect_type)
+int get_city_bonus(const city_t *pcity, enum effect_type effect_type)
 {
   return get_target_bonus_sources(NULL, TARGET_CITY,
                                   city_owner(pcity), pcity, B_LAST, NULL,
@@ -1263,7 +1263,7 @@ int get_city_bonus(const struct city *pcity, enum effect_type effect_type)
 /**************************************************************************
   Returns the effect bonus at a city tile.
 **************************************************************************/
-int get_city_tile_bonus(const struct city *pcity, const struct tile *ptile,
+int get_city_tile_bonus(const city_t *pcity, const struct tile *ptile,
                         enum effect_type effect_type)
 {
   return get_target_bonus_sources(NULL, TARGET_CITY,
@@ -1274,7 +1274,7 @@ int get_city_tile_bonus(const struct city *pcity, const struct tile *ptile,
 /**************************************************************************
   Returns the effect bonus at a building.
 **************************************************************************/
-int get_building_bonus(const struct city *pcity, Impr_Type_id id,
+int get_building_bonus(const city_t *pcity, Impr_Type_id id,
                        enum effect_type effect_type)
 {
   return get_target_bonus_sources(NULL, TARGET_BUILDING,
@@ -1303,7 +1303,7 @@ int get_player_bonus_sources(struct effect_source_vector *sources,
   is done with it.
 **************************************************************************/
 int get_city_bonus_sources(struct effect_source_vector *sources,
-    const struct city *pcity, enum effect_type effect_type)
+    const city_t *pcity, enum effect_type effect_type)
 {
   return get_target_bonus_sources(sources, TARGET_CITY,
                                   city_owner(pcity), pcity, B_LAST, NULL,
@@ -1316,7 +1316,7 @@ int get_city_bonus_sources(struct effect_source_vector *sources,
   Note this is not called get_current_production_bonus because that would
   be confused with EFT_PROD_BONUS.
 **************************************************************************/
-int get_current_construction_bonus(const struct city *pcity,
+int get_current_construction_bonus(const city_t *pcity,
                                    enum effect_type effect_type)
 {
   if (!pcity->is_building_unit) {

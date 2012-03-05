@@ -25,7 +25,7 @@ struct data_in;
 #include "spaceship.h"
 #include "unittype.h"
 #include "worklist.h"
-
+#include "effects.h"
 
 #define MAX_LEN_USERNAME        10        /* see below */
 #define MAX_LEN_MSG             1536

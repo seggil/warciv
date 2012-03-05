@@ -25,7 +25,7 @@ typedef int Terrain_type_id;
 typedef enum specialist_type Specialist_type_id;
 typedef int Impr_Type_id;
 
-struct city;
+struct city_s;
 struct government;
 struct player;
 struct tile;

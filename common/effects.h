@@ -19,6 +19,7 @@
 #include "wc_types.h"
 #include "tech.h"
 #include "terrain.h"
+#include "city.h"
 
 /* Range of effects (used in equiv_range and effect.range fields)
  * These must correspond to effect_range_names[] in improvement.c. */
@@ -246,21 +247,24 @@ enum target_type {
   TARGET_BUILDING
 };
 
+typedef struct city_s city_t;
+
 bool is_effect_useful(enum target_type target,
                       const struct player *target_player,
-                      const struct city *target_pcity,
+                      const city_t *target_pcity,
                       Impr_Type_id target_building,
                       const struct tile *target_tile,
-                      Impr_Type_id source, const struct effect *effect);
+                      Impr_Type_id source,
+                      const struct effect *effect);
 
-bool is_building_replaced(const struct city *pcity, Impr_Type_id building);
+bool is_building_replaced(const city_t *pcity, Impr_Type_id building);
 
 /* functions to know the bonuses a certain effect is granting */
 int get_player_bonus(const struct player *plr, enum effect_type effect_type);
-int get_city_bonus(const struct city *pcity, enum effect_type effect_type);
-int get_city_tile_bonus(const struct city *pcity, const struct tile *ptile,
+int get_city_bonus(const city_t *pcity, enum effect_type effect_type);
+int get_city_tile_bonus(const city_t *pcity, const struct tile *ptile,
                         enum effect_type effect_type);
-int get_building_bonus(const struct city *pcity, Impr_Type_id building,
+int get_building_bonus(const city_t *pcity, Impr_Type_id building,
                        enum effect_type effect_type);
 
 /* miscellaneous auxiliary effects functions */
@@ -271,11 +275,11 @@ struct effect_type_vector *get_building_effect_types(Impr_Type_id building);
 int get_player_bonus_sources(struct effect_source_vector *sources,
     const struct player *pplayer, enum effect_type effect_type);
 int get_city_bonus_sources(struct effect_source_vector *sources,
-    const struct city *pcity, enum effect_type effect_type);
+    const city_t *pcity, enum effect_type effect_type);
 
 bool building_has_effect(Impr_Type_id building,
                          enum effect_type effect_type);
-int get_current_construction_bonus(const struct city *pcity,
+int get_current_construction_bonus(const city_t *pcity,
                                    enum effect_type effect_type);
 
 Impr_Type_id ai_find_source_building(struct player *pplayer,
@@ -283,3 +287,4 @@ Impr_Type_id ai_find_source_building(struct player *pplayer,
 Impr_Type_id get_building_for_effect(enum effect_type effect_type);
 
 #endif  /* WC_COMMON_EFFECTS_H */
+

@@ -231,17 +231,17 @@ int game_next_year(int);
 void game_advance_year(void);
 
 int civ_population(struct player *pplayer);
-struct city *game_find_city_by_name(const char *name);
+city_t *game_find_city_by_name(const char *name);
 
 struct unit *find_unit_by_id(int id);
-struct city *find_city_by_id(int id);
-struct city *find_city_by_name_fast(const char *name);
+city_t *find_city_by_id(int id);
+city_t *find_city_by_name_fast(const char *name);
 
 void game_remove_player(struct player *pplayer);
 void game_renumber_players(int plrno);
 
 void game_remove_unit(struct unit *punit);
-void game_remove_city(struct city *pcity);
+void game_remove_city(city_t *pcity);
 void initialize_globals(void);
 
 void translate_data_names(void);

@@ -81,7 +81,7 @@ bool player_has_embassy(struct player *pplayer, struct player *pplayer2)
 /****************************************************************
 ...
 *****************************************************************/
-bool player_owns_city(struct player *pplayer, struct city *pcity)
+bool player_owns_city(struct player *pplayer, city_t *pcity)
 {
   if (!pcity || !pplayer)
     return FALSE;                       /* better safe than sorry */
@@ -266,7 +266,7 @@ struct player *find_player_by_user(const char *name)
 bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
                             struct tile *ptile)
 {
-  struct city *pcity;
+  city_t *pcity;
 
   /* If the player can't even see the tile... */
   if (map_get_known(ptile, pplayer) != TILE_KNOWN) {
@@ -296,7 +296,7 @@ bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
   /* Hiding units may only be seen by adjacent allied units or cities. */
   /* FIXME: shouldn't a check for shared vision be done here? */
   adjc_iterate(ptile, ptile1) {
-    struct city *pcity = map_get_city(ptile1);
+    city_t *pcity = map_get_city(ptile1);
     if (pcity && pplayers_allied(city_owner(pcity), pplayer)) {
       return TRUE;
     }
@@ -341,7 +341,7 @@ bool can_player_see_unit(struct player *pplayer, struct unit *punit)
   all, since the full city packet has no "occupied" flag.
 ****************************************************************************/
 bool can_player_see_units_in_city(struct player *pplayer,
-                                  struct city *pcity)
+                                  city_t *pcity)
 {
   return (can_player_see_city_internals(pplayer, pcity)
           || pplayers_allied(pplayer, city_owner(pcity)));
@@ -353,7 +353,7 @@ bool can_player_see_units_in_city(struct player *pplayer,
   a dialog for it.
 ****************************************************************************/
 bool can_player_see_city_internals(struct player *pplayer,
-                                   struct city *pcity)
+                                   city_t *pcity)
 {
   return (pplayer == city_owner(pcity));
 }
@@ -363,10 +363,10 @@ bool can_player_see_city_internals(struct player *pplayer,
  return pointer to the city struct.  Else return NULL.
  Now always uses fast idex_lookup_city.
 ***************************************************************/
-struct city *player_find_city_by_id(const struct player *pplayer,
+city_t *player_find_city_by_id(const struct player *pplayer,
                                     int city_id)
 {
-  struct city *pcity = idex_lookup_city(city_id);
+  city_t *pcity = idex_lookup_city(city_id);
 
   if (pplayer == NULL) {
     return NULL;
@@ -401,7 +401,7 @@ Return 1 if x,y is inside any of the player's city radii.
 **************************************************************************/
 bool player_in_city_radius(struct player *pplayer, struct tile *ptile)
 {
-  struct city *pcity;
+  city_t *pcity;
   map_city_radius_iterate(ptile, ptile1) {
     pcity = map_get_city(ptile1);
     if (pcity && (pcity->owner == pplayer->player_no))
@@ -523,7 +523,7 @@ void player_limit_to_government_rates(struct player *pplayer)
 /**************************************************************************
 Locate the city where the players palace is located, (NULL Otherwise)
 **************************************************************************/
-struct city *find_palace(struct player *pplayer)
+city_t *find_palace(struct player *pplayer)
 {
   city_list_iterate(pplayer->cities, pcity) {
     if (is_capital(pcity)) {

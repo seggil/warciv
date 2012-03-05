@@ -36,7 +36,7 @@
 ***********************************************************************/
 bool can_player_attack_tile(struct player *pplayer, const struct tile *ptile)
 {
-  struct city *pcity = ptile->city;
+  city_t *pcity = ptile->city;
 
   /* 1. Is there anyone there at all? */
   if (!pcity && unit_list_size(ptile->units) == 0) {
@@ -81,7 +81,7 @@ bool can_unit_attack_unit_at_tile(struct unit *punit, struct unit *pdefender,
 {
   Terrain_type_id fromtile = punit->tile->terrain;
   Terrain_type_id totile = dest_tile->terrain;
-  struct city *pcity = dest_tile->city;
+  city_t *pcity = dest_tile->city;
 
   /* 1. Can we attack _anything_ ? */
   if (!is_military_unit(punit) || !is_attack_unit(punit)) {
@@ -323,11 +323,11 @@ bool unit_on_fortress(struct unit *punit)
 /**************************************************************************
   a wrapper function returns 1 if there is a sdi-defense close to the square
 **************************************************************************/
-struct city *sdi_defense_close(struct player *owner,
-                               const struct tile *ptile)
+city_t *sdi_defense_close(struct player *owner,
+                          const struct tile *ptile)
 {
   square_iterate(ptile, 2, ptile1) {
-    struct city *pcity = map_get_city(ptile1);
+    city_t *pcity = map_get_city(ptile1);
     if (pcity && (!pplayers_allied(city_owner(pcity), owner))
         && get_city_bonus(pcity, EFT_NUKE_PROOF) > 0) {
       return pcity;
@@ -424,7 +424,7 @@ static int defense_multiplication(Unit_Type_id att_type,
                                   const struct tile *ptile,
                                   int defensepower, bool fortified)
 {
-  struct city *pcity = map_get_city(ptile);
+  city_t *pcity = map_get_city(ptile);
   int mod;
 
   if (unit_type_exists(att_type)) {

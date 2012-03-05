@@ -170,10 +170,14 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
       pc->compression.frozen_level--;
       if (pc->compression.frozen_level == 0) {
         uLongf compressed_size = 12 + pc->compression.queue.size * 1.001;
+#ifndef NDEBUG
         int error;
+#endif
         Bytef compressed[compressed_size];
 
+#ifndef NDEBUG
         error =
+#endif
             compress2(compressed, &compressed_size,
                       pc->compression.queue.p, pc->compression.queue.size,
                       compression_level);

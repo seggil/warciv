@@ -26,7 +26,8 @@ enum trade_route_status {
 
 /* the pcity1 owner is the trade route owner */
 struct trade_route {
-  struct city *pcity1, *pcity2;
+  city_t *pcity1;
+  city_t *pcity2;
   struct unit *punit;
   enum trade_route_status status;
   int value;
@@ -64,14 +65,14 @@ struct trade_route {
                    : ((ptr)->punit->moves_left == 0 ? 1 : 0))           \
    : ((ptr)->move_cost + 1) / SINGLE_MOVE)
 
-struct trade_route *game_trade_route_add(struct city *pcity1,
-                                         struct city *pcity2);
+struct trade_route *game_trade_route_add(city_t *pcity1,
+                                         city_t *pcity2);
 void game_trade_route_remove(struct trade_route *ptr);
 void game_remove_all_trade_routes(void);
-void check_removed_city(const struct city *pcity);
+void check_removed_city(const city_t *pcity);
 
-struct trade_route *game_trade_route_find(const struct city *pcity1,
-                                          const struct city *pcity2);
+struct trade_route *game_trade_route_find(const city_t *pcity1,
+                                          const city_t *pcity2);
 
 int calculate_trade_move_cost(struct trade_route *ptr);
 int calculate_trade_move_turns(struct trade_route *ptr);

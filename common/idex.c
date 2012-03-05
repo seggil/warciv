@@ -96,9 +96,9 @@ void idex_free(void)
    Register a city into idex, with current pcity->id.
    Call this when pcity created.
 ***************************************************************************/
-void idex_register_city(struct city *pcity)
+void idex_register_city(city_t *pcity)
 {
-  struct city *old = (struct city *)
+  city_t *old = (city_t *)
       hash_replace(idex_city_hash, &pcity->id, pcity);
   if (old) {
     /* error */
@@ -134,9 +134,9 @@ void idex_register_unit(struct unit *punit)
    Remove a city from idex, with current pcity->id.
    Call this when pcity deleted.
 ***************************************************************************/
-void idex_unregister_city(struct city *pcity)
+void idex_unregister_city(city_t *pcity)
 {
-  struct city *old = (struct city *)
+  city_t *old = (city_t *)
       hash_delete_entry(idex_city_hash, &pcity->id);
   if (!old) {
     /* error */
@@ -188,9 +188,9 @@ void idex_unregister_unit(struct unit *punit)
    Lookup city with given id.
    Returns NULL if the city is not registered (which is not an error).
 ***************************************************************************/
-struct city *idex_lookup_city(int id)
+city_t *idex_lookup_city(int id)
 {
-  return (struct city *) hash_lookup_data(idex_city_hash, &id);
+  return (city_t *) hash_lookup_data(idex_city_hash, &id);
 }
 
 /**************************************************************************
@@ -205,7 +205,7 @@ struct unit *idex_lookup_unit(int id)
 /**************************************************************************
   ...
 ***************************************************************************/
-struct city *idex_lookup_city_by_name(const char *name)
+city_t *idex_lookup_city_by_name(const char *name)
 {
   int id;
 
@@ -224,7 +224,7 @@ struct city *idex_lookup_city_by_name(const char *name)
 /**************************************************************************
   ...
 ***************************************************************************/
-void idex_register_city_name(struct city *pcity)
+void idex_register_city_name(city_t *pcity)
 {
   void *old;
   if (!pcity || !pcity->name || !pcity->name[0]) {
@@ -244,7 +244,7 @@ void idex_register_city_name(struct city *pcity)
 /**************************************************************************
   ...
 ***************************************************************************/
-void idex_unregister_city_name(struct city *pcity)
+void idex_unregister_city_name(city_t *pcity)
 {
   void *old;
 

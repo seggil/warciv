@@ -17,7 +17,7 @@
 
 #include "shared.h"             /* MAX_LEN_NAME */
 
-#include "effects.h"
+//#include "effects.h"
 #include "wc_types.h"
 #include "tech.h"               /* Tech_Type_id */
 #include "terrain.h"            /* Terrain_type_id etc */
@@ -102,7 +102,7 @@ const char *get_improvement_name(Impr_Type_id id);
 const char *get_improvement_name_orig(Impr_Type_id id);
 
 bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id);
-bool improvement_redundant(struct player *pplayer, const struct city *pcity,
+bool improvement_redundant(struct player *pplayer, const city_t *pcity,
                           Impr_Type_id id, bool want_to_build);
 bool wonder_obsolete(Impr_Type_id id);
 Impr_Type_id find_improvement_by_name(const char *s);
@@ -116,10 +116,10 @@ bool can_player_eventually_build_improvement(struct player *p,
                                              Impr_Type_id id);
 
 /* city related improvement functions */
-void mark_improvement(struct city *pcity,Impr_Type_id id,Impr_Status status);
+void mark_improvement(city_t *pcity,Impr_Type_id id,Impr_Status status);
 void allot_island_improvs(void);
 void improvements_update_obsolete(void);
-void improvements_update_redundant(struct player *pplayer, struct city *pcity,
+void improvements_update_redundant(struct player *pplayer, city_t *pcity,
                                    Continent_id cont, enum impr_range range);
 
 /* Iterates over all improvements. Creates a new variable names m_i

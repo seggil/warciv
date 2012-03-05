@@ -22,6 +22,7 @@
 #include "player.h"
 #include "terrain.h"
 #include "unit.h"
+#include "city.h"
 
 /*
  * The value of MOVE_COST_FOR_VALID_SEA_STEP has no particular
@@ -47,11 +48,11 @@ struct tile {
   const int index;              /* Index coordinate of the tile. */
   Terrain_type_id terrain;
   enum tile_special_type special;
-  struct city *city;
+  city_t *city;
   struct unit_list *units;
   Continent_id continent;
   signed char move_cost[DIR8_COUNT];    /* don't know if this helps! */
-  struct city *worked;          /* city working tile, or NULL if none */
+  city_t *worked;          /* city working tile, or NULL if none */
   struct player *owner;         /* Player owning this tile, or NULL. */
   char *spec_sprite;            /* Maybe for scenarios? Not sure... -- Pepeto */
 
@@ -358,8 +359,8 @@ struct tile *index_to_tile(int index);
 
 struct player *map_get_owner(const struct tile *ptile);
 void map_set_owner(struct tile *ptile, struct player *pplayer);
-struct city *map_get_city(const struct tile *ptile);
-void map_set_city(struct tile *ptile, struct city *pcity);
+city_t *map_get_city(const struct tile *ptile);
+void map_set_city(struct tile *ptile, city_t *pcity);
 Terrain_type_id map_get_terrain(const struct tile *ptile);
 enum tile_special_type map_get_special(const struct tile *ptile);
 void map_set_terrain(struct tile *ptile, Terrain_type_id ter);
@@ -533,6 +534,12 @@ extern struct terrain_misc terrain_control;
 
 #define adjc_dir_iterate_end adjc_dirlist_iterate_end
 
+#define adjc_dir_base_iterate(center_tile, dir_itr)                            \
+  adjc_dirlist_base_iterate(center_tile, dir_itr,                              \
+  map.valid_dirs, map.num_valid_dirs)
+
+#define adjc_dir_base_iterate_end adjc_dirlist_base_iterate_end
+
 #define cardinal_adjc_iterate(center_tile, itr_tile)                        \
   adjc_dirlist_iterate(center_tile, itr_tile, _dir_itr,                     \
                        map.cardinal_dirs, map.num_cardinal_dirs)
@@ -543,11 +550,13 @@ extern struct terrain_misc terrain_control;
   adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,                      \
                        map.cardinal_dirs, map.num_cardinal_dirs)
 
-#define cardinal_adjc_dir_iterate2(center_tile, dir_itr)           \
-  adjc_dirlist_iterate2(center_tile, dir_itr,                      \
-                       map.cardinal_dirs, map.num_cardinal_dirs)
-
 #define cardinal_adjc_dir_iterate_end adjc_dirlist_iterate_end
+
+#define cardinal_adjc_dir_base_iterate(center_tile, dir_itr)           \
+  adjc_dirlist_base_iterate(center_tile, dir_itr,                      \
+                            map.cardinal_dirs, map.num_cardinal_dirs)
+
+#define cardinal_adjc_dir_base_iterate_end adjc_dirlist_base_iterate_end
 
 /* Iterate through all tiles adjacent to a tile using the given list of
  * directions.  dir_itr is the directional value, (center_x, center_y) is
@@ -575,13 +584,18 @@ extern struct terrain_misc terrain_control;
     }                                                                       \
     itr_tile = map.tiles + map_pos_to_index(_x_itr, _y_itr);
 
-#define adjc_dirlist_iterate2(center_tile, dir_itr,                         \
-                              dirlist, dircount)                            \
+#define adjc_dirlist_iterate_end    \
+    }    \
+}
+
+/* Same as adjc_dirlist_iterate but without setting the tile. */
+#define adjc_dirlist_base_iterate(center_tile, dir_itr,                     \
+                                  dirlist, dircount)                        \
 {                                                                           \
+  enum direction8 dir_itr;                                                  \
   const struct tile *_center_tile = (center_tile);                          \
   /*struct tile *itr_tile;*/                                                \
   int _dir_index, _x_itr, _y_itr;                                           \
-  enum direction8 dir_itr;                                                  \
   bool _is_border = is_border_tile(_center_tile, 1);                        \
                                                                             \
   for (_dir_index = 0; _dir_index < (dircount); _dir_index++) {             \
@@ -594,7 +608,7 @@ extern struct terrain_misc terrain_control;
     }
     //itr_tile = map.tiles + map_pos_to_index(_x_itr, _y_itr);
 
-#define adjc_dirlist_iterate_end                                            \
+#define adjc_dirlist_base_iterate_end                                       \
     }                                                                       \
 }
 

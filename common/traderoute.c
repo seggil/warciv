@@ -89,7 +89,7 @@ static struct pf_parameter *get_caravan_parameter(struct player *pplayer,
 /**************************************************************************
   Calculate the default move cost between pcity1 to pcity2.
 **************************************************************************/
-static int calculate_default_move_cost(struct city *pcity1, struct city *pcity2)
+static int calculate_default_move_cost(city_t *pcity1, city_t *pcity2)
 {
   struct pf_parameter *pparameter = get_caravan_parameter(city_owner(pcity1),
                                                           pcity1->tile);
@@ -132,8 +132,8 @@ static int base_calculate_move_cost(struct unit *punit, struct tile *ptile1,
   Calculate trade move cost. For a unit between 2 cities.
 **************************************************************************/
 static int base_calculate_trade_move_cost(struct unit *punit,
-                                          struct city *pcity1,
-                                          struct city *pcity2)
+                                          city_t *pcity1,
+                                          city_t *pcity2)
 {
   if (punit->homecity == pcity1->id) {
     return base_calculate_move_cost(punit, punit->tile, pcity2->tile);
@@ -148,8 +148,8 @@ static int base_calculate_trade_move_cost(struct unit *punit,
 /****************************************************************************
   ...
 ****************************************************************************/
-static struct trade_route *trade_route_new(struct city *pcity1,
-                                           struct city *pcity2,
+static struct trade_route *trade_route_new(city_t *pcity1,
+                                           city_t *pcity2,
                                            struct unit *punit,
                                            enum trade_route_status status)
 {
@@ -171,8 +171,8 @@ static struct trade_route *trade_route_new(struct city *pcity1,
   Make a new trade route, attached to all structures.
   Returns NULL if there is an error.
 ****************************************************************************/
-struct trade_route *game_trade_route_add(struct city *pcity1,
-                                         struct city *pcity2)
+struct trade_route *game_trade_route_add(city_t *pcity1,
+                                         city_t *pcity2)
 {
   if (!pcity1 || !pcity2) {
     return NULL;
@@ -211,8 +211,8 @@ void game_trade_route_remove(struct trade_route *ptr)
 /****************************************************************************
   Check if a trade route exist between 2 cities.
 ****************************************************************************/
-struct trade_route *game_trade_route_find(const struct city *pcity1,
-                                          const struct city *pcity2)
+struct trade_route *game_trade_route_find(const city_t *pcity1,
+                                          const city_t *pcity2)
 {
   if (!pcity1 || !pcity2) {
     return NULL;
@@ -253,7 +253,7 @@ int calculate_trade_move_cost(struct trade_route *ptr)
   }
 
   /* Swap cities */
-  struct city *pcity0 = ptr->pcity1;
+  city_t *pcity0 = ptr->pcity1;
   ptr->pcity1 = ptr->pcity2;
   ptr->pcity2 = pcity0;
 
@@ -368,7 +368,7 @@ enum trade_plan_state {
 #endif  /* ASYNC_TRADE_PLANNING */
 
 struct trade_city {
-  struct city *pcity;                   /* The pointed city */
+  city_t *pcity;                   /* The pointed city */
   int free_slots;                       /* Number of free slots */
   int trade_routes_num;                 /* Number of city it can trade with */
   struct trade_route **trade_routes;    /* A list of possible trade routes */
@@ -427,7 +427,7 @@ void recursive_calculate_trade_planning(
 /****************************************************************************
   Count the trade routes, but ignore the planned ones.
 ****************************************************************************/
-static int get_real_trade_route_number(struct city *pcity)
+static int get_real_trade_route_number(city_t *pcity)
 {
   if (!pcity) {
     return 0;
@@ -447,7 +447,7 @@ static int get_real_trade_route_number(struct city *pcity)
 /****************************************************************************
   Have cities trade route, or will have soon (& TR_IN_ROUTE).
 ****************************************************************************/
-static bool cities_will_have_trade(struct city *pcity1, struct city *pcity2)
+static bool cities_will_have_trade(city_t *pcity1, city_t *pcity2)
 {
   struct trade_route *ptr = game_trade_route_find(pcity1, pcity2);
   return ptr && ptr->status > TR_PLANNED ? TRUE : FALSE;
@@ -469,7 +469,7 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
 {
   struct precalc_city {
     struct tile *ptile;
-    struct city *pcity;
+    city_t *pcity;
     int free_slots;
     int trade_routes_num;
     bool *trade_routes;
@@ -1181,7 +1181,7 @@ void game_remove_all_trade_routes(void)
 /****************************************************************************
   Check if we use a pointer to a destroyed city in a trade planning calculation.
 ****************************************************************************/
-void check_removed_city(const struct city *pcity)
+void check_removed_city(const city_t *pcity)
 {
   int i;
 

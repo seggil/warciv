@@ -171,7 +171,8 @@ extern struct ai_gov_tech_hint ai_gov_tech_hints[MAX_NUM_TECH_LIST];
 bool government_exists(int gov);
 struct government *get_government(int gov);
 struct government *get_gov_pplayer(struct player *pplayer);
-struct government *get_gov_pcity(const struct city *pcity);
+typedef struct city_s city_t;
+struct government *get_gov_pcity(const city_t *pcity);
 
 struct government *find_government_by_name(const char *name);
 struct government *find_government_by_name_orig(const char *name);

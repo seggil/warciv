@@ -272,7 +272,8 @@ bool can_player_eventually_build_unit(struct player *p, Unit_Type_id id);
 void role_unit_precalcs(void);
 int num_role_units(int role);
 Unit_Type_id get_role_unit(int role, int index);
-Unit_Type_id best_role_unit(struct city *pcity, int role);
+typedef struct city_s city_t;
+Unit_Type_id best_role_unit(city_t *pcity, int role);
 Unit_Type_id best_role_unit_for_player(struct player *pplayer, int role);
 Unit_Type_id first_role_unit_for_player(struct player *pplayer, int role);
 

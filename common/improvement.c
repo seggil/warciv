@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -267,7 +267,7 @@ bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id)
  given city (owned by the given player)
 **************************************************************************/
 static void fill_ranges_improv_lists(Impr_Status *equiv_list[IR_LAST],
-                                     const struct city *pcity,
+                                     const city_t *pcity,
                                      struct player *pplayer)
 {
   Continent_id cont = 0;
@@ -299,7 +299,7 @@ static void fill_ranges_improv_lists(Impr_Status *equiv_list[IR_LAST],
  Checks whether the building is within the equiv_range of a building that
  replaces it
 **************************************************************************/
-bool improvement_redundant(struct player *pplayer, const struct city *pcity,
+bool improvement_redundant(struct player *pplayer, const city_t *pcity,
                            Impr_Type_id id, bool want_to_build)
 {
   enum impr_range i;
@@ -367,7 +367,6 @@ void improvement_status_init(Impr_Status * improvements, size_t elements)
 **************************************************************************/
 bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id)
 {
-  //struct impr_type *impr;
   bool space_part = FALSE;
 
   /* This also checks if tech req is Never */
@@ -378,8 +377,6 @@ bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id)
   if (!player_knows_improvement_tech(p, id)) {
     return FALSE;
   }
-
-  //impr = get_improvement_type(id);
 
   /* Check for space part construction.  This assumes that space parts have
    * no other effects. */
@@ -451,7 +448,7 @@ bool can_player_eventually_build_improvement(struct player *p,
 /**************************************************************************
   Marks an improvment to the status
 **************************************************************************/
-void mark_improvement(struct city *pcity, Impr_Type_id id,
+void mark_improvement(city_t *pcity, Impr_Type_id id,
                       Impr_Status status)
 {
   enum impr_range range;
@@ -561,7 +558,7 @@ void improvements_update_obsolete(void)
   whether it itself it redundant or not. having been built is all that
   counts.
 **************************************************************************/
-void improvements_update_redundant(struct player *pplayer, struct city *pcity,
+void improvements_update_redundant(struct player *pplayer, city_t *pcity,
                                    Continent_id cont, enum impr_range range)
 {
 #define CHECK_CITY_IMPR(_pcity)                                         \

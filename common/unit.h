@@ -227,18 +227,18 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
                                   const struct tile *ptile);
 
 int unit_move_rate(struct unit *punit);
-bool unit_can_help_build_wonder(struct unit *punit, struct city *pcity);
+bool unit_can_help_build_wonder(struct unit *punit, city_t *pcity);
 bool unit_can_help_build_wonder_here(struct unit *punit);
 bool unit_can_est_traderoute_here(struct unit *punit);
 bool unit_can_defend_here(struct unit *punit);
-bool unit_can_airlift_to(struct unit *punit, struct city *pcity);
+bool unit_can_airlift_to(struct unit *punit, city_t *pcity);
 bool unit_has_orders(struct unit *punit);
 
 bool can_unit_load(struct unit *punit, struct unit *ptrans);
 bool can_unit_unload(struct unit *punit, struct unit *ptrans);
 bool can_unit_paradrop(struct unit *punit);
 bool can_unit_bombard(struct unit *punit);
-bool can_unit_change_homecity_to(struct unit *punit, struct city *pcity);
+bool can_unit_change_homecity_to(struct unit *punit, city_t *pcity);
 bool can_unit_change_homecity(struct unit *punit);
 const char *get_activity_text(enum unit_activity activity);
 bool can_unit_continue_current_activity(struct unit *punit);
@@ -331,7 +331,7 @@ bool zoc_ok_move(struct unit *punit, const struct tile *ptile);
 
 bool is_build_or_clean_activity(enum unit_activity activity);
 
-struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
+struct unit *create_unit_virtual(struct player *pplayer, city_t *pcity,
                                  Unit_Type_id type, int veteran_level);
 void destroy_unit_virtual(struct unit *punit);
 void free_unit_orders(struct unit *punit);

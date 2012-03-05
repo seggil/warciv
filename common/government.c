@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -157,7 +157,7 @@ struct government *get_gov_pplayer(struct player *pplayer)
 /****************************************************************************
   Return the government of the player who owns the city.
 ****************************************************************************/
-struct government *get_gov_pcity(const struct city *pcity)
+struct government *get_gov_pcity(const city_t *pcity)
 {
   assert(pcity != NULL);
   return get_gov_pplayer(city_owner(pcity));

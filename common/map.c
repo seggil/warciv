@@ -1412,7 +1412,7 @@ void map_clear_all_specials(struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-struct city *map_get_city(const struct tile *ptile)
+city_t *map_get_city(const struct tile *ptile)
 {
   return ptile->city;
 }
@@ -1420,7 +1420,7 @@ struct city *map_get_city(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-void map_set_city(struct tile *ptile, struct city *pcity)
+void map_set_city(struct tile *ptile, city_t *pcity)
 {
   ptile->city = pcity;
 }

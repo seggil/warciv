@@ -302,14 +302,14 @@ bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
                             struct tile *ptile);
 
 bool can_player_see_units_in_city(struct player *pplayer,
-                                  struct city *pcity);
+                                  city_t *pcity);
 bool can_player_see_city_internals(struct player *pplayer,
-                                   struct city *pcity);
+                                   city_t *pcity);
 
-bool player_owns_city(struct player *pplayer, struct city *pcity);
+bool player_owns_city(struct player *pplayer, city_t *pcity);
 
-struct city *player_find_city_by_id(const struct player *pplayer,
-                                    int city_id);
+city_t *player_find_city_by_id(const struct player *pplayer,
+                               int city_id);
 struct unit *player_find_unit_by_id(const struct player *pplayer,
                                     int unit_id);
 
@@ -324,7 +324,7 @@ int player_get_expected_bulbs(struct player *pplayer);
 
 void player_limit_to_government_rates(struct player *pplayer);
 
-struct city *find_palace(struct player *pplayer);
+city_t *find_palace(struct player *pplayer);
 
 bool ai_handicap(struct player *pplayer, enum handicap_type htype);
 bool ai_fuzzy(struct player *pplayer, bool normal_decision);

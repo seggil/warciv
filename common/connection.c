@@ -506,11 +506,11 @@ struct socket_packet_buffer *new_socket_packet_buffer(void)
 {
   struct socket_packet_buffer *buf;
 
-  buf = (struct socket_packet_buffer *)wc_malloc(sizeof(*buf));
+  buf = (struct socket_packet_buffer *)calloc(1, sizeof(struct socket_packet_buffer));
   buf->ndata = 0;
   buf->do_buffer_sends = 0;
   buf->nsize = 10*MAX_LEN_PACKET;
-  buf->data = (unsigned char *)wc_malloc(buf->nsize);
+  buf->data = (unsigned char *)calloc(1, 10*MAX_LEN_PACKET);
   return buf;
 }
 

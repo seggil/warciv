@@ -104,10 +104,10 @@ int civ_population(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-struct city *game_find_city_by_name(const char *name)
+city_t *game_find_city_by_name(const char *name)
 {
   players_iterate(pplayer) {
-    struct city *pcity = city_list_find_name(pplayer->cities, name);
+    city_t *pcity = city_list_find_name(pplayer->cities, name);
 
     if (pcity) {
       return pcity;
@@ -123,7 +123,7 @@ struct city *game_find_city_by_name(const char *name)
   City may be any city in the game.  This now always uses fast idex
   method, instead of looking through all cities of all players.
 **************************************************************************/
-struct city *find_city_by_id(int id)
+city_t *find_city_by_id(int id)
 {
   return idex_lookup_city(id);
 }
@@ -131,7 +131,7 @@ struct city *find_city_by_id(int id)
 /**************************************************************************
   ...
 **************************************************************************/
-struct city *find_city_by_name_fast(const char *name)
+city_t *find_city_by_name_fast(const char *name)
 {
   return idex_lookup_city_by_name(name);
 }
@@ -150,7 +150,7 @@ struct unit *find_unit_by_id(int id)
 **************************************************************************/
 void game_remove_unit(struct unit *punit)
 {
-  struct city *pcity;
+  city_t *pcity;
 
   freelog(LOG_DEBUG, "game_remove_unit %d", punit->id);
   freelog(LOG_DEBUG, "removing unit %d, %s %s (%d %d) hcity %d",
@@ -183,7 +183,7 @@ void game_remove_unit(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-void game_remove_city(struct city *pcity)
+void game_remove_city(city_t *pcity)
 {
   freelog(LOG_DEBUG, "game_remove_city %d", pcity->id);
   freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,

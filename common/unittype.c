@@ -643,7 +643,7 @@ Unit_Type_id get_role_unit(int role, int index)
 Return "best" unit this city can build, with given role/flag.
 Returns U_LAST if none match. "Best" means highest unit type id.
 **************************************************************************/
-Unit_Type_id best_role_unit(struct city *pcity, int role)
+Unit_Type_id best_role_unit(city_t *pcity, int role)
 {
   Unit_Type_id u;
   int j;

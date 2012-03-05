@@ -124,7 +124,7 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
                                   enum diplomat_actions action,
                                   const struct tile *ptile)
 {
-  struct city *pcity=map_get_city(ptile);
+  city_t *pcity=map_get_city(ptile);
 
   if (action!=DIPLOMAT_MOVE
       && is_ocean(map_get_terrain(pdiplomat->tile))) {
@@ -145,7 +145,7 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
         return TRUE;
       }
       if (action == SPY_POISON
-          && pcity->size > 1
+          && pcity->pop_size > 1
           && unit_flag(pdiplomat, F_SPY)) {
         return pplayers_at_war(unit_owner(pdiplomat), city_owner(pcity));
       }
@@ -196,9 +196,9 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
 /**************************************************************************
   ...
 **************************************************************************/
-bool unit_can_airlift_to(struct unit *punit, struct city *destcity)
+bool unit_can_airlift_to(struct unit *punit, city_t *destcity)
 {
-  struct city *srccity;
+  city_t *srccity;
 
   if (punit == NULL || destcity == NULL
       || punit->tile == NULL
@@ -252,7 +252,7 @@ bool unit_has_orders(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-bool unit_can_help_build_wonder(struct unit *punit, struct city *pcity)
+bool unit_can_help_build_wonder(struct unit *punit, city_t *pcity)
 {
   if (!is_tiles_adjacent(punit->tile, pcity->tile)
       && !same_pos(punit->tile, pcity->tile))
@@ -271,7 +271,7 @@ bool unit_can_help_build_wonder(struct unit *punit, struct city *pcity)
 **************************************************************************/
 bool unit_can_help_build_wonder_here(struct unit *punit)
 {
-  struct city *pcity = map_get_city(punit->tile);
+  city_t *pcity = map_get_city(punit->tile);
   return pcity && unit_can_help_build_wonder(punit, pcity);
 }
 
@@ -281,7 +281,7 @@ bool unit_can_help_build_wonder_here(struct unit *punit)
 **************************************************************************/
 bool unit_can_est_traderoute_here(struct unit *punit)
 {
-  struct city *phomecity, *pdestcity;
+  city_t *phomecity, *pdestcity;
 
   return (unit_flag(punit, F_TRADE_ROUTE)
           && (pdestcity = map_get_city(punit->tile))
@@ -490,7 +490,7 @@ bool can_unit_add_or_build_city(struct unit *punit)
 **************************************************************************/
 enum add_build_city_result test_unit_add_or_build_city(struct unit *punit)
 {
-  struct city *pcity = map_get_city(punit->tile);
+  city_t *pcity = map_get_city(punit->tile);
   bool is_build = unit_flag(punit, F_CITIES);
   bool is_add = unit_flag(punit, F_ADD_TO_CITY);
   int new_pop;
@@ -515,7 +515,7 @@ enum add_build_city_result test_unit_add_or_build_city(struct unit *punit)
     return AB_NO_MOVES_ADD;
 
   assert(unit_pop_value(punit->type) > 0);
-  new_pop = pcity->size + unit_pop_value(punit->type);
+  new_pop = pcity->pop_size + unit_pop_value(punit->type);
 
   if (new_pop > game.ruleset_control.add_to_size_limit)
     return AB_TOO_BIG;
@@ -529,7 +529,7 @@ enum add_build_city_result test_unit_add_or_build_city(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-bool can_unit_change_homecity_to(struct unit *punit, struct city *pcity)
+bool can_unit_change_homecity_to(struct unit *punit, city_t *pcity)
 {
   /* Requirements to change homecity:
    *
@@ -1420,7 +1420,7 @@ bool is_my_zoc(struct player *pplayer, const struct tile *ptile0)
     }
 
     if (!is_server) {
-      struct city *pcity = is_non_allied_city_tile(ptile, pplayer);
+      city_t *pcity = is_non_allied_city_tile(ptile, pplayer);
 
       if (pcity
           && ((!is_server && pcity->client.occupied)
@@ -1580,7 +1580,7 @@ enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
                                              bool igzoc)
 {
   bool zoc;
-  struct city *pcity;
+  city_t *pcity;
 
   /* 1) */
   if (activity != ACTIVITY_IDLE
@@ -1754,7 +1754,7 @@ bool is_build_or_clean_activity(enum unit_activity activity)
   Create a virtual unit skeleton. pcity can be NULL, but then you need
   to set x, y and homecity yourself.
 **************************************************************************/
-struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
+struct unit *create_unit_virtual(struct player *pplayer, city_t *pcity,
                                  Unit_Type_id type, int veteran_level)
 {
   struct unit *punit = wc_calloc(1, sizeof(struct unit));
@@ -1894,7 +1894,7 @@ enum unit_upgrade_result test_unit_upgrade(struct unit *punit, bool is_free)
 {
   struct player *pplayer = unit_owner(punit);
   Unit_Type_id to_unittype = can_upgrade_unittype(pplayer, punit->type);
-  struct city *pcity;
+  city_t *pcity;
   int cost;
 
   if (to_unittype == -1) {
