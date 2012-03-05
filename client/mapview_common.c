@@ -1693,18 +1693,18 @@ void draw_map_canvas(int canvas_x, int canvas_y,
     gui_rect_iterate(gui_x0 - GOTO_WIDTH, gui_y0 - GOTO_WIDTH,
                      width + 2 * GOTO_WIDTH, height + 2 * GOTO_WIDTH,
                      ptile) {
-      adjc_dir_iterate(ptile, adjc_tile, dir) {
+      adjc_dir_base_iterate(ptile, dir) {
         if (is_drawn_line(ptile, dir)) {
           draw_segment(ptile, dir);
         }
-      } adjc_dir_iterate_end;
+      } adjc_dir_base_iterate_end;
     } gui_rect_iterate_end;
 
     /* Draw citymap overlays on top. */
     gui_rect_iterate(gui_x0, gui_y0, width, height, ptile) {
       if (tile_get_known(ptile) != TILE_UNKNOWN) {
         struct unit *punit;
-        struct city *pcity;
+        struct city_s *pcity;
         int city_x, city_y, canvas_x2, canvas_y2;
 
         pcity = find_city_or_settler_near_tile(ptile, &punit);
