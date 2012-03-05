@@ -33,7 +33,7 @@ enum callback_type {
   CB_NEW, CB_REMOVE, CB_CHANGE, CB_LAST
 };
 
-struct agent {
+struct agent_s {
   char name[MAX_AGENT_NAME_LEN];
   int level;
 
@@ -45,7 +45,7 @@ struct agent {
 
 void agents_init(void);
 void agents_free(void);
-void register_agent(const struct agent *agent);
+void register_agent(const struct agent_s *agent);
 bool agents_busy(void);
 
 /* called from client/packhand.c */
@@ -64,9 +64,9 @@ void agents_unit_changed(struct unit *punit);
 void agents_unit_new(struct unit *punit);
 void agents_unit_remove(struct unit *punit);
 
-void agents_city_changed(struct city *pcity);
-void agents_city_new(struct city *pcity);
-void agents_city_remove(struct city *pcity);
+void agents_city_changed(city_t *pcity);
+void agents_city_new(city_t *pcity);
+void agents_city_remove(city_t *pcity);
 
 void agents_tile_changed(struct tile *ptile);
 void agents_tile_new(struct tile *ptile);
@@ -74,7 +74,7 @@ void agents_tile_remove(struct tile *ptile);
 
 /* called from agents */
 void cause_a_city_changed_for_agent(const char *name_of_calling_agent,
-                                    struct city *pcity);
+                                    city_t *pcity);
 void cause_a_unit_changed_for_agent(const char *name_of_calling_agent,
                                     struct unit *punit);
 void wait_for_requests(const char *agent_name, int first_request_id,

@@ -95,7 +95,7 @@ static void sha_unit_remove(int id)
 **************************************************************************/
 void simple_historian_init(void)
 {
-  struct agent self;
+  struct agent_s self;
 
   previous_tiles = wc_malloc(MAX_MAP_INDEX * sizeof(*previous_tiles));
   memset(previous_tiles, 0, MAX_MAP_INDEX * sizeof(*previous_tiles));

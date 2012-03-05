@@ -67,7 +67,7 @@ static void city_remove(int city_id)
 **************************************************************************/
 void cmafec_init(void)
 {
-  struct agent self;
+  struct agent_s self;
 
   if (!preset_list) {
     preset_list = preset_list_new();
@@ -93,7 +93,7 @@ void cmafec_free(void)
 /**************************************************************************
  Sets the front-end parameter.
 **************************************************************************/
-void cmafec_set_fe_parameter(struct city *pcity,
+void cmafec_set_fe_parameter(city_t *pcity,
                              const struct cm_parameter *const parameter)
 {
   cma_set_parameter(ATTR_CITY_CMAFE_PARAMETER, pcity->id, parameter);
@@ -103,7 +103,7 @@ void cmafec_set_fe_parameter(struct city *pcity,
  Return the front-end parameter for the given city. Returns a dummy
  parameter if no parameter was set.
 *****************************************************************/
-void cmafec_get_fe_parameter(struct city *pcity, struct cm_parameter *dest)
+void cmafec_get_fe_parameter(city_t *pcity, struct cm_parameter *dest)
 {
   struct cm_parameter parameter;
 
@@ -213,7 +213,7 @@ int cmafec_preset_num(void)
 /**************************************************************************
 ...
 **************************************************************************/
-const char *cmafec_get_short_descr_of_city(const struct city *pcity)
+const char *cmafec_get_short_descr_of_city(const city_t *pcity)
 {
   struct cm_parameter parameter;
 
@@ -243,7 +243,7 @@ const char *cmafec_get_short_descr(const struct cm_parameter *const
 /**************************************************************************
 ...
 **************************************************************************/
-static const char *get_city_growth_string(struct city *pcity, int surplus)
+static const char *get_city_growth_string(city_t *pcity, int surplus)
 {
   int stock, cost, turns;
   static char buffer[50];
@@ -254,7 +254,7 @@ static const char *get_city_growth_string(struct city *pcity, int surplus)
   }
 
   stock = pcity->food_stock;
-  cost = city_granary_size(pcity->size);
+  cost = city_granary_size(pcity->pop_size);
 
   stock += surplus;
 
@@ -277,7 +277,7 @@ static const char *get_city_growth_string(struct city *pcity, int surplus)
 /**************************************************************************
 ...
 **************************************************************************/
-static const char *get_prod_complete_string(struct city *pcity, int surplus)
+static const char *get_prod_complete_string(city_t *pcity, int surplus)
 {
   int stock, cost, turns;
   static char buffer[50];
@@ -319,7 +319,7 @@ static const char *get_prod_complete_string(struct city *pcity, int surplus)
 /**************************************************************************
 ...
 **************************************************************************/
-const char *cmafec_get_result_descr(struct city *pcity,
+const char *cmafec_get_result_descr(city_t *pcity,
                                     const struct cm_result *const
                                     result,
                                     const struct cm_parameter *const
@@ -338,7 +338,7 @@ const char *cmafec_get_result_descr(struct city *pcity,
     }
 
     my_snprintf(buf[6], BUFFER_SIZE, "%d/%s%s",
-                pcity->size - cm_count_specialist(pcity, result),
+                pcity->pop_size - cm_count_specialist(pcity, result),
                 specialists_string(result->specialists),
                 result->happy ? _(" happy") : "");
 

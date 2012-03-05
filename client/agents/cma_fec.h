@@ -19,15 +19,15 @@
 void cmafec_init(void);
 void cmafec_free(void);
 
-void cmafec_set_fe_parameter(struct city *pcity,
+void cmafec_set_fe_parameter(city_t *pcity,
                              const struct cm_parameter *const parameter);
-void cmafec_get_fe_parameter(struct city *pcity,
+void cmafec_get_fe_parameter(city_t *pcity,
                              struct cm_parameter *dest);
 
 const char *cmafec_get_short_descr(const struct cm_parameter *const
                                    parameter);
-const char *cmafec_get_short_descr_of_city(const struct city *pcity);
-const char *cmafec_get_result_descr(struct city *pcity,
+const char *cmafec_get_short_descr_of_city(const city_t *pcity);
+const char *cmafec_get_result_descr(city_t *pcity,
                                     const struct cm_result *const result,
                                     const struct cm_parameter *const
                                     parameter);

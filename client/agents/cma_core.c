@@ -10,6 +10,7 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
+// Citizen Management Agent(CMA)
 
 #ifdef HAVE_CONFIG_H
 #  include "../../config.h"
@@ -48,10 +49,10 @@
 #include "cma_core.h"
 
 /*
- * The CMA is an agent. The CMA will subscribe itself to all city
- * events. So if a city changes the callback function city_changed is
+ * The citizen management agent(CMA) is an agent. The CMA will subscribe
+ * itself to all city events. So if a city changes the callback function
  * called. handle_city will be called from city_changed to update the
- * given city. handle_city will call cma_query_result and
+ * city_changed is given city. handle_city will call cma_query_result and
  * apply_result_on_server to update the server city state.
  */
 
@@ -96,7 +97,7 @@ static struct {
  Returns TRUE iff the two results are equal. Both results have to be
  results for the given city.
 *****************************************************************************/
-static bool results_are_equal(struct city *pcity,
+static bool results_are_equal(city_t *pcity,
                              const struct cm_result *const result1,
                              const struct cm_result *const result2)
 {
@@ -130,7 +131,7 @@ static bool results_are_equal(struct city *pcity,
  Copy the current city state (citizen assignment, production stats and
  happy state) in the given result.
 *****************************************************************************/
-static void get_current_as_result(struct city *pcity,
+static void get_current_as_result(city_t *pcity,
                                   struct cm_result *result)
 {
   int worker = 0, specialist = 0;
@@ -151,7 +152,7 @@ static void get_current_as_result(struct city *pcity,
     specialist += pcity->specialists[sp];
   } specialist_type_iterate_end;
 
-  assert(worker + specialist == pcity->size);
+  assert(worker + specialist == pcity->pop_size);
 
   result->found_a_valid = TRUE;
 
@@ -164,7 +165,7 @@ static void get_current_as_result(struct city *pcity,
 *****************************************************************************/
 static bool check_city(int city_id, struct cm_parameter *parameter)
 {
-  struct city *pcity = find_city_by_id(city_id);
+  city_t *pcity = find_city_by_id(city_id);
   struct cm_parameter dummy;
 
   if (!parameter) {
@@ -191,7 +192,7 @@ static bool check_city(int city_id, struct cm_parameter *parameter)
  Change the actual city setting to the given result. Returns TRUE iff
  the actual data matches the calculated one.
 *****************************************************************************/
-static bool apply_result_on_server(struct city *pcity,
+static bool apply_result_on_server(city_t *pcity,
                                    const struct cm_result *const result)
 {
   int first_request_id = 0, last_request_id = 0, i, sp;
@@ -215,7 +216,7 @@ static bool apply_result_on_server(struct city *pcity,
   connection_do_buffer(&aconnection);
 
   /* Do checks */
-  if (pcity->size != (cm_count_worker(pcity, result)
+  if (pcity->pop_size != (cm_count_worker(pcity, result)
                       + cm_count_specialist(pcity, result))) {
     cm_print_city(pcity);
     cm_print_result(pcity, result);
@@ -364,11 +365,12 @@ static void release_city(int city_id)
  follows the set CMA goal or that the CMA detaches itself from the
  city.
 *****************************************************************************/
-static void handle_city(struct city *pcity)
+static void handle_city(city_t *pcity)
 {
   struct cm_result result;
   bool handled;
-  int i, city_id = pcity->id;
+  int i;
+  int city_id = pcity->id;
 
   freelog(HANDLE_CITY_LOG_LEVEL,
           "handle_city(city='%s'(%d) pos=(%d,%d) owner=%s)", pcity->name,
@@ -445,7 +447,7 @@ static void handle_city(struct city *pcity)
 *****************************************************************************/
 static void city_changed(int city_id)
 {
-  struct city *pcity = find_city_by_id(city_id);
+  city_t *pcity = find_city_by_id(city_id);
 
   if (pcity) {
     cm_clear_cache(pcity);
@@ -475,7 +477,7 @@ static void new_turn(void)
 *****************************************************************************/
 void cma_init(void)
 {
-  struct agent self;
+  struct agent_s self;
   struct timer *timer = stats.wall_timer;
 
   freelog(LOG_DEBUG, "sizeof(struct cm_result)=%d",
@@ -500,7 +502,7 @@ void cma_init(void)
 /****************************************************************************
 ...
 *****************************************************************************/
-bool cma_apply_result(struct city *pcity,
+bool cma_apply_result(city_t *pcity,
                      const struct cm_result *const result)
 {
   assert(!cma_is_city_under_agent(pcity, NULL));
@@ -513,7 +515,7 @@ bool cma_apply_result(struct city *pcity,
 /****************************************************************************
 ...
 *****************************************************************************/
-void cma_put_city_under_agent(struct city *pcity,
+void cma_put_city_under_agent(city_t *pcity,
                               const struct cm_parameter *const parameter)
 {
   freelog(LOG_DEBUG, "cma_put_city_under_agent(city='%s'(%d))",
@@ -555,7 +557,7 @@ void cma_put_city_under_agent(struct city *pcity,
 /****************************************************************************
 ...
 *****************************************************************************/
-void cma_release_city(struct city *pcity)
+void cma_release_city(city_t *pcity)
 {
   release_city(pcity->id);
   refresh_city_dialog(pcity, UPDATE_CMA);
@@ -568,7 +570,7 @@ void cma_release_city(struct city *pcity)
 /****************************************************************************
 ...
 *****************************************************************************/
-bool cma_is_city_under_agent(const struct city *pcity,
+bool cma_is_city_under_agent(const city_t *pcity,
                              struct cm_parameter *parameter)
 {
   struct cm_parameter my_parameter;
