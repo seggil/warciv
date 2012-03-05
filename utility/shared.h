@@ -24,22 +24,22 @@
 #endif
 
 #if __BEOS__
-#include <posix/be_prim.h>
-#define __bool_true_false_are_defined 1
+#  include <posix/be_prim.h>
+#  define __bool_true_false_are_defined 1
 #else
-#ifdef HAVE_STDBOOL_H
-#include <stdbool.h>
-#else /* Implement <stdbool.h> ourselves */
-#undef bool
-#undef true
-#undef false
-#undef __bool_true_false_are_defined
-#define bool wc_bool
-#define true  1
-#define false 0
-#define __bool_true_false_are_defined 1
+#  ifdef HAVE_STDBOOL_H
+#    include <stdbool.h>
+#  else /* Implement <stdbool.h> ourselves */
+#    undef bool
+#    undef true
+#    undef false
+#    undef __bool_true_false_are_defined
+#    define bool wc_bool
+#    define true  1
+#    define false 0
+#    define __bool_true_false_are_defined 1
 typedef unsigned int wc_bool;
-#endif /* ! HAVE_STDBOOL_H */
+#  endif /* ! HAVE_STDBOOL_H */
 #endif /* ! __BEOS__ */
 
 /* Want to use GCC's __attribute__ keyword to check variadic
@@ -50,9 +50,9 @@ typedef unsigned int wc_bool;
  * --dwp
  */
 #if defined(__GNUC__)
-#define wc__attribute(x)  __attribute__(x)
+#  define wc__attribute(x)  __attribute__(x)
 #else
-#define wc__attribute(x)
+#  define wc__attribute(x)
 #endif
 
 
@@ -79,19 +79,19 @@ typedef unsigned int wc_bool;
 #define WC_INFINITY     (1000 * 1000 * 1000)
 
 #ifdef TRUE
-#undef TRUE
+#  undef TRUE
 #endif
 
 #ifdef FALSE
-#undef FALSE
+#  undef FALSE
 #endif
 
 #define TRUE true
 #define FALSE false
 
 #ifndef MAX
-#define MAX(x,y) (((x)>(y))?(x):(y))
-#define MIN(x,y) (((x)<(y))?(x):(y))
+#  define MAX(x,y) (((x)>(y))?(x):(y))
+#  define MIN(x,y) (((x)<(y))?(x):(y))
 #endif
 #define CLIP(lower,this,upper) \
     ((this)<(lower)?(lower):(this)>(upper)?(upper):(this))

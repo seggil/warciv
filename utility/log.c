@@ -253,7 +253,8 @@ static void log_write(FILE *fs, int level, char *message)
     timebuf = ctime(&ltime);
     timebuf[24]='\0';
 
-    wc_fprintf(fs, "%-8s: %-26s: %-12s: line %-5i: %-25s - %s\n", loglevelstr[level],timebuf,l_file, l_line, l_fncname, message);
+    wc_fprintf(fs, "%-8s: %-26s: %-12s: line %-5i: %-25s - %s\n",
+               loglevelstr[level],timebuf,l_file, l_line, l_fncname, message);
     fflush(fs);
   }
 }
@@ -282,7 +283,7 @@ void vreal_freelog(int level, const char *message, va_list ap)
     if (log_filename) {
       if(!(fs=fopen(log_filename, "a"))) {
         wc_fprintf(stderr, _("Couldn't open logfile: %s for appending.\n"),
-                log_filename);
+                   log_filename);
         exit(EXIT_FAILURE);
       }
     } else {

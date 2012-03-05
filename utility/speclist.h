@@ -69,7 +69,11 @@
 #endif
 
 #ifndef SPECLIST_TYPE
-#define SPECLIST_TYPE struct SPECLIST_TAG
+#  ifndef SPECLIST_TYPEDEF
+#    define SPECLIST_TYPE struct SPECLIST_TAG
+#  else
+#    define SPECLIST_TYPE SPECLIST_TYPEDEF
+#  endif
 #endif
 
 #define SPECLIST_PASTE_(x,y) x ## y

@@ -117,7 +117,10 @@ static void check_init_lookup_tables(void)
 ***************************************************************************/
 int adns_get_socket_fd(void)
 {
-  return dns ? dns_get_fd(dns) : -1;
+  if (dns)
+    return dns_get_fd(dns);
+  else
+    return -1;
 }
 
 /***************************************************************************

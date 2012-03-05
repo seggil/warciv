@@ -76,9 +76,10 @@ static inline int logdebug_check(const char *file, int line)
     logdebug_thisfile = logdebug_update(file);
     logdebug_this_init = logd_init_counter;
   }
-  return (logdebug_thisfile.tthis && (logdebug_thisfile.max==0
-                                      || (line >= logdebug_thisfile.min
-                                          && line <= logdebug_thisfile.max)));
+  return (logdebug_thisfile.tthis
+          && (logdebug_thisfile.max==0
+              || (line >= logdebug_thisfile.min
+                  && line <= logdebug_thisfile.max)));
 }
 #endif
 
@@ -86,17 +87,17 @@ static inline int logdebug_check(const char *file, int line)
  * evaluating its arguments, as this would potentially break code
  * that passes for example myerrno() as a parameter. */
 #ifdef DEBUG
-#  define freelog(level, ...)                                             \
+#  define freelog(level, ...)                                               \
   do {                                                                      \
     if ((level) != LOG_DEBUG || logdebug_check(__FILE__, __LINE__)) {       \
-      real_freelog((level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__);                                   \
+      real_freelog((level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
     }                                                                       \
   } while(FALSE)
 #else
-#  define freelog(level, ...)                                             \
+#  define freelog(level, ...)                                               \
   do {                                                                      \
     if ((level) != LOG_DEBUG) {                                             \
-      real_freelog((level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__);                                   \
+      real_freelog((level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
     }                                                                       \
   } while(FALSE)
 #endif  /* DEBUG */
