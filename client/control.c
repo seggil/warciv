@@ -613,8 +613,8 @@ void process_caravan_arrival(struct unit *punit)
     if (punit && (unit_can_help_build_wonder_here(punit)
                   || unit_can_est_traderoute_here(punit))
         && (!get_player_ptr()->ai.control || ai_popup_windows)) {
-      struct city *pcity_dest = map_get_city(punit->tile);
-      struct city *pcity_homecity = find_city_by_id(punit->homecity);
+      city_t *pcity_dest = map_get_city(punit->tile);
+      city_t *pcity_homecity = find_city_by_id(punit->homecity);
 
       if (default_caravan_action == DCA_POPUP_DIALOG
           && pcity_dest && pcity_homecity) {
@@ -674,7 +674,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 
   while (genlist_size(arrival_queue) > 0) {
     int diplomat_id, victim_id;
-    struct city *pcity;
+    city_t *pcity;
     struct unit *punit;
     bool dipl_unit_ok, dipl_city_ok;
 
@@ -1018,7 +1018,7 @@ void request_unit_unload_all(struct unit *punit)
 /**************************************************************************
   ...
 **************************************************************************/
-void request_unit_airlift(struct unit *punit, struct city *pcity)
+void request_unit_airlift(struct unit *punit, city_t *pcity)
 {
   punit->is_new = FALSE;
   dsend_packet_unit_airlift(&aconnection, punit->id, pcity->id);
@@ -1178,7 +1178,7 @@ void request_unit_disband(struct unit *punit)
 **************************************************************************/
 void request_unit_change_homecity(struct unit *punit)
 {
-  struct city *pcity = map_get_city(punit->tile);
+  city_t *pcity = map_get_city(punit->tile);
 
   if (pcity) {
     dsend_packet_unit_change_homecity(&aconnection, punit->id, pcity->id);
@@ -1190,7 +1190,7 @@ void request_unit_change_homecity(struct unit *punit)
 **************************************************************************/
 void request_unit_upgrade(struct unit *punit)
 {
-  struct city *pcity;
+  city_t *pcity;
 
   if (punit == NULL || punit->tile == NULL) {
     return;
@@ -1823,7 +1823,7 @@ void check_new_unit_action(struct unit *punit)
 void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 {
   enum unit_activity ca=connect_activity;
-  struct city *pcity = map_get_city(ptile);
+  city_t *pcity = map_get_city(ptile);
   struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
   bool maybe_goto = FALSE;
 
@@ -2265,7 +2265,7 @@ void key_cancel_action(void)
 **************************************************************************/
 void key_center_capital(void)
 {
-  struct city *capital = find_palace(get_player_ptr());
+  city_t *capital = find_palace(get_player_ptr());
 
   if (capital)  {
     /* Center on the tile, and pop up the crosshair overlay. */
@@ -2364,7 +2364,7 @@ void key_unit_connect(enum unit_activity activity)
 **************************************************************************/
 void key_unit_diplomat_actions(void)
 {
-  struct city *pcity;           /* need pcity->id */
+  city_t *pcity;           /* need pcity->id */
 
   multi_select_iterate(TRUE, punit) {
     if (punit

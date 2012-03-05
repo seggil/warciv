@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
       wc_fprintf(stderr, _("  -a, --autoconnect\tSkip connect dialog\n"));
 #ifdef DEBUG
       wc_fprintf(stderr, _("  -d, --debug NUM\tSet debug log level (0 to 4,"
-                           " or 4:file1,min,max:...)\n"));
+                           " or 4:file1,min,max:... or 4:file1:file2)\n"));
 #else
       wc_fprintf(stderr,
                  _("  -d, --debug NUM\tSet debug log level (0 to 3)\n"));
@@ -562,7 +562,7 @@ void client_game_free()
 void set_client_state(enum client_states newstate)
 {
   bool connect_error = (client_state == CLIENT_PRE_GAME_STATE)
-      && (newstate == CLIENT_PRE_GAME_STATE);
+                       && newstate == CLIENT_PRE_GAME_STATE;
   enum client_states oldstate = client_state;
   struct player *pplayer = get_player_ptr();
 

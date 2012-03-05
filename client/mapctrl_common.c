@@ -66,14 +66,14 @@ bool keyboardless_goto_active = FALSE;
 struct tile *keyboardless_goto_start_tile;
 
 /* Update the workers for a city on the map, when the update is received */
-struct city *city_workers_display = NULL;
+city_t *city_workers_display = NULL;
 
 static bool turn_done_state;
 static bool is_turn_done_state_valid = FALSE;
 
 /*************************************************************************/
 
-static void clipboard_send_production_packet(struct city *pcity);
+static void clipboard_send_production_packet(city_t *pcity);
 static void define_tiles_within_rectangle(void);
 
 /**************************************************************************
@@ -308,7 +308,7 @@ void cancel_distance_tool(void)
 /**************************************************************************
 ...
 **************************************************************************/
-bool is_city_hilited(struct city *pcity)
+bool is_city_hilited(city_t *pcity)
 {
   return pcity != NULL && pcity->tile->client.hilite == HILITE_CITY;
 }
@@ -351,7 +351,7 @@ void release_right_button(int canvas_x, int canvas_y)
 **************************************************************************/
 void toggle_tile_hilite(struct tile *ptile)
 {
-  struct city *pcity = ptile->city;
+  city_t *pcity = ptile->city;
 
   if (ptile->client.hilite == HILITE_CITY) {
     ptile->client.hilite = HILITE_NONE;
@@ -381,7 +381,7 @@ void key_city_overlay(int canvas_x, int canvas_y)
 
   if (can_client_change_view() && ptile) {
     struct unit *punit;
-    struct city *pcity = find_city_or_settler_near_tile(ptile, &punit);
+    city_t *pcity = find_city_or_settler_near_tile(ptile, &punit);
 
     if (pcity) {
       toggle_city_color(pcity);
@@ -399,7 +399,7 @@ void key_cities_overlay(int canvas_x, int canvas_y)
   struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (can_client_change_view() && ptile) {
-    struct city *pcity = find_city_or_settler_near_tile(ptile, NULL);
+    city_t *pcity = find_city_or_settler_near_tile(ptile, NULL);
     int num = 0;
     bool toggle_on;
 
@@ -447,7 +447,7 @@ void key_cities_overlay(int canvas_x, int canvas_y)
 void clipboard_copy_production(struct tile *ptile)
 {
   char msg[MAX_LEN_MSG];
-  struct city *pcity = ptile->city;
+  city_t *pcity = ptile->city;
 
   if (!client_is_player()) {
     return;
@@ -486,7 +486,7 @@ void clipboard_copy_production(struct tile *ptile)
  If City tiles are hilited, paste into all those cities.
  Otherwise paste into the one city under the mouse pointer.
 **************************************************************************/
-void clipboard_paste_production(struct city *pcity)
+void clipboard_paste_production(city_t *pcity)
 {
   if (!can_client_issue_orders()) {
     return;
@@ -516,7 +516,7 @@ void clipboard_paste_production(struct city *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-static void clipboard_send_production_packet(struct city *pcity)
+static void clipboard_send_production_packet(city_t *pcity)
 {
   cid mycid = cid_encode(clipboard_is_unit, clipboard);
 
@@ -651,7 +651,7 @@ void adjust_workers_button_pressed(int canvas_x, int canvas_y)
   struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (can_client_issue_orders() && ptile) {
-    struct city *pcity = find_city_near_tile(ptile);
+    city_t *pcity = find_city_near_tile(ptile);
 
     if (pcity && !cma_is_city_under_agent(pcity, NULL)) {
       if (!map_to_city_map(&city_x, &city_y, pcity, ptile)) {

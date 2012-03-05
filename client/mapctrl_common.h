@@ -36,7 +36,7 @@ void redraw_selection_rectangle(void);
 void update_distance_tool(int canvas_x, int canvas_y);
 void cancel_distance_tool(void);
 
-bool is_city_hilited(struct city *pcity);
+bool is_city_hilited(city_t *pcity);
 
 void cancel_tile_hiliting(void);
 void toggle_tile_hilite(struct tile *ptile);
@@ -45,7 +45,7 @@ void key_city_overlay(int canvas_x, int canvas_y);
 void key_cities_overlay(int canvas_x, int canvas_y);
 
 void clipboard_copy_production(struct tile *ptile);
-void clipboard_paste_production(struct city *pcity);
+void clipboard_paste_production(city_t *pcity);
 void upgrade_canvas_clipboard(void);
 
 void release_right_button(int canvas_x, int canvas_y);
@@ -69,6 +69,6 @@ bool get_chance_to_win(int *att_chance, int *def_chance,
 
 void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list);
 
-extern struct city *city_workers_display;
+extern city_t *city_workers_display;
 
 #endif /* WC_CLIENT_MAPCTRL_COMMON_H */

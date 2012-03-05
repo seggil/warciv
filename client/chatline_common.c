@@ -255,7 +255,7 @@ static void link_escape_city_name(char *buf, size_t buflen, const char *name)
   NB If you change any of the chat link formats, be sure to change
   the detection code in server/handchat.c as well!
 **************************************************************************/
-int insert_city_link(char *buf, size_t buflen, struct city *pcity)
+int insert_city_link(char *buf, size_t buflen, city_t *pcity)
 {
   char safename[256];
 

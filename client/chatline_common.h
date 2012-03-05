@@ -15,7 +15,7 @@
 
 #include "shared.h"             /* bool type */
 
-#include "wc_types.h"           /* struct city, tile and unit */
+#include "wc_types.h"           /* city_t, tile and unit */
 
 void send_chat(const char *message);
 
@@ -29,7 +29,8 @@ void output_window_thaw(void);
 void output_window_force_thaw(void);
 bool is_output_window_frozen(void);
 
-int insert_city_link(char *buf, size_t buflen, struct city *pcity);
+typedef struct city_s city_t;
+int insert_city_link(char *buf, size_t buflen, city_t *pcity);
 int insert_tile_link(char *buf, size_t buflen, struct tile *ptile);
 int insert_unit_link(char *buf, size_t buflen, struct unit *punit);
 

@@ -156,18 +156,18 @@ bool tile_visible_and_not_on_border_mapcanvas(struct tile *ptile);
 
 void put_unit(struct unit *punit,
               struct canvas *pcanvas, int canvas_x, int canvas_y);
-void put_city(struct city *pcity,
+void put_city(city_t *pcity,
               struct canvas *pcanvas, int canvas_x, int canvas_y);
 void put_terrain(struct tile *ptile,
                  struct canvas *pcanvas, int canvas_x, int canvas_y);
 
-void put_city_tile_output(struct city *pcity, int city_x, int city_y,
+void put_city_tile_output(city_t *pcity, int city_x, int city_y,
                           struct canvas *pcanvas,
                           int canvas_x, int canvas_y);
 void put_unit_city_overlays(struct unit *punit,
                             struct canvas *pcanvas,
                             int canvas_x, int canvas_y);
-void toggle_city_color(struct city *pcity);
+void toggle_city_color(city_t *pcity);
 void toggle_unit_color(struct unit *punit);
 void put_red_frame_tile(struct canvas *pcanvas,
                         int canvas_x, int canvas_y);
@@ -187,7 +187,7 @@ void update_map_canvas(int canvas_x, int canvas_y,
                        int width, int height, enum map_update_type type);
 void update_map_canvas_visible(enum map_update_type type);
 void refresh_tile_mapcanvas(struct tile *ptile, enum map_update_type type);
-void update_city_description(struct city *pcity);
+void update_city_description(city_t *pcity);
 
 void flush_dirty_overview(void);
 
@@ -203,22 +203,22 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
 void move_unit_map_canvas(struct unit *punit,
                           struct tile *ptile, int dx, int dy);
 
-struct city *find_city_or_settler_near_tile(struct tile *ptile,
-                                            struct unit **punit);
-struct city *find_city_near_tile(struct tile *ptile);
+city_t *find_city_or_settler_near_tile(struct tile *ptile,
+                                         struct unit **punit);
+city_t *find_city_near_tile(struct tile *ptile);
 
-void get_city_mapview_production(struct city *pcity,
+void get_city_mapview_production(city_t *pcity,
                                  char *buf, size_t buf_len);
-void get_city_mapview_name_and_growth(struct city *pcity,
+void get_city_mapview_name_and_growth(city_t *pcity,
                                       char *name_buffer,
                                       size_t name_buffer_len,
                                       char *growth_buffer,
                                       size_t growth_buffer_len,
                                       enum color_std *grwoth_color);
-void get_city_mapview_traderoutes(struct city *pcity,
-                                      char *traderoutes_buffer,
-                                      size_t traderoutes_len,
-                                      enum color_std *traderoutes_color);
+void get_city_mapview_traderoutes(city_t *pcity,
+                                  char *traderoutes_buffer,
+                                  size_t traderoutes_len,
+                                  enum color_std *traderoutes_color);
 
 void map_to_overview_pos(int *overview_x, int *overview_y,
                          int map_x, int map_y);

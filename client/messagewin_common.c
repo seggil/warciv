@@ -153,7 +153,7 @@ void add_notify_window(char *message, struct tile *ptile,
    */
   for (i = 0; i < messages_total; i++) {
     if (messages[i].location_ok) {
-      struct city *pcity = map_get_city(messages[i].tile);
+      city_t *pcity = map_get_city(messages[i].tile);
 
       messages[i].city_ok = (pcity && city_owner(pcity) == get_player_ptr());
     } else {
@@ -203,7 +203,7 @@ void meswin_popup_city(int message_index)
 
   if (messages[message_index].city_ok) {
     struct tile *ptile = messages[message_index].tile;
-    struct city *pcity = map_get_city(ptile);
+    city_t *pcity = map_get_city(ptile);
 
     if (center_when_popup_city) {
       center_tile_mapcanvas(ptile);

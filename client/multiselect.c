@@ -513,7 +513,7 @@ int multi_select_size(int multi)
 struct scity {
   int tdv, rdv;
   int tav, rav;
-  struct city *pcity;
+  city_t *pcity;
   struct unit_list *ulist;
 };
 
@@ -1677,7 +1677,7 @@ void request_auto_airlift_source_selection_with_airport(void)
 /**********************************************************************
   Do airlift for a given airlift queue.
 ***********************************************************************/
-void do_airlift_for(int aq, struct city *pcity)
+void do_airlift_for(int aq, city_t *pcity)
 {
   aqassert(aq);
 
@@ -1742,7 +1742,7 @@ void do_airlift(struct tile *ptile)
   Add a city to the specified airlift queue. If multi is FALSE, it will
   remove the tile if the tile is already in the queue.
 ************************************************************************/
-void add_city_to_specific_auto_airlift_queue(int aq, struct city *pcity)
+void add_city_to_specific_auto_airlift_queue(int aq, city_t *pcity)
 {
   char buf[256] = "\0";
 

@@ -27,7 +27,7 @@ struct city_report_spec {
   const char *title1;           /* already translated or NULL */
   const char *title2;           /* already translated or NULL */
   const char *explanation;      /* already translated */
-  const char *(*func)(const struct city *);
+  const char *(*func)(const city_t *);
   const char *tagname;          /* for save_options */
 };
 

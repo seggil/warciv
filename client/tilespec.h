@@ -81,7 +81,7 @@ void tilespec_free_city_tiles(int count);
 /* Gfx support */
 
 int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
-                      struct unit *punit, struct city *pcity,
+                      struct unit *punit, city_t *pcity,
                       bool citymode);
 
 void player_colors_init(void);
@@ -279,7 +279,7 @@ extern int fogstyle;
 
 struct Sprite *get_citizen_sprite(struct citizen_type type,
                                   int citizen_index,
-                                  const struct city *pcity);
+                                  const city_t *pcity);
 
 /* full pathnames: */
 extern char *main_intro_filename;

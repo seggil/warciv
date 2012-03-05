@@ -23,7 +23,7 @@ struct player_spaceship;
 ****************************************************************************/
 const char *popup_info_text(struct tile *ptile);
 const char *concat_tile_activity_text(struct tile *ptile);
-const char *get_nearest_city_text(struct city *pcity, int sq_dist);
+const char *get_nearest_city_text(city_t *pcity, int sq_dist);
 const char *unit_description(struct unit *punit);
 const char *science_dialog_text(void);
 const char *get_info_label_text(void);
@@ -38,8 +38,8 @@ const char *get_timeout_label_text(void);
 const char *format_duration(int duration);
 const char *get_ping_time_text(struct player *pplayer);
 const char *get_report_title(const char *report_name);
-const char *get_happiness_buildings(const struct city *pcity);
-const char *get_happiness_wonders(const struct city *pcity);
+const char *get_happiness_buildings(const city_t *pcity);
+const char *get_happiness_wonders(const city_t *pcity);
 const char *get_ping_time_text(struct player *pplayer);
 
 #endif /* WC_CLIENT_TEXT_H */

@@ -163,7 +163,7 @@ void request_unit_patrol(void);
 void request_unit_pillage(struct unit *punit);
 void request_unit_sentry(struct unit *punit);
 void request_unit_unload_all(struct unit *punit);
-void request_unit_airlift(struct unit *punit, struct city *pcity);
+void request_unit_airlift(struct unit *punit, city_t *pcity);
 void request_unit_return(struct unit *punit);
 void request_unit_upgrade(struct unit *punit);
 void request_unit_wait(struct unit *punit);

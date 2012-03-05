@@ -24,7 +24,7 @@
 struct canvas;
 
 struct citizen_type {
-  enum {
+  enum citizen_type_type {
     CITIZEN_SPECIALIST,
     CITIZEN_CONTENT,
     CITIZEN_HAPPY,
@@ -43,36 +43,36 @@ bool city_to_canvas_pos(int *canvas_x, int *canvas_y,
                         int city_x, int city_y);
 bool canvas_to_city_pos(int *city_x, int *city_y,
                         int canvas_x, int canvas_y);
-void city_dialog_redraw_map(struct city *pcity,
+void city_dialog_redraw_map(city_t *pcity,
                             struct canvas *pcanvas);
 
-void get_city_dialog_production(struct city *pcity,
+void get_city_dialog_production(city_t *pcity,
                                 char *buffer, size_t buffer_len);
 void get_city_dialog_production_full(char *buffer, size_t buffer_len,
                                      int id, bool is_unit,
-                                     struct city *pcity);
+                                     city_t *pcity);
 void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
-                                    bool is_unit, struct city *pcity);
+                                    bool is_unit, city_t *pcity);
 
-void get_city_citizen_types(struct city *pcity, int index,
+void get_city_citizen_types(city_t *pcity, int index,
                             struct citizen_type *citizens);
-void city_rotate_specialist(struct city *pcity, int citizen_index);
+void city_rotate_specialist(city_t *pcity, int citizen_index);
 
 void activate_all_units(struct tile *ptile);
 
-int city_change_production(struct city *pcity, bool is_unit, int build_id);
-int city_set_worklist(struct city *pcity, struct worklist *pworklist);
-bool city_queue_insert(struct city *pcity, int position,
+int city_change_production(city_t *pcity, bool is_unit, int build_id);
+int city_set_worklist(city_t *pcity, struct worklist *pworklist);
+bool city_queue_insert(city_t *pcity, int position,
                        bool item_is_unit, int item_id);
-void city_get_queue(struct city *pcity, struct worklist *pqueue);
-bool city_set_queue(struct city *pcity, struct worklist *pqueue);
-bool city_can_buy(const struct city *pcity);
-int city_sell_improvement(struct city *pcity, Impr_Type_id sell_id);
-int city_buy_production(struct city *pcity);
-int city_change_specialist(struct city *pcity, Specialist_type_id from,
+void city_get_queue(city_t *pcity, struct worklist *pqueue);
+bool city_set_queue(city_t *pcity, struct worklist *pqueue);
+bool city_can_buy(const city_t *pcity);
+int city_sell_improvement(city_t *pcity, Impr_Type_id sell_id);
+int city_buy_production(city_t *pcity);
+int city_change_specialist(city_t *pcity, Specialist_type_id from,
                            Specialist_type_id to);
-int city_toggle_worker(struct city *pcity, int city_x, int city_y);
-int city_rename(struct city *pcity, const char *name);
+int city_toggle_worker(city_t *pcity, int city_x, int city_y);
+int city_rename(city_t *pcity, const char *name);
 
 void refresh_city_dialog_maps(struct tile *ptile);
 

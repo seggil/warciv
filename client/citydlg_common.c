@@ -165,7 +165,7 @@ bool canvas_to_city_pos(int *city_x, int *city_y, int canvas_x, int canvas_y)
   Draw the full city map onto the canvas store.  Works for both isometric
   and orthogonal views.
 ****************************************************************************/
-void city_dialog_redraw_map(struct city *pcity,
+void city_dialog_redraw_map(city_t *pcity,
                             struct canvas *pcanvas)
 {
   /* First make it all black. */
@@ -210,7 +210,7 @@ void city_dialog_redraw_map(struct city *pcity,
   concise_city_production option.  pcity may be NULL; in this case a
   filler string is returned.
 **************************************************************************/
-void get_city_dialog_production(struct city *pcity,
+void get_city_dialog_production(city_t *pcity,
                                 char *buffer, size_t buffer_len)
 {
   int turns, cost, stock;
@@ -277,7 +277,7 @@ void get_city_dialog_production(struct city *pcity,
 **************************************************************************/
 void get_city_dialog_production_full(char *buffer, size_t buffer_len,
                                      int id, bool is_unit,
-                                     struct city *pcity)
+                                     city_t *pcity)
 {
   if (!is_unit && building_has_effect(id, EFT_PROD_TO_GOLD)) {
     my_snprintf(buffer, buffer_len, _("%s (XX) %d/turn"),
@@ -311,7 +311,7 @@ void get_city_dialog_production_full(char *buffer, size_t buffer_len,
  column_size bytes.
 **************************************************************************/
 void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
-                                    bool is_unit, struct city *pcity)
+                                    bool is_unit, city_t *pcity)
 {
   if (is_unit) {
     struct unit_type *ptype = get_unit_type(id);
@@ -385,7 +385,7 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
   happiness).  "citizens" should be an array large enough to hold all
   citizens (use MAX_CITY_SIZE to be on the safe side).
 **************************************************************************/
-void get_city_citizen_types(struct city *pcity, int index,
+void get_city_citizen_types(city_t *pcity, int index,
                             struct citizen_type *citizens)
 {
   int i = 0, n;
@@ -411,18 +411,18 @@ void get_city_citizen_types(struct city *pcity, int index,
     }
   } specialist_type_iterate_end;
 
-  assert(i == pcity->size);
+  assert(i == pcity->pop_size);
 }
 
 /**************************************************************************
   Rotate the given specialist citizen to the next type of citizen.
 **************************************************************************/
-void city_rotate_specialist(struct city *pcity, int citizen_index)
+void city_rotate_specialist(city_t *pcity, int citizen_index)
 {
   struct citizen_type citizens[MAX_CITY_SIZE];
   Specialist_type_id from, to;
 
-  if (citizen_index < 0 || citizen_index >= pcity->size) {
+  if (citizen_index < 0 || citizen_index >= pcity->pop_size) {
     return;
   }
 
@@ -470,7 +470,7 @@ void activate_all_units(struct tile *ptile)
 /**************************************************************************
   Change the production of a given city.  Return the request ID.
 **************************************************************************/
-int city_change_production(struct city *pcity, bool is_unit, int build_id)
+int city_change_production(city_t *pcity, bool is_unit, int build_id)
 {
   return dsend_packet_city_change(&aconnection, pcity->id, build_id,
                                   is_unit);
@@ -481,7 +481,7 @@ int city_change_production(struct city *pcity, bool is_unit, int build_id)
 
   Note that the worklist does NOT include the current production.
 **************************************************************************/
-int city_set_worklist(struct city *pcity, struct worklist *pworklist)
+int city_set_worklist(city_t *pcity, struct worklist *pworklist)
 {
   struct worklist copy;
 
@@ -498,7 +498,7 @@ int city_set_worklist(struct city *pcity, struct worklist *pworklist)
 
   Note that the queue DOES include the current production.
 **************************************************************************/
-bool city_queue_insert(struct city *pcity, int position,
+bool city_queue_insert(city_t *pcity, int position,
                        bool item_is_unit, int item_id)
 {
   if (position == 0) {
@@ -554,7 +554,7 @@ bool city_queue_insert(struct city *pcity, int position,
 /**************************************************************************
   Get the city current production and the worklist, like it should be.
 **************************************************************************/
-void city_get_queue(struct city *pcity, struct worklist *pqueue)
+void city_get_queue(city_t *pcity, struct worklist *pqueue)
 {
   int id;
   bool is_unit;
@@ -576,7 +576,7 @@ void city_get_queue(struct city *pcity, struct worklist *pqueue)
 /**************************************************************************
   Set the city current production and the worklist, like it should be.
 **************************************************************************/
-bool city_set_queue(struct city *pcity, struct worklist *pqueue)
+bool city_set_queue(city_t *pcity, struct worklist *pqueue)
 {
   struct worklist copy;
   int id;
@@ -616,7 +616,7 @@ bool city_set_queue(struct city *pcity, struct worklist *pqueue)
 /**************************************************************************
   Return TRUE iff the city can buy.
 **************************************************************************/
-bool city_can_buy(const struct city *pcity)
+bool city_can_buy(const city_t *pcity)
 {
   return (can_client_issue_orders()
           && !pcity->did_buy
@@ -626,7 +626,7 @@ bool city_can_buy(const struct city *pcity)
 /**************************************************************************
   Change the production of a given city.  Return the request ID.
 **************************************************************************/
-int city_sell_improvement(struct city *pcity, Impr_Type_id sell_id)
+int city_sell_improvement(city_t *pcity, Impr_Type_id sell_id)
 {
   return dsend_packet_city_sell(&aconnection, pcity->id, sell_id);
 }
@@ -634,7 +634,7 @@ int city_sell_improvement(struct city *pcity, Impr_Type_id sell_id)
 /**************************************************************************
   Buy the current production item in a given city.  Return the request ID.
 **************************************************************************/
-int city_buy_production(struct city *pcity)
+int city_buy_production(city_t *pcity)
 {
   return dsend_packet_city_buy(&aconnection, pcity->id);
 }
@@ -642,7 +642,7 @@ int city_buy_production(struct city *pcity)
 /**************************************************************************
   Change a specialist in the given city.  Return the request ID.
 **************************************************************************/
-int city_change_specialist(struct city *pcity, Specialist_type_id from,
+int city_change_specialist(city_t *pcity, Specialist_type_id from,
                            Specialist_type_id to)
 {
   return dsend_packet_city_change_specialist(&aconnection, pcity->id, from,
@@ -653,7 +653,7 @@ int city_change_specialist(struct city *pcity, Specialist_type_id from,
   Toggle a worker<->specialist at the given city tile.  Return the
   request ID.
 **************************************************************************/
-int city_toggle_worker(struct city *pcity, int city_x, int city_y)
+int city_toggle_worker(city_t *pcity, int city_x, int city_y)
 {
   assert(is_valid_city_coords(city_x, city_y));
 
@@ -671,7 +671,7 @@ int city_toggle_worker(struct city *pcity, int city_x, int city_y)
 /**************************************************************************
   Tell the server to rename the city.  Return the request ID.
 **************************************************************************/
-int city_rename(struct city *pcity, const char *name)
+int city_rename(city_t *pcity, const char *name)
 {
   return dsend_packet_city_rename(&aconnection, pcity->id, name);
 }
@@ -681,7 +681,7 @@ int city_rename(struct city *pcity, const char *name)
 **************************************************************************/
 void refresh_city_dialog_maps(struct tile *ptile)
 {
-  struct city *pcity;
+  city_t *pcity;
   bool global_observer = client_is_global_observer();
 
   city_map_checked_iterate(ptile, cx, cy, itr_tile) {

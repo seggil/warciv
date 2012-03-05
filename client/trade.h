@@ -23,8 +23,8 @@ void trade_free(void);
 void update_trade_route_infos(struct trade_route *ptr);
 
 void add_tile_in_trade_planning(struct tile *ptile, bool allow_remove);
-void trade_city_new(struct city *pcity);
-void trade_remove_city(struct city *pcity);
+void trade_city_new(city_t *pcity);
+void trade_remove_city(city_t *pcity);
 void clear_trade_city_list(void);
 void clear_trade_planning(bool include_in_route);
 void do_trade_planning_precalculation(void);
@@ -39,12 +39,12 @@ bool is_trade_city_list(void);
 bool is_trade_planning(void);
 bool is_trade_route_in_route(void);
 bool are_trade_cities_built(void);
-int in_route_trade_route_number(struct city *pcity);
+int in_route_trade_route_number(city_t *pcity);
 
 void draw_non_built_trade_cities(void);
 
-void request_trade_route(struct city *pcity);
-void request_cancel_trade_route(struct city *pcity1, struct city *pcity2);
+void request_trade_route(city_t *pcity);
+void request_cancel_trade_route(city_t *pcity1, city_t *pcity2);
 void execute_trade_orders(struct unit *punit);
 bool trade_free_unit(struct unit *punit);
 

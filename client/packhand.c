@@ -74,7 +74,7 @@
 
 #include "packhand.h"
 
-static void handle_city_packet_common(struct city *pcity, bool is_new,
+static void handle_city_packet_common(city_t *pcity, bool is_new,
                                       bool popup, bool investigate);
 static bool handle_unit_packet_common(struct unit *packet_unit);
 static int *reports_thaw_requests = NULL;
@@ -222,7 +222,7 @@ void handle_server_join_reply(bool you_can_join, char *message,
 **************************************************************************/
 void handle_city_remove(int city_id)
 {
-  struct city *pcity = find_city_by_id(city_id);
+  city_t *pcity = find_city_by_id(city_id);
   struct tile *ptile;
 
   if (!pcity)
@@ -337,7 +337,7 @@ void handle_unit_combat_info(int attacker_unit_id, int defender_unit_id,
   be added (TRUE) or removed (FALSE). "impr_changed" is set TRUE only if
   the existing improvement status was changed by this call.
 **************************************************************************/
-static void update_improvement_from_packet(struct city *pcity,
+static void update_improvement_from_packet(city_t *pcity,
                                            Impr_Type_id impr, bool have_impr,
                                            bool *impr_changed)
 {
@@ -418,7 +418,7 @@ void handle_city_info(struct packet_city_info *packet)
   int i;
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
   bool need_units_dialog_update = FALSE;
-  struct city *pcity;
+  city_t *pcity;
   bool popup, update_descriptions = FALSE, name_changed = FALSE;
   enum city_update needs_update =
     UPDATE_TITLE | UPDATE_INFORMATION | UPDATE_CITIZENS | UPDATE_HAPPINESS;
@@ -501,7 +501,7 @@ void handle_city_info(struct packet_city_info *packet)
   sz_strlcpy(pcity->name, packet->name);
   idex_register_city_name (pcity);
 
-  pcity->size = packet->size;
+  pcity->pop_size = packet->size;
   for (i = 0; i < 5; i++) {
     pcity->people_happy[i] = packet->people_happy[i];
     pcity->people_content[i] = packet->people_content[i];
@@ -548,7 +548,7 @@ void handle_city_info(struct packet_city_info *packet)
     for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
       /* N.B.: packet->trade_value[i] == 0 is valid. */
       if (packet->trade[i] && !found[i]) {
-        struct city *ocity = find_city_by_id(packet->trade[i]);
+        city_t *ocity = find_city_by_id(packet->trade[i]);
         struct trade_route *ptr;
 
         if (!ocity) {
@@ -702,7 +702,7 @@ void handle_city_info(struct packet_city_info *packet)
 /**************************************************************************
   ...
 **************************************************************************/
-static void handle_city_packet_common(struct city *pcity, bool is_new,
+static void handle_city_packet_common(city_t *pcity, bool is_new,
                                       bool popup, bool investigate)
 {
   int i;
@@ -784,7 +784,7 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
 **************************************************************************/
 void handle_city_short_info(struct packet_city_short_info *packet)
 {
-  struct city *pcity;
+  city_t *pcity;
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
   bool update_descriptions = FALSE, name_changed = FALSE;
   struct tile *ptile;
@@ -848,7 +848,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   sz_strlcpy(pcity->name, packet->name);
   idex_register_city_name(pcity);
 
-  pcity->size = packet->size;
+  pcity->pop_size = packet->size;
   pcity->tile_trade = packet->tile_trade;
 
   /* We can't actually see the internals of the city, but the server tells
@@ -863,11 +863,11 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   pcity->people_unhappy[4] = 0;
   pcity->people_angry[4] = 0;
   if (packet->happy) {
-    pcity->people_happy[4] = pcity->size;
+    pcity->people_happy[4] = pcity->pop_size;
   } else if (packet->unhappy) {
-    pcity->people_unhappy[4] = pcity->size;
+    pcity->people_unhappy[4] = pcity->pop_size;
   } else {
-    pcity->people_content[4] = pcity->size;
+    pcity->people_content[4] = pcity->pop_size;
   }
 
   if (city_is_new) {
@@ -1102,7 +1102,7 @@ void handle_unit_info(struct packet_unit_info *packet)
 **************************************************************************/
 static bool handle_unit_packet_common(struct unit *packet_unit)
 {
-  struct city *homecity;
+  city_t *homecity;
   struct unit *punit;
   bool need_update_menus = FALSE;
   bool repaint_unit = FALSE;
@@ -1279,7 +1279,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
     if (!same_pos(punit->tile, packet_unit->tile)) {
       /*** Change position ***/
-      struct city *pcity = map_get_city(punit->tile);
+      city_t *pcity = map_get_city(punit->tile);
 
       old_tile = punit->tile;
       moved = TRUE;
@@ -1369,7 +1369,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       homecity_needs_update |= UPDATE_INFORMATION | UPDATE_SUPPORTED_UNITS;
     }
     if (repaint_unit) {
-      struct city *pcity = map_get_city(punit->tile);
+      city_t *pcity = map_get_city(punit->tile);
 
       homecity_needs_update |= UPDATE_SUPPORTED_UNITS;
       if (pcity) {
@@ -1396,7 +1396,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     /* This won't change punit; it enqueues the call for later handling. */
     agents_unit_changed(punit);
   } else {
-    struct city *pcity;
+    city_t *pcity;
 
     /*** Create new unit ***/
     punit = packet_unit;
@@ -1488,7 +1488,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 **************************************************************************/
 void handle_unit_short_info(struct packet_unit_short_info *packet)
 {
-  struct city *pcity;
+  city_t *pcity;
   struct unit *punit;
 
   if (packet->goes_out_of_sight) {
@@ -2388,7 +2388,7 @@ void handle_ruleset_control(struct packet_ruleset_control *packet)
   governments_alloc(packet->government_count);
   nations_alloc(packet->nation_count);
   city_styles_alloc(packet->style_count);
-  tilespec_alloc_city_tiles(packet->style_count+1);
+  tilespec_alloc_city_tiles(packet->style_count);
   tilespec_alloc_city_tiles(game.ruleset_control.style_count);
 }
 
@@ -2845,7 +2845,7 @@ void handle_ruleset_city(struct packet_ruleset_city *packet)
 #endif
   tilespec_setup_city_tiles(id);
   // client hack start, we want an empty city_style
-#if 1
+#if 0
   if ( id == 7 )
   {
     // add one, until server provide one
@@ -2898,7 +2898,7 @@ void handle_unit_bribe_info(int unit_id, int cost)
 **************************************************************************/
 void handle_city_incite_info(int city_id, int cost)
 {
-  struct city *pcity = find_city_by_id(city_id);
+  city_t *pcity = find_city_by_id(city_id);
 
   if (pcity) {
     if (get_player_ptr()
@@ -2956,7 +2956,7 @@ void handle_city_sabotage_list(int diplomat_id, int city_id,
   }
 
   struct unit *punit = player_find_unit_by_id(get_player_ptr(), diplomat_id);
-  struct city *pcity = find_city_by_id(city_id);
+  city_t *pcity = find_city_by_id(city_id);
 
   if (punit && pcity) {
     impr_type_iterate(i) {
@@ -3252,7 +3252,7 @@ void handle_vote_resolve(int vote_no, bool passed)
 **************************************************************************/
 void handle_city_manager_param(struct packet_city_manager_param *packet)
 {
-  struct city *pcity = find_city_by_id(packet->id);
+  city_t *pcity = find_city_by_id(packet->id);
   struct cm_parameter parameter;
   int i;
 
@@ -3283,7 +3283,7 @@ void handle_city_manager_param(struct packet_city_manager_param *packet)
 **************************************************************************/
 void handle_city_no_manager_param(int city_id)
 {
-  struct city *pcity = find_city_by_id(city_id);
+  city_t *pcity = find_city_by_id(city_id);
 
   if (!pcity) {
     return;

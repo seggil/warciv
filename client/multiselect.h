@@ -295,9 +295,9 @@ void airlift_queue_show(int aq);
 int airlift_queue_size(int aq);
 
 void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi);
-void add_city_to_specific_auto_airlift_queue(int aq, struct city *pcity);
+void add_city_to_specific_auto_airlift_queue(int aq, city_t *pcity);
 void request_auto_airlift_source_selection_with_airport(void);
-void do_airlift_for(int aq, struct city *pcity);
+void do_airlift_for(int aq, city_t *pcity);
 void do_airlift(struct tile *ptile);
 
 #endif /* WC_CLIENT_MULTISELECT_H */

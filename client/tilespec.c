@@ -1875,7 +1875,7 @@ void tilespec_setup_nation_flag(int id)
 /**********************************************************************
   ...
 ***********************************************************************/
-static struct Sprite *get_city_nation_flag_sprite(struct city *pcity)
+static struct Sprite *get_city_nation_flag_sprite(city_t *pcity)
 {
   return get_nation_by_plr(city_owner(pcity))->flag_sprite;
 }
@@ -1891,14 +1891,14 @@ static struct Sprite *get_unit_nation_flag_sprite(struct unit *punit)
 /**************************************************************************
 Return the sprite needed to draw the city
 **************************************************************************/
-static struct Sprite *get_city_sprite(struct city *pcity)
+static struct Sprite *get_city_sprite(city_t *pcity)
 {
   int size, style;
 
   style = get_city_style(pcity);    /* get style and match the best tile */
                                     /* based on city size                */
   for( size=0; size < city_styles[style].tiles_num; size++)
-    if( pcity->size < city_styles[style].tresh[size])
+    if( pcity->pop_size < city_styles[style].tresh[size])
       break;
 
   if (is_isometric) {
@@ -1915,7 +1915,7 @@ static struct Sprite *get_city_sprite(struct city *pcity)
 Return the sprite needed to draw the city wall
 Not used for isometric view.
 **************************************************************************/
-static struct Sprite *get_city_wall_sprite(struct city *pcity)
+static struct Sprite *get_city_wall_sprite(city_t *pcity)
 {
   int style = get_city_style(pcity);
 
@@ -1925,7 +1925,7 @@ static struct Sprite *get_city_wall_sprite(struct city *pcity)
 /**************************************************************************
 Return the sprite needed to draw the occupied tile
 **************************************************************************/
-static struct Sprite *get_city_occupied_sprite(struct city *pcity)
+static struct Sprite *get_city_occupied_sprite(city_t *pcity)
 {
   int style = get_city_style(pcity);
 
@@ -2210,7 +2210,7 @@ static int fill_rail_corner_sprites(struct drawn_sprite *sprs,
 static int fill_road_rail_sprite_array(struct drawn_sprite *sprs,
                                        enum tile_special_type tspecial,
                                        enum tile_special_type *tspecial_near,
-                                       struct city *pcity)
+                                       city_t *pcity)
 {
   struct drawn_sprite *saved_sprs = sprs;
   bool road, road_near[8], rail, rail_near[8];
@@ -2415,7 +2415,7 @@ static int get_irrigation_index(enum tile_special_type *tspecial_near)
 static int fill_irrigation_sprite_array(struct drawn_sprite *sprs,
                                         enum tile_special_type tspecial,
                                         enum tile_special_type *tspecial_near,
-                                        struct city *pcity)
+                                        city_t *pcity)
 {
   struct drawn_sprite *saved_sprs = sprs;
 
@@ -2675,7 +2675,7 @@ static int fill_terrain_sprite_array(struct drawn_sprite *sprs,
   is done differently.
 ****************************************************************************/
 int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
-                      struct unit *punit, struct city *pcity,
+                      struct unit *punit, city_t *pcity,
                       bool citymode)
 {
   Terrain_type_id ttype, ttype_near[8];
@@ -2815,11 +2815,11 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
 
   /* City size.  Drawing this under fog makes it hard to read. */
   if (pcity && draw_cities) {
-    if (pcity->size >= 10) {
-      ADD_SPRITE(sprites.city.size_tens[pcity->size / 10], DRAW_FULL,
+    if (pcity->pop_size >= 10) {
+      ADD_SPRITE(sprites.city.size_tens[pcity->pop_size / 10], DRAW_FULL,
                  FALSE, 0, 0);
     }
-    ADD_SPRITE(sprites.city.size[pcity->size % 10], DRAW_FULL,
+    ADD_SPRITE(sprites.city.size[pcity->pop_size % 10], DRAW_FULL,
                FALSE, 0, 0);
   }
 
@@ -3011,7 +3011,7 @@ static void classic_player_colors_init(void)
 static enum color_std classic_overview_tile_color(struct tile *ptile)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
   struct player *pplayer, *me = get_player_ptr();
 
   if (!ptile || tile_get_known(ptile) == TILE_UNKNOWN) {
@@ -3117,7 +3117,7 @@ static void team_player_colors_init(void)
 static enum color_std team_overview_tile_color(struct tile *ptile)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
   struct player *pplayer, *me;
   bool is_fogged;
 
@@ -3344,7 +3344,7 @@ void tilespec_free_tiles(void)
 **************************************************************************/
 struct Sprite *get_citizen_sprite(struct citizen_type type,
                                   int citizen_index,
-                                  const struct city *pcity)
+                                  const city_t *pcity)
 {
   struct citizen_graphic *graphic;
 

@@ -212,7 +212,7 @@ static const char *get_player_nation_name(struct player *pplayer)
 const char *popup_info_text(struct tile *ptile)
 {
   const char *activity_text;
-  struct city *pcity = ptile->city;
+  city_t *pcity = ptile->city;
   struct unit *punit = find_visible_unit(ptile);
   struct unit *pfocus_unit = get_unit_in_focus();
   const char *diplo_nation_plural_adjectives[DS_LAST] =
@@ -318,7 +318,7 @@ const char *popup_info_text(struct tile *ptile)
     }
 
     if (pfocus_unit) {
-      struct city *hcity = find_city_by_id(pfocus_unit->homecity);
+      city_t *hcity = find_city_by_id(pfocus_unit->homecity);
 
       if (unit_flag(pfocus_unit, F_TRADE_ROUTE)
           && can_cities_trade(hcity, pcity)
@@ -343,7 +343,7 @@ const char *popup_info_text(struct tile *ptile)
     char vet[1024] = "";
 
     if (client_is_global_observer()) {
-      struct city *pcity;
+      city_t *pcity;
       char tmp[64] = {0};
 
       pcity = find_city_by_id(punit->homecity);
@@ -356,7 +356,7 @@ const char *popup_info_text(struct tile *ptile)
                get_proper_username(owner),
                get_player_nation_name(owner), tmp);
     } else if (owner == get_player_ptr()) {
-      struct city *pcity;
+      city_t *pcity;
       char tmp[64] = {0};
 
       pcity = find_city_by_id(punit->homecity);
@@ -478,7 +478,7 @@ const char *concat_tile_activity_text(struct tile *ptile)
 /****************************************************************************
   Returns the text describing the city and its distance.
 ****************************************************************************/
-const char *get_nearest_city_text(struct city *pcity, int sq_dist)
+const char *get_nearest_city_text(city_t *pcity, int sq_dist)
 {
   INIT;
 
@@ -501,9 +501,9 @@ const char *get_nearest_city_text(struct city *pcity, int sq_dist)
 const char *unit_description(struct unit *punit)
 {
   int pcity_near_dist;
-  struct city *pcity =
+  city_t *pcity =
       player_find_city_by_id(get_player_ptr(), punit->homecity);
-  struct city *pcity_near = get_nearest_city(punit, &pcity_near_dist);
+  city_t *pcity_near = get_nearest_city(punit, &pcity_near_dist);
   struct unit_type *ptype = unit_type(punit);
   INIT;
 
@@ -625,7 +625,7 @@ const char *get_unit_info_label_text2(struct unit *punit)
   /* This text should always have the same number of lines.  Otherwise the
    * GUI widgets may be confused and try to resize themselves. */
   if (punit) {
-    struct city *pcity =
+    city_t *pcity =
         player_find_city_by_id(get_player_ptr(), punit->homecity);
     int infrastructure = get_tile_infrastructure_set(punit->tile);
 
@@ -864,7 +864,7 @@ const char *get_report_title(const char *report_name)
 /****************************************************************************
   Get the text describing buildings that affect happiness.
 ****************************************************************************/
-const char *get_happiness_buildings(const struct city *pcity)
+const char *get_happiness_buildings(const city_t *pcity)
 {
   int faces = 0;
   struct effect_source_vector sources;
@@ -889,7 +889,7 @@ const char *get_happiness_buildings(const struct city *pcity)
 /****************************************************************************
   Get the text describing wonders that affect happiness.
 ****************************************************************************/
-const char *get_happiness_wonders(const struct city *pcity)
+const char *get_happiness_wonders(const city_t *pcity)
 {
   int faces = 0;
   struct effect_source_vector sources;

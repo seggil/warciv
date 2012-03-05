@@ -65,7 +65,7 @@ static void redraw_viewrect(struct canvas *dest);
 static void redraw_viewrect_small(struct canvas *dest);
 static void dirty_overview(void);
 
-static void draw_traderoutes_for_city(struct city *src_pcity);
+static void draw_traderoutes_for_city(struct city_s *src_pcity);
 
 struct line {
   int x, y;
@@ -88,7 +88,7 @@ Returns the color the grid should have between tile (x1,y1) and
 enum color_std get_grid_color(struct tile *tile1, enum direction8 dir)
 {
   enum city_tile_type city_tile_type1, city_tile_type2;
-  struct city *dummy_pcity;
+  struct city_s *dummy_pcity;
   bool pos1_is_in_city_radius;
   bool pos2_is_in_city_radius;
   struct tile *tile2;
@@ -946,7 +946,7 @@ void put_unit(struct unit *punit,
   Draw the given city onto the canvas store at the given location.  The
   area of drawing is UNIT_TILE_HEIGHT x UNIT_TILE_WIDTH.
 **************************************************************************/
-void put_city(struct city *pcity,
+void put_city(struct city_s *pcity,
               struct canvas *pcanvas, int canvas_x, int canvas_y)
 {
   struct drawn_sprite drawn_sprites[40];
@@ -981,7 +981,7 @@ void put_terrain(struct tile *ptile,
   (one sprite drawn N times on top of itself), but we just use separate
   sprites (limiting the number of combinations).
 ****************************************************************************/
-void put_city_tile_output(struct city *pcity, int city_x, int city_y,
+void put_city_tile_output(struct city_s *pcity, int city_x, int city_y,
                           struct canvas *pcanvas,
                           int canvas_x, int canvas_y)
 {
@@ -1066,7 +1066,7 @@ static int color_index = 0;
   citymap as shown on the mapview.  These colors are listed in the
   city_colors array; above.
 ****************************************************************************/
-void toggle_city_color(struct city *pcity)
+void toggle_city_color(struct city_s *pcity)
 {
   int canvas_x, canvas_y;
   int width = get_citydlg_canvas_width();
@@ -1817,7 +1817,7 @@ static int max_desc_width = 0, max_desc_height = 0;
 /**************************************************************************
   Update the city description for the given city.
 **************************************************************************/
-void update_city_description(struct city *pcity)
+void update_city_description(struct city_s *pcity)
 {
   int canvas_x, canvas_y;
 
@@ -1865,7 +1865,7 @@ void show_city_descriptions(int canvas_x, int canvas_y,
                    width + dx, height + dy - NORMAL_TILE_HEIGHT,
                    ptile) {
     int canvas_x, canvas_y;
-    struct city *pcity = ptile->city;
+    struct city_s *pcity = ptile->city;
 
     if (pcity) {
       int width = 0, height = 0;
@@ -2144,10 +2144,10 @@ void move_unit_map_canvas(struct unit *punit,
         closest one (only if punit != NULL).
     g.  If nobody can work it, return NULL.
 **************************************************************************/
-struct city *find_city_or_settler_near_tile(struct tile *ptile,
+struct city_s *find_city_or_settler_near_tile(struct tile *ptile,
                                             struct unit **punit)
 {
-  struct city *pcity = ptile->worked, *closest_city;
+  struct city_s *pcity = ptile->worked, *closest_city;
   struct unit *closest_settler = NULL, *best_settler = NULL;
   bool global_observer = client_is_global_observer();
 
@@ -2229,7 +2229,7 @@ struct city *find_city_or_settler_near_tile(struct tile *ptile,
 /**************************************************************************
   Find the nearest/best city that owns the tile.
 **************************************************************************/
-struct city *find_city_near_tile(struct tile *ptile)
+struct city_s *find_city_near_tile(struct tile *ptile)
 {
   return find_city_or_settler_near_tile(ptile, NULL);
 }
@@ -2238,7 +2238,7 @@ struct city *find_city_near_tile(struct tile *ptile)
   Find the mapview city production text for the given city, and place it
   into the buffer.
 **************************************************************************/
-void get_city_mapview_production(struct city *pcity,
+void get_city_mapview_production(struct city_s *pcity,
                                  char *buffer, size_t buffer_len)
 {
   int turns = city_turns_to_build(pcity, pcity->currently_building,
@@ -2280,7 +2280,7 @@ void get_city_mapview_production(struct city *pcity,
   Fill the two buffers which information about the city which is shown
   below it. It takes draw_city_names and draw_city_growth into account.
 **************************************************************************/
-void get_city_mapview_name_and_growth(struct city *pcity,
+void get_city_mapview_name_and_growth(struct city_s *pcity,
                                       char *name_buffer,
                                       size_t name_buffer_len,
                                       char *growth_buffer,
@@ -2325,7 +2325,7 @@ void get_city_mapview_name_and_growth(struct city *pcity,
 /**************************************************************************
   Fill the buffer with information about the city's traderoutes.
 **************************************************************************/
-void get_city_mapview_traderoutes(struct city *pcity,
+void get_city_mapview_traderoutes(struct city_s *pcity,
                                   char *traderoutes_buffer,
                                   size_t traderoutes_buffer_len,
                                   enum color_std *traderoutes_color)
@@ -3029,7 +3029,7 @@ static int trade_route_to_canvas_pos(struct trade_route *ptr,
 static void draw_traderoute_line(struct trade_route *ptr,
                                  enum color_std color)
 {
-  struct city *pcity_src = ptr->pcity1, *pcity_dest = ptr->pcity2, *tmp;
+  struct city_s *pcity_src = ptr->pcity1, *pcity_dest = ptr->pcity2, *tmp;
   struct tile *ptile1, *ptile2;
   struct line lines[TR_LINE_NUM];
   int i, draw;
@@ -3083,7 +3083,7 @@ static void draw_traderoute_line(struct trade_route *ptr,
   function should only be called over all of the player's cities at
   once.
 **************************************************************************/
-static void draw_traderoutes_for_city(struct city *src_pcity)
+static void draw_traderoutes_for_city(struct city_s *src_pcity)
 {
   trade_route_list_iterate(src_pcity->trade_routes, ptr) {
     switch (ptr->status) {

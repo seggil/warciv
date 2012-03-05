@@ -127,7 +127,7 @@ void city_autonaming_remove_used_name(const char *city_name)
 /**************************************************************************
   ...
 **************************************************************************/
-void city_clear_worklist(struct city *pcity)
+void city_clear_worklist(city_t *pcity)
 {
   struct worklist empty_worklist;
   init_worklist(&empty_worklist);
@@ -160,7 +160,7 @@ void clear_worklists_in_selected_cities(void)
 /**************************************************************************
   Advance the worlist while the city can't build
 **************************************************************************/
-void city_worklist_check(struct city *pcity, struct worklist *pwl)
+void city_worklist_check(city_t *pcity, struct worklist *pwl)
 {
   while (pwl->wlefs[0] != WEF_END
          && (pwl->wlefs[0] == WEF_UNIT
@@ -184,7 +184,7 @@ void client_remove_player(int plrno)
 **************************************************************************/
 void client_remove_unit(struct unit *punit)
 {
-  struct city *pcity;
+  city_t *pcity;
   struct tile *ptile = punit->tile;
   int hc = punit->homecity;
   struct unit *ufocus = get_unit_in_focus();
@@ -249,7 +249,7 @@ void client_remove_unit(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-void client_remove_city(struct city *pcity)
+void client_remove_city(city_t *pcity)
 {
   bool effect_update;
   struct tile *ptile = pcity->tile;
@@ -364,7 +364,7 @@ Copy a string that describes the given clause into the return buffer.
 void client_diplomacy_clause_string(char *buf, int bufsiz,
                                     struct Clause *pclause)
 {
-  struct city *pcity;
+  city_t *pcity;
 
   switch (pclause->type) {
   case CLAUSE_ADVANCE:
@@ -430,7 +430,7 @@ void client_diplomacy_clause_string(char *buf, int bufsiz,
 char *get_tile_info(struct tile *ptile)
 {
   static char buf[256];
-  struct city *pcity;
+  city_t *pcity;
 
   if (!ptile) {
     my_snprintf(buf, sizeof(buf), _("(unknown tile)"));
@@ -493,7 +493,7 @@ intro gfx.
 void center_on_something(void)
 {
   struct player *pplayer;
-  struct city *pcity;
+  city_t *pcity;
   struct unit *punit;
 
   if (!can_client_change_view()) {
@@ -550,7 +550,7 @@ cid cid_encode(bool is_unit, int id)
 /**************************************************************************
 ...
 **************************************************************************/
-cid cid_encode_from_city(struct city * pcity)
+cid cid_encode_from_city(city_t * pcity)
 {
   return cid_encode(pcity->is_building_unit, pcity->currently_building);
 }
@@ -635,7 +635,7 @@ int wid_id(wid wid)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_can_build_impr_or_unit(struct city * pcity, cid cid)
+bool city_can_build_impr_or_unit(city_t * pcity, cid cid)
 {
   if (cid_is_unit(cid)) {
     return can_build_unit(pcity, cid_id(cid));
@@ -647,7 +647,7 @@ bool city_can_build_impr_or_unit(struct city * pcity, cid cid)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_can_sell_impr(struct city * pcity, cid cid)
+bool city_can_sell_impr(city_t * pcity, cid cid)
 {
   int id;
   id = cid_id(cid);
@@ -663,7 +663,7 @@ bool city_can_sell_impr(struct city * pcity, cid cid)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_unit_supported(struct city * pcity, cid cid)
+bool city_unit_supported(city_t * pcity, cid cid)
 {
   if (cid_is_unit(cid)) {
     int unit_type = cid_id(cid);
@@ -680,7 +680,7 @@ bool city_unit_supported(struct city * pcity, cid cid)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_unit_present(struct city * pcity, cid cid)
+bool city_unit_present(city_t * pcity, cid cid)
 {
   if (cid_is_unit(cid)) {
     int unit_type = cid_id(cid);
@@ -697,7 +697,7 @@ bool city_unit_present(struct city * pcity, cid cid)
 /****************************************************************************
   A TestCityFunc to tell whether the item is a building and is present.
 ****************************************************************************/
-bool city_building_present(struct city * pcity, cid cid)
+bool city_building_present(city_t * pcity, cid cid)
 {
   if (!cid_is_unit(cid)) {
     int impr_type = cid_id(cid);
@@ -732,7 +732,7 @@ static int my_cmp(const void *p1, const void *p2)
  section 4: wonders
 **************************************************************************/
 void name_and_sort_items(int *pcids, int num_cids, struct item *items,
-                         bool show_cost, struct city *pcity)
+                         bool show_cost, city_t *pcity)
 {
   int i;
 
@@ -781,10 +781,10 @@ void name_and_sort_items(int *pcids, int num_cids, struct item *items,
 /**************************************************************************
 ...
 **************************************************************************/
-int collect_cids1(cid * dest_cids, struct city **selected_cities,
+int collect_cids1(cid * dest_cids, city_t **selected_cities,
                   int num_selected_cities, bool append_units,
                   bool append_wonders, bool change_prod,
-                  bool(*test_func) (struct city *, int))
+                  bool(*test_func) (city_t *, int))
 {
   cid first = append_units ? B_LAST : 0;
   cid last = (append_units
@@ -876,7 +876,7 @@ int collect_cids3(cid * dest_cids)
  Collect the cids of all targets which can be build by this city or
  in general.
 **************************************************************************/
-int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
+int collect_cids4(cid * dest_cids, city_t *pcity, bool advanced_tech)
 {
   struct player *pplayer = get_player_ptr();
   int cids_used = 0;
@@ -966,7 +966,7 @@ int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
 /**************************************************************************
  Collect the cids of all improvements which are built in the given city.
 **************************************************************************/
-int collect_cids5(cid * dest_cids, struct city *pcity)
+int collect_cids5(cid * dest_cids, city_t *pcity)
 {
   int cids_used = 0;
 
@@ -983,7 +983,7 @@ int collect_cids5(cid * dest_cids, struct city *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-int num_supported_units_in_city(struct city *pcity)
+int num_supported_units_in_city(city_t *pcity)
 {
   struct unit_list *plist;
 
@@ -999,7 +999,7 @@ int num_supported_units_in_city(struct city *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-int num_present_units_in_city(struct city *pcity)
+int num_present_units_in_city(city_t *pcity)
 {
   struct unit_list *plist;
 
@@ -1324,7 +1324,7 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
   ...
 **************************************************************************/
 static int an_generate_city_name(char *buf, int buflen,
-                                 struct city *pcity, char *err, int errlen)
+                                 city_t *pcity, char *err, int errlen)
 {
   struct autoname_data *ad;
   int num_formats, len = -1, start_format_index;
@@ -1512,9 +1512,9 @@ void normalize_names_in_selected_cities(void)
   distance Parameter sq_dist may be NULL. Returns NULL only if no city is
   known. Favors punit owner's cities over other cities if equally distant.
 **************************************************************************/
-struct city *get_nearest_city(struct unit *punit, int *sq_dist)
+city_t *get_nearest_city(struct unit *punit, int *sq_dist)
 {
-  struct city *pcity_near;
+  city_t *pcity_near;
   int pcity_near_dist;
 
   if ((pcity_near = map_get_city(punit->tile))) {
@@ -1547,7 +1547,7 @@ struct city *get_nearest_city(struct unit *punit, int *sq_dist)
   selected city. Checks for coinage and sufficient funds or request the
   purchase if everything is ok.
 **************************************************************************/
-void cityrep_buy(struct city *pcity)
+void cityrep_buy(city_t *pcity)
 {
   int value = city_buy_cost(pcity);
 
@@ -1725,7 +1725,7 @@ static struct tile *get_link_mark_tile(struct map_link *pml)
   case LINK_CITY_ID:
   case LINK_CITY_ID_AND_NAME:
     {
-      struct city *pcity = find_city_by_id(pml->id);
+      city_t *pcity = find_city_by_id(pml->id);
       return pcity ? pcity->tile : NULL;
     }
   case LINK_UNIT:

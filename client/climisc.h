@@ -32,7 +32,7 @@ enum tag_link_types {
 };
 
 void client_remove_player(int plrno);
-void client_remove_city(struct city *pcity);
+void client_remove_city(city_t *pcity);
 void client_remove_unit(struct unit *punit);
 
 void client_change_all(cid x, cid y);
@@ -58,7 +58,7 @@ void center_on_something(void);
  */
 
 cid cid_encode(bool is_unit, int id);
-cid cid_encode_from_city(struct city *pcity);
+cid cid_encode_from_city(city_t *pcity);
 void cid_decode(cid cid, bool *is_unit, int *id);
 bool cid_is_unit(cid cid);
 int cid_id(cid cid);
@@ -81,11 +81,11 @@ bool wid_is_unit(wid wid);
 bool wid_is_worklist(wid wid);
 int wid_id(wid wid);
 
-bool city_can_build_impr_or_unit(struct city *pcity, cid cid);
-bool city_unit_supported(struct city *pcity, cid cid);
-bool city_unit_present(struct city *pcity, cid cid);
-bool city_building_present(struct city *pcity, cid cid);
-bool city_can_sell_impr(struct city *pcity, cid cid);
+bool city_can_build_impr_or_unit(city_t *pcity, cid cid);
+bool city_unit_supported(city_t *pcity, cid cid);
+bool city_unit_present(city_t *pcity, cid cid);
+bool city_building_present(city_t *pcity, cid cid);
+bool city_can_sell_impr(city_t *pcity, cid cid);
 
 struct item {
   cid cid;
@@ -96,19 +96,19 @@ struct item {
 };
 
 void name_and_sort_items(int *pcids, int num_cids, struct item *items,
-                         bool show_cost, struct city *pcity);
-int collect_cids1(cid * dest_cids, struct city **selected_cities,
+                         bool show_cost, city_t *pcity);
+int collect_cids1(cid * dest_cids, city_t **selected_cities,
                  int num_selected_cities, bool append_units,
                  bool append_wonders, bool change_prod,
-                 bool (*test_func) (struct city *, int));
+                 bool (*test_func) (city_t *, int));
 int collect_cids2(cid * dest_cids);
 int collect_cids3(cid * dest_cids);
-int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech);
-int collect_cids5(cid * dest_cids, struct city *pcity);
+int collect_cids4(cid * dest_cids, city_t *pcity, bool advanced_tech);
+int collect_cids5(cid * dest_cids, city_t *pcity);
 
 /* the number of units in city */
-int num_present_units_in_city(struct city* pcity);
-int num_supported_units_in_city(struct city* pcity);
+int num_present_units_in_city(city_t* pcity);
+int num_supported_units_in_city(city_t* pcity);
 
 void handle_event(char *message, struct tile *ptile,
                   enum event_type event, int conn_id);
@@ -122,17 +122,17 @@ void reports_freeze_till(int request_id);
 void reports_thaw(void);
 void reports_force_thaw(void);
 
-struct city *get_nearest_city(struct unit *punit, int *sq_dist);
+city_t *get_nearest_city(struct unit *punit, int *sq_dist);
 
-void cityrep_buy(struct city *pcity);
+void cityrep_buy(city_t *pcity);
 void common_taxrates_callback(int i);
 
 int buy_production_in_selected_cities(void);
 void set_rally_point_for_selected_cities(struct tile *ptile);
 
-void city_clear_worklist(struct city *pcity);
+void city_clear_worklist(city_t *pcity);
 void clear_worklists_in_selected_cities(void);
-void city_worklist_check(struct city *pcity, struct worklist *pwl);
+void city_worklist_check(city_t *pcity, struct worklist *pwl);
 
 void city_autonaming_init(void);
 void city_autonaming_free(void);

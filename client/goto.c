@@ -1127,7 +1127,7 @@ bool is_drawn_line(struct tile *ptile, int dir)
 struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 {
   struct player *pplayer = get_player_ptr();
-  struct city *pcity = NULL;
+  city_t *pcity = NULL;
   struct pf_parameter parameter;
   struct path_finding_map *map;
   struct pf_path *path = NULL;
@@ -1195,7 +1195,7 @@ int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
 struct tile *find_nearest_city(struct unit *punit, bool allies)
 {
   struct player *pplayer = get_player_ptr();
-  struct city *pcity = map_get_city(punit->tile);
+  city_t *pcity = map_get_city(punit->tile);
   struct pf_parameter parameter;
   struct path_finding_map *map;
 
