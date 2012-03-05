@@ -162,7 +162,7 @@ static void find_response(struct gui_dialog *dlg, int response)
     selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(find_view));
 
     if (gtk_tree_selection_get_selected(selection, &model, &it)) {
-      struct city *pcity;
+      city_t *pcity;
 
       gtk_tree_model_get(model, &it, 1, &pcity, -1);
 
@@ -191,7 +191,7 @@ static void find_selection_callback(GtkTreeSelection *selection,
                                     GtkTreeModel *model)
 {
   GtkTreeIter it;
-  struct city *pcity;
+  city_t *pcity;
 
   if (!gtk_tree_selection_get_selected(selection, NULL, &it))
     return;

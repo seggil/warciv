@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <gtk/gtk.h>
 
+#include "city.h"
 #include "combat.h"
 #include "wc_intl.h"
 #include "game.h"
@@ -79,10 +80,8 @@ static void popupinfo_positioning_callback(GtkWidget *w, GtkAllocation *alloc,
   ptile = canvas_pos_to_tile(mousepos->x, mousepos->y);
   if (tile_to_canvas_pos(&x, &y, ptile)) {
     gint minx, miny, maxy;
-    //guint maxx;
 
     gdk_window_get_origin(map_canvas->window, &minx, &miny);
-    //maxx = minx + map_canvas->allocation.width;
     maxy = miny + map_canvas->allocation.height;
 
     if (x > mapview_canvas.width/2) {
@@ -247,7 +246,7 @@ gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
   static int press_waited = 0;
-  struct city *pcity = NULL;
+  city_t *pcity = NULL;
   struct tile *ptile = NULL;
 
   if (!can_client_change_view()) {

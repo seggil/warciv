@@ -32,7 +32,7 @@ GtkWidget *create_worklists_report(void);
 /* an individual worklist. */
 GtkWidget *create_worklist(void);
 void reset_worklist(GtkWidget *editor, struct worklist *pwl,
-                    struct city *pcity);
+                    city_t *pcity);
 void refresh_worklist(GtkWidget *editor);
 
 void add_worklist_dnd_target(GtkWidget *w);

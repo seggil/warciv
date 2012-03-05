@@ -18,8 +18,6 @@
 
 #include "../agents/cma_core.h"
 
-struct city;
-
 enum cma_refresh {
   REFRESH_ALL,
   DONT_REFRESH_SELECT,
@@ -27,7 +25,7 @@ enum cma_refresh {
 };
 
 struct cma_dialog {
-  struct city *pcity;
+  city_t *pcity;
   GtkWidget *shell;
   GtkWidget *name_shell;
   GtkWidget *preset_remove_shell;
@@ -47,8 +45,8 @@ struct cma_dialog {
   int id;                       /* needed to pass a preset_index */
 };
 
-struct cma_dialog *create_cma_dialog(struct city *pcity);
-void close_cma_dialog(struct city *pcity);
-void refresh_cma_dialog(struct city *pcity, enum cma_refresh refresh);
+struct cma_dialog *create_cma_dialog(city_t *pcity);
+void close_cma_dialog(city_t *pcity);
+void refresh_cma_dialog(city_t *pcity, enum cma_refresh refresh);
 
 #endif

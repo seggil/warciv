@@ -44,7 +44,7 @@
 enum { CITIES, LUXURIES, BUILDINGS, UNITS, WONDERS };
 
 struct happiness_dialog {
-  struct city *pcity;
+  city_t *pcity;
   GtkWidget *shell;
   GtkWidget *cityname_label;
   GtkWidget *hpixmaps[NUM_HAPPINESS_MODIFIERS];
@@ -62,8 +62,8 @@ struct happiness_dialog {
 
 static struct dialog_list *dialog_list = NULL;
 
-static struct happiness_dialog *get_happiness_dialog(struct city *pcity);
-static struct happiness_dialog *create_happiness_dialog(struct city
+static struct happiness_dialog *get_happiness_dialog(city_t *pcity);
+static struct happiness_dialog *create_happiness_dialog(city_t
                                                         *pcity);
 static void happiness_dialog_update_cities(struct happiness_dialog
                                            *pdialog);
@@ -79,7 +79,7 @@ static void happiness_dialog_update_wonders(struct happiness_dialog
 /****************************************************************
 ...
 *****************************************************************/
-static struct happiness_dialog *get_happiness_dialog(struct city *pcity)
+static struct happiness_dialog *get_happiness_dialog(city_t *pcity)
 {
   if (!dialog_list) {
     dialog_list = dialog_list_new();
@@ -97,7 +97,7 @@ static struct happiness_dialog *get_happiness_dialog(struct city *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-static struct happiness_dialog *create_happiness_dialog(struct city *pcity)
+static struct happiness_dialog *create_happiness_dialog(city_t *pcity)
 {
   int i;
   struct happiness_dialog *pdialog;
@@ -150,11 +150,11 @@ static struct happiness_dialog *create_happiness_dialog(struct city *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-static void refresh_pixcomm(GtkPixcomm *dst, struct city *pcity, int index)
+static void refresh_pixcomm(GtkPixcomm *dst, city_t *pcity, int index)
 {
   int i;
   struct citizen_type citizens[MAX_CITY_SIZE];
-  int num_citizens = pcity->size;
+  int num_citizens = pcity->pop_size;
   int offset = MIN(SMALL_TILE_WIDTH, PIXCOMM_WIDTH / num_citizens);
 
   get_city_citizen_types(pcity, index, citizens);
@@ -173,7 +173,7 @@ static void refresh_pixcomm(GtkPixcomm *dst, struct city *pcity, int index)
 /**************************************************************************
 ...
 **************************************************************************/
-void refresh_happiness_dialog(struct city *pcity)
+void refresh_happiness_dialog(city_t *pcity)
 {
   int i;
 
@@ -193,7 +193,7 @@ void refresh_happiness_dialog(struct city *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-void close_happiness_dialog(struct city *pcity)
+void close_happiness_dialog(city_t *pcity)
 {
   struct happiness_dialog *pdialog = get_happiness_dialog(pcity);
 
@@ -213,7 +213,7 @@ static void happiness_dialog_update_cities(struct happiness_dialog
   char buf[512], *bptr = buf;
   int nleft = sizeof(buf);
 
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
   struct player *pplayer = &game.players[pcity->owner];
   struct government *g = get_gov_pcity(pcity);
   int cities = city_list_size(pplayer->cities);
@@ -254,7 +254,7 @@ static void happiness_dialog_update_luxury(struct happiness_dialog
 {
   char buf[512], *bptr = buf;
   int nleft = sizeof(buf);
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
 
   my_snprintf(bptr, nleft, _("Luxury: %d total."),
               pcity->luxury_total);
@@ -279,7 +279,7 @@ static void happiness_dialog_update_units(struct happiness_dialog *pdialog)
 {
   char buf[512], *bptr = buf;
   int nleft = sizeof(buf);
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
   struct government *g = get_gov_pcity(pcity);
   int mlmax = g->martial_law_max;
   int uhcfac = g->unit_happy_cost_factor;
@@ -326,7 +326,7 @@ static void happiness_dialog_update_wonders(struct happiness_dialog
 /**************************************************************************
 ...
 **************************************************************************/
-GtkWidget *get_top_happiness_display(struct city *pcity)
+GtkWidget *get_top_happiness_display(city_t *pcity)
 {
   return create_happiness_dialog(pcity)->shell;
 }

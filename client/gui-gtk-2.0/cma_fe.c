@@ -53,7 +53,7 @@ static struct dialog_list *dialog_list = NULL;
 
 static int allow_refreshes = 1;
 
-static struct cma_dialog *get_cma_dialog(struct city *pcity);
+static struct cma_dialog *get_cma_dialog(city_t *pcity);
 
 static void update_cma_preset_list(struct cma_dialog *pdialog);
 
@@ -90,7 +90,7 @@ static void ensure_initialised_dialog_list(void)
 /**************************************************************************
  only called when the city dialog is closed.
 **************************************************************************/
-void close_cma_dialog(struct city *pcity)
+void close_cma_dialog(city_t *pcity)
 {
   struct cma_dialog *pdialog = get_cma_dialog(pcity);
 
@@ -113,7 +113,7 @@ static void cma_dialog_destroy_callback(GtkWidget *w, gpointer data)
 /****************************************************************
  return the cma_dialog for a given city.
 *****************************************************************/
-struct cma_dialog *get_cma_dialog(struct city *pcity)
+struct cma_dialog *get_cma_dialog(city_t *pcity)
 {
   ensure_initialised_dialog_list();
 
@@ -194,7 +194,7 @@ static void cell_data_func(GtkTreeViewColumn *col, GtkCellRenderer *cell,
 /**************************************************************************
  instantiates a new struct for each city_dialog window that is open.
 **************************************************************************/
-struct cma_dialog *create_cma_dialog(struct city *pcity)
+struct cma_dialog *create_cma_dialog(city_t *pcity)
 {
   struct cma_dialog *pdialog;
   struct cm_parameter param;
@@ -420,7 +420,7 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
 /**************************************************************************
  refreshes the cma dialog
 **************************************************************************/
-void refresh_cma_dialog(struct city *pcity, enum cma_refresh refresh)
+void refresh_cma_dialog(city_t *pcity, enum cma_refresh refresh)
 {
   struct cm_result result;
   struct cm_parameter param;

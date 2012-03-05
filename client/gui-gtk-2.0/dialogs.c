@@ -190,7 +190,7 @@ void popup_notify_dialog(const char *caption, const char *headline,
 *****************************************************************/
 static void notify_goto_response(GtkWidget *w, gint response)
 {
-  struct city *pcity = NULL;
+  city_t *pcity = NULL;
   struct tile *ptile = g_object_get_data(G_OBJECT(w), "tile");
 
   switch (response) {
@@ -251,7 +251,7 @@ void popup_notify_goto_dialog(const char *headline, const char *lines,
     gtk_widget_set_sensitive(goto_command, FALSE);
     gtk_widget_set_sensitive(popcity_command, FALSE);
   } else {
-    struct city *pcity;
+    city_t *pcity;
 
     pcity = map_get_city(ptile);
     gtk_widget_set_sensitive(popcity_command,
@@ -581,7 +581,7 @@ static void spy_improvements_callback(GtkTreeSelection *select, gpointer data)
 ...
 *****************************************************************/
 static void create_improvements_list(struct player *pplayer,
-                                     struct city *pcity)
+                                     city_t *pcity)
 {
   GtkWidget *sw, *label, *vbox, *view;
   GtkListStore *store;
@@ -674,7 +674,7 @@ static void create_improvements_list(struct player *pplayer,
 *****************************************************************/
 static void spy_steal_popup(GtkWidget *w, gpointer data)
 {
-  struct city *pvcity = find_city_by_id(diplomat_target_id);
+  city_t *pvcity = find_city_by_id(diplomat_target_id);
   struct player *pvictim = NULL;
 
   if(pvcity)
@@ -709,7 +709,7 @@ static void spy_request_sabotage_list(GtkWidget *w, gpointer data)
  Pops-up the Spy sabotage dialog, upon return of list of
  available improvements requested by the above function.
 *****************************************************************/
-void popup_sabotage_dialog(struct city *pcity)
+void popup_sabotage_dialog(city_t *pcity)
 {
   if(!spy_sabotage_shell){
     create_improvements_list(get_player_ptr(), pcity);
@@ -743,7 +743,7 @@ static void incite_response(GtkWidget *w, gint response)
 /****************************************************************
 Popup the yes/no dialog for inciting, since we know the cost now
 *****************************************************************/
-void popup_incite_dialog(struct city *pcity, int cost)
+void popup_incite_dialog(city_t *pcity, int cost)
 {
   int gold = get_player_ptr()->economic.gold;
   GtkWidget *shell;
@@ -785,7 +785,7 @@ void popup_incite_dialog(struct city *pcity, int cost)
 static void diplomat_keep_moving_callback(GtkWidget *w, gpointer data)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
 
   if( (punit=find_unit_by_id(diplomat_id))
       && (pcity=find_city_by_id(diplomat_target_id))
@@ -819,7 +819,7 @@ static void diplomat_cancel_callback(GtkWidget *w, gpointer data)
 *****************************************************************/
 void popup_diplomat_dialog(struct unit *punit, struct tile *dest_tile)
 {
-  struct city *pcity;
+  city_t *pcity;
   struct unit *ptunit;
   GtkWidget *shl;
   char buf[128];
@@ -969,7 +969,7 @@ static void caravan_destroy_callback(GtkWidget *w, gpointer data)
 ...
 *****************************************************************/
 void popup_caravan_dialog(struct unit *punit,
-                          struct city *phomecity, struct city *pdestcity)
+                          city_t *phomecity, city_t *pdestcity)
 {
   char buf[128];
   bool can_establish, can_trade;
@@ -1244,11 +1244,9 @@ GtkWidget *popup_message_dialog(GtkWindow *parent, const gchar *dialogname,
   GtkWidget *dshell;
   va_list args;
   gchar *name;
-  //int i;
 
   dshell = message_dialog_start(parent, dialogname, text);
 
-  //i = 0;
   va_start(args, text);
 
   while ((name = va_arg(args, gchar *))) {
@@ -1304,7 +1302,7 @@ static void unit_select_append(struct unit *punit, GtkTreeIter *it,
 {
   GdkPixbuf *pix;
   struct unit_type *ptype = unit_type(punit);
-  struct city *pcity = player_find_city_by_id(get_player_ptr(), punit->homecity);
+  city_t *pcity = player_find_city_by_id(get_player_ptr(), punit->homecity);
 
   pix = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8,
       UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
@@ -1492,7 +1490,6 @@ void popup_unit_select_dialog(struct tile *ptile)
     GtkTreeStore *store;
     GtkWidget *shell, *view, *sw, *hbox;
     GtkWidget *ready_cmd, *sentry_cmd;
-    //GtkWidget *close_cmd;
     GtkWidget *select_cmd, *add_to_focus_cmd;
 
     static const char *titles[NUM_UNIT_SELECT_COLUMNS] = {
@@ -1609,9 +1606,8 @@ void popup_unit_select_dialog(struct tile *ptile)
       GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
       add_to_focus_cmd, TRUE);
 
-    //close_cmd =
     gtk_dialog_add_button(GTK_DIALOG(shell),
-      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+                          GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 
     gtk_dialog_set_default_response(GTK_DIALOG(shell), GTK_RESPONSE_CLOSE);
 

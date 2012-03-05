@@ -24,7 +24,6 @@
 #include "graphics.h"
 
 struct unit;
-struct city;
 
 GdkPixmap *get_thumb_pixmap(int onoff);
 

@@ -347,7 +347,7 @@ void update_intel_dialog(struct player *p)
     /* table labels. */
     for (i = 0; i < ARRAY_SIZE(pdialog->table_labels); i++) {
       if (pdialog->table_labels[i]) {
-        struct city *pcity;
+        city_t *pcity;
 
         switch (i) {
           case LABEL_RULER:

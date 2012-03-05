@@ -421,7 +421,7 @@ static void popup_worklists_report(void)
 *****************************************************************/
 struct worklist_data {
   struct worklist *pwl;
-  struct city *pcity;
+  city_t *pcity;
 
   GtkWidget *editor;
 
@@ -1100,7 +1100,7 @@ static void cell_render_func(GtkTreeViewColumn *col, GtkCellRenderer *rend,
   }
 
   if (!on_icon_column) {
-    struct city **pcity;
+    city_t **pcity;
     struct player *plr;
     gint column;
     char *row[4];
@@ -1108,7 +1108,7 @@ static void cell_render_func(GtkTreeViewColumn *col, GtkCellRenderer *rend,
     int   i;
     gboolean useless;
 
-    pcity = (struct city **) data;
+    pcity = (city_t **) data;
 
     for (i = 0; i < ARRAY_SIZE(row); i++) {
       row[i] = buf[i];
@@ -1132,7 +1132,7 @@ static void cell_render_func(GtkTreeViewColumn *col, GtkCellRenderer *rend,
 /****************************************************************
 ...
 *****************************************************************/
-static void populate_view(GtkTreeView *view, struct city **ppcity,
+static void populate_view(GtkTreeView *view, city_t **ppcity,
                           GtkTreeViewColumn **pcol)
 {
   static const char *titles[] =
@@ -1418,7 +1418,7 @@ GtkWidget *create_worklist(void)
 /****************************************************************
 ...
 *****************************************************************/
-void reset_worklist(GtkWidget *editor, struct worklist *pwl, struct city *pcity)
+void reset_worklist(GtkWidget *editor, struct worklist *pwl, city_t *pcity)
 {
   struct worklist_data *ptr;
 

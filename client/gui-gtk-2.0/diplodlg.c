@@ -293,10 +293,10 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
   *****************************************************************/
   {
     int i = 0, j = 0, n = city_list_size(plr0->cities);
-    struct city **city_list_ptrs;
+    city_t **city_list_ptrs;
 
     if (n > 0) {
-      city_list_ptrs = wc_malloc(sizeof(struct city *) * n);
+      city_list_ptrs = wc_malloc(sizeof(city_t *) * n);
     } else {
       city_list_ptrs = NULL;
     }
@@ -308,7 +308,7 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
       }
     } city_list_iterate_end;
 
-    qsort(city_list_ptrs, i, sizeof(struct city *), city_name_compare);
+    qsort(city_list_ptrs, i, sizeof(city_t *), city_name_compare);
 
     menu = gtk_menu_new();
 

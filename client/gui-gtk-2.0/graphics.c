@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -560,17 +560,31 @@ void sprite_get_bounding_box(SPRITE * sprite, int *start_x,
   GdkImage *mask_image;
   int i, j;
 
+  //printf("has_mask=%d, mask=%p;", sprite->has_mask, sprite->mask);
   if (!sprite->has_mask || !sprite->mask) {
+    *start_x = 0;
+    *start_y = 0;
+    *end_x = sprite->width - 1;
+    *end_y = sprite->height - 1;
+    //printf("\n");
+    return;
+  }
+
+  //if (0 >= sprite->width || 0 >= sprite->height) {
+  //printf("gdk_drawable_get_image %u %u; ", sprite->width, sprite->height);
+  //}
+  if ( GDK_IS_DRAWABLE(sprite->mask) ) {
+    mask_image =
+      gdk_drawable_get_image(sprite->mask, 0, 0, sprite->width, sprite->height);
+  } else {
+    /* something wrong with setting mask field */
+    printf("sprite_get_bounding_box sprite->mask is not drawable\n" );
     *start_x = 0;
     *start_y = 0;
     *end_x = sprite->width - 1;
     *end_y = sprite->height - 1;
     return;
   }
-
-  mask_image =
-    gdk_drawable_get_image(sprite->mask, 0, 0, sprite->width, sprite->height);
-
 
   /* parses mask image for the first column that contains a visible pixel */
   *start_x = -1;
@@ -585,37 +599,42 @@ void sprite_get_bounding_box(SPRITE * sprite, int *start_x,
 
   /* parses mask image for the last column that contains a visible pixel */
   *end_x = -1;
-  for (i = sprite->width - 1; i >= *start_x && *end_x == -1; i--) {
-    for (j = 0; j < sprite->height; j++) {
-      if (gdk_image_get_pixel(mask_image, i, j) != 0) {
-        *end_x = i;
-        break;
+  if ( *start_x != -1 ) {  // the mask is all transparent
+    for (i = sprite->width - 1; i >= *start_x && *end_x == -1; i--) {
+      for (j = 0; j < sprite->height; j++) {
+        if (gdk_image_get_pixel(mask_image, i, j) != 0) {
+          *end_x = i;
+          break;
+        }
+      }
+    }
+
+    /* parses mask image for the first row that contains a visible pixel */
+    *start_y = -1;
+    for (i = 0; i < sprite->height && *start_y == -1; i++) {
+      for (j = *start_x; j <= *end_x; j++) {
+        if (gdk_image_get_pixel(mask_image, j, i) != 0) {
+          *start_y = i;
+          break;
+        }
+      }
+    }
+
+    /* parses mask image for the last row that contains a visible pixel */
+    *end_y = -1;
+    for (i = sprite->height - 1; i >= *end_y && *end_y == -1; i--) {
+      for (j = *start_x; j <= *end_x; j++) {
+        if (gdk_image_get_pixel(mask_image, j, i) != 0) {
+          *end_y = i;
+          break;
+        }
       }
     }
   }
-
-  /* parses mask image for the first row that contains a visible pixel */
-  *start_y = -1;
-  for (i = 0; i < sprite->height && *start_y == -1; i++) {
-    for (j = *start_x; j <= *end_x; j++) {
-      if (gdk_image_get_pixel(mask_image, j, i) != 0) {
-        *start_y = i;
-        break;
-      }
-    }
+  else {
+    *start_y = -1;
+    *end_y = -1;
   }
-
-  /* parses mask image for the last row that contains a visible pixel */
-  *end_y = -1;
-  for (i = sprite->height - 1; i >= *end_y && *end_y == -1; i--) {
-    for (j = *start_x; j <= *end_x; j++) {
-      if (gdk_image_get_pixel(mask_image, j, i) != 0) {
-        *end_y = i;
-        break;
-      }
-    }
-  }
-
   g_object_unref(mask_image);
 }
 
@@ -627,8 +646,12 @@ SPRITE *crop_blankspace(SPRITE *s)
   int x1, y1, x2, y2;
 
   sprite_get_bounding_box(s, &x1, &y1, &x2, &y2);
-
-  return crop_sprite(s, x1, y1, x2 - x1 + 1, y2 - y1 + 1, NULL, -1, -1);
+  if ( x1 == -1 || y1 == -1) {
+    return s;
+  }
+  else {
+    return crop_sprite(s, x1, y1, x2 - x1 + 1, y2 - y1 + 1, NULL, -1, -1);
+  }
 }
 
 /*********************************************************************
@@ -663,11 +686,13 @@ GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src)
       for (x = 0; x < w; x++) {
         guchar *pixel = pixels + y * rowstride + x * 4 + 3;
 
+        //printf("gdk_image_get_pixel in gdk_pixbuf_new_from_sprite; ");
         if (gdk_image_get_pixel(img, x, y)) {
           *pixel = 255;
         } else {
           *pixel = 0;
         }
+        //printf("end\n");
       }
     }
     g_object_unref(img);
@@ -693,4 +718,3 @@ GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite)
   }
   return sprite->pixbuf;
 }
-

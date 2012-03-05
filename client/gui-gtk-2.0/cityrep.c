@@ -213,7 +213,7 @@ void popdown_city_report_dialog(void)
 /****************************************************************
 ...
 *****************************************************************/
-typedef bool (*TestCityFunc)(struct city *, gint);
+typedef bool (*TestCityFunc)(city_t *, gint);
 
 /****************************************************************
 ...
@@ -249,7 +249,7 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
     ITree it;
     int num_selected = 0;
     GtkTreeModel *model = GTK_TREE_MODEL(city_model);
-    struct city **data;
+    city_t **data;
 
     selected = g_ptr_array_sized_new(size);
 
@@ -264,7 +264,7 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
       num_selected++;
     }
 
-    data = (struct city **)g_ptr_array_free(selected, FALSE);
+    data = (city_t **)g_ptr_array_free(selected, FALSE);
     cids_used = collect_cids1(cids, data, num_selected, append_units,
                               append_wonders, TRUE, test_func);
     g_free(data);
@@ -364,7 +364,7 @@ static void worklist_last_impr_or_unit_iterate(GtkTreeModel *model,
 {
   cid cid = GPOINTER_TO_INT(data);
   gint id;
-  struct city *pcity;
+  city_t *pcity;
 
   gtk_tree_model_get(model, it, 1, &id, -1);
   pcity = find_city_by_id(id);
@@ -388,7 +388,7 @@ static void worklist_first_impr_or_unit_iterate(GtkTreeModel *model,
 {
   cid cid = GPOINTER_TO_INT(data);
   gint id;
-  struct city *pcity;
+  city_t *pcity;
 
   gtk_tree_model_get(model, it, 1, &id, -1);
   pcity = find_city_by_id(id);
@@ -408,7 +408,7 @@ static void worklist_next_impr_or_unit_iterate(GtkTreeModel *model,
                                                GtkTreeIter *it,
                                                gpointer data)
 {
-  struct city *pcity;
+  city_t *pcity;
   gint id;
   cid cid = GPOINTER_TO_INT(data);
 
@@ -427,7 +427,7 @@ static void sell_impr_iterate(GtkTreeModel *model,
                               GtkTreeIter *it,
                               gpointer data)
 {
-  struct city *pcity;
+  city_t *pcity;
   gint id;
   int impr_id;
   struct sell_data *sd = (struct sell_data *)data;
@@ -461,7 +461,7 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
 
     gtk_tree_selection_unselect_all(city_selection);
     for (itree_begin(model, &it); !itree_end(&it); itree_next(&it)) {
-      struct city *pcity;
+      city_t *pcity;
       gpointer res;
 
       itree_get(&it, 0, &res, -1);
@@ -540,7 +540,7 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
 static void cma_iterate(GtkTreeModel *model, GtkTreePath *path,
                         GtkTreeIter *it, gpointer data)
 {
-  struct city *pcity;
+  city_t *pcity;
   int idx = GPOINTER_TO_INT(data);
   gpointer res;
 
@@ -573,7 +573,7 @@ static void select_cma_callback(GtkWidget * w, gpointer data)
 
     gtk_tree_selection_unselect_all(city_selection);
     for (itree_begin(model, &it); !itree_end(&it); itree_next(&it)) {
-      struct city *pcity;
+      city_t *pcity;
       int controlled;
       bool select;
       gpointer res;
@@ -845,11 +845,12 @@ static GtkWidget *create_city_report_menubar(void)
 *****************************************************************/
 static void cityrep_cell_data_func(GtkTreeViewColumn *col,
                                    GtkCellRenderer *cell,
-                                   GtkTreeModel *model, GtkTreeIter *it,
+                                   GtkTreeModel *model,
+                                   GtkTreeIter *it,
                                    gpointer data)
 {
   struct city_report_spec *sp;
-  struct city             *pcity;
+  city_t           *pcity;
   GValue                   value = { 0, };
   gint                     n;
   static char              buf[64];
@@ -877,8 +878,8 @@ static gint cityrep_sort_func(GtkTreeModel *model,
 {
   struct city_report_spec *sp;
   GValue                   value = { 0, };
-  struct city             *pcity1;
-  struct city             *pcity2;
+  city_t             *pcity1;
+  city_t             *pcity2;
   static char              buf1[64];
   static char              buf2[64];
   gint                     n;
@@ -1060,7 +1061,7 @@ static void city_select_coastal_callback(GtkMenuItem *item, gpointer data)
   gtk_tree_selection_unselect_all(city_selection);
 
   for (itree_begin(model, &it); !itree_end(&it); itree_next(&it)) {
-    struct city *pcity;
+    city_t *pcity;
     gpointer res;
 
     itree_get(&it, 0, &res, -1);
@@ -1079,14 +1080,14 @@ static void same_island_iterate(GtkTreeModel *model, GtkTreePath *path,
                                 GtkTreeIter *iter, gpointer data)
 {
   ITree it;
-  struct city *selectedcity;
+  city_t *selectedcity;
   gpointer res;
 
   gtk_tree_model_get(model, iter, 0, &res, -1);
   selectedcity = res;
 
   for (itree_begin(model, &it); !itree_end(&it); itree_next(&it)) {
-    struct city *pcity;
+    city_t *pcity;
 
     itree_get(&it, 0, &res, -1);
     pcity = res;
@@ -1118,7 +1119,7 @@ static void city_select_building_callback(GtkMenuItem *item, gpointer data)
   gtk_tree_selection_unselect_all(city_selection);
 
   for (itree_begin(model, &it); !itree_end(&it); itree_next(&it)) {
-    struct city *pcity;
+    city_t *pcity;
     gpointer res;
 
     itree_get(&it, 0, &res, -1);
@@ -1141,7 +1142,7 @@ static void autoarrange_workers_iterate(GtkTreeModel *model, GtkTreePath *path,
                                         GtkTreeIter *it, gpointer data)
 {
   gpointer res;
-  struct city *pcity;
+  city_t *pcity;
   struct cm_parameter parameter;
 
   gtk_tree_model_get (model, it, 0, &res, -1);
@@ -1165,7 +1166,7 @@ static void clear_worklist_iterate (GtkTreeModel *model,
                                     gpointer data)
 {
   gpointer res;
-  struct city *pcity;
+  city_t *pcity;
   gtk_tree_model_get (model, it, 0, &res, -1);
   pcity = res;
   city_clear_worklist (pcity);
@@ -1180,7 +1181,7 @@ static void remove_cur_prod_iterate(GtkTreeModel *model,
                                     gpointer data)
 {
   gpointer res;
-  struct city *pcity;
+  city_t *pcity;
   struct worklist wl;
 
   gtk_tree_model_get(model, it, 0, &res, -1);
@@ -1205,7 +1206,7 @@ static void worklist_change_worklist_iterate(GtkTreeModel *model,
                                              gpointer data)
 {
   struct worklist wl, *pwl = (struct worklist *) data;
-  struct city *pcity;
+  city_t *pcity;
   gpointer res;
 
   if (!pwl->is_valid || worklist_is_empty(pwl)) {
@@ -1273,7 +1274,7 @@ static void worklist_last_worklist_iterate(GtkTreeModel *model,
                                            gpointer data)
 {
   struct worklist wl, *pwl = (struct worklist *) data;
-  struct city *pcity;
+  city_t *pcity;
   gpointer res;
 
   if (!pwl->is_valid || worklist_is_empty(pwl)) {
@@ -1306,7 +1307,7 @@ static void worklist_first_worklist_iterate(GtkTreeModel *model,
                                             gpointer data)
 {
   struct worklist temp, wl, *pwl = (struct worklist *) data;
-  struct city *pcity;
+  city_t *pcity;
   gpointer res;
   int old_id;
   bool old_is_unit;
@@ -1353,7 +1354,7 @@ static void worklist_next_worklist_iterate(GtkTreeModel *model,
                                            gpointer data)
 {
   struct worklist wl, *pwl = (struct worklist *) data;
-  struct city *pcity;
+  city_t *pcity;
   gpointer res;
 
   if (!pwl->is_valid || worklist_is_empty(pwl)) {
@@ -1397,7 +1398,7 @@ static void buy_iterate(GtkTreeModel *model, GtkTreePath *path,
 static void center_iterate(GtkTreeModel *model, GtkTreePath *path,
                            GtkTreeIter *it, gpointer data)
 {
-  struct city *pcity;
+  city_t *pcity;
   gpointer res;
 
   gtk_tree_model_get(model, it, 0, &res, -1);
@@ -1411,7 +1412,7 @@ static void center_iterate(GtkTreeModel *model, GtkTreePath *path,
 static void popup_iterate(GtkTreeModel *model, GtkTreePath *path,
                           GtkTreeIter *it, gpointer data)
 {
-  struct city *pcity;
+  city_t *pcity;
   gpointer res;
 
   gtk_tree_model_get(model, it, 0, &res, -1);
@@ -1495,7 +1496,7 @@ static void city_activated_callback(GtkTreeView *view, GtkTreePath *path,
 /****************************************************************
 ...
 *****************************************************************/
-static void update_row(GtkTreeIter *row, struct city *pcity)
+static void update_row(GtkTreeIter *row, city_t *pcity)
 {
   GValue value = { 0, };
 
@@ -1575,7 +1576,7 @@ void city_report_dialog_update(void)
 /****************************************************************
   Update the text for a single city in the city report
 *****************************************************************/
-void city_report_dialog_update_city(struct city *pcity)
+void city_report_dialog_update_city(city_t *pcity)
 {
   if (city_dialog_shell && !is_report_dialogs_frozen()) {
     ITree it;
@@ -1585,7 +1586,7 @@ void city_report_dialog_update_city(struct city *pcity)
     /* search for pcity in the current store. */
     found = FALSE;
     for (itree_begin(model, &it); !itree_end(&it); itree_next(&it)) {
-      struct city *iter;
+      city_t *iter;
 
       itree_get(&it, 0, &iter, -1);
 
@@ -1958,7 +1959,7 @@ static void create_select_menu(GtkWidget *item)
 /****************************************************************
 ...
 *****************************************************************/
-static bool city_building_impr_or_unit(struct city *pcity, cid cid)
+static bool city_building_impr_or_unit(city_t *pcity, cid cid)
 {
   return (cid == cid_encode_from_city(pcity));
 }
@@ -2036,7 +2037,7 @@ static void update_total_buy_cost(void)
   GtkTreePath *path;
   GtkTreeIter iter;
   gpointer res;
-  struct city *pcity;
+  city_t *pcity;
   int total = 0;
 
   view = city_view;
@@ -2124,7 +2125,7 @@ void hilite_cities_from_canvas(void)
   gtk_tree_selection_unselect_all(city_selection);
 
   for (itree_begin(model, &it); !itree_end(&it); itree_next(&it)) {
-    struct city *pcity;
+    city_t *pcity;
     gpointer res;
 
     itree_get(&it, 0, &res, -1);
@@ -2139,7 +2140,7 @@ void hilite_cities_from_canvas(void)
 /****************************************************************
  Toggle a city's hilited status.
 *****************************************************************/
-void toggle_city_hilite(struct city *pcity, bool on_off)
+void toggle_city_hilite(city_t *pcity, bool on_off)
 {
   ITree it;
   GtkTreeModel *model;
@@ -2168,7 +2169,7 @@ static void airlift_queue_add_city_iterate(GtkTreeModel *model,
                                            GtkTreePath *path,
                                            GtkTreeIter *it, gpointer data)
 {
-  struct city *pcity;
+  city_t *pcity;
   gint id;
 
   gtk_tree_model_get(model, it, 1, &id, -1);

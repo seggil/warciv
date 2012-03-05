@@ -53,7 +53,7 @@ struct tile *original_tile;
 static void update_goto_dialog(GtkToggleButton *button);
 static void goto_selection_callback(GtkTreeSelection *selection, gpointer data);
 
-static struct city *get_selected_city(void);
+static city_t *get_selected_city(void);
 
 enum {
   CMD_AIRLIFT = 1, CMD_GOTO
@@ -79,7 +79,7 @@ static void goto_cmd_callback(GtkWidget *dlg, gint arg)
 
   case CMD_AIRLIFT:
     {
-      struct city *pdestcity = get_selected_city();
+      city_t *pdestcity = get_selected_city();
 
       if (pdestcity) {
                   multi_select_iterate(TRUE,punit)
@@ -91,7 +91,7 @@ static void goto_cmd_callback(GtkWidget *dlg, gint arg)
   }
   case CMD_GOTO:
     {
-      struct city *pdestcity = get_selected_city();
+      city_t *pdestcity = get_selected_city();
 
       if (pdestcity) {
                   multi_select_iterate(FALSE,punit)
@@ -217,7 +217,7 @@ void popup_goto_dialog(void)
 /**************************************************************************
 ...
 **************************************************************************/
-static struct city *get_selected_city(void)
+static city_t *get_selected_city(void)
 {
   GtkTreeModel *model;
   GtkTreeIter it;
@@ -264,7 +264,7 @@ static void update_goto_dialog(GtkToggleButton *button)
 **************************************************************************/
 static void goto_selection_callback(GtkTreeSelection *selection, gpointer data)
 {
-  struct city *pdestcity;
+  city_t *pdestcity;
 
   if((pdestcity = get_selected_city())) {
     struct unit *punit = get_unit_in_focus();

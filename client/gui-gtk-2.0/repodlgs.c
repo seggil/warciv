@@ -308,14 +308,12 @@ void create_science_dialog(bool make_modal)
 
   for (i = 0; i<ARRAY_SIZE(science_model); i++) {
     GtkWidget *view;
-    //GtkTreeSelection *selection;
     GtkTreeViewColumn *column;
 
     science_model[i] = gtk_list_store_new(1, G_TYPE_STRING);
     view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(science_model[i]));
     gtk_box_pack_start(GTK_BOX(hbox), view, TRUE, TRUE, 0);
     gtk_widget_set_name(view, "small font");
-    //selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
     g_object_unref(science_model[i]);
     gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
@@ -499,7 +497,6 @@ void science_dialog_update(void)
   GList *sorting_list = NULL, *it;
   gdouble pct;
   int steps, bulbs;
-  //GtkSizeGroup *group1, *group2;
   GtkTreeIter iter;
   struct player *pplayer = get_player_ptr();
 
@@ -627,9 +624,6 @@ void science_dialog_update(void)
       sorting_list = g_list_append(sorting_list, GINT_TO_POINTER(i));
     }
   }
-
-  //group1 = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-  //group2 = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
   /* sort the list and build from it the menu */
   sorting_list = g_list_sort(sorting_list, cmp_func);

@@ -836,7 +836,7 @@ void free_mapview_updates(void)
   city's tile).
 ****************************************************************************/
 void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
-                    struct city *pcity, int *width, int *height)
+                    city_t *pcity, int *width, int *height)
 {
   if (pcanvas->type == CANVAS_PIXMAP) {
     static char buffer[512], buffer2[32], buffer3[64];

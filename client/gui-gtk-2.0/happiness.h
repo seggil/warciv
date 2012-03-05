@@ -16,8 +16,8 @@
 #include <gtk/gtk.h>
 #include "citydlg.h"
 
-GtkWidget *get_top_happiness_display(struct city *pcity);
-void close_happiness_dialog(struct city *pcity);
-void refresh_happiness_dialog(struct city *pcity);
+GtkWidget *get_top_happiness_display(city_t *pcity);
+void close_happiness_dialog(city_t *pcity);
+void refresh_happiness_dialog(city_t *pcity);
 
 #endif  /* WC_CLIENT_GUI_HAPPINESS_H */

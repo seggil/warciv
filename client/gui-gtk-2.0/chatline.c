@@ -212,7 +212,7 @@ follow_if_link(GtkWidget   *text_view,
   gint link_type;
   int x, y, id;
   char buf[128];
-  struct city *pcity;
+  city_t *pcity;
   struct tile *ptile;
   struct unit *punit;
 
@@ -518,7 +518,7 @@ static int parse_city_id_link(const char *str, GtkTextBuffer *buf,
   const char *p = str;
   char *q, idbuf[32];
   int id;
-  struct city *pcity;
+  city_t *pcity;
 
   if (strncmp(p, CITY_ID_LINK_PREFIX, sizeof(CITY_ID_LINK_PREFIX) - 1) != 0) {
     return 0;
@@ -567,7 +567,7 @@ static int parse_city_link(const char *str, GtkTextBuffer *buf,
 {
   const char *p = str;
   char city_name[MAX_LEN_NAME], *q;
-  struct city *pcity;
+  city_t *pcity;
 
   if (strncmp(p, CITY_NAME_LINK_PREFIX "\"",
               sizeof(CITY_NAME_LINK_PREFIX)) != 0) {

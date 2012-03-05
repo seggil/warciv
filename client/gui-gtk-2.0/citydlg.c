@@ -109,7 +109,7 @@ enum info_style { NORMAL, ORANGE, RED, NUM_INFO_STYLES };
 static int citydialog_width, citydialog_height;
 
 struct city_dialog {
-  struct city *pcity;
+  city_t *pcity;
 
   GtkWidget *shell;
   GtkWidget *name_label;
@@ -199,7 +199,7 @@ static guint update_request = 0;
 
 static void initialize_city_dialogs(void);
 
-static struct city_dialog *get_city_dialog(struct city *pcity);
+static struct city_dialog *get_city_dialog(city_t *pcity);
 static gboolean keyboard_handler(GtkWidget * widget, GdkEventKey * event,
                                  struct city_dialog *pdialog);
 
@@ -211,7 +211,7 @@ static void create_and_append_cma_page(struct city_dialog *pdialog);
 static void create_and_append_trade_page(struct city_dialog *pdialog);
 static void create_and_append_settings_page(struct city_dialog *pdialog);
 
-static struct city_dialog *create_city_dialog(struct city *pcity,
+static struct city_dialog *create_city_dialog(city_t *pcity,
                                               bool make_modal);
 
 static void city_dialog_update_title(struct city_dialog *pdialog);
@@ -356,7 +356,7 @@ void reset_city_dialogs(void)
 /****************************************************************
   ...
 *****************************************************************/
-static struct city_dialog *get_city_dialog(struct city *pcity)
+static struct city_dialog *get_city_dialog(city_t *pcity)
 {
   if (!dialog_list) {
     initialize_city_dialogs();
@@ -375,7 +375,7 @@ static struct city_dialog *get_city_dialog(struct city *pcity)
 *****************************************************************/
 static void real_update_city_dialog(struct city_dialog *pdialog)
 {
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
   enum city_update need_update = pdialog->need_update;
 
   if (need_update & UPDATE_TITLE) {
@@ -474,7 +474,7 @@ static void request_update_city_dialog(void)
 /****************************************************************
 ...
 *****************************************************************/
-void refresh_city_dialog(struct city *pcity, enum city_update update)
+void refresh_city_dialog(city_t *pcity, enum city_update update)
 {
   struct city_dialog *pdialog = get_city_dialog(pcity);
 
@@ -510,7 +510,7 @@ void refresh_all_city_dialogs(enum city_update update)
 *****************************************************************/
 void refresh_unit_city_dialogs(struct unit *punit)
 {
-  struct city *pcity;
+  city_t *pcity;
 
   if ((pcity = find_city_by_id(punit->homecity))) {
     refresh_city_dialog(pcity, UPDATE_SUPPORTED_UNITS);
@@ -524,7 +524,7 @@ void refresh_unit_city_dialogs(struct unit *punit)
 /****************************************************************
 popup the dialog 10% inside the main-window
 *****************************************************************/
-void popup_city_dialog(struct city *pcity, bool make_modal)
+void popup_city_dialog(city_t *pcity, bool make_modal)
 {
   struct city_dialog *pdialog;
 
@@ -538,7 +538,7 @@ void popup_city_dialog(struct city *pcity, bool make_modal)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_dialog_is_open(struct city *pcity)
+bool city_dialog_is_open(city_t *pcity)
 {
   return get_city_dialog(pcity) != NULL;
 }
@@ -546,7 +546,7 @@ bool city_dialog_is_open(struct city *pcity)
 /****************************************************************
 popdown the dialog
 *****************************************************************/
-void popdown_city_dialog(struct city *pcity)
+void popdown_city_dialog(city_t *pcity)
 {
   struct city_dialog *pdialog = get_city_dialog(pcity);
 
@@ -1283,7 +1283,7 @@ static void create_and_append_settings_page(struct city_dialog *pdialog)
 /****************************************************************
 ...
 *****************************************************************/
-static struct city_dialog *create_city_dialog(struct city *pcity,
+static struct city_dialog *create_city_dialog(city_t *pcity,
                                               bool make_modal)
 {
   struct city_dialog *pdialog;
@@ -1474,7 +1474,7 @@ static void city_dialog_update_title(struct city_dialog *pdialog)
 static void city_dialog_update_citizens(struct city_dialog *pdialog)
 {
   int i, width;
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
   struct citizen_type citizens[MAX_CITY_SIZE];
 
   /* If there is not enough space we stack the icons. We draw from left to */
@@ -1482,10 +1482,10 @@ static void city_dialog_update_citizens(struct city_dialog *pdialog)
   /* last icon is always drawn in full, and so has reserved                */
   /* SMALL_TILE_WIDTH pixels.                                              */
 
-  if (pcity->size > 1) {
+  if (pcity->pop_size > 1) {
     width = MIN(SMALL_TILE_WIDTH,
                 ((NUM_CITIZENS_SHOWN - 1) * SMALL_TILE_WIDTH) /
-                (pcity->size - 1));
+                (pcity->pop_size - 1));
   } else {
     width = SMALL_TILE_WIDTH;
   }
@@ -1496,7 +1496,7 @@ static void city_dialog_update_citizens(struct city_dialog *pdialog)
 
   get_city_citizen_types(pcity, 4, citizens);
 
-  for (i = 0; i < pcity->size; i++) {
+  for (i = 0; i < pcity->pop_size; i++) {
     gtk_pixcomm_copyto(GTK_PIXCOMM(pdialog->citizen_pixmap),
                        get_citizen_sprite(citizens[i], i, pcity),
                        i * width, 0);
@@ -1515,7 +1515,7 @@ static void city_dialog_update_information(GtkWidget **info_label,
 {
   int i, style;
   char buf[NUM_INFO_FIELDS][512];
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
   int granaryturns;
   enum { FOOD, SHIELD, TRADE, GOLD, LUXURY, SCIENCE,
          GRANARY, GROWTH, CORRUPTION, WASTE, POLLUTION
@@ -1539,7 +1539,7 @@ static void city_dialog_update_information(GtkWidget **info_label,
               pcity->science_total);
 
   my_snprintf(buf[GRANARY], sizeof(buf[GRANARY]), "%d/%-d",
-              pcity->food_stock, city_granary_size(pcity->size));
+              pcity->food_stock, city_granary_size(pcity->pop_size));
 
   granaryturns = city_turns_to_grow(pcity);
   if (granaryturns == 0) {
@@ -1618,7 +1618,7 @@ static void city_dialog_update_building(struct city_dialog *pdialog)
 {
   char buf[32], buf2[200];
   const char *descr;
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
   gdouble pct;
   int cost;
   gboolean sensitive = city_can_buy(pcity);
@@ -1946,7 +1946,7 @@ static void city_dialog_update_present_units(struct city_dialog *pdialog)
 *****************************************************************/
 static void city_dialog_update_tradelist(struct city_dialog *pdialog)
 {
-  struct city *pother_city;
+  city_t *pother_city;
   GtkTreeIter iter;
 
   /* Clear all */
@@ -2014,7 +2014,7 @@ static int get_reachable_city_number(void)
 /****************************************************************
   Returns the next or previous city.
 *****************************************************************/
-static struct city *get_reachable_city(struct city *pcity, int dir)
+static city_t *get_reachable_city(city_t *pcity, int dir)
 {
   bool found = FALSE;
 
@@ -2025,7 +2025,7 @@ static struct city *get_reachable_city(struct city *pcity, int dir)
   if (!client_is_global_observer()) {
     if (dir < 0) {
       while (TRUE) {
-        TYPED_LIST_ITERATE_REV(struct city, get_player_ptr()->cities, acity) {
+        TYPED_LIST_ITERATE_REV(city_t, get_player_ptr()->cities, acity) {
           if (acity == pcity) {
             if (found) {
               return NULL;
@@ -2056,7 +2056,7 @@ static struct city *get_reachable_city(struct city *pcity, int dir)
     int i = pcity->owner;
     while (TRUE) {
       for (; i >= 0; i--) {
-        TYPED_LIST_ITERATE_REV(struct city, get_player(i)->cities, acity) {
+        TYPED_LIST_ITERATE_REV(city_t, get_player(i)->cities, acity) {
           if (acity == pcity) {
             if (found) {
               return NULL;
@@ -2149,28 +2149,13 @@ static void show_units_callback(GtkWidget * w, gpointer data)
 static void city_menu_position(GtkMenu *menu, gint *x, gint *y,
                                gboolean *push_in, gpointer data)
 {
-  //GtkWidget *active;
   GtkWidget *widget;
-  GtkRequisition requisition;
-  gint xpos;
-  gint ypos;
-  //gint width;
-
-  g_return_if_fail(GTK_IS_BUTTON(data));
 
   widget = GTK_WIDGET(data);
 
-  gtk_widget_get_child_requisition(GTK_WIDGET(menu), &requisition);
-  //width = requisition.width;
-
-  //active = gtk_menu_get_active(menu);
-  gdk_window_get_origin(widget->window, &xpos, &ypos);
-
-  xpos += widget->allocation.x;
-  ypos += widget->allocation.y;
-
-  *x = xpos;
-  *y = ypos;
+  gdk_window_get_origin(widget->window, x, y);
+  x += widget->allocation.x;
+  y += widget->allocation.y;
   *push_in = TRUE;
 }
 
@@ -2187,7 +2172,7 @@ static void destroy_func(GtkWidget *w, gpointer data)
 *****************************************************************/
 static void center_on_city(GtkMenuItem *item, gpointer data)
 {
-  struct city *pcity = find_city_by_id(GPOINTER_TO_INT(data));
+  city_t *pcity = find_city_by_id(GPOINTER_TO_INT(data));
 
   if (!pcity) {
     return;
@@ -2201,7 +2186,7 @@ static void center_on_city(GtkMenuItem *item, gpointer data)
 *****************************************************************/
 static void open_city_dialog(GtkMenuItem *item, gpointer data)
 {
-  struct city *pcity = find_city_by_id(GPOINTER_TO_INT(data));
+  city_t *pcity = find_city_by_id(GPOINTER_TO_INT(data));
 
   if (!pcity
       || (!client_is_global_observer()
@@ -2247,7 +2232,7 @@ static void stop_unit(GtkMenuItem *item, gpointer data)
 static void cancel_trade_route(GtkMenuItem *item, gpointer data)
 {
   unsigned long tr = GPOINTER_TO_INT(data);
-  struct city *pcity1, *pcity2;
+  city_t *pcity1, *pcity2;
 
   pcity1 = find_city_by_id(tr >> 16);
   pcity2 = find_city_by_id(tr & 0xFFFF);
@@ -2273,7 +2258,7 @@ static gboolean established_trade_routes_callback(GtkWidget * w,
 
   char buf[256];
   int city_id;
-  struct city *pcity;
+  city_t *pcity;
   GtkWidget *menu, *item;
   GtkTreeModel *model;
   GtkTreePath *path;
@@ -2334,7 +2319,7 @@ static gboolean in_routes_trade_routes_callback(GtkWidget * w,
   char buf[256];
   int city_id, city2_id, unit_id;
   unsigned long tr;
-  struct city *pcity;
+  city_t *pcity;
   GtkWidget *menu, *item;
   GtkTreeModel *model;
   GtkTreePath *path;
@@ -2416,7 +2401,7 @@ static gboolean planned_trade_routes_callback(GtkWidget * w,
   char buf[256];
   int city_id, city2_id;
   unsigned long tr;
-  struct city *pcity;
+  city_t *pcity;
   GtkWidget *menu, *item;
   GtkTreeModel *model;
   GtkTreePath *path;
@@ -2480,7 +2465,7 @@ static gboolean supported_unit_callback(GtkWidget * w, GdkEventButton * ev,
                                         gpointer data)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
   struct city_dialog *pdialog;
   GtkWidget *menu, *item;
 
@@ -2548,7 +2533,7 @@ static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
                                       gpointer data)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
   struct city_dialog *pdialog;
   GtkWidget *menu, *item;
 
@@ -2682,7 +2667,7 @@ static gboolean present_unit_middle_callback(GtkWidget * w,
                                              gpointer data)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
   struct city_dialog *pdialog;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data)) &&
@@ -2711,7 +2696,7 @@ static gboolean supported_unit_middle_callback(GtkWidget * w,
                                                gpointer data)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
   struct city_dialog *pdialog;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data)) &&
@@ -2763,7 +2748,7 @@ static void supported_unit_activate_close_callback(GtkWidget * w,
                                                    gpointer data)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
   struct city_dialog *pdialog;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
@@ -2794,7 +2779,7 @@ static void present_unit_activate_close_callback(GtkWidget * w,
                                                  gpointer data)
 {
   struct unit *punit;
-  struct city *pcity;
+  city_t *pcity;
   struct city_dialog *pdialog;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
@@ -2951,17 +2936,17 @@ static gboolean citizens_callback(GtkWidget * w, GdkEventButton * ev,
                               gpointer data)
 {
   struct city_dialog *pdialog = data;
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
   int citnum;
 
   if (!can_client_issue_orders()) {
     return FALSE;
   }
 
-  if (ev->x > (pcity->size - 1) * pdialog->cwidth + SMALL_TILE_WIDTH)
+  if (ev->x > (pcity->pop_size - 1) * pdialog->cwidth + SMALL_TILE_WIDTH)
     return FALSE;               /* no citizen that far to the right */
 
-  citnum = MIN(pcity->size - 1, ev->x / pdialog->cwidth);
+  citnum = MIN(pcity->pop_size - 1, ev->x / pdialog->cwidth);
 
   city_rotate_specialist(pcity, citnum);
 
@@ -2973,7 +2958,7 @@ static gboolean citizens_callback(GtkWidget * w, GdkEventButton * ev,
 **************************************************************************/
 static gboolean button_down_citymap(GtkWidget * w, GdkEventButton * ev)
 {
-  struct city *pcity = NULL;;
+  city_t *pcity = NULL;;
 
   if (!can_client_issue_orders()) {
     return FALSE;
@@ -3261,7 +3246,7 @@ static void cityopt_callback(GtkWidget * w, gpointer data)
 
   if(!pdialog->misc.block_signal){
     int i, new_options = 0;
-    struct city *pcity = pdialog->pcity;
+    city_t *pcity = pdialog->pcity;
 
     for(i = 0; i < NUM_CITY_OPTS; i++){
       if(GTK_TOGGLE_BUTTON(pdialog->misc.city_opts[i])->active)
@@ -3284,7 +3269,7 @@ static void cityopt_callback(GtkWidget * w, gpointer data)
 **************************************************************************/
 static void set_cityopt_values(struct city_dialog *pdialog)
 {
-  struct city *pcity = pdialog->pcity;
+  city_t *pcity = pdialog->pcity;
   int i;
 
   pdialog->misc.block_signal = 1;
@@ -3400,7 +3385,7 @@ static void switch_city_callback(GtkWidget *w, gpointer data)
 {
   struct city_dialog *pdialog = (struct city_dialog *) data;
   int dir;
-  struct city *new_pcity;
+  city_t *new_pcity;
 
   /* dir = 1 will advance to the city, dir = -1 will get previous */
   if (w == pdialog->next_command) {
