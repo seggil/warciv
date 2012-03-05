@@ -45,7 +45,7 @@
  * advanced enough to build caravans, the corresponding tech will be
  * stimulated.
  ***************************************************************************/
-static void ai_choose_help_wonder(struct city *pcity,
+static void ai_choose_help_wonder(city_t *pcity,
                                   struct ai_choice *choice)
 {
   struct player *pplayer = city_owner(pcity);
@@ -140,7 +140,7 @@ static void ai_choose_help_wonder(struct city *pcity,
 
   If want is 0, this advisor doesn't want anything.
 ***************************************************************************/
-void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
+void domestic_advisor_choose_build(struct player *pplayer, city_t *pcity,
                                    struct ai_choice *choice)
 {
   /* Government of the player */

@@ -82,7 +82,7 @@ void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
   Log city messages, they will appear like this
     2: c's Romenna(5,35) [s1 d106 u11 g1] must have Archers ...
 **************************************************************************/
-void CITY_LOG(int level, struct city *pcity, const char *msg, ...)
+void CITY_LOG(int level, struct city_s *pcity, const char *msg, ...)
 {
   char buffer[500];
   char buffer2[500];
@@ -97,7 +97,7 @@ void CITY_LOG(int level, struct city *pcity, const char *msg, ...)
 
   my_snprintf(buffer, sizeof(buffer), "%s's %s(%d,%d) [s%d d%d u%d g%d] ",
               city_owner(pcity)->name, pcity->name,
-              pcity->tile->x, pcity->tile->y, pcity->size,
+              pcity->tile->x, pcity->tile->y, pcity->pop_size,
               pcity->server.ai.danger, pcity->server.ai.urgency,
               pcity->server.ai.grave_danger);
 
@@ -132,7 +132,7 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
   } else {
     /* Are we a virtual unit evaluated in a debug city?. */
     if (punit->id == 0) {
-      struct city *pcity = map_get_city(punit->tile);
+      struct city_s *pcity = map_get_city(punit->tile);
 
       if (pcity && pcity->server.debug) {
         minlevel = LOG_NORMAL;
@@ -178,7 +178,7 @@ void BODYGUARD_LOG(int level, struct unit *punit, const char *msg)
   char buffer[500];
   int minlevel = MIN(LOGLEVEL_BODYGUARD, level);
   struct unit *pcharge;
-  struct city *pcity;
+  struct city_s *pcity;
   int id = -1;
   struct tile *ptile = NULL;
   const char *s = "none";

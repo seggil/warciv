@@ -55,13 +55,13 @@
 #define LOG_DIPLOMAT_BUILD LOG_DEBUG
 
 static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
-                                  struct city **ctarget, int *move_dist,
+                                  struct city_s **ctarget, int *move_dist,
                                   struct path_finding_map *map);
 
 /******************************************************************************
   Number of improvements that can be sabotaged in pcity.
 ******************************************************************************/
-static int count_sabotagable_improvements(struct city *pcity)
+static int count_sabotagable_improvements(struct city_s *pcity)
 {
   int count = 0;
 
@@ -97,7 +97,7 @@ static int count_stealable_techs(struct player *pplayer, struct player *tplayer)
   arbitrary but seem to work.
 ***********************************************************************/
 void ai_choose_diplomat_defensive(struct player *pplayer,
-                                  struct city *pcity,
+                                  struct city_s *pcity,
                                   struct ai_choice *choice, int def)
 {
   /* Build a diplomat if our city is threatened by enemy diplomats, and
@@ -135,7 +135,7 @@ void ai_choose_diplomat_defensive(struct player *pplayer,
   values in choice.
 ***********************************************************************/
 void ai_choose_diplomat_offensive(struct player *pplayer,
-                                  struct city *pcity,
+                                  struct city_s *pcity,
                                   struct ai_choice *choice)
 {
   Unit_Type_id u = best_role_unit(pcity, F_DIPLOMAT);
@@ -156,7 +156,7 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
     struct path_finding_map *map;
     struct pf_parameter parameter;
     struct unit_type *ut = get_unit_type(u);
-    struct city *acity;
+    struct city_s *acity;
     int want, loss, p_success, p_failure, time_to_dest;
     int gain_incite = 0, gain_theft = 0, gain = 1;
     int incite_cost;
@@ -250,7 +250,7 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
   is allied. Then we steal, incite, sabotage or poison the city, in that
   order of priority.
 **************************************************************************/
-static void ai_diplomat_city(struct unit *punit, struct city *ctarget)
+static void ai_diplomat_city(struct unit *punit, struct city_s *ctarget)
 {
   struct player *pplayer = unit_owner(punit);
   struct player *tplayer = city_owner(ctarget);
@@ -315,7 +315,7 @@ static void ai_diplomat_city(struct unit *punit, struct city *ctarget)
   if none available on this continent.  punit can be virtual.
 **************************************************************************/
 static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
-                                  struct city **ctarget, int *move_dist,
+                                  struct city_s **ctarget, int *move_dist,
                                   struct path_finding_map *map)
 {
   bool has_embassy;
@@ -327,7 +327,7 @@ static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
   *move_dist = -1;
 
   pf_iterator(map, pos) {
-    struct city *acity;
+    struct city_s *acity;
     struct player *aplayer;
     bool can_incite;
 
@@ -369,14 +369,14 @@ static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
 /**************************************************************************
   Go to nearest/most threatened city (can be the current city too).
 **************************************************************************/
-static struct city *ai_diplomat_defend(struct player *pplayer,
+static struct city_s *ai_diplomat_defend(struct player *pplayer,
                                        struct unit *punit,
                                        Unit_Type_id utype, struct path_finding_map *map)
 {
   int best_dist = 30; /* any city closer than this is better than none */
   int best_urgency = 0;
-  struct city *ctarget = NULL;
-  struct city *pcity = map_get_city(punit->tile);
+  struct city_s *ctarget = NULL;
+  struct city_s *pcity = map_get_city(punit->tile);
 
   if (pcity
       && count_diplomats_on_tile(pcity->tile) == 1
@@ -386,7 +386,7 @@ static struct city *ai_diplomat_defend(struct player *pplayer,
   }
 
   pf_iterator(map, pos) {
-    struct city *acity;
+    struct city_s *acity;
     struct player *aplayer;
     int dipls, urgency;
 
@@ -541,7 +541,7 @@ static bool ai_diplomat_bribe_nearby(struct player *pplayer,
 **************************************************************************/
 void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
 {
-  struct city *pcity, *ctarget = NULL;
+  struct city_s *pcity, *ctarget = NULL;
   struct pf_parameter parameter;
   struct path_finding_map *map;
   struct pf_position pos;

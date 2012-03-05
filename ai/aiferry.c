@@ -652,7 +652,7 @@ static bool aiferry_find_interested_city(struct unit *pferry)
    * do-while loop */
   do {
     struct pf_position pos;
-    struct city *pcity;
+    struct city_s *pcity;
 
     pf_next_get_position(map, &pos);
     if (pos.turn >= turns_horizon) {
@@ -723,7 +723,7 @@ static bool aiferry_find_interested_city(struct unit *pferry)
 ****************************************************************************/
 void ai_manage_ferryboat(struct player *pplayer, struct unit *punit)
 {
-  struct city *pcity;
+  struct city_s *pcity;
 
   CHECK_UNIT(punit);
 
@@ -862,7 +862,7 @@ void ai_manage_ferryboat(struct player *pplayer, struct unit *punit)
   (void) ai_manage_explorer(punit);
 
   if (punit->moves_left > 0) {
-    struct city *pcity = find_nearest_safe_city(punit);
+    struct city_s *pcity = find_nearest_safe_city(punit);
     if (pcity) {
       punit->goto_tile = pcity->tile;
       UNIT_LOG(LOGLEVEL_FERRY, punit, "No work, going home");

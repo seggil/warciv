@@ -33,7 +33,7 @@ struct ai_data;
 void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
                 const char *msg, ...)
      wc__attribute((__format__ (__printf__, 4, 5)));
-void CITY_LOG(int level, struct city *pcity, const char *msg, ...)
+void CITY_LOG(int level, city_t *pcity, const char *msg, ...)
      wc__attribute((__format__ (__printf__, 3, 4)));
 void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
      wc__attribute((__format__ (__printf__, 3, 4)));

@@ -112,7 +112,7 @@ void cityresult_fill(struct player *pplayer,
                      struct ai_data *ai,
                      struct cityresult *result)
 {
-  struct city *pcity = map_get_city(result->tile);
+  struct city_s *pcity = map_get_city(result->tile);
   int sum = 0;
   bool virtual_city = FALSE;
   int curr_govt = pplayer->government;
@@ -240,7 +240,7 @@ void cityresult_fill(struct player *pplayer,
   } else {
     /* Deduct difference in corruption and waste for real cities. Note that it
      * is possible (with notradesize) that we _gain_ value here. */
-    pcity->size++;
+    pcity->pop_size++;
     result->corruption = ai->science_priority
       * (city_corruption(pcity,
                          result->citymap[result->o_x][result->o_y].trade)
@@ -249,7 +249,7 @@ void cityresult_fill(struct player *pplayer,
       * (city_waste(pcity,
                     result->citymap[result->o_x][result->o_y].shield)
          - pcity->shield_waste);
-    pcity->size--;
+    pcity->pop_size--;
   }
   result->total -= result->corruption;
   result->total -= result->waste;
@@ -374,7 +374,7 @@ static void city_desirability(struct player *pplayer, struct ai_data *ai,
                               struct unit *punit, struct tile *ptile,
                               struct cityresult *result)
 {
-  struct city *pcity = map_get_city(ptile);
+  struct city_s *pcity = map_get_city(ptile);
 
   assert(punit && ai && pplayer && result);
 
@@ -398,7 +398,7 @@ static void city_desirability(struct player *pplayer, struct ai_data *ai,
     return;
   }
 
-  if (pcity && (pcity->size + unit_pop_value(punit->type)
+  if (pcity && (pcity->pop_size + unit_pop_value(punit->type)
                 > game.ruleset_control.add_to_size_limit)) {
     /* Can't exceed population limit. */
     return;

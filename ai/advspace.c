@@ -17,6 +17,7 @@
 
 #include <assert.h>
 
+#include "city.h"
 #include "government.h"
 #include "packets.h"
 #include "spaceship.h"

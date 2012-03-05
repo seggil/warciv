@@ -42,7 +42,7 @@
   existing hunter if any.
 **************************************************************************/
 static struct unit *ai_hunter_find(struct player *pplayer,
-                                   struct city *pcity)
+                                   struct city_s *pcity)
 {
   unit_list_iterate(pcity->units_supported, punit) {
     if (ai_hunter_qualify(pplayer, punit)) {
@@ -61,7 +61,7 @@ static struct unit *ai_hunter_find(struct player *pplayer,
 /**************************************************************************
   Guess best hunter unit type.
 **************************************************************************/
-static Unit_Type_id ai_hunter_guess_best(struct city *pcity,
+static Unit_Type_id ai_hunter_guess_best(struct city_s *pcity,
                                          enum unit_move_type umt)
 {
   Unit_Type_id bestid = -1;
@@ -118,7 +118,7 @@ static Unit_Type_id ai_hunter_guess_best(struct city *pcity,
   Check if we want to build a missile for our hunter.
 **************************************************************************/
 static void ai_hunter_missile_want(struct player *pplayer,
-                                   struct city *pcity,
+                                   struct city_s *pcity,
                                    struct ai_choice *choice)
 {
   int best = -1, best_unit_type = -1;
@@ -182,7 +182,7 @@ static void ai_hunter_missile_want(struct player *pplayer,
 /**************************************************************************
   Support function for ai_hunter_choice()
 **************************************************************************/
-static void eval_hunter_want(struct player *pplayer, struct city *pcity,
+static void eval_hunter_want(struct player *pplayer, struct city_s *pcity,
                              struct ai_choice *choice, int best_type,
                              int veteran)
 {
@@ -203,7 +203,7 @@ static void eval_hunter_want(struct player *pplayer, struct city *pcity,
 /**************************************************************************
   Check if we want to build a hunter.
 **************************************************************************/
-void ai_hunter_choice(struct player *pplayer, struct city *pcity,
+void ai_hunter_choice(struct player *pplayer, struct city_s *pcity,
                       struct ai_choice *choice)
 {
   int best_land_hunter = ai_hunter_guess_best(pcity, LAND_MOVING);

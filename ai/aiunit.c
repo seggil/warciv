@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -104,7 +104,7 @@ Unit_Type_id simple_ai_types[U_LAST];
 **************************************************************************/
 static void ai_airlift(struct player *pplayer)
 {
-  struct city *most_needed;
+  struct city_s *most_needed;
   int comparison;
   struct unit *transported;
 
@@ -216,7 +216,7 @@ int could_unit_move_to_tile(struct unit *punit, struct tile *dest_tile)
   value.  This is for use with "foreign" cities, especially non-ai
   cities, where ai.wallvalue may be out of date or uninitialized --dwp
 ***********************************************************************/
-static bool has_defense(struct city *pcity)
+static bool has_defense(struct city_s *pcity)
 {
   unit_list_iterate((pcity->tile)->units, punit) {
     if (is_military_unit(punit) && get_defense_power(punit) != 0 && punit->hp != 0) {
@@ -313,7 +313,7 @@ int build_cost_balanced(Unit_Type_id type)
   Return first city that contains a wonder being built on the given
   continent.
 **************************************************************************/
-static struct city *wonder_on_continent(struct player *pplayer,
+static struct city_s *wonder_on_continent(struct player *pplayer,
                                         Continent_id cont)
 {
   city_list_iterate(pplayer->cities, pcity)
@@ -334,7 +334,7 @@ static struct city *wonder_on_continent(struct player *pplayer,
 **************************************************************************/
 static bool stay_and_defend(struct unit *punit)
 {
-  struct city *pcity = map_get_city(punit->tile);
+  struct city_s *pcity = map_get_city(punit->tile);
   bool has_defense = FALSE;
   int mydef;
   int units = -2; /* WAG for grave danger threshold, seems to work */
@@ -637,7 +637,7 @@ static int ai_rampage_want(struct unit *punit, struct tile *ptile)
     }
 
   } else {
-    struct city *pcity = map_get_city(ptile);
+    struct city_s *pcity = map_get_city(ptile);
 
     /* No defender... */
 
@@ -772,7 +772,7 @@ static bool ai_military_rampage(struct unit *punit, int thresh_adj,
 static void ai_military_bodyguard(struct player *pplayer, struct unit *punit)
 {
   struct unit *aunit = player_find_unit_by_id(pplayer, punit->ai.charge);
-  struct city *acity = find_city_by_id(punit->ai.charge);
+  struct city_s *acity = find_city_by_id(punit->ai.charge);
   struct tile *ptile;
 
   CHECK_UNIT(punit);
@@ -875,7 +875,7 @@ find_beachhead() works only when city is not further that 1 tile from
 the sea. But Sea Raiders might want to attack cities inland.
 So this finds the nearest land tile on the same continent as the city.
 **************************************************************************/
-static void find_city_beach(struct city *pc, struct unit *punit,
+static void find_city_beach(struct city_s *pc, struct unit *punit,
                             struct tile **dest_tile)
 {
   struct tile *best_tile = punit->tile;
@@ -920,7 +920,7 @@ static bool unit_role_defender(Unit_Type_id type)
   Requires an initialized warmap!
 **************************************************************************/
 int look_for_charge(struct player *pplayer, struct unit *punit,
-                    struct unit **aunit, struct city **acity)
+                    struct unit **aunit, struct city_s **acity)
 {
   int dist, def, best = 0;
   int toughness = unit_def_rating_basic_sq(punit);
@@ -995,7 +995,7 @@ int look_for_charge(struct player *pplayer, struct unit *punit,
 ***********************************************************************/
 static void ai_military_findjob(struct player *pplayer,struct unit *punit)
 {
-  struct city *pcity = NULL, *acity = NULL;
+  struct city_s *pcity = NULL, *acity = NULL;
   struct unit *aunit;
   int val, def;
   int q = 0;
@@ -1153,7 +1153,7 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
 ***********************************************************************/
 static void ai_military_gohome(struct player *pplayer,struct unit *punit)
 {
-  struct city *pcity = find_city_by_id(punit->homecity);
+  struct city_s *pcity = find_city_by_id(punit->homecity);
 
   if (!pcity) {
     /* Try to find a place to rest. Sitting duck out in the wilderness
@@ -1189,7 +1189,7 @@ static void ai_military_gohome(struct player *pplayer,struct unit *punit)
 
  Requires ready warmap(s).  Assumes punit is ground or sailing.
 ***************************************************************************/
-int turns_to_enemy_city(Unit_Type_id our_type,  struct city *acity,
+int turns_to_enemy_city(Unit_Type_id our_type,  struct city_s *acity,
                         int speed, bool go_by_boat,
                         struct unit *boat, Unit_Type_id boattype)
 {
@@ -1295,7 +1295,7 @@ static void invasion_funct(struct unit *punit, bool dest, int radius,
   }
 
   square_iterate(ptile, radius, tile1) {
-    struct city *pcity = map_get_city(tile1);
+    struct city_s *pcity = map_get_city(tile1);
 
     if (pcity
         && HOSTILE_PLAYER(pplayer, ai, city_owner(pcity))
@@ -1346,7 +1346,7 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
   /* Type of our boat (a future one if ferryboat == NULL) */
   Unit_Type_id boattype = U_LAST;
   bool unhap = FALSE;
-  struct city *pcity;
+  struct city_s *pcity;
   /* this is a kluge, because if we don't set x and y with !punit->id,
    * p_a_w isn't called, and we end up not wanting ironclads and therefore
    * never learning steam engine, even though ironclads would be very
@@ -1709,10 +1709,10 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
   decision not easily taken, since we also want to protect unsafe
   cities, at least most of the time.
 ***********************************************************************/
-struct city *find_nearest_safe_city(struct unit *punit)
+struct city_s *find_nearest_safe_city(struct unit *punit)
 {
   struct player *pplayer = unit_owner(punit);
-  struct city *acity = NULL;
+  struct city_s *acity = NULL;
   int best = 6 * THRESHOLD + 1, cur;
   bool ground = is_ground_unit(punit);
 
@@ -1757,7 +1757,7 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
   struct tile *dest_tile;
   int id = punit->id;
   int ct = 10;
-  struct city *pcity = NULL;
+  struct city_s *pcity = NULL;
 
   CHECK_UNIT(punit);
 
@@ -1849,7 +1849,7 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
   } else {
     /* You can still have some moves left here, but barbarians should
        not sit helplessly, but advance towards nearest known enemy city */
-    struct city *pc;
+    struct city_s *pc;
     struct tile *ftile;
 
     if ((pc = dist_nearest_city(pplayer, punit->tile, FALSE, TRUE))) {
@@ -1867,7 +1867,7 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
     }
   }
   if ((punit = find_unit_by_id(id)) && punit->moves_left > 0) {
-    struct city *pcity = map_get_city(punit->tile);
+    struct city_s *pcity = map_get_city(punit->tile);
 
     if (pcity) {
       ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->tile);
@@ -1889,7 +1889,7 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
 **************************************************************************/
 static void ai_manage_caravan(struct player *pplayer, struct unit *punit)
 {
-  struct city *pcity;
+  struct city_s *pcity;
   int tradeval, best_city = -1, best=0;
   struct ai_data *ai = ai_data_get(pplayer);
 
@@ -1959,8 +1959,8 @@ static void ai_manage_caravan(struct player *pplayer, struct unit *punit)
 static void ai_manage_hitpoint_recovery(struct unit *punit)
 {
   struct player *pplayer = unit_owner(punit);
-  struct city *pcity = map_get_city(punit->tile);
-  struct city *safe = NULL;
+  struct city_s *pcity = map_get_city(punit->tile);
+  struct city_s *safe = NULL;
   struct unit_type *punittype = get_unit_type(punit->type);
 
   CHECK_UNIT(punit);
@@ -2218,7 +2218,7 @@ void ai_manage_units(struct player *pplayer)
  Assign tech wants for techs to get better units with given role/flag.
  Returns the best we can build so far, or U_LAST if none.  (dwp)
 **************************************************************************/
-Unit_Type_id ai_wants_role_unit(struct player *pplayer, struct city *pcity,
+Unit_Type_id ai_wants_role_unit(struct player *pplayer, struct city_s *pcity,
                                 int role, int want)
 {
   Unit_Type_id iunit;
@@ -2244,7 +2244,7 @@ Unit_Type_id ai_wants_role_unit(struct player *pplayer, struct city *pcity,
 /**************************************************************************
  As ai_wants_role_unit, but also set choice->choice if we can build something.
 **************************************************************************/
-void ai_choose_role_unit(struct player *pplayer, struct city *pcity,
+void ai_choose_role_unit(struct player *pplayer, struct city_s *pcity,
                          struct ai_choice *choice, int role, int want)
 {
   Unit_Type_id iunit = ai_wants_role_unit(pplayer, pcity, role, want);

@@ -72,15 +72,15 @@
   || pcity->food_stock + pcity->food_surplus < 0)
 #define LOG_BUY LOG_DEBUG
 
-static void resolve_city_emergency(struct player *pplayer, struct city *pcity);
-static void ai_sell_obsolete_buildings(struct city *pcity);
+static void resolve_city_emergency(struct player *pplayer, struct city_s *pcity);
+static void ai_sell_obsolete_buildings(struct city_s *pcity);
 
 /**************************************************************************
   This calculates the usefulness of pcity to us. Note that you can pass
   another player's ai_data structure here for evaluation by different
   priorities.
 **************************************************************************/
-int ai_eval_calc_city(struct city *pcity, struct ai_data *ai)
+int ai_eval_calc_city(struct city_s *pcity, struct ai_data *ai)
 {
   int i = (pcity->food_surplus * ai->food_priority
            + pcity->shield_surplus * ai->shield_priority
@@ -103,7 +103,7 @@ int ai_eval_calc_city(struct city *pcity, struct ai_data *ai)
 /**************************************************************************
   Calculates city want from some input values.
 **************************************************************************/
-static inline int city_want(struct player *pplayer, struct city *acity,
+static inline int city_want(struct player *pplayer, struct city_s *acity,
                             struct ai_data *ai)
 {
   int want = 0, food, trade, shields, lux, sci, tax;
@@ -149,12 +149,12 @@ static inline int city_want(struct player *pplayer, struct city *acity,
   Calculates want for some buildings by actually adding the building and
   measuring the effect.
 **************************************************************************/
-static int base_want(struct player *pplayer, struct city *pcity,
+static int base_want(struct player *pplayer, struct city_s *pcity,
                      Impr_Type_id id)
 {
   struct ai_data *ai = ai_data_get(pplayer);
   int final_want = 0;
-  struct city *capital = find_palace(pplayer);
+  struct city_s *capital = find_palace(pplayer);
 
   if (ai->impr_calc[id] == AI_IMPR_ESTIMATE) {
     return 0; /* Nothing to calculate here. */
@@ -198,7 +198,7 @@ static int base_want(struct player *pplayer, struct city *pcity,
   IDEA: Calculate per-continent aggregates of various data, and use this
   for wonders below for better wonder placements.
 **************************************************************************/
-static void adjust_building_want_by_effects(struct city *pcity,
+static void adjust_building_want_by_effects(struct city_s *pcity,
                                             Impr_Type_id id)
 {
   struct player *pplayer = city_owner(pcity);
@@ -235,7 +235,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
       if (is_effect_useful(TARGET_BUILDING, pplayer, pcity, id,
                            NULL, id, peff)) {
         int amount = peff->value, c = cities[peff->range];
-        struct city *palace = find_palace(pplayer);
+        struct city_s *palace = find_palace(pplayer);
 
         switch (*ptype) {
           case EFT_PROD_TO_GOLD:
@@ -348,7 +348,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
             break;
           case EFT_NUKE_PROOF:
             if (ai->threats.nuclear) {
-              v += pcity->size * unit_list_size(ptile->units) * (capital + 1);
+              v += pcity->pop_size * unit_list_size(ptile->units) * (capital + 1);
             }
             break;
           case EFT_REVEAL_MAP:
@@ -360,9 +360,9 @@ static void adjust_building_want_by_effects(struct city *pcity,
             amount = 20; /* really big city */
             /* there not being a break here is deliberate, mind you */
           case EFT_SIZE_ADJ:
-            if (!city_can_grow_to(pcity, pcity->size + 1)) {
+            if (!city_can_grow_to(pcity, pcity->pop_size + 1)) {
               v += pcity->food_surplus * ai->food_priority * amount;
-              if (pcity->size == game.ruleset_control.aqueduct_size) {
+              if (pcity->pop_size == game.ruleset_control.aqueduct_size) {
                 v += 30 * pcity->food_surplus;
               }
             }
@@ -572,7 +572,7 @@ void ai_manage_buildings(struct player *pplayer)
   If there are more than one wondercity, things will get a bit random.
 ****************************************************************************/
 static void establish_city_distances(struct player *pplayer,
-                                     struct city *pcity)
+                                     struct city_s *pcity)
 {
   int distance;
   Continent_id wonder_continent;
@@ -654,7 +654,7 @@ static void ai_barbarian_choose_build(struct player *pplayer,
   Note that AI cheats -- it suffers no penalty for switching from unit to
   improvement, etc.
 **************************************************************************/
-static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
+static void ai_city_choose_build(struct player *pplayer, struct city_s *pcity)
 {
   struct ai_choice newchoice;
 
@@ -743,7 +743,7 @@ static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-static void try_to_sell_stuff(struct player *pplayer, struct city *pcity)
+static void try_to_sell_stuff(struct player *pplayer, struct city_s *pcity)
 {
   impr_type_iterate(id) {
     if (can_sell_building(pcity, id)
@@ -769,7 +769,7 @@ static void increase_maxbuycost(struct player *pplayer, int new_value)
   end up with after the upgrade. military is if we want to upgrade non-
   military or military units.
 **************************************************************************/
-static void ai_upgrade_units(struct city *pcity, int limit, bool military)
+static void ai_upgrade_units(struct city_s *pcity, int limit, bool military)
 {
   struct player *pplayer = city_owner(pcity);
   unit_list_iterate(pcity->tile->units, punit) {
@@ -827,7 +827,7 @@ static void ai_spend_gold(struct player *pplayer)
 
   do {
     int limit = cached_limit; /* cached_limit is our gold reserve */
-    struct city *pcity = NULL;
+    struct city_s *pcity = NULL;
     bool expensive; /* don't buy when it costs x2 unless we must */
     int buycost;
 
@@ -881,8 +881,8 @@ static void ai_spend_gold(struct player *pplayer)
     if (bestchoice.type != CT_BUILDING
         && unit_type_flag(bestchoice.choice, F_CITIES)) {
       if (get_city_bonus(pcity, EFT_GROWTH_FOOD) == 0
-          && pcity->size == 1
-          && city_granary_size(pcity->size)
+          && pcity->pop_size == 1
+          && city_granary_size(pcity->pop_size)
              > pcity->food_stock + pcity->food_surplus) {
         /* Don't buy settlers in size 1 cities unless we grow next turn */
         continue;
@@ -1011,7 +1011,7 @@ static bool building_unwanted(struct player *plr, Impr_Type_id i)
 /**************************************************************************
   Sell an obsolete building if there are any in the city.
 **************************************************************************/
-static void ai_sell_obsolete_buildings(struct city *pcity)
+static void ai_sell_obsolete_buildings(struct city_s *pcity)
 {
   struct player *pplayer = city_owner(pcity);
 
@@ -1050,7 +1050,7 @@ static void ai_sell_obsolete_buildings(struct city *pcity)
   Syela is wrong. It happens quite too often, mostly due to unhappiness.
   Also, most of the time we are unable to resolve the situation.
 **************************************************************************/
-static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
+static void resolve_city_emergency(struct player *pplayer, struct city_s *pcity)
 #define LOG_EMERGENCY LOG_DEBUG
 {
   struct city_list *minilist = city_list_new();
@@ -1062,9 +1062,11 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
           pcity->food_surplus, pcity->shield_surplus);
 
   map_city_radius_iterate(pcity->tile, ptile) {
-    struct city *acity = ptile->worked;
+    struct city_s *acity = ptile->worked;
     int city_map_x, city_map_y;
+#ifndef NDEBUG
     bool is_valid;
+#endif
 
     if (acity && acity != pcity && acity->owner == pcity->owner)  {
       if (same_pos(acity->tile, ptile)) {
@@ -1073,8 +1075,12 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
       }
       freelog(LOG_DEBUG, "%s taking over %s's square in (%d, %d)",
               pcity->name, acity->name, ptile->x, ptile->y);
-      is_valid = map_to_city_map(&city_map_x, &city_map_y, acity, ptile);
+#ifdef NDEBUG
+      map_to_city_map(&city_map_x, &city_map_y, acity, ptile);
+#else
+      map_to_city_map(&city_map_x, &city_map_y, acity, ptile);
       assert(is_valid);
+#endif
       server_remove_worker_city(acity, city_map_x, city_map_y);
       acity->specialists[SP_ELVIS]++;
       if (!city_list_find_id(minilist, acity->id)) {

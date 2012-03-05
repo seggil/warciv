@@ -15,8 +15,8 @@
 # include "../config.h"
 #endif
 
-#include "aicore/aisupport.h"
 #include "city.h"
+#include "aicore/aisupport.h"
 #include "effects.h"
 #include "game.h"
 #include "government.h"
@@ -316,7 +316,7 @@ void ai_data_turn_init(struct player *pplayer)
     }
     if (unit_flag(punit, F_DIPLOMAT) && punit->ai.ai_role == AIUNIT_ATTACK) {
       /* Heading somewhere on a mission, reserve target. */
-      struct city *pcity = map_get_city(punit->goto_tile);
+      struct city_s *pcity = map_get_city(punit->goto_tile);
 
       if (pcity) {
         BV_SET(ai->stats.diplomat_reservations, pcity->id);

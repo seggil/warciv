@@ -68,7 +68,7 @@ static bool find_nearest_airbase(struct tile *ptile, struct unit *punit,
 static bool ai_should_we_air_attack_tile(struct unit *punit,
                                          struct tile *ptile)
 {
-  struct city *acity = map_get_city(ptile);
+  city_t *acity = map_get_city(ptile);
 
   /* For a virtual unit (punit->id == 0), all targets are good */
   /* TODO: There is a danger of producing too many units that will not
@@ -244,7 +244,7 @@ static bool ai_find_strategic_airbase(struct unit *punit,
 
     if ((target_worth
          = find_something_to_bomb(punit, get_refuel_tile(airbase))) > 0) {
-      struct city *base_city
+      city_t *base_city
         = map_get_city(get_refuel_tile(airbase));
 
       if (base_city && base_city->server.ai.grave_danger != 0) {
@@ -370,7 +370,7 @@ void ai_manage_airunit(struct player *pplayer, struct unit *punit)
  * The interface is somewhat different from other ai_choose, but
  * that's what it should be like, I believe -- GB
  ******************************************************************/
-bool ai_choose_attacker_air(struct player *pplayer, struct city *pcity,
+bool ai_choose_attacker_air(struct player *pplayer, city_t *pcity,
                             struct ai_choice *choice)
 {
   bool want_something = FALSE;

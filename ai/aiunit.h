@@ -50,12 +50,12 @@ extern Unit_Type_id simple_ai_types[U_LAST];
 void ai_manage_units(struct player *pplayer);
 void ai_manage_unit(struct player *pplayer, struct unit *punit);
 void ai_manage_military(struct player *pplayer,struct unit *punit);
-struct city *find_nearest_safe_city(struct unit *punit);
+city_t *find_nearest_safe_city(struct unit *punit);
 int could_unit_move_to_tile(struct unit *punit, struct tile *dst_tile);
 int look_for_charge(struct player *pplayer, struct unit *punit,
-                    struct unit **aunit, struct city **acity);
+                    struct unit **aunit, city_t **acity);
 
-int turns_to_enemy_city(Unit_Type_id our_type, struct city *acity,
+int turns_to_enemy_city(Unit_Type_id our_type, city_t *acity,
                         int speed, bool go_by_boat,
                         struct unit *boat, Unit_Type_id boattype);
 int turns_to_enemy_unit(Unit_Type_id our_type, int speed, struct tile *ptile,
@@ -77,9 +77,9 @@ int kill_desire(int benefit, int attack, int loss, int vuln, int attack_count);
 
 bool is_on_unit_upgrade_path(Unit_Type_id test, Unit_Type_id base);
 
-Unit_Type_id ai_wants_role_unit(struct player *pplayer, struct city *pcity,
+Unit_Type_id ai_wants_role_unit(struct player *pplayer, city_t *pcity,
                                 int role, int want);
-void ai_choose_role_unit(struct player *pplayer, struct city *pcity,
+void ai_choose_role_unit(struct player *pplayer, city_t *pcity,
                          struct ai_choice *choice, int role, int want);
 void update_simple_ai_types(void);
 

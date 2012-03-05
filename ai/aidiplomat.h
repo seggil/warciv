@@ -20,10 +20,10 @@
 
 void ai_manage_diplomat(struct player *pplayer, struct unit *punit);
 void ai_choose_diplomat_defensive(struct player *pplayer,
-                                  struct city *pcity,
+                                  city_t *pcity,
                                   struct ai_choice *choice, int def);
 void ai_choose_diplomat_offensive(struct player *pplayer,
-                                  struct city *pcity,
+                                  city_t *pcity,
                                   struct ai_choice *choice);
 
 #endif  /* WC_AI_AIDIPLOMAT_H */

@@ -18,15 +18,15 @@
 
 struct ai_choice;
 
-Unit_Type_id ai_choose_defender_versus(struct city *pcity, Unit_Type_id v);
+Unit_Type_id ai_choose_defender_versus(city_t *pcity, Unit_Type_id v);
 void military_advisor_choose_tech(struct player *pplayer,
                                   struct ai_choice *choice);
-void  military_advisor_choose_build(struct player *pplayer, struct city *pcity,
+void  military_advisor_choose_build(struct player *pplayer, city_t *pcity,
                                     struct ai_choice *choice);
 void assess_danger_player(struct player *pplayer);
-int assess_defense_quadratic(struct city *pcity);
-int assess_defense_unit(struct city *pcity, struct unit *punit, bool igwall);
-int assess_defense(struct city *pcity);
+int assess_defense_quadratic(city_t *pcity);
+int assess_defense_unit(city_t *pcity, struct unit *punit, bool igwall);
+int assess_defense(city_t *pcity);
 int ai_unit_defence_desirability(Unit_Type_id i);
 int ai_unit_attack_desirability(Unit_Type_id i);
 

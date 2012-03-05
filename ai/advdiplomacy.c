@@ -18,8 +18,8 @@
 #include <assert.h>
 #include <string.h>
 
-#include "aicore/aisupport.h"
 #include "city.h"
+#include "aicore/aisupport.h"
 #include "diptreaty.h"
 #include "events.h"
 #include "wc_intl.h"
@@ -400,7 +400,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
     break;
 
   case CLAUSE_CITY: {
-    struct city *offer = city_list_find_id(pclause->from->cities,
+    city_t *offer = city_list_find_id(pclause->from->cities,
                                            pclause->value);
 
     if (!offer || offer->owner != giver) {
@@ -624,7 +624,7 @@ static int ai_war_desire(struct player *pplayer, struct player *aplayer,
 
   /* Count big cities as twice the threat */
   city_list_iterate(aplayer->cities, pcity) {
-    kill_desire += pcity->size > 8 ? 1 : 0;
+    kill_desire += pcity->pop_size > 8 ? 1 : 0;
   } city_list_iterate_end;
 
   /* Tech lead is worrisome */

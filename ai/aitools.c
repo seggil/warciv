@@ -62,7 +62,7 @@
   the unit. If the city has less than average shield output, we
   instead use the average, to encourage long-term thinking.
 **************************************************************************/
-int military_amortize(struct player *pplayer, struct city *pcity,
+int military_amortize(struct player *pplayer, struct city_s *pcity,
                       int value, int delay, int build_cost)
 {
   struct ai_data *ai = ai_data_get(pplayer);
@@ -150,7 +150,7 @@ static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
   struct player *pplayer = unit_owner(punit);
   struct ai_data *ai = ai_data_get(pplayer);
   unsigned int danger = 0;
-  struct city *dcity;
+  struct city_s *dcity;
   struct tile *ptile;
 
   if (is_barbarian(unit_owner(punit))) {
@@ -386,7 +386,7 @@ void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
   Try to make pcity our new homecity. Fails if we can't upkeep it. Assumes
   success from server.
 **************************************************************************/
-bool ai_unit_make_homecity(struct unit *punit, struct city *pcity)
+bool ai_unit_make_homecity(struct unit *punit, struct city_s *pcity)
 {
   CHECK_UNIT(punit);
   assert(punit->owner == pcity->owner);
@@ -417,6 +417,7 @@ bool ai_unit_make_homecity(struct unit *punit, struct city *pcity)
 static void ai_unit_bodyguard_move(int unitid, struct tile *ptile)
 {
   struct unit *bodyguard = find_unit_by_id(unitid);
+#ifndef NDEBUG
   struct unit *punit;
   struct player *pplayer;
 
@@ -428,6 +429,7 @@ static void ai_unit_bodyguard_move(int unitid, struct tile *ptile)
 
   assert(punit->ai.bodyguard == bodyguard->id);
   assert(bodyguard->ai.charge == punit->id);
+#endif
 
   if (!is_tiles_adjacent(ptile, bodyguard->tile)) {
     return;
@@ -561,10 +563,10 @@ unless (everywhere != 0)
 If (enemy != 0) it looks only for enemy cities
 If (pplayer != NULL) it looks for cities known to pplayer
 **************************************************************************/
-struct city *dist_nearest_city(struct player *pplayer, struct tile *ptile,
+struct city_s *dist_nearest_city(struct player *pplayer, struct tile *ptile,
                                bool everywhere, bool enemy)
 {
-  struct city *pc=NULL;
+  struct city_s *pc=NULL;
   int best_dist = -1;
   Continent_id con = map_get_continent(ptile);
 
@@ -686,7 +688,7 @@ void copy_if_better_choice(struct ai_choice *cur, struct ai_choice *best)
   Returns TRUE if pcity's owner is building any wonder in another city on
   the same continent (if so, we may want to build a caravan here).
 **************************************************************************/
-static bool is_building_other_wonder(struct city *pcity)
+static bool is_building_other_wonder(struct city_s *pcity)
 {
   struct player *pplayer = city_owner(pcity);
 
@@ -707,7 +709,7 @@ static bool is_building_other_wonder(struct city *pcity)
   Choose improvement we like most and put it into ai_choice.
   TODO: Clean, update the log calls.
 **************************************************************************/
-void ai_advisor_choose_building(struct city *pcity, struct ai_choice *choice)
+void ai_advisor_choose_building(struct city_s *pcity, struct ai_choice *choice)
 { /* I prefer the ai_choice as a return value; gcc prefers it as an arg -- Syela */
   Impr_Type_id id = B_LAST;
   unsigned int danger = 0;
@@ -775,7 +777,7 @@ void ai_advisor_choose_building(struct city *pcity, struct ai_choice *choice)
   sure whether it is fully general for all possible parameters/
   combinations." --dwp
 **********************************************************************/
-bool ai_assess_military_unhappiness(struct city *pcity,
+bool ai_assess_military_unhappiness(struct city_s *pcity,
                                     struct government *g)
 {
   int free_happy;

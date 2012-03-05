@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -168,8 +168,8 @@ static void ai_manage_taxes(struct player *pplayer)
 
       if (cmr.found_a_valid
           && pcity->food_surplus > 0
-          && pcity->size >= g->rapture_size
-          && city_can_grow_to(pcity, pcity->size + 1)) {
+          && pcity->pop_size >= g->rapture_size
+          && city_can_grow_to(pcity, pcity->pop_size + 1)) {
         pcity->server.ai.celebrate = TRUE;
         can_celebrate++;
       } else {

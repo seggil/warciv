@@ -23,7 +23,7 @@ struct ai_choice;
 void ai_manage_cities(struct player *pplayer);
 void ai_manage_buildings(struct player *pplayer);
 
-Unit_Type_id ai_choose_defender_versus(struct city *pcity, Unit_Type_id v);
-int ai_eval_calc_city(struct city *pcity, struct ai_data *ai);
+Unit_Type_id ai_choose_defender_versus(struct city_s *pcity, Unit_Type_id v);
+int ai_eval_calc_city(struct city_s *pcity, struct ai_data *ai);
 
 #endif  /* WC_AI_AICITY_H */
