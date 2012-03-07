@@ -114,16 +114,16 @@ static void ai_airlift(struct player *pplayer)
     transported = NULL;
 
     city_list_iterate(pplayer->cities, pcity) {
-      if (pcity->server.ai.urgency > comparison && pcity->airlift) {
-        comparison = pcity->server.ai.urgency;
+      if (pcity->u.server.ai.urgency > comparison && pcity->common.airlift) {
+        comparison = pcity->u.server.ai.urgency;
         most_needed = pcity;
       }
     } city_list_iterate_end;
     if (!most_needed) {
       comparison = 0;
       city_list_iterate(pplayer->cities, pcity) {
-        if (pcity->server.ai.danger > comparison && pcity->airlift) {
-          comparison = pcity->server.ai.danger;
+        if (pcity->u.server.ai.danger > comparison && pcity->common.airlift) {
+          comparison = pcity->u.server.ai.danger;
           most_needed = pcity;
         }
       } city_list_iterate_end;
@@ -135,14 +135,14 @@ static void ai_airlift(struct player *pplayer)
     unit_list_iterate(pplayer->units, punit) {
       struct tile *ptile = (punit->tile);
 
-      if (ptile->city && ptile->city->server.ai.urgency == 0
-          && ptile->city->server.ai.danger - DEFENCE_POWER(punit) < comparison
+      if (ptile->city && ptile->city->u.server.ai.urgency == 0
+          && ptile->city->u.server.ai.danger - DEFENCE_POWER(punit) < comparison
           && unit_can_airlift_to(punit, most_needed)
           && DEFENCE_POWER(punit) > 2
           && (punit->ai.ai_role == AIUNIT_NONE
               || punit->ai.ai_role == AIUNIT_DEFEND_HOME)
           && IS_ATTACKER(punit)) {
-        comparison = ptile->city->server.ai.danger;
+        comparison = ptile->city->u.server.ai.danger;
         transported = punit;
       }
     } unit_list_iterate_end;
@@ -150,7 +150,7 @@ static void ai_airlift(struct player *pplayer)
       return;
     }
     UNIT_LOG(LOG_DEBUG, transported, "airlifted to defend %s",
-             most_needed->name);
+             most_needed->common.name);
     do_airlift(transported, most_needed);
   } while (TRUE);
 }
@@ -212,13 +212,13 @@ int could_unit_move_to_tile(struct unit *punit, struct tile *dest_tile)
 
 /**********************************************************************
   This is a much simplified form of assess_defense (see advmilitary.c),
-  but which doesn't use pcity->server.ai.wallvalue and just returns a boolean
+  but which doesn't use pcity->u.server.ai.wallvalue and just returns a boolean
   value.  This is for use with "foreign" cities, especially non-ai
   cities, where ai.wallvalue may be out of date or uninitialized --dwp
 ***********************************************************************/
 static bool has_defense(struct city_s *pcity)
 {
-  unit_list_iterate((pcity->tile)->units, punit) {
+  unit_list_iterate((pcity->common.tile)->units, punit) {
     if (is_military_unit(punit) && get_defense_power(punit) != 0 && punit->hp != 0) {
       return TRUE;
     }
@@ -317,9 +317,9 @@ static struct city_s *wonder_on_continent(struct player *pplayer,
                                         Continent_id cont)
 {
   city_list_iterate(pplayer->cities, pcity)
-    if (!(pcity->is_building_unit)
-        && is_wonder(pcity->currently_building)
-        && map_get_continent(pcity->tile) == cont) {
+    if (!(pcity->common.is_building_unit)
+        && is_wonder(pcity->common.currently_building)
+        && map_get_continent(pcity->common.tile) == cont) {
       return pcity;
   }
   city_list_iterate_end;
@@ -344,22 +344,22 @@ static bool stay_and_defend(struct unit *punit)
   }
   mydef = assess_defense_unit(pcity, punit, FALSE);
 
-  unit_list_iterate((pcity->tile)->units, pdef) {
+  unit_list_iterate((pcity->common.tile)->units, pdef) {
     if (assess_defense_unit(pcity, pdef, FALSE) >= mydef
         && pdef != punit
-        && pdef->homecity == pcity->id) {
+        && pdef->homecity == pcity->common.id) {
       has_defense = TRUE;
     }
     units++;
   } unit_list_iterate_end;
 
   /* Guess I better stay / you can live at home now */
-  if (!has_defense && pcity->server.ai.danger > 0
-      && punit->owner == pcity->owner) {
+  if (!has_defense && pcity->u.server.ai.danger > 0
+      && punit->owner == pcity->common.owner) {
     /* Change homecity to this city */
     if (ai_unit_make_homecity(punit, pcity)) {
       /* Very important, or will not stay -- Syela */
-      ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->tile);
+      ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->common.tile);
       return TRUE;
     } /* else city cannot upkeep us! */
   }
@@ -367,8 +367,8 @@ static bool stay_and_defend(struct unit *punit)
   /* Treat grave danger anyway if danger is over threshold, which is the
    * number of units currently in the city.  However, to avoid AI panics
    * (this is common when enemy is huge), add a ceiling. */
-  if (pcity->server.ai.grave_danger > units && units <= 2) {
-    ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->tile);
+  if (pcity->u.server.ai.grave_danger > units && units <= 2) {
+    ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->common.tile);
     return TRUE;
   }
 
@@ -784,9 +784,9 @@ static void ai_military_bodyguard(struct player *pplayer, struct unit *punit)
     } else {
       ptile = aunit->tile;
     }
-  } else if (acity && acity->owner == punit->owner) {
+  } else if (acity && acity->common.owner == punit->owner) {
     /* protect a city */
-    ptile = acity->tile;
+    ptile = acity->common.tile;
   } else {
     /* should be impossible */
     UNIT_LOG(LOGLEVEL_BODYGUARD, punit, "we lost our charge");
@@ -800,7 +800,7 @@ static void ai_military_bodyguard(struct player *pplayer, struct unit *punit)
              aunit->tile->y,
              aunit->ai.bodyguard);
   } else if (acity) {
-    UNIT_LOG(LOGLEVEL_BODYGUARD, punit, "to guard %s", acity->name);
+    UNIT_LOG(LOGLEVEL_BODYGUARD, punit, "to guard %s", acity->common.name);
   }
 
   if (!same_pos(punit->tile, ptile)) {
@@ -880,12 +880,12 @@ static void find_city_beach(struct city_s *pc, struct unit *punit,
 {
   struct tile *best_tile = punit->tile;
   int dist = 100;
-  int search_dist = real_map_distance(pc->tile, punit->tile) - 1;
+  int search_dist = real_map_distance(pc->common.tile, punit->tile) - 1;
 
   CHECK_UNIT(punit);
 
   square_iterate(punit->tile, search_dist, tile1) {
-    if (map_get_continent(tile1) == map_get_continent(pc->tile)
+    if (map_get_continent(tile1) == map_get_continent(pc->common.tile)
         && real_map_distance(punit->tile, tile1) < dist) {
 
       dist = real_map_distance(punit->tile, tile1);
@@ -961,12 +961,12 @@ int look_for_charge(struct player *pplayer, struct unit *punit,
   /* City bodyguard */
   if (unit_type(punit)->move_type == LAND_MOVING) {
    city_list_iterate(pplayer->cities, mycity) {
-    if (!goto_is_sane(punit, mycity->tile, TRUE)
-        || mycity->server.ai.urgency == 0) {
+    if (!goto_is_sane(punit, mycity->common.tile, TRUE)
+        || mycity->u.server.ai.urgency == 0) {
       continue;
     }
-    dist = unit_move_turns(punit, mycity->tile);
-    def = (mycity->server.ai.danger - assess_defense_quadratic(mycity));
+    dist = unit_move_turns(punit, mycity->common.tile);
+    def = (mycity->u.server.ai.danger - assess_defense_quadratic(mycity));
     if (def <= 0) {
       continue;
     }
@@ -979,11 +979,11 @@ int look_for_charge(struct player *pplayer, struct unit *punit,
   }
 
   UNIT_LOG(LOGLEVEL_BODYGUARD, punit, "look_for_charge, best=%d, "
-           "type=%s(%d,%d)", best * 100 / toughness, *acity ? (*acity)->name
+           "type=%s(%d,%d)", best * 100 / toughness, *acity ? (*acity)->common.name
            : (*aunit ? unit_name((*aunit)->type) : ""),
-           *acity ? (*acity)->tile->x : (*aunit
+           *acity ? (*acity)->common.tile->x : (*aunit
                                               ? (*aunit)->tile->y : 0),
-           *acity ? (*acity)->tile->x : (*aunit
+           *acity ? (*acity)->common.tile->x : (*aunit
                                               ? (*aunit)->tile->y : 0));
 
   return ((best * 100) / toughness);
@@ -1005,9 +1005,9 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
 
 /* tired of AI abandoning its cities! -- Syela */
   if (punit->homecity != 0 && (pcity = find_city_by_id(punit->homecity))) {
-    if (pcity->server.ai.danger != 0) { /* otherwise we can attack */
+    if (pcity->u.server.ai.danger != 0) { /* otherwise we can attack */
       def = assess_defense(pcity);
-      if (same_pos(punit->tile, pcity->tile)) {
+      if (same_pos(punit->tile, pcity->common.tile)) {
         /* I'm home! */
         val = assess_defense_unit(pcity, punit, FALSE);
         def -= val; /* old bad kluge fixed 980803 -- Syela */
@@ -1015,7 +1015,7 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
 /* and only if this does not jeopardize the city */
 /* def is the defense of the city without punit */
         if (unit_flag(punit, F_FIELDUNIT)) val = -1;
-        unit_list_iterate((pcity->tile)->units, pdef)
+        unit_list_iterate((pcity->common.tile)->units, pdef)
           if (is_military_unit(pdef)
               && pdef != punit
               && !unit_flag(pdef, F_FIELDUNIT)
@@ -1029,7 +1029,7 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
         } else {
           /* this was a WAG, but it works, so now it's just good code!
            * -- Syela */
-          q = (pcity->server.ai.danger * 2
+          q = (pcity->u.server.ai.danger * 2
                - (def * unit_type(punit)->attack_strength /
                   unit_type(punit)->defense_strength));
         }
@@ -1060,9 +1060,9 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
      * or unit we should protect is still alive */
     if ((aunit && aunit->ai.bodyguard != BODYGUARD_NONE
          && unit_def_rating_basic(punit) > unit_def_rating_basic(aunit))
-        || (acity && acity->owner == punit->owner
-            && acity->server.ai.urgency != 0
-            && acity->server.ai.danger > assess_defense_quadratic(acity))) {
+        || (acity && acity->common.owner == punit->owner
+            && acity->u.server.ai.urgency != 0
+            && acity->u.server.ai.danger > assess_defense_quadratic(acity))) {
       assert(punit->ai.ai_role == AIUNIT_ESCORT);
       return;
     } else {
@@ -1073,13 +1073,13 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
   /* ok, what if I'm somewhere new? - ugly, kludgy code by Syela */
   if (stay_and_defend(punit)) {
     UNIT_LOG(LOG_DEBUG, punit, "stays to defend %s",
-             map_get_city(punit->tile)->name);
+             map_get_city(punit->tile)->common.name);
     return;
   }
 
-  if (pcity && q > 0 && pcity->server.ai.urgency > 0) {
-    UNIT_LOG(LOG_DEBUG, punit, "decides to camp at home in %s", pcity->name);
-    ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->tile);
+  if (pcity && q > 0 && pcity->u.server.ai.urgency > 0) {
+    UNIT_LOG(LOG_DEBUG, punit, "decides to camp at home in %s", pcity->common.name);
+    ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->common.tile);
     return;
   }
 
@@ -1112,7 +1112,7 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
   if (pcity && q > 0) {
     q *= 100;
     q /= unit_def_rating_basic_sq(punit);
-    q >>= unit_move_turns(punit, pcity->tile);
+    q >>= unit_move_turns(punit, pcity->common.tile);
   }
 
   val = 0; acity = NULL; aunit = NULL;
@@ -1126,21 +1126,21 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
   }
   if (pcity && q > val) {
     UNIT_LOG(LOG_DEBUG, punit, "decided not to go anywhere, sits in %s",
-             pcity->name);
-    ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->tile);
+             pcity->common.name);
+    ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->common.tile);
     return;
   }
   /* this is bad; riflemen might rather attack if val is low -- Syela */
   if (acity) {
-    ai_unit_new_role(punit, AIUNIT_ESCORT, acity->tile);
-    punit->ai.charge = acity->id;
+    ai_unit_new_role(punit, AIUNIT_ESCORT, acity->common.tile);
+    punit->ai.charge = acity->common.id;
     BODYGUARD_LOG(LOG_DEBUG, punit, "going to defend city");
   } else if (aunit) {
     ai_unit_new_role(punit, AIUNIT_ESCORT, aunit->tile);
     punit->ai.charge = aunit->id;
     BODYGUARD_LOG(LOG_DEBUG, punit, "going to defend unit");
   } else if (ai_unit_attack_desirability(punit->type) != 0 ||
-      (pcity && !same_pos(pcity->tile, punit->tile))) {
+      (pcity && !same_pos(pcity->common.tile, punit->tile))) {
      ai_unit_new_role(punit, AIUNIT_ATTACK, NULL);
   } else {
     UNIT_LOG(LOG_DEBUG, punit, "nothing to do, sit where we are");
@@ -1166,8 +1166,8 @@ static void ai_military_gohome(struct player *pplayer,struct unit *punit)
 
   if (pcity) {
     UNIT_LOG(LOG_DEBUG, punit, "go home to %s(%d,%d)",
-             pcity->name, TILE_XY(pcity->tile));
-    if (same_pos(punit->tile, pcity->tile)) {
+             pcity->common.name, TILE_XY(pcity->common.tile));
+    if (same_pos(punit->tile, pcity->common.tile)) {
       UNIT_LOG(LOG_DEBUG, punit, "go home successful; role AI_NONE");
       ai_unit_new_role(punit, AIUNIT_NONE, NULL);
 
@@ -1176,7 +1176,7 @@ static void ai_military_gohome(struct player *pplayer,struct unit *punit)
       (void) ai_military_rampage(punit, RAMPAGE_ANYTHING,
                                  RAMPAGE_ANYTHING);
     } else {
-      (void) ai_gothere(pplayer, punit, pcity->tile);
+      (void) ai_gothere(pplayer, punit, pcity->common.tile);
     }
   }
 }
@@ -1197,7 +1197,7 @@ int turns_to_enemy_city(Unit_Type_id our_type,  struct city_s *acity,
   case LAND_MOVING:
     if (go_by_boat) {
       int boatspeed = unit_types[boattype].move_rate;
-      int move_time = (WARMAP_SEACOST(acity->tile)) / boatspeed;
+      int move_time = (WARMAP_SEACOST(acity->common.tile)) / boatspeed;
 
       if (unit_type_flag(boattype, F_TRIREME) && move_time > 2) {
         /* FIXME: Should also check for LIGHTHOUSE */
@@ -1217,11 +1217,11 @@ int turns_to_enemy_city(Unit_Type_id our_type,  struct city_s *acity,
       return move_time;
     } else {
       /* We are walking */
-      return (WARMAP_COST(acity->tile) + speed - 1) / speed;
+      return (WARMAP_COST(acity->common.tile) + speed - 1) / speed;
     }
   case SEA_MOVING:
     /* We are a boat: time to sail */
-    return (WARMAP_SEACOST(acity->tile) + speed - 1) / speed;
+    return (WARMAP_SEACOST(acity->common.tile) + speed - 1) / speed;
   default:
     freelog(LOG_ERROR, "ERROR: Unsupported move_type in time_to_enemy_city");
     /* Return something prohibitive */
@@ -1299,9 +1299,9 @@ static void invasion_funct(struct unit *punit, bool dest, int radius,
 
     if (pcity
         && HOSTILE_PLAYER(pplayer, ai, city_owner(pcity))
-        && (pcity->server.ai.invasion & which) != which
+        && (pcity->u.server.ai.invasion & which) != which
         && (dest || !has_defense(pcity))) {
-      pcity->server.ai.invasion |= which;
+      pcity->u.server.ai.invasion |= which;
     }
   } square_iterate_end;
 }
@@ -1380,10 +1380,10 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
       continue;
     }
     city_list_iterate(aplayer->cities, acity) {
-      reinforcements_cost_and_value(punit, acity->tile,
-                                    &acity->server.ai.attack,
-                                    &acity->server.ai.bcost);
-      acity->server.ai.invasion = 0;
+      reinforcements_cost_and_value(punit, acity->common.tile,
+                                    &acity->u.server.ai.attack,
+                                    &acity->u.server.ai.bcost);
+      acity->u.server.ai.invasion = 0;
     } city_list_iterate_end;
   } players_iterate_end;
 
@@ -1399,8 +1399,8 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
       if (aunit->activity == ACTIVITY_GOTO) {
         invasion_funct(aunit, TRUE, 0, (COULD_OCCUPY(aunit) ? 1 : 2));
         if ((pcity = map_get_city(aunit->goto_tile))) {
-          pcity->server.ai.attack += unit_att_rating(aunit);
-          pcity->server.ai.bcost += unit_build_shield_cost(aunit->type);
+          pcity->u.server.ai.attack += unit_att_rating(aunit);
+          pcity->u.server.ai.bcost += unit_build_shield_cost(aunit->type);
         }
       }
       invasion_funct(aunit, FALSE, unit_move_rate(aunit) / SINGLE_MOVE,
@@ -1424,7 +1424,7 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
 
   pcity = map_get_city(punit->tile);
 
-  if (pcity && (punit->id == 0 || pcity->id == punit->homecity)) {
+  if (pcity && (punit->id == 0 || pcity->common.id == punit->homecity)) {
     /* I would have thought unhappiness should be taken into account
      * irrespectfully the city in which it will surface...  GB */
     unhap = ai_assess_military_unhappiness(pcity, get_gov_pplayer(pplayer));
@@ -1478,34 +1478,34 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
 
     city_list_iterate(aplayer->cities, acity) {
       bool go_by_boat = (is_ground_unit(punit)
-                         && !(goto_is_sane(punit, acity->tile, TRUE)
-                              && WARMAP_COST(acity->tile) < maxd));
+                         && !(goto_is_sane(punit, acity->common.tile, TRUE)
+                              && WARMAP_COST(acity->common.tile) < maxd));
 
-      if (!is_ocean(map_get_terrain(acity->tile))
+      if (!is_ocean(map_get_terrain(acity->common.tile))
           && unit_flag(punit, F_NO_LAND_ATTACK)) {
         /* Can't attack this city. It is on land. */
         continue;
       }
 
-      if (handicap && !map_is_known(acity->tile, pplayer)) {
+      if (handicap && !map_is_known(acity->common.tile, pplayer)) {
         /* Can't see it */
         continue;
       }
 
       if (go_by_boat
           && (!(ferryboat || harbor)
-              || WARMAP_SEACOST(acity->tile) > 6 * THRESHOLD)) {
+              || WARMAP_SEACOST(acity->common.tile) > 6 * THRESHOLD)) {
         /* Too far or impossible to go by boat */
         continue;
       }
 
       if (is_sailing_unit(punit)
-          && WARMAP_SEACOST(acity->tile) >= maxd) {
+          && WARMAP_SEACOST(acity->common.tile) >= maxd) {
         /* Too far to sail */
         continue;
       }
 
-      if ((pdef = get_defender(punit, acity->tile))) {
+      if ((pdef = get_defender(punit, acity->common.tile))) {
         vuln = unit_def_rating_sq(punit, pdef);
         benefit = unit_build_shield_cost(pdef->type);
       } else {
@@ -1519,7 +1519,7 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
       if (move_time > 1) {
         Unit_Type_id def_type = ai_choose_defender_versus(acity, punit->type);
         int v = unittype_def_rating_sq(punit->type, def_type,
-                                       acity->tile, FALSE,
+                                       acity->common.tile, FALSE,
                                        do_make_unit_veteran(acity, def_type));
         if (v > vuln) {
           /* They can build a better defender! */
@@ -1528,19 +1528,19 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
         }
       }
 
-      if (COULD_OCCUPY(punit) || TEST_BIT(acity->server.ai.invasion, 0)) {
+      if (COULD_OCCUPY(punit) || TEST_BIT(acity->u.server.ai.invasion, 0)) {
         /* There are units able to occupy the city! */
         benefit += 40;
       }
 
-      attack = (attack_value + acity->server.ai.attack)
-        * (attack_value + acity->server.ai.attack);
+      attack = (attack_value + acity->u.server.ai.attack)
+        * (attack_value + acity->u.server.ai.attack);
       /* Avoiding handling upkeep aggregation this way -- Syela */
 
       /* AI was not sending enough reinforcements to totally wipe out a city
        * and conquer it in one turn.
        * This variable enables total carnage. -- Syela */
-      victim_count = unit_list_size(acity->tile->units) + 1;
+      victim_count = unit_list_size(acity->common.tile->units) + 1;
 
       if (!COULD_OCCUPY(punit) && !pdef) {
         /* Nothing there to bash and we can't occupy!
@@ -1549,15 +1549,15 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
       } else if (move_time > THRESHOLD) {
         /* Too far! */
         want = 0;
-      } else if (COULD_OCCUPY(punit) && acity->server.ai.invasion == 2) {
+      } else if (COULD_OCCUPY(punit) && acity->u.server.ai.invasion == 2) {
         /* Units able to occupy really needed there! */
         want = bcost * SHIELD_WEIGHTING;
       } else {
-        int a_squared = acity->server.ai.attack * acity->server.ai.attack;
+        int a_squared = acity->u.server.ai.attack * acity->u.server.ai.attack;
 
-        want = kill_desire(benefit, attack, (bcost + acity->server.ai.bcost),
+        want = kill_desire(benefit, attack, (bcost + acity->u.server.ai.bcost),
                            vuln, victim_count);
-        if (benefit * a_squared > acity->server.ai.bcost * vuln) {
+        if (benefit * a_squared > acity->u.server.ai.bcost * vuln) {
           /* If there're enough units to do the job, we don't need this
            * one. */
           /* FIXME: The problem with ai.bcost is that bigger it is, less is
@@ -1565,7 +1565,7 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
            * cavalries to take over a city, we have four (which is not
            * enough), then we will be severely discouraged to build the
            * fifth one.  Where is logic in this??!?! --GB */
-          want -= kill_desire(benefit, a_squared, acity->server.ai.bcost,
+          want -= kill_desire(benefit, a_squared, acity->u.server.ai.bcost,
                               vuln, victim_count);
         }
       }
@@ -1588,7 +1588,7 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
                                      bcost_bal + needferry);
 
         if (bk_e > bk) {
-          *dest_tile = acity->tile;
+          *dest_tile = acity->common.tile;
           bk = bk_e;
         }
       }
@@ -1598,7 +1598,7 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
         UNIT_LOG(LOG_DEBUG, punit, "in fstk with boat %s@(%d, %d) -> %s@(%d, %d)"
                  " (go_by_boat=%d, move_time=%d, want=%d, best=%d)",
                  unit_type(ferryboat)->name, best_tile->x, best_tile->y,
-                 acity->name, TILE_XY(acity->tile),
+                 acity->common.name, TILE_XY(acity->common.tile),
                  go_by_boat, move_time, want, best);
       }
 
@@ -1606,22 +1606,22 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
         /* Yes, we like this target */
         if (punit->id != 0 && is_ground_unit(punit)
             && !unit_flag(punit, F_MARINES)
-            && map_get_continent(acity->tile) != con) {
+            && map_get_continent(acity->common.tile) != con) {
           /* a non-virtual ground unit is trying to attack something on
            * another continent.  Need a beachhead which is adjacent
            * to the city and an available ocean tile */
           struct tile *btile;
 
-          if (find_beachhead(punit, acity->tile, &btile)) {
+          if (find_beachhead(punit, acity->common.tile, &btile)) {
             best = want;
-            *dest_tile = acity->tile;
+            *dest_tile = acity->common.tile;
             /* the ferryboat needs to target the beachhead, but the unit
              * needs to target the city itself.  This is a little weird,
              * but it's the best we can do. -- Syela */
           } /* else do nothing, since we have no beachhead */
         } else {
           best = want;
-          *dest_tile = acity->tile;
+          *dest_tile = acity->common.tile;
         } /* end need-beachhead else */
       }
     } city_list_iterate_end;
@@ -1723,12 +1723,12 @@ struct city_s *find_nearest_safe_city(struct unit *punit)
     if (pplayers_allied(pplayer,aplayer)) {
       city_list_iterate(aplayer->cities, pcity) {
         if (ground) {
-          cur = WARMAP_COST(pcity->tile);
+          cur = WARMAP_COST(pcity->common.tile);
           if (get_city_bonus(pcity, EFT_LAND_REGEN) > 0) {
             cur /= 3;
           }
         } else {
-          cur = WARMAP_SEACOST(pcity->tile);
+          cur = WARMAP_SEACOST(pcity->common.tile);
           if (get_city_bonus(pcity, EFT_SEA_REGEN) > 0) {
             cur /= 3;
           }
@@ -1781,7 +1781,7 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
     if (stay_and_defend(punit)) {
       /* This city needs defending, don't go outside! */
       UNIT_LOG(LOG_DEBUG, punit, "stayed to defend %s",
-               map_get_city(punit->tile)->name);
+               map_get_city(punit->tile)->common.name);
       return;
     }
 
@@ -1838,7 +1838,7 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
   pcity = find_nearest_safe_city(punit);
   if (is_sailing_unit(punit) && pcity) {
     /* Sail somewhere */
-    (void) ai_unit_goto(punit, pcity->tile);
+    (void) ai_unit_goto(punit, pcity->common.tile);
   } else if (!is_barbarian(pplayer)) {
     /* Nothing else to do, so try exploring. */
     if (ai_manage_explorer(punit)) {
@@ -1854,14 +1854,14 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
 
     if ((pc = dist_nearest_city(pplayer, punit->tile, FALSE, TRUE))) {
       if (!is_ocean(map_get_terrain(punit->tile))) {
-        UNIT_LOG(LOG_DEBUG, punit, "Barbarian marching to conquer %s", pc->name);
-        (void) ai_gothere(pplayer, punit, pc->tile);
+        UNIT_LOG(LOG_DEBUG, punit, "Barbarian marching to conquer %s", pc->common.name);
+        (void) ai_gothere(pplayer, punit, pc->common.tile);
       } else {
         /* sometimes find_beachhead is not enough */
-        if (!find_beachhead(punit, pc->tile, &ftile)) {
+        if (!find_beachhead(punit, pc->common.tile, &ftile)) {
           find_city_beach(pc, punit, &ftile);
         }
-        UNIT_LOG(LOG_DEBUG, punit, "Barbarian sailing to %s", pc->name);
+        UNIT_LOG(LOG_DEBUG, punit, "Barbarian sailing to %s", pc->common.name);
         (void) ai_gothere(pplayer, punit, ftile);
       }
     }
@@ -1870,7 +1870,7 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
     struct city_s *pcity = map_get_city(punit->tile);
 
     if (pcity) {
-      ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->tile);
+      ai_unit_new_role(punit, AIUNIT_DEFEND_HOME, pcity->common.tile);
       /* FIXME: Send unit to nearest city needing more defence */
       UNIT_LOG(LOG_DEBUG, punit, "could not find work, sitting duck");
     } else {
@@ -1899,12 +1899,12 @@ static void ai_manage_caravan(struct player *pplayer, struct unit *punit)
     if ((pcity = wonder_on_continent(pplayer,
                                      map_get_continent(punit->tile)))
         && unit_flag(punit, F_HELP_WONDER)
-        && build_points_left(pcity) > (pcity->shield_surplus * 2)) {
-      if (!same_pos(pcity->tile, punit->tile)) {
+        && build_points_left(pcity) > (pcity->common.shield_surplus * 2)) {
+      if (!same_pos(pcity->common.tile, punit->tile)) {
         if (punit->moves_left == 0) {
           return;
         }
-        (void) ai_unit_goto(punit, pcity->tile);
+        (void) ai_unit_goto(punit, pcity->common.tile);
       } else {
         /*
          * We really don't want to just drop all caravans in immediately.
@@ -1924,13 +1924,13 @@ static void ai_manage_caravan(struct player *pplayer, struct unit *punit)
            if (pcity
                && can_cities_trade(pcity, pdest)
                && can_establish_trade_route(pcity, pdest)
-               && map_get_continent(pcity->tile)
-                                == map_get_continent(pdest->tile)) {
+               && map_get_continent(pcity->common.tile)
+                                == map_get_continent(pdest->common.tile)) {
              tradeval=trade_between_cities(pcity, pdest);
              if (tradeval != 0) {
                if (best < tradeval) {
                  best=tradeval;
-                 best_city=pdest->id;
+                 best_city=pdest->common.id;
                }
              }
            }
@@ -1939,11 +1939,11 @@ static void ai_manage_caravan(struct player *pplayer, struct unit *punit)
        pcity = player_find_city_by_id(pplayer, best_city);
 
        if (pcity) {
-         if (!same_pos(pcity->tile, punit->tile)) {
+         if (!same_pos(pcity->common.tile, punit->tile)) {
            if (punit->moves_left == 0) {
              return;
            }
-           (void) ai_unit_goto(punit, pcity->tile);
+           (void) ai_unit_goto(punit, pcity->common.tile);
          } else {
            handle_unit_establish_trade(pplayer, punit->id);
         }
@@ -1985,8 +1985,8 @@ static void ai_manage_hitpoint_recovery(struct unit *punit)
     /* find city to stay and go there */
     safe = find_nearest_safe_city(punit);
     if (safe) {
-      UNIT_LOG(LOGLEVEL_RECOVERY, punit, "going to %s to recover", safe->name);
-      if (!ai_unit_goto(punit, safe->tile)) {
+      UNIT_LOG(LOGLEVEL_RECOVERY, punit, "going to %s to recover", safe->common.name);
+      if (!ai_unit_goto(punit, safe->common.tile)) {
         freelog(LOGLEVEL_RECOVERY, "died trying to hide and recover");
         return;
       }

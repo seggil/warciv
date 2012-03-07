@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <stdio.h>
@@ -240,16 +240,16 @@ void cityresult_fill(struct player *pplayer,
   } else {
     /* Deduct difference in corruption and waste for real cities. Note that it
      * is possible (with notradesize) that we _gain_ value here. */
-    pcity->pop_size++;
+    pcity->common.pop_size++;
     result->corruption = ai->science_priority
       * (city_corruption(pcity,
                          result->citymap[result->o_x][result->o_y].trade)
-         - pcity->corruption);
+         - pcity->common.corruption);
     result->waste = ai->shield_priority
       * (city_waste(pcity,
                     result->citymap[result->o_x][result->o_y].shield)
-         - pcity->shield_waste);
-    pcity->pop_size--;
+         - pcity->common.shield_waste);
+    pcity->common.pop_size--;
   }
   result->total -= result->corruption;
   result->total -= result->waste;
@@ -398,7 +398,7 @@ static void city_desirability(struct player *pplayer, struct ai_data *ai,
     return;
   }
 
-  if (pcity && (pcity->pop_size + unit_pop_value(punit->type)
+  if (pcity && (pcity->common.pop_size + unit_pop_value(punit->type)
                 > game.ruleset_control.add_to_size_limit)) {
     /* Can't exceed population limit. */
     return;
@@ -415,7 +415,7 @@ static void city_desirability(struct player *pplayer, struct ai_data *ai,
   }
 
   /* If (x, y) is an existing city, consider immigration */
-  if (pcity && pcity->owner == pplayer->player_no) {
+  if (pcity && pcity->common.owner == pplayer->player_no) {
     return;
   }
 

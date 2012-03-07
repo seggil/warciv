@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -44,12 +44,12 @@
 static struct unit *ai_hunter_find(struct player *pplayer,
                                    struct city_s *pcity)
 {
-  unit_list_iterate(pcity->units_supported, punit) {
+  unit_list_iterate(pcity->common.units_supported, punit) {
     if (ai_hunter_qualify(pplayer, punit)) {
       return punit;
     }
   } unit_list_iterate_end;
-  unit_list_iterate(pcity->tile->units, punit) {
+  unit_list_iterate(pcity->common.tile->units, punit) {
     if (ai_hunter_qualify(pplayer, punit)) {
       return punit;
     }
@@ -103,7 +103,7 @@ static Unit_Type_id ai_hunter_guess_best(struct city_s *pcity,
       desire /= 2;
     }
 
-    desire = amortize(desire, ut->build_cost / MAX(pcity->shield_surplus, 1));
+    desire = amortize(desire, ut->build_cost / MAX(pcity->common.shield_surplus, 1));
 
     if (desire > best) {
         best = desire;
@@ -124,7 +124,7 @@ static void ai_hunter_missile_want(struct player *pplayer,
   int best = -1, best_unit_type = -1;
   bool have_hunter = FALSE;
 
-  unit_list_iterate(pcity->tile->units, punit) {
+  unit_list_iterate(pcity->common.tile->units, punit) {
     if (ai_hunter_qualify(pplayer, punit)
         && (unit_flag(punit, F_MISSILE_CARRIER)
             || unit_flag(punit, F_CARRIER))) {
@@ -160,7 +160,7 @@ static void ai_hunter_missile_want(struct player *pplayer,
       desire /= 2;
     }
 
-    desire = amortize(desire, ut->build_cost / MAX(pcity->shield_surplus, 1));
+    desire = amortize(desire, ut->build_cost / MAX(pcity->common.shield_surplus, 1));
 
     if (desire > best) {
         best = desire;

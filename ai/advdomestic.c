@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <string.h>
@@ -51,7 +51,7 @@ static void ai_choose_help_wonder(city_t *pcity,
   struct player *pplayer = city_owner(pcity);
   /* Continent where the city is --- we won't be aiding any wonder
    * construction on another continent */
-  Continent_id continent = map_get_continent(pcity->tile);
+  Continent_id continent = map_get_continent(pcity->common.tile);
   /* Total count of caravans available or already being built
    * on this continent */
   int caravans = 0;
@@ -72,11 +72,11 @@ static void ai_choose_help_wonder(city_t *pcity,
 
   /* Count caravans being built */
   city_list_iterate(pplayer->cities, acity) {
-    if (acity->is_building_unit
-        && unit_type_flag(acity->currently_building, F_HELP_WONDER)
-        && (acity->shield_stock
-        >= unit_build_shield_cost(acity->currently_building))
-        && map_get_continent(acity->tile) == continent) {
+    if (acity->common.is_building_unit
+        && unit_type_flag(acity->common.currently_building, F_HELP_WONDER)
+        && (acity->common.shield_stock
+        >= unit_build_shield_cost(acity->common.currently_building))
+        && map_get_continent(acity->common.tile) == continent) {
       caravans++;
     }
   } city_list_iterate_end;
@@ -96,16 +96,16 @@ static void ai_choose_help_wonder(city_t *pcity,
      * aren't in that city (stopping building wonder in order to build caravan
      * to help it makes no sense) and we haven't already got enough caravans
      * to finish the wonder. */
-    if (!acity->is_building_unit
-        && is_wonder(acity->currently_building)
-        && map_get_continent(acity->tile) == continent
+    if (!acity->common.is_building_unit
+        && is_wonder(acity->common.currently_building)
+        && map_get_continent(acity->common.tile) == continent
         && acity != pcity
         && (build_points_left(acity)
         > unit_build_shield_cost(unit_type) * caravans)) {
 
       /* Desire for the wonder we are going to help - as much as we want to
        * build it we want to help building it as well. */
-      int want = pcity->server.ai.building_want[acity->currently_building];
+      int want = pcity->u.server.ai.building_want[acity->common.currently_building];
 
       /* Distance to wonder city was established after ai_manage_buildings()
        * and before this.  If we just started building a wonder during
@@ -114,8 +114,8 @@ static void ai_choose_help_wonder(city_t *pcity,
        * warmap generation than there would be otherwise. -- Syela *
        * Value of 8 is a total guess and could be wrong, but it's still better
        * than 0. -- Syela */
-      int dist = pcity->server.ai.distance_to_wonder_city * 8 /
-        get_unit_type(unit_type)->move_rate;
+      int dist = pcity->u.server.ai.distance_to_wonder_city * 8
+                 / get_unit_type(unit_type)->move_rate;
 
       want -= dist;
 
@@ -149,9 +149,9 @@ void domestic_advisor_choose_build(struct player *pplayer, city_t *pcity,
   Unit_Type_id unit_type;
   /* Food surplus assuming that workers and elvii are already accounted for
    * and properly balanced. */
-  int est_food = pcity->food_surplus
-                 + 2 * pcity->specialists[SP_SCIENTIST]
-                 + 2 * pcity->specialists[SP_TAXMAN];
+  int est_food = pcity->common.food_surplus
+                 + 2 * pcity->common.specialists[SP_SCIENTIST]
+                 + 2 * pcity->common.specialists[SP_TAXMAN];
 
   init_choice(choice);
 
@@ -164,7 +164,7 @@ void domestic_advisor_choose_build(struct player *pplayer, city_t *pcity,
      * ai_manage_cities.  The expand value is the % that the AI should
      * value expansion (basically to handicap easier difficutly levels)
      * and is set when the difficulty level is changed (stdinhand.c). */
-    int want = pcity->server.ai.settler_want * pplayer->ai.expand / 100;
+    int want = pcity->u.server.ai.settler_want * pplayer->ai.expand / 100;
 
     /* Allowing multiple settlers per city now. I think this is correct.
      * -- Syela */
@@ -186,12 +186,12 @@ void domestic_advisor_choose_build(struct player *pplayer, city_t *pcity,
   if (unit_type != U_LAST
       && est_food >= utype_food_cost(get_unit_type(unit_type), gov)) {
     /* founder_want calculated in settlers.c, called from ai_manage_cities(). */
-    int want = pcity->server.ai.founder_want;
+    int want = pcity->u.server.ai.founder_want;
 
     if (want > choice->want) {
       CITY_LOG(LOG_DEBUG, pcity, "desires founders with passion %d", want);
       choice->want = want;
-      choice->need_boat = pcity->server.ai.founder_boat;
+      choice->need_boat = pcity->u.server.ai.founder_boat;
       choice->type = CT_NONMIL;
       ai_choose_role_unit(pplayer, pcity, choice, F_CITIES, want);
 

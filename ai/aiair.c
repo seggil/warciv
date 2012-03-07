@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -74,10 +74,10 @@ static bool ai_should_we_air_attack_tile(struct unit *punit,
   /* TODO: There is a danger of producing too many units that will not
    * attack anything.  Production should not happen if there is an idle
    * unit of the same type nearby */
-  if (acity && !TEST_BIT(acity->server.ai.invasion, 0) && punit->id != 0) {
+  if (acity && !TEST_BIT(acity->u.server.ai.invasion, 0) && punit->id != 0) {
     /* No ground troups are invading */
     freelog(LOG_DEBUG, "Don't want to attack %s, although we could",
-            acity->name);
+            acity->common.name);
     return FALSE;
   }
 
@@ -247,7 +247,7 @@ static bool ai_find_strategic_airbase(struct unit *punit,
       city_t *base_city
         = map_get_city(get_refuel_tile(airbase));
 
-      if (base_city && base_city->server.ai.grave_danger != 0) {
+      if (base_city && base_city->u.server.ai.grave_danger != 0) {
         /* Fly there immediately!! */
         *airbase_tile = get_refuel_tile(airbase);
         found = TRUE;
@@ -345,7 +345,7 @@ void ai_manage_airunit(struct player *pplayer, struct unit *punit)
       freelog(LOG_DEBUG, "%s will fly to (%i, %i) (%s) to fight there",
               unit_type(punit)->name, dst_tile->x, dst_tile->y,
               (map_get_city(dst_tile) ?
-               map_get_city(dst_tile)->name : ""));
+               map_get_city(dst_tile)->common.name : ""));
       punit->goto_tile = dst_tile;
       ai_unit_goto(punit, punit->goto_tile);
     } else {
@@ -396,7 +396,7 @@ bool ai_choose_attacker_air(struct player *pplayer, city_t *pcity,
       struct unit *virtual_unit =
         create_unit_virtual(pplayer, pcity, u_type,
                             do_make_unit_veteran(pcity, u_type));
-      int profit = find_something_to_bomb(virtual_unit, pcity->tile);
+      int profit = find_something_to_bomb(virtual_unit, pcity->common.tile);
       if (profit > choice->want){
         /* Update choice */
         choice->want = profit;
@@ -404,10 +404,10 @@ bool ai_choose_attacker_air(struct player *pplayer, city_t *pcity,
         choice->type = CT_ATTACKER;
         want_something = TRUE;
         freelog(LOG_DEBUG, "%s wants to build %s (want=%d)",
-                pcity->name, get_unit_type(u_type)->name, profit);
+                pcity->common.name, get_unit_type(u_type)->name, profit);
       } else {
-      freelog(LOG_DEBUG, "%s doesn't want to build %s (want=%d)",
-                pcity->name, get_unit_type(u_type)->name, profit);
+        freelog(LOG_DEBUG, "%s doesn't want to build %s (want=%d)",
+                pcity->common.name, get_unit_type(u_type)->name, profit);
       }
       destroy_unit_virtual(virtual_unit);
     }

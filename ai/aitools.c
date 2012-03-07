@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -66,7 +66,7 @@ int military_amortize(struct player *pplayer, struct city_s *pcity,
                       int value, int delay, int build_cost)
 {
   struct ai_data *ai = ai_data_get(pplayer);
-  int city_output = (pcity ? pcity->shield_surplus : 1);
+  int city_output = (pcity ? pcity->common.shield_surplus : 1);
   int output = MAX(city_output, ai->stats.average_production);
   int build_time = build_cost / MAX(output, 1);
 
@@ -389,7 +389,7 @@ void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
 bool ai_unit_make_homecity(struct unit *punit, struct city_s *pcity)
 {
   CHECK_UNIT(punit);
-  assert(punit->owner == pcity->owner);
+  assert(punit->owner == pcity->common.owner);
 
   if (punit->homecity == 0 && !unit_has_role(punit->type, L_EXPLORER)) {
     /* This unit doesn't pay any upkeep while it doesn't have a homecity,
@@ -400,9 +400,9 @@ bool ai_unit_make_homecity(struct unit *punit, struct city_s *pcity)
        the greater good -- Per */
     return FALSE;
   }
-  if (pcity->shield_surplus - unit_type(punit)->shield_cost >= 0
-      && pcity->food_surplus - unit_type(punit)->food_cost >= 0) {
-    handle_unit_change_homecity(unit_owner(punit), punit->id, pcity->id);
+  if (pcity->common.shield_surplus - unit_type(punit)->shield_cost >= 0
+      && pcity->common.food_surplus - unit_type(punit)->food_cost >= 0) {
+    handle_unit_change_homecity(unit_owner(punit), punit->id, pcity->common.id);
     return TRUE;
   }
   return FALSE;
@@ -578,14 +578,14 @@ struct city_s *dist_nearest_city(struct player *pplayer, struct tile *ptile,
     }
 
     city_list_iterate(pplay->cities, pcity) {
-      int city_dist = real_map_distance(ptile, pcity->tile);
+      int city_dist = real_map_distance(ptile, pcity->common.tile);
 
       /* Find the closest city known to the player with a matching
        * continent. */
       if ((best_dist == -1 || city_dist < best_dist)
           && (everywhere || con == 0
-              || con == map_get_continent(pcity->tile))
-          && (!pplayer || map_is_known(pcity->tile, pplayer))) {
+              || con == map_get_continent(pcity->common.tile))
+          && (!pplayer || map_is_known(pcity->common.tile, pplayer))) {
         best_dist = city_dist;
         pc = pcity;
       }
@@ -694,10 +694,10 @@ static bool is_building_other_wonder(struct city_s *pcity)
 
   city_list_iterate(pplayer->cities, acity) {
     if (pcity != acity
-        && !acity->is_building_unit
-        && is_wonder(acity->currently_building)
-        && (map_get_continent(acity->tile)
-            == map_get_continent(pcity->tile))) {
+        && !acity->common.is_building_unit
+        && is_wonder(acity->common.currently_building)
+        && (map_get_continent(acity->common.tile)
+            == map_get_continent(pcity->common.tile))) {
       return TRUE;
     }
   } city_list_iterate_end;
@@ -721,8 +721,8 @@ void ai_advisor_choose_building(struct city_s *pcity, struct ai_choice *choice)
 
   /* too bad plr->score isn't kept up to date. */
   city_list_iterate(plr->cities, acity)
-    danger += acity->server.ai.danger;
-    downtown += acity->server.ai.downtown;
+    danger += acity->u.server.ai.danger;
+    downtown += acity->u.server.ai.downtown;
     cities++;
   city_list_iterate_end;
 
@@ -733,24 +733,24 @@ void ai_advisor_choose_building(struct city_s *pcity, struct ai_choice *choice)
       continue; /* Humans should not be advised to build wonders or palace */
     }
     if (!is_wonder(i)
-        || (!pcity->is_building_unit && is_wonder(pcity->currently_building)
-            && pcity->shield_stock >= impr_build_shield_cost(i) / 2)
+        || (!pcity->common.is_building_unit && is_wonder(pcity->common.currently_building)
+            && pcity->common.shield_stock >= impr_build_shield_cost(i) / 2)
         || (!is_building_other_wonder(pcity)
             /* otherwise caravans will be killed! */
-            && pcity->server.ai.grave_danger == 0
-            && pcity->server.ai.downtown * cities >= downtown
-            && pcity->server.ai.danger * cities <= danger)) {
+            && pcity->u.server.ai.grave_danger == 0
+            && pcity->u.server.ai.downtown * cities >= downtown
+            && pcity->u.server.ai.danger * cities <= danger)) {
       /* Is this too many restrictions? */
       /* trying to keep wonders in safe places with easy caravan
        * access -- Syela */
-      if(pcity->server.ai.building_want[i]>want) {
+      if(pcity->u.server.ai.building_want[i]>want) {
         /* we have to do the can_build check to avoid Built Granary.
          * Now Building Granary. */
         if (can_build_improvement(pcity, i)) {
-          want = pcity->server.ai.building_want[i];
+          want = pcity->u.server.ai.building_want[i];
           id = i;
         } else {
-          freelog(LOG_DEBUG, "%s can't build %s", pcity->name,
+          freelog(LOG_DEBUG, "%s can't build %s", pcity->common.name,
                   get_improvement_name(i));
         }
       } /* id is the building we like the best */
@@ -759,9 +759,9 @@ void ai_advisor_choose_building(struct city_s *pcity, struct ai_choice *choice)
 
   if (want != 0) {
     freelog(LOG_DEBUG, "AI_Chosen: %s with desire = %d for %s",
-            get_improvement_name(id), want, pcity->name);
+            get_improvement_name(id), want, pcity->common.name);
   } else {
-    freelog(LOG_DEBUG, "AI_Chosen: None for %s", pcity->name);
+    freelog(LOG_DEBUG, "AI_Chosen: None for %s", pcity->common.name);
   }
   choice->want = want;
   choice->choice = id;
@@ -793,7 +793,7 @@ bool ai_assess_military_unhappiness(struct city_s *pcity,
   /* ??  This does the right thing for normal Republic and Democ -- dwp */
   free_happy += get_city_bonus(pcity, EFT_MAKE_CONTENT_MIL);
 
-  unit_list_iterate(pcity->units_supported, punit) {
+  unit_list_iterate(pcity->common.units_supported, punit) {
     int happy_cost = utype_happy_cost(unit_type(punit), g);
 
     if (happy_cost <= 0) {

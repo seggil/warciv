@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include "city.h"
@@ -195,7 +195,7 @@ void ai_data_turn_init(struct player *pplayer)
      * enough to warrant city walls. Concentrate instead on
      * coastal fortresses and hunting down enemy transports. */
     city_list_iterate(aplayer->cities, acity) {
-      Continent_id continent = map_get_continent(acity->tile);
+      Continent_id continent = map_get_continent(acity->common.tile);
       ai->threats.continent[continent] = TRUE;
     } city_list_iterate_end;
 
@@ -303,8 +303,8 @@ void ai_data_turn_init(struct player *pplayer)
   ai->stats.cities = wc_calloc(ai->num_continents + 1, sizeof(int));
   ai->stats.average_production = 0;
   city_list_iterate(pplayer->cities, pcity) {
-    ai->stats.cities[(int)map_get_continent(pcity->tile)]++;
-    ai->stats.average_production += pcity->shield_surplus;
+    ai->stats.cities[(int)map_get_continent(pcity->common.tile)]++;
+    ai->stats.average_production += pcity->common.shield_surplus;
   } city_list_iterate_end;
   ai->stats.average_production /= MAX(1, city_list_size(pplayer->cities));
   BV_CLR_ALL(ai->stats.diplomat_reservations);
@@ -319,7 +319,7 @@ void ai_data_turn_init(struct player *pplayer)
       struct city_s *pcity = map_get_city(punit->goto_tile);
 
       if (pcity) {
-        BV_SET(ai->stats.diplomat_reservations, pcity->id);
+        BV_SET(ai->stats.diplomat_reservations, pcity->common.id);
       }
     }
   } unit_list_iterate_end;

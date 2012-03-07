@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -403,7 +403,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
     city_t *offer = city_list_find_id(pclause->from->cities,
                                            pclause->value);
 
-    if (!offer || offer->owner != giver) {
+    if (!offer || offer->common.owner != giver) {
       /* City destroyed or taken during negotiations */
       notify(aplayer, _("*%s (AI)* You don't have the offered city!"),
              pplayer->name);
@@ -416,7 +416,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
       } else {
         worth *= 15;
       }
-      if (aplayer->player_no == offer->server.original) {
+      if (aplayer->player_no == offer->u.server.original) {
         /* Let them buy back their own city cheaper. */
         worth /= 2;
       }
@@ -611,8 +611,8 @@ static int ai_war_desire(struct player *pplayer, struct player *aplayer,
    * while counting all enemy settlers as (worst case) indicators of
    * enemy expansionism */
   city_list_iterate(pplayer->cities, pcity) {
-    if (pcity->is_building_unit
-        && unit_type_flag(pcity->currently_building, F_CITIES)) {
+    if (pcity->common.is_building_unit
+        && unit_type_flag(pcity->common.currently_building, F_CITIES)) {
       kill_desire -= 1;
     }
   } city_list_iterate_end;
@@ -624,7 +624,7 @@ static int ai_war_desire(struct player *pplayer, struct player *aplayer,
 
   /* Count big cities as twice the threat */
   city_list_iterate(aplayer->cities, pcity) {
-    kill_desire += pcity->pop_size > 8 ? 1 : 0;
+    kill_desire += pcity->common.pop_size > 8 ? 1 : 0;
   } city_list_iterate_end;
 
   /* Tech lead is worrisome */

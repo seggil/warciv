@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -105,21 +105,21 @@ void ai_choose_diplomat_defensive(struct player *pplayer,
      to protect us. If we see an enemy diplomat and we don't have diplomat
      tech... race it! */
   if (def != 0
-      && pcity->server.ai.diplomat_threat
-      && !pcity->server.ai.has_diplomat) {
+      && pcity->u.server.ai.diplomat_threat
+      && !pcity->u.server.ai.has_diplomat) {
     Unit_Type_id u = best_role_unit(pcity, F_DIPLOMAT);
 
     if (u < U_LAST) {
        freelog(LOG_DIPLOMAT_BUILD,
-               "A defensive diplomat will be built in city %s.", pcity->name);
+               "A defensive diplomat will be built in city %s.", pcity->common.name);
        choice->want = 16000; /* diplomat more important than soldiers */
-       pcity->server.ai.urgency = 1;
+       pcity->u.server.ai.urgency = 1;
        choice->type = CT_DEFENDER;
        choice->choice = u;
     } else if (num_role_units(F_DIPLOMAT) > 0) {
       /* We don't know diplomats yet... */
       freelog(LOG_DIPLOMAT_BUILD,
-              "A defensive diplomat is wanted badly in city %s.", pcity->name);
+              "A defensive diplomat is wanted badly in city %s.", pcity->common.name);
       u = get_role_unit(F_DIPLOMAT, 0);
       /* 3000 is a just a large number, but not hillariously large as the
          previously used one. This is important for diplomacy later - Per */
@@ -171,7 +171,7 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
     pf_destroy_map(map);
     destroy_unit_virtual(punit);
 
-    if (acity == NULL || BV_ISSET(ai->stats.diplomat_reservations, acity->id)) {
+    if (acity == NULL || BV_ISSET(ai->stats.diplomat_reservations, acity->common.id)) {
       /* Found no target or city already considered */
       return;
     }
@@ -181,11 +181,11 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
         && (incite_cost < pplayer->economic.gold - pplayer->ai.est_upkeep)) {
       /* incite gain (FIXME: we should count wonders too but need to
          cache that somehow to avoid CPU hog -- Per) */
-      gain_incite = acity->food_prod * FOOD_WEIGHTING
-                    + acity->shield_prod * SHIELD_WEIGHTING
-                    + (acity->luxury_total
-                       + acity->tax_total
-                       + acity->science_total) * TRADE_WEIGHTING;
+      gain_incite = acity->common.food_prod * FOOD_WEIGHTING
+                    + acity->common.shield_prod * SHIELD_WEIGHTING
+                    + (acity->common.luxury_total
+                       + acity->common.tax_total
+                       + acity->common.science_total) * TRADE_WEIGHTING;
       gain_incite *= SHIELD_WEIGHTING; /* WAG cost to take city otherwise */
       gain_incite -= incite_cost * TRADE_WEIGHTING;
     }
@@ -222,21 +222,21 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
         && want < 99) {
         freelog(LOG_DIPLOMAT_BUILD,
                 "A diplomat desired in %s to establish an embassy with %s "
-                "in %s", pcity->name, city_owner(acity)->name, acity->name);
+                "in %s", pcity->common.name, city_owner(acity)->name, acity->common.name);
         want = 99;
     }
     if (want > choice->want) {
       freelog(LOG_DIPLOMAT_BUILD,
               "%s, %s: %s is desired with want %d to spy in %s (incite "
               "want %d cost %d gold %d, tech theft want %d, ttd %d)",
-              pplayer->name, pcity->name, ut->name, want, acity->name,
+              pplayer->name, pcity->common.name, ut->name, want, acity->common.name,
               gain_incite, incite_cost,
               pplayer->economic.gold - pplayer->ai.est_upkeep,
               gain_theft, time_to_dest);
       choice->want = want;
       choice->type = CT_NONMIL; /* so we don't build barracks for it */
       choice->choice = u;
-      BV_SET(ai->stats.diplomat_reservations, acity->id);
+      BV_SET(ai->stats.diplomat_reservations, acity->common.id);
     }
   }
 }
@@ -267,12 +267,12 @@ static void ai_diplomat_city(struct unit *punit, struct city_s *ctarget)
 
   handle_unit_activity_request(punit, ACTIVITY_IDLE);
 
-#define T(my_act,my_val)                                            \
-  if (diplomat_can_do_action(punit, my_act, ctarget->tile)) {       \
-    freelog(LOG_DIPLOMAT, "Player %s's diplomat %d does " #my_act   \
-            " on %s", pplayer->name, punit->id, ctarget->name);     \
+#define T(my_act,my_val)                                               \
+  if (diplomat_can_do_action(punit, my_act, ctarget->common.tile)) {   \
+    freelog(LOG_DIPLOMAT, "Player %s's diplomat %d does " #my_act      \
+            " on %s", pplayer->name, punit->id, ctarget->common.name); \
     handle_unit_diplomat_action(pplayer, punit->id, my_act,         \
-                                ctarget->id, my_val);               \
+                                ctarget->common.id, my_val);        \
     return;                                                         \
   }
 
@@ -283,18 +283,18 @@ static void ai_diplomat_city(struct unit *punit, struct city_s *ctarget)
   }
 
   if (count_tech > 0
-      && (ctarget->server.steal == 0 || unit_flag(punit, F_SPY))) {
+      && (ctarget->u.server.steal == 0 || unit_flag(punit, F_SPY))) {
     T(DIPLOMAT_STEAL,0);
   } else {
     UNIT_LOG(LOG_DIPLOMAT, punit, "We have already stolen from %s!",
-             ctarget->name);
+             ctarget->common.name);
   }
 
   incite_cost = city_incite_cost(pplayer, ctarget);
   if (incite_cost <= gold_avail) {
     T(DIPLOMAT_INCITE,0);
   } else {
-    UNIT_LOG(LOG_DIPLOMAT, punit, "%s too expensive!", ctarget->name);
+    UNIT_LOG(LOG_DIPLOMAT, punit, "%s too expensive!", ctarget->common.name);
   }
 
   if (!pplayers_at_war(pplayer, tplayer)) {
@@ -306,7 +306,7 @@ static void ai_diplomat_city(struct unit *punit, struct city_s *ctarget)
 
   /* This can happen for a number of odd and esoteric reasons  */
   UNIT_LOG(LOG_DIPLOMAT, punit, "decides to stand idle outside "
-           "enemy city %s!", ctarget->name);
+           "enemy city %s!", ctarget->common.name);
   ai_unit_new_role(punit, AIUNIT_NONE, NULL);
 }
 
@@ -348,13 +348,13 @@ static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
     incite_cost = city_incite_cost(pplayer, acity);
     can_incite = (incite_cost < INCITE_IMPOSSIBLE_COST);
 
-    dipldef = (count_diplomats_on_tile(acity->tile) > 0);
+    dipldef = (count_diplomats_on_tile(acity->common.tile) > 0);
     /* Three actions to consider:
      * 1. establishing embassy OR
      * 2. stealing techs OR
      * 3. inciting revolt */
     if (!has_embassy
-        || (acity->server.steal == 0 && pplayer->research.techs_researched <
+        || (acity->u.server.steal == 0 && pplayer->research.techs_researched <
             aplayer->research.techs_researched && !dipldef)
         || (incite_cost < (pplayer->economic.gold - pplayer->ai.est_upkeep)
             && can_incite && !dipldef)) {
@@ -379,8 +379,8 @@ static struct city_s *ai_diplomat_defend(struct player *pplayer,
   struct city_s *pcity = map_get_city(punit->tile);
 
   if (pcity
-      && count_diplomats_on_tile(pcity->tile) == 1
-      && pcity->server.ai.urgency > 0) {
+      && count_diplomats_on_tile(pcity->common.tile) == 1
+      && pcity->u.server.ai.urgency > 0) {
     /* Danger and we are only diplomat present - stay. */
     return pcity;
   }
@@ -399,10 +399,10 @@ static struct city_s *ai_diplomat_defend(struct player *pplayer,
       continue;
     }
 
-    urgency = acity->server.ai.urgency;
+    urgency = acity->u.server.ai.urgency;
     dipls = (count_diplomats_on_tile(pos.tile)
              - (same_pos(pos.tile, punit->tile) ? 1 : 0));
-    if (dipls == 0 && acity->server.ai.diplomat_threat) {
+    if (dipls == 0 && acity->u.server.ai.diplomat_threat) {
       /* We are _really_ needed there */
       urgency = (urgency + 1) * 5;
     } else if (dipls > 0) {
@@ -565,9 +565,9 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
   /* If we are the only diplomat in a threatened city, then stay to defend */
   pcity = map_get_city(punit->tile); /* we may have moved */
   if (pcity && count_diplomats_on_tile(punit->tile) == 1
-      && (pcity->server.ai.diplomat_threat || pcity->server.ai.urgency > 0)) {
+      && (pcity->u.server.ai.diplomat_threat || pcity->u.server.ai.urgency > 0)) {
     UNIT_LOG(LOG_DIPLOMAT, punit, "stays to protect %s (urg %d)",
-             pcity->name, pcity->server.ai.urgency);
+             pcity->common.name, pcity->u.server.ai.urgency);
     ai_unit_new_role(punit, AIUNIT_NONE, NULL); /* abort mission */
     pf_destroy_map(map);
     return;
@@ -581,7 +581,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
     ctarget = map_get_city(punit->goto_tile);
     if (pf_get_position(map, punit->goto_tile, &pos)
         && ctarget) {
-      if (same_pos(ctarget->tile, punit->tile)) {
+      if (same_pos(ctarget->common.tile, punit->tile)) {
         failure = TRUE;
       } else if (pplayers_allied(pplayer, city_owner(ctarget))
           && punit->ai.ai_role == AIUNIT_ATTACK
@@ -628,7 +628,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
     } else if ((ctarget = ai_diplomat_defend(pplayer, punit,
                                              punit->type, map)) != NULL) {
       task = AIUNIT_DEFEND_HOME;
-      UNIT_LOG(LOG_DIPLOMAT, punit, "going to defend %s", ctarget->name);
+      UNIT_LOG(LOG_DIPLOMAT, punit, "going to defend %s", ctarget->common.name);
     } else if ((ctarget = find_closest_owned_city(pplayer, punit->tile,
                                                   TRUE, NULL)) != NULL) {
       /* This should only happen if the entire continent was suddenly
@@ -642,7 +642,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
       return;
     }
 
-    ai_unit_new_role(punit, task, ctarget->tile);
+    ai_unit_new_role(punit, task, ctarget->common.tile);
     assert(punit->moves_left > 0 && ctarget
            && punit->ai.ai_role != AIUNIT_NONE);
   }
@@ -656,7 +656,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
   }
 
   /* GOTO unless we want to stay */
-  if (!same_pos(punit->tile, ctarget->tile)) {
+  if (!same_pos(punit->tile, ctarget->common.tile)) {
     struct pf_path *path;
 
     path = pf_get_path(map, punit->goto_tile);
@@ -665,7 +665,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
       if (punit->ai.ai_role == AIUNIT_ATTACK) {
         int dist  = real_map_distance(punit->tile, punit->goto_tile);
         UNIT_LOG(LOG_DIPLOMAT, punit, "attack, dist %d to %s",
-                 dist, ctarget ? ctarget->name : "(none)");
+                 dist, ctarget ? ctarget->common.name : "(none)");
         if (dist == 1) {
           /* Do our stuff */
           ai_unit_new_role(punit, AIUNIT_NONE, NULL);

@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include "log.h"
@@ -662,27 +662,27 @@ static bool aiferry_find_interested_city(struct unit *pferry)
 
     pcity = map_get_city(pos.tile);
 
-    if (pcity && pcity->owner == pferry->owner
-        && (pcity->server.ai.choice.need_boat
-            || (pcity->is_building_unit
-                && unit_has_role(pcity->currently_building, L_FERRYBOAT)))) {
+    if (pcity && pcity->common.owner == pferry->owner
+        && (pcity->u.server.ai.choice.need_boat
+            || (pcity->common.is_building_unit
+                && unit_has_role(pcity->common.currently_building, L_FERRYBOAT)))) {
       bool really_needed = TRUE;
-      int turns = city_turns_to_build(pcity, pcity->currently_building,
-                                      pcity->is_building_unit, TRUE);
+      int turns = city_turns_to_build(pcity, pcity->common.currently_building,
+                                      pcity->common.is_building_unit, TRUE);
 
       UNIT_LOG(LOGLEVEL_FERRY, pferry, "%s (%d, %d) looks promising...",
-               pcity->name, TILE_XY(pcity->tile));
+               pcity->common.name, TILE_XY(pcity->common.tile));
 
-      if (pos.turn > turns && pcity->is_building_unit
-          && unit_has_role(pcity->currently_building, L_FERRYBOAT)) {
+      if (pos.turn > turns && pcity->common.is_building_unit
+          && unit_has_role(pcity->common.currently_building, L_FERRYBOAT)) {
         UNIT_LOG(LOGLEVEL_FERRY, pferry, "%s is NOT suitable: "
-                 "will finish building its own ferry too soon", pcity->name);
+                 "will finish building its own ferry too soon", pcity->common.name);
         continue;
       }
 
       if (turns >= turns_horizon) {
         UNIT_LOG(LOGLEVEL_FERRY, pferry, "%s is NOT suitable: "
-                 "has just started building", pcity->name);
+                 "has just started building", pcity->common.name);
         continue;
       }
 
@@ -691,7 +691,7 @@ static bool aiferry_find_interested_city(struct unit *pferry)
             && unit_has_role(aunit->type, L_FERRYBOAT)) {
 
           UNIT_LOG(LOGLEVEL_FERRY, pferry, "%s is NOT suitable: "
-                   "has another ferry", pcity->name);
+                   "has another ferry", pcity->common.name);
           really_needed = FALSE;
           break;
         }
@@ -699,7 +699,7 @@ static bool aiferry_find_interested_city(struct unit *pferry)
 
       if (really_needed) {
         UNIT_LOG(LOGLEVEL_FERRY, pferry, "will go to %s unless we "
-                 "find something better", pcity->name);
+                 "find something better", pcity->common.name);
         pferry->goto_tile = pos.tile;
         turns_horizon = turns;
         needed = TRUE;
@@ -731,7 +731,7 @@ void ai_manage_ferryboat(struct player *pplayer, struct unit *punit)
   if (punit->hp < unit_type(punit)->hp
       && (pcity = map_get_city(punit->tile))) {
     UNIT_LOG(LOGLEVEL_FERRY, punit, "waiting in %s to recover hitpoints",
-             pcity->name);
+             pcity->common.name);
     return;
   }
 
@@ -864,9 +864,9 @@ void ai_manage_ferryboat(struct player *pplayer, struct unit *punit)
   if (punit->moves_left > 0) {
     struct city_s *pcity = find_nearest_safe_city(punit);
     if (pcity) {
-      punit->goto_tile = pcity->tile;
+      punit->goto_tile = pcity->common.tile;
       UNIT_LOG(LOGLEVEL_FERRY, punit, "No work, going home");
-      (void) ai_unit_goto(punit, pcity->tile);
+      (void) ai_unit_goto(punit, pcity->common.tile);
     }
   }
 

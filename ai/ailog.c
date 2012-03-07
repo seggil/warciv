@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <stdarg.h>
@@ -89,24 +89,25 @@ void CITY_LOG(int level, struct city_s *pcity, const char *msg, ...)
   va_list ap;
   int minlevel = MIN(LOGLEVEL_CITY, level);
 
-  if (pcity->server.debug) {
+  if (pcity->u.server.debug) {
     minlevel = LOG_NORMAL;
   } else if (minlevel > wc_log_level) {
     return;
   }
 
   my_snprintf(buffer, sizeof(buffer), "%s's %s(%d,%d) [s%d d%d u%d g%d] ",
-              city_owner(pcity)->name, pcity->name,
-              pcity->tile->x, pcity->tile->y, pcity->pop_size,
-              pcity->server.ai.danger, pcity->server.ai.urgency,
-              pcity->server.ai.grave_danger);
+              city_owner(pcity)->name, pcity->common.name,
+              pcity->common.tile->x, pcity->common.tile->y,
+              pcity->common.pop_size,
+              pcity->u.server.ai.danger, pcity->u.server.ai.urgency,
+              pcity->u.server.ai.grave_danger);
 
   va_start(ap, msg);
   my_vsnprintf(buffer2, sizeof(buffer2), msg, ap);
   va_end(ap);
 
   cat_snprintf(buffer, sizeof(buffer), "%s", buffer2);
-  if (pcity->server.debug) {
+  if (pcity->u.server.debug) {
     notify_conn(game.est_connections, "%s", buffer);
   }
   freelog(minlevel, "%s", buffer);
@@ -134,7 +135,7 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
     if (punit->id == 0) {
       struct city_s *pcity = map_get_city(punit->tile);
 
-      if (pcity && pcity->server.debug) {
+      if (pcity && pcity->u.server.debug) {
         minlevel = LOG_NORMAL;
         messwin = TRUE;
       }
@@ -196,9 +197,9 @@ void BODYGUARD_LOG(int level, struct unit *punit, const char *msg)
     id = pcharge->id;
     s = unit_type(pcharge)->name;
   } else if (pcity) {
-    ptile = pcity->tile;
-    id = pcity->id;
-    s = pcity->name;
+    ptile = pcity->common.tile;
+    id = pcity->common.id;
+    s = pcity->common.name;
   }
   my_snprintf(buffer, sizeof(buffer),
               "%s's bodyguard %s[%d] (%d,%d){%s:%d@%d,%d} ",

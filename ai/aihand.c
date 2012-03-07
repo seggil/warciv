@@ -167,13 +167,13 @@ static void ai_manage_taxes(struct player *pplayer)
       total_cities++;
 
       if (cmr.found_a_valid
-          && pcity->food_surplus > 0
-          && pcity->pop_size >= g->rapture_size
-          && city_can_grow_to(pcity, pcity->pop_size + 1)) {
-        pcity->server.ai.celebrate = TRUE;
+          && pcity->common.food_surplus > 0
+          && pcity->common.pop_size >= g->rapture_size
+          && city_can_grow_to(pcity, pcity->common.pop_size + 1)) {
+        pcity->u.server.ai.celebrate = TRUE;
         can_celebrate++;
       } else {
-        pcity->server.ai.celebrate = FALSE;
+        pcity->u.server.ai.celebrate = FALSE;
       }
     } city_list_iterate_end;
     /* If more than half our cities can celebrate, go for it! */
@@ -181,8 +181,8 @@ static void ai_manage_taxes(struct player *pplayer)
     if (celebrate) {
       freelog(LOGLEVEL_TAX, "*** %s CELEBRATES! ***", pplayer->name);
       city_list_iterate(pplayer->cities, pcity) {
-        if (pcity->server.ai.celebrate == TRUE) {
-          freelog(LOGLEVEL_TAX, "setting %s to celebrate", pcity->name);
+        if (pcity->u.server.ai.celebrate == TRUE) {
+          freelog(LOGLEVEL_TAX, "setting %s to celebrate", pcity->common.name);
           cm_query_result(pcity, &cmp, &cmr);
           if (cmr.found_a_valid) {
             apply_cmresult_to_city(pcity, &cmr);
@@ -270,7 +270,7 @@ void ai_best_government(struct player *pplayer)
        * this is a rather big CPU operation, we'd rather not. */
       check_player_government_rates(pplayer);
       city_list_iterate(pplayer->cities, acity) {
-        acity->server.ai.celebrate = FALSE;
+        acity->u.server.ai.celebrate = FALSE;
         /* This isn't strictly necessary since it's done in aaw. */
         generic_city_refresh(acity, TRUE, NULL);
         auto_arrange_workers(acity);
