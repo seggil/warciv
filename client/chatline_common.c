@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -261,9 +261,9 @@ int insert_city_link(char *buf, size_t buflen, city_t *pcity)
 
   assert(pcity != NULL);
 
-  link_escape_city_name(safename, sizeof(safename), pcity->name);
+  link_escape_city_name(safename, sizeof(safename), pcity->common.name);
   return my_snprintf(buf, buflen,
-                     CITY_LINK_PREFIX "%d\"%s\"", pcity->id, safename);
+                     CITY_LINK_PREFIX "%d\"%s\"", pcity->common.id, safename);
 }
 
 /**************************************************************************

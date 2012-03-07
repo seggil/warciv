@@ -164,7 +164,7 @@ static void define_tiles_within_rectangle(void)
 
       /*  Tile passed all tests; process it.
        */
-      if (ptile->city && ptile->city->owner == get_player_idx()) {
+      if (ptile->city && ptile->city->common.owner == get_player_idx()) {
         ptile->client.hilite = HILITE_CITY;
         tiles_hilited_cities = TRUE;
         update_miscellaneous_menu();
@@ -310,7 +310,7 @@ void cancel_distance_tool(void)
 **************************************************************************/
 bool is_city_hilited(city_t *pcity)
 {
-  return pcity != NULL && pcity->tile->client.hilite == HILITE_CITY;
+  return pcity != NULL && pcity->common.tile->client.hilite == HILITE_CITY;
 }
 
 /**************************************************************************
@@ -359,7 +359,7 @@ void toggle_tile_hilite(struct tile *ptile)
       toggle_city_hilite(pcity, FALSE); /* cityrep.c */
     }
   }
-  else if (pcity && pcity->owner == get_player_idx()) {
+  else if (pcity && pcity->common.owner == get_player_idx()) {
     ptile->client.hilite = HILITE_CITY;
     tiles_hilited_cities = TRUE;
     toggle_city_hilite(pcity, TRUE);
@@ -405,7 +405,7 @@ void key_cities_overlay(int canvas_x, int canvas_y)
 
     if (client_is_global_observer()) {
       cities_iterate(pcity) {
-        if (pcity->client.colored) {
+        if (pcity->u.client.colored) {
           if (++num >= 2) {
             /* No need more */
             break;
@@ -414,7 +414,7 @@ void key_cities_overlay(int canvas_x, int canvas_y)
       } cities_iterate_end;
     } else {
       city_list_iterate(get_player_ptr()->cities, pcity) {
-        if (pcity->client.colored) {
+        if (pcity->u.client.colored) {
           if (++num >= 2) {
             /* No need more */
             break;
@@ -423,17 +423,17 @@ void key_cities_overlay(int canvas_x, int canvas_y)
       } city_list_iterate_end;
     }
 
-    toggle_on = num == 0 || (num == 1 && pcity && pcity->client.colored);
+    toggle_on = num == 0 || (num == 1 && pcity && pcity->u.client.colored);
 
     if (client_is_global_observer()) {
       cities_iterate(pcity) {
-        if ((toggle_on ? !pcity->client.colored : pcity->client.colored)) {
+        if ((toggle_on ? !pcity->u.client.colored : pcity->u.client.colored)) {
           toggle_city_color(pcity);
         }
       } cities_iterate_end;
     } else {
       city_list_iterate(get_player_ptr()->cities, pcity) {
-        if ((toggle_on ? !pcity->client.colored : pcity->client.colored)) {
+        if ((toggle_on ? !pcity->u.client.colored : pcity->u.client.colored)) {
           toggle_city_color(pcity);
         }
       } city_list_iterate_end;
@@ -454,11 +454,11 @@ void clipboard_copy_production(struct tile *ptile)
   }
 
   if (pcity) {
-    if (pcity->owner != get_player_idx())  {
+    if (pcity->common.owner != get_player_idx())  {
       return;
     }
-    clipboard = pcity->currently_building;
-    clipboard_is_unit = pcity->is_building_unit;
+    clipboard = pcity->common.currently_building;
+    clipboard_is_unit = pcity->common.is_building_unit;
   } else {
     struct unit *punit = find_visible_unit(ptile);
     if (!punit) {
@@ -497,7 +497,7 @@ void clipboard_paste_production(city_t *pcity)
     return;
   }
   if (!tiles_hilited_cities) {
-    if (pcity && pcity->owner == get_player_idx()) {
+    if (pcity && pcity->common.owner == get_player_idx()) {
       clipboard_send_production_packet(pcity);
     }
     return;
@@ -525,7 +525,7 @@ static void clipboard_send_production_packet(city_t *pcity)
     return;
   }
 
-  dsend_packet_city_change(&aconnection, pcity->id, clipboard,
+  dsend_packet_city_change(&aconnection, pcity->common.id, clipboard,
                            clipboard_is_unit);
 }
 
@@ -660,10 +660,10 @@ void adjust_workers_button_pressed(int canvas_x, int canvas_y)
 
       worker = get_worker_city(pcity, city_x, city_y);
       if (worker == C_TILE_WORKER) {
-        dsend_packet_city_make_specialist(&aconnection, pcity->id,
+        dsend_packet_city_make_specialist(&aconnection, pcity->common.id,
                                           city_x, city_y);
       } else if (worker == C_TILE_EMPTY) {
-        dsend_packet_city_make_worker(&aconnection, pcity->id,
+        dsend_packet_city_make_worker(&aconnection, pcity->common.id,
                                       city_x, city_y);
       } else {
         /* If worker == C_TILE_UNAVAILABLE then we can't use this tile.  No

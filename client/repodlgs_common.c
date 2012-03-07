@@ -83,9 +83,9 @@ void get_economy_report_data(struct improvement_entry *entries,
   *total_income = 0;
 
   city_list_iterate(get_player_ptr()->cities, pcity) {
-    *total_income += pcity->tax_total;
+    *total_income += pcity->common.tax_total;
     if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
-      *total_income += MAX(0, pcity->shield_surplus);
+      *total_income += MAX(0, pcity->common.shield_surplus);
     }
   } city_list_iterate_end;
 }
@@ -112,7 +112,7 @@ void get_economy_report_units_data(struct unit_entry *entries,
     partial_cost = 0;
 
     city_list_iterate(get_player_ptr()->cities, pcity) {
-      unit_list_iterate(pcity->units_supported, punit) {
+      unit_list_iterate(pcity->common.units_supported, punit) {
 
         if (punit->type == utype) {
           count++;
@@ -323,7 +323,7 @@ void sell_all_improvements(Impr_Type_id impr, bool obsolete_only,
   }
 
   city_list_iterate(get_player_ptr()->cities, pcity) {
-    if (!pcity->did_sell && city_got_building(pcity, impr)
+    if (!pcity->common.did_sell && city_got_building(pcity, impr)
         && (!obsolete_only
             || improvement_obsolete(get_player_ptr(), impr)
             || is_building_replaced(pcity, impr))) {
@@ -369,7 +369,7 @@ void disband_all_units(Unit_Type_id type, bool in_cities_only,
   city_list_iterate(get_player_ptr()->cities, pcity) {
     /* Only supported units are disbanded.  Units with no homecity have no
      * cost and are not disbanded. */
-    unit_list_iterate(pcity->units_supported, punit) {
+    unit_list_iterate(pcity->common.units_supported, punit) {
       city_t *incity = map_get_city(punit->tile);
 
       if (punit->type == type

@@ -138,7 +138,7 @@ void handle_trade_route_info(struct packet_trade_route_info *packet)
   }
 
   freelog(LOG_VERBOSE, "handle_trade_route_info: %s - %s, status %d",
-          pcity1->name, pcity2->name, packet->status);
+          pcity1->common.name, pcity2->common.name, packet->status);
 
   pold_unit = ptr->punit;
   ptr->pcity1 = pcity1; /* pcity1 and pcity2 could have been swapped */
@@ -179,7 +179,7 @@ void handle_trade_route_remove(int city1, int city2)
   }
 
   freelog(LOG_VERBOSE, "handle_trade_route_remove: %s - %s",
-          pcity1->name, pcity2->name);
+          pcity1->common.name, pcity2->common.name);
 
   if (ptr->punit) {
     ptr->punit->ptr = NULL;
@@ -198,7 +198,7 @@ void handle_trade_route_remove(int city1, int city2)
 **************************************************************************/
 void add_tile_in_trade_planning(struct tile *ptile, bool allow_remove)
 {
-  if (ptile->city && ptile->city->owner != get_player_idx()) {
+  if (ptile->city && ptile->city->common.owner != get_player_idx()) {
     return;
   }
 
@@ -236,7 +236,7 @@ void trade_city_new(city_t *pcity)
     return;
   }
 
-  if (tile_list_search(trade_cities, pcity->tile)
+  if (tile_list_search(trade_cities, pcity->common.tile)
       && are_trade_cities_built()) {
     update_auto_caravan_menu();
   }
@@ -252,18 +252,18 @@ void trade_remove_city(city_t *pcity)
   }
 
   /* Free the trade routes */
-  trade_route_list_iterate(pcity->trade_routes, ptr) {
+  trade_route_list_iterate(pcity->common.trade_routes, ptr) {
     if (server_has_extglobalinfo
         || !ptr->punit || !trade_free_unit(ptr->punit)) {
       game_trade_route_remove(ptr);
     }
   } trade_route_list_iterate_end;
 
-  if (tile_list_search(trade_cities, pcity->tile)) {
+  if (tile_list_search(trade_cities, pcity->common.tile)) {
     /* HACK: set it as non-built. */
-    pcity->tile->city = NULL;
+    pcity->common.tile->city = NULL;
     update_auto_caravan_menu();
-    pcity->tile->city = pcity;
+    pcity->common.tile->city = pcity;
   }
 }
 
@@ -292,23 +292,24 @@ void clear_trade_planning(bool include_in_route)
   if (server_has_extglobalinfo) {
     connection_do_buffer(&aconnection);
     city_list_iterate(get_player_ptr()->cities, pcity) {
-      trade_route_list_iterate(pcity->trade_routes, ptr) {
+      trade_route_list_iterate(pcity->common.trade_routes, ptr) {
         city_t *pother_city = OTHER_CITY(ptr, pcity);
 
         /* Try to don't send the packet twice */
         if (((include_in_route && ptr->status & TR_PLANNED)
              || (!include_in_route && ptr->status == TR_PLANNED))
-            && (pcity->owner != pother_city->owner
-                || pcity->id < pother_city->id)) {
-          dsend_packet_trade_route_remove(&aconnection, ptr->pcity1->id,
-                                          ptr->pcity2->id);
+            && (pcity->common.owner != pother_city->common.owner
+                || pcity->common.id < pother_city->common.id)) {
+          dsend_packet_trade_route_remove(&aconnection,
+                                          ptr->pcity1->common.id,
+                                          ptr->pcity2->common.id);
         }
       } trade_route_list_iterate_end;
     } city_list_iterate_end;
     connection_do_unbuffer(&aconnection);
   } else {
     city_list_iterate(get_player_ptr()->cities, pcity) {
-      trade_route_list_iterate(pcity->trade_routes, ptr) {
+      trade_route_list_iterate(pcity->common.trade_routes, ptr) {
         if ((include_in_route && ptr->status & TR_PLANNED)
             || (!include_in_route && ptr->status == TR_PLANNED)) {
           struct trade_route tr = *ptr;
@@ -363,8 +364,9 @@ static void trade_planning_apply(const struct trade_planning_calculation *pcalc,
       connection_do_buffer(&aconnection);
       clear_trade_planning(FALSE);
       trade_route_list_iterate(trade_planning, ptr) {
-        dsend_packet_trade_route_plan(&aconnection, ptr->pcity1->id,
-                                      ptr->pcity2->id);
+        dsend_packet_trade_route_plan(&aconnection,
+                                      ptr->pcity1->common.id,
+                                      ptr->pcity2->common.id);
       } trade_route_list_iterate_end;
       show_free_slot_arg = trade_planning;
       connection_do_unbuffer(&aconnection);
@@ -489,9 +491,9 @@ void show_trade_estimation(void)
 
   /* Get datas */
   city_list_iterate(get_player_ptr()->cities, pcity) {
-    trade_route_list_iterate(pcity->trade_routes, ptr) {
+    trade_route_list_iterate(pcity->common.trade_routes, ptr) {
       if (ptr->status & TR_IN_ROUTE
-          && ptr->pcity1->owner == get_player_idx()
+          && ptr->pcity1->common.owner == get_player_idx()
           /* Don't estimate them twice */
           && ptr->pcity1 == pcity) {
         i = calculate_trade_move_turns(ptr);
@@ -558,7 +560,7 @@ static int get_trade_route_num(city_t *pcity,
   int count = 0;
 
   /* Current trade routes */
-  trade_route_list_iterate(pcity->trade_routes, ptr) {
+  trade_route_list_iterate(pcity->common.trade_routes, ptr) {
     if (ptr->status > TR_PLANNED) {
       count++;
     }
@@ -591,7 +593,7 @@ void show_free_slots_in_trade_planning(struct trade_route_list *ptrlist)
     if (pcity) {
       missing = game.traderoute_info.maxtraderoutes
                 - (ptrlist ? get_trade_route_num(pcity, ptrlist)
-                           : trade_route_list_size(pcity->trade_routes));
+                           : trade_route_list_size(pcity->common.trade_routes));
     } else {
       missing = game.traderoute_info.maxtraderoutes;
     }
@@ -633,7 +635,7 @@ bool is_trade_planning(void)
   }
 
   city_list_iterate(get_player_ptr()->cities, pcity) {
-    trade_route_list_iterate(pcity->trade_routes, ptr) {
+    trade_route_list_iterate(pcity->common.trade_routes, ptr) {
       if (ptr->status & TR_PLANNED) {
         return TRUE;
       }
@@ -653,7 +655,7 @@ bool is_trade_route_in_route(void)
   }
 
   city_list_iterate(get_player_ptr()->cities, pcity) {
-    trade_route_list_iterate(pcity->trade_routes, ptr) {
+    trade_route_list_iterate(pcity->common.trade_routes, ptr) {
       if (ptr->status & TR_IN_ROUTE) {
         return TRUE;
       }
@@ -684,7 +686,7 @@ int in_route_trade_route_number(city_t *pcity)
 {
   int count = 0;
 
-  trade_route_list_iterate(pcity->trade_routes, ptr) {
+  trade_route_list_iterate(pcity->common.trade_routes, ptr) {
     if (ptr->status & TR_IN_ROUTE) {
       count++;
     }
@@ -756,9 +758,9 @@ void request_unit_trade_route(struct unit *punit, city_t *pcity)
         return;
       }
     } else {
-      if (trade_route_list_size(phome_city->trade_routes)
+      if (trade_route_list_size(phome_city->common.trade_routes)
             >= game.traderoute_info.maxtraderoutes
-          || trade_route_list_size(pcity->trade_routes)
+          || trade_route_list_size(pcity->common.trade_routes)
                >= game.traderoute_info.maxtraderoutes) {
         my_snprintf(buf, sizeof(buf),
                     _("Warclient: Warning: the trade route "
@@ -837,17 +839,18 @@ void request_trade_route(city_t *pcity)
   connection_do_buffer(&aconnection);
   if (server_has_extglobalinfo) {
     city_list_iterate(get_player_ptr()->cities, pcity) {
-      trade_route_list_iterate(pcity->trade_routes, ptr) {
+      trade_route_list_iterate(pcity->common.trade_routes, ptr) {
         if (ptr->status <= TR_PLANNED && ptr->punit) {
           dsend_packet_unit_trade_route(&aconnection, ptr->punit->id,
-                                        ptr->pcity1->id, ptr->pcity2->id);
+                                        ptr->pcity1->common.id,
+                                        ptr->pcity2->common.id);
           ptr->punit = NULL;
         }
       } trade_route_list_iterate_end;
     } city_list_iterate_end;
   } else {
     city_list_iterate(get_player_ptr()->cities, pcity) {
-      trade_route_list_iterate(pcity->trade_routes, ptr) {
+      trade_route_list_iterate(pcity->common.trade_routes, ptr) {
         if (ptr->status <= TR_PLANNED && ptr->punit) {
           ptr->status |= TR_IN_ROUTE;
           ptr->punit->ptr = ptr;
@@ -877,13 +880,14 @@ void request_cancel_trade_route(city_t *pcity1, city_t *pcity2)
 
   struct trade_route tr, *ptr = game_trade_route_find(pcity1, pcity2);
 
-  if (!ptr || ptr->pcity1->owner != get_player_idx()) {
+  if (!ptr || ptr->pcity1->common.owner != get_player_idx()) {
     return;
   }
 
   if (server_has_extglobalinfo) {
     dsend_packet_trade_route_remove(&aconnection,
-                                    ptr->pcity1->id, ptr->pcity2->id);
+                                    ptr->pcity1->common.id,
+                                    ptr->pcity2->common.id);
   } else if (!ptr->punit || !trade_free_unit(ptr->punit)) {
     tr = *ptr;
     game_trade_route_remove(ptr);
@@ -902,17 +906,17 @@ void execute_trade_orders(struct unit *punit)
     return;
   }
 
-  if (punit->homecity != punit->ptr->pcity1->id) {
-    if (punit->tile != punit->ptr->pcity1->tile) {
-      unit_goto(punit, punit->ptr->pcity1->tile);
+  if (punit->homecity != punit->ptr->pcity1->common.id) {
+    if (punit->tile != punit->ptr->pcity1->common.tile) {
+      unit_goto(punit, punit->ptr->pcity1->common.tile);
       return;
     } else {
       dsend_packet_unit_change_homecity(&aconnection, punit->id,
-                                        punit->ptr->pcity1->id);
+                                        punit->ptr->pcity1->common.id);
     }
   }
-  if (punit->tile != punit->ptr->pcity2->tile) {
-    unit_goto(punit, punit->ptr->pcity2->tile);
+  if (punit->tile != punit->ptr->pcity2->common.tile) {
+    unit_goto(punit, punit->ptr->pcity2->common.tile);
   } else {
     struct toggle_worker_list *plist;
 
@@ -1005,16 +1009,16 @@ static struct toggle_worker *toggle_worker_new(city_t *pcity,
   ptw->pcity = pcity;
   ptw->cx = cx;
   ptw->cy = cy;
-  ptw->was_used = pcity->city_map[cx][cy] == C_TILE_WORKER;
+  ptw->was_used = pcity->common.city_map[cx][cy] == C_TILE_WORKER;
 
   freelog(LOG_VERBOSE, "Apply: Toggling tile (%d, %d) to %s for %s",
           TILE_XY(city_map_to_map(pcity, cx, cy)),
-          ptw->was_used ? "specialist" : "worker", pcity->name);
+          ptw->was_used ? "specialist" : "worker", pcity->common.name);
 
   if (ptw->was_used) {
-    dsend_packet_city_make_specialist(&aconnection, pcity->id, cx, cy);
+    dsend_packet_city_make_specialist(&aconnection, pcity->common.id, cx, cy);
   } else {
-    dsend_packet_city_make_worker(&aconnection, pcity->id, cx, cy);
+    dsend_packet_city_make_worker(&aconnection, pcity->common.id, cx, cy);
   }
 
   return ptw;
@@ -1027,13 +1031,13 @@ static void toggle_worker_free(struct toggle_worker *ptw)
 {
   freelog(LOG_VERBOSE, "Release: Toggling tile (%d, %d) to %s for %s",
           TILE_XY(city_map_to_map(ptw->pcity, ptw->cx, ptw->cy)),
-          ptw->was_used ? "worker" : "specialist", ptw->pcity->name);
+          ptw->was_used ? "worker" : "specialist", ptw->pcity->common.name);
 
   if (ptw->was_used) {
-    dsend_packet_city_make_worker(&aconnection, ptw->pcity->id,
+    dsend_packet_city_make_worker(&aconnection, ptw->pcity->common.id,
                                   ptw->cx, ptw->cy);
   } else {
-    dsend_packet_city_make_specialist(&aconnection, ptw->pcity->id,
+    dsend_packet_city_make_specialist(&aconnection, ptw->pcity->common.id,
                                       ptw->cx, ptw->cy);
   }
 
@@ -1083,14 +1087,14 @@ static bool can_steal_tile_to_cities(struct toggle_city *cities, size_t size,
 
   for (i = 0; i < size; i++) {
     tcity = &cities[i];
-    if (tcity->pcity->tile == ptile) {
+    if (tcity->pcity->common.tile == ptile) {
       return FALSE;
     }
-    for (j = 0; j < tcity->tiles_num && j < tcity->pcity->pop_size; j++) {
+    for (j = 0; j < tcity->tiles_num && j < tcity->pcity->common.pop_size; j++) {
       if (tcity->tiles[j].ptile == ptile) {
-        if (tcity->pcity->pop_size < tcity->tiles_num
-            && tcity->tiles[tcity->pcity->pop_size - 1].trade_value
-               == tcity->tiles[tcity->pcity->pop_size].trade_value) {
+        if (tcity->pcity->common.pop_size < tcity->tiles_num
+            && tcity->tiles[tcity->pcity->common.pop_size - 1].trade_value
+               == tcity->tiles[tcity->pcity->common.pop_size].trade_value) {
           /* We can use an other tile. */
           drop_worked_tile(tcity, j);
           return TRUE;
@@ -1136,12 +1140,12 @@ static void fill_worked_tiles(struct toggle_city *cities,
 
   /* Get informations. */
   tcity->tiles_num = 0;
-  city_map_checked_iterate(pcity->tile, cx, cy, ptile) {
-    if (ptile == pcity->tile) {
+  city_map_checked_iterate(pcity->common.tile, cx, cy, ptile) {
+    if (ptile == pcity->common.tile) {
       continue;
     }
     if (ptile->worked
-        && ptile->worked->owner != pcity->owner) {
+        && ptile->worked->common.owner != pcity->common.owner) {
       continue;
     }
     if (!can_steal_tile_to_cities(cities, vec, ptile)) {
@@ -1155,14 +1159,14 @@ static void fill_worked_tiles(struct toggle_city *cities,
     pwtile->cy = cy;
     pwtile->trade_value =
         base_city_get_trade_tile(cx, cy, pcity, is_celebrating);
-    pwtile->used = pcity->city_map[cx][cy] == C_TILE_WORKER;
+    pwtile->used = pcity->common.city_map[cx][cy] == C_TILE_WORKER;
   } city_map_checked_iterate_end;
 
   /* Sort them */
   qsort(tcity->tiles, tcity->tiles_num, sizeof(*tcity->tiles), best_trade);
 
   i = 0;
-  while (i < tcity->tiles_num && i < pcity->pop_size) {
+  while (i < tcity->tiles_num && i < pcity->common.pop_size) {
     if (!can_steal_tile_to_cities(cities, vec, tcity->tiles[i].ptile)) {
       drop_worked_tile(tcity, i);
     } else {
@@ -1215,7 +1219,7 @@ static void city_set_specialists(struct toggle_city *cities, size_t size,
   int i, cx, cy;
 
   /* Check tiles used by others cities. */
-  for (i = 0; i < tcity->tiles_num && i < tcity->pcity->pop_size; i++) {
+  for (i = 0; i < tcity->tiles_num && i < tcity->pcity->common.pop_size; i++) {
     ptile = tcity->tiles[i].ptile;
 
     if (ptile->worked && ptile->worked != pcity) {
@@ -1230,9 +1234,9 @@ static void city_set_specialists(struct toggle_city *cities, size_t size,
   /* Remove workers from tiles we won't use. */
   city_map_iterate(cx, cy) {
     if ((cx != CITY_MAP_RADIUS || cy != CITY_MAP_RADIUS)
-        && pcity->city_map[cx][cy] == C_TILE_WORKER
+        && pcity->common.city_map[cx][cy] == C_TILE_WORKER
         && !tile_is_in_list(tcity->tiles,
-                            MIN(tcity->tiles_num, tcity->pcity->pop_size),
+                            MIN(tcity->tiles_num, tcity->pcity->common.pop_size),
                             cx, cy))
     {
       toggle_worker_list_append(plist, toggle_worker_new(pcity, cx, cy));
@@ -1250,9 +1254,9 @@ static void city_set_workers(struct toggle_city *tcity,
   struct worked_tile *pwtile;
   int i;
 
-  for (i = 0; i < tcity->tiles_num && i < tcity->pcity->pop_size; i++) {
+  for (i = 0; i < tcity->tiles_num && i < tcity->pcity->common.pop_size; i++) {
     pwtile = &tcity->tiles[i];
-    if (pcity->city_map[pwtile->cx][pwtile->cy] != C_TILE_WORKER) {
+    if (pcity->common.city_map[pwtile->cx][pwtile->cy] != C_TILE_WORKER) {
       toggle_worker_list_append(plist, toggle_worker_new(pcity, pwtile->cx,
                                                          pwtile->cy));
     }
@@ -1274,13 +1278,13 @@ static struct toggle_worker_list *apply_trade_workers(city_t *pcity1,
   assert(server_has_extglobalinfo == FALSE);
 
   /* Initialize */
-  if (pcity1->owner == player_idx) {
+  if (pcity1->common.owner == player_idx) {
     cities[i].pcity = pcity1;
     cities[i].importance = 3;
     i++;
   }
 
-  if (pcity2->owner == player_idx) {
+  if (pcity2->common.owner == player_idx) {
     cities[i].pcity = pcity2;
     cities[i].importance = 3;
     i++;
@@ -1288,7 +1292,7 @@ static struct toggle_worker_list *apply_trade_workers(city_t *pcity1,
 
   established_trade_routes_iterate(pcity1, ptr) {
     ocity = OTHER_CITY(ptr, pcity1);
-    if (ocity->owner != player_idx) {
+    if (ocity->common.owner != player_idx) {
       continue;
     }
 
@@ -1300,7 +1304,7 @@ static struct toggle_worker_list *apply_trade_workers(city_t *pcity1,
   established_trade_routes_iterate(pcity2, ptr) {
     ocity = OTHER_CITY(ptr, pcity1);
     if (have_cities_trade_route(pcity1, ocity)
-        || ocity->owner != player_idx) {
+        || ocity->common.owner != player_idx) {
       continue;
     }
 

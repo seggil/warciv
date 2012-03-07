@@ -42,13 +42,13 @@ static const char *cr_entry_cityname(const city_t *pcity)
   /* We used to truncate the name to 14 bytes.  This should not be needed
    * in any modern GUI library and may give an invalid string if a
    * multibyte character is clipped. */
-  return pcity->name;
+  return pcity->common.name;
 }
 
 static const char *cr_entry_size(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->pop_size);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->common.pop_size);
   return buf;
 }
 
@@ -77,63 +77,63 @@ static const char *cr_entry_hstate_verbose(const city_t *pcity)
 static const char *cr_entry_workers(const city_t *pcity)
 {
   static char buf[32];
-  my_snprintf(buf, sizeof(buf), "%d/%d/%d/%d", pcity->people_happy[4],
-              pcity->people_content[4], pcity->people_unhappy[4],
-              pcity->people_angry[4]);
+  my_snprintf(buf, sizeof(buf), "%d/%d/%d/%d", pcity->common.people_happy[4],
+              pcity->common.people_content[4], pcity->common.people_unhappy[4],
+              pcity->common.people_angry[4]);
   return buf;
 }
 
 static const char *cr_entry_happy(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->people_happy[4]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->common.people_happy[4]);
   return buf;
 }
 
 static const char *cr_entry_content(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->people_content[4]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->common.people_content[4]);
   return buf;
 }
 
 static const char *cr_entry_unhappy(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->people_unhappy[4]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->common.people_unhappy[4]);
   return buf;
 }
 
 static const char *cr_entry_angry(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->people_angry[4]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->common.people_angry[4]);
   return buf;
 }
 
 static const char *cr_entry_specialists(const city_t *pcity)
 {
-  return specialists_string(pcity->specialists);
+  return specialists_string(pcity->common.specialists);
 }
 
 static const char *cr_entry_entertainers(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->specialists[SP_ELVIS]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->common.specialists[SP_ELVIS]);
   return buf;
 }
 
 static const char *cr_entry_scientists(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->specialists[SP_SCIENTIST]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->common.specialists[SP_SCIENTIST]);
   return buf;
 }
 
 static const char *cr_entry_taxmen(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->specialists[SP_TAXMAN]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->common.specialists[SP_TAXMAN]);
   return buf;
 }
 
@@ -142,7 +142,7 @@ static const char *cr_entry_attack(const city_t *pcity)
   static char buf[32];
   int attack_best[4] = {-1, -1, -1, -1}, i;
 
-  unit_list_iterate(pcity->tile->units, punit) {
+  unit_list_iterate(pcity->common.tile->units, punit) {
     /* What about allied units?  Should we just count them? */
     attack_best[3] = get_unit_type(punit->type)->attack_strength;
 
@@ -174,7 +174,7 @@ static const char *cr_entry_defense(const city_t *pcity)
   static char buf[32];
   int defense_best[4] = {-1, -1, -1, -1}, i;
 
-  unit_list_iterate(pcity->tile->units, punit) {
+  unit_list_iterate(pcity->common.tile->units, punit) {
     /* What about allied units?  Should we just count them? */
     defense_best[3] = get_unit_type(punit->type)->defense_strength;
 
@@ -204,7 +204,7 @@ static const char *cr_entry_defense(const city_t *pcity)
 static const char *cr_entry_supported(const city_t *pcity)
 {
   static char buf[8];
-  int num_supported = genlist_size((const genlist*)pcity->units_supported);
+  int num_supported = genlist_size((const genlist*)pcity->common.units_supported);
 
   my_snprintf(buf, sizeof(buf), "%2d", num_supported);
   return buf;
@@ -213,7 +213,7 @@ static const char *cr_entry_supported(const city_t *pcity)
 static const char *cr_entry_present(const city_t *pcity)
 {
   static char buf[8];
-  int num_present = genlist_size((const genlist*)pcity->tile->units);
+  int num_present = genlist_size((const genlist*)pcity->common.tile->units);
 
   my_snprintf(buf, sizeof(buf), "%2d", num_present);
   return buf;
@@ -223,9 +223,9 @@ static const char *cr_entry_resources(const city_t *pcity)
 {
   static char buf[32];
   my_snprintf(buf, sizeof(buf), "%d/%d/%d",
-              pcity->food_surplus,
-              pcity->shield_surplus,
-              pcity->trade_prod);
+              pcity->common.food_surplus,
+              pcity->common.shield_surplus,
+              pcity->common.trade_prod);
   return buf;
 }
 
@@ -233,7 +233,7 @@ static const char *cr_entry_foodplus(const city_t *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-              pcity->food_surplus);
+              pcity->common.food_surplus);
   return buf;
 }
 
@@ -241,7 +241,7 @@ static const char *cr_entry_prodplus(const city_t *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-              pcity->shield_surplus);
+              pcity->common.shield_surplus);
   return buf;
 }
 
@@ -249,7 +249,7 @@ static const char *cr_entry_tradeplus(const city_t *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-              pcity->trade_prod);
+              pcity->common.trade_prod);
   return buf;
 }
 
@@ -258,23 +258,24 @@ static const char *cr_entry_output(const city_t *pcity)
   static char buf[32];
   int goldie;
 
-  goldie = city_gold_surplus(pcity, pcity->tax_total);
+  goldie = city_gold_surplus(pcity, pcity->common.tax_total);
   my_snprintf(buf, sizeof(buf), "%s%d/%d/%d",
               (goldie < 0) ? "-" : (goldie > 0) ? "+" : "",
               (goldie < 0) ? (-goldie) : goldie,
-              pcity->luxury_total,
-              pcity->science_total);
+              pcity->common.luxury_total,
+              pcity->common.science_total);
   return buf;
 }
 
 static const char *cr_entry_gold(const city_t *pcity)
 {
   static char buf[8];
-  int income = city_gold_surplus(pcity, pcity->tax_total);
+  int income = city_gold_surplus(pcity, pcity->common.tax_total);
   if (income > 0) {
     my_snprintf(buf, sizeof(buf), "+%d", income);
   } else {
-    my_snprintf(buf, sizeof(buf), "%3d", city_gold_surplus(pcity, pcity->tax_total));
+    my_snprintf(buf, sizeof(buf),
+                "%3d", city_gold_surplus(pcity, pcity->common.tax_total));
   }
   return buf;
 }
@@ -283,7 +284,7 @@ static const char *cr_entry_luxury(const city_t *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-              pcity->luxury_total);
+              pcity->common.luxury_total);
   return buf;
 }
 
@@ -291,7 +292,7 @@ static const char *cr_entry_science(const city_t *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-              pcity->science_total);
+              pcity->common.science_total);
   return buf;
 }
 
@@ -299,8 +300,8 @@ static const char *cr_entry_food(const city_t *pcity)
 {
   static char buf[32];
   my_snprintf(buf, sizeof(buf), "%d/%d",
-              pcity->food_stock,
-              city_granary_size(pcity->pop_size) );
+              pcity->common.food_stock,
+              city_granary_size(pcity->common.pop_size) );
   return buf;
 }
 
@@ -321,7 +322,7 @@ static const char *cr_entry_growturns(const city_t *pcity)
 static const char *cr_entry_pollution(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%3d", pcity->pollution);
+  my_snprintf(buf, sizeof(buf), "%3d", pcity->common.pollution);
   return buf;
 }
 
@@ -336,16 +337,16 @@ static const char *cr_entry_building(const city_t *pcity)
 {
   static char buf[128];
   const char *from_worklist =
-    worklist_is_empty(&pcity->worklist) ? "" :
+    worklist_is_empty(&pcity->common.worklist) ? "" :
     concise_city_production ? "*" : _("(worklist)");
 
   if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
     my_snprintf(buf, sizeof(buf), "%s (%d/X/X/X)%s",
-                get_impr_name_ex(pcity, pcity->currently_building),
-                MAX(0, pcity->shield_surplus), from_worklist);
+                get_impr_name_ex(pcity, pcity->common.currently_building),
+                MAX(0, pcity->common.shield_surplus), from_worklist);
   } else {
-    int turns = city_turns_to_build(pcity, pcity->currently_building,
-                                    pcity->is_building_unit, TRUE);
+    int turns = city_turns_to_build(pcity, pcity->common.currently_building,
+                                    pcity->common.is_building_unit, TRUE);
     char time[32];
     const char *name;
     int cost;
@@ -356,16 +357,16 @@ static const char *cr_entry_building(const city_t *pcity)
       my_snprintf(time, sizeof(time), "-");
     }
 
-    if(pcity->is_building_unit) {
-      name = get_unit_type(pcity->currently_building)->name;
-      cost = unit_build_shield_cost(pcity->currently_building);
+    if(pcity->common.is_building_unit) {
+      name = get_unit_type(pcity->common.currently_building)->name;
+      cost = unit_build_shield_cost(pcity->common.currently_building);
     } else {
-      name = get_impr_name_ex(pcity, pcity->currently_building);
-      cost = impr_build_shield_cost(pcity->currently_building);
+      name = get_impr_name_ex(pcity, pcity->common.currently_building);
+      cost = impr_build_shield_cost(pcity->common.currently_building);
     }
 
     my_snprintf(buf, sizeof(buf), "%s (%d/%d/%s/%d)%s", name,
-                pcity->shield_stock, cost, time, city_buy_cost(pcity),
+                pcity->common.shield_stock, cost, time, city_buy_cost(pcity),
                 from_worklist);
   }
 
@@ -375,14 +376,14 @@ static const char *cr_entry_building(const city_t *pcity)
 static const char *cr_entry_corruption(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%3d", pcity->corruption);
+  my_snprintf(buf, sizeof(buf), "%3d", pcity->common.corruption);
   return buf;
 }
 
 static const char *cr_entry_waste(const city_t *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%3d", pcity->shield_waste);
+  my_snprintf(buf, sizeof(buf), "%3d", pcity->common.shield_waste);
   return buf;
 }
 

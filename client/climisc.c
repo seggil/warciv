@@ -151,7 +151,7 @@ void clear_worklists_in_selected_cities(void)
     }
     city_clear_worklist(pcity);
     my_snprintf(buf, sizeof(buf), _("Cleared worklist in %s."),
-                pcity->name);
+                pcity->common.name);
     append_output_window(buf);
   } city_list_iterate_end;
   connection_do_unbuffer(&aconnection);
@@ -226,21 +226,21 @@ void client_remove_unit(struct unit *punit)
   if (pcity) {
     if (client_is_global_observer()
         || can_player_see_units_in_city(get_player_ptr(), pcity)) {
-      pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
+      pcity->u.client.occupied = (unit_list_size(pcity->common.tile->units) > 0);
     }
 
     refresh_city_dialog(pcity, UPDATE_PRESENT_UNITS);
-    freelog(LOG_DEBUG, "map city %s, %s, (%d %d)", pcity->name,
+    freelog(LOG_DEBUG, "map city %s, %s, (%d %d)", pcity->common.name,
             get_nation_name(city_owner(pcity)->nation),
-            TILE_XY(pcity->tile));
+            TILE_XY(pcity->common.tile));
   }
 
   pcity = player_find_city_by_id(get_player_ptr(), hc);
   if (pcity) {
     refresh_city_dialog(pcity, UPDATE_SUPPORTED_UNITS);
-    freelog(LOG_DEBUG, "home city %s, %s, (%d %d)", pcity->name,
+    freelog(LOG_DEBUG, "home city %s, %s, (%d %d)", pcity->common.name,
             get_nation_name(city_owner(pcity)->nation),
-            TILE_XY(pcity->tile));
+            TILE_XY(pcity->common.tile));
   }
 
   refresh_tile_mapcanvas(ptile, MUT_NORMAL);
@@ -252,9 +252,9 @@ void client_remove_unit(struct unit *punit)
 void client_remove_city(city_t *pcity)
 {
   bool effect_update;
-  struct tile *ptile = pcity->tile;
+  struct tile *ptile = pcity->common.tile;
 
-  freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,
+  freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->common.name,
           get_nation_name(city_owner(pcity)->nation), TILE_XY(ptile));
 
   trade_remove_city(pcity);
@@ -300,11 +300,11 @@ void client_change_all(cid x, cid y)
   connection_do_buffer(&aconnection);
   city_list_iterate(get_player_ptr()->cities, pcity) {
     if (((fr_is_unit &&
-          (pcity->is_building_unit) &&
-          (pcity->currently_building == fr_id)) ||
+          (pcity->common.is_building_unit) &&
+          (pcity->common.currently_building == fr_id)) ||
          (!fr_is_unit &&
-          !(pcity->is_building_unit) &&
-          (pcity->currently_building == fr_id))) &&
+          !(pcity->common.is_building_unit) &&
+          (pcity->common.currently_building == fr_id))) &&
         ((to_is_unit &&
           can_build_unit(pcity, to_id)) ||
          (!to_is_unit && can_build_improvement(pcity, to_id)))) {
@@ -377,7 +377,7 @@ void client_diplomacy_clause_string(char *buf, int bufsiz,
     if (pcity) {
       my_snprintf(buf, bufsiz, _("The %s give %s"),
                   get_nation_name_plural(pclause->from->nation),
-                  pcity->name);
+                  pcity->common.name);
     } else {
       my_snprintf(buf, bufsiz, _("The %s give unknown city."),
                   get_nation_name_plural(pclause->from->nation));
@@ -506,12 +506,12 @@ void center_on_something(void)
     center_tile_mapcanvas(punit->tile);
   } else if (pplayer && (pcity = find_palace(pplayer))) {
     /* Else focus on the capital. */
-    center_tile_mapcanvas(pcity->tile);
+    center_tile_mapcanvas(pcity->common.tile);
   } else if (pplayer && city_list_size(pplayer->cities) > 0) {
     /* Just focus on any city. */
     pcity = city_list_get(pplayer->cities, 0);
     assert(pcity != NULL);
-    center_tile_mapcanvas(pcity->tile);
+    center_tile_mapcanvas(pcity->common.tile);
   } else if (pplayer && unit_list_size(pplayer->units) > 0) {
     /* Just focus on any unit. */
     punit = unit_list_get(pplayer->units, 0);
@@ -552,7 +552,7 @@ cid cid_encode(bool is_unit, int id)
 **************************************************************************/
 cid cid_encode_from_city(city_t * pcity)
 {
-  return cid_encode(pcity->is_building_unit, pcity->currently_building);
+  return cid_encode(pcity->common.is_building_unit, pcity->common.currently_building);
 }
 
 /**************************************************************************
@@ -656,7 +656,7 @@ bool city_can_sell_impr(city_t * pcity, cid cid)
     return FALSE;
   }
 
-  return !pcity->did_sell && city_got_building(pcity, id)
+  return !pcity->common.did_sell && city_got_building(pcity, id)
     && !is_wonder(id);
 }
 
@@ -668,7 +668,7 @@ bool city_unit_supported(city_t * pcity, cid cid)
   if (cid_is_unit(cid)) {
     int unit_type = cid_id(cid);
 
-    unit_list_iterate(pcity->units_supported, punit) {
+    unit_list_iterate(pcity->common.units_supported, punit) {
       if (punit->type == unit_type) {
         return TRUE;
       }
@@ -685,7 +685,7 @@ bool city_unit_present(city_t * pcity, cid cid)
   if (cid_is_unit(cid)) {
     int unit_type = cid_id(cid);
 
-    unit_list_iterate(pcity->tile->units, punit) {
+    unit_list_iterate(pcity->common.tile->units, punit) {
       if (punit->type == unit_type) {
         return TRUE;
       }
@@ -987,10 +987,10 @@ int num_supported_units_in_city(city_t *pcity)
 {
   struct unit_list *plist;
 
-  if (pcity->owner != get_player_idx()) {
-    plist = pcity->client.info_units_supported;
+  if (pcity->common.owner != get_player_idx()) {
+    plist = pcity->u.client.info_units_supported;
   } else {
-    plist = pcity->units_supported;
+    plist = pcity->common.units_supported;
   }
 
   return unit_list_size(plist);
@@ -1003,10 +1003,10 @@ int num_present_units_in_city(city_t *pcity)
 {
   struct unit_list *plist;
 
-  if (pcity->owner != get_player_idx()) {
-    plist = pcity->client.info_units_present;
+  if (pcity->common.owner != get_player_idx()) {
+    plist = pcity->u.client.info_units_present;
   } else {
-    plist = pcity->tile->units;
+    plist = pcity->common.tile->units;
   }
 
   return unit_list_size(plist);
@@ -1334,8 +1334,8 @@ static int an_generate_city_name(char *buf, int buflen,
 
   assert(city_name_formats != NULL);
 
-  freelog(LOG_DEBUG, "agcn an_generate_city_name pcity->id=%d \"%s\"",
-          pcity->id, pcity->name);
+  freelog(LOG_DEBUG, "agcn an_generate_city_name pcity->common.id=%d \"%s\"",
+          pcity->common.id, pcity->common.name);
 
   num_formats = string_vector_size(city_name_formats) + 1;
 
@@ -1345,18 +1345,18 @@ static int an_generate_city_name(char *buf, int buflen,
     return 0;
   }
 
-  ad = hash_lookup_data(an_city_autoname_data_table, INT_TO_PTR(pcity->id));
+  ad = hash_lookup_data(an_city_autoname_data_table, INT_TO_PTR(pcity->common.id));
   if (!ad) {
     ad = wc_malloc(sizeof(struct autoname_data));
     freelog(LOG_DEBUG, "agcn   new ad %p", ad);
     //printf("%s   new ad %p\n", __FILE__, ad);
-    sz_strlcpy(ad->original_name, pcity->name);
-    ad->city_id = pcity->id;
-    ad->continent_id = pcity->tile->continent;
+    sz_strlcpy(ad->original_name, pcity->common.name);
+    ad->city_id = pcity->common.id;
+    ad->continent_id = pcity->common.tile->continent;
     ad->format_index = 0;
     ad->global_city_number = 0;
     ad->continent_city_number = 0;
-    hash_insert(an_city_autoname_data_table, INT_TO_PTR(pcity->id), ad);
+    hash_insert(an_city_autoname_data_table, INT_TO_PTR(pcity->common.id), ad);
   } else {
     ad->format_index++;
     ad->format_index %= num_formats;
@@ -1382,7 +1382,7 @@ static int an_generate_city_name(char *buf, int buflen,
     sz_strlcpy(last_generated_name, buf);
 
     name_exists = hash_key_exists(an_city_name_table, buf)
-        || !strcmp(pcity->name, buf);
+        || !strcmp(pcity->common.name, buf);
 
     if (!name_exists) {
       break;
@@ -1488,19 +1488,19 @@ void normalize_names_in_selected_cities(void)
   connection_do_buffer(&aconnection);
   city_list_iterate(get_player_ptr()->cities, pcity) {
     if (!is_city_hilited(pcity)) {
-      //printf("not highlighted city=%s\n", &pcity->name[0]);
+      //printf("not highlighted city=%s\n", &pcity->common.name[0]);
       continue;
     }
 
     if (an_generate_city_name(buf, sizeof(buf), pcity,
                               err, sizeof(err)) > 0) {
-      //printf("highlighted city=%s\n", &pcity->name[0]);
+      //printf("highlighted city=%s\n", &pcity->common.name[0]);
       city_autonaming_add_used_name(buf);
       city_rename(pcity, buf);
     } else {
       my_snprintf(buf, sizeof(buf),
                   _("Warclient: Could not auto-rename city %s! %s"),
-                  pcity->name, err);
+                  pcity->common.name, err);
       append_output_window(buf);
     }
   } city_list_iterate_end;
@@ -1524,10 +1524,11 @@ city_t *get_nearest_city(struct unit *punit, int *sq_dist)
     pcity_near_dist = -1;
     players_iterate(pplayer) {
       city_list_iterate(pplayer->cities, pcity_current) {
-        int dist = sq_map_distance(pcity_current->tile, punit->tile);
+        int dist = sq_map_distance(pcity_current->common.tile,
+                                   punit->tile);
         if (pcity_near_dist == -1 || dist < pcity_near_dist
             || (dist == pcity_near_dist
-                && punit->owner == pcity_current->owner)) {
+                && punit->owner == pcity_current->common.owner)) {
           pcity_near = pcity_current;
           pcity_near_dist = dist;
         }
@@ -1554,11 +1555,11 @@ void cityrep_buy(city_t *pcity)
   if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
     char buf[512];
 
-    assert(!pcity->is_building_unit);
+    assert(!pcity->common.is_building_unit);
     my_snprintf(buf, sizeof(buf),
                 _("Game: You don't buy %s in %s!"),
-                improvement_types[pcity->currently_building].name,
-                pcity->name);
+                improvement_types[pcity->common.currently_building].name,
+                pcity->common.name);
     append_output_window(buf);
     return;
   }
@@ -1569,10 +1570,10 @@ void cityrep_buy(city_t *pcity)
     char buf[512];
     const char *name;
 
-    if (pcity->is_building_unit) {
-      name = get_unit_type(pcity->currently_building)->name;
+    if (pcity->common.is_building_unit) {
+      name = get_unit_type(pcity->common.currently_building)->name;
     } else {
-      name = get_impr_name_ex(pcity, pcity->currently_building);
+      name = get_impr_name_ex(pcity, pcity->common.currently_building);
     }
 
     my_snprintf(buf, sizeof(buf),
@@ -1726,7 +1727,7 @@ static struct tile *get_link_mark_tile(struct map_link *pml)
   case LINK_CITY_ID_AND_NAME:
     {
       city_t *pcity = find_city_by_id(pml->id);
-      return pcity ? pcity->tile : NULL;
+      return pcity ? pcity->common.tile : NULL;
     }
   case LINK_UNIT:
     {
@@ -2144,14 +2145,14 @@ void toggle_traderoute_drawing_in_selected_cities(void)
 
   if (!draw_city_traderoutes) {
     city_list_iterate(me->cities, pcity) {
-      pcity->client.traderoute_drawing_disabled = TRUE;
+      pcity->u.client.traderoute_drawing_disabled = TRUE;
     } city_list_iterate_end;
     draw_city_traderoutes = TRUE;
   }
 
   city_list_iterate(me->cities, pcity) {
     if (is_city_hilited(pcity)) {
-      pcity->client.traderoute_drawing_disabled ^= 1;
+      pcity->u.client.traderoute_drawing_disabled ^= 1;
     }
   } city_list_iterate_end;
 
@@ -2180,29 +2181,29 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
   bool first = TRUE;
 
   city_list_iterate(get_player_ptr()->cities, pcity) {
-    if (!is_city_hilited(pcity) || pcity->rally_point == ptile) {
+    if (!is_city_hilited(pcity) || pcity->common.rally_point == ptile) {
       continue;
     }
 
-    sz_strlcpy(city_name, get_tile_info(pcity->tile));
+    sz_strlcpy(city_name, get_tile_info(pcity->common.tile));
     if (ptile) {
       cat_snprintf(buf, sizeof(buf), "%s%s", first ? "" : ", ", city_name);
     } else {
       cat_snprintf(buf, sizeof(buf), "%s%s %s",
                    first ? "" : ", ", city_name,
-                   get_tile_info(pcity->rally_point));
+                   get_tile_info(pcity->common.rally_point));
     }
     first = FALSE;
 
     if (server_has_extglobalinfo) {
       if (ptile) {
-        dsend_packet_city_set_rally_point(&aconnection, pcity->id,
+        dsend_packet_city_set_rally_point(&aconnection, pcity->common.id,
                                           TILE_XY(ptile));
       } else {
-        dsend_packet_city_clear_rally_point(&aconnection, pcity->id);
+        dsend_packet_city_clear_rally_point(&aconnection, pcity->common.id);
       }
     } else {
-      pcity->rally_point = ptile;
+      pcity->common.rally_point = ptile;
     }
   } city_list_iterate_end;
 

@@ -1043,7 +1043,7 @@ void put_unit_city_overlays(struct unit *punit,
 }
 
 /*
- * pcity->client.color_index is an index into the city_colors array.
+ * pcity->u.client.color_index is an index into the city_colors array.
  * When toggle_city_color is called the city's coloration is toggled.  When
  * a city is newly colored its color is taken from color_index and
  * color_index is moved forward one position. Each color in the array
@@ -1072,15 +1072,15 @@ void toggle_city_color(struct city_s *pcity)
   int width = get_citydlg_canvas_width();
   int height = get_citydlg_canvas_height();
 
-  if (pcity->client.colored) {
-    pcity->client.colored = FALSE;
+  if (pcity->u.client.colored) {
+    pcity->u.client.colored = FALSE;
   } else {
-    pcity->client.colored = TRUE;
-    pcity->client.color_index = color_index;
+    pcity->u.client.colored = TRUE;
+    pcity->u.client.color_index = color_index;
     color_index = (color_index + 1) % NUM_CITY_COLORS;
   }
 
-  tile_to_canvas_pos(&canvas_x, &canvas_y, pcity->tile);
+  tile_to_canvas_pos(&canvas_x, &canvas_y, pcity->common.tile);
   update_map_canvas(canvas_x - (width - NORMAL_TILE_WIDTH) / 2,
                     canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
                     width, height, MUT_NORMAL);
@@ -1708,13 +1708,13 @@ void draw_map_canvas(int canvas_x, int canvas_y,
         int city_x, city_y, canvas_x2, canvas_y2;
 
         pcity = find_city_or_settler_near_tile(ptile, &punit);
-        if (pcity && pcity->client.colored
+        if (pcity && pcity->u.client.colored
             && map_to_city_map(&city_x, &city_y, pcity, ptile)
             && tile_to_canvas_pos(&canvas_x2, &canvas_y2, ptile)) {
           enum city_tile_type worker = get_worker_city(pcity, city_x, city_y);
 
           put_city_worker(mapview_canvas.store,
-                          city_colors[pcity->client.color_index], worker,
+                          city_colors[pcity->u.client.color_index], worker,
                           canvas_x2, canvas_y2);
           if (worker == C_TILE_WORKER) {
             put_city_tile_output(pcity, city_x, city_y,
@@ -1824,7 +1824,7 @@ void update_city_description(struct city_s *pcity)
   /* We update the entire map canvas area that this city description
    * might be covering.  This may, for instance, redraw other city
    * descriptions that overlap with this one. */
-  (void) tile_to_canvas_pos(&canvas_x, &canvas_y, pcity->tile);
+  (void) tile_to_canvas_pos(&canvas_x, &canvas_y, pcity->common.tile);
   update_map_canvas(canvas_x - (max_desc_width - NORMAL_TILE_WIDTH) / 2,
                     canvas_y + NORMAL_TILE_HEIGHT,
                     max_desc_width, max_desc_height, MUT_NORMAL);
@@ -2156,7 +2156,7 @@ struct city_s *find_city_or_settler_near_tile(struct tile *ptile,
   }
 
   if (pcity) {
-    if (global_observer || pcity->owner == get_player_idx()) {
+    if (global_observer || pcity->common.owner == get_player_idx()) {
       /* rule a */
       return pcity;
     } else {
@@ -2170,7 +2170,7 @@ struct city_s *find_city_or_settler_near_tile(struct tile *ptile,
 
   city_map_checked_iterate(ptile, city_x, city_y, tile1) {
     pcity = map_get_city(tile1);
-    if (pcity && (global_observer || pcity->owner == get_player_idx())
+    if (pcity && (global_observer || pcity->common.owner == get_player_idx())
         && get_worker_city(pcity, CITY_MAP_SIZE - 1 - city_x,
                            CITY_MAP_SIZE - 1 - city_y) == C_TILE_EMPTY) {
       /*
@@ -2180,7 +2180,7 @@ struct city_s *find_city_or_settler_near_tile(struct tile *ptile,
        * causing it to be marked as C_TILE_UNAVAILABLE.
        */
 
-      if (pcity->tile->client.hilite == HILITE_CITY) {
+      if (pcity->common.tile->client.hilite == HILITE_CITY) {
         /* rule c */
         return pcity;
       }
@@ -2241,8 +2241,8 @@ struct city_s *find_city_near_tile(struct tile *ptile)
 void get_city_mapview_production(struct city_s *pcity,
                                  char *buffer, size_t buffer_len)
 {
-  int turns = city_turns_to_build(pcity, pcity->currently_building,
-                                  pcity->is_building_unit, TRUE);
+  int turns = city_turns_to_build(pcity, pcity->common.currently_building,
+                                  pcity->common.is_building_unit, TRUE);
   char coststr[64];
 
   if (draw_city_production_buy_cost) {
@@ -2251,9 +2251,9 @@ void get_city_mapview_production(struct city_s *pcity,
     coststr[0] = '\0';
   }
 
-  if (pcity->is_building_unit) {
+  if (pcity->common.is_building_unit) {
     struct unit_type *punit_type =
-                get_unit_type(pcity->currently_building);
+                get_unit_type(pcity->common.currently_building);
     if (turns < 999) {
       my_snprintf(buffer, buffer_len, "%s %d%s",
                   punit_type->name, turns, coststr);
@@ -2263,7 +2263,7 @@ void get_city_mapview_production(struct city_s *pcity,
     }
   } else {
     struct impr_type *pimprovement_type =
-                get_improvement_type(pcity->currently_building);
+                get_improvement_type(pcity->common.currently_building);
     if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
       my_snprintf(buffer, buffer_len, "%s", pimprovement_type->name);
     } else if (turns < 999) {
@@ -2294,10 +2294,10 @@ void get_city_mapview_name_and_growth(struct city_s *pcity,
     return;
   }
 
-  mystrlcpy(name_buffer, pcity->name, name_buffer_len);
+  mystrlcpy(name_buffer, pcity->common.name, name_buffer_len);
 
   if (draw_city_growth
-      && (client_is_global_observer() || pcity->owner == get_player_idx())) {
+      && (client_is_global_observer() || pcity->common.owner == get_player_idx())) {
     int turns = city_turns_to_grow(pcity);
 
     if (turns == 0) {
@@ -2345,7 +2345,7 @@ void get_city_mapview_traderoutes(struct city_s *pcity,
   my_snprintf(traderoutes_buffer, traderoutes_buffer_len,
               "[%d(+%d)/%d/%d]", num_traderoutes,
               in_route_trade_route_number(pcity),
-              trade_route_list_size(pcity->trade_routes),
+              trade_route_list_size(pcity->common.trade_routes),
               game.traderoute_info.maxtraderoutes);
 
   if (num_traderoutes >= game.traderoute_info.maxtraderoutes) {
@@ -3000,12 +3000,12 @@ static int trade_route_to_canvas_pos(struct trade_route *ptr,
     return 0;
   }
 
-  if (ptr->pcity1->id < ptr->pcity2->id) {
-    ptile1 = ptr->pcity1->tile;
-    ptile2 = ptr->pcity2->tile;
+  if (ptr->pcity1->common.id < ptr->pcity2->common.id) {
+    ptile1 = ptr->pcity1->common.tile;
+    ptile2 = ptr->pcity2->common.tile;
   } else {
-    ptile1 = ptr->pcity2->tile;
-    ptile2 = ptr->pcity1->tile;
+    ptile1 = ptr->pcity2->common.tile;
+    ptile2 = ptr->pcity1->common.tile;
   }
 
   base_map_distance_vector(&dx, &dy, TILE_XY(ptile1), TILE_XY(ptile2));
@@ -3038,31 +3038,31 @@ static void draw_traderoute_line(struct trade_route *ptr,
     return;
   }
 
-  if (pcity_src->id < pcity_dest->id) {
+  if (pcity_src->common.id < pcity_dest->common.id) {
     tmp = pcity_src;
     pcity_src = pcity_dest;
     pcity_dest = tmp;
   }
 
-  if (pcity_src->client.traderoute_drawing_disabled
-      && pcity_dest->client.traderoute_drawing_disabled) {
+  if (pcity_src->u.client.traderoute_drawing_disabled
+      && pcity_dest->u.client.traderoute_drawing_disabled) {
     return;
   }
 
-  if (pcity_src->client.traderoute_drawing_disabled
+  if (pcity_src->u.client.traderoute_drawing_disabled
       && !client_is_global_observer()
-      && pcity_dest->owner != get_player_idx()) {
+      && pcity_dest->common.owner != get_player_idx()) {
     return;
   }
 
-  if (pcity_dest->client.traderoute_drawing_disabled
+  if (pcity_dest->u.client.traderoute_drawing_disabled
       && !client_is_global_observer()
-      && pcity_src->owner != get_player_idx()) {
+      && pcity_src->common.owner != get_player_idx()) {
     return;
   }
 
-  ptile1 = pcity_src->tile;
-  ptile2 = pcity_dest->tile;
+  ptile1 = pcity_src->common.tile;
+  ptile2 = pcity_dest->common.tile;
 
   if (ptile1 == NULL || ptile2 == NULL) {
     return;
@@ -3085,12 +3085,13 @@ static void draw_traderoute_line(struct trade_route *ptr,
 **************************************************************************/
 static void draw_traderoutes_for_city(struct city_s *src_pcity)
 {
-  trade_route_list_iterate(src_pcity->trade_routes, ptr) {
+  trade_route_list_iterate(src_pcity->common.trade_routes, ptr) {
     switch (ptr->status) {
     case TR_NONE:
       freelog(LOG_ERROR,
               "No trade route status for trade route between %s and %s.",
-              ptr->pcity1->name, ptr->pcity2->name);
+              ptr->pcity1->common.name,
+              ptr->pcity2->common.name);
       break;
     case TR_PLANNED:
       draw_traderoute_line(ptr, COLOR_STD_RED);

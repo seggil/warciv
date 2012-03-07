@@ -230,7 +230,7 @@ void handle_city_remove(int city_id)
 
   agents_city_remove(pcity);
 
-  ptile = pcity->tile;
+  ptile = pcity->common.tile;
   client_remove_city(pcity);
   reset_move_costs(ptile);
 
@@ -341,13 +341,13 @@ static void update_improvement_from_packet(city_t *pcity,
                                            Impr_Type_id impr, bool have_impr,
                                            bool *impr_changed)
 {
-  if (have_impr && pcity->improvements[impr] == I_NONE) {
+  if (have_impr && pcity->common.improvements[impr] == I_NONE) {
     city_add_improvement(pcity, impr);
 
     if (impr_changed) {
       *impr_changed = TRUE;
     }
-  } else if (!have_impr && pcity->improvements[impr] != I_NONE) {
+  } else if (!have_impr && pcity->common.improvements[impr] != I_NONE) {
     city_remove_improvement(pcity, impr);
 
     if (impr_changed) {
@@ -427,8 +427,8 @@ void handle_city_info(struct packet_city_info *packet)
 
   pcity = find_city_by_id(packet->id);
 
-  if (pcity && (pcity->owner != packet->owner)) {
-    city_autonaming_remove_used_name(pcity->name);
+  if (pcity && (pcity->common.owner != packet->owner)) {
+    city_autonaming_remove_used_name(pcity->common.name);
     client_remove_city(pcity);
     pcity = NULL;
     city_has_changed_owner = TRUE;
@@ -436,7 +436,7 @@ void handle_city_info(struct packet_city_info *packet)
 
   ptile = map_pos_to_tile(packet->x, packet->y);
   if (!ptile) {
-    if (!pcity || !pcity->tile) {
+    if (!pcity || !pcity->common.tile) {
       freelog(LOG_ERROR, "handle_city_info: got invalid "
               "city tile (%d, %d), ignoring packet!",
               packet->x, packet->y);
@@ -447,7 +447,7 @@ void handle_city_info(struct packet_city_info *packet)
       freelog(LOG_ERROR, "handle_city_info: got invalid "
               "city tile (%d, %d), keeping old tile.",
               packet->x, packet->y);
-      ptile = pcity->tile;
+      ptile = pcity->common.tile;
       /* Maybe it was just the x,y fields that were wrong,
        * so try to handle the rest of the packet. */
     }
@@ -457,17 +457,17 @@ void handle_city_info(struct packet_city_info *packet)
     city_is_new = TRUE;
     pcity = create_city_virtual(get_player(packet->owner), ptile,
                                 packet->name);
-    pcity->id = packet->id;
+    pcity->common.id = packet->id;
     idex_register_city(pcity);
     update_descriptions = TRUE;
     city_autonaming_add_used_name(packet->name);
   } else {
     city_is_new = FALSE;
 
-    name_changed = (strcmp(pcity->name, packet->name) != 0);
+    name_changed = (strcmp(pcity->common.name, packet->name) != 0);
 
     if (name_changed) {
-      city_autonaming_remove_used_name (pcity->name);
+      city_autonaming_remove_used_name (pcity->common.name);
       city_autonaming_add_used_name (packet->name);
       idex_unregister_city_name (pcity);
     }
@@ -476,47 +476,47 @@ void handle_city_info(struct packet_city_info *packet)
     if (draw_city_names && name_changed) {
       update_descriptions = TRUE;
     }
-    if (pcity->is_building_unit != packet->is_building_unit
-        || pcity->currently_building != packet->currently_building
-        || pcity->shield_surplus != packet->shield_surplus
-        || pcity->shield_stock != packet->shield_stock) {
+    if (pcity->common.is_building_unit != packet->is_building_unit
+        || pcity->common.currently_building != packet->currently_building
+        || pcity->common.shield_surplus != packet->shield_surplus
+        || pcity->common.shield_stock != packet->shield_stock) {
       needs_update |= UPDATE_BUILDING;
       if (draw_city_productions) {
         update_descriptions = TRUE;
       }
     }
-    if (pcity->food_stock != packet->food_stock
-        || pcity->food_surplus != packet->food_surplus) {
+    if (pcity->common.food_stock != packet->food_stock
+        || pcity->common.food_surplus != packet->food_surplus) {
       if (draw_city_names && draw_city_growth) {
         /* If either the food stock or surplus have changed, the time-to-grow
            is likely to have changed as well. */
         update_descriptions = TRUE;
       }
     }
-    assert(pcity->id == packet->id);
+    assert(pcity->common.id == packet->id);
   }
 
-  pcity->owner = packet->owner;
-  pcity->tile = ptile;
-  sz_strlcpy(pcity->name, packet->name);
+  pcity->common.owner = packet->owner;
+  pcity->common.tile = ptile;
+  sz_strlcpy(pcity->common.name, packet->name);
   idex_register_city_name (pcity);
 
-  pcity->pop_size = packet->size;
+  pcity->common.pop_size = packet->size;
   for (i = 0; i < 5; i++) {
-    pcity->people_happy[i] = packet->people_happy[i];
-    pcity->people_content[i] = packet->people_content[i];
-    pcity->people_unhappy[i] = packet->people_unhappy[i];
-    pcity->people_angry[i] = packet->people_angry[i];
+    pcity->common.people_happy[i] = packet->people_happy[i];
+    pcity->common.people_content[i] = packet->people_content[i];
+    pcity->common.people_unhappy[i] = packet->people_unhappy[i];
+    pcity->common.people_angry[i] = packet->people_angry[i];
   }
   specialist_type_iterate(sp) {
-    pcity->specialists[sp] = packet->specialists[sp];
+    pcity->common.specialists[sp] = packet->specialists[sp];
   } specialist_type_iterate_end;
 
-  pcity->city_options = packet->city_options;
+  pcity->common.city_options = packet->city_options;
 
   if (server_has_extglobalinfo) {
     /* Rally point */
-    pcity->rally_point = is_normal_map_pos(packet->rally_point_x,
+    pcity->common.rally_point = is_normal_map_pos(packet->rally_point_x,
                                            packet->rally_point_y)
         ? map_pos_to_tile(packet->rally_point_x, packet->rally_point_y) : NULL;
   } else if (get_client_state() < CLIENT_GAME_RUNNING_STATE) {
@@ -524,14 +524,14 @@ void handle_city_info(struct packet_city_info *packet)
      * routes would be missing with a player with a higher player numero,
      * build a stack and build them later.
      */
-    delayed_trade_routes_add(pcity->id, packet->trade, packet->trade_value);
+    delayed_trade_routes_add(pcity->common.id, packet->trade, packet->trade_value);
   } else {
     bool found[OLD_NUM_TRADEROUTES];
     memset(found, FALSE, sizeof(found));
     /* Remove old trade routes */
     established_trade_routes_iterate(pcity, ptr) {
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        if (OTHER_CITY(ptr, pcity)->id == packet->trade[i]) {
+        if (OTHER_CITY(ptr, pcity)->common.id == packet->trade[i]) {
           ptr->value = packet->trade_value[i];
           found[i] = TRUE;
           break;
@@ -568,65 +568,65 @@ void handle_city_info(struct packet_city_info *packet)
     }
   }
 
-  pcity->food_prod = packet->food_prod;
-  pcity->food_surplus = packet->food_surplus;
-  pcity->shield_prod = packet->shield_prod;
-  pcity->shield_surplus = packet->shield_surplus;
-  pcity->trade_prod = packet->trade_prod;
-  pcity->tile_trade = packet->tile_trade;
-  pcity->corruption = packet->corruption;
-  pcity->shield_waste = packet->shield_waste;
+  pcity->common.food_prod = packet->food_prod;
+  pcity->common.food_surplus = packet->food_surplus;
+  pcity->common.shield_prod = packet->shield_prod;
+  pcity->common.shield_surplus = packet->shield_surplus;
+  pcity->common.trade_prod = packet->trade_prod;
+  pcity->common.tile_trade = packet->tile_trade;
+  pcity->common.corruption = packet->corruption;
+  pcity->common.shield_waste = packet->shield_waste;
 
-  pcity->luxury_total = packet->luxury_total;
-  pcity->tax_total = packet->tax_total;
-  pcity->science_total = packet->science_total;
+  pcity->common.luxury_total = packet->luxury_total;
+  pcity->common.tax_total = packet->tax_total;
+  pcity->common.science_total = packet->science_total;
 
-  pcity->food_stock = packet->food_stock;
-  pcity->shield_stock = packet->shield_stock;
-  pcity->pollution = packet->pollution;
+  pcity->common.food_stock = packet->food_stock;
+  pcity->common.shield_stock = packet->shield_stock;
+  pcity->common.pollution = packet->pollution;
 
   if (city_is_new
-      || pcity->is_building_unit != packet->is_building_unit
-      || pcity->currently_building != packet->currently_building) {
+      || pcity->common.is_building_unit != packet->is_building_unit
+      || pcity->common.currently_building != packet->currently_building) {
     need_units_dialog_update = TRUE;
   }
-  pcity->is_building_unit = packet->is_building_unit;
-  pcity->currently_building = packet->currently_building;
+  pcity->common.is_building_unit = packet->is_building_unit;
+  pcity->common.currently_building = packet->currently_building;
   if (city_is_new) {
-    init_worklist(&pcity->worklist);
+    init_worklist(&pcity->common.worklist);
 
     /* Initialise list of improvements with city/building wide equiv_range. */
-    improvement_status_init(pcity->improvements,
-                            ARRAY_SIZE(pcity->improvements));
+    improvement_status_init(pcity->common.improvements,
+                            ARRAY_SIZE(pcity->common.improvements));
   }
-  if (!are_worklists_equal(&pcity->worklist, &packet->worklist)) {
-    copy_worklist(&pcity->worklist, &packet->worklist);
+  if (!are_worklists_equal(&pcity->common.worklist, &packet->worklist)) {
+    copy_worklist(&pcity->common.worklist, &packet->worklist);
     needs_update |= UPDATE_WORKLIST;
   }
-  pcity->did_buy = packet->did_buy;
-  pcity->did_sell = packet->did_sell;
-  pcity->was_happy = packet->was_happy;
-  pcity->airlift = packet->airlift;
+  pcity->common.did_buy = packet->did_buy;
+  pcity->common.did_sell = packet->did_sell;
+  pcity->common.was_happy = packet->was_happy;
+  pcity->common.airlift = packet->airlift;
 
-  pcity->turn_last_built = packet->turn_last_built;
-  pcity->turn_founded = packet->turn_founded;
-  pcity->changed_from_id = packet->changed_from_id;
-  pcity->changed_from_is_unit = packet->changed_from_is_unit;
-  pcity->before_change_shields = packet->before_change_shields;
-  pcity->disbanded_shields = packet->disbanded_shields;
-  pcity->caravan_shields = packet->caravan_shields;
-  pcity->last_turns_shield_surplus = packet->last_turns_shield_surplus;
+  pcity->common.turn_last_built = packet->turn_last_built;
+  pcity->common.turn_founded = packet->turn_founded;
+  pcity->common.changed_from_id = packet->changed_from_id;
+  pcity->common.changed_from_is_unit = packet->changed_from_is_unit;
+  pcity->common.before_change_shields = packet->before_change_shields;
+  pcity->common.disbanded_shields = packet->disbanded_shields;
+  pcity->common.caravan_shields = packet->caravan_shields;
+  pcity->common.last_turns_shield_surplus = packet->last_turns_shield_surplus;
 
   for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
     const int x = i % CITY_MAP_SIZE, y = i / CITY_MAP_SIZE;
 
     if (city_is_new) {
       /* Need to pre-initialize before set_worker_city()  -- dwp */
-      pcity->city_map[x][y] =
+      pcity->common.city_map[x][y] =
         is_valid_city_coords(x, y) ? C_TILE_EMPTY : C_TILE_UNAVAILABLE;
     }
     if (is_valid_city_coords(x, y)) {
-      if (pcity->city_map[x][y] != packet->city_map[i]) {
+      if (pcity->common.city_map[x][y] != packet->city_map[i]) {
         needs_update |= UPDATE_MAP;
       }
       set_worker_city(pcity, x, y, packet->city_map[i]);
@@ -635,9 +635,9 @@ void handle_city_info(struct packet_city_info *packet)
 
   impr_type_iterate(i) {
     if (!city_is_new
-        && ((pcity->improvements[i] == I_NONE
+        && ((pcity->common.improvements[i] == I_NONE
              && packet->improvements[i] == '1')
-            || (pcity->improvements[i] != I_NONE
+            || (pcity->common.improvements[i] != I_NONE
                 && packet->improvements[i] == '0'))) {
       audio_play_sound(get_improvement_type(i)->soundtag,
                        get_improvement_type(i)->soundtag_alt);
@@ -653,14 +653,14 @@ void handle_city_info(struct packet_city_info *packet)
    * get an update if it changes. */
   if (client_is_global_observer()
       || can_player_see_units_in_city(get_player_ptr(), pcity)) {
-    pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
+    pcity->u.client.occupied = (unit_list_size(pcity->common.tile->units) > 0);
   }
 
-  pcity->client.happy = city_happy(pcity);
-  pcity->client.unhappy = city_unhappy(pcity);
+  pcity->u.client.happy = city_happy(pcity);
+  pcity->u.client.unhappy = city_unhappy(pcity);
 
   popup = (city_is_new && can_client_change_view()
-           && pcity->owner == get_player_idx() && popup_new_cities)
+           && pcity->common.owner == get_player_idx() && popup_new_cities)
           || packet->diplomat_investigate;
 
   if (city_is_new && !city_has_changed_owner) {
@@ -684,7 +684,7 @@ void handle_city_info(struct packet_city_info *packet)
   }
 
   /* Update focus unit info label if necessary. */
-  if (name_changed && pfocus_unit && pfocus_unit->homecity == pcity->id) {
+  if (name_changed && pfocus_unit && pfocus_unit->homecity == pcity->common.id) {
     update_unit_info_label(pfocus_unit);
   }
 
@@ -708,22 +708,22 @@ static void handle_city_packet_common(city_t *pcity, bool is_new,
   int i;
 
   if (is_new) {
-    pcity->client.info_units_supported = unit_list_new();
-    pcity->client.info_units_present = unit_list_new();
+    pcity->u.client.info_units_supported = unit_list_new();
+    pcity->u.client.info_units_present = unit_list_new();
     city_list_prepend(city_owner(pcity)->cities, pcity);
-    map_set_city(pcity->tile, pcity);
-    if (pcity->owner == get_player_idx()) {
+    map_set_city(pcity->common.tile, pcity);
+    if (pcity->common.owner == get_player_idx()) {
       city_report_dialog_update();
     }
 
     for (i = 0; i < game.info.nplayers; i++) {
       unit_list_iterate(game.players[i].units, punit)
-        if (punit->homecity == pcity->id) {
-          unit_list_prepend(pcity->units_supported, punit);
+        if (punit->homecity == pcity->common.id) {
+          unit_list_prepend(pcity->common.units_supported, punit);
         }
       unit_list_iterate_end;
     }
-  } else if (pcity->owner == get_player_idx()) {
+  } else if (pcity->common.owner == get_player_idx()) {
     city_report_dialog_update_city(pcity);
   }
 
@@ -739,14 +739,14 @@ static void handle_city_packet_common(city_t *pcity, bool is_new,
     int width = get_citydlg_canvas_width() + 2;
     int height = get_citydlg_canvas_height() + 2;
 
-    (void) tile_to_canvas_pos(&canvas_x, &canvas_y, pcity->tile);
+    (void) tile_to_canvas_pos(&canvas_x, &canvas_y, pcity->common.tile);
 
     update_map_canvas(canvas_x - (width - NORMAL_TILE_WIDTH) / 2,
                       canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
                       width, height, MUT_NORMAL);
-    overview_update_tile(pcity->tile);
+    overview_update_tile(pcity->common.tile);
   } else {
-    refresh_tile_mapcanvas(pcity->tile, MUT_NORMAL);
+    refresh_tile_mapcanvas(pcity->common.tile, MUT_NORMAL);
   }
 
   if (city_workers_display == pcity)  {
@@ -765,7 +765,7 @@ static void handle_city_packet_common(city_t *pcity, bool is_new,
   /* update menus if the focus unit is on the tile. */
   {
     struct unit *punit = get_unit_in_focus();
-    if (punit && same_pos(punit->tile, pcity->tile)) {
+    if (punit && same_pos(punit->tile, pcity->common.tile)) {
       update_menus();
     }
   }
@@ -773,10 +773,10 @@ static void handle_city_packet_common(city_t *pcity, bool is_new,
   if (is_new) {
     freelog(LOG_DEBUG, "New %s city %s id %d (%d %d)",
             get_nation_name(city_owner(pcity)->nation),
-            pcity->name, pcity->id, TILE_XY(pcity->tile));
+            pcity->common.name, pcity->common.id, TILE_XY(pcity->common.tile));
   }
 
-  reset_move_costs(pcity->tile);
+  reset_move_costs(pcity->common.tile);
 }
 
 /**************************************************************************
@@ -791,8 +791,8 @@ void handle_city_short_info(struct packet_city_short_info *packet)
 
   pcity = find_city_by_id(packet->id);
 
-  if (pcity && (pcity->owner != packet->owner)) {
-    city_autonaming_remove_used_name (pcity->name);
+  if (pcity && (pcity->common.owner != packet->owner)) {
+    city_autonaming_remove_used_name (pcity->common.name);
     client_remove_city(pcity);
     pcity = NULL;
     city_has_changed_owner = TRUE;
@@ -800,7 +800,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
 
   ptile = map_pos_to_tile(packet->x, packet->y);
   if (!ptile) {
-    if (!pcity || !pcity->tile) {
+    if (!pcity || !pcity->common.tile) {
       freelog(LOG_ERROR, "handle_city_short_info: got invalid "
               "city tile (%d, %d), ignoring packet!",
               packet->x, packet->y);
@@ -811,7 +811,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
       freelog(LOG_ERROR, "handle_city_short_info: got invalid "
               "city tile (%d, %d), keeping old tile.",
               packet->x, packet->y);
-      ptile = pcity->tile;
+      ptile = pcity->common.tile;
       /* Maybe it was just the x,y fields that were wrong,
        * so try to handle the rest of the packet. */
     }
@@ -821,59 +821,59 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     city_is_new = TRUE;
     pcity = create_city_virtual(get_player(packet->owner), ptile,
                                 packet->name);
-    pcity->id = packet->id;
+    pcity->common.id = packet->id;
     idex_register_city(pcity);
     city_autonaming_add_used_name(packet->name);
   } else {
     city_is_new = FALSE;
 
-    name_changed = strcmp(pcity->name, packet->name) != 0;
+    name_changed = strcmp(pcity->common.name, packet->name) != 0;
     /* Check if city desciptions should be updated */
     if (draw_city_names && name_changed) {
       update_descriptions = TRUE;
     }
 
     if (name_changed) {
-      city_autonaming_remove_used_name(pcity->name);
+      city_autonaming_remove_used_name(pcity->common.name);
       city_autonaming_add_used_name(packet->name);
 
       idex_unregister_city_name (pcity);
     }
 
-    assert(pcity->id == packet->id);
+    assert(pcity->common.id == packet->id);
   }
 
-  pcity->owner = packet->owner;
-  pcity->tile = ptile;
-  sz_strlcpy(pcity->name, packet->name);
+  pcity->common.owner = packet->owner;
+  pcity->common.tile = ptile;
+  sz_strlcpy(pcity->common.name, packet->name);
   idex_register_city_name(pcity);
 
-  pcity->pop_size = packet->size;
-  pcity->tile_trade = packet->tile_trade;
+  pcity->common.pop_size = packet->size;
+  pcity->common.tile_trade = packet->tile_trade;
 
   /* We can't actually see the internals of the city, but the server tells
    * us this much. */
-  pcity->client.occupied = packet->occupied;
-  pcity->client.happy = packet->happy;
-  pcity->client.unhappy = packet->unhappy;
-  pcity->client.traderoute_drawing_disabled = FALSE;
+  pcity->u.client.occupied = packet->occupied;
+  pcity->u.client.happy = packet->happy;
+  pcity->u.client.unhappy = packet->unhappy;
+  pcity->u.client.traderoute_drawing_disabled = FALSE;
 
-  pcity->people_happy[4] = 0;
-  pcity->people_content[4] = 0;
-  pcity->people_unhappy[4] = 0;
-  pcity->people_angry[4] = 0;
+  pcity->common.people_happy[4] = 0;
+  pcity->common.people_content[4] = 0;
+  pcity->common.people_unhappy[4] = 0;
+  pcity->common.people_angry[4] = 0;
   if (packet->happy) {
-    pcity->people_happy[4] = pcity->pop_size;
+    pcity->common.people_happy[4] = pcity->common.pop_size;
   } else if (packet->unhappy) {
-    pcity->people_unhappy[4] = pcity->pop_size;
+    pcity->common.people_unhappy[4] = pcity->common.pop_size;
   } else {
-    pcity->people_content[4] = pcity->pop_size;
+    pcity->common.people_content[4] = pcity->common.pop_size;
   }
 
   if (city_is_new) {
     /* Initialise list of improvements with city/building wide equiv_range. */
-    improvement_status_init(pcity->improvements,
-                            ARRAY_SIZE(pcity->improvements));
+    improvement_status_init(pcity->common.improvements,
+                            ARRAY_SIZE(pcity->common.improvements));
   }
 
   update_improvement_from_packet(pcity, game.palace_building,
@@ -882,7 +882,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
                                  packet->walls, &need_effect_update);
 
   if (city_is_new) {
-    init_worklist(&pcity->worklist);
+    init_worklist(&pcity->common.worklist);
   }
 
   if (city_is_new && !city_has_changed_owner) {
@@ -921,7 +921,7 @@ void handle_new_year(int year, int turn)
   if ((pplayer = get_player_ptr())) {
     player_set_unit_focus_status(pplayer);
     city_list_iterate(pplayer->cities, pcity) {
-      pcity->client.colored = FALSE;
+      pcity->u.client.colored = FALSE;
     } city_list_iterate_end;
     unit_list_iterate(pplayer->units, punit) {
       punit->client.colored = FALSE;
@@ -1200,10 +1200,10 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       if (punit->ptr
           && !server_has_extglobalinfo
           && !packet_unit->has_orders) {
-        if ((packet_unit->homecity != punit->ptr->pcity1->id
-             && packet_unit->tile == punit->ptr->pcity1->tile)
-            || (packet_unit->homecity == punit->ptr->pcity1->id
-                && packet_unit->tile == punit->ptr->pcity2->tile)) {
+        if ((packet_unit->homecity != punit->ptr->pcity1->common.id
+             && packet_unit->tile == punit->ptr->pcity1->common.tile)
+            || (packet_unit->homecity == punit->ptr->pcity1->common.id
+                && packet_unit->tile == punit->ptr->pcity2->common.tile)) {
           need_execute_trade = TRUE;
         } else if (!punit->has_orders
                    || punit->orders.index < punit->orders.length - 1) {
@@ -1242,14 +1242,14 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     if (punit->homecity != packet_unit->homecity) {
       /* change homecity */
       if (homecity) {
-        unit_list_unlink(homecity->units_supported, punit);
+        unit_list_unlink(homecity->common.units_supported, punit);
         refresh_city_dialog(homecity, UPDATE_SUPPORTED_UNITS);
       }
 
       punit->homecity = packet_unit->homecity;
       homecity = find_city_by_id(punit->homecity);
       if (homecity) {
-        unit_list_prepend(homecity->units_supported, punit);
+        unit_list_prepend(homecity->common.units_supported, punit);
         homecity_needs_update |= UPDATE_SUPPORTED_UNITS;
       }
     }
@@ -1299,15 +1299,15 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
             || can_player_see_units_in_city(get_player_ptr(), pcity)) {
           /* Unit moved out of a city - update the occupied status. */
           bool new_occupied =
-            (unit_list_size(pcity->tile->units) > 0);
+            (unit_list_size(pcity->common.tile->units) > 0);
 
-          if (pcity->client.occupied != new_occupied) {
-            pcity->client.occupied = new_occupied;
-            refresh_tile_mapcanvas(pcity->tile, MUT_NORMAL);
+          if (pcity->u.client.occupied != new_occupied) {
+            pcity->u.client.occupied = new_occupied;
+            refresh_tile_mapcanvas(pcity->common.tile, MUT_NORMAL);
           }
         }
 
-        if (pcity->id == punit->homecity) {
+        if (pcity->common.id == punit->homecity) {
           homecity_needs_update |= UPDATE_PRESENT_UNITS;
         } else {
           refresh_city_dialog(pcity, UPDATE_PRESENT_UNITS);
@@ -1318,13 +1318,13 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
         if (!get_player_ptr()
             || can_player_see_units_in_city(get_player_ptr(), pcity)) {
           /* Unit moved into a city - obviously it's occupied. */
-          if (!pcity->client.occupied) {
-            pcity->client.occupied = TRUE;
-            refresh_tile_mapcanvas(pcity->tile, MUT_NORMAL);
+          if (!pcity->u.client.occupied) {
+            pcity->u.client.occupied = TRUE;
+            refresh_tile_mapcanvas(pcity->common.tile, MUT_NORMAL);
           }
         }
 
-        if (pcity->id == punit->homecity) {
+        if (pcity->common.id == punit->homecity) {
           homecity_needs_update |= UPDATE_PRESENT_UNITS;
         } else {
           refresh_city_dialog(pcity, UPDATE_PRESENT_UNITS);
@@ -1406,27 +1406,28 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     unit_list_prepend(punit->tile->units, punit);
 
     if ((homecity = find_city_by_id(punit->homecity))) {
-      unit_list_prepend(homecity->units_supported, punit);
+      unit_list_prepend(homecity->common.units_supported, punit);
       if (!server_has_extglobalinfo
-          && homecity->rally_point
-          && punit->tile == homecity->tile) {
+          && homecity->common.rally_point
+          && punit->tile == homecity->common.tile) {
         /* Check rally point */
-        send_goto_unit(punit, homecity->rally_point);
-        homecity->rally_point = NULL;
+        send_goto_unit(punit, homecity->common.rally_point);
+        homecity->common.rally_point = NULL;
       }
     }
 
     freelog(LOG_DEBUG, "New %s %s id %d (%d %d) hc %d %s",
             get_nation_name(unit_owner(punit)->nation),
             unit_name(punit->type), TILE_XY(punit->tile), punit->id,
-            punit->homecity, (homecity ? homecity->name : _("(unknown)")));
+            punit->homecity,
+            homecity ? homecity->common.name : _("(unknown)"));
 
     repaint_unit = (punit->transported_by == -1);
     agents_unit_new(punit);
 
     if ((pcity = map_get_city(punit->tile))) {
       /* The unit is in a city - obviously it's occupied. */
-      pcity->client.occupied = TRUE;
+      pcity->u.client.occupied = TRUE;
     }
 
     refresh_unit_city_dialogs(punit);
@@ -1516,23 +1517,23 @@ void handle_unit_short_info(struct packet_unit_short_info *packet)
     /* New serial number -- clear (free) everything */
     if (last_serial_num != packet->serial_num) {
       last_serial_num = packet->serial_num;
-      unit_list_iterate(pcity->client.info_units_supported, psunit) {
+      unit_list_iterate(pcity->u.client.info_units_supported, psunit) {
         destroy_unit_virtual(psunit);
       } unit_list_iterate_end;
-      unit_list_unlink_all(pcity->client.info_units_supported);
-      unit_list_iterate(pcity->client.info_units_present, ppunit) {
+      unit_list_unlink_all(pcity->u.client.info_units_supported);
+      unit_list_iterate(pcity->u.client.info_units_present, ppunit) {
         destroy_unit_virtual(ppunit);
       } unit_list_iterate_end;
-      unit_list_unlink_all(pcity->client.info_units_present);
+      unit_list_unlink_all(pcity->u.client.info_units_present);
     }
 
     /* Okay, append a unit struct to the proper list. */
     punit = unpackage_short_unit(packet);
     if (packet->packet_use == UNIT_INFO_CITY_SUPPORTED) {
-      unit_list_prepend(pcity->client.info_units_supported, punit);
+      unit_list_prepend(pcity->u.client.info_units_supported, punit);
     } else {
       assert(packet->packet_use == UNIT_INFO_CITY_PRESENT);
-      unit_list_prepend(pcity->client.info_units_present, punit);
+      unit_list_prepend(pcity->u.client.info_units_present, punit);
     }
 
     /* Done with special case. */
@@ -2960,7 +2961,7 @@ void handle_city_sabotage_list(int diplomat_id, int city_id,
 
   if (punit && pcity) {
     impr_type_iterate(i) {
-      pcity->improvements[i] = (improvements[i]=='1') ? I_ACTIVE : I_NONE;
+      pcity->common.improvements[i] = (improvements[i]=='1') ? I_ACTIVE : I_NONE;
     } impr_type_iterate_end;
 
     popup_sabotage_dialog(pcity);

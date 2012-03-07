@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -1202,7 +1202,7 @@ struct tile *find_nearest_city(struct unit *punit, bool allies)
   if (pcity
       && (city_owner(pcity) == pplayer
           || (allies && pplayers_allied(pplayer, city_owner(pcity))))) {
-    return pcity->tile;
+    return pcity->common.tile;
   }
 
   fill_client_goto_parameter(punit, &parameter);
@@ -1222,5 +1222,5 @@ struct tile *find_nearest_city(struct unit *punit, bool allies)
 
   pf_destroy_map(map);
 
-  return pcity ? pcity->tile : NULL;
+  return pcity ? pcity->common.tile : NULL;
 }

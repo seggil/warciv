@@ -288,7 +288,7 @@ static int col_production(struct player *player)
   int prod = 0;
 
   city_list_iterate(player->cities, pcity) {
-    prod += pcity->shield_surplus;
+    prod += pcity->common.shield_surplus;
   } city_list_iterate_end;
 
   return prod;
@@ -302,7 +302,7 @@ static int col_economics(struct player *player)
   int eco = 0;
 
   city_list_iterate(player->cities, pcity) {
-    eco += pcity->trade_prod;
+    eco += pcity->common.trade_prod;
   } city_list_iterate_end;
 
   return eco;

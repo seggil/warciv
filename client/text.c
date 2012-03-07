@@ -282,13 +282,13 @@ const char *popup_info_text(struct tile *ptile)
     if (client_is_global_observer()) {
       /* TRANS: "City: Warsaw | Username (Polish)" */
       add_line(_("City: %s | %s%s (%s)"),
-               pcity->name,
+               pcity->common.name,
                get_name_prefix(owner),
                get_proper_username(owner),
                get_player_nation_name(owner));
     } else if (owner == get_player_ptr()) {
       /* TRANS: "City: Warsaw (Polish)" */
-      add_line(_("City: %s (%s)"), pcity->name, get_player_nation_name(owner));
+      add_line(_("City: %s (%s)"), pcity->common.name, get_player_nation_name(owner));
     } else {
       struct player_diplstate *ds =
           &get_player_ptr()->diplstates[owner->player_no];
@@ -299,13 +299,13 @@ const char *popup_info_text(struct tile *ptile)
         add_line(PL_("City: %s | %s%s (%d turn ceasefire, %s)",
                      "City: %s | %s%s (%d turn ceasefire, %s)",
                                        turns),
-                 pcity->name,
+                 pcity->common.name,
                  get_name_prefix(owner),
                  get_proper_username(owner),
                  turns, get_player_nation_name(owner));
       } else {
         /* TRANS: "City: Warsaw | Username (friendly, Polish)" */
-        add_line(_("City: %s | %s%s (%s, %s)"), pcity->name,
+        add_line(_("City: %s | %s%s (%s, %s)"), pcity->common.name,
                  get_name_prefix(owner),
                  get_proper_username(owner),
                  diplo_city_adjectives[ds->type],
@@ -325,7 +325,7 @@ const char *popup_info_text(struct tile *ptile)
           && can_establish_trade_route(hcity, pcity)) {
         /* TRANS: "Trade from Warsaw: 5" */
         add_line(_("Trade from %s: %d"),
-                 hcity->name, trade_between_cities(hcity, pcity));
+                 hcity->common.name, trade_between_cities(hcity, pcity));
       }
     }
   }
@@ -348,7 +348,7 @@ const char *popup_info_text(struct tile *ptile)
 
       pcity = find_city_by_id(punit->homecity);
       if (pcity) {
-        my_snprintf(tmp, sizeof(tmp), "/%s", pcity->name);
+        my_snprintf(tmp, sizeof(tmp), "/%s", pcity->common.name);
       }
       /* TRANS: "Unit: Musketeers | Username (Polish/Warsaw)" */
       add_line(_("Unit: %s | %s%s (%s%s)"), ptype->name,
@@ -361,7 +361,7 @@ const char *popup_info_text(struct tile *ptile)
 
       pcity = find_city_by_id(punit->homecity);
       if (pcity) {
-        my_snprintf(tmp, sizeof(tmp), "/%s", pcity->name);
+        my_snprintf(tmp, sizeof(tmp), "/%s", pcity->common.name);
       }
       /* TRANS: "Unit: Musketeers (Polish/Warsaw)" */
       add_line(_("Unit: %s (%s%s)"), ptype->name,
@@ -490,7 +490,7 @@ const char *get_nearest_city_text(city_t *pcity, int sq_dist)
   add((sq_dist >= FAR_CITY_SQUARE_DIST) ? _("far from %s")
       : (sq_dist > 0) ? _("near %s")
       : (sq_dist == 0) ? _("in %s")
-      : "%s", pcity ? pcity->name : "");
+      : "%s", pcity ? pcity->common.name : "");
 
   RETURN;
 }
@@ -517,7 +517,7 @@ const char *unit_description(struct unit *punit)
 
   if (pcity) {
     /* TRANS: "from Warsaw" */
-    add_line(_("from %s"), pcity->name);
+    add_line(_("from %s"), pcity->common.name);
   } else {
     add("\n");
   }
@@ -643,7 +643,7 @@ const char *get_unit_info_label_text2(struct unit *punit)
       add_line(" ");
     }
     if (pcity) {
-      add_line("%s", pcity->name);
+      add_line("%s", pcity->common.name);
     } else {
       add_line(" ");
     }

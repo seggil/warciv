@@ -594,7 +594,7 @@ void multi_select_spread(void)
     }
 
     city_list_iterate(pplayer->cities, pcity) {
-      if (pcity->tile->continent != cid
+      if (pcity->common.tile->continent != cid
           || (multi_select_spread_airport_cities
               && get_city_bonus(pcity, EFT_AIRLIFT) == 0)) {
         continue;
@@ -617,7 +617,7 @@ void multi_select_spread(void)
     bool multi = FALSE;
 
     scity_list_iterate(sclist, pscity) {
-      if (calculate_move_cost(punit, pscity->pcity->tile) > punit->moves_left) {
+      if (calculate_move_cost(punit, pscity->pcity->common.tile) > punit->moves_left) {
         continue;
       }
       unit_list_append(pscity->ulist, punit);
@@ -631,7 +631,7 @@ void multi_select_spread(void)
     } scity_list_iterate_end;
     if (!multi && last) {
       /* send if the unit can go to one only city */
-      send_goto_unit(punit, last->pcity->tile);
+      send_goto_unit(punit, last->pcity->common.tile);
       unit_list_unlink(pscity->ulist, punit);
       last->tdv -= type->defense_strength;
       last->tav -= type->attack_strength;
@@ -646,7 +646,7 @@ void multi_select_spread(void)
 
     if (punit) {
       struct unit_type *type = unit_type(punit);
-      send_goto_unit(punit, pscity->pcity->tile);
+      send_goto_unit(punit, pscity->pcity->common.tile);
       pscity->rdv += type->defense_strength;
       pscity->rav += type->attack_strength;
       scity_list_iterate(sclist, pscity) {
@@ -1667,7 +1667,7 @@ void request_auto_airlift_source_selection_with_airport(void)
 {
   city_list_iterate(get_player_ptr()->cities, pcity) {
     if (get_city_bonus(pcity, EFT_AIRLIFT) > 0) {
-      add_city_to_auto_airlift_queue(pcity->tile, TRUE);
+      add_city_to_auto_airlift_queue(pcity->common.tile, TRUE);
     }
   } city_list_iterate_end;
 
@@ -1693,7 +1693,7 @@ void do_airlift_for(int aq, city_t *pcity)
   }
 
   tile_list_iterate(airlift_queues[aq].tlist, ptile) {
-    if (!ptile->city || ptile->city->owner != get_player_idx()
+    if (!ptile->city || ptile->city->common.owner != get_player_idx()
         || unit_list_size(ptile->units) == 0) {
       continue;
     }
@@ -1749,20 +1749,20 @@ void add_city_to_specific_auto_airlift_queue(int aq, city_t *pcity)
   aqassert(aq);
 
   if (!pcity
-      || !pcity->tile
-      || tile_list_search(airlift_queues[aq].tlist, pcity->tile)) {
+      || !pcity->common.tile
+      || tile_list_search(airlift_queues[aq].tlist, pcity->common.tile)) {
     return;
   }
 
-  tile_list_prepend(airlift_queues[aq].tlist, pcity->tile);
+  tile_list_prepend(airlift_queues[aq].tlist, pcity->common.tile);
   if (aq == 0) {
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: Adding city %s to auto airlift queue."),
-                get_tile_info(pcity->tile));
+                get_tile_info(pcity->common.tile));
   } else {
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: Adding city %s to auto airlift queue %d."),
-                get_tile_info(pcity->tile), aq + DELAYED_GOTO_NUM - 1);
+                get_tile_info(pcity->common.tile), aq + DELAYED_GOTO_NUM - 1);
   }
 
   append_output_window(buf);

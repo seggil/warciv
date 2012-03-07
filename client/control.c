@@ -698,9 +698,9 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
                                   punit->tile);
     dipl_city_ok = pcity != NULL
                && is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
-                                               pcity->tile)
+                                               pcity->common.tile)
                && diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
-                                  pcity->tile);
+                                  pcity->common.tile);
 
     if (dipl_unit_ok) {
       /* Target is a unit */
@@ -741,7 +741,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 
       switch (default_diplomat_city_action) {
         case DDCA_POPUP_DIALOG:
-          popup_diplomat_dialog(pdiplomat, pcity->tile);
+          popup_diplomat_dialog(pdiplomat, pcity->common.tile);
           break;
         case DDCA_EMBASSY:
           request_diplomat_action(DIPLOMAT_EMBASSY, diplomat_id, victim_id, 0);
@@ -864,7 +864,7 @@ void request_auto_airlift_source_selection(void)
       if (!is_city_hilited (pcity)) {
         continue;
       }
-      add_city_to_auto_airlift_queue(pcity->tile, TRUE);
+      add_city_to_auto_airlift_queue(pcity->common.tile, TRUE);
     } city_list_iterate_end;
     update_airlift_menu(0);
   } else {
@@ -1021,7 +1021,7 @@ void request_unit_unload_all(struct unit *punit)
 void request_unit_airlift(struct unit *punit, city_t *pcity)
 {
   punit->is_new = FALSE;
-  dsend_packet_unit_airlift(&aconnection, punit->id, pcity->id);
+  dsend_packet_unit_airlift(&aconnection, punit->id, pcity->common.id);
 }
 
 /**************************************************************************
@@ -1181,7 +1181,7 @@ void request_unit_change_homecity(struct unit *punit)
   city_t *pcity = map_get_city(punit->tile);
 
   if (pcity) {
-    dsend_packet_unit_change_homecity(&aconnection, punit->id, pcity->id);
+    dsend_packet_unit_change_homecity(&aconnection, punit->id, pcity->common.id);
   }
 }
 
@@ -1521,7 +1521,7 @@ void request_toggle_city_traderoutes(void)
 
   if (me != NULL) {
     city_list_iterate(me->cities, pcity) {
-      pcity->client.traderoute_drawing_disabled = !draw_city_traderoutes;
+      pcity->u.client.traderoute_drawing_disabled = !draw_city_traderoutes;
     } city_list_iterate_end;
   }
 
@@ -2269,8 +2269,8 @@ void key_center_capital(void)
 
   if (capital)  {
     /* Center on the tile, and pop up the crosshair overlay. */
-    center_tile_mapcanvas(capital->tile);
-    put_cross_overlay_tile(capital->tile);
+    center_tile_mapcanvas(capital->common.tile);
+    put_cross_overlay_tile(capital->common.tile);
   } else {
     append_output_window(_("Game: Oh my! You seem to have no capital!"));
   }
@@ -2364,7 +2364,7 @@ void key_unit_connect(enum unit_activity activity)
 **************************************************************************/
 void key_unit_diplomat_actions(void)
 {
-  city_t *pcity;           /* need pcity->id */
+  city_t *pcity;           /* need pcity->common.id */
 
   multi_select_iterate(TRUE, punit) {
     if (punit
@@ -2372,7 +2372,7 @@ void key_unit_diplomat_actions(void)
         && (pcity = map_get_city(punit->tile))
         && !diplomat_dialog_is_open()    /* confusing otherwise? */
         && diplomat_can_do_action(punit, DIPLOMAT_ANY_ACTION, punit->tile)) {
-      process_diplomat_arrival(punit, pcity->id);
+      process_diplomat_arrival(punit, pcity->common.id);
     }
   } multi_select_iterate_end;
 }
@@ -2975,7 +2975,7 @@ void key_add_trade_city(void)
   if (tiles_hilited_cities) {
     city_list_iterate(get_player_ptr()->cities, pcity) {
       if (is_city_hilited(pcity)) {
-        add_tile_in_trade_planning(pcity->tile, FALSE);
+        add_tile_in_trade_planning(pcity->common.tile, FALSE);
       }
     } city_list_iterate_end;
     update_auto_caravan_menu();

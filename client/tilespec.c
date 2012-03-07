@@ -1898,7 +1898,7 @@ static struct Sprite *get_city_sprite(city_t *pcity)
   style = get_city_style(pcity);    /* get style and match the best tile */
                                     /* based on city size                */
   for( size=0; size < city_styles[style].tiles_num; size++)
-    if( pcity->pop_size < city_styles[style].tresh[size])
+    if( pcity->common.pop_size < city_styles[style].tresh[size])
       break;
 
   if (is_isometric) {
@@ -2780,14 +2780,14 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
       ADD_BG(get_player_color(city_owner(pcity)));
     }
     ADD_SPRITE_FULL(get_city_sprite(pcity));
-    if (pcity->client.occupied) {
+    if (pcity->u.client.occupied) {
       ADD_SPRITE_FULL(get_city_occupied_sprite(pcity));
     }
     if (!is_isometric && city_got_citywalls(pcity)) {
       /* In iso-view the city wall is a part of the city sprite. */
       ADD_SPRITE_SIMPLE(get_city_wall_sprite(pcity));
     }
-    if (pcity->client.unhappy) {
+    if (pcity->u.client.unhappy) {
       ADD_SPRITE_FULL(sprites.city.disorder);
     } else if (city_celebrating(pcity) && sprites.city.happy) {
       ADD_SPRITE_SIMPLE(sprites.city.happy);
@@ -2815,11 +2815,11 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
 
   /* City size.  Drawing this under fog makes it hard to read. */
   if (pcity && draw_cities) {
-    if (pcity->pop_size >= 10) {
-      ADD_SPRITE(sprites.city.size_tens[pcity->pop_size / 10], DRAW_FULL,
+    if (pcity->common.pop_size >= 10) {
+      ADD_SPRITE(sprites.city.size_tens[pcity->common.pop_size / 10], DRAW_FULL,
                  FALSE, 0, 0);
     }
-    ADD_SPRITE(sprites.city.size[pcity->pop_size % 10], DRAW_FULL,
+    ADD_SPRITE(sprites.city.size[pcity->common.pop_size % 10], DRAW_FULL,
                FALSE, 0, 0);
   }
 
@@ -3337,7 +3337,7 @@ void tilespec_free_tiles(void)
 
 /**************************************************************************
   Return a sprite for the given citizen.  The citizen's type is given,
-  as well as their index (in the range [0..pcity->size)).  The
+  as well as their index (in the range [0..pcity->common.size)).  The
   citizen's city can be used to determine which sprite to use (a NULL
   value indicates there is no city; i.e., the sprite is just being
   used as a picture).
