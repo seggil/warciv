@@ -79,17 +79,17 @@ static struct {
   int apply_result_ignored, apply_result_applied, refresh_forced;
 } stats;
 
-#define my_city_map_iterate(pcity, cx, cy) {                           \
-  city_map_checked_iterate(pcity->tile, cx, cy, _ptile) { \
+#define my_city_map_iterate(pcity, cx, cy) {                     \
+  city_map_checked_iterate(pcity->common.tile, cx, cy, _ptile) { \
     if(!is_city_center(cx, cy)) {
 
-#define my_city_map_iterate_end \
-    }                                \
-  } city_map_checked_iterate_end;    \
+#define my_city_map_iterate_end    \
+    }                              \
+  } city_map_checked_iterate_end;  \
 }
 
 
-#define T(x) if (result1->x != result2->x) { \
+#define T(x) if (result1->x != result2->x) {      \
         freelog(RESULTS_ARE_EQUAL_LOG_LEVEL, #x); \
         return FALSE; }
 
@@ -141,18 +141,18 @@ static void get_current_as_result(city_t *pcity,
 
   my_city_map_iterate(pcity, x, y) {
     result->worker_positions_used[x][y] =
-        (pcity->city_map[x][y] == C_TILE_WORKER);
+        (pcity->common.city_map[x][y] == C_TILE_WORKER);
     if (result->worker_positions_used[x][y]) {
       worker++;
     }
   } my_city_map_iterate_end;
 
   specialist_type_iterate(sp) {
-    result->specialists[sp] = pcity->specialists[sp];
-    specialist += pcity->specialists[sp];
+    result->specialists[sp] = pcity->common.specialists[sp];
+    specialist += pcity->common.specialists[sp];
   } specialist_type_iterate_end;
 
-  assert(worker + specialist == pcity->pop_size);
+  assert(worker + specialist == pcity->common.pop_size);
 
   result->found_a_valid = TRUE;
 
@@ -179,9 +179,9 @@ static bool check_city(int city_id, struct cm_parameter *parameter)
 
   if (city_owner(pcity) != get_player_ptr()) {
     cma_release_city(pcity);
-    create_event(pcity->tile, E_CITY_CMA_RELEASE,
+    create_event(pcity->common.tile, E_CITY_CMA_RELEASE,
                  _("CMA: You lost control of %s. Detaching from city."),
-                 pcity->name);
+                 pcity->common.name);
     return FALSE;
   }
 
@@ -211,13 +211,15 @@ static bool apply_result_on_server(city_t *pcity,
   stats.apply_result_applied++;
 
   freelog(APPLY_RESULT_LOG_LEVEL, "apply_result(city='%s'(%d))",
-          pcity->name, pcity->id);
+          pcity->common.name, pcity->common.id);
 
   connection_do_buffer(&aconnection);
 
   /* Do checks */
-  if (pcity->pop_size != (cm_count_worker(pcity, result)
-                      + cm_count_specialist(pcity, result))) {
+  if (pcity->common.pop_size
+      != (cm_count_worker(pcity, result)
+          + cm_count_specialist(pcity, result)))
+  {
     cm_print_city(pcity);
     cm_print_result(pcity, result);
     assert(0);
@@ -225,7 +227,7 @@ static bool apply_result_on_server(city_t *pcity,
 
   /* Remove all surplus workers */
   my_city_map_iterate(pcity, x, y) {
-    if ((pcity->city_map[x][y] == C_TILE_WORKER) &&
+    if ((pcity->common.city_map[x][y] == C_TILE_WORKER) &&
         !result->worker_positions_used[x][y]) {
       freelog(APPLY_RESULT_LOG_LEVEL, "Removing worker at %d,%d.", x, y);
       last_request_id = city_toggle_worker(pcity, x, y);
@@ -238,7 +240,7 @@ static bool apply_result_on_server(city_t *pcity,
   /* Change the excess non-elvis specialists to elvises. */
   assert(SP_ELVIS == 0);
   for (sp = 1; sp < SP_COUNT; sp++) {
-    for (i = 0; i < pcity->specialists[sp] - result->specialists[sp]; i++) {
+    for (i = 0; i < pcity->common.specialists[sp] - result->specialists[sp]; i++) {
       freelog(APPLY_RESULT_LOG_LEVEL, "Change specialist from %d to %d.",
               sp, SP_ELVIS);
       last_request_id = city_change_specialist(pcity, sp, SP_ELVIS);
@@ -255,8 +257,8 @@ static bool apply_result_on_server(city_t *pcity,
    * elvis! */
   my_city_map_iterate(pcity, x, y) {
     if (result->worker_positions_used[x][y] &&
-        pcity->city_map[x][y] != C_TILE_WORKER) {
-      assert(pcity->city_map[x][y] == C_TILE_EMPTY);
+        pcity->common.city_map[x][y] != C_TILE_WORKER) {
+      assert(pcity->common.city_map[x][y] == C_TILE_EMPTY);
       freelog(APPLY_RESULT_LOG_LEVEL, "Putting worker at %d,%d.", x, y);
       last_request_id = city_toggle_worker(pcity, x, y);
       if (first_request_id == 0) {
@@ -269,7 +271,7 @@ static bool apply_result_on_server(city_t *pcity,
    * as elvises). */
   assert(SP_ELVIS == 0);
   for (sp = 1; sp < SP_COUNT; sp++) {
-    for (i = 0; i < result->specialists[sp] - pcity->specialists[sp]; i++) {
+    for (i = 0; i < result->specialists[sp] - pcity->common.specialists[sp]; i++) {
       freelog(APPLY_RESULT_LOG_LEVEL, "Changing specialist from %d to %d.",
               SP_ELVIS, sp);
       last_request_id = city_change_specialist(pcity, SP_ELVIS, sp);
@@ -289,7 +291,7 @@ static bool apply_result_on_server(city_t *pcity,
        * PACKET_CITY_REFRESH to bring them in sync.
        */
     first_request_id = last_request_id =
-        dsend_packet_city_refresh(&aconnection, pcity->id);
+        dsend_packet_city_refresh(&aconnection, pcity->common.id);
     stats.refresh_forced++;
   }
   reports_freeze_till(last_request_id);
@@ -297,7 +299,7 @@ static bool apply_result_on_server(city_t *pcity,
   connection_do_unbuffer(&aconnection);
 
   if (last_request_id != 0) {
-    int city_id = pcity->id;
+    int city_id = pcity->common.id;
 
     wait_for_requests("CMA", first_request_id, last_request_id);
     if (!check_city(city_id, NULL)) {
@@ -370,14 +372,14 @@ static void handle_city(city_t *pcity)
   struct cm_result result;
   bool handled;
   int i;
-  int city_id = pcity->id;
+  int city_id = pcity->common.id;
 
   freelog(HANDLE_CITY_LOG_LEVEL,
-          "handle_city(city='%s'(%d) pos=(%d,%d) owner=%s)", pcity->name,
-          pcity->id, TILE_XY(pcity->tile), city_owner(pcity)->name);
+          "handle_city(city='%s'(%d) pos=(%d,%d) owner=%s)", pcity->common.name,
+          pcity->common.id, TILE_XY(pcity->common.tile), city_owner(pcity)->name);
 
   freelog(HANDLE_CITY_LOG_LEVEL2, "START handle city='%s'(%d)",
-          pcity->name, pcity->id);
+          pcity->common.name, pcity->common.id);
 
   handled = FALSE;
   for (i = 0; i < 5; i++) {
@@ -398,19 +400,20 @@ static void handle_city(city_t *pcity)
 
       cma_release_city(pcity);
 
-      create_event(pcity->tile, E_CITY_CMA_RELEASE,
+      create_event(pcity->common.tile, E_CITY_CMA_RELEASE,
                    _("CMA: The agent can't fulfill the requirements "
-                     "for %s. Passing back control."), pcity->name);
+                     "for %s. Passing back control."),
+                   pcity->common.name);
       handled = TRUE;
       break;
     } else {
       if (!apply_result_on_server(pcity, &result)) {
         freelog(HANDLE_CITY_LOG_LEVEL2, "  doesn't cleanly apply");
         if (check_city(city_id, NULL) && i == 0) {
-          create_event(pcity->tile, E_NOEVENT,
+          create_event(pcity->common.tile, E_NOEVENT,
                        _("CMA: %s has changed and the calculated "
                          "result can't be applied. Will retry."),
-                       pcity->name);
+                       pcity->common.name);
         }
       } else {
         freelog(HANDLE_CITY_LOG_LEVEL2, "  ok");
@@ -427,16 +430,18 @@ static void handle_city(city_t *pcity)
     assert(pcity != NULL);
     freelog(HANDLE_CITY_LOG_LEVEL2, "  not handled");
 
-    create_event(pcity->tile, E_CITY_CMA_RELEASE,
+    create_event(pcity->common.tile, E_CITY_CMA_RELEASE,
                  _("CMA: %s has changed multiple times. This may be "
                    "an error in Warciv or bad luck. The CMA will detach "
-                   "itself from the city now."), pcity->name);
+                   "itself from the city now."),
+                 pcity->common.name);
 
     cma_release_city(pcity);
 
     freelog(LOG_ERROR, "CMA: %s has changed multiple times due to "
             "an error in Warciv. Please send a savegame that can reproduce "
-            "this bug at %s. Thank you.", pcity->name, BUG_URL);
+            "this bug at %s. Thank you.",
+            pcity->common.name, BUG_URL);
   }
 
   freelog(HANDLE_CITY_LOG_LEVEL2, "END handle city=(%d)", city_id);
@@ -519,11 +524,11 @@ void cma_put_city_under_agent(city_t *pcity,
                               const struct cm_parameter *const parameter)
 {
   freelog(LOG_DEBUG, "cma_put_city_under_agent(city='%s'(%d))",
-          pcity->name, pcity->id);
+          pcity->common.name, pcity->common.id);
 
   assert(city_owner(pcity) == get_player_ptr() || !get_player_ptr());
 
-  cma_set_parameter(ATTR_CITY_CMA_PARAMETER, pcity->id, parameter);
+  cma_set_parameter(ATTR_CITY_CMA_PARAMETER, pcity->common.id, parameter);
 
   if (can_client_issue_orders()) {
     cause_a_city_changed_for_agent("CMA", pcity);
@@ -534,7 +539,7 @@ void cma_put_city_under_agent(city_t *pcity,
       struct packet_city_manager_param packet;
       int i;
 
-      packet.id = pcity->id;
+      packet.id = pcity->common.id;
       for (i = 0; i < CM_NUM_STATS; i++) {
         packet.minimal_surplus[i] = parameter->minimal_surplus[i];
         packet.factor[i] = parameter->factor[i];
@@ -547,7 +552,7 @@ void cma_put_city_under_agent(city_t *pcity,
       send_packet_city_manager_param(&aconnection, &packet);
     } else {
       /* Failed */
-      dsend_packet_city_no_manager_param(&aconnection, pcity->id);
+      dsend_packet_city_no_manager_param(&aconnection, pcity->common.id);
     }
   }
 
@@ -559,11 +564,11 @@ void cma_put_city_under_agent(city_t *pcity,
 *****************************************************************************/
 void cma_release_city(city_t *pcity)
 {
-  release_city(pcity->id);
+  release_city(pcity->common.id);
   refresh_city_dialog(pcity, UPDATE_CMA);
   city_report_dialog_update_city(pcity);
   if (server_has_extglobalinfo && !client_is_observer()) {
-    dsend_packet_city_no_manager_param(&aconnection, pcity->id);
+    dsend_packet_city_no_manager_param(&aconnection, pcity->common.id);
   }
 }
 
@@ -575,7 +580,7 @@ bool cma_is_city_under_agent(const city_t *pcity,
 {
   struct cm_parameter my_parameter;
 
-  if (!cma_get_parameter(ATTR_CITY_CMA_PARAMETER, pcity->id, &my_parameter)) {
+  if (!cma_get_parameter(ATTR_CITY_CMA_PARAMETER, pcity->common.id, &my_parameter)) {
     return FALSE;
   }
 

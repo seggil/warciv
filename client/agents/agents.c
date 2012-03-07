@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -598,7 +598,7 @@ void agents_city_changed(city_t *pcity)
   int i;
 
   freelog(LOG_DEBUG, "A: agents_city_changed(city='%s'(%d)) owner=%s",
-          pcity->name, pcity->id, city_owner(pcity)->name);
+          pcity->common.name, pcity->common.id, city_owner(pcity)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
     struct agents_entries_s *agent = &agents.entries[i];
@@ -607,7 +607,7 @@ void agents_city_changed(city_t *pcity)
       continue;
     }
     if (agent->agent.city_callbacks[CB_CHANGE]) {
-      enqueue_call(agent, OCT_CITY, CB_CHANGE, pcity->id);
+      enqueue_call(agent, OCT_CITY, CB_CHANGE, pcity->common.id);
     }
   }
 
@@ -624,7 +624,7 @@ void agents_city_new(city_t *pcity)
 
   freelog(LOG_DEBUG,
           "A: agents_city_new(city='%s'(%d)) pos=(%d,%d) owner=%s",
-          pcity->name, pcity->id, TILE_XY(pcity->tile),
+          pcity->common.name, pcity->common.id, TILE_XY(pcity->common.tile),
           city_owner(pcity)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
@@ -634,7 +634,7 @@ void agents_city_new(city_t *pcity)
       continue;
     }
     if (agent->agent.city_callbacks[CB_NEW]) {
-      enqueue_call(agent, OCT_CITY, CB_NEW, pcity->id);
+      enqueue_call(agent, OCT_CITY, CB_NEW, pcity->common.id);
     }
   }
 
@@ -651,7 +651,7 @@ void agents_city_remove(city_t *pcity)
 
   freelog(LOG_DEBUG,
           "A: agents_city_remove(city='%s'(%d)) pos=(%d,%d) owner=%s",
-          pcity->name, pcity->id, TILE_XY(pcity->tile),
+          pcity->common.name, pcity->common.id, TILE_XY(pcity->common.tile),
           city_owner(pcity)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
@@ -661,7 +661,7 @@ void agents_city_remove(city_t *pcity)
       continue;
     }
     if (agent->agent.city_callbacks[CB_REMOVE]) {
-      enqueue_call(agent, OCT_CITY, CB_REMOVE, pcity->id);
+      enqueue_call(agent, OCT_CITY, CB_REMOVE, pcity->common.id);
     }
   }
 
@@ -801,7 +801,7 @@ void cause_a_city_changed_for_agent(const char *name_of_calling_agent,
   struct agents_entries_s *agent = find_agent_by_name(name_of_calling_agent);
 
   assert(agent->agent.city_callbacks[CB_CHANGE] != NULL);
-  enqueue_call(agent, OCT_CITY, CB_CHANGE, pcity->id);
+  enqueue_call(agent, OCT_CITY, CB_CHANGE, pcity->common.id);
   call_handle_methods();
 }
 

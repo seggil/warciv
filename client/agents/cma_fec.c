@@ -96,7 +96,7 @@ void cmafec_free(void)
 void cmafec_set_fe_parameter(city_t *pcity,
                              const struct cm_parameter *const parameter)
 {
-  cma_set_parameter(ATTR_CITY_CMAFE_PARAMETER, pcity->id, parameter);
+  cma_set_parameter(ATTR_CITY_CMAFE_PARAMETER, pcity->common.id, parameter);
 }
 
 /****************************************************************
@@ -114,7 +114,7 @@ void cmafec_get_fe_parameter(city_t *pcity, struct cm_parameter *dest)
   } else {
     /* Create a dummy parameter to return. */
     cm_init_parameter(dest);
-    if (!cma_get_parameter(ATTR_CITY_CMAFE_PARAMETER, pcity->id, dest)) {
+    if (!cma_get_parameter(ATTR_CITY_CMAFE_PARAMETER, pcity->common.id, dest)) {
       /* We haven't seen this city before; store the dummy. */
       cmafec_set_fe_parameter(pcity, dest);
     }
@@ -253,8 +253,8 @@ static const char *get_city_growth_string(city_t *pcity, int surplus)
     return buffer;
   }
 
-  stock = pcity->food_stock;
-  cost = city_granary_size(pcity->pop_size);
+  stock = pcity->common.food_stock;
+  cost = city_granary_size(pcity->common.pop_size);
 
   stock += surplus;
 
@@ -287,15 +287,15 @@ static const char *get_prod_complete_string(city_t *pcity, int surplus)
     return buffer;
   }
 
-  stock = pcity->shield_stock;
-  if (pcity->is_building_unit) {
-    cost = unit_build_shield_cost(pcity->currently_building);
+  stock = pcity->common.shield_stock;
+  if (pcity->common.is_building_unit) {
+    cost = unit_build_shield_cost(pcity->common.currently_building);
   } else {
     if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
-      sz_strlcpy(buffer, get_improvement_type(pcity->currently_building)->name);
+      sz_strlcpy(buffer, get_improvement_type(pcity->common.currently_building)->name);
       return buffer;
     }
-    cost = impr_build_shield_cost(pcity->currently_building);
+    cost = impr_build_shield_cost(pcity->common.currently_building);
   }
 
   stock += surplus;
@@ -338,7 +338,7 @@ const char *cmafec_get_result_descr(city_t *pcity,
     }
 
     my_snprintf(buf[6], BUFFER_SIZE, "%d/%s%s",
-                pcity->pop_size - cm_count_specialist(pcity, result),
+                pcity->common.pop_size - cm_count_specialist(pcity, result),
                 specialists_string(result->specialists),
                 result->happy ? _(" happy") : "");
 
