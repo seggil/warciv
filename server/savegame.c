@@ -1444,7 +1444,7 @@ static void load_player_units(struct player *plr, int plrno,
                                          plrno, i);
 
     if ((pcity = find_city_by_id(punit->homecity))) {
-      unit_list_append(pcity->units_supported, punit);
+      unit_list_append(pcity->common.units_supported, punit);
     }
 
     punit->moves_left
@@ -2009,22 +2009,22 @@ static void player_load(struct player *plr, int plrno,
     pcity = create_city_virtual(plr, ptile,
                       secfile_lookup_str(file, "player%d.c%d.name", plrno, i));
 
-    pcity->id=secfile_lookup_int(file, "player%d.c%d.id", plrno, i);
-    alloc_id(pcity->id);
+    pcity->common.id=secfile_lookup_int(file, "player%d.c%d.id", plrno, i);
+    alloc_id(pcity->common.id);
     idex_register_city(pcity);
 
     if (section_file_lookup(file, "player%d.c%d.original", plrno, i)) {
-      pcity->server.original = secfile_lookup_int(file, "player%d.c%d.original",
+      pcity->u.server.original = secfile_lookup_int(file, "player%d.c%d.original",
                                                   plrno, i);
     } else {
-      pcity->server.original = plrno;
+      pcity->u.server.original = plrno;
     }
-    pcity->pop_size = secfile_lookup_int(file, "player%d.c%d.size", plrno, i);
+    pcity->common.pop_size = secfile_lookup_int(file, "player%d.c%d.size", plrno, i);
 
-    pcity->server.steal = secfile_lookup_int(file, "player%d.c%d.steal", plrno, i);
+    pcity->u.server.steal = secfile_lookup_int(file, "player%d.c%d.steal", plrno, i);
 
     specialist_type_iterate(sp) {
-      pcity->specialists[sp]
+      pcity->common.specialists[sp]
         = secfile_lookup_int(file, "player%d.c%d.n%s", plrno, i,
                              game.ruleset_game.specialist_name[sp]);
     } specialist_type_iterate_end;
@@ -2073,146 +2073,146 @@ static void player_load(struct player *plr, int plrno,
                                    "player%d.c%d.rally_point_y", plrno, i);
 
     if (is_normal_map_pos(x, y)) {
-      pcity->rally_point = map_pos_to_tile(x, y);
+      pcity->common.rally_point = map_pos_to_tile(x, y);
     } else {
-      pcity->rally_point = NULL;
+      pcity->common.rally_point = NULL;
     }
 
     /* City Manager parameter */
     if (secfile_lookup_bool_default(file, FALSE,
                                     "player%d.c%d.managed",
                                     plrno, i)) {
-      pcity->server.managed = TRUE;
+      pcity->u.server.managed = TRUE;
       for (j = 0; j < CM_NUM_STATS; j++) {
-        pcity->server.parameter.minimal_surplus[j] =
+        pcity->u.server.parameter.minimal_surplus[j] =
           secfile_lookup_int(file, "player%d.c%dw.minimal_surplus%d",
                              plrno, i, j);
-        pcity->server.parameter.factor[j] =
+        pcity->u.server.parameter.factor[j] =
           secfile_lookup_int(file, "player%d.c%dw.factor%d",
                              plrno, i, j);
       }
-      pcity->server.parameter.require_happy =
+      pcity->u.server.parameter.require_happy =
         secfile_lookup_bool(file, "player%d.c%dw.require_happy", plrno, i);
-      pcity->server.parameter.allow_disorder =
+      pcity->u.server.parameter.allow_disorder =
         secfile_lookup_bool(file, "player%d.c%dw.allow_disorder", plrno, i);
-      pcity->server.parameter.allow_specialists =
+      pcity->u.server.parameter.allow_specialists =
         secfile_lookup_bool(file, "player%d.c%dw.allow_specialists", plrno, i);
-      pcity->server.parameter.happy_factor =
+      pcity->u.server.parameter.happy_factor =
         secfile_lookup_int(file, "player%d.c%dw.happy_factor", plrno, i);
     } else {
-      pcity->server.managed = FALSE;
+      pcity->u.server.managed = FALSE;
     }
 
-    pcity->food_stock = secfile_lookup_int(file, "player%d.c%d.food_stock",
+    pcity->common.food_stock = secfile_lookup_int(file, "player%d.c%d.food_stock",
                                            plrno, i);
-    pcity->shield_stock = secfile_lookup_int(file, "player%d.c%d.shield_stock",
+    pcity->common.shield_stock = secfile_lookup_int(file, "player%d.c%d.shield_stock",
                                              plrno, i);
-    pcity->tile_trade = pcity->trade_prod = 0;
-    pcity->anarchy = secfile_lookup_int(file, "player%d.c%d.anarchy", plrno, i);
-    pcity->rapture = secfile_lookup_int_default(file, 0, "player%d.c%d.rapture",
+    pcity->common.tile_trade = pcity->common.trade_prod = 0;
+    pcity->common.anarchy = secfile_lookup_int(file, "player%d.c%d.anarchy", plrno, i);
+    pcity->common.rapture = secfile_lookup_int_default(file, 0, "player%d.c%d.rapture",
                                                 plrno, i);
-    pcity->was_happy = secfile_lookup_bool(file, "player%d.c%d.was_happy",
+    pcity->common.was_happy = secfile_lookup_bool(file, "player%d.c%d.was_happy",
                                            plrno, i);
-    pcity->is_building_unit=
+    pcity->common.is_building_unit=
       secfile_lookup_bool(file,
                          "player%d.c%d.is_building_unit", plrno, i);
     name = secfile_lookup_str_default(file, NULL,
                                       "player%d.c%d.currently_building_name",
                                       plrno, i);
-    if (pcity->is_building_unit) {
+    if (pcity->common.is_building_unit) {
       if (!name) {
         id = secfile_lookup_int(file, "player%d.c%d.currently_building",
                                 plrno, i);
         name = old_unit_type_name(id);
       }
-      pcity->currently_building = find_unit_type_by_name_orig(name);
+      pcity->common.currently_building = find_unit_type_by_name_orig(name);
     } else {
       if (!name) {
         id = secfile_lookup_int(file, "player%d.c%d.currently_building",
                                 plrno, i);
         name = old_impr_type_name(id);
       }
-      pcity->currently_building = find_improvement_by_name_orig(name);
+      pcity->common.currently_building = find_improvement_by_name_orig(name);
     }
 
     if (has_capability("turn_last_built", savefile_options)) {
-      pcity->turn_last_built = secfile_lookup_int(file,
+      pcity->common.turn_last_built = secfile_lookup_int(file,
                                 "player%d.c%d.turn_last_built", plrno, i);
     } else {
       /* Before, turn_last_built was stored as a year.  There is no easy
        * way to convert this into a turn value. */
-      pcity->turn_last_built = 0;
+      pcity->common.turn_last_built = 0;
     }
-    pcity->changed_from_is_unit=
-      secfile_lookup_bool_default(file, pcity->is_building_unit,
+    pcity->common.changed_from_is_unit=
+      secfile_lookup_bool_default(file, pcity->common.is_building_unit,
                                  "player%d.c%d.changed_from_is_unit", plrno, i);
     name = secfile_lookup_str_default(file, NULL,
                                       "player%d.c%d.changed_from_name",
                                       plrno, i);
-    if (pcity->changed_from_is_unit) {
+    if (pcity->common.changed_from_is_unit) {
       if (!name) {
         id = secfile_lookup_int(file, "player%d.c%d.changed_from_id",
                                 plrno, i);
         name = old_unit_type_name(id);
       }
-      pcity->changed_from_id = find_unit_type_by_name_orig(name);
+      pcity->common.changed_from_id = find_unit_type_by_name_orig(name);
     } else {
       if (!name) {
         id = secfile_lookup_int(file, "player%d.c%d.changed_from_id",
                                 plrno, i);
         name = old_impr_type_name(id);
       }
-      pcity->changed_from_id = find_improvement_by_name_orig(name);
+      pcity->common.changed_from_id = find_improvement_by_name_orig(name);
     }
 
-    pcity->before_change_shields=
-      secfile_lookup_int_default(file, pcity->shield_stock,
+    pcity->common.before_change_shields=
+      secfile_lookup_int_default(file, pcity->common.shield_stock,
                                  "player%d.c%d.before_change_shields", plrno, i);
-    pcity->disbanded_shields=
+    pcity->common.disbanded_shields=
       secfile_lookup_int_default(file, 0,
                                  "player%d.c%d.disbanded_shields", plrno, i);
-    pcity->caravan_shields=
+    pcity->common.caravan_shields=
       secfile_lookup_int_default(file, 0,
                                  "player%d.c%d.caravan_shields", plrno, i);
-    pcity->last_turns_shield_surplus =
+    pcity->common.last_turns_shield_surplus =
       secfile_lookup_int_default(file, 0,
                                  "player%d.c%d.last_turns_shield_surplus",
                                  plrno, i);
 
-    pcity->server.synced = FALSE; /* must re-sync with clients */
+    pcity->u.server.synced = FALSE; /* must re-sync with clients */
 
-    pcity->turn_founded =
+    pcity->common.turn_founded =
         secfile_lookup_int_default(file, -2, "player%d.c%d.turn_founded",
                                    plrno, i);
 
     j = secfile_lookup_int(file, "player%d.c%d.did_buy", plrno, i);
-    pcity->did_buy = (j != 0);
-    if (j == -1 && pcity->turn_founded == -2) {
-      pcity->turn_founded = game.info.turn;
+    pcity->common.did_buy = (j != 0);
+    if (j == -1 && pcity->common.turn_founded == -2) {
+      pcity->common.turn_founded = game.info.turn;
     }
 
-    pcity->did_sell =
+    pcity->common.did_sell =
       secfile_lookup_bool_default(file, FALSE, "player%d.c%d.did_sell", plrno,i);
 
-    pcity->airlift = secfile_lookup_bool_default(file, FALSE,
+    pcity->common.airlift = secfile_lookup_bool_default(file, FALSE,
                                         "player%d.c%d.airlift", plrno,i);
 
-    pcity->city_options =
+    pcity->common.city_options =
       secfile_lookup_int_default(file, CITYOPT_DEFAULT,
                                  "player%d.c%d.options", plrno, i);
 
     /* Fix for old buggy savegames. */
     if (!has_capability("known32fix", savefile_options)
         && plrno >= 16) {
-      map_city_radius_iterate(pcity->tile, tile1) {
+      map_city_radius_iterate(pcity->common.tile, tile1) {
         map_set_known(tile1, plr);
       } map_city_radius_iterate_end;
     }
 
     /* adding the cities contribution to fog-of-war */
-    map_unfog_pseudo_city_area(&game.players[plrno], pcity->tile);
+    map_unfog_pseudo_city_area(&game.players[plrno], pcity->common.tile);
 
-    /* Initialize pcity->city_map[][], using set_worker_city() so that
+    /* Initialize pcity->common.city_map[][], using set_worker_city() so that
        ptile->worked gets initialized correctly.  The pre-initialisation
        to C_TILE_EMPTY is necessary because set_worker_city() accesses
        the existing value to possibly adjust ptile->worked, so need to
@@ -2223,7 +2223,7 @@ static void player_load(struct player *plr, int plrno,
     p=secfile_lookup_str(file, "player%d.c%d.workers", plrno, i);
     for(y=0; y<CITY_MAP_SIZE; y++) {
       for(x=0; x<CITY_MAP_SIZE; x++) {
-        pcity->city_map[x][y] =
+        pcity->common.city_map[x][y] =
             is_valid_city_coords(x, y) ? C_TILE_EMPTY : C_TILE_UNAVAILABLE;
         if (*p == '0') {
           set_worker_city(pcity, x, y,
@@ -2237,8 +2237,8 @@ static void player_load(struct player *plr, int plrno,
           if (ptile->worked) {
             /* oops, inconsistent savegame; minimal fix: */
             freelog(LOG_VERBOSE, "Inconsistent worked for %s (%d,%d), "
-                    "converting to elvis", pcity->name, x, y);
-            pcity->specialists[SP_ELVIS]++;
+                    "converting to elvis", pcity->common.name, x, y);
+            pcity->common.specialists[SP_ELVIS]++;
             set_worker_city(pcity, x, y, C_TILE_UNAVAILABLE);
           } else {
             set_worker_city(pcity, x, y, C_TILE_WORKER);
@@ -2248,7 +2248,7 @@ static void player_load(struct player *plr, int plrno,
           if (is_valid_city_coords(x, y)) {
             set_worker_city(pcity, x, y, C_TILE_UNAVAILABLE);
           }
-          assert(pcity->city_map[x][y] == C_TILE_UNAVAILABLE);
+          assert(pcity->common.city_map[x][y] == C_TILE_UNAVAILABLE);
         }
         p++;
       }
@@ -2256,8 +2256,8 @@ static void player_load(struct player *plr, int plrno,
 
     /* Initialise list of improvements with City- and Building-wide
        equiv_ranges */
-    improvement_status_init(pcity->improvements,
-                            ARRAY_SIZE(pcity->improvements));
+    improvement_status_init(pcity->common.improvements,
+                            ARRAY_SIZE(pcity->common.improvements));
 
     p = secfile_lookup_str_default(file, NULL,
                                    "player%d.c%d.improvements_new",
@@ -2285,19 +2285,19 @@ static void player_load(struct player *plr, int plrno,
       }
     }
 
-    init_worklist(&pcity->worklist);
+    init_worklist(&pcity->common.worklist);
     if (has_capability("worklists2", savefile_options)) {
-      worklist_load(file, "player%d.c%d", plrno, i, &pcity->worklist);
+      worklist_load(file, "player%d.c%d", plrno, i, &pcity->common.worklist);
     } else {
       worklist_load_old(file, "player%d.c%d.worklist%d",
-                        plrno, i, &pcity->worklist);
+                        plrno, i, &pcity->common.worklist);
     }
 
     /* FIXME: remove this when the urgency is properly recalculated. */
-    pcity->server.ai.urgency =
+    pcity->u.server.ai.urgency =
       secfile_lookup_int_default(file, 0, "player%d.c%d.ai.urgency", plrno, i);
 
-    map_set_city(pcity->tile, pcity);
+    map_set_city(pcity->common.tile, pcity);
 
     city_list_append(plr->cities, pcity);
   }
@@ -2816,9 +2816,9 @@ static void player_save(struct player *plr, int plrno,
 
     /* Trade route */
     if (punit->ptr) {
-      secfile_insert_int(file, punit->ptr->pcity1->id,
+      secfile_insert_int(file, punit->ptr->pcity1->common.id,
                          "player%d.u%d.trade_route_c1", plrno, i);
-      secfile_insert_int(file, punit->ptr->pcity2->id,
+      secfile_insert_int(file, punit->ptr->pcity2->common.id,
                          "player%d.u%d.trade_route_c2", plrno, i);
     } else {
       secfile_insert_int(file, -1, "player%d.u%d.trade_route_c1", plrno, i);
@@ -2897,17 +2897,17 @@ static void player_save(struct player *plr, int plrno,
     char buf[512];
 
     i++;
-    secfile_insert_int(file, pcity->id, "player%d.c%d.id", plrno, i);
-    secfile_insert_int(file, pcity->tile->nat_x, "player%d.c%d.x", plrno, i);
-    secfile_insert_int(file, pcity->tile->nat_y, "player%d.c%d.y", plrno, i);
-    secfile_insert_str(file, pcity->name, "player%d.c%d.name", plrno, i);
-    secfile_insert_int(file, pcity->server.original, "player%d.c%d.original",
+    secfile_insert_int(file, pcity->common.id, "player%d.c%d.id", plrno, i);
+    secfile_insert_int(file, pcity->common.tile->nat_x, "player%d.c%d.x", plrno, i);
+    secfile_insert_int(file, pcity->common.tile->nat_y, "player%d.c%d.y", plrno, i);
+    secfile_insert_str(file, pcity->common.name, "player%d.c%d.name", plrno, i);
+    secfile_insert_int(file, pcity->u.server.original, "player%d.c%d.original",
                        plrno, i);
-    secfile_insert_int(file, pcity->pop_size, "player%d.c%d.size", plrno, i);
-    secfile_insert_int(file, pcity->server.steal,
+    secfile_insert_int(file, pcity->common.pop_size, "player%d.c%d.size", plrno, i);
+    secfile_insert_int(file, pcity->u.server.steal,
                        "player%d.c%d.steal", plrno, i);
     specialist_type_iterate(sp) {
-      secfile_insert_int(file, pcity->specialists[sp],
+      secfile_insert_int(file, pcity->common.specialists[sp],
                          "player%d.c%d.n%s", plrno, i,
                          game.ruleset_game.specialist_name[sp]);
     } specialist_type_iterate_end;
@@ -2919,8 +2919,9 @@ static void player_save(struct player *plr, int plrno,
        * If there are more trade routes, we cannot save or it will
        * crash the next standard server which will load this game. */
       established_trade_routes_iterate(pcity, ptr) {
-        secfile_insert_int(file, ptr->pcity1 == pcity ? ptr->pcity2->id
-                                                        : ptr->pcity1->id,
+        secfile_insert_int(file, ptr->pcity1 == pcity
+                           ? ptr->pcity2->common.id
+                           : ptr->pcity1->common.id,
                            "player%d.c%d.traderoute%d", plrno, i, j);
         j++;
       } established_trade_routes_iterate_end;
@@ -2935,9 +2936,11 @@ static void player_save(struct player *plr, int plrno,
      * Note: don't save the unit here,
      *       because the units are loaded after the cities. */
     j = 0;
-    trade_route_list_iterate(pcity->trade_routes, ptr) {
-      secfile_insert_int(file, ptr->pcity1 == pcity ? ptr->pcity2->id
-                                                      : ptr->pcity1->id,
+    trade_route_list_iterate(pcity->common.trade_routes, ptr) {
+      secfile_insert_int(file,
+                         ptr->pcity1 == pcity
+                         ? ptr->pcity2->common.id
+                         : ptr->pcity1->common.id,
                          "player%d.c%dw.wc_trade_route%d_city", plrno, i, j);
       secfile_insert_int(file, ptr->status,
                          "player%d.c%dw.wc_trade_route%d_status", plrno, i, j);
@@ -2946,76 +2949,76 @@ static void player_save(struct player *plr, int plrno,
     secfile_insert_int(file, j, "player%d.c%d.wc_trade_route_num", plrno, i);
 
     /* Rally point */
-    secfile_insert_int(file, pcity->rally_point ? pcity->rally_point->x : -1,
+    secfile_insert_int(file, pcity->common.rally_point ? pcity->common.rally_point->x : -1,
                        "player%d.c%d.rally_point_x", plrno, i);
-    secfile_insert_int(file, pcity->rally_point ? pcity->rally_point->y : -1,
+    secfile_insert_int(file, pcity->common.rally_point ? pcity->common.rally_point->y : -1,
                        "player%d.c%d.rally_point_y", plrno, i);
 
     /* City Manager parameter */
-    secfile_insert_bool(file, pcity->server.managed, "player%d.c%d.managed",
+    secfile_insert_bool(file, pcity->u.server.managed, "player%d.c%d.managed",
                         plrno, i);
     for (j = 0; j < CM_NUM_STATS; j++) {
-      secfile_insert_int(file, pcity->server.parameter.minimal_surplus[j],
+      secfile_insert_int(file, pcity->u.server.parameter.minimal_surplus[j],
                          "player%d.c%dw.minimal_surplus%d", plrno, i, j);
-      secfile_insert_int(file, pcity->server.parameter.factor[j],
+      secfile_insert_int(file, pcity->u.server.parameter.factor[j],
                          "player%d.c%dw.factor%d", plrno, i, j);
     }
-    secfile_insert_bool(file, pcity->server.parameter.require_happy,
+    secfile_insert_bool(file, pcity->u.server.parameter.require_happy,
                         "player%d.c%dw.require_happy", plrno, i);
-    secfile_insert_bool(file, pcity->server.parameter.allow_disorder,
+    secfile_insert_bool(file, pcity->u.server.parameter.allow_disorder,
                         "player%d.c%dw.allow_disorder", plrno, i);
-    secfile_insert_bool(file, pcity->server.parameter.allow_specialists,
+    secfile_insert_bool(file, pcity->u.server.parameter.allow_specialists,
                         "player%d.c%dw.allow_specialists", plrno, i);
-    secfile_insert_int(file, pcity->server.parameter.happy_factor,
+    secfile_insert_int(file, pcity->u.server.parameter.happy_factor,
                        "player%d.c%dw.happy_factor", plrno, i);
 
-    secfile_insert_int(file, pcity->food_stock, "player%d.c%d.food_stock",
+    secfile_insert_int(file, pcity->common.food_stock, "player%d.c%d.food_stock",
                        plrno, i);
-    secfile_insert_int(file, pcity->shield_stock, "player%d.c%d.shield_stock",
+    secfile_insert_int(file, pcity->common.shield_stock, "player%d.c%d.shield_stock",
                        plrno, i);
-    secfile_insert_int(file, pcity->turn_last_built,
+    secfile_insert_int(file, pcity->common.turn_last_built,
                        "player%d.c%d.turn_last_built", plrno, i);
-    secfile_insert_bool(file, pcity->changed_from_is_unit,
+    secfile_insert_bool(file, pcity->common.changed_from_is_unit,
                        "player%d.c%d.changed_from_is_unit", plrno, i);
-    if (pcity->changed_from_is_unit) {
-      secfile_insert_int(file, old_unit_type_id(pcity->changed_from_id),
+    if (pcity->common.changed_from_is_unit) {
+      secfile_insert_int(file, old_unit_type_id(pcity->common.changed_from_id),
                          "player%d.c%d.changed_from_id", plrno, i);
-      secfile_insert_str(file, unit_name_orig(pcity->changed_from_id),
+      secfile_insert_str(file, unit_name_orig(pcity->common.changed_from_id),
                          "player%d.c%d.changed_from_name", plrno, i);
     } else {
-      secfile_insert_int(file, old_impr_type_id(pcity->changed_from_id),
+      secfile_insert_int(file, old_impr_type_id(pcity->common.changed_from_id),
                          "player%d.c%d.changed_from_id", plrno, i);
       secfile_insert_str(file, get_improvement_name_orig(
-                                 pcity->changed_from_id),
+                                 pcity->common.changed_from_id),
                          "player%d.c%d.changed_from_name", plrno, i);
     }
 
-    secfile_insert_int(file, pcity->before_change_shields,
+    secfile_insert_int(file, pcity->common.before_change_shields,
                        "player%d.c%d.before_change_shields", plrno, i);
-    secfile_insert_int(file, pcity->disbanded_shields,
+    secfile_insert_int(file, pcity->common.disbanded_shields,
                        "player%d.c%d.disbanded_shields", plrno, i);
-    secfile_insert_int(file, pcity->caravan_shields,
+    secfile_insert_int(file, pcity->common.caravan_shields,
                        "player%d.c%d.caravan_shields", plrno, i);
-    secfile_insert_int(file, pcity->last_turns_shield_surplus,
+    secfile_insert_int(file, pcity->common.last_turns_shield_surplus,
                        "player%d.c%d.last_turns_shield_surplus", plrno, i);
 
-    secfile_insert_int(file, pcity->anarchy, "player%d.c%d.anarchy", plrno,i);
-    secfile_insert_int(file, pcity->rapture, "player%d.c%d.rapture", plrno,i);
-    secfile_insert_bool(file, pcity->was_happy, "player%d.c%d.was_happy", plrno,i);
-    if (pcity->turn_founded == game.info.turn) {
+    secfile_insert_int(file, pcity->common.anarchy, "player%d.c%d.anarchy", plrno,i);
+    secfile_insert_int(file, pcity->common.rapture, "player%d.c%d.rapture", plrno,i);
+    secfile_insert_bool(file, pcity->common.was_happy, "player%d.c%d.was_happy", plrno,i);
+    if (pcity->common.turn_founded == game.info.turn) {
       j = -1;
     } else {
-      assert(pcity->did_buy == TRUE || pcity->did_buy == FALSE);
-      j = pcity->did_buy ? 1 : 0;
+      assert(pcity->common.did_buy == TRUE || pcity->common.did_buy == FALSE);
+      j = pcity->common.did_buy ? 1 : 0;
     }
     secfile_insert_int(file, j, "player%d.c%d.did_buy", plrno, i);
-    secfile_insert_int(file, pcity->turn_founded,
+    secfile_insert_int(file, pcity->common.turn_founded,
                        "player%d.c%d.turn_founded", plrno, i);
-    secfile_insert_bool(file, pcity->did_sell, "player%d.c%d.did_sell", plrno,i);
-    secfile_insert_bool(file, pcity->airlift, "player%d.c%d.airlift", plrno,i);
+    secfile_insert_bool(file, pcity->common.did_sell, "player%d.c%d.did_sell", plrno,i);
+    secfile_insert_bool(file, pcity->common.airlift, "player%d.c%d.airlift", plrno,i);
 
     /* for auto_attack */
-    secfile_insert_int(file, pcity->city_options,
+    secfile_insert_int(file, pcity->common.city_options,
                        "player%d.c%d.options", plrno, i);
 
     j=0;
@@ -3031,18 +3034,18 @@ static void player_save(struct player *plr, int plrno,
     buf[j]='\0';
     secfile_insert_str(file, buf, "player%d.c%d.workers", plrno, i);
 
-    secfile_insert_bool(file, pcity->is_building_unit,
+    secfile_insert_bool(file, pcity->common.is_building_unit,
                        "player%d.c%d.is_building_unit", plrno, i);
-    if (pcity->is_building_unit) {
-      secfile_insert_int(file, old_unit_type_id(pcity->currently_building),
+    if (pcity->common.is_building_unit) {
+      secfile_insert_int(file, old_unit_type_id(pcity->common.currently_building),
                          "player%d.c%d.currently_building", plrno, i);
-      secfile_insert_str(file, unit_name_orig(pcity->currently_building),
+      secfile_insert_str(file, unit_name_orig(pcity->common.currently_building),
                          "player%d.c%d.currently_building_name", plrno, i);
     } else {
-      secfile_insert_int(file, old_impr_type_id(pcity->currently_building),
+      secfile_insert_int(file, old_impr_type_id(pcity->common.currently_building),
                          "player%d.c%d.currently_building", plrno, i);
       secfile_insert_str(file, get_improvement_name_orig(
-                                   pcity->currently_building),
+                                   pcity->common.currently_building),
                          "player%d.c%d.currently_building_name", plrno, i);
     }
 
@@ -3051,7 +3054,7 @@ static void player_save(struct player *plr, int plrno,
      */
     init_old_improvement_bitvector(buf);
     impr_type_iterate(id) {
-      if (pcity->improvements[id] != I_NONE) {
+      if (pcity->common.improvements[id] != I_NONE) {
         add_improvement_into_old_bitvector(buf, id);
       }
     } impr_type_iterate_end;
@@ -3061,15 +3064,15 @@ static void player_save(struct player *plr, int plrno,
      * is saved in savefile.improvement_order.
      */
     impr_type_iterate(id) {
-      buf[id] = (pcity->improvements[id] != I_NONE) ? '1' : '0';
+      buf[id] = (pcity->common.improvements[id] != I_NONE) ? '1' : '0';
     } impr_type_iterate_end;
     buf[game.ruleset_control.num_impr_types] = '\0';
     secfile_insert_str(file, buf, "player%d.c%d.improvements_new", plrno, i);
 
-    worklist_save(file, "player%d.c%d", plrno, i, &pcity->worklist);
+    worklist_save(file, "player%d.c%d", plrno, i, &pcity->common.worklist);
 
     /* FIXME: remove this when the urgency is properly recalculated. */
-    secfile_insert_int(file, pcity->server.ai.urgency,
+    secfile_insert_int(file, pcity->u.server.ai.urgency,
                        "player%d.c%d.ai.urgency", plrno, i);
   } city_list_iterate_end;
 
@@ -3237,7 +3240,7 @@ static void calc_unit_ordering(void)
     } unit_list_iterate_end;
     city_list_iterate(pplayer->cities, pcity) {
       j = 0;
-      unit_list_iterate(pcity->units_supported, punit) {
+      unit_list_iterate(pcity->common.units_supported, punit) {
         punit->ord_city = j++;
       } unit_list_iterate_end;
     } city_list_iterate_end;
@@ -3259,7 +3262,7 @@ static void apply_unit_ordering(void)
 {
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
-      unit_list_sort_ord_city(pcity->units_supported);
+      unit_list_sort_ord_city(pcity->common.units_supported);
     } city_list_iterate_end;
   } players_iterate_end;
 
@@ -3275,7 +3278,7 @@ static void check_city(city_t *pcity)
 {
   city_map_iterate(x, y) {
     bool res = city_can_work_tile(pcity, x, y);
-    switch (pcity->city_map[x][y]) {
+    switch (pcity->common.city_map[x][y]) {
     case C_TILE_EMPTY:
       if (!res) {
         set_worker_city(pcity, x, y, C_TILE_UNAVAILABLE);
@@ -3286,7 +3289,7 @@ static void check_city(city_t *pcity)
       if (!res) {
         struct tile *ptile;
 
-        pcity->specialists[SP_ELVIS]++;
+        pcity->common.specialists[SP_ELVIS]++;
         set_worker_city(pcity, x, y, C_TILE_UNAVAILABLE);
         freelog(LOG_DEBUG, "Worked tile was unavailable!");
 

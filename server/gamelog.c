@@ -223,7 +223,8 @@ void gamelog(int level, ...)
     pplayer = va_arg(args, struct player *);
 
     my_snprintf(buf, sizeof(buf), "<n>%d</n><m>%s</m>",
-                pplayer->player_no, get_nation_name_plural(pplayer->nation));
+                pplayer->player_no,
+                get_nation_name_plural(pplayer->nation));
     gamelog_put_prefix(buf, sizeof(buf), "rev");
     break;
   case GAMELOG_FOUNDCITY:
@@ -232,8 +233,10 @@ void gamelog(int level, ...)
     my_snprintf(buf, sizeof(buf), "<n>%d</n><name>%s</name>"
                 "<x>%d</x><y>%d</y><m>%s (%d,%d) founded by the %s</m>",
                 city_owner(pcity)->player_no,
-                pcity->name, pcity->tile->x, pcity->tile->y,
-                pcity->name, pcity->tile->x, pcity->tile->y,
+                pcity->common.name,
+                pcity->common.tile->x, pcity->common.tile->y,
+                pcity->common.name,
+                pcity->common.tile->x, pcity->common.tile->y,
                 get_nation_name_plural(city_owner(pcity)->nation));
     gamelog_put_prefix(buf, sizeof(buf), "cityf");
     break;
@@ -247,9 +250,11 @@ void gamelog(int level, ...)
                 "<name>%s</name><x>%d</x><y>%d</y>"
                 "<m>%s (%s) (%d,%d) %s by %s</m>",
                 pplayer->player_no, pplayer2->player_no,
-                pcity->name, pcity->tile->x, pcity->tile->y,
-                pcity->name, get_nation_name_plural(pplayer->nation),
-                pcity->tile->x, pcity->tile->y, word,
+                pcity->common.name,
+                pcity->common.tile->x, pcity->common.tile->y,
+                pcity->common.name,
+                get_nation_name_plural(pplayer->nation),
+                pcity->common.tile->x, pcity->common.tile->y, word,
                 get_nation_name_plural(pplayer2->nation));
     gamelog_put_prefix(buf, sizeof(buf), "cityl");
     break;
@@ -259,8 +264,8 @@ void gamelog(int level, ...)
     my_snprintf(buf, sizeof(buf), "<n>%d</n><name>%s</name>"
                 "<x>%d</x><y>%d</y><m>%s (%d, %d) disbanded by the %s</m>",
                 city_owner(pcity)->player_no,
-                pcity->name, pcity->tile->x, pcity->tile->y,
-                pcity->name, pcity->tile->x, pcity->tile->y,
+                pcity->common.name, pcity->common.tile->x, pcity->common.tile->y,
+                pcity->common.name, pcity->common.tile->x, pcity->common.tile->y,
                 get_nation_name_plural(city_owner(pcity)->nation));
     gamelog_put_prefix(buf, sizeof(buf), "cityd");
     break;
@@ -313,10 +318,10 @@ void gamelog(int level, ...)
     if (pcity) {
       my_snprintf(buf, sizeof(buf),
                   "<n1>%d</n1><n2>%d</n2><city>%s</city><type>%s</type>",
-                  pplayer->player_no, pplayer2->player_no, pcity->name,
+                  pplayer->player_no, pplayer2->player_no, pcity->common.name,
                   treaty_clause_strings[num]);
       cat_snprintf(buf, sizeof(buf), msg,
-                  pcity->name, get_nation_name_plural(pplayer2->nation),
+                  pcity->common.name, get_nation_name_plural(pplayer2->nation),
                   get_nation_name_plural(pplayer->nation));
     } else {
       my_snprintf(buf, sizeof(buf),
@@ -411,11 +416,11 @@ void gamelog(int level, ...)
                 "<n1>%d</n1><n2>%d</n2><name>%s</name><x>%d</x><y>%d</y>"
                 "<m>%s establish an embassy in %s (%s) (%d,%d)</m>",
                 pplayer->player_no, city_owner(pcity)->player_no,
-                pcity->name, pcity->tile->x, pcity->tile->y,
+                pcity->common.name, pcity->common.tile->x, pcity->common.tile->y,
                 get_nation_name_plural(pplayer->nation),
-                pcity->name,
+                pcity->common.name,
                 get_nation_name_plural(city_owner(pcity)->nation),
-                pcity->tile->x, pcity->tile->y);
+                pcity->common.tile->x, pcity->common.tile->y);
     gamelog_put_prefix(buf, sizeof(buf), "embassy");
     break;
   case GAMELOG_BUILD:
@@ -425,18 +430,18 @@ void gamelog(int level, ...)
     my_snprintf(buf, sizeof(buf),
                 "<n>%d</n><city>%s</city><u>%d</u>"
                 "<w>%d</w><name>%s</name><m>%s build %s in %s</m>",
-                city_owner(pcity)->player_no, pcity->name,
-                pcity->is_building_unit ? 1 : 0,
-                (!pcity->is_building_unit
-                 && is_wonder(pcity->currently_building)) ? 1 : 0,
-                pcity->is_building_unit ?
-                  unit_types[pcity->currently_building].name :
-                  get_impr_name_ex(pcity, pcity->currently_building),
+                city_owner(pcity)->player_no, pcity->common.name,
+                pcity->common.is_building_unit ? 1 : 0,
+                (!pcity->common.is_building_unit
+                 && is_wonder(pcity->common.currently_building)) ? 1 : 0,
+                pcity->common.is_building_unit ?
+                  unit_types[pcity->common.currently_building].name :
+                  get_impr_name_ex(pcity, pcity->common.currently_building),
                 get_nation_name_plural(city_owner(pcity)->nation),
-                pcity->is_building_unit ?
-                  unit_types[pcity->currently_building].name :
-                  get_impr_name_ex(pcity, pcity->currently_building),
-                pcity->name);
+                pcity->common.is_building_unit ?
+                  unit_types[pcity->common.currently_building].name :
+                  get_impr_name_ex(pcity, pcity->common.currently_building),
+                pcity->common.name);
     gamelog_put_prefix(buf, sizeof(buf), "build");
     break;
   case GAMELOG_GENO:
@@ -469,9 +474,9 @@ void gamelog(int level, ...)
         }
       } unit_list_iterate_end;
       city_list_iterate(pplayer->cities, pcity) {
-        shields += pcity->shield_prod;
-        food += pcity->food_prod;
-        trade += pcity->trade_prod;
+        shields += pcity->common.shield_prod;
+        food += pcity->common.food_prod;
+        trade += pcity->common.trade_prod;
       } city_list_iterate_end;
 
       my_snprintf(buf, sizeof(buf), "<n>%d</n><cities>%d</cities>"

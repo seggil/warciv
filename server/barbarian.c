@@ -364,9 +364,9 @@ static void try_summon_barbarians(void)
   victim = city_owner(pc);
   if ( game.server.barbarianrate > 4 ) superbarb = 3;
 
-  dist = real_map_distance(ptile, pc->tile);
+  dist = real_map_distance(ptile, pc->common.tile);
   freelog(LOG_DEBUG,"Closest city to %d %d is %s at %d %d which is %d far",
-          ptile->x, ptile->y, pc->name, pc->tile->x, pc->tile->y, dist);
+          ptile->x, ptile->y, pc->common.name, pc->common.tile->x, pc->common.tile->y, dist);
   if (dist > MAX_UNREST_DIST || dist < MIN_UNREST_DIST) {
     return;
   }
@@ -439,16 +439,16 @@ static void try_summon_barbarians(void)
 
   /* to let them know where to get you */
   show_area(barbarians, utile, 3);
-  show_area(barbarians, pc->tile, 3);
+  show_area(barbarians, pc->common.tile, 3);
 
   /* There should probably be a different message about Sea Raiders */
   if (is_land_barbarian(barbarians)) {
     notify_player_ex(victim, utile, E_UPRISING,
-                     _("Native unrest near %s led by %s."), pc->name,
+                     _("Native unrest near %s led by %s."), pc->common.name,
                      barbarians->name);
   } else if (map_is_known_and_seen(utile, victim)) {
     notify_player_ex(victim, utile, E_UPRISING,
-                     _("Sea raiders seen near %s!"), pc->name);
+                     _("Sea raiders seen near %s!"), pc->common.name);
   }
 }
 

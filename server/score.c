@@ -183,8 +183,8 @@ static void build_landarea_map_new(struct claim_map *pcmap)
 
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
-      map_city_radius_iterate(pcity->tile, tile1) {
-        pcmap->claims[tile1->index].cities |= (1u << pcity->owner);
+      map_city_radius_iterate(pcity->common.tile, tile1) {
+        pcmap->claims[tile1->index].cities |= (1u << pcity->common.owner);
       } map_city_radius_iterate_end;
     } city_list_iterate_end;
   } players_iterate_end;
@@ -213,7 +213,7 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
       pclaim->whom = no_owner;
       /* pclaim->know = 0; */
     } else if (ptile->city) {
-      owner = ptile->city->owner;
+      owner = ptile->city->common.owner;
       pclaim->when = turn + 1;
       pclaim->whom = owner;
       *nextedge = ptile;
@@ -222,7 +222,7 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
       pcmap->player_owndarea[owner]++;
       pclaim->know = ptile->server.known;
     } else if (ptile->worked) {
-      owner = ptile->worked->owner;
+      owner = ptile->worked->common.owner;
       pclaim->when = turn + 1;
       pclaim->whom = owner;
       *nextedge = ptile;
@@ -423,19 +423,19 @@ void calc_civ_score(struct player *pplayer)
   city_list_iterate(pplayer->cities, pcity) {
     int bonus;
 
-    pplayer->score.happy += pcity->people_happy[4];
-    pplayer->score.content += pcity->people_content[4];
-    pplayer->score.unhappy += pcity->people_unhappy[4];
-    pplayer->score.angry += pcity->people_angry[4];
-    pplayer->score.taxmen += pcity->specialists[SP_TAXMAN];
-    pplayer->score.scientists += pcity->specialists[SP_SCIENTIST];
-    pplayer->score.elvis += pcity->specialists[SP_ELVIS];
+    pplayer->score.happy += pcity->common.people_happy[4];
+    pplayer->score.content += pcity->common.people_content[4];
+    pplayer->score.unhappy += pcity->common.people_unhappy[4];
+    pplayer->score.angry += pcity->common.people_angry[4];
+    pplayer->score.taxmen += pcity->common.specialists[SP_TAXMAN];
+    pplayer->score.scientists += pcity->common.specialists[SP_SCIENTIST];
+    pplayer->score.elvis += pcity->common.specialists[SP_ELVIS];
     pplayer->score.population += city_population(pcity);
     pplayer->score.cities++;
-    pplayer->score.pollution += pcity->pollution;
-    pplayer->score.techout += pcity->science_total;
-    pplayer->score.bnp += pcity->trade_prod;
-    pplayer->score.mfg += pcity->shield_surplus;
+    pplayer->score.pollution += pcity->common.pollution;
+    pplayer->score.techout += pcity->common.science_total;
+    pplayer->score.bnp += pcity->common.trade_prod;
+    pplayer->score.mfg += pcity->common.shield_surplus;
 
     bonus = CLIP(0, get_city_bonus(pcity, EFT_SCIENCE_BONUS), 100);
     pplayer->score.literacy += (city_population(pcity) * bonus) / 100;

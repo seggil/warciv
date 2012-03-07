@@ -428,7 +428,7 @@ static void do_reveal_effects(void)
     if (get_player_bonus(pplayer, EFT_REVEAL_CITIES) > 0) {
       players_iterate(other_player) {
         city_list_iterate(other_player->cities, pcity) {
-          show_area(pplayer, pcity->tile, 0);
+          show_area(pplayer, pcity->common.tile, 0);
         } city_list_iterate_end;
       } players_iterate_end;
     }

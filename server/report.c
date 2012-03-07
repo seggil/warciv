@@ -252,7 +252,7 @@ void report_top_five_cities(struct conn_list *dest)
 
   shuffled_players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
-      int value_of_pcity = pcity->pop_size + nr_wonders(pcity) * WONDER_FACTOR;
+      int value_of_pcity = pcity->common.pop_size + nr_wonders(pcity) * WONDER_FACTOR;
 
       if (value_of_pcity > size[NUM_BEST_CITIES - 1].value) {
         size[NUM_BEST_CITIES - 1].value = value_of_pcity;
@@ -278,7 +278,7 @@ void report_top_five_cities(struct conn_list *dest)
     cat_snprintf(buffer, sizeof(buffer),
                  _("%2d: The %s City of %s of size %d, "), i + 1,
                  get_nation_name(city_owner(size[i].city)->nation),
-                 size[i].city->name, size[i].city->pop_size);
+                 size[i].city->common.name, size[i].city->common.pop_size);
 
     wonders = nr_wonders(size[i].city);
     if (wonders == 0) {
@@ -308,7 +308,7 @@ void report_wonders_of_the_world(struct conn_list *dest)
 
       if (pcity) {
         cat_snprintf(buffer, sizeof(buffer), _("%s in %s (%s)\n"),
-                     get_impr_name_ex(pcity, i), pcity->name,
+                     get_impr_name_ex(pcity, i), pcity->common.name,
                      get_nation_name(city_owner(pcity)->nation));
       } else if (game.info.global_wonders[i] != 0) {
         cat_snprintf(buffer, sizeof(buffer), _("%s has been DESTROYED\n"),
@@ -321,10 +321,10 @@ void report_wonders_of_the_world(struct conn_list *dest)
     if (is_wonder(i)) {
       players_iterate(pplayer) {
         city_list_iterate(pplayer->cities, pcity) {
-          if (pcity->currently_building == i && !pcity->is_building_unit) {
+          if (pcity->common.currently_building == i && !pcity->common.is_building_unit) {
             cat_snprintf(buffer, sizeof(buffer),
                          _("(building %s in %s (%s))\n"),
-                         get_improvement_type(i)->name, pcity->name,
+                         get_improvement_type(i)->name, pcity->common.name,
                          get_nation_name(pplayer->nation));
           }
         } city_list_iterate_end;
@@ -480,7 +480,7 @@ static int get_riots(struct player *pplayer)
   int result = 0;
 
   city_list_iterate(pplayer->cities, pcity) {
-    if (pcity->anarchy > 0) {
+    if (pcity->common.anarchy > 0) {
       result++;
     }
   } city_list_iterate_end;
@@ -528,7 +528,7 @@ static int get_corruption(struct player *pplayer)
   int result = 0;
 
   city_list_iterate(pplayer->cities, pcity) {
-    result += pcity->corruption;
+    result += pcity->common.corruption;
   } city_list_iterate_end;
 
   return result;

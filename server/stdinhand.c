@@ -451,7 +451,8 @@ static bool may_view_option(struct connection *caller, int option_idx)
 static void cmd_reply_line(enum command_id cmd,
                            struct connection *caller,
                            enum rfc_status rfc_status,
-                           const char *prefix, const char *line)
+                           const char *prefix,
+                           const char *line)
 {
   const char *cmdname = cmd < CMD_NUM
       ? commands[cmd].name : cmd == CMD_AMBIGUOUS ? _("(ambiguous)")
@@ -3546,14 +3547,14 @@ static bool debug_command(struct connection *caller, char *str, bool check)
                 _("No city at this coordinate."));
       goto cleanup;
     }
-    if (pcity->server.debug) {
-      pcity->server.debug = FALSE;
+    if (pcity->u.server.debug) {
+      pcity->u.server.debug = FALSE;
       cmd_reply(CMD_DEBUG, caller, C_OK, _("%s no longer debugged"),
-                pcity->name);
+                pcity->common.name);
     } else {
-      pcity->server.debug = TRUE;
+      pcity->u.server.debug = TRUE;
       CITY_LOG(LOG_NORMAL, pcity, "debugged");
-      pcity->server.ai.next_recalc = 0;  /* force recalc of city next turn */
+      pcity->u.server.ai.next_recalc = 0;  /* force recalc of city next turn */
     }
   } else if (ntokens > 0 && strcmp(arg[0], "units") == 0) {
     int x, y;

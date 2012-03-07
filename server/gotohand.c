@@ -272,7 +272,7 @@ void really_generate_warmap(city_t *pcity, struct unit *punit,
   struct player *pplayer;
 
   if (pcity) {
-    orig_tile = pcity->tile;
+    orig_tile = pcity->common.tile;
     pplayer = city_owner(pcity);
   } else {
     orig_tile = punit->tile;
@@ -369,7 +369,7 @@ for now.
 void generate_warmap(city_t *pcity, struct unit *punit)
 {
   freelog(LOG_DEBUG, "Generating warmap, pcity = %s, punit = %s",
-          (pcity ? pcity->name : "NULL"),
+          (pcity ? pcity->common.name : "NULL"),
           (punit ? unit_type(punit)->name : "NULL"));
 
   if (punit) {
@@ -407,7 +407,7 @@ void generate_warmap(city_t *pcity, struct unit *punit)
   } else {
     really_generate_warmap(pcity, punit, LAND_MOVING);
     really_generate_warmap(pcity, punit, SEA_MOVING);
-    warmap.orig_tile = pcity->tile;
+    warmap.orig_tile = pcity->common.tile;
   }
 }
 

@@ -246,12 +246,12 @@ void kill_player(struct player *pplayer) {
   palace = game.server.savepalace;
   game.server.savepalace = FALSE; /* moving it around is dumb */
   city_list_iterate(pplayer->cities, pcity) {
-    if ((pcity->server.original != pplayer->player_no)
-        && (get_player(pcity->server.original)->is_alive)) {
+    if ((pcity->u.server.original != pplayer->player_no)
+        && (get_player(pcity->u.server.original)->is_alive)) {
       /* Transfer city to original owner, kill all its units outside of
          a radius of 3, give verbose messages of every unit transferred,
          and raze buildings according to raze chance (also removes palace) */
-      transfer_city(get_player(pcity->server.original),
+      transfer_city(get_player(pcity->u.server.original),
                     pcity, 3, TRUE, TRUE, TRUE);
     }
   } city_list_iterate_end;
@@ -345,7 +345,7 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
                          _("Game: Discovery of %s OBSOLETES %s in %s!"),
                          get_tech_name(city_owner(pcity), tech_found),
                          get_improvement_name(id),
-                         pcity->name);
+                         pcity->common.name);
       }
     } impr_type_iterate_end;
   }
@@ -2312,10 +2312,10 @@ void civil_war(struct player *pplayer)
         transfer_city(cplayer, pcity, -1, FALSE, FALSE, FALSE);
         send_city_info(NULL, pcity);
         freelog(LOG_VERBOSE, "%s declares allegiance to %s",
-                pcity->name, cplayer->name);
-        notify_player_ex(pplayer, pcity->tile, E_CITY_LOST,
+                pcity->common.name, cplayer->name);
+        notify_player_ex(pplayer, pcity->common.tile, E_CITY_LOST,
                          _("Game: %s declares allegiance to %s."),
-                         pcity->name, cplayer->name);
+                         pcity->common.name, cplayer->name);
         i--;
       }
     }

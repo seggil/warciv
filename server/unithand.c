@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -254,52 +254,52 @@ void handle_unit_diplomat_action(struct player *pplayer, int diplomat_id,
       break;
      case DIPLOMAT_SABOTAGE:
       if(pcity && diplomat_can_do_action(pdiplomat, DIPLOMAT_SABOTAGE,
-                                         pcity->tile)) {
+                                         pcity->common.tile)) {
         /* packet value is improvement ID + 1 (or some special codes) */
         diplomat_sabotage(pplayer, pdiplomat, pcity, value - 1);
       }
       break;
     case SPY_POISON:
       if(pcity && diplomat_can_do_action(pdiplomat, SPY_POISON,
-                                         pcity->tile)) {
+                                         pcity->common.tile)) {
         spy_poison(pplayer, pdiplomat, pcity);
       }
       break;
     case DIPLOMAT_INVESTIGATE:
       if(pcity && diplomat_can_do_action(pdiplomat,DIPLOMAT_INVESTIGATE,
-                                         pcity->tile)) {
+                                         pcity->common.tile)) {
         diplomat_investigate(pplayer, pdiplomat, pcity);
       }
       break;
     case DIPLOMAT_EMBASSY:
       if(pcity && diplomat_can_do_action(pdiplomat, DIPLOMAT_EMBASSY,
-                                         pcity->tile)) {
+                                         pcity->common.tile)) {
         diplomat_embassy(pplayer, pdiplomat, pcity);
       }
       break;
     case DIPLOMAT_INCITE:
       if(pcity && diplomat_can_do_action(pdiplomat, DIPLOMAT_INCITE,
-                                         pcity->tile)) {
+                                         pcity->common.tile)) {
         diplomat_incite(pplayer, pdiplomat, pcity);
       }
       break;
     case DIPLOMAT_MOVE:
       if(pcity && diplomat_can_do_action(pdiplomat, DIPLOMAT_MOVE,
-                                         pcity->tile)) {
-        (void) handle_unit_move_request(pdiplomat, pcity->tile,
+                                         pcity->common.tile)) {
+        (void) handle_unit_move_request(pdiplomat, pcity->common.tile,
                                         FALSE, TRUE);
       }
       break;
     case DIPLOMAT_STEAL:
       if(pcity && diplomat_can_do_action(pdiplomat, DIPLOMAT_STEAL,
-                                         pcity->tile)) {
+                                         pcity->common.tile)) {
         /* packet value is technology ID (or some special codes) */
         diplomat_get_tech(pplayer, pdiplomat, pcity, value);
       }
       break;
     case SPY_GET_SABOTAGE_LIST:
       if(pcity && diplomat_can_do_action(pdiplomat, SPY_GET_SABOTAGE_LIST,
-                                         pcity->tile)) {
+                                         pcity->common.tile)) {
         spy_get_sabotage_list(pplayer, pdiplomat, pcity);
       }
       break;
@@ -327,12 +327,12 @@ void handle_unit_change_homecity(struct player *pplayer, int unit_id,
 
   old_pcity = player_find_city_by_id(pplayer, punit->homecity);
 
-  unit_list_prepend(new_pcity->units_supported, punit);
+  unit_list_prepend(new_pcity->common.units_supported, punit);
   if (old_pcity) {
-    unit_list_unlink(old_pcity->units_supported, punit);
+    unit_list_unlink(old_pcity->common.units_supported, punit);
   }
 
-  punit->homecity = new_pcity->id;
+  punit->homecity = new_pcity->common.id;
   send_unit_info(pplayer, punit);
 
   city_refresh(new_pcity);
@@ -360,9 +360,9 @@ void handle_unit_disband(struct player *pplayer, int unit_id)
 
   if (!unit_flag(punit, F_UNDISBANDABLE)) { /* refuse to kill ourselves */
     if (pcity) {
-      pcity->shield_stock += unit_disband_shields(punit->type);
+      pcity->common.shield_stock += unit_disband_shields(punit->type);
       /* If we change production later at this turn. No penalty is added. */
-      pcity->disbanded_shields += unit_disband_shields(punit->type);
+      pcity->common.disbanded_shields += unit_disband_shields(punit->type);
 
       /* Note: Nowadays it's possible to disband unit in allied city and
        * your ally receives those shields. Should it be like this? Why not?
@@ -428,7 +428,7 @@ static void city_add_or_build_error(struct player *pplayer,
   case AB_NO_MOVES_ADD:
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
                      _("Game: %s unit has no moves left to add to %s."),
-                     unit_name, pcity->name);
+                     unit_name, pcity->common.name);
     break;
   case AB_NO_MOVES_BUILD:
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
@@ -438,21 +438,21 @@ static void city_add_or_build_error(struct player *pplayer,
   case AB_TOO_BIG:
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
                      _("Game: %s is too big to add %s."),
-                     pcity->name, unit_name);
+                     pcity->common.name, unit_name);
     break;
   case AB_NO_SPACE:
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
                      _("Game: %s needs an improvement to grow, so "
                        "you cannot add %s."),
-                     pcity->name, unit_name);
+                     pcity->common.name, unit_name);
     break;
   default:
     /* Shouldn't happen */
     freelog(LOG_ERROR, "Cannot add %s to %s for unknown reason",
-            unit_name, pcity->name);
+            unit_name, pcity->common.name);
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
                      _("Game: Can't add %s to %s."),
-                     unit_name, pcity->name);
+                     unit_name, pcity->common.name);
     break;
   }
 }
@@ -468,13 +468,13 @@ static void city_add_unit(struct player *pplayer, struct unit *punit)
   const char *unit_name = unit_type(punit)->name;
 
   assert(unit_pop_value(punit->type) > 0);
-  pcity->pop_size += unit_pop_value(punit->type);
+  pcity->common.pop_size += unit_pop_value(punit->type);
   /* Make the new people something, otherwise city fails the checks */
-  pcity->specialists[SP_TAXMAN] += unit_pop_value(punit->type);
+  pcity->common.specialists[SP_TAXMAN] += unit_pop_value(punit->type);
   auto_arrange_workers(pcity);
-  notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+  notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                    _("Game: %s added to aid %s in growing."),
-                   unit_name, pcity->name);
+                   unit_name, pcity->common.name);
   wipe_unit(punit);
   send_city_info(NULL, pcity);
 }
@@ -707,7 +707,7 @@ static bool unit_bombard(struct unit *punit, struct tile *ptile)
   punit->moves_left = 0;
 
   if (pcity
-      && pcity->pop_size > 1
+      && pcity->common.pop_size > 1
       && get_city_bonus(pcity, EFT_UNIT_NO_LOSE_POP) == 0
       && kills_citizen_after_attack(punit)) {
     city_reduce_size(pcity,1);
@@ -766,7 +766,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
                          " SDI defences, what a waste."));
       notify_player_ex(city_owner(pcity), def_tile, E_UNIT_WIN,
                        _("Game: The nuclear attack on %s was avoided by"
-                         " your SDI defense."), pcity->name);
+                         " your SDI defense."), pcity->common.name);
       wipe_unit(punit);
       return;
     }
@@ -807,7 +807,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 
   if (punit->hp > 0
       && (pcity = map_get_city(def_tile))
-      && pcity->pop_size > 1
+      && pcity->common.pop_size > 1
       && get_city_bonus(pcity, EFT_UNIT_NO_LOSE_POP) == 0
       && kills_citizen_after_attack(punit)) {
     city_reduce_size(pcity,1);
@@ -1049,7 +1049,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
         /* if is_diplomat_action_available() then there must be
          * a city or a unit */
         if (pcity) {
-          target_id = pcity->id;
+          target_id = pcity->common.id;
         } else if (target) {
           target_id = target->id;
         } else {
@@ -1080,7 +1080,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
       notify_player_ex(pplayer, punit->tile, E_NOEVENT,
                        _("Game: Can't attack %s "
                          "because you are not at war with %s."),
-                       pcity->name,
+                       pcity->common.name,
                        city_owner(pcity)->name);
       how_to_declare_war(pplayer);
       return FALSE;
@@ -1139,7 +1139,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
       assert(is_enemy_city_tile(pdesttile, pplayer) != NULL);
 
       if (unit_flag(punit, F_NUCLEAR)) {
-        if (move_unit(punit, pcity->tile, 0)) {
+        if (move_unit(punit, pcity->common.tile, 0)) {
           /* Survived dangers of moving */
           handle_unit_attack_request(punit, punit); /* Boom! */
         }
@@ -1207,8 +1207,8 @@ void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
     return;
   }
 
-  pcity_dest->shield_stock += unit_build_shield_cost(punit->type);
-  pcity_dest->caravan_shields += unit_build_shield_cost(punit->type);
+  pcity_dest->common.shield_stock += unit_build_shield_cost(punit->type);
+  pcity_dest->common.caravan_shields += unit_build_shield_cost(punit->type);
 
   conn_list_do_buffer(pplayer->connections);
 
@@ -1217,11 +1217,12 @@ void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
   } else {
     text = _("Game: Your %s helps build the %s in %s (%d surplus).");
   }
-  notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
+  notify_player_ex(pplayer,
+                   pcity_dest->common.tile, E_NOEVENT,
                    text, /* Must match arguments below. */
                    unit_name(punit->type),
-                   get_improvement_type(pcity_dest->currently_building)->name,
-                   pcity_dest->name,
+                   get_improvement_type(pcity_dest->common.currently_building)->name,
+                   pcity_dest->common.name,
                    abs(build_points_left(pcity_dest)));
 
   wipe_unit(punit);
@@ -1265,11 +1266,13 @@ static bool base_handle_unit_establish_trade(struct player *pplayer,
   }
 
   if (!can_cities_trade(pcity_homecity, pcity_dest)) {
-    notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
+    notify_player_ex(pplayer,
+                     pcity_dest->common.tile, E_NOEVENT,
                      _("Sorry, your %s cannot establish"
                        " a trade route between %s and %s"),
-                     unit_name(punit->type), pcity_homecity->name,
-                     pcity_dest->name);
+                     unit_name(punit->type),
+                     pcity_homecity->common.name,
+                     pcity_dest->common.name);
     return FALSE;
   }
 

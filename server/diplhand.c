@@ -184,17 +184,17 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
                             "you can't accept treaty."));
             return;
           }
-          if (pcity->owner != pplayer->player_no) {
+          if (pcity->common.owner != pplayer->player_no) {
             notify_player(pplayer,
                           _("You are not owner of %s, you can't accept treaty."),
-                          pcity->name);
+                          pcity->common.name);
             return;
           }
           if (is_capital(pcity)) {
             notify_player(pplayer,
                           _("Game: Your capital (%s) is requested, "
                             "you can't accept treaty."),
-                          pcity->name);
+                          pcity->common.name);
             return;
           }
           break;
@@ -291,23 +291,23 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
                           get_nation_name_plural(pother->nation));
             goto cleanup;
           }
-          if (pcity->owner != pother->player_no) {
+          if (pcity->common.owner != pother->player_no) {
             notify_player(pplayer,
                           _("Game: The %s no longer control %s! "
                             "Treaty canceled!"),
                           get_nation_name_plural(pother->nation),
-                          pcity->name);
+                          pcity->common.name);
             notify_player(pother,
                           _("Game: The %s no longer control %s! "
                             "Treaty canceled!"),
                           get_nation_name_plural(pother->nation),
-                          pcity->name);
+                          pcity->common.name);
             goto cleanup;
           }
           if (is_capital(pcity)) {
             notify_player(pother,
                           _("Game: Your capital (%s) is requested, "
-                            "you can't accept treaty."), pcity->name);
+                            "you can't accept treaty."), pcity->common.name);
             goto cleanup;
           }
 
@@ -439,13 +439,13 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
             break;
           }
 
-          notify_player_ex(pdest, pcity->tile, E_CITY_TRANSFER,
+          notify_player_ex(pdest, pcity->common.tile, E_CITY_TRANSFER,
                            _("Game: You receive city of %s from %s."),
-                           pcity->name, pgiver->name);
+                           pcity->common.name, pgiver->name);
 
-          notify_player_ex(pgiver, pcity->tile, E_CITY_LOST,
+          notify_player_ex(pgiver, pcity->common.tile, E_CITY_LOST,
                            _("Game: You give city of %s to %s."),
-                           pcity->name, pdest->name);
+                           pcity->common.name, pdest->name);
 
           gamelog(GAMELOG_LOSECITY, pgiver, pdest, pcity, "acquired");
           gamelog(GAMELOG_TREATY, GL_CITY, pgiver, pdest, pcity);
@@ -625,7 +625,7 @@ void handle_diplomacy_create_clause_req(struct player *pplayer,
     if (type == CLAUSE_CITY) {
       city_t *pcity = find_city_by_id(value);
 
-      if (pcity && !map_is_known_and_seen(pcity->tile, pother))
+      if (pcity && !map_is_known_and_seen(pcity->common.tile, pother))
         give_citymap_from_player_to_player(pcity, pplayer, pother);
     }
 

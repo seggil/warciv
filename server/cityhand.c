@@ -76,13 +76,13 @@ void handle_city_change_specialist(struct player *pplayer, int city_id,
   if (to < 0 || to >= SP_COUNT
       || from < 0 || from >= SP_COUNT
       || !city_can_use_specialist(pcity, to)
-      || pcity->specialists[from] == 0) {
+      || pcity->common.specialists[from] == 0) {
     freelog(LOG_ERROR, "Error in specialist change request from client.");
     return;
   }
 
-  pcity->specialists[from]--;
-  pcity->specialists[to]++;
+  pcity->common.specialists[from]--;
+  pcity->common.specialists[to]++;
 
   sanity_check_city(pcity);
   city_refresh(pcity);
@@ -107,11 +107,11 @@ void handle_city_make_specialist(struct player *pplayer, int city_id,
   }
   if (is_worker_here(pcity, worker_x, worker_y)) {
     server_remove_worker_city(pcity, worker_x, worker_y);
-    pcity->specialists[SP_ELVIS]++;
+    pcity->common.specialists[SP_ELVIS]++;
     city_refresh(pcity);
     sync_cities();
   } else {
-    notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+    notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                      _("Game: You don't have a worker here."));
   }
   sanity_check_city(pcity);
@@ -149,8 +149,8 @@ void handle_city_make_worker(struct player *pplayer, int city_id,
   server_set_worker_city(pcity, worker_x, worker_y);
 
   for (i = 0; i < SP_COUNT; i++) {
-    if (pcity->specialists[i] > 0) {
-      pcity->specialists[i]--;
+    if (pcity->common.specialists[i] > 0) {
+      pcity->common.specialists[i]--;
       break;
     }
   }
@@ -167,8 +167,8 @@ void handle_city_make_worker(struct player *pplayer, int city_id,
 void really_handle_city_sell(struct player *pplayer, city_t *pcity,
                              Impr_Type_id id)
 {
-  if (pcity->did_sell) {
-    notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+  if (pcity->common.did_sell) {
+    notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                   _("Game: You have already sold something here this turn."));
     return;
   }
@@ -176,10 +176,10 @@ void really_handle_city_sell(struct player *pplayer, city_t *pcity,
   if (!can_sell_building(pcity, id))
     return;
 
-  pcity->did_sell=TRUE;
-  notify_player_ex(pplayer, pcity->tile, E_IMP_SOLD,
+  pcity->common.did_sell=TRUE;
+  notify_player_ex(pplayer, pcity->common.tile, E_IMP_SOLD,
                    _("Game: You sell %s in %s for %d gold."),
-                   get_improvement_name(id), pcity->name,
+                   get_improvement_name(id), pcity->common.name,
                    impr_sell_gold(id));
   do_sell_building(pplayer, pcity, id);
 
@@ -213,38 +213,38 @@ void really_handle_city_buy(struct player *pplayer, city_t *pcity)
 
   assert(pcity && player_owns_city(pplayer, pcity));
 
-  if (pcity->turn_founded == game.info.turn) {
-    notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+  if (pcity->common.turn_founded == game.info.turn) {
+    notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                   _("Game: Cannot buy in city created this turn."));
     return;
   }
 
   if (!city_can_change_build(pcity)) {
-    notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+    notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                   _("Game: You have already bought this turn."));
     return;
   }
 
   if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
-    assert(!pcity->is_building_unit);
-    notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+    assert(!pcity->common.is_building_unit);
+    notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                      _("Game: You don't buy %s!"),
-                     improvement_types[pcity->currently_building].name);
+                     improvement_types[pcity->common.currently_building].name);
     return;
   }
 
-  if (pcity->is_building_unit && pcity->anarchy != 0) {
-    notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+  if (pcity->common.is_building_unit && pcity->common.anarchy != 0) {
+    notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                      _("Game: Can't buy units when city is in disorder."));
     return;
   }
 
-  if (pcity->is_building_unit) {
-    name = unit_types[pcity->currently_building].name;
-    total = unit_build_shield_cost(pcity->currently_building);
+  if (pcity->common.is_building_unit) {
+    name = unit_types[pcity->common.currently_building].name;
+    total = unit_build_shield_cost(pcity->common.currently_building);
   } else {
-    name = get_improvement_name(pcity->currently_building);
-    total = impr_build_shield_cost(pcity->currently_building);
+    name = get_improvement_name(pcity->common.currently_building);
+    total = impr_build_shield_cost(pcity->common.currently_building);
   }
   cost = city_buy_cost(pcity);
   if (cost == 0 || cost > pplayer->economic.gold) {
@@ -261,20 +261,20 @@ void really_handle_city_buy(struct player *pplayer, city_t *pcity)
    */
 
   pplayer->economic.gold-=cost;
-  if (pcity->shield_stock < total){
+  if (pcity->common.shield_stock < total){
     /* As we never put penalty on disbanded_shields, we can
      * fully well add the missing shields there. */
-    pcity->disbanded_shields += total - pcity->shield_stock;
-    pcity->shield_stock=total; /* AI wants this -- Syela */
-    pcity->did_buy = TRUE;      /* !PS: no need to set buy flag otherwise */
+    pcity->common.disbanded_shields += total - pcity->common.shield_stock;
+    pcity->common.shield_stock=total; /* AI wants this -- Syela */
+    pcity->common.did_buy = TRUE;      /* !PS: no need to set buy flag otherwise */
   }
   city_refresh(pcity);
 
   conn_list_do_buffer(pplayer->connections);
-  notify_player_ex(pplayer, pcity->tile,
-                   pcity->is_building_unit?E_UNIT_BUY:E_IMP_BUY,
+  notify_player_ex(pplayer, pcity->common.tile,
+                   pcity->common.is_building_unit?E_UNIT_BUY:E_IMP_BUY,
                    _("Game: %s bought in %s for %d gold."),
-                   name, pcity->name, cost);
+                   name, pcity->common.name, cost);
   send_city_info(pplayer, pcity);
   send_player_info(pplayer,pplayer);
   conn_list_do_unbuffer(pplayer->connections);
@@ -292,7 +292,7 @@ void handle_city_worklist(struct player *pplayer, int city_id,
     return;
   }
 
-  copy_worklist(&pcity->worklist, worklist);
+  copy_worklist(&pcity->common.worklist, worklist);
 
   send_city_info(pplayer, pcity);
 }
@@ -342,8 +342,8 @@ void handle_city_change(struct player *pplayer, int city_id, int build_id,
     return;
   }
 
-  if (pcity->is_building_unit == is_build_id_unit_id
-      && pcity->currently_building == build_id) {
+  if (pcity->common.is_building_unit == is_build_id_unit_id
+      && pcity->common.currently_building == build_id) {
     /* The client probably shouldn't send such a packet. */
     return;
   }
@@ -352,8 +352,8 @@ void handle_city_change(struct player *pplayer, int city_id, int build_id,
      return;
    if (!is_build_id_unit_id && !can_build_improvement(pcity, build_id))
      return;
-  if (pcity->did_buy && pcity->shield_stock > 0) {
-    notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+  if (pcity->common.did_buy && pcity->common.shield_stock > 0) {
+    notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                      _("Game: You have bought this turn, can't change."));
     return;
   }
@@ -379,12 +379,12 @@ void handle_city_rename(struct player *pplayer, int city_id, char *name)
   }
 
   if (!is_allowed_city_name(pplayer, name, message, sizeof(message))) {
-    notify_player_ex(pplayer, pcity->tile, E_NOEVENT,
+    notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                      _("Game: %s"),  message);
     return;
   }
 
-  sz_strlcpy(pcity->name, name);
+  sz_strlcpy(pcity->common.name, name);
   city_refresh(pcity);
   send_city_info(NULL, pcity);
 }
@@ -400,7 +400,7 @@ void handle_city_options_req(struct player *pplayer, int city_id, int value)
     return;
   }
 
-  pcity->city_options = value;
+  pcity->common.city_options = value;
   send_city_info(pplayer, pcity);
 }
 
@@ -417,12 +417,12 @@ void handle_city_incite_inq(struct connection *pc, int city_id)
 
   if (pplayer && pcity) {
     /* First check if the player has a diplomat near this tile */
-    adjc_iterate(pcity->tile, ptile) {
+    adjc_iterate(pcity->common.tile, ptile) {
       unit_list_iterate(ptile->units, pdiplomat) {
         if (pdiplomat->owner == pplayer->player_no
             && is_diplomat_unit(pdiplomat)
             && diplomat_can_do_action(pdiplomat,
-                                      DIPLOMAT_INCITE, pcity->tile)) {
+                                      DIPLOMAT_INCITE, pcity->common.tile)) {
           possible = TRUE;
           break;
         }
@@ -448,11 +448,11 @@ void handle_city_set_rally_point(struct player *pplayer, int city_id,
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
   struct tile *rally_point = map_pos_to_tile(x, y);
 
-  if (!pcity || !rally_point || rally_point == pcity->rally_point) {
+  if (!pcity || !rally_point || rally_point == pcity->common.rally_point) {
     return;
   }
 
-  pcity->rally_point = rally_point;
+  pcity->common.rally_point = rally_point;
   send_city_info(pplayer, pcity);
 }
 
@@ -463,11 +463,11 @@ void handle_city_clear_rally_point(struct player *pplayer, int city_id)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
 
-  if (!pcity || !pcity->rally_point) {
+  if (!pcity || !pcity->common.rally_point) {
     return;
   }
 
-  pcity->rally_point = NULL;
+  pcity->common.rally_point = NULL;
   send_city_info(pplayer, pcity);
 }
 
@@ -494,11 +494,11 @@ void handle_city_manager_param(struct player *pplayer,
   param.allow_disorder = packet->allow_disorder;
   param.allow_specialists = packet->allow_specialists;
 
-  if (0 != memcmp(&pcity->server.parameter, &param,
-                  sizeof(pcity->server.parameter))) {
+  if (0 != memcmp(&pcity->u.server.parameter, &param,
+                  sizeof(pcity->u.server.parameter))) {
     /* The paramter changed */
-    pcity->server.managed = TRUE;
-    pcity->server.parameter = param;
+    pcity->u.server.managed = TRUE;
+    pcity->u.server.parameter = param;
 
     /* Send info */
     send_city_manager_param(NULL, packet, pplayer, FALSE);
@@ -512,7 +512,7 @@ void handle_city_no_manager_param(struct player *pplayer, int city_id)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
 
-  if (!pcity || !pcity->server.managed) {
+  if (!pcity || !pcity->u.server.managed) {
     return;
   }
 

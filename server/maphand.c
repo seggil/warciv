@@ -317,8 +317,8 @@ void upgrade_city_rails(struct player *pplayer, bool discovery)
   }
 
   city_list_iterate(pplayer->cities, pcity) {
-    map_set_special(pcity->tile, S_RAILROAD);
-    update_tile_knowledge(pcity->tile);
+    map_set_special(pcity->common.tile, S_RAILROAD);
+    update_tile_knowledge(pcity->common.tile);
   }
   city_list_iterate_end;
 
@@ -390,7 +390,7 @@ void give_citymap_from_player_to_player(city_t *pcity,
                                         struct player *pfrom, struct player *pdest)
 {
   buffer_shared_vision(pdest);
-  map_city_radius_iterate(pcity->tile, ptile) {
+  map_city_radius_iterate(pcity->common.tile, ptile) {
     give_tile_info_from_player_to_player(pfrom, pdest, ptile);
   } map_city_radius_iterate_end;
   unbuffer_shared_vision(pdest);
@@ -780,7 +780,7 @@ void map_fog_city_area(city_t *pcity)
     return;
   }
 
-  map_fog_pseudo_city_area(city_owner(pcity), pcity->tile);
+  map_fog_pseudo_city_area(city_owner(pcity), pcity->common.tile);
 }
 
 /**************************************************************************
@@ -793,7 +793,7 @@ void map_unfog_city_area(city_t *pcity)
     return;
   }
 
-  map_unfog_pseudo_city_area(city_owner(pcity), pcity->tile);
+  map_unfog_pseudo_city_area(city_owner(pcity), pcity->common.tile);
 }
 
 /**************************************************************************
@@ -1637,7 +1637,7 @@ static city_t *map_get_adjc_city(struct tile *ptile)
 
   adjc_iterate(ptile, tile1) {
     if (tile1->city &&
-         (!closest || tile1->city->turn_founded < closest->turn_founded)) {
+         (!closest || tile1->city->common.turn_founded < closest->common.turn_founded)) {
       closest = tile1->city;
     }
   } adjc_iterate_end;
@@ -1715,11 +1715,11 @@ static city_t *map_get_closest_city(struct tile *ptile)
 
     if (!is_ocean(map_get_terrain(ptile)) || is_claimed_ocean(ptile, &cont)) {
       cities_iterate(pcity) {
-        if (map_get_continent(pcity->tile) == cont) {
-          distsq = sq_map_distance(pcity->tile, ptile);
+        if (map_get_continent(pcity->common.tile) == cont) {
+          distsq = sq_map_distance(pcity->common.tile, ptile);
           if (distsq < cldistsq ||
                (distsq == cldistsq &&
-                (!closest || closest->turn_founded > pcity->turn_founded))) {
+                (!closest || closest->common.turn_founded > pcity->common.turn_founded))) {
             closest = pcity;
             cldistsq = distsq;
           }
@@ -1757,7 +1757,7 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
   if (game.ruleset_control.borders > 0) {
     iterate_outward(ptile, game.ruleset_control.borders, tile1) {
       city_t *pccity = map_get_closest_city(tile1);
-      struct player *new_owner = pccity ? get_player(pccity->owner) : NULL;
+      struct player *new_owner = pccity ? get_player(pccity->common.owner) : NULL;
 
       if (new_owner != map_get_owner(tile1)) {
         map_set_owner(tile1, new_owner);
@@ -1830,7 +1830,7 @@ void map_update_borders_landmass_change(struct tile *ptile)
 *************************************************************************/
 void map_update_borders_city_change(city_t *pcity)
 {
-  map_update_borders_recalculate_position(pcity->tile);
+  map_update_borders_recalculate_position(pcity->common.tile);
 }
 
 /*************************************************************************
@@ -1855,11 +1855,11 @@ static void map_calculate_territory(void)
     /* Loop over all cities and claim territory. */
     cities_iterate(pcity) {
       /* Loop over all map tiles within this city's sphere of influence. */
-      iterate_outward(pcity->tile, game.ruleset_control.borders, ptile) {
+      iterate_outward(pcity->common.tile, game.ruleset_control.borders, ptile) {
         city_t *pccity = map_get_closest_city(ptile);
 
         if (pccity) {
-          map_set_owner(ptile, get_player(pccity->owner));
+          map_set_owner(ptile, get_player(pccity->common.owner));
         }
       } iterate_outward_end;
     } cities_iterate_end;
@@ -1879,7 +1879,7 @@ void map_calculate_borders(void)
 
     /* Fix tile worker states. */
     cities_iterate(pcity) {
-      map_city_radius_iterate(pcity->tile, tile1) {
+      map_city_radius_iterate(pcity->common.tile, tile1) {
         update_city_tile_status_map(pcity, tile1);
       } map_city_radius_iterate_end;
     } cities_iterate_end;

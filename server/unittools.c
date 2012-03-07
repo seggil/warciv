@@ -262,7 +262,7 @@ static int dist_from_home_continent(const struct unit *punit)
   }
 
   if (pcity != NULL) {
-    Continent_id cont = map_get_continent(pcity->tile);
+    Continent_id cont = map_get_continent(pcity->common.tile);
 
     iterate_outward(punit->tile, 4, ptile) {
       if (cont == map_get_continent(ptile)) {
@@ -1037,19 +1037,19 @@ static char *get_location_str(struct player *pplayer, struct tile *ptile, bool u
   incity = map_get_city(ptile);
   if (incity) {
     if (use_at) {
-      my_snprintf(buffer, sizeof(buffer), _(" at %s"), incity->name);
+      my_snprintf(buffer, sizeof(buffer), _(" at %s"), incity->common.name);
     } else {
-      my_snprintf(buffer, sizeof(buffer), _(" in %s"), incity->name);
+      my_snprintf(buffer, sizeof(buffer), _(" in %s"), incity->common.name);
     }
   } else {
     nearcity = dist_nearest_city(pplayer, ptile, FALSE, FALSE);
     if (nearcity) {
-      if (is_tiles_adjacent(ptile, nearcity->tile)) {
+      if (is_tiles_adjacent(ptile, nearcity->common.tile)) {
         my_snprintf(buffer, sizeof(buffer),
-                   _(" outside %s"), nearcity->name);
+                   _(" outside %s"), nearcity->common.name);
       } else {
         my_snprintf(buffer, sizeof(buffer),
-                    _(" near %s"), nearcity->name);
+                    _(" near %s"), nearcity->common.name);
       }
     } else {
       buffer[0] = '\0';
@@ -1112,7 +1112,7 @@ static bool find_a_good_partisan_spot(city_t *pcity, int u_type,
 {
   int bestvalue = 0;
   /* coords of best tile in arg pointers */
-  map_city_radius_iterate(pcity->tile, ptile) {
+  map_city_radius_iterate(pcity->common.tile, ptile) {
     int value;
     if (is_ocean(ptile->terrain)) {
       continue;
@@ -1124,7 +1124,7 @@ static bool find_a_good_partisan_spot(city_t *pcity, int u_type,
     value = get_virtual_defense_power(U_LAST, u_type, ptile, FALSE, 0);
     value *= 10;
 
-    if (ptile->continent != map_get_continent(pcity->tile)) {
+    if (ptile->continent != map_get_continent(pcity->common.tile)) {
       value /= 2;
     }
 
@@ -1175,7 +1175,7 @@ void make_partisans(city_t *pcity)
     return;
   if (!tech_exists(game.server.u_partisan)
       || game.info.global_advances[game.server.u_partisan] == 0
-      || pcity->server.original != pcity->owner)
+      || pcity->u.server.original != pcity->common.owner)
     return;
 
   if (!government_has_flag(get_gov_pcity(pcity), G_INSPIRES_PARTISANS))
@@ -1189,7 +1189,7 @@ void make_partisans(city_t *pcity)
     /* Was A_COMMUNISM and A_GUNPOWDER */
   }
 
-  partisans = myrand(1 + pcity->pop_size/2) + 1;
+  partisans = myrand(1 + pcity->common.pop_size/2) + 1;
   if (partisans > 8)
     partisans = 8;
 
@@ -1251,16 +1251,16 @@ Teleport punit to city at cost specified.  Returns success.
 bool teleport_unit_to_city(struct unit *punit, city_t *pcity,
                           int move_cost, bool verbose)
 {
-  struct tile *src_tile = punit->tile, *dst_tile = pcity->tile;
+  struct tile *src_tile = punit->tile, *dst_tile = pcity->common.tile;
 
-  if (pcity->owner == punit->owner){
+  if (pcity->common.owner == punit->owner){
     freelog(LOG_VERBOSE, "Teleported %s's %s from (%d, %d) to %s",
             unit_owner(punit)->name, unit_name(punit->type),
-            src_tile->x, src_tile->y, pcity->name);
+            src_tile->x, src_tile->y, pcity->common.name);
     if (verbose) {
-      notify_player_ex(unit_owner(punit), pcity->tile, E_NOEVENT,
+      notify_player_ex(unit_owner(punit), pcity->common.tile, E_NOEVENT,
                        _("Game: Teleported your %s to %s."),
-                       unit_name(punit->type), pcity->name);
+                       unit_name(punit->type), pcity->common.name);
     }
 
     /* Silently free orders since they won't be applicable anymore. */
@@ -1385,7 +1385,7 @@ void remove_allied_visibility(struct player* pplayer, struct player* aplayer)
     /* The player used to know what units were in these cities.  Now that he
      * doesn't, he needs to get a new short city packet updating the
      * occupied status. */
-    if (map_is_known_and_seen(pcity->tile, pplayer)) {
+    if (map_is_known_and_seen(pcity->common.tile, pplayer)) {
       send_city_info(pplayer, pcity);
     }
   } city_list_iterate_end;
@@ -1541,7 +1541,7 @@ struct unit *create_unit_full(struct player *pplayer, struct tile *ptile,
   unit_list_prepend(ptile->units, punit);
   if (pcity && !unit_type_flag(type, F_NOHOME)) {
     assert(city_owner(pcity) == pplayer);
-    unit_list_prepend(pcity->units_supported, punit);
+    unit_list_prepend(pcity->common.units_supported, punit);
     /* Refresh the unit's homecity. */
     city_refresh(pcity);
     send_city_info(pplayer, pcity);
@@ -1730,7 +1730,7 @@ void wipe_unit_spec_safe(struct unit *punit,
               notify_player_ex(pplayer, ptile, E_NOEVENT,
                                _("Game: %s escaped the destruction of %s, and "
                                  "fled to %s."), unit_type(pcargo)->name,
-                               ptype->name, pcity->name);
+                               ptype->name, pcity->common.name);
             }
           }
           if (!unit_flag(pcargo, F_UNDISBANDABLE) || !pcity) {
@@ -2173,17 +2173,17 @@ static void do_nuke_tile(struct player *pplayer, struct tile *ptile)
     notify_player_ex(city_owner(pcity),
                      ptile, E_CITY_NUKED,
                      _("Game: %s was nuked by %s."),
-                     pcity->name,
+                     pcity->common.name,
                      pplayer == city_owner(pcity) ? _("yourself") : pplayer->name);
 
     if (city_owner(pcity) != pplayer) {
       notify_player_ex(pplayer,
                        ptile, E_CITY_NUKED,
                        _("Game: You nuked %s."),
-                       pcity->name);
+                       pcity->common.name);
     }
 
-    city_reduce_size(pcity, pcity->pop_size / 2);
+    city_reduce_size(pcity, pcity->common.pop_size / 2);
     send_city_info(NULL, pcity);
   }
 
@@ -2260,18 +2260,20 @@ bool do_airlift(struct unit *punit, city_t *city2)
   if (get_transporter_occupancy(punit) > 0) {
     return FALSE;
   }
-  city1->airlift = FALSE;
-  city2->airlift = FALSE;
+  city1->common.airlift = FALSE;
+  city2->common.airlift = FALSE;
 
-  move_unit(punit, city2->tile, punit->moves_left);
+  move_unit(punit, city2->common.tile, punit->moves_left);
 
   /* airlift fields have changed. */
   send_city_info(city_owner(city1), city1);
   send_city_info(city_owner(city2), city2);
 
-  notify_player_ex(unit_owner(punit), city2->tile, E_UNIT_RELOCATED,
+  notify_player_ex(unit_owner(punit),
+                   city2->common.tile, E_UNIT_RELOCATED,
                    _("Game: %s airlifted from %s to %s successfully."),
-                   unit_name(punit->type), city1->name, city2->name);
+                   unit_name(punit->type),
+                   city1->common.name, city2->common.name);
 
   return TRUE;
 }
@@ -2466,7 +2468,7 @@ static void hut_get_city(struct unit *punit)
     }
 
     /* Init ai.choice. Handling ferryboats might use it. */
-    init_choice(&punit->tile->city->server.ai.choice);
+    init_choice(&punit->tile->city->u.server.ai.choice);
 
   } else {
     notify_player_ex(pplayer, punit->tile, E_HUT_SETTLER,
@@ -2672,7 +2674,7 @@ static void handle_unit_move_consequences(struct unit *punit,
     tocity = map_get_city(dst_tile);
 
     if (tocity) { /* entering a city */
-      if (tocity->owner == punit->owner) {
+      if (tocity->common.owner == punit->owner) {
         if (tocity != homecity) {
           city_refresh(tocity);
           send_city_info(pplayer, tocity);
@@ -2688,7 +2690,9 @@ static void handle_unit_move_consequences(struct unit *punit,
       if (homecity) {
         refresh_homecity = TRUE;
       }
-      if (fromcity != homecity && fromcity->owner == punit->owner) {
+      if (fromcity != homecity
+          && fromcity->common.owner == punit->owner)
+      {
         city_refresh(fromcity);
         send_city_info(pplayer, fromcity);
       }
@@ -3064,13 +3068,15 @@ bool execute_orders(struct unit *punit)
     struct unit_order order;
 
     if (punit->ptr) {
-      if (punit->tile == punit->ptr->pcity1->tile
+      if (punit->tile == punit->ptr->pcity1->common.tile
           && punit->moves_left > 0
-          && punit->homecity != punit->ptr->pcity1->id) {
+          && punit->homecity != punit->ptr->pcity1->common.id)
+      {
         handle_unit_change_homecity(unit_owner(punit), punit->id,
-                                    punit->ptr->pcity1->id);
-      } else if (punit->tile == punit->ptr->pcity2->tile
-                 && punit->homecity == punit->ptr->pcity1->id) {
+                                    punit->ptr->pcity1->common.id);
+      } else if (punit->tile == punit->ptr->pcity2->common.tile
+                 && punit->homecity == punit->ptr->pcity1->common.id)
+      {
         unit_establish_trade_route(punit, punit->ptr->pcity1,
                                    punit->ptr->pcity2);
         return FALSE;
@@ -3233,8 +3239,8 @@ bool execute_orders(struct unit *punit)
       assert(punit->has_orders == FALSE);
       freelog(LOG_DEBUG, "  stopping because orders are complete");
       if (punit->ptr) {
-        if (punit->tile == punit->ptr->pcity2->tile
-            && punit->homecity == punit->ptr->pcity1->id) {
+        if (punit->tile == punit->ptr->pcity2->common.tile
+            && punit->homecity == punit->ptr->pcity1->common.id) {
           unit_establish_trade_route(punit, punit->ptr->pcity1,
                                      punit->ptr->pcity2);
           return FALSE;
