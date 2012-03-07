@@ -132,8 +132,8 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
   }
 
   if (pcity) {
-    if (pcity->owner != pdiplomat->owner
-       && real_map_distance(pdiplomat->tile, pcity->tile) <= 1) {
+    if (pcity->common.owner != pdiplomat->owner
+       && real_map_distance(pdiplomat->tile, pcity->common.tile) <= 1) {
       if (action == DIPLOMAT_SABOTAGE) {
         return pplayers_at_war(unit_owner(pdiplomat), city_owner(pcity));
       }
@@ -145,7 +145,7 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
         return TRUE;
       }
       if (action == SPY_POISON
-          && pcity->pop_size > 1
+          && pcity->common.pop_size > 1
           && unit_flag(pdiplomat, F_SPY)) {
         return pplayers_at_war(unit_owner(pdiplomat), city_owner(pcity));
       }
@@ -220,19 +220,19 @@ bool unit_can_airlift_to(struct unit *punit, city_t *destcity)
     return FALSE;
   }
 
-  if (!srccity->airlift) {
+  if (!srccity->common.airlift) {
     return FALSE;
   }
 
-  if (!destcity->airlift
+  if (!destcity->common.airlift
       && (game.ext_info.airliftingstyle == 0
           || game.ext_info.airliftingstyle == 2)) {
     return FALSE;
   }
 
-  if (srccity->owner != destcity->owner
+  if (srccity->common.owner != destcity->common.owner
       && !(pplayers_allied(get_player(punit->owner),
-                           get_player(destcity->owner))
+                           get_player(destcity->common.owner))
            && (game.ext_info.airliftingstyle == 2
                || game.ext_info.airliftingstyle == 3))) {
     return FALSE;
@@ -254,15 +254,15 @@ bool unit_has_orders(struct unit *punit)
 **************************************************************************/
 bool unit_can_help_build_wonder(struct unit *punit, city_t *pcity)
 {
-  if (!is_tiles_adjacent(punit->tile, pcity->tile)
-      && !same_pos(punit->tile, pcity->tile))
+  if (!is_tiles_adjacent(punit->tile, pcity->common.tile)
+      && !same_pos(punit->tile, pcity->common.tile))
     return FALSE;
 
   return (unit_flag(punit, F_HELP_WONDER)
-          && punit->owner == pcity->owner
-          && !pcity->is_building_unit && is_wonder(pcity->currently_building)
-          && (pcity->shield_stock
-              < impr_build_shield_cost(pcity->currently_building)));
+          && punit->owner == pcity->common.owner
+          && !pcity->common.is_building_unit && is_wonder(pcity->common.currently_building)
+          && (pcity->common.shield_stock
+              < impr_build_shield_cost(pcity->common.currently_building)));
 }
 
 
@@ -515,11 +515,11 @@ enum add_build_city_result test_unit_add_or_build_city(struct unit *punit)
     return AB_NO_MOVES_ADD;
 
   assert(unit_pop_value(punit->type) > 0);
-  new_pop = pcity->pop_size + unit_pop_value(punit->type);
+  new_pop = pcity->common.pop_size + unit_pop_value(punit->type);
 
   if (new_pop > game.ruleset_control.add_to_size_limit)
     return AB_TOO_BIG;
-  if (pcity->owner != punit->owner)
+  if (pcity->common.owner != punit->owner)
     return AB_NOT_OWNER;
   if (!city_can_grow_to(pcity, new_pop))
     return AB_NO_SPACE;
@@ -541,8 +541,8 @@ bool can_unit_change_homecity_to(struct unit *punit, city_t *pcity)
   return (punit && pcity
           && punit->homecity > 0
           && punit->tile->city
-          && punit->tile->city->owner == punit->owner
-          && punit->homecity != punit->tile->city->id);
+          && punit->tile->city->common.owner == punit->owner
+          && punit->homecity != punit->tile->city->common.id);
 }
 
 /**************************************************************************
@@ -1423,7 +1423,7 @@ bool is_my_zoc(struct player *pplayer, const struct tile *ptile0)
       city_t *pcity = is_non_allied_city_tile(ptile, pplayer);
 
       if (pcity
-          && ((!is_server && pcity->client.occupied)
+          && ((!is_server && pcity->u.client.occupied)
               || map_get_known(ptile, pplayer) == TILE_KNOWN_FOGGED)) {
         /* If the city is fogged, we assume it's occupied */
         return FALSE;
@@ -1762,8 +1762,8 @@ struct unit *create_unit_virtual(struct player *pplayer, city_t *pcity,
   punit->type = type;
   punit->owner = pplayer->player_no;
   if (pcity) {
-    punit->tile = pcity->tile;
-    punit->homecity = pcity->id;
+    punit->tile = pcity->common.tile;
+    punit->homecity = pcity->common.id;
   } else {
     punit->tile = NULL;
     punit->homecity = 0;

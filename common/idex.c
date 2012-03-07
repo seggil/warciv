@@ -22,7 +22,7 @@
    the structs.
 
    Note id values should probably be unsigned int: here leave as plain int
-   so can use pointers to pcity->id etc.
+   so can use pointers to pcity->common.id etc.
 
    On probable errors, print LOG_ERROR messages and persevere,
    unless IDEX_DIE set.
@@ -93,18 +93,18 @@ void idex_free(void)
 }
 
 /**************************************************************************
-   Register a city into idex, with current pcity->id.
+   Register a city into idex, with current pcity->common.id.
    Call this when pcity created.
 ***************************************************************************/
 void idex_register_city(city_t *pcity)
 {
   city_t *old = (city_t *)
-      hash_replace(idex_city_hash, &pcity->id, pcity);
+      hash_replace(idex_city_hash, &pcity->common.id, pcity);
   if (old) {
     /* error */
     freelog(LOG_IDEX_ERR, "IDEX: city collision: new %d %p %s, old %d %p %s",
-            pcity->id, (void *) pcity, pcity->name,
-            old->id, (void *) old, old->name);
+            pcity->common.id, (void *) pcity, pcity->common.name,
+            old->common.id, (void *) old, old->common.name);
     if (IDEX_DIE) {
       die("byebye");
     }
@@ -131,17 +131,17 @@ void idex_register_unit(struct unit *punit)
 }
 
 /**************************************************************************
-   Remove a city from idex, with current pcity->id.
+   Remove a city from idex, with current pcity->common.id.
    Call this when pcity deleted.
 ***************************************************************************/
 void idex_unregister_city(city_t *pcity)
 {
   city_t *old = (city_t *)
-      hash_delete_entry(idex_city_hash, &pcity->id);
+      hash_delete_entry(idex_city_hash, &pcity->common.id);
   if (!old) {
     /* error */
     freelog(LOG_IDEX_ERR, "IDEX: city unreg missing: %d %p %s",
-            pcity->id, (void *) pcity, pcity->name);
+            pcity->common.id, (void *) pcity, pcity->common.name);
     if (IDEX_DIE) {
       die("byebye");
     }
@@ -149,8 +149,8 @@ void idex_unregister_city(city_t *pcity)
     /* error */
     freelog(LOG_IDEX_ERR,
             "IDEX: city unreg mismatch: unreg %d %p %s, old %d %p %s",
-            pcity->id, (void *) pcity, pcity->name,
-            old->id, (void *) old, old->name);
+            pcity->common.id, (void *) pcity, pcity->common.name,
+            old->common.id, (void *) old, old->common.name);
     if (IDEX_DIE) {
       die("byebye");
     }
@@ -227,18 +227,18 @@ city_t *idex_lookup_city_by_name(const char *name)
 void idex_register_city_name(city_t *pcity)
 {
   void *old;
-  if (!pcity || !pcity->name || !pcity->name[0]) {
+  if (!pcity || !pcity->common.name || !pcity->common.name[0]) {
     return;
   }
 
   freelog(LOG_DEBUG,
-          "idex_register_city_name pcity=%p pcity->id=%d pcity->name=\"%s\"",
-          pcity, pcity->id, pcity->name);
-  if (hash_delete_entry_full(idex_city_name_hash, pcity->name, &old)) {
+          "idex_register_city_name pcity=%p pcity->common.id=%d pcity->common.name=\"%s\"",
+          pcity, pcity->common.id, pcity->common.name);
+  if (hash_delete_entry_full(idex_city_name_hash, pcity->common.name, &old)) {
     free(old);
   }
-  hash_insert(idex_city_name_hash, mystrdup(pcity->name),
-              INT_TO_PTR(pcity->id));
+  hash_insert(idex_city_name_hash, mystrdup(pcity->common.name),
+              INT_TO_PTR(pcity->common.id));
 }
 
 /**************************************************************************
@@ -248,14 +248,14 @@ void idex_unregister_city_name(city_t *pcity)
 {
   void *old;
 
-  if (!pcity || !pcity->name || !pcity->name[0]) {
+  if (!pcity || !pcity->common.name || !pcity->common.name[0]) {
     return;
   }
 
   freelog(LOG_DEBUG,
-          "idex_unregister_city_name pcity=%p pcity->id=%d pcity->name=\"%s\"",
-          pcity, pcity->id, pcity->name);
-  if (hash_delete_entry_full(idex_city_name_hash, pcity->name, &old)) {
+          "idex_unregister_city_name pcity=%p pcity->common.id=%d pcity->common.name=\"%s\"",
+          pcity, pcity->common.id, pcity->common.name);
+  if (hash_delete_entry_full(idex_city_name_hash, pcity->common.name, &old)) {
     free(old);
   }
 }

@@ -46,7 +46,7 @@ struct trade_route {
 
 /* Iterate all established trade routes for a city */
 #define established_trade_routes_iterate(pcity, ptr)   \
-  trade_route_list_iterate(pcity->trade_routes, ptr) { \
+  trade_route_list_iterate(pcity->common.trade_routes, ptr) { \
     if (ptr->status != TR_ESTABLISHED) {               \
       continue;                                        \
     }

@@ -316,7 +316,7 @@ void cm_free(void)
   off the edge of the world).
  ***************************************************************************/
 #define my_city_map_iterate(pcity, cx, cy) \
-  city_map_checked_iterate(pcity->tile, cx, cy, itr_tile)
+  city_map_checked_iterate(pcity->common.tile, cx, cy, itr_tile)
 
 #define my_city_map_iterate_end city_map_checked_iterate_end;
 
@@ -638,13 +638,13 @@ static void apply_solution(struct cm_state *state,
 
   /* Clear all specialists, and remove all workers from fields (except
    * the city center). */
-  memset(&pcity->specialists, 0, sizeof(pcity->specialists));
+  memset(&pcity->common.specialists, 0, sizeof(pcity->common.specialists));
   city_map_iterate(x, y) {
     if (is_city_center(x, y)) {
       continue;
     }
-    if (pcity->city_map[x][y] == C_TILE_WORKER) {
-      pcity->city_map[x][y] = C_TILE_EMPTY;
+    if (pcity->common.city_map[x][y] == C_TILE_WORKER) {
+      pcity->common.city_map[x][y] = C_TILE_EMPTY;
     }
   } city_map_iterate_end;
 
@@ -665,7 +665,7 @@ static void apply_solution(struct cm_state *state,
 
     if (type->is_specialist) {
       /* Just increase the number of specialists. */
-      pcity->specialists[type->spec] += nworkers;
+      pcity->common.specialists[type->spec] += nworkers;
     } else {
       int j;
 
@@ -673,14 +673,14 @@ static void apply_solution(struct cm_state *state,
       for (j = 0; j < nworkers; j++) {
         const struct cm_tile *tile = tile_get(type, j);
 
-        pcity->city_map[tile->x][tile->y] = C_TILE_WORKER;
+        pcity->common.city_map[tile->x][tile->y] = C_TILE_WORKER;
       }
     }
   }
 
   /* Finally we must refresh the city to reset all the precomputed fields. */
   generic_city_refresh(pcity, FALSE, 0);
-  assert(sumworkers == pcity->pop_size);
+  assert(sumworkers == pcity->common.pop_size);
 }
 
 /****************************************************************************
@@ -692,12 +692,12 @@ static void get_city_surplus(const city_t *pcity,
                              int surplus[CM_NUM_STATS],
                              bool *disorder, bool *happy)
 {
-  surplus[CM_FOOD] = pcity->food_surplus;
-  surplus[CM_SHIELD] = pcity->shield_surplus;
-  surplus[CM_TRADE] = pcity->trade_prod;
-  surplus[CM_GOLD] = city_gold_surplus(pcity, pcity->tax_total);
-  surplus[CM_LUXURY] = pcity->luxury_total;
-  surplus[CM_SCIENCE] = pcity->science_total;
+  surplus[CM_FOOD] = pcity->common.food_surplus;
+  surplus[CM_SHIELD] = pcity->common.shield_surplus;
+  surplus[CM_TRADE] = pcity->common.trade_prod;
+  surplus[CM_GOLD] = city_gold_surplus(pcity, pcity->common.tax_total);
+  surplus[CM_LUXURY] = pcity->common.luxury_total;
+  surplus[CM_SCIENCE] = pcity->common.science_total;
 
   *disorder = city_unhappy(pcity);
   *happy = city_happy(pcity);
@@ -1089,7 +1089,7 @@ static void clean_lattice(struct tile_type_vector *lattice,
 
     forced_loop = FALSE;
 
-    if (ptype->lattice_depth >= pcity->pop_size) {
+    if (ptype->lattice_depth >= pcity->common.pop_size) {
       tile_type_vector_add(&tofree, ptype);
     } else {
       /* Remove links to children that are being removed. */
@@ -1103,7 +1103,7 @@ static void clean_lattice(struct tile_type_vector *lattice,
       for (ci = 0, cj = 0; ci < ptype->worse_types.size; ci++) {
         const struct cm_tile_type *ptype2 = ptype->worse_types.p[ci];
 
-        if (ptype2->lattice_depth < pcity->pop_size) {
+        if (ptype2->lattice_depth < pcity->common.pop_size) {
           ptype->worse_types.p[cj] = ptype->worse_types.p[ci];
           cj++;
         }
@@ -1158,7 +1158,7 @@ static void init_tile_lattice(const city_t *pcity,
   /* add all the fields into the lattice */
   tile_type_init(&type); /* init just once */
   my_city_map_iterate(pcity, x, y) {
-    if (pcity->city_map[x][y] == C_TILE_UNAVAILABLE) {
+    if (pcity->common.city_map[x][y] == C_TILE_UNAVAILABLE) {
       continue;
     }
     if (!is_city_center(x, y)) {
@@ -1235,7 +1235,7 @@ static void add_workers(struct partial_solution *soln,
   /* update the number of idle workers */
   newcount = soln->idle - number;
   assert(newcount >= 0);
-  assert(newcount <= state->pcity->pop_size);
+  assert(newcount <= state->pcity->common.pop_size);
   soln->idle = newcount;
 
   /* update the worker counts */
@@ -1513,7 +1513,7 @@ compute_max_stats_heuristic(const struct cm_state *state,
   }
 
   /* initialize solnplus here, after the shortcut check */
-  init_partial_solution(&solnplus, num_types(state), state->pcity->pop_size);
+  init_partial_solution(&solnplus, num_types(state), state->pcity->common.pop_size);
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     /* compute the solution that has soln, then the check_choice,
@@ -1586,9 +1586,9 @@ static void init_min_production(struct cm_state *state)
    * prod-surplus; otherwise, we know it's at least 2*size but we
    * can't easily compute the settlers. */
   if (!city_unhappy(pcity)) {
-    usage[CM_FOOD] = pcity->food_prod - pcity->food_surplus;
+    usage[CM_FOOD] = pcity->common.food_prod - pcity->common.food_surplus;
   } else {
-    usage[CM_FOOD] = pcity->pop_size * 2;
+    usage[CM_FOOD] = pcity->common.pop_size * 2;
   }
   state->min_production[CM_FOOD] = usage[CM_FOOD]
       + state->parameter.minimal_surplus[CM_FOOD]
@@ -1609,9 +1609,9 @@ static void init_min_production(struct cm_state *state)
   if (!city_unhappy(pcity)) {
     double sbonus;
 
-    usage[CM_SHIELD] = pcity->shield_prod - pcity->shield_surplus;
+    usage[CM_SHIELD] = pcity->common.shield_prod - pcity->common.shield_surplus;
 
-    sbonus = ((double)pcity->shield_bonus) / 100.0;
+    sbonus = ((double)pcity->common.shield_bonus) / 100.0;
     sbonus += .1;
     state->min_production[CM_SHIELD] =
         (usage[CM_SHIELD] + state->parameter.minimal_surplus[CM_SHIELD]) / sbonus;
@@ -1642,7 +1642,7 @@ static void init_min_production(struct cm_state *state)
 static double estimate_fitness(const struct cm_state *state,
                                const int production[CM_NUM_STATS]) {
   const city_t *pcity = state->pcity;
-  const struct player *pplayer = get_player(pcity->owner);
+  const struct player *pplayer = get_player(pcity->common.owner);
   enum cm_stat stat;
   double estimates[CM_NUM_STATS];
   double sum = 0;
@@ -1657,10 +1657,10 @@ static double estimate_fitness(const struct cm_state *state,
   estimates[CM_GOLD] += pplayer->economic.tax     * estimates[CM_TRADE] / 100.0;
 
   /* now add in the bonuses (none for food or trade) (in percentage) */
-  estimates[CM_SHIELD] *= pcity->shield_bonus / 100.0;
-  estimates[CM_LUXURY] *= pcity->luxury_bonus / 100.0;
-  estimates[CM_GOLD] *= pcity->tax_bonus / 100.0;
-  estimates[CM_SCIENCE] *= pcity->science_bonus / 100.0;
+  estimates[CM_SHIELD] *= pcity->common.shield_bonus / 100.0;
+  estimates[CM_LUXURY] *= pcity->common.luxury_bonus / 100.0;
+  estimates[CM_GOLD] *= pcity->common.tax_bonus / 100.0;
+  estimates[CM_SCIENCE] *= pcity->common.science_bonus / 100.0;
 
   /* finally, sum it all up, weighted by the parameter, but give additional
    * weight to luxuries to take account of disorder/happy constraints */
@@ -1728,7 +1728,7 @@ struct cm_state *cm_init_state(city_t *pcity)
   struct cm_state *state = wc_malloc(sizeof(struct cm_state));
 
   freelog(LOG_CM_STATE, "creating cm_state for %s (size %d)",
-          pcity->name, pcity->pop_size);
+          pcity->common.name, pcity->common.pop_size);
 
   /* copy the arguments */
   state->pcity = pcity;
@@ -1749,12 +1749,12 @@ struct cm_state *cm_init_state(city_t *pcity)
   }
 
   /* We have no best solution yet, so its value is the worst possible. */
-  init_partial_solution(&state->best, numtypes, pcity->pop_size);
+  init_partial_solution(&state->best, numtypes, pcity->common.pop_size);
   state->best_value = worst_fitness();
 
   /* Initialize the current solution and choice stack to empty */
-  init_partial_solution(&state->current, numtypes, pcity->pop_size);
-  state->choice.stack = wc_malloc(pcity->pop_size
+  init_partial_solution(&state->current, numtypes, pcity->common.pop_size);
+  state->choice.stack = wc_malloc(pcity->common.pop_size
                                   * sizeof(*state->choice.stack));
   state->choice.size = 0;
 
@@ -1782,7 +1782,7 @@ static void begin_search(struct cm_state *state,
   state->best_value = worst_fitness();
   destroy_partial_solution(&state->current);
   init_partial_solution(&state->current, num_types(state),
-                        state->pcity->pop_size);
+                        state->pcity->common.pop_size);
   state->choice.size = 0;
 }
 
@@ -2008,12 +2008,12 @@ void cm_copy_result_from_city(const city_t *pcity,
   /* copy the map of where workers are */
   city_map_iterate(x, y) {
     result->worker_positions_used[x][y] =
-      (pcity->city_map[x][y] == C_TILE_WORKER);
+      (pcity->common.city_map[x][y] == C_TILE_WORKER);
   } city_map_iterate_end;
 
   /* copy the specialist counts */
   specialist_type_iterate(spec) {
-    result->specialists[spec] = pcity->specialists[spec];
+    result->specialists[spec] = pcity->common.specialists[spec];
   } specialist_type_iterate_end;
 
   /* find the surplus production numbers */
@@ -2145,29 +2145,29 @@ static void print_performance(struct one_perf *counts)
 void cm_print_city(const city_t *pcity)
 {
   freelog(LOG_NORMAL, "print_city(city='%s'(id=%d))",
-          pcity->name, pcity->id);
+          pcity->common.name, pcity->common.id);
   freelog(LOG_NORMAL,
           "  size=%d, entertainers=%d, scientists=%d, taxmen=%d",
-          pcity->pop_size, pcity->specialists[SP_ELVIS],
-          pcity->specialists[SP_SCIENTIST],
-          pcity->specialists[SP_TAXMAN]);
+          pcity->common.pop_size, pcity->common.specialists[SP_ELVIS],
+          pcity->common.specialists[SP_SCIENTIST],
+          pcity->common.specialists[SP_TAXMAN]);
   freelog(LOG_NORMAL, "  workers at:");
   my_city_map_iterate(pcity, x, y) {
-    if (pcity->city_map[x][y] == C_TILE_WORKER) {
+    if (pcity->common.city_map[x][y] == C_TILE_WORKER) {
       freelog(LOG_NORMAL, "    (%2d,%2d)", x, y);
     }
   } my_city_map_iterate_end;
 
   freelog(LOG_NORMAL, "  food    = %3d (%+3d)",
-          pcity->food_prod, pcity->food_surplus);
+          pcity->common.food_prod, pcity->common.food_surplus);
   freelog(LOG_NORMAL, "  shield  = %3d (%+3d)",
-          pcity->shield_prod, pcity->shield_surplus);
-  freelog(LOG_NORMAL, "  trade   = %3d", pcity->trade_prod);
+          pcity->common.shield_prod, pcity->common.shield_surplus);
+  freelog(LOG_NORMAL, "  trade   = %3d", pcity->common.trade_prod);
 
-  freelog(LOG_NORMAL, "  gold    = %3d (%+3d)", pcity->tax_total,
-          city_gold_surplus(pcity, pcity->tax_total));
-  freelog(LOG_NORMAL, "  luxury  = %3d", pcity->luxury_total);
-  freelog(LOG_NORMAL, "  science = %3d", pcity->science_total);
+  freelog(LOG_NORMAL, "  gold    = %3d (%+3d)", pcity->common.tax_total,
+          city_gold_surplus(pcity, pcity->common.tax_total));
+  freelog(LOG_NORMAL, "  luxury  = %3d", pcity->common.luxury_total);
+  freelog(LOG_NORMAL, "  science = %3d", pcity->common.science_total);
 }
 
 

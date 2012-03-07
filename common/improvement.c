@@ -278,8 +278,8 @@ static void fill_ranges_improv_lists(Impr_Status *equiv_list[IR_LAST],
   }
 
   if (pcity) {
-    equiv_list[IR_CITY] = (Impr_Status *) &pcity->improvements;
-    cont = map_get_continent(pcity->tile);
+    equiv_list[IR_CITY] = (Impr_Status *) &pcity->common.improvements;
+    cont = map_get_continent(pcity->common.tile);
     /* Negative continents mean ocean cities. */
   }
 
@@ -454,7 +454,7 @@ void mark_improvement(city_t *pcity, Impr_Type_id id,
   enum impr_range range;
   Impr_Status *improvements = NULL, *equiv_list[IR_LAST];
 
-  pcity->improvements[id] = status;
+  pcity->common.improvements[id] = status;
   range = improvement_types[id].equiv_range;
 
   /* Get the relevant improvement list */
@@ -489,7 +489,7 @@ void allot_island_improvs(void)
 
     /* Fill the lists with existent improvements with Island equiv_range */
     city_list_iterate(pplayer->cities, pcity) {
-      Continent_id cont = map_get_continent(pcity->tile);
+      Continent_id cont = map_get_continent(pcity->common.tile);
       Impr_Status *improvs =
         &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
 
@@ -498,7 +498,7 @@ void allot_island_improvs(void)
           continue;
         }
 
-        improvs[id] = pcity->improvements[id];
+        improvs[id] = pcity->common.improvements[id];
       } built_impr_iterate_end;
     } city_list_iterate_end;
   } players_iterate_end;
@@ -526,7 +526,7 @@ void improvements_update_obsolete(void)
       built_impr_iterate(pcity, i) {
         if (improvement_obsolete(pplayer, i)) {
           freelog(LOG_DEBUG,"%s in %s is obsolete",
-                  improvement_types[i].name, pcity->name);
+                  improvement_types[i].name, pcity->common.name);
           mark_improvement(pcity, i, I_OBSOLETE);
           did_mark = TRUE;
         }
@@ -564,18 +564,18 @@ void improvements_update_redundant(struct player *pplayer, city_t *pcity,
 #define CHECK_CITY_IMPR(_pcity)                                         \
   {                                                                     \
     built_impr_iterate((_pcity), i) {                                   \
-      if ((_pcity)->improvements[i] == I_OBSOLETE) {                    \
+      if ((_pcity)->common.improvements[i] == I_OBSOLETE) {             \
         continue;                                                       \
       }                                                                 \
                                                                         \
       if (improvement_redundant(city_owner(_pcity),                     \
                                 (_pcity), i, FALSE)) {                  \
         freelog(LOG_DEBUG,"%s in %s is redundant",                      \
-                improvement_types[i].name, (_pcity)->name);             \
+                improvement_types[i].name, (_pcity)->common.name);      \
         mark_improvement((_pcity), i, I_REDUNDANT);                     \
       } else {                                                          \
         freelog(LOG_DEBUG,"%s in %s is active!",                        \
-                improvement_types[i].name, (_pcity)->name);             \
+                improvement_types[i].name, (_pcity)->common.name);      \
         mark_improvement((_pcity), i, I_ACTIVE);                        \
       }                                                                 \
     } built_impr_iterate_end;                                           \
@@ -604,7 +604,7 @@ void improvements_update_redundant(struct player *pplayer, city_t *pcity,
   case IR_ISLAND:
     assert(cont > 0);
     city_list_iterate(pplayer->cities, pcity2) {
-      if (map_get_continent(pcity2->tile) == cont) {
+      if (map_get_continent(pcity2->common.tile) == cont) {
         CHECK_CITY_IMPR(pcity2);
       }
     } city_list_iterate_end;

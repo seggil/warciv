@@ -189,7 +189,7 @@ struct ai_city {
   int next_recalc; /* Only recalc every Nth turn */
 };
 
-typedef struct city_s {
+struct city_common {
   int id;
   int owner;
   struct tile *tile;
@@ -261,8 +261,11 @@ typedef struct city_s {
   int turn_founded;             /* In which turn was the city founded? */
 
   struct tile *rally_point;
+};
 
-  union {
+typedef struct city_s {
+  struct city_common common;
+  union tata_u {
     struct client_part_s {
       /* Only used at the client (the server is omniscient). */
       bool occupied;
@@ -306,7 +309,7 @@ typedef struct city_s {
       struct ai_city ai;
       bool debug;
     } server;
-  };
+  } u;
 
   /* Nothing behind the union please! */
 } city_t;
@@ -528,7 +531,7 @@ int city_pollution(city_t *pcity, int shield_total);
  */
 #define built_impr_iterate(m_pcity, m_i)                                      \
   impr_type_iterate(m_i) {                                                    \
-    if((m_pcity)->improvements[m_i] == I_NONE) {                              \
+    if((m_pcity)->common.improvements[m_i] == I_NONE) {                       \
       continue;                                                               \
     }
 

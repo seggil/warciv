@@ -853,7 +853,7 @@ static int num_continent_buildings(const struct player *pplayer,
     const city_t *pcity;
 
     pcity = player_find_city_by_id(pplayer, game.info.global_wonders[building]);
-    if (pcity && map_get_continent(pcity->tile) == continent) {
+    if (pcity && map_get_continent(pcity->common.tile) == continent) {
       return 1;
     }
   } else {
@@ -945,7 +945,7 @@ static int count_sources_in_range(enum target_type target,
     return num_player_buildings(target_player, source);
   case EFR_CONTINENT:
     {
-      int continent = map_get_continent(target_city->tile);
+      int continent = map_get_continent(target_city->common.tile);
 
       return num_continent_buildings(target_player, continent, source);
     }
@@ -1319,8 +1319,8 @@ int get_city_bonus_sources(struct effect_source_vector *sources,
 int get_current_construction_bonus(const city_t *pcity,
                                    enum effect_type effect_type)
 {
-  if (!pcity->is_building_unit) {
-    Impr_Type_id bldg = pcity->currently_building;
+  if (!pcity->common.is_building_unit) {
+    Impr_Type_id bldg = pcity->common.currently_building;
     int power = 0;
 
     effect_list_iterate(get_building_effects(bldg, effect_type), peffect) {

@@ -92,11 +92,11 @@ static struct pf_parameter *get_caravan_parameter(struct player *pplayer,
 static int calculate_default_move_cost(city_t *pcity1, city_t *pcity2)
 {
   struct pf_parameter *pparameter = get_caravan_parameter(city_owner(pcity1),
-                                                          pcity1->tile);
+                                                          pcity1->common.tile);
   struct path_finding_map *pmap = pf_create_map(pparameter);
   struct pf_position position;
 
-  if (!pf_get_position(pmap, pcity2->tile, &position)) {
+  if (!pf_get_position(pmap, pcity2->common.tile, &position)) {
     pf_destroy_map(pmap);
     return WC_INFINITY;
   }
@@ -135,13 +135,13 @@ static int base_calculate_trade_move_cost(struct unit *punit,
                                           city_t *pcity1,
                                           city_t *pcity2)
 {
-  if (punit->homecity == pcity1->id) {
-    return base_calculate_move_cost(punit, punit->tile, pcity2->tile);
-  } else if (punit->owner != pcity1->owner) {
+  if (punit->homecity == pcity1->common.id) {
+    return base_calculate_move_cost(punit, punit->tile, pcity2->common.tile);
+  } else if (punit->owner != pcity1->common.owner) {
     return WC_INFINITY;
   } else {
-    return base_calculate_move_cost(punit, punit->tile, pcity1->tile)
-           + base_calculate_move_cost(punit, pcity1->tile, pcity2->tile);
+    return base_calculate_move_cost(punit, punit->tile, pcity1->common.tile)
+           + base_calculate_move_cost(punit, pcity1->common.tile, pcity2->common.tile);
   }
 }
 
@@ -180,15 +180,15 @@ struct trade_route *game_trade_route_add(city_t *pcity1,
 
   if (game_trade_route_find(pcity1, pcity2)) {
     freelog(LOG_ERROR, "The trade route between %s and %s was already existant",
-            pcity1->name, pcity2->name);
+            pcity1->common.name, pcity2->common.name);
     return NULL;
   }
 
   struct trade_route *ptr = trade_route_new(pcity1, pcity2, NULL, TR_NONE);
 
   ptr->value = trade_between_cities(pcity1, pcity2);
-  trade_route_list_append(pcity1->trade_routes, ptr);
-  trade_route_list_append(pcity2->trade_routes, ptr);
+  trade_route_list_append(pcity1->common.trade_routes, ptr);
+  trade_route_list_append(pcity2->common.trade_routes, ptr);
 
   return ptr;
 }
@@ -203,8 +203,8 @@ void game_trade_route_remove(struct trade_route *ptr)
   }
 
   assert(ptr && ptr->pcity1 && ptr->pcity2);
-  trade_route_list_unlink(ptr->pcity1->trade_routes, ptr);
-  trade_route_list_unlink(ptr->pcity2->trade_routes, ptr);
+  trade_route_list_unlink(ptr->pcity1->common.trade_routes, ptr);
+  trade_route_list_unlink(ptr->pcity2->common.trade_routes, ptr);
   free(ptr);
 }
 
@@ -218,9 +218,9 @@ struct trade_route *game_trade_route_find(const city_t *pcity1,
     return NULL;
   }
 
-  bool same_owner = pcity1->owner == pcity2->owner;
+  bool same_owner = pcity1->common.owner == pcity2->common.owner;
 
-  trade_route_list_iterate(pcity1->trade_routes, ptr) {
+  trade_route_list_iterate(pcity1->common.trade_routes, ptr) {
     if (ptr->pcity2 == pcity2 || ((same_owner || ptr->status == TR_ESTABLISHED)
                                   && ptr->pcity1 == pcity2)) {
       return ptr;
@@ -239,7 +239,7 @@ int calculate_trade_move_cost(struct trade_route *ptr)
     return calculate_default_move_cost(ptr->pcity1, ptr->pcity2);
   }
 
-  if (ptr->pcity1->owner != ptr->pcity2->owner) {
+  if (ptr->pcity1->common.owner != ptr->pcity2->common.owner) {
     return base_calculate_trade_move_cost(ptr->punit, ptr->pcity1, ptr->pcity2);
   }
 
@@ -329,20 +329,20 @@ struct unit_order *make_unit_orders(struct trade_route *ptr, int *length)
   calculate_trade_move_cost(ptr); /* Maybe swap city1 and city2,
                                    * if it's faster */
 
-  if (ptr->punit->homecity != ptr->pcity1->id) {
+  if (ptr->punit->homecity != ptr->pcity1->common.id) {
     /* Goto city1 first */
     if (!add_move_orders(ptr->punit, orders, length, MAX_LEN_ROUTE,
-                         ptr->punit->tile, ptr->pcity1->tile)
+                         ptr->punit->tile, ptr->pcity1->common.tile)
         || *length >= MAX_LEN_ROUTE) {
       /* Too long path */
       return NULL;
     }
     /* N.B.: ORDER_HOMECITY order not possible in 2.0 :( */
-    ptile = ptr->pcity1->tile;
+    ptile = ptr->pcity1->common.tile;
   }
 
   if (!add_move_orders(ptr->punit, orders, length, MAX_LEN_ROUTE,
-                       ptile, ptr->pcity2->tile)) {
+                       ptile, ptr->pcity2->common.tile)) {
     /* Too long path */
     return NULL;
   }
@@ -435,7 +435,7 @@ static int get_real_trade_route_number(city_t *pcity)
 
   int count = 0;
 
-  trade_route_list_iterate(pcity->trade_routes, ptr) {
+  trade_route_list_iterate(pcity->common.trade_routes, ptr) {
     if (ptr->status > TR_PLANNED) {
       count++;
     }
@@ -603,7 +603,7 @@ static struct trade_route *add_trade_route_in_planning(
   if (!ptr || ptr != tcity2->trade_routes[c1]) {
     freelog(LOG_ERROR,
             "Trying to add a wrong trade route in the trade planning (%s - %s)",
-            tcity1->pcity->name, tcity2->pcity->name);
+            tcity1->pcity->common.name, tcity2->pcity->common.name);
     return NULL;
   }
 
@@ -821,14 +821,14 @@ struct trade_planning_calculation *trade_planning_calculation_new(
           && !cities_will_have_trade(tcity1->pcity, tcity2->pcity)) {
         struct trade_route *ptr = trade_route_new(tcity1->pcity, tcity2->pcity,
                                                   NULL, TR_PLANNED);
-        int distance = real_map_distance(tcity1->pcity->tile,
-                                         tcity2->pcity->tile);
+        int distance = real_map_distance(tcity1->pcity->common.tile,
+                                         tcity2->pcity->common.tile);
 
         if (pparameter && !map) {
-          pparameter->start_tile = pcity->tile;
+          pparameter->start_tile = pcity->common.tile;
           map = pf_create_map(pparameter);
         }
-        if (map && pf_get_position(map, tcity2->pcity->tile, &pos)) {
+        if (map && pf_get_position(map, tcity2->pcity->common.tile, &pos)) {
           ptr->move_cost = pos.total_MC;
           ptr->move_turns = COST_TO_TURNS(ptr);
         } else {
@@ -1085,9 +1085,9 @@ struct trade_route *get_next_trade_route_to_establish(struct unit *punit,
   struct unit *ounit;
 
   city_list_iterate(unit_owner(punit)->cities, pcity) {
-    trade_route_list_iterate(pcity->trade_routes, ptr) {
+    trade_route_list_iterate(pcity->common.trade_routes, ptr) {
       if (ptr->status == TR_ESTABLISHED
-          || (ptr->pcity2->owner != ptr->pcity1->owner
+          || (ptr->pcity2->common.owner != ptr->pcity1->common.owner
               && ptr->pcity2 == pcity)) {
         continue;
       }
@@ -1112,10 +1112,12 @@ struct trade_route *get_next_trade_route_to_establish(struct unit *punit,
       }
 
       /* Find the trade route to compare with */
-      if (internal_first && ptr->pcity2->owner != ptr->pcity1->owner) {
+      if (internal_first && ptr->pcity2->common.owner != ptr->pcity1->common.owner) {
         pptr = &etr;
-      } else if (homecity_first && (ptr->pcity1->id == punit->homecity
-                                    || ptr->pcity2->id == punit->homecity)) {
+      } else if (homecity_first
+                 && (ptr->pcity1->common.id == punit->homecity
+                     || ptr->pcity2->common.id == punit->homecity))
+      {
         pptr = &htr;
       } else {
         pptr = &btr;
@@ -1164,7 +1166,7 @@ struct trade_route *get_next_trade_route_to_establish(struct unit *punit,
 void game_remove_all_trade_routes(void)
 {
   cities_iterate(pcity) {
-    trade_route_list_iterate(pcity->trade_routes, ptr) {
+    trade_route_list_iterate(pcity->common.trade_routes, ptr) {
       game_trade_route_remove(ptr);
     } trade_route_list_iterate_end;
   } cities_iterate_end;

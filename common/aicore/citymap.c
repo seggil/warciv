@@ -67,9 +67,9 @@ void citymap_turn_init(struct player *pplayer)
 
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
-      map_city_radius_iterate(pcity->tile, ptile) {
+      map_city_radius_iterate(pcity->common.tile, ptile) {
         if (ptile->worked) {
-          citymap[ptile->index] = -(ptile->worked->id);
+          citymap[ptile->index] = -(ptile->worked->common.id);
         } else {
           citymap[ptile->index]++;
         }

@@ -85,7 +85,7 @@ bool player_owns_city(struct player *pplayer, city_t *pcity)
 {
   if (!pcity || !pplayer)
     return FALSE;                       /* better safe than sorry */
-  return (pcity->owner==pplayer->player_no);
+  return (pcity->common.owner==pplayer->player_no);
 }
 
 /***************************************************************
@@ -372,7 +372,7 @@ city_t *player_find_city_by_id(const struct player *pplayer,
     return NULL;
   }
 
-  if(pcity && (pcity->owner==pplayer->player_no)) {
+  if(pcity && (pcity->common.owner==pplayer->player_no)) {
     return pcity;
   } else {
     return NULL;
@@ -404,7 +404,7 @@ bool player_in_city_radius(struct player *pplayer, struct tile *ptile)
   city_t *pcity;
   map_city_radius_iterate(ptile, ptile1) {
     pcity = map_get_city(ptile1);
-    if (pcity && (pcity->owner == pplayer->player_no))
+    if (pcity && (pcity->common.owner == pplayer->player_no))
       return TRUE;
   } map_city_radius_iterate_end;
   return FALSE;
@@ -434,11 +434,11 @@ int player_get_expected_income(struct player *pplayer)
   /* City income/expenses. */
   city_list_iterate(pplayer->cities, pcity) {
     /* Gold suplus accounts for imcome plus building and unit upkeep. */
-    income += city_gold_surplus(pcity, pcity->tax_total);
+    income += city_gold_surplus(pcity, pcity->common.tax_total);
 
     /* Capitalization income. */
     if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
-      income += pcity->shield_stock + pcity->shield_surplus;
+      income += pcity->common.shield_stock + pcity->common.shield_surplus;
     }
   } city_list_iterate_end;
 
@@ -456,7 +456,7 @@ int player_get_expected_bulbs(struct player *pplayer)
   int bulbs = 0;
 
   city_list_iterate(pplayer->cities, pcity) {
-    bulbs += pcity->science_total;
+    bulbs += pcity->common.science_total;
   } city_list_iterate_end;
 
   return bulbs;

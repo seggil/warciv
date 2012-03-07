@@ -86,7 +86,7 @@ int player_distance_to_player(struct player *pplayer, struct player *target)
     int min_dist = WC_INFINITY;
 
     city_list_iterate(target->cities, c2) {
-      int dist = real_map_distance(c2->tile, pcity->tile);
+      int dist = real_map_distance(c2->common.tile, pcity->common.tile);
 
       if (min_dist > dist) {
         min_dist = dist;
@@ -106,9 +106,9 @@ int city_gold_worth(city_t *pcity)
 {
   int worth;
 
-  worth = pcity->pop_size * 150; /* reasonable base cost */
-  unit_list_iterate(pcity->units_supported, punit) {
-    if (same_pos(punit->tile, pcity->tile)) {
+  worth = pcity->common.pop_size * 150; /* reasonable base cost */
+  unit_list_iterate(pcity->common.units_supported, punit) {
+    if (same_pos(punit->tile, pcity->common.tile)) {
       Unit_Type_id id = unit_type(punit)->obsoleted_by;
 
       if (id >= 0 && can_build_unit_direct(pcity, id)) {

@@ -160,13 +160,14 @@ void game_remove_unit(struct unit *punit)
 
   pcity = player_find_city_by_id(unit_owner(punit), punit->homecity);
   if (pcity) {
-    unit_list_unlink(pcity->units_supported, punit);
+    unit_list_unlink(pcity->common.units_supported, punit);
   }
 
   if (pcity) {
-    freelog(LOG_DEBUG, "home city %s, %s, (%d %d)", pcity->name,
-            get_nation_name(city_owner(pcity)->nation), pcity->tile->x,
-            pcity->tile->y);
+    freelog(LOG_DEBUG, "home city %s, %s, (%d %d)", pcity->common.name,
+            get_nation_name(city_owner(pcity)->nation),
+            pcity->common.tile->x,
+            pcity->common.tile->y);
   }
 
   unit_list_unlink(punit->tile->units, punit);
@@ -185,17 +186,19 @@ void game_remove_unit(struct unit *punit)
 **************************************************************************/
 void game_remove_city(city_t *pcity)
 {
-  freelog(LOG_DEBUG, "game_remove_city %d", pcity->id);
-  freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,
-           get_nation_name(city_owner(pcity)->nation), pcity->tile->x,
-          pcity->tile->y);
+  freelog(LOG_DEBUG, "game_remove_city %d", pcity->common.id);
+  freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)",
+          pcity->common.name,
+          get_nation_name(city_owner(pcity)->nation),
+          pcity->common.tile->x,
+          pcity->common.tile->y);
 
   check_removed_city(pcity);
-  city_map_checked_iterate(pcity->tile, x, y, map_tile) {
+  city_map_checked_iterate(pcity->common.tile, x, y, map_tile) {
     set_worker_city(pcity, x, y, C_TILE_EMPTY);
   } city_map_checked_iterate_end;
   city_list_unlink(city_owner(pcity)->cities, pcity);
-  map_set_city(pcity->tile, NULL);
+  map_set_city(pcity->common.tile, NULL);
   idex_unregister_city(pcity);
   remove_city_virtual(pcity);
 }
@@ -456,7 +459,7 @@ void initialize_globals(void)
     city_list_iterate(plr->cities, pcity) {
       built_impr_iterate(pcity, i) {
         if (is_wonder(i)) {
-          game.info.global_wonders[i] = pcity->id;
+          game.info.global_wonders[i] = pcity->common.id;
         }
       } built_impr_iterate_end;
     } city_list_iterate_end;

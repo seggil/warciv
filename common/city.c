@@ -94,7 +94,7 @@ bool map_to_city_map(int *city_map_x, int *city_map_y,
                      const city_t *const pcity,
                      const struct tile *map_tile)
 {
-  return base_map_to_city_map(city_map_x, city_map_y, pcity->tile, map_tile);
+  return base_map_to_city_map(city_map_x, city_map_y, pcity->common.tile, map_tile);
 }
 
 /**************************************************************************
@@ -120,7 +120,7 @@ city. Returns true if the map position found is real.
 struct tile *city_map_to_map(const city_t *const pcity,
                              int city_map_x, int city_map_y)
 {
-  return base_city_map_to_map(pcity->tile, city_map_x, city_map_y);
+  return base_city_map_to_map(pcity->common.tile, city_map_x, city_map_y);
 }
 
 /**************************************************************************
@@ -217,17 +217,17 @@ void set_worker_city(city_t *pcity, int city_x, int city_y,
   struct tile *ptile;
 
   if ((ptile = city_map_to_map(pcity, city_x, city_y))) {
-    if (pcity->city_map[city_x][city_y] == C_TILE_WORKER
+    if (pcity->common.city_map[city_x][city_y] == C_TILE_WORKER
         && ptile->worked == pcity) {
       ptile->worked = NULL;
     }
-    pcity->city_map[city_x][city_y] = type;
+    pcity->common.city_map[city_x][city_y] = type;
     if (type == C_TILE_WORKER) {
       ptile->worked = pcity;
     }
   } else {
     assert(type == C_TILE_UNAVAILABLE);
-    pcity->city_map[city_x][city_y] = type;
+    pcity->common.city_map[city_x][city_y] = type;
   }
 }
 
@@ -241,7 +241,7 @@ enum city_tile_type get_worker_city(const city_t *pcity,
   if (!is_valid_city_coords(city_x, city_y)) {
     return C_TILE_UNAVAILABLE;
   }
-  return pcity->city_map[city_x][city_y];
+  return pcity->common.city_map[city_x][city_y];
 }
 
 /**************************************************************************
@@ -265,7 +265,7 @@ const char *get_impr_name_ex(const city_t *pcity, Impr_Type_id id)
   const char *state = NULL;
 
   if (pcity) {
-    switch (pcity->improvements[id]) {
+    switch (pcity->common.improvements[id]) {
     case I_REDUNDANT:   state = Q_("?redundant:*");     break;
     case I_OBSOLETE:    state = Q_("?obsolete:O");      break;
     default:                                            break;
@@ -292,12 +292,12 @@ const char *get_impr_name_ex(const city_t *pcity, Impr_Type_id id)
 **************************************************************************/
 int city_buy_cost(const city_t *pcity)
 {
-  int cost, build = pcity->shield_stock;
+  int cost, build = pcity->common.shield_stock;
 
-  if (pcity->is_building_unit) {
-    cost = unit_buy_gold_cost(pcity->currently_building, build);
+  if (pcity->common.is_building_unit) {
+    cost = unit_buy_gold_cost(pcity->common.currently_building, build);
   } else {
-    cost = impr_buy_gold_cost(pcity->currently_building, build);
+    cost = impr_buy_gold_cost(pcity->common.currently_building, build);
   }
   return cost;
 }
@@ -307,7 +307,7 @@ int city_buy_cost(const city_t *pcity)
 **************************************************************************/
 struct player *city_owner(const city_t *pcity)
 {
-  return (&game.players[pcity->owner]);
+  return (&game.players[pcity->common.owner]);
 }
 
 /**************************************************************************
@@ -330,15 +330,15 @@ bool city_has_terr_spec_gate(const city_t *pcity, Impr_Type_id id)
   }
 
   for (;*spec_gate!=S_NO_SPECIAL;spec_gate++) {
-    if (map_has_special(pcity->tile, *spec_gate) ||
-        is_special_near_tile(pcity->tile, *spec_gate)) {
+    if (map_has_special(pcity->common.tile, *spec_gate) ||
+        is_special_near_tile(pcity->common.tile, *spec_gate)) {
       return TRUE;
     }
   }
 
   for (; *terr_gate != T_NONE; terr_gate++) {
-    if (pcity->tile->terrain == *terr_gate
-        || is_terrain_near_tile(pcity->tile, *terr_gate)) {
+    if (pcity->common.tile->terrain == *terr_gate
+        || is_terrain_near_tile(pcity->common.tile, *terr_gate)) {
       return TRUE;
     }
   }
@@ -428,7 +428,7 @@ bool can_build_unit_direct(const city_t *pcity, Unit_Type_id id)
   }
 
   /* You can't build naval units inland. */
-  if (!is_ocean_near_tile(pcity->tile) && is_water_unit(id)) {
+  if (!is_ocean_near_tile(pcity->common.tile) && is_water_unit(id)) {
     return FALSE;
   }
   return TRUE;
@@ -464,7 +464,7 @@ bool can_eventually_build_unit(const city_t *pcity, Unit_Type_id id)
 
   /* Some units can be built only in certain cities -- for instance,
      ships may be built only in cities adjacent to ocean. */
-  if (!is_ocean_near_tile(pcity->tile) && is_water_unit(id)) {
+  if (!is_ocean_near_tile(pcity->common.tile) && is_water_unit(id)) {
     return FALSE;
   }
 
@@ -477,7 +477,7 @@ bool can_eventually_build_unit(const city_t *pcity, Unit_Type_id id)
 bool city_can_use_specialist(const city_t *pcity,
                              Specialist_type_id type)
 {
-  return pcity->pop_size >= game.ruleset_game.specialist_min_size[type];
+  return pcity->common.pop_size >= game.ruleset_game.specialist_min_size[type];
 }
 
 /****************************************************************************
@@ -485,7 +485,7 @@ bool city_can_use_specialist(const city_t *pcity,
 ****************************************************************************/
 bool city_can_change_build(const city_t *pcity)
 {
-  return !pcity->did_buy || pcity->shield_stock <= 0;
+  return !pcity->common.did_buy || pcity->common.shield_stock <= 0;
 }
 
 /**************************************************************************
@@ -494,7 +494,7 @@ bool city_can_change_build(const city_t *pcity)
 int city_population(const city_t *pcity)
 {
   /*  Sum_{i=1}^{n} i  ==  n*(n+1)/2  */
-  return pcity->pop_size * (pcity->pop_size + 1) * 5;
+  return pcity->common.pop_size * (pcity->common.pop_size + 1) * 5;
 }
 
 /**************************************************************************
@@ -505,7 +505,7 @@ bool city_got_building(const city_t *pcity, Impr_Type_id id)
   if (!improvement_exists(id)) {
     return FALSE;
   } else {
-    return (pcity->improvements[id] != I_NONE);
+    return (pcity->common.improvements[id] != I_NONE);
   }
 }
 
@@ -905,8 +905,8 @@ bool can_cities_trade(const city_t *pc1, const city_t *pc2)
   /* If you change the logic here, make sure to update the help in
    * helptext_unit(). */
   return (pc1 && pc2 && pc1 != pc2
-          && (pc1->owner != pc2->owner
-              || map_distance(pc1->tile, pc2->tile)
+          && (pc1->common.owner != pc2->common.owner
+              || map_distance(pc1->common.tile, pc2->common.tile)
                  >= game.traderoute_info.trademindist));
 }
 
@@ -989,11 +989,11 @@ static int base_trade_between_cities(const city_t *pc1, int trade_tile1,
       bonus = (trade_tile1 + trade_tile2 + 4) / 8;
 
       /* Double if on different continents. */
-      if (map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
+      if (map_get_continent(pc1->common.tile) != map_get_continent(pc2->common.tile)) {
         bonus *= 2;
       }
 
-      if (pc1->owner == pc2->owner) {
+      if (pc1->common.owner == pc2->common.owner) {
         bonus /= 2;
       }
     }
@@ -1008,11 +1008,11 @@ static int base_trade_between_cities(const city_t *pc1, int trade_tile1,
     if (pc1 && pc2) {
       bonus = (trade_tile1 + trade_tile2 + 4) / 8;
 
-      if (pc1->owner == pc2->owner) {
+      if (pc1->common.owner == pc2->common.owner) {
         bonus = bonus / 1.5;
       }
 
-      if (map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
+      if (map_get_continent(pc1->common.tile) != map_get_continent(pc2->common.tile)) {
         bonus *= 2;
       }
       if (city_got_building(pc1, find_improvement_by_name_orig(_("Airport")))
@@ -1039,7 +1039,8 @@ static int base_trade_between_cities(const city_t *pc1, int trade_tile1,
 **************************************************************************/
 int trade_between_cities(const city_t *pc1, const city_t *pc2)
 {
-  return base_trade_between_cities(pc1, pc1->tile_trade, pc2, pc2->tile_trade);
+  return base_trade_between_cities(pc1, pc1->common.tile_trade,
+                                   pc2, pc2->common.tile_trade);
 }
 
 /**************************************************************************
@@ -1083,7 +1084,7 @@ static bool tile_is_available_for_city(const city_t *pcity, int cx, int cy)
     return FALSE;
   }
 
-  if (ptile->worked->owner == pcity->owner) {
+  if (ptile->worked->common.owner == pcity->common.owner) {
     /* We still can toggle workers. */
     return TRUE;
   }
@@ -1124,7 +1125,7 @@ static int max_tile_trade(const city_t *pcity) {
 
   qsort(tile_trade, size, sizeof(*tile_trade), best_value);
 
-  for (i = 0; i < pcity->pop_size && i < size; i++) {
+  for (i = 0; i < pcity->common.pop_size && i < size; i++) {
     total += tile_trade[i];
   }
 
@@ -1168,7 +1169,7 @@ int get_caravan_enter_city_trade_bonus(const city_t *pc1,
   if (game.traderoute_info.caravanbonusstyle == 0) {
     /* Classic Warciv */
     /* Should this be real_map_distance? */
-    tb = real_map_distance(pc1->tile, pc2->tile) + 10;
+    tb = real_map_distance(pc1->common.tile, pc2->common.tile) + 10;
     tb = (tb * (max_trade_prod(pc1)
                 + max_trade_prod(pc2))) / 24;
 
@@ -1177,7 +1178,7 @@ int get_caravan_enter_city_trade_bonus(const city_t *pc1,
     tb *= 3;
   } else if (game.traderoute_info.caravanbonusstyle == 1) {
     /* Experimental logarithmic bonus */
-    bonus = pow(log(real_map_distance(pc1->tile, pc2->tile) + 20
+    bonus = pow(log(real_map_distance(pc1->common.tile, pc2->common.tile) + 20
                     + max_trade_prod(pc1) + max_trade_prod(pc2)) * 2, 2);
     tb = (int)bonus;
   }
@@ -1212,7 +1213,7 @@ int city_gold_surplus(const city_t *pcity, int tax_total)
     cost += improvement_upkeep(pcity, i);
   } built_impr_iterate_end;
 
-  unit_list_iterate(pcity->units_supported, punit) {
+  unit_list_iterate(pcity->common.units_supported, punit) {
     cost += punit->upkeep_gold;
   } unit_list_iterate_end;
 
@@ -1242,8 +1243,9 @@ bool city_got_citywalls(const city_t *pcity)
 **************************************************************************/
 bool city_happy(const city_t *pcity)
 {
-  return (pcity->people_happy[4] >= (pcity->pop_size + 1) / 2 &&
-          pcity->people_unhappy[4] == 0 && pcity->people_angry[4] == 0);
+  return (pcity->common.people_happy[4] >= (pcity->common.pop_size + 1) / 2
+          && pcity->common.people_unhappy[4] == 0
+          && pcity->common.people_angry[4] == 0);
 }
 
 /**************************************************************************
@@ -1252,8 +1254,8 @@ bool city_happy(const city_t *pcity)
 **************************************************************************/
 bool city_unhappy(const city_t *pcity)
 {
-  return (pcity->people_happy[4] <
-          pcity->people_unhappy[4] + 2 * pcity->people_angry[4]);
+  return (pcity->common.people_happy[4] <
+          pcity->common.people_unhappy[4] + 2 * pcity->common.people_angry[4]);
 }
 
 /**************************************************************************
@@ -1261,8 +1263,8 @@ bool city_unhappy(const city_t *pcity)
 **************************************************************************/
 bool base_city_celebrating(const city_t *pcity)
 {
-  return (pcity->pop_size >= get_gov_pcity(pcity)->rapture_size
-          && pcity->was_happy);
+  return (pcity->common.pop_size >= get_gov_pcity(pcity)->rapture_size
+          && pcity->common.was_happy);
 }
 
 /**************************************************************************
@@ -1280,7 +1282,7 @@ city_t *city_list_find_id(struct city_list *This, int id)
 {
   if (id != 0) {
     city_list_iterate(This, pcity) {
-      if (pcity->id == id) {
+      if (pcity->common.id == id) {
         return pcity;
       }
     } city_list_iterate_end;
@@ -1295,7 +1297,7 @@ city_t *city_list_find_id(struct city_list *This, int id)
 city_t *city_list_find_name(struct city_list *This, const char *name)
 {
   city_list_iterate(This, pcity) {
-    if (mystrcasecmp(name, pcity->name) == 0) {
+    if (mystrcasecmp(name, pcity->common.name) == 0) {
       return pcity;
     }
   } city_list_iterate_end;
@@ -1310,8 +1312,8 @@ Args are really (city_t**), to sort an array of pointers.
 **************************************************************************/
 int city_name_compare(const void *p1, const void *p2)
 {
-  return mystrcasecmp((*(const city_t**)p1)->name,
-                      (*(const city_t**)p2)->name);
+  return mystrcasecmp((*(const city_t**)p1)->common.name,
+                      (*(const city_t**)p2)->common.name);
 }
 
 /**************************************************************************
@@ -1321,7 +1323,7 @@ int city_name_compare(const void *p1, const void *p2)
 int citygov_free_shield(const city_t *pcity, struct government *gov)
 {
   if (gov->free_shield == G_CITY_SIZE_FREE) {
-    return pcity->pop_size;
+    return pcity->common.pop_size;
   } else {
     return gov->free_shield;
   }
@@ -1333,7 +1335,7 @@ int citygov_free_shield(const city_t *pcity, struct government *gov)
 int citygov_free_happy(const city_t *pcity, struct government *gov)
 {
   if (gov->free_happy == G_CITY_SIZE_FREE) {
-    return pcity->pop_size;
+    return pcity->common.pop_size;
   } else {
     return gov->free_happy;
   }
@@ -1345,7 +1347,7 @@ int citygov_free_happy(const city_t *pcity, struct government *gov)
 int citygov_free_food(const city_t *pcity, struct government *gov)
 {
   if (gov->free_food == G_CITY_SIZE_FREE) {
-    return pcity->pop_size;
+    return pcity->common.pop_size;
   } else {
     return gov->free_food;
   }
@@ -1358,7 +1360,7 @@ static int citygov_free_gold(const city_t *pcity,
                              struct government *gov)
 {
   if (gov->free_gold == G_CITY_SIZE_FREE) {
-    return pcity->pop_size;
+    return pcity->common.pop_size;
   } else {
     return gov->free_gold;
   }
@@ -1456,9 +1458,9 @@ int city_change_production_penalty(const city_t *pcity,
   enum production_class_type new_class;
   int unpenalized_shields = 0, penalized_shields = 0;
 
-  if (pcity->changed_from_is_unit)
+  if (pcity->common.changed_from_is_unit)
     orig_class=TYPE_UNIT;
-  else if (is_wonder(pcity->changed_from_id))
+  else if (is_wonder(pcity->common.changed_from_id))
     orig_class=TYPE_WONDER;
   else
     orig_class=TYPE_NORMAL_IMPROVEMENT;
@@ -1473,29 +1475,29 @@ int city_change_production_penalty(const city_t *pcity,
   /* Changing production is penalized under certain circumstances. */
   if (orig_class == new_class) {
     /* There's never a penalty for building something of the same class. */
-    unpenalized_shields = pcity->before_change_shields;
+    unpenalized_shields = pcity->common.before_change_shields;
   } else if (city_built_last_turn(pcity)) {
     /* Surplus shields from the previous production won't be penalized if
      * you change production on the very next turn.  But you can only use
      * up to the city's surplus amount of shields in this way. */
-    unpenalized_shields = MIN(pcity->last_turns_shield_surplus,
-                              pcity->before_change_shields);
-    penalized_shields = pcity->before_change_shields - unpenalized_shields;
+    unpenalized_shields = MIN(pcity->common.last_turns_shield_surplus,
+                              pcity->common.before_change_shields);
+    penalized_shields = pcity->common.before_change_shields - unpenalized_shields;
   } else {
     /* Penalize 50% of the production. */
-    penalized_shields = pcity->before_change_shields;
+    penalized_shields = pcity->common.before_change_shields;
   }
 
   /* Do not put penalty on these. It shouldn't matter whether you disband unit
      before or after changing production...*/
-  unpenalized_shields += pcity->disbanded_shields;
+  unpenalized_shields += pcity->common.disbanded_shields;
 
   /* Caravan shields are penalized (just as if you disbanded the caravan)
    * if you're not building a wonder. */
   if (new_class == TYPE_WONDER) {
-    unpenalized_shields += pcity->caravan_shields;
+    unpenalized_shields += pcity->common.caravan_shields;
   } else {
-    penalized_shields += pcity->caravan_shields;
+    penalized_shields += pcity->common.caravan_shields;
   }
 
   shield_stock_after_adjustment =
@@ -1511,7 +1513,7 @@ int city_change_production_penalty(const city_t *pcity,
 int city_turns_to_build(const city_t *pcity, int id, bool id_is_unit,
                         bool include_shield_stock)
 {
-  int city_shield_surplus = pcity->shield_surplus;
+  int city_shield_surplus = pcity->common.shield_surplus;
   int city_shield_stock = include_shield_stock ?
       city_change_production_penalty(pcity, id, id_is_unit) : 0;
   int improvement_cost = id_is_unit ?
@@ -1538,12 +1540,12 @@ int city_turns_to_build(const city_t *pcity, int id, bool id_is_unit,
 **************************************************************************/
 int city_turns_to_grow(const city_t *pcity)
 {
-  if (pcity->food_surplus > 0) {
-    return (city_granary_size(pcity->pop_size) - pcity->food_stock +
-            pcity->food_surplus - 1) / pcity->food_surplus;
-  } else if (pcity->food_surplus < 0) {
+  if (pcity->common.food_surplus > 0) {
+    return (city_granary_size(pcity->common.pop_size) - pcity->common.food_stock +
+            pcity->common.food_surplus - 1) / pcity->common.food_surplus;
+  } else if (pcity->common.food_surplus < 0) {
     /* turns before famine loss */
-    return -1 + (pcity->food_stock / pcity->food_surplus);
+    return -1 + (pcity->common.food_stock / pcity->common.food_surplus);
   } else {
     return WC_INFINITY;
   }
@@ -1818,7 +1820,7 @@ void get_tax_income(struct player *pplayer, int trade, int *sci,
 **************************************************************************/
 bool city_built_last_turn(const city_t *pcity)
 {
-  return pcity->turn_last_built + 1 >= game.info.turn;
+  return pcity->common.turn_last_built + 1 >= game.info.turn;
 }
 
 /**************************************************************************
@@ -1826,16 +1828,18 @@ bool city_built_last_turn(const city_t *pcity)
 **************************************************************************/
 static inline void set_tax_income(city_t *pcity)
 {
-  get_tax_income(city_owner(pcity), pcity->trade_prod, &pcity->science_total,
-                 &pcity->luxury_total, &pcity->tax_total);
+  get_tax_income(city_owner(pcity), pcity->common.trade_prod,
+                 &pcity->common.science_total,
+                 &pcity->common.luxury_total,
+                 &pcity->common.tax_total);
 
-  pcity->luxury_total += (pcity->specialists[SP_ELVIS]
-                          * game.ruleset_game.specialist_bonus[SP_ELVIS]);
-  pcity->science_total += (pcity->specialists[SP_SCIENTIST]
-                           * game.ruleset_game.specialist_bonus[SP_SCIENTIST]);
-  pcity->tax_total += (pcity->specialists[SP_TAXMAN]
-                        * game.ruleset_game.specialist_bonus[SP_TAXMAN]);
-  pcity->tax_total += get_city_tithes_bonus(pcity);
+  pcity->common.luxury_total += (pcity->common.specialists[SP_ELVIS]
+                                 * game.ruleset_game.specialist_bonus[SP_ELVIS]);
+  pcity->common.science_total += (pcity->common.specialists[SP_SCIENTIST]
+                                  * game.ruleset_game.specialist_bonus[SP_SCIENTIST]);
+  pcity->common.tax_total += (pcity->common.specialists[SP_TAXMAN]
+                              * game.ruleset_game.specialist_bonus[SP_TAXMAN]);
+  pcity->common.tax_total += get_city_tithes_bonus(pcity);
 }
 
 /**************************************************************************
@@ -1846,16 +1850,16 @@ static inline void set_tax_income(city_t *pcity)
 static void add_buildings_effect(city_t *pcity)
 {
   /* this is the place to set them */
-  pcity->tax_bonus = get_city_tax_bonus(pcity);
-  pcity->luxury_bonus = get_city_luxury_bonus(pcity);
-  pcity->science_bonus = get_city_science_bonus(pcity);
-  pcity->shield_bonus = get_city_shield_bonus(pcity);
+  pcity->common.tax_bonus = get_city_tax_bonus(pcity);
+  pcity->common.luxury_bonus = get_city_luxury_bonus(pcity);
+  pcity->common.science_bonus = get_city_science_bonus(pcity);
+  pcity->common.shield_bonus = get_city_shield_bonus(pcity);
 
-  pcity->shield_prod = (pcity->shield_prod * pcity->shield_bonus) / 100;
-  pcity->luxury_total = (pcity->luxury_total * pcity->luxury_bonus) / 100;
-  pcity->tax_total = (pcity->tax_total * pcity->tax_bonus) / 100;
-  pcity->science_total = (pcity->science_total * pcity->science_bonus) / 100;
-  pcity->shield_surplus = pcity->shield_prod;
+  pcity->common.shield_prod = (pcity->common.shield_prod * pcity->common.shield_bonus) / 100;
+  pcity->common.luxury_total = (pcity->common.luxury_total * pcity->common.luxury_bonus) / 100;
+  pcity->common.tax_total = (pcity->common.tax_total * pcity->common.tax_bonus) / 100;
+  pcity->common.science_total = (pcity->common.science_total * pcity->common.science_bonus) / 100;
+  pcity->common.shield_surplus = pcity->common.shield_prod;
 }
 
 /**************************************************************************
@@ -1863,10 +1867,10 @@ static void add_buildings_effect(city_t *pcity)
 **************************************************************************/
 static void happy_copy(city_t *pcity, int i)
 {
-  pcity->people_angry[i + 1] = pcity->people_angry[i];
-  pcity->people_unhappy[i + 1] = pcity->people_unhappy[i];
-  pcity->people_content[i + 1] = pcity->people_content[i];
-  pcity->people_happy[i + 1] = pcity->people_happy[i];
+  pcity->common.people_angry[i + 1] = pcity->common.people_angry[i];
+  pcity->common.people_unhappy[i + 1] = pcity->common.people_unhappy[i];
+  pcity->common.people_content[i + 1] = pcity->common.people_content[i];
+  pcity->common.people_happy[i + 1] = pcity->common.people_happy[i];
 }
 
 /**************************************************************************
@@ -1883,26 +1887,26 @@ static void citizen_happy_size(city_t *pcity)
   int content = content_citizens(city_owner(pcity));
 
   /* Create content citizens. Take specialists from their ranks. */
-  pcity->people_content[0] = MAX(0, MIN(pcity->pop_size, content) - specialists);
+  pcity->common.people_content[0] = MAX(0, MIN(pcity->common.pop_size, content) - specialists);
 
   /* Create angry citizens only if we have a negative number of possible
    * content citizens. This happens when empires grow really big. */
   if (game.info.angrycitizen == FALSE) {
-    pcity->people_angry[0] = 0;
+    pcity->common.people_angry[0] = 0;
   } else {
-    pcity->people_angry[0] = MIN(MAX(0, -content), pcity->pop_size - specialists);
+    pcity->common.people_angry[0] = MIN(MAX(0, -content), pcity->common.pop_size - specialists);
   }
 
   /* Create unhappy citizens. In the beginning, all who are not content,
    * specialists or angry are unhappy. This is changed by luxuries and
    * buildings later. */
-  pcity->people_unhappy[0] = (pcity->pop_size
-                           - specialists
-                           - pcity->people_content[0]
-                           - pcity->people_angry[0]);
+  pcity->common.people_unhappy[0] = (pcity->common.pop_size
+                                     - specialists
+                                     - pcity->common.people_content[0]
+                                     - pcity->common.people_angry[0]);
 
   /* No one is born happy. */
-  pcity->people_happy[0] = 0;
+  pcity->common.people_happy[0] = 0;
 }
 
 /**************************************************************************
@@ -1942,12 +1946,14 @@ static inline void citizen_luxury_happy(const city_t *pcity, int *luxuries,
 **************************************************************************/
 static inline void citizen_happy_luxury(city_t *pcity)
 {
-  int x = pcity->luxury_total;
+  int x = pcity->common.luxury_total;
 
   happy_copy(pcity, 0);
 
-  citizen_luxury_happy(pcity, &x, &pcity->people_angry[1], &pcity->people_unhappy[1],
-                       &pcity->people_happy[1], &pcity->people_content[1]);
+  citizen_luxury_happy(pcity, &x, &pcity->common.people_angry[1],
+                       &pcity->common.people_unhappy[1],
+                       &pcity->common.people_happy[1],
+                       &pcity->common.people_content[1]);
 }
 
 /**************************************************************************
@@ -1955,20 +1961,20 @@ static inline void citizen_happy_luxury(city_t *pcity)
 **************************************************************************/
 static inline void citizen_unhappy_units(city_t *pcity, int unhap)
 {
-  while (unhap > 0 && pcity->people_content[3] > 0) {
-    pcity->people_content[3]--;
-    pcity->people_unhappy[3]++;
+  while (unhap > 0 && pcity->common.people_content[3] > 0) {
+    pcity->common.people_content[3]--;
+    pcity->common.people_unhappy[3]++;
     unhap--;
   }
-  while (unhap >= 2 && pcity->people_happy[3] > 0) {
-    pcity->people_happy[3]--;
-    pcity->people_unhappy[3]++;
+  while (unhap >= 2 && pcity->common.people_happy[3] > 0) {
+    pcity->common.people_happy[3]--;
+    pcity->common.people_unhappy[3]++;
     unhap -= 2;
   }
   if (unhap > 0) {
-    if (pcity->people_happy[3] > 0) {   /* 1 unhap left */
-      pcity->people_happy[3]--;
-      pcity->people_content[3]++;
+    if (pcity->common.people_happy[3] > 0) {   /* 1 unhap left */
+      pcity->common.people_happy[3]--;
+      pcity->common.people_content[3]++;
       unhap--;
     }
     /* everyone is unhappy now, units don't make angry citizen */
@@ -1987,14 +1993,14 @@ static inline void citizen_content_buildings(city_t *pcity)
 
   /* make people content (but not happy):
      get rid of angry first, then make unhappy content. */
-  while (faces > 0 && pcity->people_angry[2] > 0) {
-    pcity->people_angry[2]--;
-    pcity->people_unhappy[2]++;
+  while (faces > 0 && pcity->common.people_angry[2] > 0) {
+    pcity->common.people_angry[2]--;
+    pcity->common.people_unhappy[2]++;
     faces--;
   }
-  while (faces > 0 && pcity->people_unhappy[2] > 0) {
-    pcity->people_unhappy[2]--;
-    pcity->people_content[2]++;
+  while (faces > 0 && pcity->common.people_unhappy[2] > 0) {
+    pcity->common.people_unhappy[2]--;
+    pcity->common.people_content[2]++;
     faces--;
   }
 }
@@ -2011,9 +2017,9 @@ static inline void citizen_happy_wonders(city_t *pcity)
   if ((mod = get_city_bonus(pcity, EFT_MAKE_HAPPY)) > 0) {
     bonus += mod;
 
-    while (bonus > 0 && pcity->people_content[4] > 0) {
-      pcity->people_content[4]--;
-      pcity->people_happy[4]++;
+    while (bonus > 0 && pcity->common.people_content[4] > 0) {
+      pcity->common.people_content[4]--;
+      pcity->common.people_happy[4]++;
       bonus--;
       /* well i'm not sure what to do with the rest,
          will let it make unhappy content */
@@ -2023,26 +2029,28 @@ static inline void citizen_happy_wonders(city_t *pcity)
   bonus += get_city_bonus(pcity, EFT_FORCE_CONTENT);
 
   /* get rid of angry first, then make unhappy content */
-  while (bonus > 0 && pcity->people_angry[4] > 0) {
-    pcity->people_angry[4]--;
-    pcity->people_unhappy[4]++;
+  while (bonus > 0 && pcity->common.people_angry[4] > 0) {
+    pcity->common.people_angry[4]--;
+    pcity->common.people_unhappy[4]++;
     bonus--;
   }
-  while (bonus > 0 && pcity->people_unhappy[4] > 0) {
-    pcity->people_unhappy[4]--;
-    pcity->people_content[4]++;
+  while (bonus > 0 && pcity->common.people_unhappy[4] > 0) {
+    pcity->common.people_unhappy[4]--;
+    pcity->common.people_content[4]++;
     bonus--;
   }
 
   if (get_city_bonus(pcity, EFT_NO_UNHAPPY) > 0) {
-    pcity->people_content[4] += pcity->people_unhappy[4] + pcity->people_angry[4];
-    pcity->people_unhappy[4] = 0;
-    pcity->people_angry[4] = 0;
+    pcity->common.people_content[4] += pcity->common.people_unhappy[4]
+                                       + pcity->common.people_angry[4];
+    pcity->common.people_unhappy[4] = 0;
+    pcity->common.people_angry[4] = 0;
   }
   if (government_has_flag(get_gov_pcity(pcity), G_NO_UNHAPPY_CITIZENS)) {
-    pcity->people_content[4] += pcity->people_unhappy[4] + pcity->people_angry[4];
-    pcity->people_unhappy[4] = 0;
-    pcity->people_angry[4] = 0;
+    pcity->common.people_content[4] += pcity->common.people_unhappy[4]
+                                       + pcity->common.people_angry[4];
+    pcity->common.people_unhappy[4] = 0;
+    pcity->common.people_angry[4] = 0;
   }
 }
 
@@ -2053,10 +2061,10 @@ static inline void citizen_happy_wonders(city_t *pcity)
 static inline void unhappy_city_check(city_t *pcity)
 {
   if (city_unhappy(pcity)) {
-    pcity->food_surplus = MIN(0, pcity->food_surplus);
-    pcity->tax_total = 0;
-    pcity->science_total = 0;
-    pcity->shield_surplus = MIN(0, pcity->shield_surplus);
+    pcity->common.food_surplus = MIN(0, pcity->common.food_surplus);
+    pcity->common.tax_total = 0;
+    pcity->common.science_total = 0;
+    pcity->common.shield_surplus = MIN(0, pcity->common.shield_surplus);
   }
 }
 
@@ -2077,7 +2085,7 @@ int city_pollution(city_t *pcity, int shield_total)
   /* Add one 1/4 pollution per citizen per tech, multiplied by the bonus. */
   mod = 100 + get_city_bonus(pcity, EFT_POLLU_POP_PCT);
   mod = MAX(0, mod);
-  pollution += (pcity->pop_size
+  pollution += (pcity->common.pop_size
                 * num_known_tech_with_flag(pplayer,
                                            TF_POPULATION_POLLUTION_INC)
                 * mod) / (4 * 100);
@@ -2114,24 +2122,25 @@ void get_food_trade_shields(const city_t *pcity, int *food, int *trade,
 **************************************************************************/
 static inline void set_food_trade_shields(city_t *pcity)
 {
-  pcity->food_surplus = 0;
-  pcity->shield_surplus = 0;
+  pcity->common.food_surplus = 0;
+  pcity->common.shield_surplus = 0;
 
-  get_food_trade_shields(pcity, &pcity->food_prod, &pcity->trade_prod,
-                         &pcity->shield_prod);
+  get_food_trade_shields(pcity, &pcity->common.food_prod,
+                         &pcity->common.trade_prod,
+                         &pcity->common.shield_prod);
 
-  pcity->tile_trade = pcity->trade_prod;
-  pcity->food_surplus = pcity->food_prod - pcity->pop_size * 2;
+  pcity->common.tile_trade = pcity->common.trade_prod;
+  pcity->common.food_surplus = pcity->common.food_prod - pcity->common.pop_size * 2;
 
   established_trade_routes_iterate(pcity, ptr) {
     ptr->value = trade_between_cities(ptr->pcity1, ptr->pcity2);
-    pcity->trade_prod += ptr->value;
+    pcity->common.trade_prod += ptr->value;
   } established_trade_routes_iterate_end;
-  pcity->corruption = city_corruption(pcity, pcity->trade_prod);
-  pcity->trade_prod -= pcity->corruption;
+  pcity->common.corruption = city_corruption(pcity, pcity->common.trade_prod);
+  pcity->common.trade_prod -= pcity->common.corruption;
 
-  pcity->shield_waste = city_waste(pcity, pcity->shield_prod);
-  pcity->shield_prod -= pcity->shield_waste;
+  pcity->common.shield_waste = city_waste(pcity, pcity->common.shield_prod);
+  pcity->common.shield_prod -= pcity->common.shield_waste;
 }
 
 /**************************************************************************
@@ -2167,29 +2176,29 @@ static inline void city_support(city_t *pcity,
    */
   if (g->martial_law_max > 0) {
     int city_units = 0;
-    unit_list_iterate(pcity->tile->units, punit) {
+    unit_list_iterate(pcity->common.tile->units, punit) {
       if (city_units < g->martial_law_max && is_military_unit(punit)
-          && punit->owner == pcity->owner)
+          && punit->owner == pcity->common.owner)
         city_units++;
     }
     unit_list_iterate_end;
     city_units *= g->martial_law_per;
     /* get rid of angry first, then make unhappy content */
-    while (city_units > 0 && pcity->people_angry[3] > 0) {
-      pcity->people_angry[3]--;
-      pcity->people_unhappy[3]++;
+    while (city_units > 0 && pcity->common.people_angry[3] > 0) {
+      pcity->common.people_angry[3]--;
+      pcity->common.people_unhappy[3]++;
       city_units--;
     }
-    while (city_units > 0 && pcity->people_unhappy[3] > 0) {
-      pcity->people_unhappy[3]--;
-      pcity->people_content[3]++;
+    while (city_units > 0 && pcity->common.people_unhappy[3] > 0) {
+      pcity->common.people_unhappy[3]--;
+      pcity->common.people_content[3]++;
       city_units--;
     }
   }
 
   /* loop over units, subtracting appropriate amounts of food, shields,
    * gold etc -- SKi */
-  unit_list_iterate(pcity->units_supported, this_unit) {
+  unit_list_iterate(pcity->common.units_supported, this_unit) {
     struct unit_type *ut = unit_type(this_unit);
     int shield_cost = utype_shield_cost(ut, g);
     int happy_cost = utype_happy_cost(ut, g);
@@ -2237,14 +2246,14 @@ static inline void city_support(city_t *pcity,
     if (shield_cost > 0) {
       adjust_city_free_cost(&free_shield, &shield_cost);
       if (shield_cost > 0) {
-        pcity->shield_surplus -= shield_cost;
+        pcity->common.shield_surplus -= shield_cost;
         this_unit->upkeep = shield_cost;
       }
     }
     if (food_cost > 0) {
       adjust_city_free_cost(&free_food, &food_cost);
       if (food_cost > 0) {
-        pcity->food_surplus -= food_cost;
+        pcity->common.food_surplus -= food_cost;
         this_unit->upkeep_food = food_cost;
       }
     }
@@ -2276,20 +2285,20 @@ void generic_city_refresh(city_t *pcity,
                           void (*send_unit_info) (struct player * pplayer,
                                                   struct unit * punit))
 {
-  int prev_tile_trade = pcity->tile_trade;
+  int prev_tile_trade = pcity->common.tile_trade;
 
   set_food_trade_shields(pcity);
   citizen_happy_size(pcity);
   set_tax_income(pcity);        /* calc base luxury, tax & bulbs */
   add_buildings_effect(pcity);  /* marketplace, library wonders.. */
-  pcity->pollution = city_pollution(pcity, pcity->shield_prod);
+  pcity->common.pollution = city_pollution(pcity, pcity->common.shield_prod);
   citizen_happy_luxury(pcity);  /* with our new found luxuries */
   citizen_content_buildings(pcity);     /* temple cathedral colosseum */
   city_support(pcity, send_unit_info);  /* manage settlers, and units */
   citizen_happy_wonders(pcity); /* happy wonders & fundamentalism */
   unhappy_city_check(pcity);
 
-  if (refresh_trade_route_cities && pcity->tile_trade != prev_tile_trade) {
+  if (refresh_trade_route_cities && pcity->common.tile_trade != prev_tile_trade) {
     established_trade_routes_iterate(pcity, ptr) {
       city_t *pcity2 = OTHER_CITY(ptr, pcity);
 
@@ -2339,12 +2348,12 @@ int city_corruption(const city_t *pcity, int trade)
   int fulltradesize = MAX(game.ruleset_control.notradesize,
                           game.ruleset_control.fulltradesize);
 
-  if (pcity->pop_size <= notradesize) {
+  if (pcity->common.pop_size <= notradesize) {
     trade_penalty = trade;
-  } else if (pcity->pop_size >= fulltradesize) {
+  } else if (pcity->common.pop_size >= fulltradesize) {
     trade_penalty = 0;
   } else {
-    trade_penalty = trade * (fulltradesize - pcity->pop_size) /
+    trade_penalty = trade * (fulltradesize - pcity->common.pop_size) /
       (fulltradesize - notradesize);
   }
 
@@ -2358,7 +2367,7 @@ int city_corruption(const city_t *pcity, int trade)
     if (!capital)
       dist = g->corruption_max_distance_cap;
     else {
-      int tmp = real_map_distance(capital->tile, pcity->tile);
+      int tmp = real_map_distance(capital->common.tile, pcity->common.tile);
       dist = MIN(g->corruption_max_distance_cap, tmp);
     }
   }
@@ -2395,7 +2404,7 @@ int city_waste(const city_t *pcity, int shields)
     if (!capital) {
       dist = g->waste_max_distance_cap;
     } else {
-      int tmp = real_map_distance(capital->tile, pcity->tile);
+      int tmp = real_map_distance(capital->common.tile, pcity->common.tile);
       dist = MIN(g->waste_max_distance_cap, tmp);
     }
   }
@@ -2418,7 +2427,7 @@ int city_specialists(const city_t *pcity)
   int count = 0;
 
   specialist_type_iterate(sp) {
-    count += pcity->specialists[sp];
+    count += pcity->common.specialists[sp];
   } specialist_type_iterate_end;
 
   return count;
@@ -2465,7 +2474,7 @@ void city_add_improvement(city_t *pcity, Impr_Type_id impr)
   }
 
   improvements_update_redundant(pplayer, pcity,
-                                map_get_continent(pcity->tile),
+                                map_get_continent(pcity->common.tile),
                                 improvement_types[impr].equiv_range);
 }
 
@@ -2479,12 +2488,12 @@ void city_remove_improvement(city_t *pcity,Impr_Type_id impr)
   struct player *pplayer = city_owner(pcity);
 
   freelog(LOG_DEBUG,"Improvement %s removed from city %s",
-          improvement_types[impr].name, pcity->name);
+          improvement_types[impr].name, pcity->common.name);
 
   mark_improvement(pcity, impr, I_NONE);
 
   improvements_update_redundant(pplayer, pcity,
-                                map_get_continent(pcity->tile),
+                                map_get_continent(pcity->common.tile),
                                 improvement_types[impr].equiv_range);
 }
 
@@ -2511,7 +2520,7 @@ void get_worker_on_map_position(const struct tile *ptile,
 **************************************************************************/
 bool is_city_option_set(const city_t *pcity, enum city_options option)
 {
-  return TEST_BIT(pcity->city_options, option);
+  return TEST_BIT(pcity->common.city_options, option);
 }
 
 /**************************************************************************
@@ -2547,14 +2556,14 @@ static size_t struct_city_size(void)
   if ( ! size ) {
     static city_t city;
 
-    size = sizeof(city) - MAX(sizeof(city.server), sizeof(city.client));
+    size = sizeof(city) - MAX(sizeof(city.u.server), sizeof(city.u.client));
 
     if ( is_server ) {
-      size += MAX(sizeof(city.server),
-                  abs(sizeof(city.server) - sizeof(city.client)));
+      size += MAX(sizeof(city.u.server),
+                  abs(sizeof(city.u.server) - sizeof(city.u.client)));
     } else {
-      size += MAX(sizeof(city.client),
-                  abs(sizeof(city.server) - sizeof(city.client)));
+      size += MAX(sizeof(city.u.client),
+                  abs(sizeof(city.u.server) - sizeof(city.u.client)));
     }
   }
   //valgrind & gcc, size is multiple of 8
@@ -2572,103 +2581,103 @@ city_t *create_city_virtual(struct player *pplayer, struct tile *ptile,
 
   pcity = wc_malloc(struct_city_size());
 
-  pcity->id = 0;
-  pcity->owner = pplayer->player_no;
-  pcity->tile = ptile;
-  sz_strlcpy(pcity->name, name);
-  pcity->pop_size = 1;
+  pcity->common.id = 0;
+  pcity->common.owner = pplayer->player_no;
+  pcity->common.tile = ptile;
+  sz_strlcpy(pcity->common.name, name);
+  pcity->common.pop_size = 1;
   specialist_type_iterate(sp) {
-    pcity->specialists[sp] = 0;
+    pcity->common.specialists[sp] = 0;
   } specialist_type_iterate_end;
-  pcity->specialists[SP_ELVIS] = 1;
-  pcity->people_happy[4] = 0;
-  pcity->people_content[4] = 1;
-  pcity->people_unhappy[4] = 0;
-  pcity->people_angry[4] = 0;
-  pcity->was_happy = FALSE;
-  pcity->food_stock = 0;
-  pcity->shield_stock = 0;
-  pcity->trade_prod = 0;
-  pcity->tile_trade = 0;
+  pcity->common.specialists[SP_ELVIS] = 1;
+  pcity->common.people_happy[4] = 0;
+  pcity->common.people_content[4] = 1;
+  pcity->common.people_unhappy[4] = 0;
+  pcity->common.people_angry[4] = 0;
+  pcity->common.was_happy = FALSE;
+  pcity->common.food_stock = 0;
+  pcity->common.shield_stock = 0;
+  pcity->common.trade_prod = 0;
+  pcity->common.tile_trade = 0;
 
   /* Initialise improvements list */
-  improvement_status_init(pcity->improvements,
-                          ARRAY_SIZE(pcity->improvements));
+  improvement_status_init(pcity->common.improvements,
+                          ARRAY_SIZE(pcity->common.improvements));
 
   /* Set up the worklist */
-  init_worklist(&pcity->worklist);
+  init_worklist(&pcity->common.worklist);
 
   {
     int u = best_role_unit(pcity, L_FIRSTBUILD);
 
     if (u < U_LAST && u >= 0) {
-      pcity->is_building_unit = TRUE;
-      pcity->currently_building = u;
+      pcity->common.is_building_unit = TRUE;
+      pcity->common.currently_building = u;
     } else {
-      pcity->is_building_unit = FALSE;
-      pcity->currently_building = game.ruleset_control.default_building;
+      pcity->common.is_building_unit = FALSE;
+      pcity->common.currently_building = game.ruleset_control.default_building;
     }
   }
-  pcity->turn_founded = game.info.turn;
-  pcity->did_buy = TRUE;
-  pcity->did_sell = FALSE;
-  pcity->airlift = FALSE;
+  pcity->common.turn_founded = game.info.turn;
+  pcity->common.did_buy = TRUE;
+  pcity->common.did_sell = FALSE;
+  pcity->common.airlift = FALSE;
 
-  pcity->turn_last_built = game.info.turn;
-  pcity->changed_from_id = pcity->currently_building;
-  pcity->changed_from_is_unit = pcity->is_building_unit;
-  pcity->before_change_shields = 0;
-  pcity->disbanded_shields = 0;
-  pcity->caravan_shields = 0;
-  pcity->last_turns_shield_surplus = 0;
-  pcity->anarchy = 0;
-  pcity->rapture = 0;
-  pcity->city_options = CITYOPT_DEFAULT;
+  pcity->common.turn_last_built = game.info.turn;
+  pcity->common.changed_from_id = pcity->common.currently_building;
+  pcity->common.changed_from_is_unit = pcity->common.is_building_unit;
+  pcity->common.before_change_shields = 0;
+  pcity->common.disbanded_shields = 0;
+  pcity->common.caravan_shields = 0;
+  pcity->common.last_turns_shield_surplus = 0;
+  pcity->common.anarchy = 0;
+  pcity->common.rapture = 0;
+  pcity->common.city_options = CITYOPT_DEFAULT;
 
-  pcity->corruption = 0;
-  pcity->shield_waste = 0;
-  pcity->shield_bonus = 100;
-  pcity->luxury_bonus = 100;
-  pcity->tax_bonus = 100;
-  pcity->science_bonus = 100;
+  pcity->common.corruption = 0;
+  pcity->common.shield_waste = 0;
+  pcity->common.shield_bonus = 100;
+  pcity->common.luxury_bonus = 100;
+  pcity->common.tax_bonus = 100;
+  pcity->common.science_bonus = 100;
 
-  pcity->units_supported = unit_list_new();
+  pcity->common.units_supported = unit_list_new();
 
-  pcity->rally_point = NULL;
+  pcity->common.rally_point = NULL;
 
-  pcity->trade_routes = trade_route_list_new();
+  pcity->common.trade_routes = trade_route_list_new();
 
   if (is_server) {
-    pcity->server.workers_frozen = 0;
-    pcity->server.needs_arrange = FALSE;
-    pcity->server.steal = 0;
-    pcity->server.delayed_build = FALSE;
-    pcity->server.original = pplayer->player_no;
-    pcity->server.managed = FALSE;
-    memset(&pcity->server.parameter, 0, sizeof(pcity->server.parameter));
+    pcity->u.server.workers_frozen = 0;
+    pcity->u.server.needs_arrange = FALSE;
+    pcity->u.server.steal = 0;
+    pcity->u.server.delayed_build = FALSE;
+    pcity->u.server.original = pplayer->player_no;
+    pcity->u.server.managed = FALSE;
+    memset(&pcity->u.server.parameter, 0, sizeof(pcity->u.server.parameter));
 
-    pcity->server.ai.founder_want = 0; /* calculating this is really expensive */
-    pcity->server.ai.next_founder_want_recalc = 0; /* turns to recalc found_want */
-    pcity->server.ai.trade_want = 1; /* we always want some */
-    memset(pcity->server.ai.building_want, 0,
-           sizeof(pcity->server.ai.building_want));
-    pcity->server.ai.danger = 0;
-    pcity->server.ai.urgency = 0;
-    pcity->server.ai.grave_danger = 0;
-    pcity->server.ai.wallvalue = 0;
-    pcity->server.ai.downtown = 0;
-    pcity->server.ai.invasion = 0;
-    pcity->server.ai.bcost = 0;
-    pcity->server.ai.attack = 0;
-    pcity->server.ai.next_recalc = 0;
-    pcity->server.debug = FALSE;
+    pcity->u.server.ai.founder_want = 0; /* calculating this is really expensive */
+    pcity->u.server.ai.next_founder_want_recalc = 0; /* turns to recalc found_want */
+    pcity->u.server.ai.trade_want = 1; /* we always want some */
+    memset(pcity->u.server.ai.building_want, 0,
+           sizeof(pcity->u.server.ai.building_want));
+    pcity->u.server.ai.danger = 0;
+    pcity->u.server.ai.urgency = 0;
+    pcity->u.server.ai.grave_danger = 0;
+    pcity->u.server.ai.wallvalue = 0;
+    pcity->u.server.ai.downtown = 0;
+    pcity->u.server.ai.invasion = 0;
+    pcity->u.server.ai.bcost = 0;
+    pcity->u.server.ai.attack = 0;
+    pcity->u.server.ai.next_recalc = 0;
+    pcity->u.server.debug = FALSE;
   } else {
-    pcity->client.occupied = FALSE;
-    pcity->client.happy = pcity->client.unhappy = FALSE;
-    pcity->client.colored = FALSE;
-    pcity->client.traderoute_drawing_disabled = FALSE;
-    pcity->client.info_units_supported = NULL;
-    pcity->client.info_units_present = NULL;
+    pcity->u.client.occupied = FALSE;
+    pcity->u.client.happy = pcity->u.client.unhappy = FALSE;
+    pcity->u.client.colored = FALSE;
+    pcity->u.client.traderoute_drawing_disabled = FALSE;
+    pcity->u.client.info_units_supported = NULL;
+    pcity->u.client.info_units_present = NULL;
   }
 
   return pcity;
@@ -2680,20 +2689,20 @@ city_t *create_city_virtual(struct player *pplayer, struct tile *ptile,
 **************************************************************************/
 void remove_city_virtual(city_t *pcity)
 {
-  unit_list_free(pcity->units_supported);
-  if (pcity->trade_routes) {
-    if (trade_route_list_size(pcity->trade_routes) > 0) {
+  unit_list_free(pcity->common.units_supported);
+  if (pcity->common.trade_routes) {
+    if (trade_route_list_size(pcity->common.trade_routes) > 0) {
       freelog(LOG_ERROR, "The trade route list of %s (%d) was not empty.",
-              pcity->name, pcity->id);
+              pcity->common.name, pcity->common.id);
     }
-    trade_route_list_free(pcity->trade_routes);
+    trade_route_list_free(pcity->common.trade_routes);
   }
   if (!is_server) {
-    if (pcity->client.info_units_supported) {
-      unit_list_free(pcity->client.info_units_supported);
+    if (pcity->u.client.info_units_supported) {
+      unit_list_free(pcity->u.client.info_units_supported);
     }
-    if (pcity->client.info_units_present) {
-      unit_list_free(pcity->client.info_units_present);
+    if (pcity->u.client.info_units_present) {
+      unit_list_free(pcity->u.client.info_units_present);
     }
   }
   free(pcity);
