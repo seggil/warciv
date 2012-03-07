@@ -255,7 +255,7 @@ void popup_notify_goto_dialog(const char *headline, const char *lines,
 
     pcity = map_get_city(ptile);
     gtk_widget_set_sensitive(popcity_command,
-      (pcity && pcity->owner == get_player_idx()));
+        (pcity && pcity->common.owner == get_player_idx()));
   }
 
   g_object_set_data(G_OBJECT(shell), "tile", ptile);
@@ -752,7 +752,7 @@ void popup_incite_dialog(city_t *pcity, int cost)
     shell = gtk_message_dialog_new(NULL, 0,
                                    GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
                                    _("You can't incite a revolt in %s."),
-                                   pcity->name);
+                                   pcity->common.name);
     gtk_window_set_title(GTK_WINDOW(shell), _("City can't be incited!"));
     setup_dialog(shell, toplevel);
   } else if (gold >= cost) {
@@ -787,9 +787,11 @@ static void diplomat_keep_moving_callback(GtkWidget *w, gpointer data)
   struct unit *punit;
   city_t *pcity;
 
-  if( (punit=find_unit_by_id(diplomat_id))
+  punit=find_unit_by_id(diplomat_id);
+  if( punit
       && (pcity=find_city_by_id(diplomat_target_id))
-      && !same_pos(punit->tile, pcity->tile)) {
+      && !same_pos(punit->tile, pcity->common.tile))
+  {
     request_diplomat_action(DIPLOMAT_MOVE, diplomat_id,
                             diplomat_target_id, 0);
   }
@@ -829,10 +831,11 @@ void popup_diplomat_dialog(struct unit *punit, struct tile *dest_tile)
   if ((pcity = map_get_city(dest_tile))) {
     /* Spy/Diplomat acting against a city */
 
-    diplomat_target_id = pcity->id;
+    diplomat_target_id = pcity->common.id;
     my_snprintf(buf, sizeof(buf),
                 _("Your %s has arrived at %s.\nWhat is your command?"),
-                unit_name(punit->type), pcity->name);
+                unit_name(punit->type),
+                pcity->common.name);
 
     if (!unit_flag(punit, F_SPY)){
       shl = popup_message_dialog(GTK_WINDOW(toplevel),
@@ -976,10 +979,11 @@ void popup_caravan_dialog(struct unit *punit,
 
   my_snprintf(buf, sizeof(buf),
               _("Your caravan from %s reaches the city of %s.\nWhat now?"),
-              phomecity->name, pdestcity->name);
+              phomecity->common.name,
+              pdestcity->common.name);
 
-  caravan_city_id=pdestcity->id; /* callbacks need these */
-  caravan_unit_id=punit->id;
+  caravan_city_id = pdestcity->common.id; /* callbacks need these */
+  caravan_unit_id = punit->id;
 
   can_trade = can_cities_trade(phomecity, pdestcity);
   can_establish = can_trade
@@ -1319,12 +1323,12 @@ static void unit_select_append(struct unit *punit, GtkTreeIter *it,
 
   gtk_tree_store_append(unit_select_store, it, parent);
   gtk_tree_store_set(unit_select_store, it,
-      0, punit->id,
-      1, pix,
-      2, _(ptype->name),
-          3, (pcity?pcity->name:""),
-          4, _(ptype->veteran[punit->veteran].name),
-      -1);
+                     0, punit->id,
+                     1, pix,
+                     2, _(ptype->name),
+                     3, (pcity ? pcity->common.name : ""),
+                     4, _(ptype->veteran[punit->veteran].name),
+                     -1);
   g_object_unref(pix);
 
   if (punit == get_unit_in_focus()) {

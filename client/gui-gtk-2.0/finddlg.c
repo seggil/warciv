@@ -140,7 +140,7 @@ static void update_find_dialog(GtkListStore *store)
         gtk_list_store_append(store, &it);
 
         g_value_init(&value, G_TYPE_STRING);
-        g_value_set_static_string(&value, pcity->name);
+        g_value_set_static_string(&value, pcity->common.name);
         gtk_list_store_set_value(store, &it, 0, &value);
         g_value_unset(&value);
 
@@ -167,7 +167,7 @@ static void find_response(struct gui_dialog *dlg, int response)
       gtk_tree_model_get(model, &it, 1, &pcity, -1);
 
       if (pcity) {
-        pos = pcity->tile;
+        pos = pcity->common.tile;
       }
     }
   }
@@ -200,7 +200,7 @@ static void find_selection_callback(GtkTreeSelection *selection,
 
   if (pcity) {
     can_slide = FALSE;
-    center_tile_mapcanvas(pcity->tile);
+    center_tile_mapcanvas(pcity->common.tile);
     can_slide = TRUE;
   }
 }

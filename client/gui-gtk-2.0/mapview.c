@@ -879,7 +879,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 
       if (draw_city_growth
           && (client_is_global_observer()
-              || pcity->owner == get_player_idx())) {
+              || pcity->common.owner == get_player_idx())) {
         /* We need to know the size of the growth text before
            drawing anything. */
         pango_layout_set_font_description(layout, city_productions_font);
@@ -894,7 +894,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
       }
       if (draw_city_traderoutes
           && (client_is_global_observer()
-              || pcity->owner == get_player_idx())) {
+              || pcity->common.owner == get_player_idx())) {
         /* We need to know the size of the trade routes text before
            drawing anything. */
         pango_layout_set_font_description (layout, city_productions_font);
@@ -924,7 +924,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 
       if (draw_city_growth
           && (client_is_global_observer()
-              || pcity->owner == get_player_idx())) {
+              || pcity->common.owner == get_player_idx())) {
         pango_layout_set_font_description(layout, city_productions_font);
         pango_layout_set_text(layout, buffer2, -1);
         gdk_gc_set_foreground(civ_gc, colors_standard[color]);
@@ -941,7 +941,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 
       if (draw_city_traderoutes
           && (client_is_global_observer()
-              || pcity->owner == get_player_idx())) {
+              || pcity->common.owner == get_player_idx())) {
         pango_layout_set_font_description (layout, city_productions_font);
         pango_layout_set_text (layout, buffer3, -1);
         gdk_gc_set_foreground (civ_gc, colors_standard[color2]);
@@ -964,7 +964,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 
     if (draw_city_productions
         && (client_is_global_observer()
-            || pcity->owner == get_player_idx())) {
+            || pcity->common.owner == get_player_idx())) {
       get_city_mapview_production(pcity, buffer, sizeof(buffer));
 
       pango_layout_set_font_description(layout, city_productions_font);

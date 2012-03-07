@@ -313,14 +313,14 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
     menu = gtk_menu_new();
 
     for (j = 0; j < i; j++) {
-      item = gtk_menu_item_new_with_label(city_list_ptrs[j]->name);
+      item = gtk_menu_item_new_with_label(city_list_ptrs[j]->common.name);
 
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
       g_signal_connect(item, "activate",
                        G_CALLBACK(diplomacy_dialog_city_callback),
                          GINT_TO_POINTER((plr0->player_no << 24) |
                                          (plr1->player_no << 16) |
-                                         city_list_ptrs[j]->id));
+                                         city_list_ptrs[j]->common.id));
     }
     free(city_list_ptrs);
 

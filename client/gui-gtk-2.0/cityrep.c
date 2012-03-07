@@ -436,7 +436,7 @@ static void sell_impr_iterate(GtkTreeModel *model,
   pcity = find_city_by_id(id);
   impr_id = cid_id(sd->cid);
 
-  if (!pcity->did_sell && city_got_building(pcity, impr_id)) {
+  if (!pcity->common.did_sell && city_got_building(pcity, impr_id)) {
     sd->count++;
     sd->gold += impr_sell_gold(impr_id);
     city_sell_improvement(pcity, impr_id);
@@ -1067,7 +1067,7 @@ static void city_select_coastal_callback(GtkMenuItem *item, gpointer data)
     itree_get(&it, 0, &res, -1);
     pcity = res;
 
-    if (is_ocean_near_tile(pcity->tile)) {
+    if (is_ocean_near_tile(pcity->common.tile)) {
       itree_select(city_selection, &it);
     }
   }
@@ -1092,8 +1092,8 @@ static void same_island_iterate(GtkTreeModel *model, GtkTreePath *path,
     itree_get(&it, 0, &res, -1);
     pcity = res;
 
-    if (map_get_continent(pcity->tile)
-        == map_get_continent(selectedcity->tile)) {
+    if (map_get_continent(pcity->common.tile)
+        == map_get_continent(selectedcity->common.tile)) {
       itree_select(city_selection, &it);
     }
   }
@@ -1125,11 +1125,11 @@ static void city_select_building_callback(GtkMenuItem *item, gpointer data)
     itree_get(&it, 0, &res, -1);
     pcity = res;
 
-    if ( (which == TYPE_UNIT && pcity->is_building_unit)
-         || (which == TYPE_NORMAL_IMPROVEMENT && !pcity->is_building_unit
-             && !is_wonder(pcity->currently_building))
-         || (which == TYPE_WONDER && !pcity->is_building_unit
-             && is_wonder(pcity->currently_building)) ) {
+    if ( (which == TYPE_UNIT && pcity->common.is_building_unit)
+         || (which == TYPE_NORMAL_IMPROVEMENT && !pcity->common.is_building_unit
+             && !is_wonder(pcity->common.currently_building))
+         || (which == TYPE_WONDER && !pcity->common.is_building_unit
+             && is_wonder(pcity->common.currently_building)) ) {
       itree_select(city_selection, &it);
     }
   }
@@ -1187,11 +1187,11 @@ static void remove_cur_prod_iterate(GtkTreeModel *model,
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
 
-  if (worklist_is_empty(&pcity->worklist)) {
+  if (worklist_is_empty(&pcity->common.worklist)) {
     return;
   }
 
-  copy_worklist(&wl, &pcity->worklist);
+  copy_worklist(&wl, &pcity->common.worklist);
   city_change_production(pcity, wl.wlefs[0] == WEF_UNIT, wl.wlids[0]);
   worklist_advance(&wl);
   city_set_worklist(pcity, &wl);
@@ -1283,7 +1283,7 @@ static void worklist_last_worklist_iterate(GtkTreeModel *model,
 
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
-  worklist_insert_worklist(&wl, &pcity->worklist, pwl, -1);
+  worklist_insert_worklist(&wl, &pcity->common.worklist, pwl, -1);
   city_set_worklist(pcity, &wl);
 }
 
@@ -1319,9 +1319,9 @@ static void worklist_first_worklist_iterate(GtkTreeModel *model,
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
 
-  copy_worklist(&temp, &pcity->worklist);
-  old_id = pcity->currently_building;
-  old_is_unit = pcity->is_building_unit;
+  copy_worklist(&temp, &pcity->common.worklist);
+  old_id = pcity->common.currently_building;
+  old_is_unit = pcity->common.is_building_unit;
   worklist_insert(&temp, old_id, old_is_unit, 0);
 
   worklist_insert_worklist(&wl, &temp, pwl, 0);
@@ -1364,7 +1364,7 @@ static void worklist_next_worklist_iterate(GtkTreeModel *model,
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
 
-  worklist_insert_worklist(&wl, &pcity->worklist, pwl, 0);
+  worklist_insert_worklist(&wl, &pcity->common.worklist, pwl, 0);
   city_set_worklist(pcity, &wl);
 }
 
@@ -1403,7 +1403,7 @@ static void center_iterate(GtkTreeModel *model, GtkTreePath *path,
 
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
-  center_tile_mapcanvas(pcity->tile);
+  center_tile_mapcanvas(pcity->common.tile);
 }
 
 /****************************************************************
@@ -1419,7 +1419,7 @@ static void popup_iterate(GtkTreeModel *model, GtkTreePath *path,
   pcity = res;
 
   if (center_when_popup_city) {
-    center_tile_mapcanvas(pcity->tile);
+    center_tile_mapcanvas(pcity->common.tile);
   }
 
   popup_city_dialog(pcity, 0);
@@ -1506,7 +1506,7 @@ static void update_row(GtkTreeIter *row, city_t *pcity)
   g_value_unset(&value);
 
   g_value_init(&value, G_TYPE_INT);
-  g_value_set_int(&value, pcity->id);
+  g_value_set_int(&value, pcity->common.id);
   gtk_list_store_set_value(city_model, row, 1, &value);
   g_value_unset(&value);
 }
@@ -2057,7 +2057,7 @@ static void update_total_buy_cost(void)
       pcity = res;
       if (pcity != NULL) {
         /* Make sure the city still exists. */
-        pcity = find_city_by_id(pcity->id);
+        pcity = find_city_by_id(pcity->common.id);
       }
       if (pcity != NULL) {
         total += city_buy_cost(pcity);
@@ -2153,7 +2153,7 @@ void toggle_city_hilite(city_t *pcity, bool on_off)
     gint id;
     itree_get(&it, 1, &id, -1);
 
-    if (id == pcity->id) {
+    if (id == pcity->common.id) {
       on_off ?
         itree_select(city_selection, &it):
         itree_unselect(city_selection, &it);

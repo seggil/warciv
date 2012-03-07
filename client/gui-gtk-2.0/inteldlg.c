@@ -359,7 +359,7 @@ void update_intel_dialog(struct player *p)
             break;
           case LABEL_CAPITAL:
             pcity = find_palace(p);
-            sz_strlcpy(buf, (!pcity) ? _("(Unknown)") : pcity->name);
+            sz_strlcpy(buf, (!pcity) ? _("(Unknown)") : pcity->common.name);
             break;
           case LABEL_GOLD:
             my_snprintf(buf, sizeof(buf), "%d", p->economic.gold);

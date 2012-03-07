@@ -138,8 +138,8 @@ static void popit(GdkEventButton *event, struct tile *ptile)
         cross_head++;
       }
     }
-    if (ptile->city && ptile->city->rally_point) {
-      *cross_head = ptile->city->rally_point;
+    if (ptile->city && ptile->city->common.rally_point) {
+      *cross_head = ptile->city->common.rally_point;
       cross_head++;
     }
     *cross_head = ptile;

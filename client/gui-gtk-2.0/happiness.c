@@ -154,7 +154,7 @@ static void refresh_pixcomm(GtkPixcomm *dst, city_t *pcity, int index)
 {
   int i;
   struct citizen_type citizens[MAX_CITY_SIZE];
-  int num_citizens = pcity->pop_size;
+  int num_citizens = pcity->common.pop_size;
   int offset = MIN(SMALL_TILE_WIDTH, PIXCOMM_WIDTH / num_citizens);
 
   get_city_citizen_types(pcity, index, citizens);
@@ -214,7 +214,7 @@ static void happiness_dialog_update_cities(struct happiness_dialog
   int nleft = sizeof(buf);
 
   city_t *pcity = pdialog->pcity;
-  struct player *pplayer = &game.players[pcity->owner];
+  struct player *pplayer = &game.players[pcity->common.owner];
   struct government *g = get_gov_pcity(pcity);
   int cities = city_list_size(pplayer->cities);
   int content = game.info.unhappysize;
@@ -257,7 +257,7 @@ static void happiness_dialog_update_luxury(struct happiness_dialog
   city_t *pcity = pdialog->pcity;
 
   my_snprintf(bptr, nleft, _("Luxury: %d total."),
-              pcity->luxury_total);
+              pcity->common.luxury_total);
 
   gtk_label_set_text(GTK_LABEL(pdialog->hlabels[LUXURIES]), buf);
 }

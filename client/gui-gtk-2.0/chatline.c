@@ -241,7 +241,7 @@ follow_if_link(GtkWidget   *text_view,
         append_output_window(buf);
         continue;
       }
-      ptile = pcity->tile;
+      ptile = pcity->common.tile;
       break;
 
     case LINK_LOCATION:
@@ -503,7 +503,7 @@ static int parse_city_id_and_name_link(const char *str, GtkTextBuffer *buf,
     add_link_mark(LINK_CITY, id);
   }
 
-  my_snprintf(newtext, newtext_maxlen, "%s", pcity->name);
+  my_snprintf(newtext, newtext_maxlen, "%s", pcity->common.name);
 
   return (int) (p - str);
 }
@@ -553,7 +553,7 @@ static int parse_city_id_link(const char *str, GtkTextBuffer *buf,
 
   add_link_mark(LINK_CITY, id);
 
-  my_snprintf(newtext, newtext_maxlen, "%s", pcity->name);
+  my_snprintf(newtext, newtext_maxlen, "%s", pcity->common.name);
 
   return (int) (p - str);
 }
@@ -593,11 +593,15 @@ static int parse_city_link(const char *str, GtkTextBuffer *buf,
                                     "foreground", "green",
                                     "underline", PANGO_UNDERLINE_SINGLE,
                                     NULL);
-  g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_CITY));
-  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(pcity->id));
+  g_object_set_data(G_OBJECT(*tag),
+                    "link_type",
+                    GINT_TO_POINTER(LINK_CITY));
+  g_object_set_data(G_OBJECT(*tag),
+                    "city_id",
+                    GINT_TO_POINTER(pcity->common.id));
 
   if (draw_links) {
-    add_link_mark(LINK_CITY, pcity->id);
+    add_link_mark(LINK_CITY, pcity->common.id);
   }
 
   my_snprintf(newtext, newtext_maxlen, "%s", city_name);

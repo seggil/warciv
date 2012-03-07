@@ -1261,9 +1261,11 @@ void activeunits_report_dialog_update(void)
     }
     unit_list_iterate_end;
     city_list_iterate(pplayer->cities,pcity) {
-      if (pcity->is_building_unit &&
-          (unit_type_exists (pcity->currently_building)))
-        (unitarray[pcity->currently_building].building_count)++;
+      if (pcity->common.is_building_unit &&
+          (unit_type_exists (pcity->common.currently_building)))
+      {
+        (unitarray[pcity->common.currently_building].building_count)++;
+      }
     }
     city_list_iterate_end;
 

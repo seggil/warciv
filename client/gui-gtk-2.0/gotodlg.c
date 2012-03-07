@@ -96,7 +96,7 @@ static void goto_cmd_callback(GtkWidget *dlg, gint arg)
       if (pdestcity) {
                   multi_select_iterate(FALSE,punit)
                   {
-          send_goto_unit(punit, pdestcity->tile);
+          send_goto_unit(punit, pdestcity->common.tile);
                   } multi_select_iterate_end;
       }
     }
@@ -253,7 +253,9 @@ static void update_goto_dialog(GtkToggleButton *button)
       gtk_list_store_append(store, &it);
 
       /* FIXME: should use unit_can_airlift_to(). */
-      gtk_list_store_set(store, &it, 0, pcity->name, 1, pcity->airlift, -1);
+      gtk_list_store_set(store, &it, 0,
+                         pcity->common.name, 1,
+                         pcity->common.airlift, -1);
     }
     city_list_iterate_end;
   }
@@ -268,7 +270,7 @@ static void goto_selection_callback(GtkTreeSelection *selection, gpointer data)
 
   if((pdestcity = get_selected_city())) {
     struct unit *punit = get_unit_in_focus();
-    center_tile_mapcanvas(pdestcity->tile);
+    center_tile_mapcanvas(pdestcity->common.tile);
     if(punit && unit_can_airlift_to(punit, pdestcity)) {
       gtk_dialog_set_response_sensitive(GTK_DIALOG(dshell), CMD_AIRLIFT, TRUE);
       return;
