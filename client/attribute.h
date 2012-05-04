@@ -53,7 +53,7 @@ void attribute_restore(void);
 void attribute_set(int key, int id, int x, int y, size_t data_length,
                    const void *const data);
 size_t attribute_get(int key, int id, int x, int y, size_t max_data_length,
-                  void *data);
+                     void *data);
 
 /*
  * Special methods for units.
@@ -61,7 +61,7 @@ size_t attribute_get(int key, int id, int x, int y, size_t max_data_length,
 void attr_unit_set(enum attr_unit what, int unit_id, size_t data_length,
                    const void *const data);
 size_t attr_unit_get(enum attr_unit what, int unit_id, size_t max_data_length,
-                   void *data);
+                     void *data);
 void attr_unit_set_int(enum attr_unit what, int unit_id, int data);
 size_t attr_unit_get_int(enum attr_unit what, int unit_id, int *data);
 
@@ -82,7 +82,7 @@ size_t attr_city_get_int(enum attr_city what, int city_id, int *data);
 void attr_player_set(enum attr_player what, int player_id, size_t data_length,
                      const void *const data);
 size_t attr_player_get(enum attr_player what, int player_id,
-                    size_t max_data_length, void *data);
+                       size_t max_data_length, void *data);
 
 /*
  * Special methods for tiles.
@@ -90,5 +90,6 @@ size_t attr_player_get(enum attr_player what, int player_id,
 void attr_tile_set(enum attr_tile what, int x, int y, size_t data_length,
                    const void *const data);
 size_t attr_tile_get(enum attr_tile what, int x, int y, size_t max_data_length,
-                  void *data);
+                     void *data);
 #endif  /* WC_CLIENT_ATTRIBUTE_H */
+
