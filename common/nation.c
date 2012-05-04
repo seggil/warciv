@@ -224,9 +224,9 @@ static void nation_free(Nation_Type_id nation)
     p->leaders = NULL;
   }
 
-  if (p->class) {
-    free(p->class);
-    p->class = NULL;
+  if (p->class_) {
+    free(p->class_);
+    p->class_ = NULL;
   }
 
   if (p->legend) {

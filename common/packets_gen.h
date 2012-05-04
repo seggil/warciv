@@ -876,7 +876,7 @@ struct packet_ruleset_nation { /* 102 */
   char name_plural[MAX_LEN_NAME];
   char graphic_str[MAX_LEN_NAME];
   char graphic_alt[MAX_LEN_NAME];
-  char class[MAX_LEN_NAME];
+  char class_[MAX_LEN_NAME];
   char legend[MAX_LEN_MSG];
   int city_style;
   int init_techs[MAX_NUM_TECH_LIST];

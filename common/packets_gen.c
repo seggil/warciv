@@ -27162,7 +27162,7 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct co
     dio_get_string(&din, real_packet->graphic_alt, sizeof(real_packet->graphic_alt));
   }
   if (BV_ISSET(fields, 5)) {
-    dio_get_string(&din, real_packet->class, sizeof(real_packet->class));
+    dio_get_string(&din, real_packet->class_, sizeof(real_packet->class_));
   }
   if (BV_ISSET(fields, 6)) {
     dio_get_string(&din, real_packet->legend, sizeof(real_packet->legend));
@@ -27268,7 +27268,7 @@ static int send_packet_ruleset_nation_100(struct connection *pconn, const struct
   if(differ) {different++;}
   if(differ) {BV_SET(fields, 4);}
 
-  differ = (strcmp(old->class, real_packet->class) != 0);
+  differ = (strcmp(old->class_, real_packet->class_) != 0);
   if(differ) {different++;}
   if(differ) {BV_SET(fields, 5);}
 
@@ -27354,7 +27354,7 @@ static int send_packet_ruleset_nation_100(struct connection *pconn, const struct
     dio_put_string(&dout, real_packet->graphic_alt);
   }
   if (BV_ISSET(fields, 5)) {
-    dio_put_string(&dout, real_packet->class);
+    dio_put_string(&dout, real_packet->class_);
   }
   if (BV_ISSET(fields, 6)) {
     dio_put_string(&dout, real_packet->legend);
