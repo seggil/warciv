@@ -36,7 +36,10 @@
 static struct hash_table *attribute_hash = NULL;
 
 struct attr_key {
-  int key, id, x, y;
+  int key;
+  int id;
+  int x;
+  int y;
 };
 
 enum attribute_serial {
