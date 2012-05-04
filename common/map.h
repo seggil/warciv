@@ -56,21 +56,21 @@ struct tile {
   struct player *owner;         /* Player owning this tile, or NULL. */
   char *spec_sprite;            /* Maybe for scenarios? Not sure... -- Pepeto */
 
-  union {
+  union tile_u {
     /* Client specific datas. */
-    struct {
+    struct tile_client {
       enum known_type known;
       enum tile_hilite hilite;  /* Area Selection in client. */
     } client;
 
     /* Server specific datas. */
-    struct {
+    struct tile_server {
       unsigned int known;       /* A bitvector on the server side, an
                                  * enum known_type on the client side.
                                  * Player_no is index */
       int assigned;             /* these can save a lot of CPU usage -- Syela */
     } server;
-  };
+  } u;
 };
 
 /****************************************************************
@@ -124,7 +124,7 @@ struct tile_type {
 
   /* I would put the above special data in this struct too,
      but don't want to make unnecessary changes right now --dwp */
-  struct {
+  struct tile_type_special {
     char graphic_str[MAX_LEN_NAME];
     char graphic_alt[MAX_LEN_NAME];
   } special[2];
@@ -159,16 +159,18 @@ struct tile_type {
 struct civ_map {
   struct packet_map_info info;
 
-  enum direction8 valid_dirs[DIR8_COUNT], cardinal_dirs[DIR8_COUNT];
-  int num_valid_dirs, num_cardinal_dirs;
+  enum direction8 valid_dirs[DIR8_COUNT];
+  enum direction8 cardinal_dirs[DIR8_COUNT];
+  int num_valid_dirs;
+  int num_cardinal_dirs;
   struct iter_index *iterate_outwards_indices;
   int num_iterate_outwards_indices;
 
   int num_continents;
-  struct tile *tiles;
+  struct tile *board;
 
   /* Specific server datas. */
-  struct {
+  struct civ_map_server {
     int size; /* used to calculate [xy]size */
     int autosize; /* used to calculate [xy]size / player number */
     int seed;
@@ -464,7 +466,7 @@ extern struct terrain_misc terrain_control;
     if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
       continue;                                                             \
     }                                                                       \
-    tile_itr = map.tiles + map_pos_to_index(_x_itr, _y_itr);
+    tile_itr = map.board + map_pos_to_index(_x_itr, _y_itr);
 
 #define iterate_outward_dxy_end                                             \
   }                                                                         \

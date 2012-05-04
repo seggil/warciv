@@ -365,11 +365,11 @@ static void tile_init(struct tile *ptile)
   ptile->spec_sprite = NULL;
 
   if (is_server) {
-    ptile->server.known = 0;
-    ptile->server.assigned = 0;         /* Bitvector. */
+    ptile->u.server.known = 0;
+    ptile->u.server.assigned = 0;         /* Bitvector. */
   } else {
-    ptile->client.known = TILE_UNKNOWN;
-    ptile->client.hilite = HILITE_NONE; /* Area Selection in client. */
+    ptile->u.client.known = TILE_UNKNOWN;
+    ptile->u.client.hilite = HILITE_NONE; /* Area Selection in client. */
   }
 }
 

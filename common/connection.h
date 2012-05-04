@@ -225,26 +225,26 @@ struct connection {
   void (*outgoing_packet_notify) (struct connection * pc,
                                   int packet_type, int size,
                                   int request_id);
-  struct {
+  struct connection_phs {
     struct hash_table **sent;
     struct hash_table **received;
     int *variant;
   } phs;
 
 #ifdef USE_COMPRESSION
-  struct {
+  struct connection_compression {
     int frozen_level;
 
     struct byte_vector queue;
   } compression;
 #endif
-  struct {
+  struct connection_statistics {
     int bytes_send;
   } statistics;
 
-  union {
+  union connection_u {
     /* Specific client datas. */
-    struct {
+    struct connection_client {
       void (*notify_of_writable_data) (struct connection *pc,
                                        bool data_available_and_socket_full);
 
@@ -266,7 +266,7 @@ struct connection {
     } client;
 
     /* Specific server datas. */
-    struct {
+    struct connection_server {
       /*
        * "access_level" stores the access granted to the client
        * corresponding to this connection.
@@ -339,7 +339,7 @@ struct connection {
       bool observe_requested;
       struct player *observe_target;
     } server;
-  };
+  } u;
 };
 
 

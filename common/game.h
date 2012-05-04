@@ -81,7 +81,7 @@ struct civ_game {
   Impr_Type_id land_defend_building;
 
   /* Server side only */
-  struct {
+  struct civ_game_server {
     bool is_new_game;    /* TRUE for games never started */
     int version;         /* Savegame version */
     char id[MAX_ID_LEN]; /* server only */
@@ -153,7 +153,7 @@ struct civ_game {
     int watchtower_vision;
     int allowed_city_names;
 
-    struct {
+    struct civ_game_incite_cost {
       int improvement_factor;
       int unit_factor;
       int total_factor;
@@ -163,7 +163,7 @@ struct civ_game {
 
     /* Used by the map editor to control game_save;
      * could be used by the server too */
-    struct {
+    struct civ_gamesave_options {
       bool save_random;
       bool save_players;
       bool save_known;       /* Moading will just reveal the squares around
@@ -174,12 +174,12 @@ struct civ_game {
 
     int revolution_length; /* 0=> random length, else the fixated length */
 
-    struct {
+    struct civ_game_meta_info {
       bool user_message_set;
       char user_message[256];
     } meta_info;
 
-    struct {
+    struct civ_game_wcdb {
       /* Used to avoid duplicating game end condition checks. */
       enum game_outcomes outcome;
 

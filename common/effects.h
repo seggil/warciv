@@ -179,10 +179,10 @@ struct effect {
 
   /* An effect can have a single requirement.  The effect will only be
    * active if this requirement is met.  The req is one of several types. */
-  struct {
+  struct effect_req {
     enum effect_req_type type;                  /* requirement type */
 
-    union {
+    union effect_req_value {
       Tech_Type_id tech;                        /* requirement tech */
       int gov;                                  /* requirement government */
       Impr_Type_id building;                    /* requirement building */

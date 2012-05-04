@@ -164,7 +164,7 @@ struct unit {
 
   int transported_by;
   int occupy; /* number of units that occupy transporter */
-  struct {
+  struct unit_client {
     /* Equivalent to pcity->client.color.  Only for F_CITIES units. */
     bool colored;
     int color_index;
@@ -173,7 +173,7 @@ struct unit {
   bool has_orders;
   bool is_new;//it is new if it has never moved
   bool is_sleeping;
-  struct {
+  struct unit__orders {
     int length, index;
     bool repeat;        /* The path is to be repeated on completion. */
     bool vigilant;      /* Orders should be cleared if an enemy is met. */

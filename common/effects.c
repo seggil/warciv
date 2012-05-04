@@ -315,8 +315,8 @@ struct effect_group {
   Ruleset cache. The cache is created during ruleset loading and the data
   is organized to enable fast queries.
 **************************************************************************/
-static struct {
-  struct {
+static struct ruleset_cache_s {
+  struct ruleset_cache_effects {
     /* This cache shows for each effect, which buildings provide it. */
     struct building_vector buildings;
 
@@ -326,7 +326,7 @@ static struct {
   } effects[EFT_LAST];
 
   /* This cache shows for each building, which effect types it provides. */
-  struct {
+  struct ruleset_cache_building {
     struct effect_type_vector types;
   } buildings[B_LAST];
 } ruleset_cache;

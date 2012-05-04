@@ -95,7 +95,7 @@ struct nation_type {
 
   /* Following basically disabled -- Syela */
   /* Note the client doesn't use/have these. */
-  struct {
+  struct nation_type_goals {
     int tech[MAX_NUM_TECH_GOALS];               /* tech goals     */
     int wonder;                                 /* primary Wonder */
     int government;
@@ -106,14 +106,16 @@ struct team {
   int member_count;
   Team_Type_id id; /* equal to array index if active, else TEAM_NONE */
 
-  struct {
+  struct team_server {
     float score;
     float rank;
     int result;
-    struct {
-      double rating, rating_deviation;
-      double new_rating, new_rating_deviation;
-    } fcdb;
+    struct team_wcdb {
+      double rating;
+      double rating_deviation;
+      double new_rating;
+      double new_rating_deviation;
+    } wcdb;  /* warciv database */
   } server;
 };
 

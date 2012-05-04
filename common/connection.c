@@ -179,7 +179,7 @@ int read_socket_data(struct connection *pc,
   int sock;
 
   if (pc == NULL || buffer == NULL || !pc->used
-      || (is_server && pc->server.is_closing) || pc->sock < 0) {
+      || (is_server && pc->u.server.is_closing) || pc->sock < 0) {
     /* Hmm, not the best way to "ignore" a "bad" call
      * to this function. In any case, this situation
      * should not happen very often. */
@@ -234,7 +234,7 @@ static int write_socket_data(struct connection *pc,
   long err_no;
 
   if (pc == NULL || buf == NULL || buf->ndata <= 0
-      || !pc->used || (is_server && pc->server.is_closing)) {
+      || !pc->used || (is_server && pc->u.server.is_closing)) {
     return 0;
   }
 
@@ -299,8 +299,10 @@ int flush_connection_send_buffer_all(struct connection *pc)
 {
   int ret = 0;
 
-  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
-      || pc->send_buffer == NULL || pc->send_buffer->ndata <= 0) {
+  if (pc == NULL || !pc->used
+      || (is_server && pc->u.server.is_closing)
+      || pc->send_buffer == NULL || pc->send_buffer->ndata <= 0)
+  {
     return 0;
   }
 
@@ -308,8 +310,11 @@ int flush_connection_send_buffer_all(struct connection *pc)
 
   ret = write_socket_data(pc, pc->send_buffer);
 
-  if (!is_server && pc->client.notify_of_writable_data && pc->send_buffer) {
-    pc->client.notify_of_writable_data(pc, pc->send_buffer->ndata > 0);
+  if (!is_server
+      && pc->u.client.notify_of_writable_data
+      && pc->send_buffer)
+  {
+    pc->u.client.notify_of_writable_data(pc, pc->send_buffer->ndata > 0);
   }
 
   return ret;
@@ -324,7 +329,8 @@ static bool add_connection_data(struct connection *pc,
 {
   struct socket_packet_buffer *buf;
 
-  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
+  if (pc == NULL || !pc->used
+      || (is_server && pc->u.server.is_closing)
       || pc->send_buffer == NULL || data == NULL || len <= 0) {
     return TRUE;
   }
@@ -351,7 +357,8 @@ static bool add_connection_data(struct connection *pc,
 int send_connection_data(struct connection *pc, const unsigned char *data,
                          int len)
 {
-  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
+  if (pc == NULL || !pc->used
+      || (is_server && pc->u.server.is_closing)
       || pc->send_buffer == NULL || data == NULL || len <= 0) {
     return 0;
   }
@@ -375,8 +382,10 @@ int send_connection_data(struct connection *pc, const unsigned char *data,
 **************************************************************************/
 void connection_do_buffer(struct connection *pc)
 {
-  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
-      || pc->send_buffer == NULL) {
+  if (pc == NULL || !pc->used
+      || (is_server && pc->u.server.is_closing)
+      || pc->send_buffer == NULL)
+  {
     return;
   }
 
@@ -393,8 +402,10 @@ void connection_do_buffer(struct connection *pc)
 **************************************************************************/
 void connection_do_unbuffer(struct connection *pc)
 {
-  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
-      || pc->send_buffer == NULL) {
+  if (pc == NULL || !pc->used
+      || (is_server && pc->u.server.is_closing)
+      || pc->send_buffer == NULL)
+  {
     return;
   }
 
@@ -565,12 +576,12 @@ const char *conn_description(const struct connection *pconn)
   buffer[0] = '\0';
 
   if (pconn->username[0] != '\0') {
-    if (!is_server || !strcmp(pconn->addr, pconn->server.ipaddr)) {
+    if (!is_server || !strcmp(pconn->addr, pconn->u.server.ipaddr)) {
       my_snprintf(buffer, sizeof(buffer), _("%s from %s"),
                   pconn->username, pconn->addr);
     } else {
       my_snprintf(buffer, sizeof(buffer), _("%s from %s, ip %s"),
-                  pconn->username, pconn->addr, pconn->server.ipaddr);
+                  pconn->username, pconn->addr, pconn->u.server.ipaddr);
     }
   } else {
     sz_strlcpy(buffer, "server");
@@ -699,14 +710,14 @@ void connection_common_init(struct connection *pconn)
   pconn->statistics.bytes_send = 0;
   pconn->exit_state = ES_NONE;
   if (is_server) {
-    pconn->server.access_level = ALLOW_NONE;
-    pconn->server.granted_access_level = ALLOW_NONE;
-    pconn->server.ignore_list = ignore_list_new();
-    pconn->server.flood_timer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
-    pconn->server.flood_counter = 0.0;
-    pconn->server.flood_warning_level = 0;
-    pconn->server.observe_requested = FALSE;
-    pconn->server.observe_target = NULL;
+    pconn->u.server.access_level = ALLOW_NONE;
+    pconn->u.server.granted_access_level = ALLOW_NONE;
+    pconn->u.server.ignore_list = ignore_list_new();
+    pconn->u.server.flood_timer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
+    pconn->u.server.flood_counter = 0.0;
+    pconn->u.server.flood_warning_level = 0;
+    pconn->u.server.observe_requested = FALSE;
+    pconn->u.server.observe_target = NULL;
   }
 
   init_packet_hashs(pconn);
@@ -731,9 +742,9 @@ void connection_common_close(struct connection *pconn)
     my_closesocket(pconn->sock);
     pconn->sock = -1;
   }
-  if (is_server && pconn->server.adns_id > 0) {
-    adns_cancel(pconn->server.adns_id);
-    pconn->server.adns_id = -1;
+  if (is_server && pconn->u.server.adns_id > 0) {
+    adns_cancel(pconn->u.server.adns_id);
+    pconn->u.server.adns_id = -1;
   }
   pconn->used = FALSE;
   pconn->established = FALSE;
@@ -752,11 +763,11 @@ void connection_common_close(struct connection *pconn)
   free_packet_hashes(pconn);
 
   if (is_server) {
-    ignore_list_iterate(pconn->server.ignore_list, cp) {
+    ignore_list_iterate(pconn->u.server.ignore_list, cp) {
       conn_pattern_free(cp);
     } ignore_list_iterate_end;
-    ignore_list_free(pconn->server.ignore_list);
-    pconn->server.ignore_list = NULL;
+    ignore_list_free(pconn->u.server.ignore_list);
+    pconn->u.server.ignore_list = NULL;
   }
 }
 
@@ -891,7 +902,10 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
 {
   switch (cp->type) {
     case CPT_ADDRESS:
-      return is_server ? wildcardfit(cp->pattern, pconn->server.ipaddr) : FALSE;
+      if ( is_server )
+        return wildcardfit(cp->pattern, pconn->u.server.ipaddr);
+      else
+        return FALSE;
     case CPT_HOSTNAME:
       return wildcardfit(cp->pattern, pconn->addr);
     case CPT_USERNAME:
@@ -938,7 +952,7 @@ enum cmdlevel_id conn_get_access(const struct connection *pconn)
   if (!pconn || !is_server) {
     return ALLOW_NONE; /* Would not want to give hack on error... */
   }
-  return pconn->server.access_level;
+  return pconn->u.server.access_level;
 }
 
 /**************************************************************************
@@ -947,6 +961,6 @@ enum cmdlevel_id conn_get_access(const struct connection *pconn)
 **************************************************************************/
 bool conn_is_valid(const struct connection *pconn)
 {
-  return (pconn && pconn->used
-          && !(is_server && pconn->server.is_closing));
+  return pconn && pconn->used
+         && !(is_server && pconn->u.server.is_closing);
 }
