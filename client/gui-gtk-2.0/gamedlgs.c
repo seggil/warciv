@@ -404,7 +404,7 @@ static struct extra_option_list *extra_options;
 void fullscreen_mode_callback(struct client_option *poption)
 {
   assert(poption->type == COT_BOOLEAN);
-  if (*poption->boolean.pvalue) {
+  if (*poption->u.boolean.pvalue) {
     gtk_window_fullscreen(GTK_WINDOW(toplevel));
   } else {
     gtk_window_unfullscreen(GTK_WINDOW(toplevel));
@@ -417,7 +417,7 @@ void fullscreen_mode_callback(struct client_option *poption)
 void map_scrollbars_callback(struct client_option *poption)
 {
   assert(poption->type == COT_BOOLEAN);
-  if (*poption->boolean.pvalue) {
+  if (*poption->u.boolean.pvalue) {
     gtk_widget_show(map_horizontal_scrollbar);
     gtk_widget_show(map_vertical_scrollbar);
   } else {
@@ -440,7 +440,7 @@ void mapview_redraw_callback(struct client_option *poption)
 void split_message_window_callback(struct client_option *poption)
 {
   assert(poption->type == COT_BOOLEAN);
-  if (*poption->boolean.pvalue) {
+  if (*poption->u.boolean.pvalue) {
     gtk_widget_show(get_split_message_window());
   } else {
     gtk_widget_hide(get_split_message_window());
@@ -856,7 +856,7 @@ static void update_filter(struct client_option *o)
     value = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget),
                                               "filter_value"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-                                 o->filter.temp & value);
+                                 o->u.filter.temp & value);
   }
 }
 
@@ -893,14 +893,14 @@ static bool string_vec_changed(struct client_option *o)
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(o->gui_data));
 
   if (!gtk_tree_model_get_iter_first(model, &iter)
-      && string_vector_size(*o->string_vec.pvector) == 0) {
+      && string_vector_size(*o->u.string_vec.pvector) == 0) {
     /* Both seems empty */
     return FALSE;
   }
 
   i = 0;
   do {
-    str = string_vector_get(*o->string_vec.pvector, i);
+    str = string_vector_get(*o->u.string_vec.pvector, i);
     gtk_tree_model_get(model, &iter, 0, &n, -1);
     if (!string_empty(str)) {
       /* Not empty */
@@ -913,7 +913,7 @@ static bool string_vec_changed(struct client_option *o)
     i++;
   } while (gtk_tree_model_iter_next(model, &iter));
 
-  return i != string_vector_size(*o->string_vec.pvector);
+  return i != string_vector_size(*o->u.string_vec.pvector);
 }
 
 /*************************************************************************
@@ -931,7 +931,7 @@ static void string_vec_store(struct client_option *o)
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(o->gui_data));
   size = gtk_tree_model_iter_n_children(model, NULL);
 
-  string_vector_reserve(*o->string_vec.pvector, size);
+  string_vector_reserve(*o->u.string_vec.pvector, size);
 
   if (!gtk_tree_model_get_iter_first(model, &iter)) {
     return;
@@ -940,10 +940,10 @@ static void string_vec_store(struct client_option *o)
   i = 0;
   do {
     gtk_tree_model_get(model, &iter, 0, &str, -1);
-    string_vector_set(*o->string_vec.pvector, i++, str);
+    string_vector_set(*o->u.string_vec.pvector, i++, str);
   } while (gtk_tree_model_iter_next(model, &iter));
 
-  string_vector_remove_empty(*o->string_vec.pvector);
+  string_vector_remove_empty(*o->u.string_vec.pvector);
 }
 
 /*************************************************************************
@@ -955,8 +955,8 @@ static void apply_option_change(struct client_option *o)
   case COT_BOOLEAN:
     {
       bool new_value = GTK_TOGGLE_BUTTON(o->gui_data)->active;
-      if (*o->boolean.pvalue != new_value) {
-        *o->boolean.pvalue = new_value;
+      if (*o->u.boolean.pvalue != new_value) {
+        *o->u.boolean.pvalue = new_value;
         if (o->change_callback) {
           (o->change_callback)(o);
         }
@@ -967,8 +967,8 @@ static void apply_option_change(struct client_option *o)
     {
       int new_value =
           gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(o->gui_data));
-      if (*o->integer.pvalue != new_value) {
-        *o->integer.pvalue = new_value;
+      if (*o->u.integer.pvalue != new_value) {
+        *o->u.integer.pvalue = new_value;
         if (o->change_callback) {
           (o->change_callback)(o);
         }
@@ -978,11 +978,11 @@ static void apply_option_change(struct client_option *o)
   case COT_STRING:
   case COT_PASSWORD:
     {
-      const char *new_value = o->string.val_accessor
+      const char *new_value = o->u.string.val_accessor
           ? gtk_entry_get_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child))
           : gtk_entry_get_text(GTK_ENTRY(o->gui_data));
-      if (strcmp(o->string.pvalue, new_value)) {
-        mystrlcpy(o->string.pvalue, new_value, o->string.size);
+      if (strcmp(o->u.string.pvalue, new_value)) {
+        mystrlcpy(o->u.string.pvalue, new_value, o->u.string.size);
         if (o->change_callback) {
           (o->change_callback)(o);
         }
@@ -1009,8 +1009,8 @@ static void apply_option_change(struct client_option *o)
       gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(o->gui_data)),
                          &iter, LC_INDEX, &new_value, -1);
 
-      if (*o->enum_list.pvalue != new_value) {
-        *o->enum_list.pvalue = new_value;
+      if (*o->u.enum_list.pvalue != new_value) {
+        *o->u.enum_list.pvalue = new_value;
         if (o->change_callback) {
           (o->change_callback)(o);
         }
@@ -1018,8 +1018,8 @@ static void apply_option_change(struct client_option *o)
     }
     break;
   case COT_FILTER:
-    if (*o->filter.pvalue != o->filter.temp) {
-      *o->filter.pvalue = o->filter.temp;
+    if (*o->u.filter.pvalue != o->u.filter.temp) {
+      *o->u.filter.pvalue = o->u.filter.temp;
       if (o->change_callback) {
         (o->change_callback)(o);
       }
@@ -1033,8 +1033,8 @@ static void apply_option_change(struct client_option *o)
 #else
           gtk_range_get_value(GTK_RANGE(o->gui_data));
 #endif /* GTK_SCALE_BUTTON */
-      if (*o->integer.pvalue != new_value) {
-        *o->integer.pvalue = new_value;
+      if (*o->u.integer.pvalue != new_value) {
+        *o->u.integer.pvalue = new_value;
         if (o->change_callback) {
           (o->change_callback)(o);
         }
@@ -1066,19 +1066,19 @@ static void refresh_option(struct client_option *o)
   switch (o->type) {
   case COT_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
-                                 *o->boolean.pvalue);
+                                 *o->u.boolean.pvalue);
     break;
   case COT_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
-                              *o->integer.pvalue);
+                              *o->u.integer.pvalue);
     break;
   case COT_STRING:
   case COT_PASSWORD:
-    if (o->string.val_accessor) {
+    if (o->u.string.val_accessor) {
       gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
-                         o->string.pvalue);
+                         o->u.string.pvalue);
     } else {
-      gtk_entry_set_text(GTK_ENTRY(o->gui_data), o->string.pvalue);
+      gtk_entry_set_text(GTK_ENTRY(o->gui_data), o->u.string.pvalue);
     }
     break;
   case COT_STRING_VEC:
@@ -1088,7 +1088,7 @@ static void refresh_option(struct client_option *o)
       GtkTreeIter iter;
 
       gtk_list_store_clear(store);
-      string_vector_iterate(*o->string_vec.pvector, str) {
+      string_vector_iterate(*o->u.string_vec.pvector, str) {
         gtk_list_store_append(store, &iter);
         gtk_list_store_set(store, &iter, 0, str, -1);
       } string_vector_iterate_end;
@@ -1096,18 +1096,18 @@ static void refresh_option(struct client_option *o)
     break;
   case COT_ENUM_LIST:
     set_combo_to(GTK_COMBO_BOX(o->gui_data),
-                 o->enum_list.str_accessor(*o->enum_list.pvalue));
+                 o->u.enum_list.str_accessor(*o->u.enum_list.pvalue));
     break;
   case COT_FILTER:
-    o->filter.temp = *o->filter.pvalue;
+    o->u.filter.temp = *o->u.filter.pvalue;
     update_filter(o);
     break;
   case COT_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
-                               *o->integer.pvalue);
+                               *o->u.integer.pvalue);
 #else
-    gtk_range_set_value(GTK_RANGE(o->gui_data), *o->integer.pvalue);
+    gtk_range_set_value(GTK_RANGE(o->gui_data), *o->u.integer.pvalue);
 #endif /* GTK_SCALE_BUTTON */
     break;
   }
@@ -1135,19 +1135,19 @@ static void reset_option(struct client_option *o)
   switch (o->type) {
   case COT_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
-                                 o->boolean.def);
+                                 o->u.boolean.def);
     break;
   case COT_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
-                              o->integer.def);
+                              o->u.integer.def);
     break;
   case COT_STRING:
   case COT_PASSWORD:
-    if (o->string.val_accessor) {
+    if (o->u.string.val_accessor) {
       gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
-                         o->string.def);
+                         o->u.string.def);
     } else {
-      gtk_entry_set_text(GTK_ENTRY(o->gui_data), o->string.def);
+      gtk_entry_set_text(GTK_ENTRY(o->gui_data), o->u.string.def);
     }
     break;
   case COT_STRING_VEC:
@@ -1158,7 +1158,7 @@ static void reset_option(struct client_option *o)
       const char *const *p;
 
       gtk_list_store_clear(store);
-      for (p = o->string_vec.def; p && *p; p++) {
+      for (p = o->u.string_vec.def; p && *p; p++) {
         gtk_list_store_append(store, &iter);
         gtk_list_store_set(store, &iter, 0, *p, -1);
       }
@@ -1166,18 +1166,18 @@ static void reset_option(struct client_option *o)
     break;
   case COT_ENUM_LIST:
     set_combo_to(GTK_COMBO_BOX(o->gui_data),
-                 o->enum_list.str_accessor(o->enum_list.def));
+                 o->u.enum_list.str_accessor(o->u.enum_list.def));
     break;
   case COT_FILTER:
-    o->filter.temp = o->filter.def;
+    o->u.filter.temp = o->u.filter.def;
     update_filter(o);
     break;
   case COT_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
-                               o->integer.def);
+                               o->u.integer.def);
 #else
-    gtk_range_set_value(GTK_RANGE(o->gui_data), o->integer.def);
+    gtk_range_set_value(GTK_RANGE(o->gui_data), o->u.integer.def);
 #endif /* GTK_SCALE_BUTTON */
     break;
   }
@@ -1205,20 +1205,20 @@ static void reload_option(struct section_file *sf, struct client_option *o)
   switch (o->type) {
   case COT_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
-                                 load_option_bool(sf, o, *o->boolean.pvalue));
+                                 load_option_bool(sf, o, *o->u.boolean.pvalue));
     break;
   case COT_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
-                              load_option_int(sf, o, *o->integer.pvalue));
+                              load_option_int(sf, o, *o->u.integer.pvalue));
     break;
   case COT_STRING:
   case COT_PASSWORD:
-    if (o->string.val_accessor) {
+    if (o->u.string.val_accessor) {
       gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
-                         load_option_string(sf, o, o->string.pvalue));
+                         load_option_string(sf, o, o->u.string.pvalue));
     } else {
       gtk_entry_set_text(GTK_ENTRY(o->gui_data),
-                         load_option_string(sf, o, o->string.pvalue));
+                         load_option_string(sf, o, o->u.string.pvalue));
     }
     break;
   case COT_STRING_VEC:
@@ -1252,20 +1252,20 @@ static void reload_option(struct section_file *sf, struct client_option *o)
     break;
   case COT_ENUM_LIST:
     set_combo_to(GTK_COMBO_BOX(o->gui_data),
-                 o->enum_list.str_accessor(load_option_enum_list(
-                 sf, o, *o->enum_list.pvalue)));
+                 o->u.enum_list.str_accessor(load_option_enum_list(
+                 sf, o, *o->u.enum_list.pvalue)));
     break;
   case COT_FILTER:
-    o->filter.temp = load_option_filter(sf, o, *o->filter.pvalue);
+    o->u.filter.temp = load_option_filter(sf, o, *o->u.filter.pvalue);
     update_filter(o);
     break;
   case COT_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
-                               load_option_int(sf, o, *o->integer.pvalue));
+                               load_option_int(sf, o, *o->u.integer.pvalue));
 #else
     gtk_range_set_value(GTK_RANGE(o->gui_data),
-                        load_option_int(sf, o, *o->integer.pvalue));
+                        load_option_int(sf, o, *o->u.integer.pvalue));
 #endif /* GTK_SCALE_BUTTON */
     break;
   }
@@ -1397,9 +1397,9 @@ static void filter_changed_callback(GtkToggleButton *togglebutton,
 
   value = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(togglebutton),
                                             "filter_value"));
-  if (((o->filter.temp & value) != 0)
+  if (((o->u.filter.temp & value) != 0)
       ^ GTK_TOGGLE_BUTTON(togglebutton)->active
-      && o->filter.change(&o->filter.temp, value)) {
+      && o->u.filter.change(&o->u.filter.temp, value)) {
     update_filter(o);
   }
 }
@@ -1544,19 +1544,19 @@ static void create_option_dialog(void)
       o->gui_data = gtk_check_button_new();
       break;
     case COT_INTEGER:
-      o->gui_data = gtk_spin_button_new_with_range(o->integer.min,
-                                              o->integer.max,
-                                              MAX((o->integer.max
-                                                   - o->integer.min) / 50,
+      o->gui_data = gtk_spin_button_new_with_range(o->u.integer.min,
+                                              o->u.integer.max,
+                                              MAX((o->u.integer.max
+                                                   - o->u.integer.min) / 50,
                                                   1));
       break;
     case COT_STRING:
     case COT_PASSWORD:
-      if (o->string.val_accessor) {
+      if (o->u.string.val_accessor) {
         const char **val;
 
         o->gui_data = gtk_combo_box_entry_new_text();
-        for (val = o->string.val_accessor(); *val; val++) {
+        for (val = o->u.string.val_accessor(); *val; val++) {
           gtk_combo_box_append_text(GTK_COMBO_BOX(o->gui_data), *val);
         }
       } else {
@@ -1606,7 +1606,7 @@ static void create_option_dialog(void)
         gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(o->gui_data),
                                        renderer, "text",
                                        LC_TEXT_TRANSLATED, NULL);
-        for (i = 0; (str = o->enum_list.str_accessor(i)); i++) {
+        for (i = 0; (str = o->u.enum_list.str_accessor(i)); i++) {
           gtk_list_store_append(model, &iter);
           gtk_list_store_set(model, &iter,
                              LC_INDEX, i,
@@ -1625,7 +1625,7 @@ static void create_option_dialog(void)
         fbox = gtk_vbox_new(FALSE,0);
         gtk_container_add(GTK_CONTAINER(o->gui_data), fbox);
 
-        for (i = 1; (str = o->filter.str_accessor(i)); i <<= 1) {
+        for (i = 1; (str = o->u.filter.str_accessor(i)); i <<= 1) {
           cb = gtk_check_button_new_with_label(_(str));
           g_object_set_data(G_OBJECT(cb), "filter_value", GINT_TO_POINTER(i));
           g_signal_connect(cb, "toggled",
@@ -1640,23 +1640,23 @@ static void create_option_dialog(void)
         GtkObject *adjustment;
 
         o->gui_data = gtk_volume_button_new();
-        adjustment = gtk_adjustment_new(*o->integer.pvalue,
-                                        o->integer.min,
-                                        o->integer.max,
-                                        MAX((o->integer.max
-                                             - o->integer.min) / 50, 1),
+        adjustment = gtk_adjustment_new(*o->u.integer.pvalue,
+                                        o->u.integer.min,
+                                        o->u.integer.max,
+                                        MAX((o->u.integer.max
+                                             - o->u.integer.min) / 50, 1),
                                          0, 1);
         gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(o->gui_data),
                                         GTK_ADJUSTMENT(adjustment));
         gtk_object_destroy(adjustment);
 #else
-        o->gui_data = gtk_hscale_new_with_range(o->integer.min,
-                                                o->integer.max,
-                                                MAX((o->integer.max
-                                                     - o->integer.min) / 50,
+        o->gui_data = gtk_hscale_new_with_range(o->u.integer.min,
+                                                o->u.integer.max,
+                                                MAX((o->u.integer.max
+                                                     - o->u.integer.min) / 50,
                                                     1));
         gtk_widget_set_size_request(GTK_WIDGET(o->gui_data),
-                                    o->integer.max - o->integer.min, -1);
+                                    o->u.integer.max - o->u.integer.min, -1);
 #endif /* GTK_SCALE_BUTTON */
       }
       break;

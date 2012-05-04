@@ -27,15 +27,15 @@
 struct Sprite;                  /* opaque; gui-dep */
 
 struct drawn_sprite {
-  enum {
+  enum ds_type {
     DRAWN_SPRITE,       /* Draw a sprite. */
     DRAWN_GRID,         /* Draw the map grid now. */
     DRAWN_BG            /* Draw a solid BG. */
   } type;
 
-  union {
-    struct {
-      enum {
+  union ds_data {
+    struct ds_sprite {
+      enum ds_sprite_style {
         /* Only applicable in iso-view.  "Full" sprites overlap into the top
          * half-tile of UNIT_TILE_HEIGHT. */
         DRAW_NORMAL,
@@ -46,12 +46,12 @@ struct drawn_sprite {
       int offset_x, offset_y;   /* offset from tile origin */
     } sprite;
 
-    struct {
+    struct ds_grid {
       struct tile *tile;
       bool citymode;
     } grid;
 
-    struct {
+    struct ds_bg {
       enum color_std color;
     } bg;
   } data;
@@ -132,7 +132,7 @@ struct terrain_drawing_data {
   char *mine_tag;
 
   int num_layers; /* Can only be 1 or 2. */
-  struct {
+  struct tdd_layer_m {
     bool is_tall;
     int offset_x, offset_y;
 
@@ -173,102 +173,97 @@ struct named_sprites {
     int count;
     struct Sprite *sprite[MAX_NUM_CITIZEN_SPRITES];
   } citizen[NUM_TILES_CITIZEN], specialist[SP_COUNT];
-  struct {
-    struct Sprite
-      *solar_panels,
-      *life_support,
-      *habitation,
-      *structural,
-      *fuel,
-      *propulsion;
+  struct ns_spaceship {
+    struct Sprite *solar_panels;
+    struct Sprite *life_support;
+    struct Sprite *habitation;
+    struct Sprite *structural;
+    struct Sprite *fuel;
+    struct Sprite *propulsion;
   } spaceship;
-  struct {
-    struct Sprite
-      /* for roadstyle 0 */
-      *dir[8],     /* all entries used */
+  struct ns_road {
+    struct Sprite      /* for roadstyle 0 */
+      *dir[8];     /* all entries used */
       /* for roadstyle 1 */
-      *even[MAX_INDEX_HALF],    /* first unused */
-      *odd[MAX_INDEX_HALF],     /* first unused */
+    struct Sprite *even[MAX_INDEX_HALF];    /* first unused */
+    struct Sprite *odd[MAX_INDEX_HALF];     /* first unused */
       /* for roadstyle 0 and 1 */
-      *isolated,
-      *corner[8], /* Indexed by direction; only non-cardinal dirs used. */
-      *total[MAX_INDEX_VALID];     /* includes all possibilities */
-  } road, rail;
-  struct {
+    struct Sprite *isolated;
+    struct Sprite *corner[8];    /* Indexed by direction; only non-cardinal dirs used. */
+    struct Sprite *total[MAX_INDEX_VALID];     /* includes all possibilities */
+  } road;
+  struct ns_road rail;
+  struct ns_explode {
     struct Sprite **unit;
     struct Sprite *nuke;
   } explode;
-  struct {
-    struct Sprite
-      *hp_bar[NUM_TILES_HP_BAR],
-      *vet_lev[MAX_VET_LEVELS],
-      *auto_attack,
-      *auto_settler,
-      *auto_explore,
-      *fallout,
-      *fortified,
-      *fortifying,
-      *fortress,
-      *airbase,
-      *go_to,                   /* goto is a C keyword :-) */
-      *irrigate,
-      *mine,
-      *pillage,
-      *pollution,
-      *road,
-      *sentry,
-      *sleeping,
-      *stack,
-      *loaded,
-      *trade,
-      *transform,
-      *connect,
-      *patrol,
-      *lowfuel,
-      *tired;
+  struct ns_unit {
+    struct Sprite *hp_bar[NUM_TILES_HP_BAR];
+    struct Sprite *vet_lev[MAX_VET_LEVELS];
+    struct Sprite *auto_attack;
+    struct Sprite *auto_settler;
+    struct Sprite *auto_explore;
+    struct Sprite *fallout;
+    struct Sprite *fortified;
+    struct Sprite *fortifying;
+    struct Sprite *fortress;
+    struct Sprite *airbase;
+    struct Sprite *go_to;      /* goto is a C keyword :-) */
+    struct Sprite *irrigate;
+    struct Sprite *mine;
+    struct Sprite *pillage;
+    struct Sprite *pollution;
+    struct Sprite *road;
+    struct Sprite *sentry;
+    struct Sprite *sleeping;
+    struct Sprite *stack;
+    struct Sprite *loaded;
+    struct Sprite *trade;
+    struct Sprite *transform;
+    struct Sprite *connect;
+    struct Sprite *patrol;
+    struct Sprite *lowfuel;
+    struct Sprite *tired;
   } unit;
-  struct {
+  struct ns_upkeep {
     struct Sprite
       *food[2],
       *unhappy[2],
       *gold[2],
       *shield;
   } upkeep;
-  struct {
-    struct Sprite
-      *occupied,
-      *disorder,
-      *happy,
-      *size[NUM_TILES_DIGITS],
-      *size_tens[NUM_TILES_DIGITS],             /* first unused */
-      *tile_foodnum[NUM_TILES_DIGITS],
-      *tile_shieldnum[NUM_TILES_DIGITS],
-      *tile_tradenum[NUM_TILES_DIGITS],
-      ***tile_wall,      /* only used for isometric view */
-      ***tile;
+  struct ns_city {
+    struct Sprite *occupied;
+    struct Sprite *disorder;
+    struct Sprite *happy;
+    struct Sprite *size[NUM_TILES_DIGITS];
+    struct Sprite *size_tens[NUM_TILES_DIGITS];      /* first unused */
+    struct Sprite *tile_foodnum[NUM_TILES_DIGITS];
+    struct Sprite *tile_shieldnum[NUM_TILES_DIGITS];
+    struct Sprite *tile_tradenum[NUM_TILES_DIGITS];
+    struct Sprite ***tile_wall;      /* only used for isometric view */
+    struct Sprite ***tile;
   } city;
-  struct {
-    struct Sprite
-      *turns[NUM_TILES_DIGITS],
-      *turns_tens[NUM_TILES_DIGITS];
+  struct ns_path {
+    struct Sprite *turns[NUM_TILES_DIGITS];
+    struct Sprite *turns_tens[NUM_TILES_DIGITS];
   } path;
-  struct {
+  struct ns_user {
     struct Sprite *attention;
   } user;
-  struct {
-    struct Sprite
-      *farmland[MAX_INDEX_CARDINAL],
-      *irrigation[MAX_INDEX_CARDINAL],
-      *pollution,
-      *village,
-      *fortress,
-      *fortress_back,
-      *airbase,
-      *fallout,
-      *fog,
-      *spec_river[MAX_INDEX_CARDINAL],
-      *darkness[MAX_INDEX_CARDINAL],         /* first unused */
-      *river_outlet[4];         /* indexed by enum direction4 */
+  struct ns_tx{
+    struct Sprite *farmland[MAX_INDEX_CARDINAL];
+    struct Sprite *irrigation[MAX_INDEX_CARDINAL];
+    struct Sprite *pollution;
+    struct Sprite *village;
+    struct Sprite *fortress;
+    struct Sprite *fortress_back;
+    struct Sprite *airbase;
+    struct Sprite *fallout;
+    struct Sprite *fog;
+    struct Sprite *spec_river[MAX_INDEX_CARDINAL];
+    struct Sprite *darkness[MAX_INDEX_CARDINAL];       /* first unused */
+    struct Sprite *river_outlet[4];                    /* indexed by enum direction4 */
   } tx;                         /* terrain extra */
 
   struct terrain_drawing_data *terrain[MAX_NUM_TERRAINS];

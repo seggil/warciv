@@ -2176,7 +2176,7 @@ This was once very ugly...
 void handle_tile_info(struct packet_tile_info *packet)
 {
   struct tile *ptile = map_pos_to_tile(packet->x, packet->y);
-  enum known_type old_known = ptile->client.known;
+  enum known_type old_known = ptile->u.client.known;
   bool tile_changed = FALSE;
   bool known_changed = FALSE;
   bool renumbered = FALSE;
@@ -2202,10 +2202,10 @@ void handle_tile_info(struct packet_tile_info *packet)
       tile_changed = TRUE;
     }
   }
-  if (ptile->client.known != packet->known) {
+  if (ptile->u.client.known != packet->known) {
     known_changed = TRUE;
   }
-  ptile->client.known = packet->known;
+  ptile->u.client.known = packet->known;
 
   if (packet->spec_sprite[0] != '\0') {
     if (!ptile->spec_sprite
@@ -2222,7 +2222,7 @@ void handle_tile_info(struct packet_tile_info *packet)
 
   reset_move_costs(ptile);
 
-  if (ptile->client.known <= TILE_KNOWN_FOGGED && old_known == TILE_KNOWN) {
+  if (ptile->u.client.known <= TILE_KNOWN_FOGGED && old_known == TILE_KNOWN) {
     /* This is an error.  So first we log the error, then make an assertion.
      * But for NDEBUG clients we fix the error. */
     unit_list_iterate(ptile->units, punit) {
@@ -2258,9 +2258,9 @@ void handle_tile_info(struct packet_tile_info *packet)
      * A tile can only change if it was known before and is still
      * known. In the other cases the tile is new or removed.
      */
-    if (known_changed && ptile->client.known == TILE_KNOWN) {
+    if (known_changed && ptile->u.client.known == TILE_KNOWN) {
       agents_tile_new(ptile);
-    } else if (known_changed && ptile->client.known == TILE_KNOWN_FOGGED) {
+    } else if (known_changed && ptile->u.client.known == TILE_KNOWN_FOGGED) {
       agents_tile_remove(ptile);
     } else {
       agents_tile_changed(ptile);
@@ -2270,7 +2270,7 @@ void handle_tile_info(struct packet_tile_info *packet)
   /* refresh tiles */
   if (can_client_change_view()) {
     /* the tile itself */
-    if (tile_changed || old_known != ptile->client.known) {
+    if (tile_changed || old_known != ptile->u.client.known) {
       refresh_tile_mapcanvas(ptile, MUT_DRAW);
       refresh_city_dialog_maps(ptile);
     }
@@ -2791,10 +2791,10 @@ void handle_ruleset_nation(struct packet_ruleset_nation *p)
   }
   pl->city_style = p->city_style;
 
-  if (p->class[0] != '\0') {
-    pl->class = mystrdup(p->class);
+  if (p->class_[0] != '\0') {
+    pl->class_ = mystrdup(p->class_);
   } else {
-    pl->class = mystrdup(N_("Other"));
+    pl->class_ = mystrdup(N_("Other"));
   }
 
   if (p->legend[0] != '\0') {
@@ -3001,13 +3001,12 @@ void handle_processing_started(void)
 {
   agents_processing_started();
 
-  assert(aconnection.client.request_id_of_currently_handled_packet == 0);
-  aconnection.client.request_id_of_currently_handled_packet =
-      get_next_request_id(aconnection.
-                          client.last_processed_request_id_seen);
+  assert(aconnection.u.client.request_id_of_currently_handled_packet == 0);
+  aconnection.u.client.request_id_of_currently_handled_packet =
+      get_next_request_id(aconnection.u.client.last_processed_request_id_seen);
 
   freelog(LOG_DEBUG, "start processing packet %d",
-          aconnection.client.request_id_of_currently_handled_packet);
+          aconnection.u.client.request_id_of_currently_handled_packet);
 }
 
 /**************************************************************************
@@ -3018,19 +3017,19 @@ void handle_processing_finished(void)
   int i;
 
   freelog(LOG_DEBUG, "finish processing packet %d",
-          aconnection.client.request_id_of_currently_handled_packet);
+          aconnection.u.client.request_id_of_currently_handled_packet);
 
-  assert(aconnection.client.request_id_of_currently_handled_packet != 0);
+  assert(aconnection.u.client.request_id_of_currently_handled_packet != 0);
 
-  aconnection.client.last_processed_request_id_seen =
-      aconnection.client.request_id_of_currently_handled_packet;
+  aconnection.u.client.last_processed_request_id_seen =
+      aconnection.u.client.request_id_of_currently_handled_packet;
 
-  aconnection.client.request_id_of_currently_handled_packet = 0;
+  aconnection.u.client.request_id_of_currently_handled_packet = 0;
 
   for (i = 0; i < reports_thaw_requests_size; i++) {
     if (reports_thaw_requests[i] != 0 &&
         reports_thaw_requests[i] ==
-        aconnection.client.last_processed_request_id_seen) {
+        aconnection.u.client.last_processed_request_id_seen) {
       reports_thaw();
       reports_thaw_requests[i] = 0;
     }

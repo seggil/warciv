@@ -2293,7 +2293,7 @@ void add_net_input(int sock)
   cond = G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP | G_IO_NVAL;
   input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
                                  get_net_input, GINT_TO_POINTER(sock), NULL);
-  aconnection.client.notify_of_writable_data = set_wait_for_writable_socket;
+  aconnection.u.client.notify_of_writable_data = set_wait_for_writable_socket;
 }
 
 /**************************************************************************

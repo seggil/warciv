@@ -307,17 +307,17 @@ static struct agents_entries_s *find_agent_by_name(const char *agent_name)
 static bool is_outstanding_request(struct agents_entries_s *agent)
 {
   if (agent->first_outstanding_request_id != 0 &&
-      aconnection.client.request_id_of_currently_handled_packet != 0 &&
+      aconnection.u.client.request_id_of_currently_handled_packet != 0 &&
       agent->first_outstanding_request_id <=
-      aconnection.client.request_id_of_currently_handled_packet &&
+      aconnection.u.client.request_id_of_currently_handled_packet &&
       agent->last_outstanding_request_id >=
-      aconnection.client.request_id_of_currently_handled_packet) {
+      aconnection.u.client.request_id_of_currently_handled_packet) {
     freelog(LOG_DEBUG,
             "A:%s: ignoring packet; outstanding [%d..%d] got=%d",
             agent->agent.name,
             agent->first_outstanding_request_id,
             agent->last_outstanding_request_id,
-            aconnection.client.request_id_of_currently_handled_packet);
+            aconnection.u.client.request_id_of_currently_handled_packet);
     return TRUE;
   }
   return FALSE;

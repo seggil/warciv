@@ -267,9 +267,9 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
   }
 
   connection_common_init(&aconnection);
-  aconnection.client.last_request_id_used = 0;
-  aconnection.client.last_processed_request_id_seen = 0;
-  aconnection.client.request_id_of_currently_handled_packet = 0;
+  aconnection.u.client.last_request_id_used = 0;
+  aconnection.u.client.last_processed_request_id_seen = 0;
+  aconnection.u.client.request_id_of_currently_handled_packet = 0;
   aconnection.incoming_packet_notify = notify_about_incoming_packet;
   aconnection.outgoing_packet_notify = notify_about_outgoing_packet;
 
@@ -457,8 +457,8 @@ void input_from_server_till_request_got_processed(int fd,
         if (type == PACKET_PROCESSING_FINISHED) {
           freelog(LOG_DEBUG, "ifstrgp: expect=%d, seen=%d",
                   expected_request_id,
-                  aconnection.client.last_processed_request_id_seen);
-          if (aconnection.client.last_processed_request_id_seen >=
+                  aconnection.u.client.last_processed_request_id_seen);
+          if (aconnection.u.client.last_processed_request_id_seen >=
               expected_request_id) {
             freelog(LOG_DEBUG, "ifstrgp: got it; returning");
             return;

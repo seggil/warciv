@@ -165,7 +165,7 @@ static void define_tiles_within_rectangle(void)
       /*  Tile passed all tests; process it.
        */
       if (ptile->city && ptile->city->common.owner == get_player_idx()) {
-        ptile->client.hilite = HILITE_CITY;
+        ptile->u.client.hilite = HILITE_CITY;
         tiles_hilited_cities = TRUE;
         update_miscellaneous_menu();
       }
@@ -310,7 +310,7 @@ void cancel_distance_tool(void)
 **************************************************************************/
 bool is_city_hilited(city_t *pcity)
 {
-  return pcity != NULL && pcity->common.tile->client.hilite == HILITE_CITY;
+  return pcity != NULL && pcity->common.tile->u.client.hilite == HILITE_CITY;
 }
 
 /**************************************************************************
@@ -322,7 +322,7 @@ void cancel_tile_hiliting(void)
     tiles_hilited_cities = FALSE;
 
     whole_map_iterate(ptile) {
-      ptile->client.hilite = HILITE_NONE;
+      ptile->u.client.hilite = HILITE_NONE;
     } whole_map_iterate_end;
 
     update_map_canvas_visible(MUT_NORMAL);
@@ -353,14 +353,14 @@ void toggle_tile_hilite(struct tile *ptile)
 {
   city_t *pcity = ptile->city;
 
-  if (ptile->client.hilite == HILITE_CITY) {
-    ptile->client.hilite = HILITE_NONE;
+  if (ptile->u.client.hilite == HILITE_CITY) {
+    ptile->u.client.hilite = HILITE_NONE;
     if (pcity) {
       toggle_city_hilite(pcity, FALSE); /* cityrep.c */
     }
   }
   else if (pcity && pcity->common.owner == get_player_idx()) {
-    ptile->client.hilite = HILITE_CITY;
+    ptile->u.client.hilite = HILITE_CITY;
     tiles_hilited_cities = TRUE;
     toggle_city_hilite(pcity, TRUE);
   }

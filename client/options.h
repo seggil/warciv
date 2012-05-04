@@ -61,16 +61,16 @@ struct client_option {
   const enum client_option_category category;
   const enum client_option_type type;
 
-  union {
+  union client_option_u {
     struct {
       bool *const pvalue;
       const bool def;
     } boolean;
-    struct {
+    struct client_option_integer {
       int *const pvalue;
       const int def, min, max;
     } integer;
-    struct {
+    struct client_option_string {
       char *const pvalue;
       const size_t size;
       const char *def;
@@ -80,11 +80,11 @@ struct client_option {
        */
       const char **(*const val_accessor)(void);
     } string;
-    struct {
+    struct client_option_string_vec {
       struct string_vector **pvector;
       const char *const *const def;
     } string_vec;
-    struct {
+    struct client_option_enum_list {
       int *const pvalue;
       const int def;
       /*
@@ -92,7 +92,7 @@ struct client_option {
        */
       const char *(*const str_accessor)(int);
     } enum_list;
-    struct {
+    struct client_option_filter {
       filter *const pvalue;
       const filter def;
       /*
@@ -106,7 +106,7 @@ struct client_option {
       const char *(*const str_accessor)(filter);
       filter temp;
     } filter;
-  };
+  } u;
   void (*const change_callback)(struct client_option *option);
 
   /* volatile */

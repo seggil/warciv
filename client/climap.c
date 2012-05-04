@@ -34,7 +34,7 @@
 *************************************************************************/
 enum known_type tile_get_known(const struct tile *ptile)
 {
-  return ptile ? ptile->client.known : 0;
+  return ptile ? ptile->u.client.known : 0;
 }
 
 /**************************************************************************

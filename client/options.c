@@ -1236,41 +1236,41 @@ void client_options_init(void)
   client_options_iterate(o) {
     switch (o->type) {
     case COT_BOOLEAN:
-      *o->boolean.pvalue = o->boolean.def;
+      *o->u.boolean.pvalue = o->u.boolean.def;
       continue;
     case COT_INTEGER:
     case COT_VOLUME:
-      assert(o->integer.def >= o->integer.min);
-      assert(o->integer.def <= o->integer.max);
-      *o->integer.pvalue = o->integer.def;
+      assert(o->u.integer.def >= o->u.integer.min);
+      assert(o->u.integer.def <= o->u.integer.max);
+      *o->u.integer.pvalue = o->u.integer.def;
       continue;
     case COT_STRING:
     case COT_PASSWORD:
       /* HACK: fix default username */
-      if (o->string.pvalue == default_user_name) {
-        o->string.def = user_username();
+      if (o->u.string.pvalue == default_user_name) {
+        o->u.string.def = user_username();
       }
       /* HACK: fix default tileset */
-      if (o->string.pvalue == default_tileset_name) {
-        o->string.def = get_default_tilespec_name();
+      if (o->u.string.pvalue == default_tileset_name) {
+        o->u.string.def = get_default_tilespec_name();
       }
-      mystrlcpy(o->string.pvalue, o->string.def, o->string.size);
+      mystrlcpy(o->u.string.pvalue, o->u.string.def, o->u.string.size);
       continue;
     case COT_STRING_VEC:
-      *o->string_vec.pvector = string_vector_new();
-      if (o->string_vec.def) {
+      *o->u.string_vec.pvector = string_vector_new();
+      if (o->u.string_vec.def) {
         /* Fill with default values. */
-        string_vector_store(*o->string_vec.pvector, o->string_vec.def, -1);
-        string_vector_remove_empty(*o->string_vec.pvector);
+        string_vector_store(*o->u.string_vec.pvector, o->u.string_vec.def, -1);
+        string_vector_remove_empty(*o->u.string_vec.pvector);
       }
       continue;
     case COT_ENUM_LIST:
-      assert(NULL != o->enum_list.str_accessor);
-      assert(NULL != o->enum_list.str_accessor(o->enum_list.def));
-      *o->enum_list.pvalue = o->enum_list.def;
+      assert(NULL != o->u.enum_list.str_accessor);
+      assert(NULL != o->u.enum_list.str_accessor(o->u.enum_list.def));
+      *o->u.enum_list.pvalue = o->u.enum_list.def;
       continue;
     case COT_FILTER:
-      *o->filter.pvalue = o->filter.def;
+      *o->u.filter.pvalue = o->u.filter.def;
       continue;
     }
     die("Option type not supported for '%s' (%d).", o->name, o->type);
@@ -1289,9 +1289,9 @@ void client_options_free(void)
   client_options_iterate(o) {
     switch (o->type) {
     case COT_STRING_VEC:
-      if (NULL != *o->string_vec.pvector) {
-        string_vector_destroy(*o->string_vec.pvector);
-        *o->string_vec.pvector = NULL;
+      if (NULL != *o->u.string_vec.pvector) {
+        string_vector_destroy(*o->u.string_vec.pvector);
+        *o->u.string_vec.pvector = NULL;
       }
       break;
     case COT_BOOLEAN:
@@ -1414,10 +1414,10 @@ int load_option_int(struct section_file *file,
 
   value = secfile_lookup_int_default(file, def, "client.%s", o->name);
 
-  if (value < o->integer.min || value > o->integer.max) {
+  if (value < o->u.integer.min || value > o->u.integer.max) {
     freelog(LOG_ERROR,
             "The value %d for option '%s' is out of scale [%d, %d].",
-            value, o->name, o->integer.min, o->integer.max);
+            value, o->name, o->u.integer.min, o->u.integer.max);
     return def;
   }
 
@@ -1478,7 +1478,7 @@ int load_option_enum_list(struct section_file *file,
   assert(file != NULL);
   assert(o != NULL && o->type == COT_ENUM_LIST);
 
-  value = revert_str_accessor(o->enum_list.str_accessor,
+  value = revert_str_accessor(o->u.enum_list.str_accessor,
                               secfile_lookup_str_default(file, NULL,
                                                          "client.%s", o->name));
   if (value == -1) {
@@ -1509,9 +1509,9 @@ filter load_option_filter(struct section_file *file,
   }
 
   for (i = 0; i < size; i++) {
-    f = filter_revert_str_accessor(o->filter.str_accessor, vec[i]);
+    f = filter_revert_str_accessor(o->u.filter.str_accessor, vec[i]);
     if (f) {
-      o->filter.change(&ret, f);
+      o->u.filter.change(&ret, f);
       ok = TRUE;
     } else {
       freelog(LOG_NORMAL, _("The value '%s' is not supported for option '%s'."),
@@ -1547,26 +1547,26 @@ void load_general_options(void)
   client_options_iterate(o) {
     switch (o->type) {
     case COT_BOOLEAN:
-      *o->boolean.pvalue = load_option_bool(&sf, o, o->boolean.def);
+      *o->u.boolean.pvalue = load_option_bool(&sf, o, o->u.boolean.def);
       break;
     case COT_INTEGER:
     case COT_VOLUME:
-      *o->integer.pvalue = load_option_int(&sf, o, o->integer.def);
+      *o->u.integer.pvalue = load_option_int(&sf, o, o->u.integer.def);
       break;
     case COT_STRING:
     case COT_PASSWORD:
-      mystrlcpy(o->string.pvalue, load_option_string(&sf, o, o->string.def),
-                o->string.size);
+      mystrlcpy(o->u.string.pvalue, load_option_string(&sf, o, o->u.string.def),
+                o->u.string.size);
       break;
     case COT_STRING_VEC:
-      load_option_string_vec(&sf, o, o->string_vec.def, *o->string_vec.pvector);
+      load_option_string_vec(&sf, o, o->u.string_vec.def, *o->u.string_vec.pvector);
       break;
     case COT_ENUM_LIST:
-      *o->enum_list.pvalue =
-          load_option_enum_list(&sf, o, o->enum_list.def);
+      *o->u.enum_list.pvalue =
+          load_option_enum_list(&sf, o, o->u.enum_list.def);
       break;
     case COT_FILTER:
-      *o->filter.pvalue = load_option_filter(&sf, o, o->filter.def);
+      *o->u.filter.pvalue = load_option_filter(&sf, o, o->u.filter.def);
       break;
     }
   } client_options_iterate_end;
@@ -1648,20 +1648,20 @@ void save_options(void)
   client_options_iterate(o) {
     switch (o->type) {
     case COT_BOOLEAN:
-      secfile_insert_bool(&sf, *o->boolean.pvalue, "client.%s", o->name);
+      secfile_insert_bool(&sf, *o->u.boolean.pvalue, "client.%s", o->name);
       break;
     case COT_INTEGER:
     case COT_VOLUME:
-      secfile_insert_int(&sf, *o->integer.pvalue, "client.%s", o->name);
+      secfile_insert_int(&sf, *o->u.integer.pvalue, "client.%s", o->name);
       break;
     case COT_STRING:
     case COT_PASSWORD:
-      secfile_insert_str(&sf, o->string.pvalue, "client.%s", o->name);
+      secfile_insert_str(&sf, o->u.string.pvalue, "client.%s", o->name);
       break;
     case COT_STRING_VEC:
-      if (string_vector_size(*o->string_vec.pvector) > 0) {
-        secfile_insert_str_vec(&sf, string_vector_data(*o->string_vec.pvector),
-                               string_vector_size(*o->string_vec.pvector),
+      if (string_vector_size(*o->u.string_vec.pvector) > 0) {
+        secfile_insert_str_vec(&sf, string_vector_data(*o->u.string_vec.pvector),
+                               string_vector_size(*o->u.string_vec.pvector),
                                "client.%s", o->name);
       } else {
         /* Insert an empty string that will be removed at next load
@@ -1670,7 +1670,7 @@ void save_options(void)
       }
       break;
     case COT_ENUM_LIST:
-      secfile_insert_str(&sf, o->enum_list.str_accessor(*o->enum_list.pvalue),
+      secfile_insert_str(&sf, o->u.enum_list.str_accessor(*o->u.enum_list.pvalue),
                          "client.%s", o->name);
       break;
     case COT_FILTER:
@@ -1678,12 +1678,12 @@ void save_options(void)
 #define MAX_VALUES 64
         const char *values[MAX_VALUES];
         size_t size = 0, vec;
-        filter f = *o->filter.pvalue;
+        filter f = *o->u.filter.pvalue;
 
-        for (f = *o->filter.pvalue, vec = 0; f != 0 && size < MAX_VALUES;
+        for (f = *o->u.filter.pvalue, vec = 0; f != 0 && size < MAX_VALUES;
              f >>= 1, vec++) {
           if (f & 1) {
-            values[size++] = o->filter.str_accessor(1 << vec);
+            values[size++] = o->u.filter.str_accessor(1 << vec);
           }
         }
         if (f != 0) {

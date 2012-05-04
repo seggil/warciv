@@ -1527,11 +1527,13 @@ static void tile_draw_selection(struct canvas *pcanvas,
      * this elsewhere) so we draw without an inset.  This may cover up the
      * map grid if it is drawn. */
     if (get_tile_boundaries(dir, inset, 1,
-                            &start_x, &start_y, &end_x, &end_y)) {
-      if (ptile->client.hilite == HILITE_CITY
+                            &start_x, &start_y, &end_x, &end_y))
+    {
+      if (ptile->u.client.hilite == HILITE_CITY
           || (is_isometric
               && (adjc_tile = mapstep(ptile, dir))
-              && adjc_tile->client.hilite == HILITE_CITY)) {
+              && adjc_tile->u.client.hilite == HILITE_CITY))
+      {
         canvas_put_line(pcanvas, COLOR_STD_YELLOW, LINE_NORMAL,
                         canvas_x + start_x, canvas_y + start_y,
                         end_x - start_x, end_y - start_y);
@@ -2180,7 +2182,7 @@ struct city_s *find_city_or_settler_near_tile(struct tile *ptile,
        * causing it to be marked as C_TILE_UNAVAILABLE.
        */
 
-      if (pcity->common.tile->client.hilite == HILITE_CITY) {
+      if (pcity->common.tile->u.client.hilite == HILITE_CITY) {
         /* rule c */
         return pcity;
       }
