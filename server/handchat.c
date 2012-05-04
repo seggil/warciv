@@ -91,11 +91,12 @@ static void complain_ambiguous(struct connection *pconn, const char *name,
 bool conn_is_ignored(struct connection *pconn, struct connection *dest)
 {
   if (pconn == dest || pconn == NULL || dest == NULL
-      || dest->server.access_level >= ALLOW_ADMIN) {
+      || dest->u.server.access_level >= ALLOW_ADMIN)
+  {
     return FALSE;
   }
 
-  ignore_list_iterate(dest->server.ignore_list, cp) {
+  ignore_list_iterate(dest->u.server.ignore_list, cp) {
     if (conn_pattern_match(cp, pconn)) {
       return TRUE;
     }
@@ -237,8 +238,8 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   bool double_colon;
   const char *end = message + MAX_LEN_MSG;
 
-  if (pconn->server.flood_timer
-      && pconn->server.access_level < ALLOW_ADMIN) {
+  if (pconn->u.server.flood_timer
+      && pconn->u.server.access_level < ALLOW_ADMIN) {
     double time_since_last_message;
     int len;
     double wait_interval, dfc;
@@ -249,28 +250,28 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     }
     wait_interval = 2.0 + 20.0 * (double) len / MAX_LEN_MSG;
 
-    time_since_last_message = read_timer_seconds(pconn->server.flood_timer);
+    time_since_last_message = read_timer_seconds(pconn->u.server.flood_timer);
     dfc = wait_interval - time_since_last_message;
-    clear_timer_start(pconn->server.flood_timer);
+    clear_timer_start(pconn->u.server.flood_timer);
 
-    pconn->server.flood_counter += dfc;
+    pconn->u.server.flood_counter += dfc;
 
-    if (pconn->server.flood_counter < 0.0) {
-      pconn->server.flood_counter = 0.0;
-      pconn->server.flood_warning_level = 0;
+    if (pconn->u.server.flood_counter < 0.0) {
+      pconn->u.server.flood_counter = 0.0;
+      pconn->u.server.flood_warning_level = 0;
     }
 
     freelog(LOG_DEBUG, "flood control %s: len=%d wi=%.1f tslm=%.1f "
             "dfc=%.1f fc=%.1f", conn_description(pconn), len,
             wait_interval, time_since_last_message,
-            dfc, pconn->server.flood_counter);
+            dfc, pconn->u.server.flood_counter);
 
-    if (pconn->server.flood_counter > 4.0) {
-      if (pconn->server.flood_warning_level == 0) {
+    if (pconn->u.server.flood_counter > 4.0) {
+      if (pconn->u.server.flood_warning_level == 0) {
         notify_conn(pconn->self, _("Server: You are sending too many "
                                    "messages! Please wait before trying "
                                    "again or you will be ignored."));
-        pconn->server.flood_warning_level++;
+        pconn->u.server.flood_warning_level++;
       }
       return;
     }

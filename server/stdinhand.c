@@ -321,7 +321,7 @@ void stdinhand_turn(void)
   } hash_values_iterate_end;
 
   conn_list_iterate(game.est_connections, pconn) {
-    if (pconn->server.observe_requested
+    if (pconn->u.server.observe_requested
         && !conn_get_player(pconn)
         && !conn_is_global_observer(pconn)) {
       /* HACK: The inverts queries will be sent
@@ -383,7 +383,7 @@ static bool may_use(struct connection *caller, enum command_id cmd)
   if (!caller) {
     return command_access_level(cmd) < ALLOW_NEVER;
   }
-  return caller->server.access_level >= command_access_level(cmd);
+  return caller->u.server.access_level >= command_access_level(cmd);
 }
 
 /**************************************************************************
@@ -395,7 +395,7 @@ static bool may_use_nothing(struct connection *caller)
   if (!caller) {
     return FALSE; /* on the console, everything is allowed */
   }
-  return (caller->server.access_level == ALLOW_NONE);
+  return (caller->u.server.access_level == ALLOW_NONE);
 }
 
 /**************************************************************************
@@ -408,7 +408,7 @@ static bool may_set_option(struct connection *caller, int option_idx)
   if (!caller) {
     return TRUE; /* on the console, everything is allowed */
   } else {
-    int level = caller->server.access_level;
+    int level = caller->u.server.access_level;
     return ((level == ALLOW_HACK)
             || (level >= sset_access_level(option_idx)
                 && sset_is_to_client(option_idx)));
@@ -770,7 +770,7 @@ bool require_command(struct connection *caller, char *arg, bool check)
   char *cap[256], buf[MAX_LEN_CONSOLE_LINE];
   int ntokens = 0, i;
 
-  if (caller && caller->server.access_level < ALLOW_ADMIN) {
+  if (caller && caller->u.server.access_level < ALLOW_ADMIN) {
     show_required_capabilities(caller);
     return TRUE;
   }
@@ -829,7 +829,7 @@ static struct kickinfo *kickinfo_new(struct connection *pconn)
 
   ki = wc_calloc(1, sizeof(*ki));
   ki->time_of_kick = time(NULL);
-  sz_strlcpy(ki->addr, pconn->server.ipaddr);
+  sz_strlcpy(ki->addr, pconn->u.server.ipaddr);
   sz_strlcpy(ki->user, pconn->username);
 
   return ki;
@@ -854,7 +854,7 @@ static void kick_table_add(struct connection *pconn)
   struct kickinfo *ki = NULL;
 
   if (kick_table_by_addr
-      && !hash_key_exists(kick_table_by_addr, pconn->server.ipaddr)) {
+      && !hash_key_exists(kick_table_by_addr, pconn->u.server.ipaddr)) {
     ki = kickinfo_new(pconn);
     hash_insert(kick_table_by_addr, ki->addr, ki);
   }
@@ -874,7 +874,7 @@ static void kick_table_remove(const struct connection *pconn)
   struct kickinfo *ki;
 
   if (kick_table_by_addr) {
-    ki = hash_delete_entry(kick_table_by_addr, pconn->server.ipaddr);
+    ki = hash_delete_entry(kick_table_by_addr, pconn->u.server.ipaddr);
     if (ki) {
       free(ki);
     }
@@ -903,7 +903,7 @@ bool conn_is_kicked(const struct connection *pconn, int *time_remaining)
     return FALSE;
   }
 
-  ki_addr = hash_lookup_data(kick_table_by_addr, pconn->server.ipaddr);
+  ki_addr = hash_lookup_data(kick_table_by_addr, pconn->u.server.ipaddr);
   ki_user = hash_lookup_data(kick_table_by_user, pconn->username);
 
   if (!ki_addr && !ki_user) {
@@ -949,7 +949,7 @@ static bool kick_command(struct connection *caller, char *name, bool check)
     return FALSE;
   }
 
-  if (caller != NULL && caller->server.access_level < ALLOW_ADMIN) {
+  if (caller != NULL && caller->u.server.access_level < ALLOW_ADMIN) {
     if (pconn == caller) {
       cmd_reply(CMD_KICK, caller, C_FAIL,
                 _("You may not kick yourself."));
@@ -958,7 +958,7 @@ static bool kick_command(struct connection *caller, char *name, bool check)
 
     unique_ipaddr_table = hash_new(hash_fval_string2, hash_fcmp_string);
     conn_list_iterate(game.est_connections, pc) {
-      hash_insert(unique_ipaddr_table, pc->server.ipaddr, NULL);
+      hash_insert(unique_ipaddr_table, pc->u.server.ipaddr, NULL);
     } conn_list_iterate_end;
 
     num_unique_connections = hash_num_entries(unique_ipaddr_table);
@@ -977,11 +977,11 @@ static bool kick_command(struct connection *caller, char *name, bool check)
     return TRUE;
   }
 
-  sz_strlcpy(ipaddr, pconn->server.ipaddr);
+  sz_strlcpy(ipaddr, pconn->u.server.ipaddr);
   kick_list = conn_list_new();
 
   conn_list_iterate(game.all_connections, pc) {
-    if (0 == mystrncasecmp(ipaddr, pc->server.ipaddr, MAX_LEN_ADDR)) {
+    if (0 == mystrncasecmp(ipaddr, pc->u.server.ipaddr, MAX_LEN_ADDR)) {
       conn_list_append(kick_list, pc);
     }
   } conn_list_iterate_end;
@@ -1719,7 +1719,7 @@ static bool set_cmdlevel(struct connection *caller,
 {
   assert(ptarget != NULL);      /* Only ever call me for specific connection */
 
-  if (caller && ptarget->server.access_level > caller->server.access_level) {
+  if (caller && ptarget->u.server.access_level > caller->u.server.access_level) {
     /*
      * This command is intended to be used at ctrl access level
      * and thus this if clause is needed.
@@ -1732,12 +1732,12 @@ static bool set_cmdlevel(struct connection *caller,
               _
               ("Cannot decrease command access level '%s' for connection '%s';"
                " you only have '%s'."),
-              cmdlevel_name(ptarget->server.access_level), ptarget->username,
-              cmdlevel_name(caller->server.access_level));
+              cmdlevel_name(ptarget->u.server.access_level), ptarget->username,
+              cmdlevel_name(caller->u.server.access_level));
     return FALSE;
   } else {
-    ptarget->server.granted_access_level = level;
-    ptarget->server.access_level = level;
+    ptarget->u.server.granted_access_level = level;
+    ptarget->u.server.access_level = level;
     return TRUE;
   }
 }
@@ -1765,7 +1765,7 @@ static bool cmdlevel_command(struct connection *caller, char *str,
     cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT, horiz_line);
     conn_list_iterate(game.est_connections, pconn) {
       cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT, "cmdlevel %s %s",
-                cmdlevel_name(pconn->server.access_level), pconn->username);
+                cmdlevel_name(pconn->u.server.access_level), pconn->username);
     } conn_list_iterate_end;
     cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT, horiz_line);
     return TRUE;
@@ -1784,11 +1784,11 @@ static bool cmdlevel_command(struct connection *caller, char *str,
     }
     cmd_reply(CMD_CMDLEVEL, caller, C_SYNTAX, "%s", buf);
     goto end;
-  } else if (caller && level > caller->server.access_level) {
+  } else if (caller && level > caller->u.server.access_level) {
     cmd_reply(CMD_CMDLEVEL, caller, C_FAIL,
               _("Cannot increase command access level to '%s';"
                 " you only have '%s' yourself."),
-              arg[0], cmdlevel_name(caller->server.access_level));
+              arg[0], cmdlevel_name(caller->u.server.access_level));
     goto end;
   }
 
@@ -1884,8 +1884,8 @@ static bool ignore_command(struct connection *caller, char *str, bool check)
     return TRUE;
 
   ap = conn_pattern_new(pat, type);
-  ignore_list_append(caller->server.ignore_list, ap);
-  n = ignore_list_size(caller->server.ignore_list);
+  ignore_list_append(caller->u.server.ignore_list, ap);
+  n = ignore_list_size(caller->u.server.ignore_list);
   conn_pattern_as_str(ap, buf, sizeof(buf));
   cmd_reply(CMD_IGNORE, caller, C_COMMENT,
             _("Added pattern %s as entry %d to your ignore list."), buf, n);
@@ -1970,7 +1970,7 @@ static bool unignore_command(struct connection *caller,
 
   sz_strlcpy(arg, str);
   remove_leading_trailing_spaces(arg);
-  n = ignore_list_size(caller->server.ignore_list);
+  n = ignore_list_size(caller->u.server.ignore_list);
 
   if (n == 0) {
     cmd_reply(CMD_UNIGNORE, caller, C_COMMENT,
@@ -1997,14 +1997,14 @@ static bool unignore_command(struct connection *caller,
   }
 
   n = 1;
-  ignore_list_iterate(caller->server.ignore_list, ap) {
+  ignore_list_iterate(caller->u.server.ignore_list, ap) {
     if (first <= n && n <= last) {
       char buf[128];
       conn_pattern_as_str(ap, buf, sizeof(buf));
       cmd_reply(CMD_UNIGNORE, caller, C_COMMENT,
                 _("Removed pattern %d (%s) from your ignore list."),
                 n, buf);
-      ignore_list_unlink(caller->server.ignore_list, ap);
+      ignore_list_unlink(caller->u.server.ignore_list, ap);
       conn_pattern_free(ap);
       break;
     }
@@ -2159,7 +2159,7 @@ bool conn_is_muted(const struct connection *pconn)
   if (!pconn) {
     return FALSE;
   }
-  return hash_key_exists(mute_table, pconn->server.ipaddr);
+  return hash_key_exists(mute_table, pconn->u.server.ipaddr);
 }
 
 /**************************************************************************
@@ -2189,7 +2189,7 @@ static bool unmute_command(struct connection *caller, char *str, bool check)
   }
 
   /* Cannot fail, since conn_is_muted returned true. */
-  mi = hash_lookup_data(mute_table, pconn->server.ipaddr);
+  mi = hash_lookup_data(mute_table, pconn->u.server.ipaddr);
   assert(mi != NULL);
   unmute_conn_by_mi(mi);
 
@@ -2250,7 +2250,7 @@ static bool mute_command(struct connection *caller, char *str, bool check)
     return FALSE;
   }
 
-  if (pconn->server.access_level >= ALLOW_ADMIN) {
+  if (pconn->u.server.access_level >= ALLOW_ADMIN) {
     cmd_reply(CMD_MUTE, caller, C_FAIL,
               _("User %s cannot be muted."), pconn->username);
     return FALSE;
@@ -2263,7 +2263,7 @@ static bool mute_command(struct connection *caller, char *str, bool check)
   mi = wc_malloc(sizeof(struct muteinfo));
   mi->turns_left = nturns;
   mi->conn_id = pconn->id;
-  mi->addr = mystrdup(pconn->server.ipaddr);
+  mi->addr = mystrdup(pconn->u.server.ipaddr);
 
   hash_insert(mute_table, mi->addr, mi);
 
@@ -2718,7 +2718,7 @@ void report_settable_server_options(struct connection *dest, int which)
   struct packet_options_settable_control control;
   struct packet_options_settable packet;
   int i, s = 0;
-  if (dest->server.access_level == ALLOW_NONE
+  if (dest->u.server.access_level == ALLOW_NONE
       || (which == 1 && server_state > PRE_GAME_STATE)) {
     report_server_options(dest->self, which);
     return;
@@ -2730,7 +2730,7 @@ void report_settable_server_options(struct connection *dest, int which)
       continue;
     }
     if (settings[i].to_client == SSET_SERVER_ONLY
-        && dest->server.access_level != ALLOW_HACK) {
+        && dest->u.server.access_level != ALLOW_HACK) {
       continue;
     }
     s++;
@@ -2748,7 +2748,7 @@ void report_settable_server_options(struct connection *dest, int which)
       continue;
     }
     if (settings[i].to_client == SSET_SERVER_ONLY
-        && dest->server.access_level != ALLOW_HACK) {
+        && dest->u.server.access_level != ALLOW_HACK) {
       continue;
     }
     memset(&packet, 0, sizeof(packet));
@@ -3427,7 +3427,7 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("There isn't any vote going on."));
       return FALSE;
-    } else if (!caller || caller->server.access_level >= ALLOW_ADMIN) {
+    } else if (!caller || caller->u.server.access_level >= ALLOW_ADMIN) {
       clear_all_votes();
       notify_conn(NULL, _("Server: All votes have been removed."));
       return TRUE;
@@ -3441,7 +3441,7 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("No such vote (%d)."), vote_no);
       return FALSE;
-    } else if (caller && caller->server.access_level < ALLOW_ADMIN
+    } else if (caller && caller->u.server.access_level < ALLOW_ADMIN
                && caller->id != pvote->caller_id) {
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("You are not allowed to cancel this vote (%d)."),
@@ -4004,7 +4004,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     goto CLEANUP;
   }
 
-  if (ntokens == 2 && (caller && caller->server.access_level != ALLOW_HACK)) {
+  if (ntokens == 2 && (caller && caller->u.server.access_level != ALLOW_HACK)) {
     cmd_reply(CMD_OBSERVE, caller, C_SYNTAX,
               _("Usage: observe [player-name]"));
     goto CLEANUP;
@@ -4085,12 +4085,12 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     goto CLEANUP;
   }
 
-  if (caller != NULL && caller->server.access_level < ALLOW_ADMIN
+  if (caller != NULL && caller->u.server.access_level < ALLOW_ADMIN
       && server_state == RUN_GAME_STATE && game.info.timeout > 0
       /* Magic number to don't wait if the timeout is really to big. */
       && game.info.timeout < game.info.turn * 4) {
-    pconn->server.observe_requested = TRUE;
-    pconn->server.observe_target = pplayer;
+    pconn->u.server.observe_requested = TRUE;
+    pconn->u.server.observe_target = pplayer;
     if (pplayer) {
       notify_conn(caller->self, _("Server: You will be attached as "
                                   "an observer of player %s during "
@@ -4150,8 +4150,8 @@ static void setup_observer(struct connection *pconn,
 
   /* attach pconn to new player as an observer */
   pconn->observer = TRUE;       /* do this before attach! */
-  pconn->server.observe_requested = FALSE;
-  pconn->server.observe_target = NULL;
+  pconn->u.server.observe_requested = FALSE;
+  pconn->u.server.observe_target = NULL;
 
   if (pplayer) {
     attach_connection_to_player(pconn, pplayer);
@@ -4214,8 +4214,8 @@ static void setup_observer(struct connection *pconn,
 static void process_observe_requests(void)
 {
   conn_list_iterate(game.est_connections, pconn) {
-    if (pconn->server.observe_requested) {
-      struct player *target = pconn->server.observe_target;
+    if (pconn->u.server.observe_requested) {
+      struct player *target = pconn->u.server.observe_target;
       if (target) {
         notify_conn(pconn->self, _("Server: Processing your "
                                    "request to observe %s..."),
@@ -4259,7 +4259,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
               _("Usage: take <connection-name> <player-name>"));
     goto CLEANUP;
   }
-  if (caller && caller->server.access_level != ALLOW_HACK && ntokens != 1) {
+  if (caller && caller->u.server.access_level != ALLOW_HACK && ntokens != 1) {
     cmd_reply(CMD_TAKE, caller, C_SYNTAX, _("Usage: take <player-name>"));
     goto CLEANUP;
   }
@@ -4425,7 +4425,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
 
   /* if pconn and caller are not the same, only continue
    * if we're console, or we have ALLOW_HACK */
-  if (pconn != caller && caller && caller->server.access_level != ALLOW_HACK) {
+  if (pconn != caller && caller && caller->u.server.access_level != ALLOW_HACK) {
     cmd_reply(CMD_DETACH, caller, C_FAIL,
               _("You can not detach other users."));
     goto CLEANUP;
@@ -4433,9 +4433,9 @@ static bool detach_command(struct connection *caller, char *str, bool check)
 
   pplayer = pconn->player;
 
-  if (pconn->server.observe_requested) {
-    pconn->server.observe_requested = FALSE;
-    pconn->server.observe_target = NULL;
+  if (pconn->u.server.observe_requested) {
+    pconn->u.server.observe_requested = FALSE;
+    pconn->u.server.observe_target = NULL;
     cmd_reply(CMD_DETACH, caller, C_COMMENT,
               _("Your previous observe request has been cancelled."));
   }
@@ -4564,7 +4564,7 @@ static bool attach_command(struct connection *caller, char *name, bool check)
 
   /* If pconn and caller are not the same, only continue
    * if we're console, or we have ALLOW_HACK */
-  if (pconn != caller && caller && caller->server.access_level != ALLOW_HACK) {
+  if (pconn != caller && caller && caller->u.server.access_level != ALLOW_HACK) {
     cmd_reply(CMD_ATTACH, caller, C_FAIL,
               _("You can not attach other users."));
     goto CLEANUP;
@@ -4923,12 +4923,12 @@ static bool examine_command(struct connection *caller,
 
   if (fgi->id <= 0) {
     cmd_reply(CMD_EXAMINE, caller, C_FAIL, _("No such game: %d."), id);
-    fcdb_game_info_free(fgi);
+    wcdb_game_info_free(fgi);
     return FALSE;
   }
 
   if (!fgi->completed && !(caller == NULL
-                           || caller->server.access_level >= ALLOW_ADMIN)) {
+                           || caller->u.server.access_level >= ALLOW_ADMIN)) {
     cmd_reply(CMD_EXAMINE, caller, C_REJECTED,
               _("You may not examine game #%d."), id);
     return FALSE;
@@ -5732,7 +5732,7 @@ static bool loadmap_command(struct connection *caller, char *str,
     char datapath[512];
     const char *fullname;
 
-    if (caller && caller->server.access_level != ALLOW_HACK
+    if (caller && caller->u.server.access_level != ALLOW_HACK
         && (strchr(buf, '/') || buf[0] == '.')) {
       cmd_reply(CMD_LOADMAP, caller, C_SYNTAX,
                 _("You are not allowed to use this command."));
@@ -6010,7 +6010,7 @@ static bool loadscenario_command(struct connection *caller, char *str,
     char datapath[512];
     const char *fullname;
 
-    if (caller && caller->server.access_level != ALLOW_HACK
+    if (caller && caller->u.server.access_level != ALLOW_HACK
         && (strchr(buf, '/') || buf[0] == '.')) {
       cmd_reply(CMD_LOADMAP, caller, C_SYNTAX,
                 _("You are not allowed to use this command."));
@@ -6101,7 +6101,7 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
               _("You must give a ruleset name or number. "
                 "Use /show ruleset to see the current ruleset."));
     return FALSE;
-  } else if (caller && caller->server.access_level != ALLOW_HACK
+  } else if (caller && caller->u.server.access_level != ALLOW_HACK
              && (strchr(filename, '/') || filename[0] == '.')) {
     cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
               _("You are not allowed to use this command."));
@@ -6297,7 +6297,7 @@ bool handle_stdin_input(struct connection * caller,
   }
 
   if (conn_can_vote(caller, NULL)
-      && !check && (caller->server.access_level == ALLOW_BASIC
+      && !check && (caller->u.server.access_level == ALLOW_BASIC
                     || (commands[cmd].vote_flags & VCF_ALWAYSVOTE))
       && level == ALLOW_CTRL) {
     struct vote *vote;
@@ -6324,9 +6324,9 @@ bool handle_stdin_input(struct connection * caller,
     }
   }
 
-  if (caller && !(check && caller->server.access_level >= ALLOW_BASIC
+  if (caller && !(check && caller->u.server.access_level >= ALLOW_BASIC
                   && level == ALLOW_CTRL)
-      && caller->server.access_level < level) {
+      && caller->u.server.access_level < level) {
     cmd_reply(cmd, caller, C_FAIL,
               _("You are not allowed to use this command."));
     return FALSE;
@@ -6348,7 +6348,7 @@ bool handle_stdin_input(struct connection * caller,
       echolist = conn_list_new();
 
       conn_list_iterate(game.est_connections, pconn) {
-        if (pconn->server.access_level >= ALLOW_ADMIN) {
+        if (pconn->u.server.access_level >= ALLOW_ADMIN) {
           conn_list_append(echolist, pconn);
         }
       } conn_list_iterate_end;
@@ -7948,7 +7948,7 @@ static void show_help_command_list(struct connection *caller,
   if (buf[0] != '\0')
     cmd_reply(help_cmd, caller, C_COMMENT, "%s", buf);
   if (caller && caller->player && !caller->observer
-      && caller->server.access_level == ALLOW_BASIC) {
+      && caller->u.server.access_level == ALLOW_BASIC) {
     cmd_reply(help_cmd, caller, C_COMMENT, horiz_line);
     cmd_reply(help_cmd, caller, C_COMMENT,
               _("The following server commands require a vote:"));
@@ -8105,8 +8105,8 @@ static bool show_help(struct connection *caller, char *arg)
 **************************************************************************/
 static int idle_compare(const void *a, const void *b)
 {
-  return (*(struct connection **)a)->server.idle_time
-    < (*(struct connection **)b)->server.idle_time;
+  return (*(struct connection **)a)->u.server.idle_time
+    < (*(struct connection **)b)->u.server.idle_time;
 }
 
 /**************************************************************************
@@ -8135,7 +8135,7 @@ static void show_idle(struct connection *caller)
 
   for (i = 0; i < size; i++) {
     pconn = connections[i];
-    idle = now - pconn->server.idle_time;
+    idle = now - pconn->u.server.idle_time;
 
     if (idle <= 0) {
       continue;
@@ -8170,14 +8170,14 @@ static bool show_ignore(struct connection *caller)
     cmd_reply(CMD_IGNORE, caller, C_FAIL,
               _("That would be rather silly, since you are not a player."));
     return FALSE;
-  } else if (ignore_list_size(caller->server.ignore_list) <= 0) {
+  } else if (ignore_list_size(caller->u.server.ignore_list) <= 0) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, _("Your ignore list is empty."));
     return TRUE;
   }
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, _("Your ignore list:"));
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
-  ignore_list_iterate(caller->server.ignore_list, cp) {
+  ignore_list_iterate(caller->u.server.ignore_list, cp) {
     conn_pattern_as_str(cp, buf, sizeof(buf));
     cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s", n++, buf);
   } ignore_list_iterate_end;
@@ -8466,7 +8466,7 @@ void show_players(struct connection *caller)
     players_iterate(pplayer) {
       /* Low access level callers don't get to see barbarians in list: */
       if (is_barbarian(pplayer) && caller
-          && (caller->server.access_level < ALLOW_CTRL)) {
+          && (caller->u.server.access_level < ALLOW_CTRL)) {
         continue;
       }
 
@@ -8526,7 +8526,7 @@ void show_players(struct connection *caller)
         my_snprintf(buf, sizeof(buf),
                     _("  %s from %s (%s access), bufsize=%dkb"),
                     pconn->username, pconn->addr,
-                    cmdlevel_name(pconn->server.access_level),
+                    cmdlevel_name(pconn->u.server.access_level),
                     (pconn->send_buffer->nsize >> 10));
         if (pconn->observer) {
           sz_strlcat(buf, _(" (observer mode)"));
@@ -8549,7 +8549,7 @@ void show_players(struct connection *caller)
       cmd_reply(CMD_LIST, caller, C_COMMENT,
                 _("  %s from %s (%s access), bufsize=%dkb"),
                 pconn->username, pconn->addr,
-                cmdlevel_name(pconn->server.access_level),
+                cmdlevel_name(pconn->u.server.access_level),
                 (pconn->send_buffer->nsize >> 10));
     } global_observers_iterate_end;
   }
@@ -8584,7 +8584,7 @@ static void show_connections(struct connection *caller)
     sz_strlcat(buf, conn_description(pconn));
     if (pconn->established) {
       cat_snprintf(buf, sizeof(buf), _(" %s access"),
-                   cmdlevel_name(pconn->server.access_level));
+                   cmdlevel_name(pconn->u.server.access_level));
     }
 
     if (pconn->ping_time > 0.0) {
@@ -8592,7 +8592,7 @@ static void show_connections(struct connection *caller)
                    (int) (1000 * pconn->ping_time));
     }
 
-    idle = now - pconn->server.idle_time;
+    idle = now - pconn->u.server.idle_time;
     if (idle > 0) {
       format_time_duration(idle, timebuf, sizeof(timebuf));
       cat_snprintf(buf, sizeof(buf), _(" (idle %s)"), timebuf);

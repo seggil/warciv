@@ -940,7 +940,7 @@ void show_area(struct player *pplayer, struct tile *ptile, int len)
 ***************************************************************/
 bool map_is_known(const struct tile *ptile, struct player *pplayer)
 {
-  return TEST_BIT(ptile->server.known, pplayer->player_no);
+  return TEST_BIT(ptile->u.server.known, pplayer->player_no);
 }
 
 /***************************************************************
@@ -948,7 +948,7 @@ bool map_is_known(const struct tile *ptile, struct player *pplayer)
 ***************************************************************/
 bool map_is_known_and_seen(const struct tile *ptile, struct player *pplayer)
 {
-  return TEST_BIT(ptile->server.known, pplayer->player_no)
+  return TEST_BIT(ptile->u.server.known, pplayer->player_no)
       && ((pplayer->private_map + ptile->index)->seen != 0);
 }
 
@@ -997,7 +997,7 @@ static void map_change_own_seen(struct tile *ptile, struct player *pplayer,
 ***************************************************************/
 void map_set_known(struct tile *ptile, struct player *pplayer)
 {
-  ptile->server.known |= (1u << pplayer->player_no);
+  ptile->u.server.known |= (1u << pplayer->player_no);
 }
 
 /***************************************************************
@@ -1005,7 +1005,7 @@ void map_set_known(struct tile *ptile, struct player *pplayer)
 ***************************************************************/
 void map_clear_known(struct tile *ptile, struct player *pplayer)
 {
-  ptile->server.known &= ~(1u << pplayer->player_no);
+  ptile->u.server.known &= ~(1u << pplayer->player_no);
 }
 
 /***************************************************************
@@ -1065,7 +1065,7 @@ static bool can_send_more(struct conn_list *dest)
   }
 
   conn_list_iterate(dest, pconn) {
-    if (!pconn || pconn->server.is_closing || !pconn->send_buffer) {
+    if (!pconn || pconn->u.server.is_closing || !pconn->send_buffer) {
       continue;
     }
     min = MIN(min, pconn->send_buffer->ndata);

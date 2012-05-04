@@ -220,7 +220,7 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
       nextedge++;
       pcmap->player_landarea[owner]++;
       pcmap->player_owndarea[owner]++;
-      pclaim->know = ptile->server.known;
+      pclaim->know = ptile->u.server.known;
     } else if (ptile->worked) {
       owner = ptile->worked->common.owner;
       pclaim->when = turn + 1;
@@ -229,7 +229,7 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
       nextedge++;
       pcmap->player_landarea[owner]++;
       pcmap->player_owndarea[owner]++;
-      pclaim->know = ptile->server.known;
+      pclaim->know = ptile->u.server.known;
     } else if (unit_list_size(ptile->units) > 0) {
       owner = (unit_list_get(ptile->units, 0))->owner;
       pclaim->when = turn + 1;
@@ -240,11 +240,11 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
       if (TEST_BIT(pclaim->cities, owner)) {
         pcmap->player_owndarea[owner]++;
       }
-      pclaim->know = ptile->server.known;
+      pclaim->know = ptile->u.server.known;
     } else {
       /* pclaim->when = 0; */
       pclaim->whom = no_owner;
-      pclaim->know = ptile->server.known;
+      pclaim->know = ptile->u.server.known;
     }
   } whole_map_iterate_end;
 

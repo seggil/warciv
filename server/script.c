@@ -122,7 +122,7 @@ static int w_conn_set_password(lua_State *L)
   struct w_conn *wc = check_w_conn(L);
   size_t len;
   const char *pass = luaL_checklstring(L, 2, &len);
-  sz_strlcpy(wc->pconn->server.password, pass);
+  sz_strlcpy(wc->pconn->u.server.password, pass);
   return 0;
 }
 
@@ -132,7 +132,7 @@ static int w_conn_set_password(lua_State *L)
 static int w_conn_get_password(lua_State *L)
 {
   struct w_conn *wc = check_w_conn(L);
-  lua_pushstring(L, wc->pconn->server.password);
+  lua_pushstring(L, wc->pconn->u.server.password);
   return 1;
 }
 
@@ -143,7 +143,7 @@ static int w_conn_set_salt(lua_State *L)
 {
   struct w_conn *wc = check_w_conn(L);
   int salt = luaL_checkinteger(L, 2);
-  wc->pconn->server.salt = salt;
+  wc->pconn->u.server.salt = salt;
   return 0;
 }
 
@@ -153,7 +153,7 @@ static int w_conn_set_salt(lua_State *L)
 static int w_conn_get_salt(lua_State *L)
 {
   struct w_conn *wc = check_w_conn(L);
-  lua_pushinteger(L, wc->pconn->server.salt);
+  lua_pushinteger(L, wc->pconn->u.server.salt);
   return 1;
 }
 

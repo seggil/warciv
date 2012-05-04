@@ -162,28 +162,28 @@ static void grant_access_level(struct connection *pconn)
           "(%s from %s)!", pconn->id, pconn->username, pconn->addr);
       break;
     case ACTION_GIVE_NONE:
-      pconn->server.granted_access_level = ALLOW_NONE;
-      pconn->server.access_level = ALLOW_NONE;
+      pconn->u.server.granted_access_level = ALLOW_NONE;
+      pconn->u.server.access_level = ALLOW_NONE;
       break;
     case ACTION_GIVE_OBSERVER:
-      pconn->server.granted_access_level = ALLOW_OBSERVER;
-      pconn->server.access_level = ALLOW_OBSERVER;
+      pconn->u.server.granted_access_level = ALLOW_OBSERVER;
+      pconn->u.server.access_level = ALLOW_OBSERVER;
       break;
     case ACTION_GIVE_BASIC:
-      pconn->server.granted_access_level = ALLOW_BASIC;
-      pconn->server.access_level = ALLOW_BASIC;
+      pconn->u.server.granted_access_level = ALLOW_BASIC;
+      pconn->u.server.access_level = ALLOW_BASIC;
       break;
     case ACTION_GIVE_CTRL:
-      pconn->server.granted_access_level = ALLOW_CTRL;
-      pconn->server.access_level = ALLOW_CTRL;
+      pconn->u.server.granted_access_level = ALLOW_CTRL;
+      pconn->u.server.access_level = ALLOW_CTRL;
       break;
     case ACTION_GIVE_ADMIN:
-      pconn->server.granted_access_level = ALLOW_ADMIN;
-      pconn->server.access_level = ALLOW_ADMIN;
+      pconn->u.server.granted_access_level = ALLOW_ADMIN;
+      pconn->u.server.access_level = ALLOW_ADMIN;
       break;
     case ACTION_GIVE_HACK:
-      pconn->server.granted_access_level = ALLOW_HACK;
-      pconn->server.access_level = ALLOW_HACK;
+      pconn->u.server.granted_access_level = ALLOW_HACK;
+      pconn->u.server.access_level = ALLOW_HACK;
       break;
     default:
       if (user_action_list_size(on_connect_user_actions) > 0) {
@@ -191,21 +191,22 @@ static void grant_access_level(struct connection *pconn)
                 _("Warning: There was no match in the "
                   "action list for connection %d (%s from %s). It will "
                   "have access level 'none'."),
-                pconn->id, pconn->username, pconn->server.ipaddr);
+                pconn->id, pconn->username, pconn->u.server.ipaddr);
       }
-      pconn->server.granted_access_level = ALLOW_NONE;
-      pconn->server.access_level = ALLOW_NONE;
+      pconn->u.server.granted_access_level = ALLOW_NONE;
+      pconn->u.server.access_level = ALLOW_NONE;
       return;
   }
 
-  if (pconn->server.access_level > ALLOW_OBSERVER
-      && !can_control_a_player(pconn, FALSE)) {
-    pconn->server.granted_access_level = ALLOW_OBSERVER;
-    pconn->server.access_level = ALLOW_OBSERVER;
+  if (pconn->u.server.access_level > ALLOW_OBSERVER
+      && !can_control_a_player(pconn, FALSE))
+  {
+    pconn->u.server.granted_access_level = ALLOW_OBSERVER;
+    pconn->u.server.access_level = ALLOW_OBSERVER;
   }
 
   freelog(LOG_VERBOSE, "Giving access '%s' to connection %d (%s from %s).",
-          cmdlevel_name(pconn->server.granted_access_level),
+          cmdlevel_name(pconn->u.server.granted_access_level),
           pconn->id, pconn->username, pconn->addr);
 }
 
@@ -230,10 +231,10 @@ static bool is_banned(struct connection *pconn, enum conn_pattern_type type)
 static bool conn_can_be_established(struct connection *pconn)
 {
   return pconn != NULL
-         && pconn->server.ipaddr != '\0'
+         && pconn->u.server.ipaddr != '\0'
          && pconn->addr != '\0'
-         && pconn->server.adns_id == -1
-         && pconn->server.received_username;
+         && pconn->u.server.adns_id == -1
+         && pconn->u.server.received_username;
 }
 
 /**************************************************************************
@@ -244,8 +245,8 @@ static void check_connection(struct connection *pconn)
   if (user_action_list_size(on_connect_user_actions) > 0
       && conn_can_be_established(pconn)) {
     grant_access_level(pconn);
-    if (pconn->server.delay_establish) {
-      pconn->server.delay_establish = FALSE;
+    if (pconn->u.server.delay_establish) {
+      pconn->u.server.delay_establish = FALSE;
       establish_new_connection(pconn);
     }
   }
@@ -258,7 +259,7 @@ bool receive_ip(struct connection *pconn, const char *ipaddr)
 {
   assert(ipaddr != NULL);
 
-  sz_strlcpy(pconn->server.ipaddr, ipaddr);
+  sz_strlcpy(pconn->u.server.ipaddr, ipaddr);
   sz_strlcpy(pconn->addr, ipaddr);
 
   if (is_banned(pconn, CPT_ADDRESS)) {
@@ -306,7 +307,7 @@ bool receive_username(struct connection *pconn, const char *username)
     return FALSE;
   }
 
-  pconn->server.received_username = TRUE;
+  pconn->u.server.received_username = TRUE;
   check_connection(pconn);
   return TRUE;
 }
@@ -329,14 +330,14 @@ void establish_new_connection(struct connection *pconn)
       && !conn_can_be_established(pconn)) {
     freelog(LOG_VERBOSE, _("Cannot establish connection %d (%s) now, "
                            "delay it"), pconn->id, pconn->username);
-    pconn->server.delay_establish = TRUE;
+    pconn->u.server.delay_establish = TRUE;
     return;
   }
 
   /* Give a warning if we give access NONE when the hack
    * challenge is disabled and there is no action list. */
   if (user_action_list_size(on_connect_user_actions) == 0
-      && pconn->server.access_level == ALLOW_NONE
+      && pconn->u.server.access_level == ALLOW_NONE
       && srvarg.hack_request_disabled) {
     freelog(LOG_NORMAL, _("Warning: Without an action list, connection %d "
                           "(%s) has been set to access level NONE."),
@@ -344,8 +345,8 @@ void establish_new_connection(struct connection *pconn)
   }
 
   /* zero out the password */
-  memset(pconn->server.password, 0, sizeof(pconn->server.password));
-  pconn->server.salt = 0;
+  memset(pconn->u.server.password, 0, sizeof(pconn->u.server.password));
+  pconn->u.server.salt = 0;
   /* send off login_replay packet */
   packet.you_can_join = TRUE;
   sz_strlcpy(packet.capability, our_capability);
@@ -357,7 +358,7 @@ void establish_new_connection(struct connection *pconn)
 
   /* "establish" the connection */
   pconn->established = TRUE;
-  pconn->server.status = AS_ESTABLISHED;
+  pconn->u.server.status = AS_ESTABLISHED;
 
   /* introduce the server to the connection */
   if (!welcome_message) {
@@ -526,8 +527,8 @@ void reject_new_connection(const char *msg, struct connection *pconn)
   struct packet_server_join_reply packet;
 
   /* zero out the password */
-  memset(pconn->server.password, 0, sizeof(pconn->server.password));
-  pconn->server.salt = 0;
+  memset(pconn->u.server.password, 0, sizeof(pconn->u.server.password));
+  pconn->u.server.salt = 0;
 
   packet.you_can_join = FALSE;
   sz_strlcpy(packet.capability, our_capability);
@@ -551,7 +552,7 @@ bool handle_login_request(struct connection *pconn,
   int kick_time_remaining;
 
   freelog(LOG_NORMAL, _("Connection request from %s from %s%s"),
-          req->username, pconn->addr, pconn->server.adns_id > 0 ?
+          req->username, pconn->addr, pconn->u.server.adns_id > 0 ?
           _(" (hostname lookup in progress)") : "");
 
   remove_leading_trailing_spaces(req->username);
@@ -729,7 +730,7 @@ void lost_connection_to_client(struct connection *pconn)
    * trigger an error on send and recurse back to here.
    * Safe to unlink even if not in list: */
   conn_list_unlink(game.est_connections, pconn);
-  pconn->server.is_closing = TRUE;
+  pconn->u.server.is_closing = TRUE;
   conn_list_iterate(game.est_connections, aconn) {
     if (!conn_is_ignored(pconn, aconn)) {
       notify_conn(aconn->self, _("Server: Lost connection: %s."), desc);
@@ -785,7 +786,7 @@ static void package_conn_info(struct connection *pconn,
   packet->established  = pconn->established;
   packet->player_num   = pconn->player ? pconn->player->player_no : -1;
   packet->observer     = pconn->observer;
-  packet->access_level = pconn->server.access_level;
+  packet->access_level = pconn->u.server.access_level;
 
   sz_strlcpy(packet->username, pconn->username);
   sz_strlcpy(packet->addr, pconn->addr);
@@ -1007,14 +1008,14 @@ struct user_action *user_action_new(const char *pattern, int type,
 void restore_access_level(struct connection *pconn)
 {
   /* Restore previous privileges. */
-  pconn->server.access_level = pconn->server.granted_access_level;
+  pconn->u.server.access_level = pconn->u.server.granted_access_level;
 
   /* Detached connections must have at most the same privileges as
    * observers, unless the action list gave them something higher
    * than ALLOW_BASIC in the first place. */
   if ((pconn->observer || !pconn->player)
-      && pconn->server.access_level == ALLOW_BASIC) {
-    pconn->server.access_level = ALLOW_OBSERVER;
+      && pconn->u.server.access_level == ALLOW_BASIC) {
+    pconn->u.server.access_level = ALLOW_OBSERVER;
   }
 }
 
@@ -1024,10 +1025,10 @@ void restore_access_level(struct connection *pconn)
 **************************************************************************/
 void conn_reset_idle_time(struct connection *pconn)
 {
-  if (!pconn || !pconn->used || pconn->server.is_closing) {
+  if (!pconn || !pconn->used || pconn->u.server.is_closing) {
     return;
   }
-  pconn->server.idle_time = time(NULL);
+  pconn->u.server.idle_time = time(NULL);
 }
 
 /**************************************************************************
@@ -1051,15 +1052,15 @@ void check_idle_connections(void)
   }
 
   conn_list_iterate(game.all_connections, pconn) {
-    if (!pconn->used || pconn->server.is_closing
-        || pconn->server.idle_time <= 0
-        || pconn->server.access_level >= ALLOW_ADMIN
+    if (!pconn->used || pconn->u.server.is_closing
+        || pconn->u.server.idle_time <= 0
+        || pconn->u.server.access_level >= ALLOW_ADMIN
         || (server_state == RUN_GAME_STATE
             && pconn->observer
             && num_connections > 1)) {
       continue;
     }
-    if (now >= pconn->server.idle_time + game.server.idlecut) {
+    if (now >= pconn->u.server.idle_time + game.server.idlecut) {
       server_break_connection(pconn, ES_IDLECUT);
     }
   } conn_list_iterate_end;

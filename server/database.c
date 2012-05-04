@@ -236,8 +236,8 @@ bool authenticate_user(struct connection *pconn, char *username)
       my_snprintf(buffer, sizeof(buffer), _("Enter password for %s:"),
                   pconn->username);
       dsend_packet_authentication_req(pconn, AUTH_LOGIN_FIRST, buffer);
-      pconn->server.auth_settime = time(NULL);
-      pconn->server.status = AS_REQUESTING_OLD_PASS;
+      pconn->u.server.auth_settime = time(NULL);
+      pconn->u.server.status = AS_REQUESTING_OLD_PASS;
       freelog(LOG_VERBOSE, "Auth packet %s sent",pconn->username);
       break;
     case AUTH_DB_NOT_FOUND:
@@ -247,8 +247,8 @@ bool authenticate_user(struct connection *pconn, char *username)
                 "About to send authentification packet to %s", pconn->username);
         sz_strlcpy(buffer, _("Enter a new password (and remember it)."));
         dsend_packet_authentication_req(pconn, AUTH_NEWUSER_FIRST, buffer);
-        pconn->server.auth_settime = time(NULL);
-        pconn->server.status = AS_REQUESTING_NEW_PASS;
+        pconn->u.server.auth_settime = time(NULL);
+        pconn->u.server.status = AS_REQUESTING_NEW_PASS;
         freelog(LOG_VERBOSE, "Auth packet %s sent", pconn->username);
       } else {
         reject_new_connection(_("This server allows only preregistered "
@@ -282,7 +282,7 @@ static void create_salt(struct connection *pconn)
   }
 
   if (!srvarg.auth.salted) {
-    pconn->server.salt = 0;
+    pconn->u.server.salt = 0;
     return;
   }
 
@@ -291,7 +291,7 @@ static void create_salt(struct connection *pconn)
 
   /* FIXME: Is this cryptographically sound? */
   mysrand(time(NULL) + pconn->id);
-  pconn->server.salt = (int) myrand(MAX_UINT32);
+  pconn->u.server.salt = (int) myrand(MAX_UINT32);
 
   set_myrand_state(old_state);
 }
@@ -321,11 +321,11 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
 {
   char msg[MAX_LEN_MSG];
 
-  if (pconn->server.status == AS_REQUESTING_NEW_PASS) {
+  if (pconn->u.server.status == AS_REQUESTING_NEW_PASS) {
 
     /* check if the new password is acceptable */
     if (!is_good_password(password, msg)) {
-      if (pconn->server.auth_tries++ >= MAX_AUTH_TRIES) {
+      if (pconn->u.server.auth_tries++ >= MAX_AUTH_TRIES) {
         reject_new_connection(_("Sorry, too many wrong tries..."), pconn);
         freelog(LOG_NORMAL, _("%s was rejected: Too many wrong password "
                 "verifies for new user."), pconn->username);
@@ -338,7 +338,7 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
 
     /* the new password is good, create a database entry for
      * this user; we establish the connection in handle_db_lookup */
-    sz_strlcpy(pconn->server.password, password);
+    sz_strlcpy(pconn->u.server.password, password);
     create_salt(pconn);
 
     if (!save_user(pconn)) {
@@ -350,14 +350,14 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
     }
 
     establish_new_connection(pconn);
-  } else if (pconn->server.status == AS_REQUESTING_OLD_PASS) {
+  } else if (pconn->u.server.status == AS_REQUESTING_OLD_PASS) {
     if (check_password(pconn, password, strlen(password))) {
       establish_new_connection(pconn);
     } else {
-      pconn->server.status = AS_FAILED;
-      pconn->server.auth_tries++;
-      pconn->server.auth_settime = time(NULL)
-          + auth_fail_wait[pconn->server.auth_tries];
+      pconn->u.server.status = AS_FAILED;
+      pconn->u.server.auth_tries++;
+      pconn->u.server.auth_settime = time(NULL)
+          + auth_fail_wait[pconn->u.server.auth_tries];
     }
   } else {
     freelog(LOG_VERBOSE, "%s is sending unrequested auth packets",
@@ -373,18 +373,18 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
 **************************************************************************/
 void process_authentication_status(struct connection *pconn)
 {
-  switch(pconn->server.status) {
+  switch(pconn->u.server.status) {
   case AS_NOT_ESTABLISHED:
     /* nothing, we're not ready to do anything here yet. */
     break;
   case AS_FAILED:
     /* the connection gave the wrong password, we kick 'em off or
      * we're throttling the connection to avoid password guessing */
-    if (pconn->server.auth_settime > 0
-        && time(NULL) >= pconn->server.auth_settime) {
+    if (pconn->u.server.auth_settime > 0
+        && time(NULL) >= pconn->u.server.auth_settime) {
 
-      if (pconn->server.auth_tries >= MAX_AUTH_TRIES) {
-        pconn->server.status = AS_NOT_ESTABLISHED;
+      if (pconn->u.server.auth_tries >= MAX_AUTH_TRIES) {
+        pconn->u.server.status = AS_NOT_ESTABLISHED;
         reject_new_connection(_("Sorry, too many wrong tries..."), pconn);
         freelog(LOG_NORMAL,
                 _("%s was rejected: Too many wrong password tries."),
@@ -393,7 +393,7 @@ void process_authentication_status(struct connection *pconn)
       } else {
         struct packet_authentication_req request;
 
-        pconn->server.status = AS_REQUESTING_OLD_PASS;
+        pconn->u.server.status = AS_REQUESTING_OLD_PASS;
         request.type = AUTH_LOGIN_RETRY;
         sz_strlcpy(request.message,
                    _("Your password is incorrect. Try again."));
@@ -405,8 +405,8 @@ void process_authentication_status(struct connection *pconn)
   case AS_REQUESTING_NEW_PASS:
     /* Waiting on the client to send us a password.
        Don't wait too long. */
-    if (time(NULL) >= pconn->server.auth_settime + MAX_WAIT_TIME) {
-      pconn->server.status = AS_NOT_ESTABLISHED;
+    if (time(NULL) >= pconn->u.server.auth_settime + MAX_WAIT_TIME) {
+      pconn->u.server.status = AS_NOT_ESTABLISHED;
       reject_new_connection(_("Sorry, your connection timed out..."),
                             pconn);
       freelog(LOG_NORMAL,
@@ -418,7 +418,7 @@ void process_authentication_status(struct connection *pconn)
     break;
   case AS_ESTABLISHED:
     /* this better fail bigtime */
-    assert(pconn->server.status != AS_ESTABLISHED);
+    assert(pconn->u.server.status != AS_ESTABLISHED);
     break;
   }
 }
@@ -551,8 +551,8 @@ static bool check_password(struct connection *pconn,
   mysql_init(&mysql);
 
   /* attempt to connect to the server */
-  if (!(sock = mysql_real_connect(&mysql, fcdb.host, fcdb.user,
-                                  fcdb.password, fcdb.dbname, 0,
+  if (!(sock = mysql_real_connect(&mysql, wcdb.host, wcdb.user,
+                                  wcdb.password, wcdb.dbname, 0,
                                   NULL, 0))) {
     freelog(LOG_ERROR, "Can't connect to server! (%s)",
             mysql_error(&mysql));

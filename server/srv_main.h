@@ -54,7 +54,7 @@ struct server_arguments {
   bv_draw draw;
 
   /* authentication options */
-  struct {
+  struct server_arguments_auth {
     bool enabled;            /* defaults to FALSE */
     bool allow_guests;       /* defaults to TRUE */
     bool allow_newusers;     /* defaults to TRUE */

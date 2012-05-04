@@ -178,7 +178,7 @@ static bool is_already_assigned(struct unit *myunit, struct player *pplayer,
     unit_list_iterate_end;
     return FALSE;
   }
-  return TEST_BIT(ptile->server.assigned, pplayer->player_no);
+  return TEST_BIT(ptile->u.server.assigned, pplayer->player_no);
 }
 
 /**************************************************************************
@@ -1144,7 +1144,7 @@ static void auto_settler_findwork(struct player *pplayer, struct unit *punit)
   if (punit->ai.ai_role == AIUNIT_AUTO_SETTLER) {
     /* Mark the square as taken. */
     if (best_tile) {
-      best_tile->server.assigned |= 1 << pplayer->player_no;
+      best_tile->u.server.assigned |= 1 << pplayer->player_no;
     } else {
       UNIT_LOG(LOG_DEBUG, punit, "giving up trying to improve terrain");
       return; /* We cannot do anything */
@@ -1313,14 +1313,14 @@ static void assign_settlers_player(struct player *pplayer)
         || unit_flag(punit, F_CITIES)) {
       if (punit->activity == ACTIVITY_GOTO) {
         ptile = punit->goto_tile;
-        ptile->server.assigned |= i; /* Assigned for us only. */
+        ptile->u.server.assigned |= i; /* Assigned for us only. */
       } else {
         ptile = punit->tile;
-        ptile->server.assigned = ~0; /* Assigned for everyone. */
+        ptile->u.server.assigned = ~0; /* Assigned for everyone. */
       }
     } else {
       ptile = punit->tile;
-      ptile->server.assigned |= ~0 ^ i; /* Assigned for everyone else. */
+      ptile->u.server.assigned |= ~0 ^ i; /* Assigned for everyone else. */
     }
   unit_list_iterate_end;
 }
@@ -1332,7 +1332,7 @@ static void assign_settlers_player(struct player *pplayer)
 static void assign_settlers(void)
 {
   whole_map_iterate(ptile) {
-    ptile->server.assigned = 0;
+    ptile->u.server.assigned = 0;
   } whole_map_iterate_end;
 
   shuffled_players_iterate(pplayer) {

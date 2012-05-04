@@ -216,16 +216,16 @@ static void close_connection(struct connection *pconn)
 {
   cancel_connection_votes(pconn);
 
-  if (pconn->server.ping_timers != NULL) {
-    while (timer_list_size(pconn->server.ping_timers) > 0) {
-      struct timer *timer = timer_list_get(pconn->server.ping_timers, 0);
+  if (pconn->u.server.ping_timers != NULL) {
+    while (timer_list_size(pconn->u.server.ping_timers) > 0) {
+      struct timer *timer = timer_list_get(pconn->u.server.ping_timers, 0);
 
-      timer_list_unlink(pconn->server.ping_timers, timer);
+      timer_list_unlink(pconn->u.server.ping_timers, timer);
       free_timer(timer);
     }
-    assert(timer_list_size(pconn->server.ping_timers) == 0);
-    timer_list_free(pconn->server.ping_timers);
-    pconn->server.ping_timers = NULL;
+    assert(timer_list_size(pconn->u.server.ping_timers) == 0);
+    timer_list_free(pconn->u.server.ping_timers);
+    pconn->u.server.ping_timers = NULL;
   }
 
   /* safe to do these even if not in lists: */
@@ -234,7 +234,7 @@ static void close_connection(struct connection *pconn)
   conn_list_unlink(game.game_connections, pconn);
 
   pconn->player = NULL;
-  pconn->server.access_level = ALLOW_NONE;
+  pconn->u.server.access_level = ALLOW_NONE;
   connection_common_close(pconn);
 
   send_conn_info(pconn->self, game.est_connections);
@@ -290,7 +290,7 @@ void close_connections_and_socket(void)
 static void server_close_socket_callback(struct connection *pc)
 {
   /* Do as little as possible here to avoid recursive evil. */
-  pc->server.is_closing = TRUE;
+  pc->u.server.is_closing = TRUE;
 }
 
 /*****************************************************************************
@@ -302,7 +302,7 @@ void server_break_connection(struct connection *pconn, enum exit_state state)
 {
   pconn->exit_state = state;
 
-  if (pconn->server.currently_processed_request_id > 0) {
+  if (pconn->u.server.currently_processed_request_id > 0) {
     finish_processing_request(pconn);
   }
   flush_connection_send_buffer_all(pconn);
@@ -341,7 +341,7 @@ void force_flush_packets(void)
 
     for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
       pconn = &connections[i];
-      if (!pconn->used || pconn->server.is_closing
+      if (!pconn->used || pconn->u.server.is_closing
           || pconn->send_buffer == NULL
           || pconn->send_buffer->ndata <= 0) {
         continue;
@@ -377,7 +377,7 @@ void force_flush_packets(void)
 
     for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
       pconn = &connections[i];
-      if (!pconn->used || pconn->server.is_closing
+      if (!pconn->used || pconn->u.server.is_closing
           || pconn->send_buffer == NULL
           || pconn->send_buffer->ndata <= 0) {
         continue;
@@ -422,7 +422,7 @@ static void really_close_connections(void)
 
   for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
     pconn = &connections[i];
-    if (!pconn->used || !pconn->server.is_closing) {
+    if (!pconn->used || !pconn->u.server.is_closing) {
       continue;
     }
     lost_connection_to_client(pconn);
@@ -463,7 +463,7 @@ static void really_close_connections(void)
 *****************************************************************************/
 static bool check_read_data(struct connection *pconn, fd_set *preadfs)
 {
-  if (!pconn || !pconn->used || pconn->server.is_closing || !pconn->buffer) {
+  if (!pconn || !pconn->used || pconn->u.server.is_closing || !pconn->buffer) {
     return FALSE;
   }
 
@@ -511,9 +511,9 @@ static bool decode_packet_data(struct connection *pconn)
     return FALSE;
   }
 
-  pconn->server.packets_received++;
-  pconn->server.last_request_id_seen =
-    get_next_request_id(pconn->server.last_request_id_seen);
+  pconn->u.server.packets_received++;
+  pconn->u.server.last_request_id_seen =
+    get_next_request_id(pconn->u.server.last_request_id_seen);
 
 #if PROCESSING_TIME_STATISTICS
   err = gettimeofday(&start, &tz);
@@ -521,7 +521,7 @@ static bool decode_packet_data(struct connection *pconn)
 #endif
 
   connection_do_buffer(pconn);
-  start_processing_request(pconn, pconn->server.
+  start_processing_request(pconn, pconn->u.server.
                            last_request_id_seen);
   accepted = handle_packet_input(pconn, packet, type);
   if (packet) {
@@ -549,11 +549,11 @@ static bool decode_packet_data(struct connection *pconn)
 
   freelog(LOG_NORMAL,
           "processed request %d in %ld.%03ldms",
-          pconn->server.last_request_id_seen, us / 1000,
+          pconn->u.server.last_request_id_seen, us / 1000,
           us % 1000);
 #endif /* PROCESSING_TIME_STATISTICS */
 
-  return !pconn->server.is_closing;
+  return !pconn->u.server.is_closing;
 }
 
 /*****************************************************************************
@@ -687,14 +687,14 @@ int sniff_packets(void)
 
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
         pconn = &connections[i];
-        if (!pconn->used || pconn->server.is_closing
+        if (!pconn->used || pconn->u.server.is_closing
             || !pconn->established
-            || !pconn->server.ping_timers) {
+            || !pconn->u.server.ping_timers) {
           continue;
         }
 
-        if (timer_list_size(pconn->server.ping_timers) > 0) {
-          ping_timer = timer_list_get(pconn->server.ping_timers, 0);
+        if (timer_list_size(pconn->u.server.ping_timers) > 0) {
+          ping_timer = timer_list_get(pconn->u.server.ping_timers, 0);
         } else {
           ping_timer = NULL;
         }
@@ -704,7 +704,7 @@ int sniff_packets(void)
             || pconn->ping_time > game.server.pingtimeout) {
 
           /* Disconnect timed-out users, except for hack-level ones. */
-          if (pconn->server.access_level == ALLOW_HACK) {
+          if (pconn->u.server.access_level == ALLOW_HACK) {
             freelog(LOG_NORMAL, _("Ignoring ping timeout for "
                                   "hack-level connection %s."),
                     conn_description(pconn));
@@ -724,7 +724,7 @@ int sniff_packets(void)
     /* if we've waited long enough after a failure, respond to the client */
     if (srvarg.auth.enabled) {
       conn_list_iterate(game.all_connections, pconn) {
-        if (pconn->server.status != AS_ESTABLISHED) {
+        if (pconn->u.server.status != AS_ESTABLISHED) {
           process_authentication_status(pconn);
         }
       } conn_list_iterate_end;
@@ -981,7 +981,7 @@ int sniff_packets(void)
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
         pconn = &connections[i];
 
-        if (!pconn->used || pconn->server.is_closing
+        if (!pconn->used || pconn->u.server.is_closing
             || pconn->send_buffer == NULL
             || pconn->send_buffer->ndata <= 0) {
           continue;
@@ -1067,16 +1067,16 @@ static bool reverse_lookup_cb(const unsigned char *addr,
     return TRUE;
   }
 
-  pconn->server.adns_id = -1;
+  pconn->u.server.adns_id = -1;
 
   if (addrlen > 0) {
     freelog(LOG_VERBOSE, "ADNS found hostname \"%s\" for "
             "connection (%s) from %s", hostname, pconn->username,
-            pconn->server.ipaddr);
+            pconn->u.server.ipaddr);
     receive_hostname(pconn, hostname);
   } else {
     freelog(LOG_VERBOSE, "ADNS could not find hostname for "
-            "connection %s (%s)", pconn->server.ipaddr,
+            "connection %s (%s)", pconn->u.server.ipaddr,
             pconn->username);
     receive_hostname(pconn, NULL);
   }
@@ -1130,7 +1130,7 @@ static int server_accept_connection(int sockfd)
     int count = 0;
 
     conn_list_iterate(game.all_connections, pconn) {
-      if (strcmp(ipaddr, pconn->server.ipaddr) == 0) {
+      if (strcmp(ipaddr, pconn->u.server.ipaddr) == 0) {
         if (++count >= game.server.maxhostconnections) {
           freelog(LOG_NORMAL, _("Maximum number of connections "
                                 "for host %s exceeded."), ipaddr);
@@ -1164,28 +1164,28 @@ static int server_accept_connection(int sockfd)
   pconn->observer = FALSE;
   pconn->player = NULL;
   pconn->capability[0] = '\0';
-  pconn->server.is_closing = FALSE;
-  pconn->server.currently_processed_request_id = 0;
-  pconn->server.last_request_id_seen = 0;
-  pconn->server.auth_tries = 0;
-  pconn->server.auth_settime = 0;
-  pconn->server.delay_counter = 0;
-  pconn->server.packets_received = 0;
-  pconn->server.status = AS_NOT_ESTABLISHED;
-  pconn->server.ping_timers = timer_list_new();
+  pconn->u.server.is_closing = FALSE;
+  pconn->u.server.currently_processed_request_id = 0;
+  pconn->u.server.last_request_id_seen = 0;
+  pconn->u.server.auth_tries = 0;
+  pconn->u.server.auth_settime = 0;
+  pconn->u.server.delay_counter = 0;
+  pconn->u.server.packets_received = 0;
+  pconn->u.server.status = AS_NOT_ESTABLISHED;
+  pconn->u.server.ping_timers = timer_list_new();
   pconn->ping_time = -1.0;
   pconn->incoming_packet_notify = NULL;
   pconn->outgoing_packet_notify = NULL;
   sz_strlcpy(pconn->username, makeup_connection_name(&pconn->id));
-  pconn->server.ipaddr[0] = '\0';
+  pconn->u.server.ipaddr[0] = '\0';
   pconn->addr[0] = '\0';
-  pconn->server.adns_id = -1;
-  pconn->server.received_username = FALSE;
-  pconn->server.granted_access_level = ALLOW_NONE;
-  pconn->server.access_level = ALLOW_NONE;
-  pconn->server.delay_establish = FALSE;
-  memset(pconn->server.password, 0, sizeof(pconn->server.password));
-  pconn->server.salt = 0;
+  pconn->u.server.adns_id = -1;
+  pconn->u.server.received_username = FALSE;
+  pconn->u.server.granted_access_level = ALLOW_NONE;
+  pconn->u.server.access_level = ALLOW_NONE;
+  pconn->u.server.delay_establish = FALSE;
+  memset(pconn->u.server.password, 0, sizeof(pconn->u.server.password));
+  pconn->u.server.salt = 0;
 
   conn_reset_idle_time(pconn);
 
@@ -1197,13 +1197,13 @@ static int server_accept_connection(int sockfd)
   if (!srvarg.no_dns_lookup) {
     if (adns_is_available()) {
       freelog(LOG_DEBUG, "sac making adns request");
-      pconn->server.adns_id = adns_reverse_lookup(&fromend,
+      pconn->u.server.adns_id = adns_reverse_lookup(&fromend,
                                                   reverse_lookup_cb,
                                                   pconn, NULL);
-      freelog(LOG_DEBUG, "sac got adns_id=%d", pconn->server.adns_id);
-      if (pconn->server.adns_id == 0) {
+      freelog(LOG_DEBUG, "sac got adns_id=%d", pconn->u.server.adns_id);
+      if (pconn->u.server.adns_id == 0) {
         /* reverse_lookup_cb called already */
-        pconn->server.adns_id = -1;
+        pconn->u.server.adns_id = -1;
       }
       if (!pconn->used) {
         /* Have been banned (not an error) */
@@ -1220,8 +1220,8 @@ static int server_accept_connection(int sockfd)
   }
 
   freelog(LOG_VERBOSE, "connection (%s) from %s (%s)",
-          pconn->username, pconn->addr, !from && pconn->server.adns_id > 0
-          ? "hostname lookup in progress" : pconn->server.ipaddr);
+          pconn->username, pconn->addr, !from && pconn->u.server.adns_id > 0
+          ? "hostname lookup in progress" : pconn->u.server.ipaddr);
 
   conn_list_append(game.all_connections, pconn);
   ping_connection(pconn);
@@ -1349,17 +1349,17 @@ void init_connections(void)
 static void start_processing_request(struct connection *pconn,
                                      int request_id)
 {
-  if (pconn == NULL || !pconn->used || pconn->server.is_closing) {
+  if (pconn == NULL || !pconn->used || pconn->u.server.is_closing) {
     return;
   }
 
   assert(request_id != 0);
-  assert(pconn->server.currently_processed_request_id == 0);
+  assert(pconn->u.server.currently_processed_request_id == 0);
 
   freelog(LOG_DEBUG, "start processing packet %d from connection %d",
           request_id, pconn->id);
   send_packet_processing_started(pconn);
-  pconn->server.currently_processed_request_id = request_id;
+  pconn->u.server.currently_processed_request_id = request_id;
 }
 
 /**************************************************************************
@@ -1367,14 +1367,14 @@ static void start_processing_request(struct connection *pconn,
 **************************************************************************/
 static void finish_processing_request(struct connection *pconn)
 {
-  if (pconn == NULL || !pconn->used || pconn->server.is_closing
-      || pconn->server.currently_processed_request_id <= 0) {
+  if (pconn == NULL || !pconn->used || pconn->u.server.is_closing
+      || pconn->u.server.currently_processed_request_id <= 0) {
     return;
   }
   freelog(LOG_DEBUG, "finish processing packet %d from connection %d",
-          pconn->server.currently_processed_request_id, pconn->id);
+          pconn->u.server.currently_processed_request_id, pconn->id);
   send_packet_processing_finished(pconn);
-  pconn->server.currently_processed_request_id = 0;
+  pconn->u.server.currently_processed_request_id = 0;
 }
 
 /**************************************************************************
@@ -1384,8 +1384,8 @@ static void ping_connection(struct connection *pconn)
 {
   freelog(LOG_DEBUG, "sending ping to %s (open=%d)",
           conn_description(pconn),
-          timer_list_size(pconn->server.ping_timers));
-  timer_list_append(pconn->server.ping_timers,
+          timer_list_size(pconn->u.server.ping_timers));
+  timer_list_append(pconn->u.server.ping_timers,
                          new_timer_start(TIMER_USER, TIMER_ACTIVE));
   send_packet_conn_ping(pconn);
 }
@@ -1397,18 +1397,18 @@ void handle_conn_pong(struct connection *pconn)
 {
   struct timer *timer;
 
-  if (timer_list_size(pconn->server.ping_timers) == 0) {
+  if (timer_list_size(pconn->u.server.ping_timers) == 0) {
     freelog(LOG_NORMAL, "got unexpected pong from %s",
             conn_description(pconn));
     return;
   }
 
-  timer = timer_list_get(pconn->server.ping_timers, 0);
-  timer_list_unlink(pconn->server.ping_timers, timer);
+  timer = timer_list_get(pconn->u.server.ping_timers, 0);
+  timer_list_unlink(pconn->u.server.ping_timers, timer);
   pconn->ping_time = read_timer_seconds_free(timer);
   freelog(LOG_DEBUG, "got pong from %s (open=%d); ping time = %fs",
           conn_description(pconn),
-          timer_list_size(pconn->server.ping_timers), pconn->ping_time);
+          timer_list_size(pconn->u.server.ping_timers), pconn->ping_time);
 }
 
 /**************************************************************************
