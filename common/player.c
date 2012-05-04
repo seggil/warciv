@@ -170,14 +170,14 @@ void player_init(struct player *plr)
   plr->rank = RANK_NONE;
   plr->team_rank = RANK_NONE;
 
-  plr->fcdb.player_id = 0;
-  plr->fcdb.rated_user_id = 0;
-  plr->fcdb.rated_user_name[0] = '\0';
-  plr->fcdb.rating = 0;
-  plr->fcdb.rating_deviation = 0;
-  plr->fcdb.last_rating_timestamp = 0;
-  plr->fcdb.new_rating = 0;
-  plr->fcdb.new_rating_deviation = 0;
+  plr->wcdb.player_id = 0;
+  plr->wcdb.rated_user_id = 0;
+  plr->wcdb.rated_user_name[0] = '\0';
+  plr->wcdb.rating = 0;
+  plr->wcdb.rating_deviation = 0;
+  plr->wcdb.last_rating_timestamp = 0;
+  plr->wcdb.new_rating = 0;
+  plr->wcdb.new_rating_deviation = 0;
   player_free_turns_played(plr);
 
   plr->score.units_built = 0;
@@ -943,7 +943,7 @@ void player_set_turns_played(struct player *plr, const char *username,
     return;
   }
 
-  h = plr->fcdb.turns_played_table;
+  h = plr->wcdb.turns_played_table;
   if (!h) {
     return;
   }
@@ -967,7 +967,7 @@ void player_setup_turns_played(struct player *plr)
   player_free_turns_played(plr);
 
   h = hash_new(hash_fval_string2, hash_fcmp_string);
-  plr->fcdb.turns_played_table = h;
+  plr->wcdb.turns_played_table = h;
 }
 
 /****************************************************************************
@@ -982,7 +982,7 @@ int player_get_turns_played(const struct player *plr, const char *username)
     return 0;
   }
 
-  h = plr->fcdb.turns_played_table;
+  h = plr->wcdb.turns_played_table;
   if (!h) {
     return 0;
   }
@@ -1001,7 +1001,7 @@ void player_free_turns_played(struct player *plr)
     return;
   }
 
-  h = plr->fcdb.turns_played_table;
+  h = plr->wcdb.turns_played_table;
   if (h) {
     hash_values_iterate(h, tp) {
       if (tp) {
@@ -1011,5 +1011,5 @@ void player_free_turns_played(struct player *plr)
     hash_free(h);
   }
 
-  plr->fcdb.turns_played_table = NULL;
+  plr->wcdb.turns_played_table = NULL;
 }

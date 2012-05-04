@@ -187,7 +187,7 @@ struct civ_game {
       int id;
 
       char *termap;
-    } fcdb;
+    } wcdb;
 
     int maxconnections;
     int maxhostconnections;

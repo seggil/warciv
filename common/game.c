@@ -374,10 +374,10 @@ void game_init(void)
     game.server.meta_info.user_message_set = FALSE;
     game.server.meta_info.user_message[0] = '\0';
 
-    game.server.fcdb.id = 0;
-    game.server.fcdb.outcome = GOC_NONE;
-    game.server.fcdb.type = GT_FFA;
-    game.server.fcdb.termap = NULL;
+    game.server.wcdb.id = 0;
+    game.server.wcdb.outcome = GOC_NONE;
+    game.server.wcdb.type = GT_FFA;
+    game.server.wcdb.termap = NULL;
   }
 
   init_our_capability();
@@ -429,9 +429,9 @@ void game_free(void)
   /* XXX Where is this init'd ? */
   ruleset_data_free();
 
-  if (is_server && game.server.fcdb.termap) {
-    free(game.server.fcdb.termap);
-    game.server.fcdb.termap = NULL;
+  if (is_server && game.server.wcdb.termap) {
+    free(game.server.wcdb.termap);
+    game.server.wcdb.termap = NULL;
   }
 }
 

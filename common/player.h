@@ -80,7 +80,7 @@ struct player_research {
   int bulbs_researched_before;  /* if the player changed techs, how
                                    many points they had before the
                                    change */
-  struct {
+  struct player_research_inventions {
     /* One of TECH_UNKNOWN, TECH_KNOWN or TECH_REACHABLE. */
     enum tech_state state;
 
@@ -251,7 +251,7 @@ struct player {
    * the player is not in a team, this will just be zero. */
   float team_rank;
 
-  struct {
+  struct player_wcdb {
     /* ID of this player in the game database, for the current game. */
     int player_id;
 
@@ -260,7 +260,7 @@ struct player {
      * to determine who should get updated ratings. */
     struct hash_table *turns_played_table;
 
-    /* These fields are filled in by fcdb_load_player_ratings. */
+    /* These fields are filled in by wcdb_load_player_ratings. */
     int rated_user_id;
     char rated_user_name[MAX_LEN_NAME]; /* Convenience. */
     double rating;
@@ -270,7 +270,7 @@ struct player {
     /* Set by evaluate_players. */
     double new_rating;
     double new_rating_deviation;
-  } fcdb;
+  } wcdb;
 };
 
 enum player_results {
@@ -399,12 +399,12 @@ void player_set_turns_played(struct player *plr, const char *username,
 
 #define player_turns_played_iterate(ARG_plr, NAME_user, NAME_turns)\
 do {\
-  if (!(ARG_plr) || !(ARG_plr)->fcdb.turns_played_table) {\
+  if (!(ARG_plr) || !(ARG_plr)->wcdb.turns_played_table) {\
     break;\
   }\
   const char *NAME_user;\
   int NAME_turns;\
-  hash_kv_iterate((ARG_plr)->fcdb.turns_played_table,\
+  hash_kv_iterate((ARG_plr)->wcdb.turns_played_table,\
                   void *, dummy, struct turns_played_info *, tp) {\
     NAME_user = tp->username;\
     NAME_turns = tp->turns;
