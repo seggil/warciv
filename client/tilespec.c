@@ -528,8 +528,8 @@ void tilespec_reread(const char *tileset_name)
 **************************************************************************/
 void tilespec_reread_callback(struct client_option *option)
 {
-  assert(option->type == COT_STRING && *option->string.pvalue != '\0');
-  tilespec_reread(option->string.pvalue);
+  assert(option->type == COT_STRING && *option->u.string.pvalue != '\0');
+  tilespec_reread(option->u.string.pvalue);
 }
 
 /**************************************************************************
