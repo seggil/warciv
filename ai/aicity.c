@@ -1064,7 +1064,7 @@ static void resolve_city_emergency(struct player *pplayer, struct city_s *pcity)
   map_city_radius_iterate(pcity->common.tile, ptile) {
     struct city_s *acity = ptile->worked;
     int city_map_x, city_map_y;
-#ifndef NDEBUG
+#ifdef NDEBUG
     bool is_valid;
 #endif
 
@@ -1080,9 +1080,9 @@ static void resolve_city_emergency(struct player *pplayer, struct city_s *pcity)
               pcity->common.name, acity->common.name, ptile->x, ptile->y);
 #ifdef NDEBUG
       map_to_city_map(&city_map_x, &city_map_y, acity, ptile);
+      assert(is_valid);
 #else
       map_to_city_map(&city_map_x, &city_map_y, acity, ptile);
-      assert(is_valid);
 #endif
       server_remove_worker_city(acity, city_map_x, city_map_y);
       acity->common.specialists[SP_ELVIS]++;
