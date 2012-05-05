@@ -20,7 +20,7 @@
 
 typedef unsigned int RANDOM_TYPE;
 
-typedef struct {
+typedef struct RANDOM_STATE_S {
   RANDOM_TYPE v[56];
   int j, k, x;
   bool is_init;                 /* initially 0 for static storage */
