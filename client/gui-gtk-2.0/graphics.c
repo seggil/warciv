@@ -414,11 +414,26 @@ struct Sprite *load_gfxfile(const char *filename)
 
   w = gdk_pixbuf_get_width(im);
   h = gdk_pixbuf_get_height(im);
-  gdk_pixbuf_render_pixmap_and_mask_for_colormap(im, colormap,
-                                                 &mysprite->pixmap,
-                                                 &mysprite->mask, 1);
-
-  mysprite->has_mask  = (mysprite->mask != NULL);
+  if ( ! gdk_pixbuf_get_has_alpha(im) ) {
+    pixbuf3 = gdk_pixbuf_add_alpha(im, FALSE, 0,0,0);
+    gdk_pixbuf_render_pixmap_and_mask_for_colormap(pixbuf3, colormap,
+                                                   &mysprite->pixmap,
+                                                   &mysprite->mask, 1);
+    g_object_unref(pixbuf3);
+  }
+  else
+  {
+    gdk_pixbuf_render_pixmap_and_mask_for_colormap(im, colormap,
+                                                   &mysprite->pixmap,
+                                                   &mysprite->mask, 1);
+  }
+  if (mysprite->mask != NULL) {
+    mysprite->has_mask  = true;
+    //printf("%s %s %d a mask for  %s\n", __FILE__, __FUNCTION__, __LINE__, filename);
+  } else {
+    mysprite->has_mask  = false;
+    //printf("%s %s %d no mask for %s\n", __FILE__, __FUNCTION__, __LINE__, filename);
+  }
   mysprite->width     = w;
   mysprite->height    = h;
 
