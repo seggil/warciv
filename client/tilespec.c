@@ -1959,21 +1959,21 @@ static struct Sprite *get_city_occupied_sprite(city_t *pcity)
   Assemble some data that is used in building the tile sprite arrays.
     (map_x, map_y) : the (normalized) map position
   The values we fill in:
-    ttype          : the terrain type of the tile
+    ter_type       : the terrain type of the tile
     tspecial       : all specials the tile has
-    ttype_near     : terrain types of all adjacent terrain
+    ter_type_near  : terrain types of all adjacent terrain
     tspecial_near  : specials of all adjacent terrain
 **************************************************************************/
 static void build_tile_data(struct tile *ptile,
-                            Terrain_type_id *ttype,
+                            Terrain_type_id *ter_type,
                             enum tile_special_type *tspecial,
-                            Terrain_type_id *ttype_near,
+                            Terrain_type_id *ter_type_near,
                             enum tile_special_type *tspecial_near)
 {
   enum direction8 dir;
 
   *tspecial = map_get_special(ptile);
-  *ttype = map_get_terrain(ptile);
+  *ter_type = map_get_terrain(ptile);
 
   /* Loop over all adjacent tiles.  We should have an iterator for this. */
   for (dir = 0; dir < 8; dir++) {
@@ -1981,12 +1981,12 @@ static void build_tile_data(struct tile *ptile,
 
     if (tile1 && tile_get_known(tile1) != TILE_UNKNOWN) {
       tspecial_near[dir] = map_get_special(tile1);
-      ttype_near[dir] = map_get_terrain(tile1);
+      ter_type_near[dir] = map_get_terrain(tile1);
     } else {
       /* We draw the edges of the (known) map as if the same terrain just
        * continued off the edge of the map. */
       tspecial_near[dir] = S_NO_SPECIAL;
-      ttype_near[dir] = *ttype;
+      ter_type_near[dir] = *ter_type;
     }
   }
 }
@@ -2854,7 +2854,7 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
 ***********************************************************************/
 static void tilespec_setup_style_tile(int style, char *graphics)
 {
-  struct Sprite *sp;
+  struct Sprite *sprite2;
   char buffer[128];
   int j;
   struct Sprite *sp_wall = NULL;
@@ -2864,13 +2864,13 @@ static void tilespec_setup_style_tile(int style, char *graphics)
 
   for(j=0; j<32 && city_styles[style].tiles_num < MAX_CITY_TILES; j++) {
     my_snprintf(buffer, sizeof(buffer), "%s_%d", graphics, j);
-    sp = load_sprite(buffer);
+    sprite2 = load_sprite(buffer);
     if (is_isometric) {
       my_snprintf(buffer, sizeof(buffer_wall), "%s_%d_wall", graphics, j);
       sp_wall = load_sprite(buffer);
     }
-    if (sp) {
-      sprites.city.tile[style][city_styles[style].tiles_num] = sp;
+    if (sprite2) {
+      sprites.city.tile[style][city_styles[style].tiles_num] = sprite2;
       if (is_isometric) {
         assert(sp_wall != NULL);
         sprites.city.tile_wall[style][city_styles[style].tiles_num] = sp_wall;
@@ -2887,9 +2887,9 @@ static void tilespec_setup_style_tile(int style, char *graphics)
   if (!is_isometric) {
     /* the wall tile */
     my_snprintf(buffer, sizeof(buffer), "%s_wall", graphics);
-    sp = load_sprite(buffer);
-    if (sp) {
-      sprites.city.tile[style][city_styles[style].tiles_num] = sp;
+    sprite2 = load_sprite(buffer);
+    if (sprite2) {
+      sprites.city.tile[style][city_styles[style].tiles_num] = sprite2;
     } else {
       freelog(LOG_NORMAL, "Warning: no wall tile for graphic %s", graphics);
     }
@@ -2897,9 +2897,9 @@ static void tilespec_setup_style_tile(int style, char *graphics)
 
   /* occupied tile */
   my_snprintf(buffer, sizeof(buffer), "%s_occupied", graphics);
-  sp = load_sprite(buffer);
-  if (sp) {
-    sprites.city.tile[style][city_styles[style].tiles_num+1] = sp;
+  sprite2 = load_sprite(buffer);
+  if (sprite2) {
+    sprites.city.tile[style][city_styles[style].tiles_num+1] = sprite2;
   } else {
     freelog(LOG_NORMAL, "Warning: no occupied tile for graphic %s", graphics);
   }
