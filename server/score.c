@@ -206,7 +206,7 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
     int i = ptile->index;
 
     pclaim = &pcmap->claims[i];
-    ptile = &map.tiles[i];
+    ptile = &map.board[i];
 
     if (is_ocean(ptile->terrain)) {
       /* pclaim->when = 0; */
