@@ -1360,7 +1360,7 @@ void send_select_nation(struct player *pplayer)
 **************************************************************************/
 static char* find_common_class(void)
 {
-  char* class = NULL;
+  char* class2 = NULL;
   struct nation_type* nation;
 
   players_iterate(pplayer) {
@@ -1369,24 +1369,24 @@ static char* find_common_class(void)
       continue;
     }
     nation = get_nation_by_idx(pplayer->nation);
-    assert(nation->class != NULL);
-    if (class == NULL) {
+    assert(nation->class_ != NULL);
+    if (class2 == NULL) {
        /* Set the class. */
-      class = nation->class;
-    } else if (strcmp(nation->class, class) != 0) {
+      class2 = nation->class_;
+    } else if (strcmp(nation->class_, class2) != 0) {
       /* Multiple classes are already being used. */
       return NULL;
     }
   } players_iterate_end;
 
-  return class;
+  return class2;
 }
 
 /**************************************************************************
   Select a random available nation.  If 'class' is non-NULL, then choose
   a nation from that class if possible.
 **************************************************************************/
-Nation_Type_id select_random_nation(const char* class)
+Nation_Type_id select_random_nation(const char* class2)
 {
   Nation_Type_id i, available[game.ruleset_control.playable_nation_count];
   int count = 0;
@@ -1396,7 +1396,7 @@ Nation_Type_id select_random_nation(const char* class)
     struct nation_type *nation = get_nation_by_idx(i);
 
     if (nations_available[i]
-        && (class == NULL || strcmp(nation->class, class) == 0)) {
+        && (class2 == NULL || strcmp(nation->class_, class2) == 0)) {
       available[count] = i;
       count++;
     }
@@ -1404,7 +1404,7 @@ Nation_Type_id select_random_nation(const char* class)
 
   /* Handle the case where no nations are possible. */
   if (count == 0) {
-    if (class) {
+    if (class2) {
       /* Try other classes. */
       return select_random_nation(NULL);
     }
