@@ -584,7 +584,7 @@ extern struct terrain_misc terrain_control;
     if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
       continue;                                                             \
     }                                                                       \
-    itr_tile = map.tiles + map_pos_to_index(_x_itr, _y_itr);
+    itr_tile = map.board + map_pos_to_index(_x_itr, _y_itr);
 
 #define adjc_dirlist_iterate_end    \
     }    \
@@ -608,7 +608,7 @@ extern struct terrain_misc terrain_control;
     if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
       continue;                                                             \
     }
-    //itr_tile = map.tiles + map_pos_to_index(_x_itr, _y_itr);
+    //itr_tile = map.board + map_pos_to_index(_x_itr, _y_itr);
 
 #define adjc_dirlist_base_iterate_end                                       \
     }                                                                       \
@@ -619,7 +619,7 @@ extern struct terrain_misc terrain_control;
 {                                                                           \
   int _index; /* We use index positions for cache efficiency. */            \
   for (_index = 0; _index < MAX_MAP_INDEX; _index++) {                      \
-    struct tile *ptile = map.tiles + _index;                                \
+    struct tile *ptile = map.board + _index;                                \
 
 #define whole_map_iterate_end                                               \
   }                                                                         \

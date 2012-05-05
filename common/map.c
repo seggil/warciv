@@ -160,7 +160,7 @@ const char *map_get_tile_info_text(const struct tile *ptile)
 ***************************************************************/
 bool map_is_empty(void)
 {
-  return !map.tiles;
+  return !map.board;
 }
 
 /***************************************************************
@@ -186,7 +186,7 @@ void map_init(void)
   map.info.ysize = MAP_MIN_LINEAR_SIZE;
 
   map.num_continents = 0;
-  map.tiles = NULL;
+  map.board = NULL;
 
   if (is_server) {
     map.server.size = MAP_DEFAULT_SIZE;
@@ -415,7 +415,7 @@ static inline struct tile *base_native_pos_to_tile(int nat_x, int nat_y)
     nat_y = WC_WRAP(nat_y, map.info.ysize);
   }
 
-  return map.tiles + native_pos_to_index(nat_x, nat_y);
+  return map.board + native_pos_to_index(nat_x, nat_y);
 }
 
 /****************************************************************************
@@ -425,7 +425,7 @@ struct tile *map_pos_to_tile(int map_x, int map_y)
 {
   int nat_x, nat_y;
 
-  if (!map.tiles) {
+  if (!map.board) {
     return NULL;
   }
 
@@ -439,7 +439,7 @@ struct tile *map_pos_to_tile(int map_x, int map_y)
 ****************************************************************************/
 struct tile *native_pos_to_tile(int nat_x, int nat_y)
 {
-  if (!map.tiles) {
+  if (!map.board) {
     return NULL;
   }
 
@@ -451,12 +451,12 @@ struct tile *native_pos_to_tile(int nat_x, int nat_y)
 ****************************************************************************/
 struct tile *index_to_tile(int index)
 {
-  if (!map.tiles) {
+  if (!map.board) {
     return NULL;
   }
 
   if (index >= 0 && index < MAX_MAP_INDEX) {
-    return map.tiles + index;
+    return map.board + index;
   } else {
     /* Unwrapped index coordinates are impossible, so the best we can do is
      * return NULL. */
@@ -500,14 +500,14 @@ static void tile_free(struct tile *ptile)
 void map_allocate(void)
 {
   freelog(LOG_DEBUG, "map_allocate (was %p) (%d,%d)",
-          map.tiles, map.info.xsize, map.info.ysize);
+          map.board, map.info.xsize, map.info.ysize);
 
-  assert(map.tiles == NULL);
-  map.tiles = wc_malloc(map.info.xsize * map.info.ysize * sizeof(struct tile));
+  assert(map.board == NULL);
+  map.board = wc_malloc(map.info.xsize * map.info.ysize * sizeof(struct tile));
   whole_map_iterate(ptile) {
     int index, nat_x, nat_y, map_x, map_y;
 
-    index = ptile - map.tiles;
+    index = ptile - map.board;
     index_to_native_pos(&nat_x, &nat_y, index);
     index_to_map_pos(&map_x, &map_y, index);
     CHECK_INDEX(index);
@@ -535,15 +535,15 @@ void map_allocate(void)
 ***************************************************************/
 void map_free(void)
 {
-  if (map.tiles) {
+  if (map.board) {
     /* it is possible that map_init was called but not map_allocate */
 
     whole_map_iterate(ptile) {
       tile_free(ptile);
     } whole_map_iterate_end;
 
-    free(map.tiles);
-    map.tiles = NULL;
+    free(map.board);
+    map.board = NULL;
   }
 }
 
@@ -1629,7 +1629,7 @@ struct tile *rand_map_pos_filtered(void *data,
   /* First do a few quick checks to find a spot.  The limit on number of
    * tries could use some tweaking. */
   do {
-    ptile = map.tiles + myrand(map.info.xsize * map.info.ysize);
+    ptile = map.board + myrand(map.info.xsize * map.info.ysize);
   } while (filter && !filter(ptile, data) && ++tries < max_tries);
 
   /* If that fails, count all available spots and pick one.
@@ -1648,7 +1648,7 @@ struct tile *rand_map_pos_filtered(void *data,
       return NULL;
     }
 
-    return map.tiles + positions[myrand(count)];
+    return map.board + positions[myrand(count)];
   } else {
     return ptile;
   }
