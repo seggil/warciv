@@ -1261,9 +1261,10 @@ void canvas_copy(struct canvas *dest, struct canvas *src,
 **************************************************************************/
 static void fog_sprite(struct Sprite *sprite)
 {
-  int x, y;
+  int x;
+  int y;
   GdkPixbuf *fogged;
-  guchar *pixel;
+  guchar    *pixel;
   const int bright = 65; /* Brightness percentage */
   GdkColormap *colormap;
   GdkScreen *screen;

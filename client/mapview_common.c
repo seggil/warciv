@@ -887,7 +887,8 @@ static void put_drawn_sprites(struct canvas *pcanvas,
       }
       if (fog && pdrawn[i].data.sprite.foggable) {
         canvas_put_sprite_fogged(pcanvas,
-                                 canvas_x + ox - dx, canvas_y + oy - dy,
+                                 canvas_x + ox - dx,
+                                 canvas_y + oy - dy,
                                  pdrawn[i].data.sprite.sprite,
                                  TRUE,
                                  canvas_x, canvas_y);

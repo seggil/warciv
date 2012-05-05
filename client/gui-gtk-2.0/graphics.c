@@ -390,12 +390,14 @@ const char **gfx_fileextensions(void)
 ***************************************************************************/
 struct Sprite *load_gfxfile(const char *filename)
 {
-  GdkPixbuf *im;
-  SPRITE    *mysprite;
-  int     w, h;
-  GError *pixbuf_error = NULL;
+  GdkPixbuf  *im;
+  GdkPixbuf  *pixbuf3;
+  SPRITE     *mysprite;
+  int         w;
+  int         h;
+  GError      *pixbuf_error = NULL;
   GdkColormap *colormap;
-  GdkScreen *screen;
+  GdkScreen   *screen;
 
   screen = gdk_screen_get_default();
   colormap = gdk_screen_get_default_colormap(screen);

@@ -115,16 +115,16 @@ struct client_option {
 extern struct client_option *const options;
 extern const int num_options;
 
-#define client_options_iterate(o)                                           \
-{                                                                           \
-  int _i;                                                                   \
-  for (_i = 0; _i < num_options; _i++) {                                    \
-    struct client_option *o = options + _i;                                 \
+#define client_options_iterate(o)             \
+{                                             \
+  int _i;                                     \
+  for (_i = 0; _i < num_options; _i++) {      \
+    struct client_option *o = options + _i;   \
     {
 
-#define client_options_iterate_end                                          \
-    }                                                                       \
-  }                                                                         \
+#define client_options_iterate_end            \
+    }                                         \
+  }                                           \
 }
 
 extern char default_user_name[512];

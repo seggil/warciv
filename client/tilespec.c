@@ -2004,7 +2004,8 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
   if (backdrop) {
     if (!solid_color_behind_units) {
       ADD_SPRITE(get_unit_nation_flag_sprite(punit),
-                 DRAW_FULL, TRUE, flag_offset_x, flag_offset_y);
+                 DRAW_FULL, TRUE,
+                 flag_offset_x, flag_offset_y);
     } else {
       ADD_BG(get_player_color(unit_owner(punit)));
     }
