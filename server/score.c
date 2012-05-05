@@ -619,12 +619,12 @@ static void dump_grouping_players(const struct grouping *p)
     freelog(LOG_DEBUG, "  player %d @ %p: %s user=%s score=%d rank=%f "
             "result=%d player_id=%d",
             j, pp, pp->name, pp->username, get_civ_score(pp), pp->rank,
-            pp->result, pp->fcdb.player_id);
+            pp->result, pp->wcdb.player_id);
     freelog(LOG_DEBUG, "      rated_user_id=%d r=%f "
             "rd=%f ts=%ld nr=%f nrd=%f",
-            pp->fcdb.rated_user_id, pp->fcdb.rating,
-            pp->fcdb.rating_deviation, pp->fcdb.last_rating_timestamp,
-            pp->fcdb.new_rating, pp->fcdb.new_rating_deviation);
+            pp->wcdb.rated_user_id, pp->wcdb.rating,
+            pp->wcdb.rating_deviation, pp->wcdb.last_rating_timestamp,
+            pp->wcdb.new_rating, pp->wcdb.new_rating_deviation);
   }
 
 }
@@ -773,9 +773,9 @@ static bool game_can_be_rated(void)
   int num_rated_users = 0;
 
   players_iterate(pplayer) {
-    if (pplayer->fcdb.rating > 0.0
-        && pplayer->fcdb.rating_deviation >= RATING_CONSTANT_MINIMUM_RD
-        && pplayer->fcdb.rated_user_id > 0) {
+    if (pplayer->wcdb.rating > 0.0
+        && pplayer->wcdb.rating_deviation >= RATING_CONSTANT_MINIMUM_RD
+        && pplayer->wcdb.rated_user_id > 0) {
       num_rated_users++;
     }
   } players_iterate_end;
@@ -783,17 +783,17 @@ static bool game_can_be_rated(void)
   freelog(LOG_DEBUG, "game_can_be_rated num_rated_users=%d game.info.turn=%d",
           num_rated_users, game.info.turn);
 
-  if ((game.server.fcdb.type == GT_SOLO && num_rated_users < 1)
-      || (game.server.fcdb.type != GT_SOLO && num_rated_users < 2)) {
+  if ((game.server.wcdb.type == GT_SOLO && num_rated_users < 1)
+      || (game.server.wcdb.type != GT_SOLO && num_rated_users < 2)) {
     notify_conn(NULL, _("Game: The game cannot be rated because there "
                         "are not enough rated users in the game."));
     return FALSE;
   }
 
-  if (srvarg.fcdb.min_rated_turns > game.info.turn) {
+  if (srvarg.wcdb.min_rated_turns > game.info.turn) {
     notify_conn(NULL, _("Game: The game cannot be rated because not "
                         "enough turns (%d) have been played."),
-                srvarg.fcdb.min_rated_turns);
+                srvarg.wcdb.min_rated_turns);
     return FALSE;
   }
 
@@ -843,10 +843,10 @@ void score_calculate_grouping_ratings(void)
     sum = 0.0;
     avgRD = 0.0;
     for (j = 0; j < groupings[i].num_players; j++) {
-      sum += groupings[i].players[j]->fcdb.rating;
-      RD = groupings[i].players[j]->fcdb.rating_deviation;
+      sum += groupings[i].players[j]->wcdb.rating;
+      RD = groupings[i].players[j]->wcdb.rating_deviation;
       avgRD += RD;
-      min_r = MIN(min_r, groupings[i].players[j]->fcdb.rating);
+      min_r = MIN(min_r, groupings[i].players[j]->wcdb.rating);
     }
     sum /= (double) groupings[i].num_players;
     avgRD /= (double) groupings[i].num_players;
@@ -860,7 +860,7 @@ void score_calculate_grouping_ratings(void)
      * contribution will be. */
     if (groupings[i].num_players > 1) {
       for (j = 0; j < groupings[i].num_players; j++) {
-        r = groupings[i].players[j]->fcdb.rating;
+        r = groupings[i].players[j]->wcdb.rating;
         if (r > A) {
           sum += K * (r - A);
         } else if (r < B) {
@@ -879,11 +879,11 @@ void score_calculate_grouping_ratings(void)
     groupings[i].rating_deviation = avgRD;
 
     if (player_is_on_team(groupings[i].players[0])) {
-      /* Set corresponding fcdb fields in team structures. */
+      /* Set corresponding wcdb fields in team structures. */
       struct team *pteam = team_get_by_id(groupings[i].players[0]->team);
 
-      pteam->server.fcdb.rating = groupings[i].rating;
-      pteam->server.fcdb.rating_deviation = groupings[i].rating_deviation;
+      pteam->server.wcdb.rating = groupings[i].rating;
+      pteam->server.wcdb.rating_deviation = groupings[i].rating_deviation;
     }
   }
 }
@@ -911,8 +911,8 @@ void score_propagate_grouping_ratings(void)
         * (groupings[i].num_players + 1.0) / 2.0;
 
     for (j = 0; j < groupings[i].num_players; j++) {
-      new_r = groupings[i].players[j]->fcdb.rating;
-      new_RD = groupings[i].players[j]->fcdb.rating_deviation;
+      new_r = groupings[i].players[j]->wcdb.rating;
+      new_RD = groupings[i].players[j]->wcdb.rating_deviation;
 
       if (groupings[i].num_players == 1) {
         new_r += rating_change;
@@ -960,8 +960,8 @@ void score_propagate_grouping_ratings(void)
         new_RD = RATING_CONSTANT_MINIMUM_RD;
       }
 
-      groupings[i].players[j]->fcdb.new_rating = new_r;
-      groupings[i].players[j]->fcdb.new_rating_deviation = new_RD;
+      groupings[i].players[j]->wcdb.new_rating = new_r;
+      groupings[i].players[j]->wcdb.new_rating_deviation = new_RD;
     }
   }
 }
@@ -980,7 +980,7 @@ static void update_ratings(void)
   double rj, sj, E, new_r, new_RD, gRD[MAX_NUM_PLAYERS];
   time_t now_time;
 
-  if (game.server.fcdb.type == GT_SOLO) {
+  if (game.server.wcdb.type == GT_SOLO) {
     assert(num_groupings == 1);
     assert(groupings[0].num_players == 1);
   }
@@ -991,15 +991,15 @@ static void update_ratings(void)
   c = RATING_CONSTANT_C;
   now_time = time(NULL);
   players_iterate(pplayer) {
-    if (pplayer->fcdb.last_rating_timestamp <= 0) {
+    if (pplayer->wcdb.last_rating_timestamp <= 0) {
       continue;
     }
 
-    RD = pplayer->fcdb.rating_deviation;
-    t = (double) (now_time - pplayer->fcdb.last_rating_timestamp)
+    RD = pplayer->wcdb.rating_deviation;
+    t = (double) (now_time - pplayer->wcdb.last_rating_timestamp)
         / RATING_CONSTANT_SECONDS_PER_RATING_PERIOD;
 
-    pplayer->fcdb.rating_deviation
+    pplayer->wcdb.rating_deviation
       = MIN(sqrt(RD*RD + c*c*t), RATING_CONSTANT_MAXIMUM_RD);
   } players_iterate_end;
 
@@ -1011,7 +1011,7 @@ static void update_ratings(void)
   /* Update ratings. (Glicko Step 2) */
 
   /* Fill gRD[j] table to avoid recalculation. */
-  if (game.server.fcdb.type == GT_SOLO) {
+  if (game.server.wcdb.type == GT_SOLO) {
     gRD[0] = glicko_g_function(score_get_solo_opponent_rating_deviation());
   } else {
     for (i = 0; i < num_groupings; i++) {
@@ -1030,11 +1030,11 @@ static void update_ratings(void)
     inv_d2 = 0.0;
     for (j = 0; j < num_groupings; j++) {
 
-      if (game.server.fcdb.type == GT_SOLO) {
+      if (game.server.wcdb.type == GT_SOLO) {
         rj = score_calculate_solo_opponent_rating(&groupings[0]);
 
         /* You only 'win' if you get to Alpha Centauri. */
-        sj = game.server.fcdb.outcome == GOC_ENDED_BY_SPACESHIP ? 1.0 : 0.0;
+        sj = game.server.wcdb.outcome == GOC_ENDED_BY_SPACESHIP ? 1.0 : 0.0;
 
       } else {
         if (i == j) {
@@ -1079,11 +1079,11 @@ static void update_ratings(void)
     groupings[i].new_rating_deviation = new_RD;
 
     if (player_is_on_team(groupings[i].players[0])) {
-      /* Set corresponding fcdb fields in team structures. */
+      /* Set corresponding wcdb fields in team structures. */
       struct team *pteam = team_get_by_id(groupings[i].players[0]->team);
 
-      pteam->server.fcdb.new_rating = groupings[i].new_rating;
-      pteam->server.fcdb.new_rating_deviation = groupings[i].new_rating_deviation;
+      pteam->server.wcdb.new_rating = groupings[i].new_rating;
+      pteam->server.wcdb.new_rating_deviation = groupings[i].new_rating_deviation;
     }
   }
 
@@ -1269,8 +1269,8 @@ void score_update_grouping_results(void)
 
   if (groupings[0].result == PR_NONE) {
     if (num_groupings < 2) {
-      if (game.server.fcdb.type == GT_SOLO
-          && game.server.fcdb.outcome != GOC_ENDED_BY_SPACESHIP) {
+      if (game.server.wcdb.type == GT_SOLO
+          && game.server.wcdb.outcome != GOC_ENDED_BY_SPACESHIP) {
         groupings[0].result = PR_LOSE;
       } else {
         groupings[0].result = PR_WIN;
@@ -1409,12 +1409,12 @@ void score_evaluate_players(void)
   dump_groupings();
 #endif
 
-  if (!game.server.rated || !srvarg.fcdb.enabled || !srvarg.auth.enabled) {
+  if (!game.server.rated || !srvarg.wcdb.enabled || !srvarg.auth.enabled) {
     return;
   }
 
   /* Get the old ratings. */
-  if (!fcdb_load_player_ratings(game.server.fcdb.type, TRUE)) {
+  if (!wcdb_load_player_ratings(game.server.wcdb.type, TRUE)) {
     notify_conn(NULL, _("Game: Though the server option 'rated' was set, "
         "player ratings cannot be updated because there was an error "
         "communicating with the database."));
@@ -1460,11 +1460,11 @@ void score_assign_ai_rating(struct player *pplayer,
                             int game_type)
 {
   score_get_ai_rating(pplayer->ai.skill_level, game_type,
-                      &pplayer->fcdb.rating,
-                      &pplayer->fcdb.rating_deviation);
-  pplayer->fcdb.new_rating = 0.0;
-  pplayer->fcdb.new_rating_deviation = 0.0;
-  pplayer->fcdb.last_rating_timestamp = 0;
+                      &pplayer->wcdb.rating,
+                      &pplayer->wcdb.rating_deviation);
+  pplayer->wcdb.new_rating = 0.0;
+  pplayer->wcdb.new_rating_deviation = 0.0;
+  pplayer->wcdb.last_rating_timestamp = 0;
 }
 
 /**************************************************************************
@@ -1473,11 +1473,11 @@ void score_assign_ai_rating(struct player *pplayer,
 void score_assign_new_player_rating(struct player *pplayer,
                                     int game_type)
 {
-  pplayer->fcdb.rating = RATING_CONSTANT_AVERAGE_PLAYER_RATING;
-  pplayer->fcdb.rating_deviation = RATING_CONSTANT_MAXIMUM_RD;
-  pplayer->fcdb.new_rating = 0.0;
-  pplayer->fcdb.new_rating_deviation = 0.0;
-  pplayer->fcdb.last_rating_timestamp = 0;
+  pplayer->wcdb.rating = RATING_CONSTANT_AVERAGE_PLAYER_RATING;
+  pplayer->wcdb.rating_deviation = RATING_CONSTANT_MAXIMUM_RD;
+  pplayer->wcdb.new_rating = 0.0;
+  pplayer->wcdb.new_rating_deviation = 0.0;
+  pplayer->wcdb.last_rating_timestamp = 0;
 }
 
 /**************************************************************************
@@ -1536,11 +1536,11 @@ void score_get_ai_rating(int skill_level, int game_type,
 int player_get_rated_username(const struct player *pplayer,
                               char *outbuf, int maxlen)
 {
-  if (pplayer->fcdb.rated_user_id <= 0
-      || pplayer->fcdb.rated_user_name[0] == '\0') {
+  if (pplayer->wcdb.rated_user_id <= 0
+      || pplayer->wcdb.rated_user_name[0] == '\0') {
     return player_get_username(pplayer, outbuf, maxlen);
   }
 
-  return mystrlcpy(outbuf, pplayer->fcdb.rated_user_name, maxlen);
+  return mystrlcpy(outbuf, pplayer->wcdb.rated_user_name, maxlen);
 }
 

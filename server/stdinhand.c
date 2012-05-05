@@ -2322,12 +2322,12 @@ static bool stats_command(struct connection *caller,
                           char *allargs, bool check)
 {
   char username[MAX_LEN_NAME + 64], buf[256];
-  struct fcdb_user_stats *fus;
+  struct wcdb_user_stats *fus;
   struct game_type_stats *gts;
   int i, recent[5], num_recent = ARRAY_SIZE(recent);
   struct string_list *username_matchs = NULL;
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     cmd_reply(CMD_STATS, caller, C_FAIL,
               _("Database communication has been disabled."));
     return FALSE;
@@ -2352,8 +2352,8 @@ static bool stats_command(struct connection *caller,
 
   username_matchs = string_list_new();
 
-  if (!(fus = fcdb_user_stats_new(username, username_matchs))
-      || !fcdb_get_recent_games(username, recent, &num_recent)) {
+  if (!(fus = wcdb_user_stats_new(username, username_matchs))
+      || !wcdb_get_recent_games(username, recent, &num_recent)) {
     cmd_reply(CMD_STATS, caller, C_FAIL,
               _("There was an error communicating with the database."));
     string_list_free_all(username_matchs);
@@ -2373,7 +2373,7 @@ static bool stats_command(struct connection *caller,
       } string_list_iterate_end;
     }
     string_list_free_all(username_matchs);
-    fcdb_user_stats_free(fus);
+    wcdb_user_stats_free(fus);
     return FALSE;
   }
 
@@ -2407,7 +2407,7 @@ static bool stats_command(struct connection *caller,
     }
     cmd_reply(CMD_STATS, caller, C_COMMENT, horiz_line);
   }
-  fcdb_user_stats_free(fus);
+  wcdb_user_stats_free(fus);
   string_list_free_all(username_matchs);
 
   if (num_recent > 0) {
@@ -3746,8 +3746,8 @@ static bool set_command(struct connection *caller,
    * setting in running SOLO games. */
   if (server_state == RUN_GAME_STATE
       && op->bool_value == &game.server.rated
-      && game.server.fcdb.type == GT_SOLO
-      && (game.info.turn >= srvarg.fcdb.min_rated_turns
+      && game.server.wcdb.type == GT_SOLO
+      && (game.info.turn >= srvarg.wcdb.min_rated_turns
           || (game.server.rated == FALSE && sv->bool_value == TRUE))) {
     cmd_reply(CMD_SET, caller, C_REJECTED,
               _("Because this is a SOLO game, this setting may "
@@ -4782,7 +4782,7 @@ static bool ratings_command(struct connection *caller,
   int type = GT_NUM_TYPES;
   struct rated_player list[game.info.nplayers];
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -4826,8 +4826,8 @@ static bool ratings_command(struct connection *caller,
 
     cml_pname = MAX(cml_pname, strlen(pplayer->name) + 2);
 
-    if (pplayer->fcdb.rated_user_name[0] != '\0') {
-      if (!fcdb_get_user_rating(pplayer->fcdb.rated_user_name,
+    if (pplayer->wcdb.rated_user_name[0] != '\0') {
+      if (!wcdb_get_user_rating(pplayer->wcdb.rated_user_name,
                                 type, &list[i].rating, &list[i].rd)) {
         cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
                   _("An error occurred while reading from the database."));
@@ -4835,7 +4835,7 @@ static bool ratings_command(struct connection *caller,
       }
     } else if (pplayer->username[0] != '\0'
                && 0 != strcmp(pplayer->username, ANON_USER_NAME)) {
-      if (!fcdb_get_user_rating(pplayer->username, type,
+      if (!wcdb_get_user_rating(pplayer->username, type,
                                 &list[i].rating, &list[i].rd)) {
         cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
                   _("An error occurred while reading from the database."));
@@ -4891,11 +4891,11 @@ static bool examine_command(struct connection *caller,
 {
   int id, i, num_rating_changes;
   char buf[256], fmt[128];
-  struct fcdb_game_info *fgi;
-  struct fcdb_player_in_game_info *fpi;
-  struct fcdb_team_in_game_info *fti;
+  struct wcdb_game_info *fgi;
+  struct wcdb_player_in_game_info *fpi;
+  struct wcdb_team_in_game_info *fti;
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     cmd_reply(CMD_EXAMINE, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -4915,7 +4915,7 @@ static bool examine_command(struct connection *caller,
     return TRUE;
   }
 
-  if (!(fgi = fcdb_game_info_new(id))) {
+  if (!(fgi = wcdb_game_info_new(id))) {
     cmd_reply(CMD_EXAMINE, caller, C_GENFAIL,
               _("There was an error reading from the database."));
     return FALSE;
@@ -5064,7 +5064,7 @@ static bool examine_command(struct connection *caller,
   cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
 
 
-  fcdb_game_info_free(fgi);
+  wcdb_game_info_free(fgi);
   return TRUE;
 }
 
@@ -5074,12 +5074,12 @@ static bool examine_command(struct connection *caller,
 static bool topten_command(struct connection *caller, char *arg, bool check)
 {
   int type = GT_NUM_TYPES;
-  struct fcdb_topten_info *ftti = NULL;
-  struct fcdb_topten_info_entry *tte = NULL;
+  struct wcdb_topten_info *ftti = NULL;
+  struct wcdb_topten_info_entry *tte = NULL;
   char buf[64], fmt[128];
   int i, cml_name;
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -5097,7 +5097,7 @@ static bool topten_command(struct connection *caller, char *arg, bool check)
     type = game_determine_type();
   }
 
-  if (!(ftti = fcdb_topten_info_new(type))) {
+  if (!(ftti = wcdb_topten_info_new(type))) {
     cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
               _("There was an error reading from the database."));
     return FALSE;
@@ -5111,7 +5111,7 @@ static bool topten_command(struct connection *caller, char *arg, bool check)
   if (ftti->count <= 0) {
     cmd_reply(CMD_TOPTEN, caller, C_FAIL,
               _("There are no rated players for the %s game type."), buf);
-    fcdb_topten_info_free(ftti);
+    wcdb_topten_info_free(ftti);
     return TRUE;
   }
 
@@ -5142,7 +5142,7 @@ static bool topten_command(struct connection *caller, char *arg, bool check)
   }
   cmd_reply(CMD_TOPTEN, caller, C_COMMENT, horiz_line);
 
-  fcdb_topten_info_free(ftti);
+  wcdb_topten_info_free(ftti);
 
   return TRUE;
 }
@@ -5153,8 +5153,8 @@ static bool topten_command(struct connection *caller, char *arg, bool check)
 static bool gamelist_command(struct connection *caller,
                              char *arg, bool check)
 {
-  struct fcdb_gamelist *fgl = NULL;
-  struct fcdb_gamelist_entry *fgle = NULL;
+  struct wcdb_gamelist *fgl = NULL;
+  struct wcdb_gamelist_entry *fgle = NULL;
   char buf[128];
   char user[MAX_LEN_NAME] = "";
   int type = GT_NUM_TYPES, i;
@@ -5162,7 +5162,7 @@ static bool gamelist_command(struct connection *caller,
   int first = 0, last = 0;
   char *args[2];
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -5201,7 +5201,7 @@ static bool gamelist_command(struct connection *caller,
     return TRUE;
   }
 
-  if (!(fgl = fcdb_gamelist_new(type, user, first, last))) {
+  if (!(fgl = wcdb_gamelist_new(type, user, first, last))) {
     cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
               _("There was an error reading from the database."));
     return FALSE;
@@ -5210,14 +5210,14 @@ static bool gamelist_command(struct connection *caller,
   if (user[0] != '\0' && fgl->id <= 0) {
     cmd_reply(CMD_GAMELIST, caller, C_FAIL,
               _("No such user \"%s\"."), user);
-    fcdb_gamelist_free(fgl);
+    wcdb_gamelist_free(fgl);
     return FALSE;
   }
 
   if (fgl->count <= 0) {
     cmd_reply(CMD_GAMELIST, caller, C_FAIL,
               _("No matching games to list."));
-    fcdb_gamelist_free(fgl);
+    wcdb_gamelist_free(fgl);
     return FALSE;
   }
 
@@ -5230,7 +5230,7 @@ static bool gamelist_command(struct connection *caller,
               fgle->id, fgle->type, fgle->players, buf, fgle->outcome);
   }
 
-  fcdb_gamelist_free(fgl);
+  wcdb_gamelist_free(fgl);
 
   return TRUE;
 }
@@ -5241,14 +5241,14 @@ static bool gamelist_command(struct connection *caller,
 static bool aka_command(struct connection *caller,
                         const char *arg, bool check)
 {
-  struct fcdb_aliaslist *fal = NULL;
-  struct fcdb_aliaslist_entry *fale = NULL;
+  struct wcdb_aliaslist *fal = NULL;
+  struct wcdb_aliaslist_entry *fale = NULL;
   char buf[MAX_LEN_MSG];
   char namebuf[MAX_LEN_NAME];
   char user[MAX_LEN_NAME];
   int i, nb, len;
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     cmd_reply(CMD_AKA, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -5267,7 +5267,7 @@ static bool aka_command(struct connection *caller,
     return TRUE;
   }
 
-  if (!(fal = fcdb_aliaslist_new(user))) {
+  if (!(fal = wcdb_aliaslist_new(user))) {
     cmd_reply(CMD_AKA, caller, C_GENFAIL,
               _("There was an error reading from the database."));
     return FALSE;
@@ -5276,14 +5276,14 @@ static bool aka_command(struct connection *caller,
   if (fal->id <= 0) {
     cmd_reply(CMD_AKA, caller, C_FAIL,
               _("No such user \"%s\" in the database."), user);
-    fcdb_aliaslist_free(fal);
+    wcdb_aliaslist_free(fal);
     return FALSE;
   }
 
   if (fal->count < 1) {
     cmd_reply(CMD_AKA, caller, C_COMMENT,
               _("User %s has no aliases."), user);
-    fcdb_aliaslist_free(fal);
+    wcdb_aliaslist_free(fal);
     return TRUE;
   }
 
@@ -5304,31 +5304,31 @@ static bool aka_command(struct connection *caller,
   }
   cmd_reply(CMD_AKA, caller, C_COMMENT, "%s", buf);
 
-  fcdb_aliaslist_free(fal);
+  wcdb_aliaslist_free(fal);
 
   return TRUE;
 }
 
 /**************************************************************************
-  Helpers for fcdb_command.
+  Helpers for wcdb_command.
 **************************************************************************/
-enum fcdb_args
+enum wcdb_args
 {
-  FCDB_ON, FCDB_OFF, FCDB_MIN_RATED_TURNS, FCDB_SAVE_MAPS,
-  FCDB_MORE_GAME_INFO, FCDB_NUM_ARGS
+  WCDB_ON, WCDB_OFF, WCDB_MIN_RATED_TURNS, WCDB_SAVE_MAPS,
+  WCDB_MORE_GAME_INFO, WCDB_NUM_ARGS
 };
-static const char *const fcdb_args[] = {
+static const char *const wcdb_args[] = {
   "on", "off", "min_rated_turns", "save_maps", "more_game_info", NULL
 };
-static const char *fcdbarg_accessor(int i)
+static const char *wcdbarg_accessor(int i)
 {
-  return fcdb_args[i];
+  return wcdb_args[i];
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static bool fcdb_command(struct connection *caller, char *arg, bool check)
+static bool wcdb_command(struct connection *caller, char *arg, bool check)
 {
   int ind, n, ntokens;
   enum m_pre_result match_result;
@@ -5342,103 +5342,103 @@ static bool fcdb_command(struct connection *caller, char *arg, bool check)
   ntokens = get_tokens(arg, args, 2, TOKEN_DELIMITERS);
 
   if (ntokens <= 0) {
-    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+    cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("FCDB access: %s."),
-              srvarg.fcdb.enabled ? _("enabled") : _("disabled"));
-    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              srvarg.wcdb.enabled ? _("enabled") : _("disabled"));
+    cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Minimum turns for rated game: %d."),
-              srvarg.fcdb.min_rated_turns);
-    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              srvarg.wcdb.min_rated_turns);
+    cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Saving of encoded turn maps: %s."),
-              srvarg.fcdb.save_maps ? _("enabled") : _("disabled"));
-    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              srvarg.wcdb.save_maps ? _("enabled") : _("disabled"));
+    cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Detailed /examine command output: %s."),
-              srvarg.fcdb.more_game_info ? _("enabled") : _("disabled"));
+              srvarg.wcdb.more_game_info ? _("enabled") : _("disabled"));
     free_tokens(args, ntokens);
     return TRUE;
   }
 
-  match_result = match_prefix(fcdbarg_accessor, FCDB_NUM_ARGS, 0,
+  match_result = match_prefix(wcdbarg_accessor, WCDB_NUM_ARGS, 0,
                               mystrncasecmp, args[0], &ind);
 
   if (match_result > M_PRE_EMPTY) {
-    cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+    cmd_reply(CMD_WCDB, caller, C_SYNTAX,
               _("Unrecognized argument: \"%s\"."), args[0]);
     free_tokens(args, ntokens);
     return FALSE;
   }
 
-  if (ind == FCDB_ON) {
-    srvarg.fcdb.enabled = TRUE;
-    cmd_reply(CMD_FCDB, caller, C_OK, _("FCDB access enabled."));
+  if (ind == WCDB_ON) {
+    srvarg.wcdb.enabled = TRUE;
+    cmd_reply(CMD_WCDB, caller, C_OK, _("FCDB access enabled."));
 
-  } else if (ind == FCDB_OFF) {
-    srvarg.fcdb.enabled = FALSE;
-    cmd_reply(CMD_FCDB, caller, C_OK, _("FCDB access disabled."));
+  } else if (ind == WCDB_OFF) {
+    srvarg.wcdb.enabled = FALSE;
+    cmd_reply(CMD_WCDB, caller, C_OK, _("FCDB access disabled."));
 
-  } else if (ind == FCDB_MIN_RATED_TURNS) {
+  } else if (ind == WCDB_MIN_RATED_TURNS) {
     if (ntokens < 2) {
-      cmd_reply(CMD_FCDB, caller, C_SYNTAX, _("Number argument missing."));
+      cmd_reply(CMD_WCDB, caller, C_SYNTAX, _("Number argument missing."));
       free_tokens(args, ntokens);
       return FALSE;
     }
 
     n = atoi(args[1]);
     if (n < 0 || (n == 0 && !(args[1][0] == '0' && args[1][1] == '\0'))) {
-      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+      cmd_reply(CMD_WCDB, caller, C_SYNTAX,
                 _("The number argument must be a non-negative integer."));
       free_tokens(args, ntokens);
       return FALSE;
     }
 
-    srvarg.fcdb.min_rated_turns = n;
-    cmd_reply(CMD_FCDB, caller, C_OK,
+    srvarg.wcdb.min_rated_turns = n;
+    cmd_reply(CMD_WCDB, caller, C_OK,
               _("The minimum number of turns for a rated game has "
                 "been set to %d."), n);
-  } else if (ind == FCDB_SAVE_MAPS) {
+  } else if (ind == WCDB_SAVE_MAPS) {
     if (ntokens < 2) {
-      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+      cmd_reply(CMD_WCDB, caller, C_SYNTAX,
                 _("Missing 'on' or 'off' argument."));
       free_tokens(args, ntokens);
       return FALSE;
     }
     if (0 == strcmp(args[1], "yes") || 0 == strcmp(args[1], "y")
         || 0 == strcmp(args[1], "on")) {
-      srvarg.fcdb.save_maps = TRUE;
+      srvarg.wcdb.save_maps = TRUE;
     } else if (0 == strcmp(args[1], "no") || 0 == strcmp(args[1], "n")
         || 0 == strcmp(args[1], "off")) {
-      srvarg.fcdb.save_maps = FALSE;
+      srvarg.wcdb.save_maps = FALSE;
     } else {
-      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+      cmd_reply(CMD_WCDB, caller, C_SYNTAX,
                 _("Invalid argument."));
       free_tokens(args, ntokens);
       return FALSE;
     }
-    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+    cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Saving of encoded turn maps: %s."),
-              srvarg.fcdb.save_maps ? _("enabled") : _("disabled"));
-  } else if (ind == FCDB_MORE_GAME_INFO) {
+              srvarg.wcdb.save_maps ? _("enabled") : _("disabled"));
+  } else if (ind == WCDB_MORE_GAME_INFO) {
     if (ntokens < 2) {
-      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+      cmd_reply(CMD_WCDB, caller, C_SYNTAX,
                 _("Missing 'on' or 'off' argument."));
       free_tokens(args, ntokens);
       return FALSE;
     }
     if (0 == strcmp(args[1], "yes") || 0 == strcmp(args[1], "y")
         || 0 == strcmp(args[1], "on")) {
-      srvarg.fcdb.more_game_info = TRUE;
+      srvarg.wcdb.more_game_info = TRUE;
     } else if (0 == strcmp(args[1], "no") || 0 == strcmp(args[1], "n")
         || 0 == strcmp(args[1], "off")) {
-      srvarg.fcdb.more_game_info = FALSE;
+      srvarg.wcdb.more_game_info = FALSE;
     } else {
-      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+      cmd_reply(CMD_WCDB, caller, C_SYNTAX,
                 _("Invalid argument."));
       free_tokens(args, ntokens);
       return FALSE;
     }
-    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+    cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Detailed /examine command output: %s."),
-              srvarg.fcdb.more_game_info ? _("enabled") : _("disabled"));
+              srvarg.wcdb.more_game_info ? _("enabled") : _("disabled"));
   }
 
 
@@ -5502,8 +5502,8 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
               _("Host: \"%s\"\nUser: \"%s\"\nPassword: \"%s\"\n"
                 "Database: \"%s\"\nGuests: %s\nNew users: %s"),
-              fcdb.host, fcdb.user, fcdb.password,
-              fcdb.dbname,
+              wcdb.host, wcdb.user, wcdb.password,
+              wcdb.dbname,
               srvarg.auth.allow_guests ? "allowed" : "not allowed",
               srvarg.auth.allow_newusers ? "allowed" : "not allowed");
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT, horiz_line);
@@ -5529,16 +5529,16 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
   remove_leading_trailing_spaces(lastarg);
   switch (ind) {
   case AUTHDB_ARG_HOST:
-    sz_strlcpy(fcdb.host, lastarg);
+    sz_strlcpy(wcdb.host, lastarg);
     break;
   case AUTHDB_ARG_PASSWORD:
-    sz_strlcpy(fcdb.password, lastarg);
+    sz_strlcpy(wcdb.password, lastarg);
     break;
   case AUTHDB_ARG_DATABASE:
-    sz_strlcpy(fcdb.dbname, lastarg);
+    sz_strlcpy(wcdb.dbname, lastarg);
     break;
   case AUTHDB_ARG_USER:
-    sz_strlcpy(fcdb.user, lastarg);
+    sz_strlcpy(wcdb.user, lastarg);
     break;
   case AUTHDB_ARG_GUESTS:
     if (!strcmp(lastarg, "yes")) {
@@ -6533,8 +6533,8 @@ bool handle_stdin_input(struct connection * caller,
     return aka_command(caller, arg, check);
   case CMD_AUTHDB:
     return authdb_command(caller, arg, check);
-  case CMD_FCDB:
-    return fcdb_command(caller, allargs, check);
+  case CMD_WCDB:
+    return wcdb_command(caller, allargs, check);
 #endif /* HAVE_MYSQL */
   case CMD_START_GAME:
     return start_command(caller, arg, check);
@@ -6579,7 +6579,7 @@ static bool end_command(struct connection *caller, char *str, bool check)
     ntokens = get_tokens(buf, arg, MAX_NUM_PLAYERS, TOKEN_DELIMITERS);
   }
 
-  if (game.server.fcdb.type == GT_SOLO && ntokens > 0) {
+  if (game.server.wcdb.type == GT_SOLO && ntokens > 0) {
     cmd_reply(CMD_END_GAME, caller, C_REJECTED,
               _("You can only win a solo game by building a spaceship!"));
     return FALSE;
@@ -6612,7 +6612,7 @@ static bool end_command(struct connection *caller, char *str, bool check)
     }
   }
 
-  game.server.fcdb.outcome = GOC_ENDED_BY_VOTE;
+  game.server.wcdb.outcome = GOC_ENDED_BY_VOTE;
   if (declared_winner) {
     players_iterate(pplayer) {
       if (BV_ISSET(srvarg.draw, pplayer->player_no)) {
@@ -6652,7 +6652,7 @@ static bool draw_command(struct connection *caller, char *str, bool check)
     return FALSE;
   }
 
-  if (game.server.fcdb.type == GT_SOLO) {
+  if (game.server.wcdb.type == GT_SOLO) {
     cmd_reply(CMD_DRAW, caller, C_REJECTED,
               _("This command is not allowed for SOLO games."));
     return FALSE;
@@ -6662,7 +6662,7 @@ static bool draw_command(struct connection *caller, char *str, bool check)
     return TRUE;
   }
 
-  game.server.fcdb.outcome = GOC_ENDED_BY_VOTE;
+  game.server.wcdb.outcome = GOC_ENDED_BY_VOTE;
   players_iterate(pplayer) {
     pplayer->result = PR_DRAW;
   } players_iterate_end;
@@ -6722,7 +6722,7 @@ static bool check_settings_for_rated_game(void)
   int i;
   enum game_types type = game_determine_type();
 
-  if (!srvarg.fcdb.enabled || !srvarg.auth.enabled) {
+  if (!srvarg.wcdb.enabled || !srvarg.auth.enabled) {
     /* No sense in enforcing settings if we cannot update the
      * database or determine who logged in. */
 

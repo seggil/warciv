@@ -233,10 +233,10 @@ void srv_init(void)
   srvarg.auth.allow_newusers = FALSE;
   srvarg.auth.salted = FALSE;
 
-  srvarg.fcdb.enabled = FALSE;
-  srvarg.fcdb.min_rated_turns = RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT;
-  srvarg.fcdb.save_maps = FALSE;
-  srvarg.fcdb.more_game_info = FALSE;
+  srvarg.wcdb.enabled = FALSE;
+  srvarg.wcdb.min_rated_turns = RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT;
+  srvarg.wcdb.save_maps = FALSE;
+  srvarg.wcdb.more_game_info = FALSE;
 
   srvarg.no_dns_lookup = FALSE;
 
@@ -276,7 +276,7 @@ static bool is_game_over(void)
     gamelog(GAMELOG_JUDGE, GL_DRAW,
             "Game ended in a draw as end year exceeded");
 
-    game.server.fcdb.outcome = GOC_DRAWN_BY_ENDYEAR;
+    game.server.wcdb.outcome = GOC_DRAWN_BY_ENDYEAR;
     players_iterate(pplayer) {
       pplayer->result = PR_DRAW;
     } players_iterate_end;
@@ -318,7 +318,7 @@ static bool is_game_over(void)
                      _("Team victory to %s"), get_team_name(pteam->id));
       gamelog(GAMELOG_JUDGE, GL_TEAMWIN, pteam);
 
-      game.server.fcdb.outcome = GOC_ENDED_BY_TEAM_VICTORY;
+      game.server.wcdb.outcome = GOC_ENDED_BY_TEAM_VICTORY;
       players_iterate(pplayer) {
         if (pplayer->team == pteam->id)
           pplayer->result = PR_WIN;
@@ -336,7 +336,7 @@ static bool is_game_over(void)
                    _("Game ended in victory for %s"), victor->name);
     gamelog(GAMELOG_JUDGE, GL_LONEWIN, victor);
 
-    game.server.fcdb.outcome = GOC_ENDED_BY_LONE_SURVIVAL;
+    game.server.wcdb.outcome = GOC_ENDED_BY_LONE_SURVIVAL;
     players_iterate(pplayer) {
       if (pplayer == victor)
         pplayer->result = PR_WIN;
@@ -350,7 +350,7 @@ static bool is_game_over(void)
                    _("Game ended in a draw"));
     gamelog(GAMELOG_JUDGE, GL_DRAW);
 
-    game.server.fcdb.outcome = GOC_DRAWN_BY_MUTUAL_DESTRUCTION;
+    game.server.wcdb.outcome = GOC_DRAWN_BY_MUTUAL_DESTRUCTION;
     players_iterate(pplayer) {
       pplayer->result = PR_DRAW;
     } players_iterate_end;
@@ -379,7 +379,7 @@ static bool is_game_over(void)
                    _("Game ended in allied victory"));
     gamelog(GAMELOG_JUDGE, GL_ALLIEDWIN);
 
-    game.server.fcdb.outcome = GOC_ENDED_BY_ALLIED_VICTORY;
+    game.server.wcdb.outcome = GOC_ENDED_BY_ALLIED_VICTORY;
     players_iterate(pplayer) {
       if (pplayer->is_alive)
         pplayer->result = PR_WIN;
@@ -750,7 +750,7 @@ static void end_turn(void)
   } players_iterate_end;
 
   score_calculate_team_scores();
-  fcdb_end_of_turn_update();
+  wcdb_end_of_turn_update();
 
   freelog(LOG_DEBUG, "Season of native unrests");
   summon_barbarians(); /* wild guess really, no idea where to put it, but
@@ -1820,7 +1820,7 @@ void srv_main(void)
       exit(EXIT_FAILURE);
     }
 
-    fcdb_check_salted_passwords();
+    wcdb_check_salted_passwords();
 
     srv_loop();
 
@@ -1829,7 +1829,7 @@ void srv_main(void)
     gamelog(GAMELOG_JUDGE, GL_NONE);
 
     score_evaluate_players();
-    fcdb_record_game_end();
+    wcdb_record_game_end();
     report_final_scores(NULL);
     report_game_rankings(NULL);
 
@@ -2083,10 +2083,10 @@ MAIN_START_PLAYERS:
   }
 
   /* NB: This is the one and only place this should be set. */
-  game.server.fcdb.type = game_determine_type();
+  game.server.wcdb.type = game_determine_type();
 
-  fcdb_load_player_ratings(game.server.fcdb.type, FALSE);
-  fcdb_record_game_start();
+  wcdb_load_player_ratings(game.server.wcdb.type, FALSE);
+  wcdb_record_game_start();
 
   send_game_state(game.game_connections, CLIENT_GAME_RUNNING_STATE);
 

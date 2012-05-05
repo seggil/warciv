@@ -184,7 +184,7 @@
 " diplchance_percent worklists2 map_editor known32fix turn " \
 "attributes watchtower rulesetdir client_worklists orders " \
 "startunits turn_last_built improvement_order technology_order " \
-"fcdb_save"
+"wcdb_save"
 
 static const char hex_chars[] = "0123456789abcdef";
 
@@ -2380,7 +2380,7 @@ static void player_load(struct player *plr, int plrno,
       "player%d.is_civil_war_split", plrno);
 
   if (has_capability("fcdb_save", savefile_options)) {
-    plr->fcdb.player_id = secfile_lookup_int_default(file, 0,
+    plr->wcdb.player_id = secfile_lookup_int_default(file, 0,
         "player%d.fcdb_player_id", plrno);
   }
 }
@@ -3220,7 +3220,7 @@ static void player_save(struct player *plr, int plrno,
   secfile_insert_bool(file, plr->is_civil_war_split,
                       "player%d.is_civil_war_split", plrno);
 
-  secfile_insert_int(file, plr->fcdb.player_id,
+  secfile_insert_int(file, plr->wcdb.player_id,
                      "player%d.fcdb_player_id", plrno);
 }
 
@@ -3717,9 +3717,9 @@ void game_load(struct section_file *file)
     }
 
     if (has_capability("fcdb_save", savefile_options)) {
-      game.server.fcdb.id = secfile_lookup_int_default(file,
+      game.server.wcdb.id = secfile_lookup_int_default(file,
           0, "game.server_fcdb_id");
-      game.server.fcdb.type = secfile_lookup_int_default(file,
+      game.server.wcdb.type = secfile_lookup_int_default(file,
           0, "game.server_fcdb_type");
     }
 
@@ -4186,9 +4186,9 @@ void game_save(struct section_file *file)
                        "game.techcoststyle");
   }
 
-  /* FCDB related data that should be restored when the game is loaded. */
-  secfile_insert_int(file, game.server.fcdb.id, "game.server_fcdb_id");
-  secfile_insert_int(file, game.server.fcdb.type, "game.server_fcdb_type");
+  /* WCDB related data that should be restored when the game is loaded. */
+  secfile_insert_int(file, game.server.wcdb.id, "game.server_fcdb_id");
+  secfile_insert_int(file, game.server.wcdb.type, "game.server_fcdb_type");
 
   /* old (1.14.1) servers need to have these server variables.  The values
    * don't matter, though. */

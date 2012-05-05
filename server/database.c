@@ -64,7 +64,7 @@
 
 #include "database.h"
 
-struct fcdb_params fcdb = {
+struct wcdb_params wcdb = {
 
   /* Where our mysql database is located and how to get to it. */
   .host = "localhost",
@@ -115,30 +115,30 @@ static bool save_user(struct connection *pconn);
 
 #ifdef HAVE_MYSQL
 
-#define FCDB_ETM_FILE_IDENTIFIER  84
-#define FCDB_ETM_VERSION          1
-#define FCDB_ETM_HEADER_LEN       4
-#define FCDB_ETM_DICT_LEN         32
-#define FCDB_ETM_RDICT_LEN        256
+#define WCDB_ETM_FILE_IDENTIFIER  84
+#define WCDB_ETM_VERSION          1
+#define WCDB_ETM_HEADER_LEN       4
+#define WCDB_ETM_DICT_LEN         32
+#define WCDB_ETM_RDICT_LEN        256
 
-#define FCDB_ETM_SPECIAL1_FLAG    (1 << 5)
-#define FCDB_ETM_SPECIAL2_FLAG    (1 << 6)
-#define FCDB_ETM_RIVER_FLAG       (1 << 7)
+#define WCDB_ETM_SPECIAL1_FLAG    (1 << 5)
+#define WCDB_ETM_SPECIAL2_FLAG    (1 << 6)
+#define WCDB_ETM_RIVER_FLAG       (1 << 7)
 
-#define FCDB_ETM_UNIT_FLAG             (1 << 5)
-#define FCDB_ETM_CITY_FLAG             (1 << 6)
-#define FCDB_ETM_CHANGED_TERRAIN_FLAG  (1 << 7)
+#define WCDB_ETM_UNIT_FLAG             (1 << 5)
+#define WCDB_ETM_CITY_FLAG             (1 << 6)
+#define WCDB_ETM_CHANGED_TERRAIN_FLAG  (1 << 7)
 
 /* For timing of db accesses. */
-static struct timer *fcdb_timer = NULL;
+static struct timer *wcdb_timer = NULL;
 
-static void fcdb_error(char *fmt, ...);
-static bool fcdb_connect(MYSQL *mysql);
-static void fcdb_close(MYSQL *mysql);
-static const char *fcdb_escape(MYSQL *sock, const char *str);
-static bool fcdb_execute(MYSQL *sock, const char *stmt);
-static bool fcdb_commit(MYSQL *sock);
-static bool fcdb_insert_player(MYSQL *sock, struct player *pplayer);
+static void wcdb_error(char *fmt, ...);
+static bool wcdb_connect(MYSQL *mysql);
+static void wcdb_close(MYSQL *mysql);
+static const char *wcdb_escape(MYSQL *sock, const char *str);
+static bool wcdb_execute(MYSQL *sock, const char *stmt);
+static bool wcdb_commit(MYSQL *sock);
+static bool wcdb_insert_player(MYSQL *sock, struct player *pplayer);
 
 static char *etm_encode_terrain_map(void);
 static char *etm_encode_turn_map(const char *termap,
@@ -149,16 +149,16 @@ static unsigned long get_tile_termap_index(const struct tile *ptile);
 static char etm_encode_terrain(const struct tile *ptile,
                                const char *rdict);
 
-#define fcdb_reset_escape_buffer() (void)fcdb_escape(NULL, NULL)
+#define wcdb_reset_escape_buffer() (void)wcdb_escape(NULL, NULL)
 
-#define fcdb_execute_or_return(sock, stmt, val) do {\
-  if (!fcdb_execute((sock), (stmt))) {\
+#define wcdb_execute_or_return(sock, stmt, val) do {\
+  if (!wcdb_execute((sock), (stmt))) {\
     return (val);\
   }\
 } while(0)
 
-#define fcdb_connect_or_return(sock, val) do {\
-  if (!fcdb_connect(sock)) {\
+#define wcdb_connect_or_return(sock, val) do {\
+  if (!wcdb_connect(sock)) {\
     return val;\
   }\
 } while(0)
@@ -628,8 +628,8 @@ static enum authdb_status load_user(struct connection *pconn)
   mysql_init(&mysql);
 
   /* attempt to connect to the server */
-  if (!(sock = mysql_real_connect(&mysql, fcdb.host, fcdb.user,
-                                  fcdb.password, fcdb.dbname,
+  if (!(sock = mysql_real_connect(&mysql, wcdb.host, wcdb.user,
+                                  wcdb.password, wcdb.dbname,
                                   0, NULL, 0))) {
     freelog(LOG_ERROR, "Can't connect to server! (%s)",
             mysql_error(&mysql));
@@ -715,8 +715,8 @@ static bool save_user(struct connection *pconn)
   mysql_init(&mysql);
 
   /* attempt to connect to the server */
-  if (!(sock = mysql_real_connect(&mysql, fcdb.host, fcdb.user,
-                                  fcdb.password, fcdb.dbname,
+  if (!(sock = mysql_real_connect(&mysql, wcdb.host, wcdb.user,
+                                  wcdb.password, wcdb.dbname,
                                   0, NULL, 0))) {
     freelog(LOG_ERROR, "Can't connect to server! (%s)",
             mysql_error(&mysql));
@@ -780,7 +780,7 @@ static bool save_user(struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-static void fcdb_error(char *fmt, ...)
+static void wcdb_error(char *fmt, ...)
 {
   va_list ap;
   char buf[1024];
@@ -788,38 +788,38 @@ static void fcdb_error(char *fmt, ...)
   va_start(ap, fmt);
   my_vsnprintf(buf, sizeof(buf), fmt, ap);
   va_end(ap);
-  freelog(LOG_ERROR, "FCDB: %s", buf);
+  freelog(LOG_ERROR, "WCDB: %s", buf);
 
-  srvarg.fcdb.enabled = FALSE;
-  freelog(LOG_ERROR, "FCDB: Disabling database updates because of errors.");
+  srvarg.wcdb.enabled = FALSE;
+  freelog(LOG_ERROR, "WCDB: Disabling database updates because of errors.");
 
-  fcdb_reset_escape_buffer(); /* Don't leave it for someone else! */
+  wcdb_reset_escape_buffer(); /* Don't leave it for someone else! */
 }
 
 /**************************************************************************
   NB turns off autocommit.
 **************************************************************************/
-static bool fcdb_connect(MYSQL *mysql)
+static bool wcdb_connect(MYSQL *mysql)
 {
   if (!srvarg.auth.enabled) {
-    fcdb_error("Game database updating aborted because "
+    wcdb_error("Game database updating aborted because "
                "user authentication is disabled.");
     return FALSE;
   }
 
-  if (!fcdb_timer) {
-    fcdb_timer = new_timer(TIMER_USER, TIMER_ACTIVE);
+  if (!wcdb_timer) {
+    wcdb_timer = new_timer(TIMER_USER, TIMER_ACTIVE);
   }
 
-  clear_timer_start(fcdb_timer);
+  clear_timer_start(wcdb_timer);
 
   mysql_init(mysql);
 
   /* Attempt to connect to the server. */
-  if (!mysql_real_connect(mysql, fcdb.host, fcdb.user,
-                          fcdb.password, fcdb.dbname,
+  if (!mysql_real_connect(mysql, wcdb.host, wcdb.user,
+                          wcdb.password, wcdb.dbname,
                           0, NULL, 0)) {
-    fcdb_error("Cannot connect to database server: %s",
+    wcdb_error("Cannot connect to database server: %s",
                mysql_error(mysql));
     return FALSE;
   }
@@ -827,7 +827,7 @@ static bool fcdb_connect(MYSQL *mysql)
   /* To prevent errors midway through an update causing the
      database data to become inconsistent, turn off autocommit. */
   if (mysql_autocommit(mysql, FALSE)) {
-    fcdb_error("Failed to turn off database autocommit: %s",
+    wcdb_error("Failed to turn off database autocommit: %s",
                mysql_error(mysql));
     mysql_close(mysql);
     return FALSE;
@@ -839,23 +839,23 @@ static bool fcdb_connect(MYSQL *mysql)
 /**************************************************************************
   ...
 **************************************************************************/
-static void fcdb_close(MYSQL *mysql)
+static void wcdb_close(MYSQL *mysql)
 {
   mysql_close(mysql);
 
-  stop_timer(fcdb_timer);
-  freelog(LOG_VERBOSE, "FCDB: Database access took %f seconds.",
-          read_timer_seconds(fcdb_timer));
+  stop_timer(wcdb_timer);
+  freelog(LOG_VERBOSE, "WCDB: Database access took %f seconds.",
+          read_timer_seconds(wcdb_timer));
 }
 
 /**************************************************************************
   NB NOT THREAD SAFE. But may be called more than once in the same
   expression (up to 2048 *worst case* output bytes ==> worst case is
-  overflow after 1023 bytes input). Call fcdb_reset_escape_buffer() to
+  overflow after 1023 bytes input). Call wcdb_reset_escape_buffer() to
   reset the buffer when done with the returned pointer(s). Also assumes
   str is null-terminated.
 **************************************************************************/
-static const char *fcdb_escape(MYSQL *sock, const char *str)
+static const char *wcdb_escape(MYSQL *sock, const char *str)
 {
   static char tmp[2048], *p = tmp;
   unsigned long len;
@@ -868,7 +868,7 @@ static const char *fcdb_escape(MYSQL *sock, const char *str)
 
   len = strlen(str);
   if (2 * len + 1 >= sizeof(tmp) - (unsigned)(p - tmp)) {
-    fcdb_error("Buffer overflow in call to fcdb_escape! "
+    wcdb_error("Buffer overflow in call to wcdb_escape! "
                "Someone didn't take out the trash, "
                "or put something too big into it. :(");
     ret = NULL;
@@ -880,63 +880,63 @@ static const char *fcdb_escape(MYSQL *sock, const char *str)
 }
 
 /**************************************************************************
-  NB calls fcdb_close(sock) on error.
+  NB calls wcdb_close(sock) on error.
 **************************************************************************/
-static bool fcdb_execute(MYSQL *sock, const char *stmt)
+static bool wcdb_execute(MYSQL *sock, const char *stmt)
 {
-  freelog(LOG_DEBUG, "FCDB: Executing statement: \"%s\"", stmt);
+  freelog(LOG_DEBUG, "WCDB: Executing statement: \"%s\"", stmt);
   if (mysql_query(sock, stmt)) {
-    fcdb_error("Database execute error: %s.\nStatement was: %s",
+    wcdb_error("Database execute error: %s.\nStatement was: %s",
                mysql_error(sock), stmt);
-    fcdb_close(sock);
+    wcdb_close(sock);
     return FALSE;
   }
   return TRUE;
 }
 
 /**************************************************************************
-  NB does NOT call fcdb_close on error.
+  NB does NOT call wcdb_close on error.
 **************************************************************************/
-static bool fcdb_commit(MYSQL *sock)
+static bool wcdb_commit(MYSQL *sock)
 {
   if (mysql_commit(sock)) {
-    fcdb_error("Database commit failed: %s.", mysql_error(sock));
+    wcdb_error("Database commit failed: %s.", mysql_error(sock));
     return FALSE;
   }
   return TRUE;
 }
 
 /**************************************************************************
-  NB Calls fcdb_close on error.
+  NB Calls wcdb_close on error.
 **************************************************************************/
-static bool fcdb_insert_player(MYSQL *sock, struct player *pplayer)
+static bool wcdb_insert_player(MYSQL *sock, struct player *pplayer)
 {
   char buf[1024];
 
-  if (pplayer->fcdb.player_id > 0) {
-    fcdb_error("Tried to insert player %s into the "
+  if (pplayer->wcdb.player_id > 0) {
+    wcdb_error("Tried to insert player %s into the "
                "database twice: already has id %d.",
-               pplayer->name, pplayer->fcdb.player_id);
-    fcdb_close(sock);
+               pplayer->name, pplayer->wcdb.player_id);
+    wcdb_close(sock);
     return FALSE;
   }
 
   my_snprintf(buf, sizeof(buf), "INSERT INTO players"
       "(game_id, name, nation) VALUES (%d, '%s', '%s')",
-      game.server.fcdb.id, fcdb_escape(sock, pplayer->name),
-      fcdb_escape(sock, get_nation_name(pplayer->nation)));
+      game.server.wcdb.id, wcdb_escape(sock, pplayer->name),
+      wcdb_escape(sock, get_nation_name(pplayer->nation)));
 
-  fcdb_execute_or_return(sock, buf, FALSE);
+  wcdb_execute_or_return(sock, buf, FALSE);
 
-  pplayer->fcdb.player_id = mysql_insert_id(sock);
+  pplayer->wcdb.player_id = mysql_insert_id(sock);
 
   if (pplayer->is_connected
       && 0 != strcmp(pplayer->username, ANON_USER_NAME)) {
     my_snprintf(buf, sizeof(buf), "UPDATE players "
         "SET creating_user_name = '%s' WHERE id = %d",
-        fcdb_escape(sock, pplayer->username),
-        pplayer->fcdb.player_id);
-    fcdb_execute_or_return(sock, buf, FALSE);
+        wcdb_escape(sock, pplayer->username),
+        pplayer->wcdb.player_id);
+    wcdb_execute_or_return(sock, buf, FALSE);
   }
 
   if (pplayer->team != TEAM_NONE) {
@@ -945,20 +945,20 @@ static bool fcdb_insert_player(MYSQL *sock, struct player *pplayer)
         "  SELECT id FROM teams "
         "    WHERE teams.game_id = %d AND teams.name = '%s'"
         ") WHERE id = %d",
-        game.server.fcdb.id,
-        fcdb_escape(sock, get_team_name(pplayer->team)),
-        pplayer->fcdb.player_id);
-    fcdb_execute_or_return(sock, buf, FALSE);
+        game.server.wcdb.id,
+        wcdb_escape(sock, get_team_name(pplayer->team)),
+        pplayer->wcdb.player_id);
+    wcdb_execute_or_return(sock, buf, FALSE);
   }
 
-  fcdb_reset_escape_buffer();
+  wcdb_reset_escape_buffer();
   return TRUE;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static bool fcdb_insert_terrain_map(MYSQL *sock)
+static bool wcdb_insert_terrain_map(MYSQL *sock)
 {
   MYSQL_BIND bind[2];
   MYSQL_STMT *stmt = NULL;
@@ -968,14 +968,14 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
   static const char *INSERT_STMT
     = "INSERT INTO terrain_maps (game_id, map) VALUES (?, ?)";
 
-  if (!srvarg.fcdb.save_maps) {
+  if (!srvarg.wcdb.save_maps) {
     return TRUE;
   }
 
   /* Create the terrain map that we save in the database. */
   tmap = etm_encode_terrain_map();
   if (!tmap) {
-    fcdb_error("Failed to encode terrain map.");
+    wcdb_error("Failed to encode terrain map.");
     goto ERROR;
   }
 
@@ -990,12 +990,12 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
   case Z_OK:
     break;
   case Z_MEM_ERROR:
-    fcdb_error("Failed to compress encoded terrain map: "
+    wcdb_error("Failed to compress encoded terrain map: "
                "not enough memory.");
     goto ERROR;
     break;
   case Z_BUF_ERROR:
-    fcdb_error("Failed to compress encoded terrain map: "
+    wcdb_error("Failed to compress encoded terrain map: "
                "output buffer size exceeded.");
     goto ERROR;
     break;
@@ -1004,18 +1004,18 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
     break;
   }
 
-  freelog(LOG_VERBOSE, "FCDB: Encoded terrain map compressed to "
+  freelog(LOG_VERBOSE, "WCDB: Encoded terrain map compressed to "
           "%lu bytes down from %lu bytes.",
           len_comp, len);
 
   stmt = mysql_stmt_init(sock);
   if (!stmt) {
-    fcdb_error("mysql_stmt_init() failed: out of memory.");
+    wcdb_error("mysql_stmt_init() failed: out of memory.");
     goto ERROR;
   }
 
   if (mysql_stmt_prepare(stmt, INSERT_STMT, strlen(INSERT_STMT))) {
-    fcdb_error("mysql_stmt_prepare() failed: %s.",
+    wcdb_error("mysql_stmt_prepare() failed: %s.",
                mysql_stmt_error(stmt));
     goto ERROR;
   }
@@ -1023,7 +1023,7 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
   memset(bind, 0, sizeof(bind));
 
   bind[0].buffer_type = MYSQL_TYPE_LONG;
-  bind[0].buffer = (char *) &game.server.fcdb.id;
+  bind[0].buffer = (char *) &game.server.wcdb.id;
   bind[0].is_null = 0;
   bind[0].length = 0;
 
@@ -1034,13 +1034,13 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
   bind[1].length = &len_comp;
 
   if (mysql_stmt_bind_param(stmt, bind)) {
-    fcdb_error("mysql_stmt_bind_param() failed: %s.",
+    wcdb_error("mysql_stmt_bind_param() failed: %s.",
                mysql_stmt_error(stmt));
     goto ERROR;
   }
 
   if (mysql_stmt_execute(stmt)) {
-    fcdb_error("mysql_stmt_execute() failed: %s.",
+    wcdb_error("mysql_stmt_execute() failed: %s.",
                mysql_stmt_error(stmt));
     goto ERROR;
   }
@@ -1048,10 +1048,10 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
   mysql_stmt_close(stmt);
   free(tmap_comp);
 
-  if (game.server.fcdb.termap) {
-    free(game.server.fcdb.termap);
+  if (game.server.wcdb.termap) {
+    free(game.server.wcdb.termap);
   }
-  game.server.fcdb.termap = tmap;
+  game.server.wcdb.termap = tmap;
 
   return TRUE;
 
@@ -1066,7 +1066,7 @@ ERROR:
     free(tmap_comp);
   }
   if (sock) {
-    fcdb_close(sock);
+    wcdb_close(sock);
   }
   return FALSE;
 }
@@ -1076,13 +1076,13 @@ ERROR:
 **************************************************************************/
 static const char *get_termap_rdict(const char *termap)
 {
-  return termap + FCDB_ETM_HEADER_LEN + FCDB_ETM_DICT_LEN;
+  return termap + WCDB_ETM_HEADER_LEN + WCDB_ETM_DICT_LEN;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
+static bool wcdb_insert_turn_map(MYSQL *sock, int turn_id)
 {
   MYSQL_BIND bind[2];
   MYSQL_STMT *stmt = NULL;
@@ -1096,14 +1096,14 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
   static const char *INSERT_STMT
     = "INSERT INTO turn_maps (turn_id, map) VALUES (?, ?)";
 
-  if (!srvarg.fcdb.save_maps) {
+  if (!srvarg.wcdb.save_maps) {
     return TRUE;
   }
 
   changed_list = tile_list_new();
-  tmap = etm_encode_turn_map(game.server.fcdb.termap, changed_list);
+  tmap = etm_encode_turn_map(game.server.wcdb.termap, changed_list);
   if (!tmap) {
-    fcdb_error("Failed to encode turn map.");
+    wcdb_error("Failed to encode turn map.");
     goto ERROR;
   }
 
@@ -1118,12 +1118,12 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
   case Z_OK:
     break;
   case Z_MEM_ERROR:
-    fcdb_error("Failed to compress encoded turn map: "
+    wcdb_error("Failed to compress encoded turn map: "
                "not enough memory.");
     goto ERROR;
     break;
   case Z_BUF_ERROR:
-    fcdb_error("Failed to compress encoded turn map: "
+    wcdb_error("Failed to compress encoded turn map: "
                "output buffer size exceeded.");
     goto ERROR;
     break;
@@ -1132,18 +1132,18 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
     break;
   }
 
-  freelog(LOG_VERBOSE, "FCDB: Encoded turn map compressed to "
+  freelog(LOG_VERBOSE, "WCDB: Encoded turn map compressed to "
           "%lu bytes down from %lu bytes.",
           len_comp, len);
 
   stmt = mysql_stmt_init(sock);
   if (!stmt) {
-    fcdb_error("mysql_stmt_init() failed: out of memory.");
+    wcdb_error("mysql_stmt_init() failed: out of memory.");
     goto ERROR;
   }
 
   if (mysql_stmt_prepare(stmt, INSERT_STMT, strlen(INSERT_STMT))) {
-    fcdb_error("mysql_stmt_prepare() failed: %s.",
+    wcdb_error("mysql_stmt_prepare() failed: %s.",
                mysql_stmt_error(stmt));
     goto ERROR;
   }
@@ -1162,13 +1162,13 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
   bind[1].length = &len_comp;
 
   if (mysql_stmt_bind_param(stmt, bind)) {
-    fcdb_error("mysql_stmt_bind_param() failed: %s.",
+    wcdb_error("mysql_stmt_bind_param() failed: %s.",
                mysql_stmt_error(stmt));
     goto ERROR;
   }
 
   if (mysql_stmt_execute(stmt)) {
-    fcdb_error("mysql_stmt_execute() failed: %s.",
+    wcdb_error("mysql_stmt_execute() failed: %s.",
                mysql_stmt_error(stmt));
     goto ERROR;
   }
@@ -1180,7 +1180,7 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
   /* Now deal with any terrain that has changed from
    * the original map. */
 
-  rdict = get_termap_rdict(game.server.fcdb.termap);
+  rdict = get_termap_rdict(game.server.wcdb.termap);
 
   tile_list_iterate(changed_list, ptile) {
     index = get_tile_termap_index(ptile);
@@ -1189,7 +1189,7 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
                 "(turn_id, terrain_map_index, encoded_value) "
                 "VALUES (%d, %lu, %d)",
                 turn_id, index, enc);
-    fcdb_execute_or_return(sock, buf, FALSE);
+    wcdb_execute_or_return(sock, buf, FALSE);
   } tile_list_iterate_end;
 
   return TRUE;
@@ -1205,7 +1205,7 @@ ERROR:
     free(tmap_comp);
   }
   if (sock) {
-    fcdb_close(sock);
+    wcdb_close(sock);
   }
   return FALSE;
 }
@@ -1215,9 +1215,9 @@ ERROR:
 **************************************************************************/
 static unsigned long get_termap_len(void)
 {
-  return FCDB_ETM_HEADER_LEN
-    + FCDB_ETM_DICT_LEN
-    + FCDB_ETM_RDICT_LEN
+  return WCDB_ETM_HEADER_LEN
+    + WCDB_ETM_DICT_LEN
+    + WCDB_ETM_RDICT_LEN
     + map_num_tiles();
 }
 
@@ -1231,13 +1231,13 @@ static char etm_encode_terrain(const struct tile *ptile,
 
   enc = rdict[(unsigned char) get_tile_type(ptile->terrain)->identifier];
   if (tile_has_special(ptile, S_SPECIAL_1)) {
-    enc |= FCDB_ETM_SPECIAL1_FLAG;
+    enc |= WCDB_ETM_SPECIAL1_FLAG;
   }
   if (tile_has_special(ptile, S_SPECIAL_2)) {
-    enc |= FCDB_ETM_SPECIAL2_FLAG;
+    enc |= WCDB_ETM_SPECIAL2_FLAG;
   }
   if (tile_has_special(ptile, S_RIVER)) {
-    enc |= FCDB_ETM_RIVER_FLAG;
+    enc |= WCDB_ETM_RIVER_FLAG;
   }
 
   return enc;
@@ -1248,7 +1248,7 @@ static char etm_encode_terrain(const struct tile *ptile,
 **************************************************************************/
 static char *get_termap_dict(char *termap)
 {
-  return termap + FCDB_ETM_HEADER_LEN;
+  return termap + WCDB_ETM_HEADER_LEN;
 }
 /**************************************************************************
   ...
@@ -1260,7 +1260,7 @@ static void init_etm_dict(char *termap)
 
   dict = get_termap_dict(termap);
 
-  for (i = 0, j = T_FIRST; i < FCDB_ETM_DICT_LEN && j < T_COUNT; i++) {
+  for (i = 0, j = T_FIRST; i < WCDB_ETM_DICT_LEN && j < T_COUNT; i++) {
     do {
       ttid = get_tile_type(j)->identifier;
       j++;
@@ -1287,7 +1287,7 @@ static void init_etm_rdict(char *termap)
    * initialize the reverse dictionary. */
   rdict = (char *) get_termap_rdict(termap);
 
-  for (i = 0; i < FCDB_ETM_DICT_LEN && dict[i] != 0; i++) {
+  for (i = 0; i < WCDB_ETM_DICT_LEN && dict[i] != 0; i++) {
     rdict[(unsigned char) dict[i]] = (char) i;
   }
 }
@@ -1297,9 +1297,9 @@ static void init_etm_rdict(char *termap)
 **************************************************************************/
 static unsigned long get_tile_termap_index(const struct tile *ptile)
 {
-  return FCDB_ETM_HEADER_LEN
-      + FCDB_ETM_DICT_LEN
-      + FCDB_ETM_RDICT_LEN
+  return WCDB_ETM_HEADER_LEN
+      + WCDB_ETM_DICT_LEN
+      + WCDB_ETM_RDICT_LEN
       + ptile->index;
 }
 /**************************************************************************
@@ -1312,10 +1312,10 @@ static char *etm_encode_terrain_map(void)
   const char *rdict;
   struct tile *ptile;
 
-  if (game.ruleset_control.terrain_count > FCDB_ETM_DICT_LEN) {
+  if (game.ruleset_control.terrain_count > WCDB_ETM_DICT_LEN) {
     freelog(LOG_ERROR, _("Cannot encode more than %d terrain types! "
                          "Ruleset has %d."),
-            FCDB_ETM_DICT_LEN, game.ruleset_control.terrain_count);
+            WCDB_ETM_DICT_LEN, game.ruleset_control.terrain_count);
     return NULL;
   }
   if (map.info.xsize > 255 || map.info.ysize > 255) {
@@ -1328,8 +1328,8 @@ static char *etm_encode_terrain_map(void)
   len = get_termap_len();
   termap = wc_calloc(1, len);
 
-  termap[0] = FCDB_ETM_FILE_IDENTIFIER;
-  termap[1] = FCDB_ETM_VERSION;
+  termap[0] = WCDB_ETM_FILE_IDENTIFIER;
+  termap[1] = WCDB_ETM_VERSION;
   termap[2] = map.info.xsize;
   termap[3] = map.info.ysize;
 
@@ -1382,10 +1382,10 @@ static char *etm_encode_turn_map(const char *termap,
       ptile = native_pos_to_tile(i, j);
       if (ptile->city) {
         enc = city_owner(ptile->city)->player_no;
-        enc |= FCDB_ETM_CITY_FLAG;
+        enc |= WCDB_ETM_CITY_FLAG;
       } else if (unit_list_size(ptile->units) > 0) {
         enc = unit_owner(unit_list_get(ptile->units, 0))->player_no;
-        enc |= FCDB_ETM_UNIT_FLAG;
+        enc |= WCDB_ETM_UNIT_FLAG;
       } else {
         enc = 0;
       }
@@ -1393,7 +1393,7 @@ static char *etm_encode_turn_map(const char *termap,
       tenc = etm_encode_terrain(ptile, rdict);
       index = get_tile_termap_index(ptile);
       if (tenc != termap[index]) {
-        enc |= FCDB_ETM_CHANGED_TERRAIN_FLAG;
+        enc |= WCDB_ETM_CHANGED_TERRAIN_FLAG;
         if (changed_terrain_list) {
           tile_list_append(changed_terrain_list, ptile);
         }
@@ -1427,7 +1427,7 @@ static bool load_old_rating(MYSQL *sock,
       "    SELECT MAX(id) FROM ratings"
       "      WHERE user_id = %d AND game_type = '%s')",
       user_id, game_type_name_orig(game_type));
-  fcdb_execute_or_return(sock, buf, FALSE);
+  wcdb_execute_or_return(sock, buf, FALSE);
 
   res = mysql_store_result(sock);
 
@@ -1436,15 +1436,15 @@ static bool load_old_rating(MYSQL *sock,
 
   } else if (mysql_num_rows(res) == 1) {
     MYSQL_ROW row = mysql_fetch_row(res);
-    pplayer->fcdb.rating = atof(row[0]);
-    pplayer->fcdb.rating_deviation = atof(row[1]);
-    pplayer->fcdb.last_rating_timestamp = (time_t) atol(row[2]);
+    pplayer->wcdb.rating = atof(row[0]);
+    pplayer->wcdb.rating_deviation = atof(row[1]);
+    pplayer->wcdb.last_rating_timestamp = (time_t) atol(row[2]);
   } else {
     /* This should not happen... */
-    fcdb_error("Unexpected number of rows (%d) for query:\n%s",
+    wcdb_error("Unexpected number of rows (%d) for query:\n%s",
                mysql_num_rows(res), buf);
     mysql_free_result(res);
-    fcdb_close(sock);
+    wcdb_close(sock);
     return FALSE;
   }
 
@@ -1464,9 +1464,9 @@ static bool get_user_id(MYSQL *sock, const char *user_name, int *id)
 
   my_snprintf(buf, sizeof(buf),
       "SELECT id FROM %s WHERE name = '%s'",
-      AUTH_TABLE, fcdb_escape(sock, user_name));
-  fcdb_reset_escape_buffer();
-  fcdb_execute_or_return(sock, buf, FALSE);
+      AUTH_TABLE, wcdb_escape(sock, user_name));
+  wcdb_reset_escape_buffer();
+  wcdb_execute_or_return(sock, buf, FALSE);
 
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) == 1) {
@@ -1489,17 +1489,17 @@ static bool reload_termap()
   char buf[1024];
   unsigned long *lengths, len;
 
-  if (game.server.fcdb.termap != NULL) {
+  if (game.server.wcdb.termap != NULL) {
     return TRUE;
   }
 
-  if (!fcdb_connect(sock)) {
+  if (!wcdb_connect(sock)) {
     return FALSE;
   }
 
   my_snprintf(buf, sizeof(buf), "SELECT map FROM terrain_maps "
-              "WHERE game_id = %d", game.server.fcdb.id);
-  fcdb_execute_or_return(sock, buf, FALSE);
+              "WHERE game_id = %d", game.server.wcdb.id);
+  wcdb_execute_or_return(sock, buf, FALSE);
 
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) == 1) {
@@ -1508,20 +1508,20 @@ static bool reload_termap()
     row = mysql_fetch_row(res);
     lengths = mysql_fetch_lengths(res);
     len = get_termap_len();
-    game.server.fcdb.termap = wc_malloc(len);
+    game.server.wcdb.termap = wc_malloc(len);
 
-    switch (uncompress((unsigned char *)game.server.fcdb.termap, &len,
+    switch (uncompress((unsigned char *)game.server.wcdb.termap, &len,
                        (unsigned char *)row[0], lengths[0])) {
     case Z_MEM_ERROR:
-      freelog(LOG_ERROR, "FCDB: Failed to uncompress reloaded "
+      freelog(LOG_ERROR, "WCDB: Failed to uncompress reloaded "
               "terrain map: out of memory.");
       break;
     case Z_BUF_ERROR:
-      freelog(LOG_ERROR, "FCDB: Failed to uncompress reloaded "
+      freelog(LOG_ERROR, "WCDB: Failed to uncompress reloaded "
               "terrain map: destination buffer too small!.");
       break;
     case Z_DATA_ERROR:
-      freelog(LOG_ERROR, "FCDB: Failed to uncompress reloaded "
+      freelog(LOG_ERROR, "WCDB: Failed to uncompress reloaded "
               "terrain map: compressed data is corrupted.");
       break;
     case Z_OK:
@@ -1535,20 +1535,20 @@ static bool reload_termap()
     }
 
     if (!succeeded) {
-      free(game.server.fcdb.termap);
-      game.server.fcdb.termap = NULL;
+      free(game.server.wcdb.termap);
+      game.server.wcdb.termap = NULL;
     }
   }
   mysql_free_result(res);
 
-  if (game.server.fcdb.termap == NULL) {
+  if (game.server.wcdb.termap == NULL) {
     /* We might as well insert a new one then... */
-    if (!fcdb_insert_terrain_map(sock)) {
+    if (!wcdb_insert_terrain_map(sock)) {
       return FALSE;
     }
   }
 
-  fcdb_close(sock);
+  wcdb_close(sock);
 
   return TRUE;
 }
@@ -1559,29 +1559,29 @@ static bool reload_termap()
   database and record the players in this game. Assumes game_set_type()
   has already been called.
 **************************************************************************/
-bool fcdb_record_game_start(void)
+bool wcdb_record_game_start(void)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
   char buf[1024], host[512];
   struct settings_s *op;
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     return TRUE;
   }
 
   /* Check if this is a reloaded game. If so, we don't
    * want to overwrite the existing start data. */
-  if (game.server.fcdb.id > 0) {
-    freelog(LOG_VERBOSE, _("FCDB: Game %d resumed."), game.server.fcdb.id);
+  if (game.server.wcdb.id > 0) {
+    freelog(LOG_VERBOSE, _("WCDB: Game %d resumed."), game.server.wcdb.id);
 
     /* We might have to recreate the termap... */
     return reload_termap();
   }
 
-  freelog(LOG_VERBOSE, _("FCDB: Recording game start into database."));
+  freelog(LOG_VERBOSE, _("WCDB: Recording game start into database."));
 
-  if (!fcdb_connect(sock)) {
+  if (!wcdb_connect(sock)) {
     return FALSE;
   }
 
@@ -1594,17 +1594,17 @@ bool fcdb_record_game_start(void)
       "(host, port, version, patches, capabilities, "
       "ruleset, type)"
       "VALUES ('%s', '%d', '%s', '%s', '%s', '%s', '%s')",
-      host, srvarg.port, fcdb_escape(sock, VERSION_STRING),
-      fcdb_escape(sock, get_meta_patches_string()),
-      fcdb_escape(sock, our_capability),
-      fcdb_escape(sock, game.server.rulesetdir),
-      game_type_name_orig(game.server.fcdb.type));
-  fcdb_reset_escape_buffer();
-  fcdb_execute_or_return(sock, buf, FALSE);
-  game.server.fcdb.id = mysql_insert_id(sock);
+      host, srvarg.port, wcdb_escape(sock, VERSION_STRING),
+      wcdb_escape(sock, get_meta_patches_string()),
+      wcdb_escape(sock, our_capability),
+      wcdb_escape(sock, game.server.rulesetdir),
+      game_type_name_orig(game.server.wcdb.type));
+  wcdb_reset_escape_buffer();
+  wcdb_execute_or_return(sock, buf, FALSE);
+  game.server.wcdb.id = mysql_insert_id(sock);
 
   /* Record the terrain map. */
-  if (!fcdb_insert_terrain_map(sock)) {
+  if (!wcdb_insert_terrain_map(sock)) {
     return FALSE;
   }
 
@@ -1625,35 +1625,35 @@ bool fcdb_record_game_start(void)
     case SSET_BOOL:
       my_snprintf(buf, sizeof(buf), "INSERT INTO non_default_settings"
           "(game_id, name, value) VALUES (%d, '%s', '%s')",
-          game.server.fcdb.id, op->name, *op->bool_value ? "true" : "false");
+          game.server.wcdb.id, op->name, *op->bool_value ? "true" : "false");
       break;
     case SSET_INT:
       my_snprintf(buf, sizeof(buf), "INSERT INTO non_default_settings"
           "(game_id, name, value) VALUES (%d, '%s', '%d')",
-          game.server.fcdb.id, op->name, *op->int_value);
+          game.server.wcdb.id, op->name, *op->int_value);
       break;
     case SSET_STRING:
       my_snprintf(buf, sizeof(buf), "INSERT INTO non_default_settings"
           "(game_id, name, value) VALUES (%d, '%s', '%s')",
-          game.server.fcdb.id, op->name, fcdb_escape(sock, op->string_value));
-      fcdb_reset_escape_buffer();
+          game.server.wcdb.id, op->name, wcdb_escape(sock, op->string_value));
+      wcdb_reset_escape_buffer();
       break;
     default:
       assert(0);
       break;
     }
-    fcdb_execute_or_return(sock, buf, FALSE);
+    wcdb_execute_or_return(sock, buf, FALSE);
   }
 
   /* Record the teams, if any. */
   team_iterate(pteam) {
     my_snprintf(buf, sizeof(buf), "INSERT INTO teams "
         "(game_id, name, num_players) VALUES (%d, '%s', %d)",
-        game.server.fcdb.id,
-        fcdb_escape(sock, get_team_name(pteam->id)),
+        game.server.wcdb.id,
+        wcdb_escape(sock, get_team_name(pteam->id)),
         pteam->member_count);
-    fcdb_reset_escape_buffer();
-    fcdb_execute_or_return(sock, buf, FALSE);
+    wcdb_reset_escape_buffer();
+    wcdb_execute_or_return(sock, buf, FALSE);
   } team_iterate_end;
 
   /* Record the initial players. */
@@ -1661,14 +1661,14 @@ bool fcdb_record_game_start(void)
     if (is_barbarian(pplayer)) {
       continue;
     }
-    if (!fcdb_insert_player(sock, pplayer)) {
+    if (!wcdb_insert_player(sock, pplayer)) {
       return FALSE;
     }
     player_setup_turns_played(pplayer);
   } players_iterate_end;
 
-  fcdb_commit(sock);
-  fcdb_close(sock);
+  wcdb_commit(sock);
+  wcdb_close(sock);
 #endif
 
   return TRUE;
@@ -1678,7 +1678,7 @@ bool fcdb_record_game_start(void)
   Called once at the end of turn to update game status, turn information,
   and player statuses for that turn.
 **************************************************************************/
-bool fcdb_end_of_turn_update(void)
+bool wcdb_end_of_turn_update(void)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
@@ -1686,18 +1686,18 @@ bool fcdb_end_of_turn_update(void)
   char buf[4096];
   int turn_id, lux_income, num;
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     return TRUE;
   }
 
-  freelog(LOG_VERBOSE, _("FCDB: Recording turn data into database."));
+  freelog(LOG_VERBOSE, _("WCDB: Recording turn data into database."));
 
-  if (game.server.fcdb.id <= 0) {
-    fcdb_error("Current game_id is invalid.");
+  if (game.server.wcdb.id <= 0) {
+    wcdb_error("Current game_id is invalid.");
     return FALSE;
   }
 
-  if (!fcdb_connect(sock)) {
+  if (!wcdb_connect(sock)) {
     return FALSE;
   }
 
@@ -1705,45 +1705,45 @@ bool fcdb_end_of_turn_update(void)
    * (e.g. if this is a replayed loaded game). */
   my_snprintf(buf, sizeof(buf), "SELECT id FROM turns "
       "WHERE game_id = %d AND turn_no = %d",
-      game.server.fcdb.id, game.info.turn);
-  fcdb_execute_or_return(sock, buf, FALSE);
+      game.server.wcdb.id, game.info.turn);
+  wcdb_execute_or_return(sock, buf, FALSE);
   res = mysql_store_result(sock);
   num = mysql_num_rows(res);
   mysql_free_result(res);
   if (num > 0) {
-    fcdb_error("Turn %d for game %d already in database!",
-               game.info.turn, game.server.fcdb.id);
+    wcdb_error("Turn %d for game %d already in database!",
+               game.info.turn, game.server.wcdb.id);
     notify_conn(NULL, _("Server: Database updating disabled "
                 "because this game is being replayed from "
                 "a previously recorded point."));
-    fcdb_close(sock);
+    wcdb_close(sock);
     return FALSE;
   }
 
   /* Make a record for this turn. */
   my_snprintf(buf, sizeof(buf), "INSERT INTO turns"
       "(game_id, turn_no, year) VALUES (%d, %d, %d)",
-      game.server.fcdb.id, game.info.turn, game.info.year);
-  fcdb_execute_or_return(sock, buf, FALSE);
+      game.server.wcdb.id, game.info.turn, game.info.year);
+  wcdb_execute_or_return(sock, buf, FALSE);
 
   turn_id = mysql_insert_id(sock);
 
-  if (!fcdb_insert_turn_map(sock, turn_id)) {
+  if (!wcdb_insert_turn_map(sock, turn_id)) {
     return FALSE;
   }
 
   /* Update the game record with that last turn we know about. */
   my_snprintf(buf, sizeof(buf), "UPDATE games "
       "SET last_turn_id = %d, last_update = NOW() WHERE id = %d",
-      turn_id, game.server.fcdb.id);
-  fcdb_execute_or_return(sock, buf, FALSE);
+      turn_id, game.server.wcdb.id);
+  wcdb_execute_or_return(sock, buf, FALSE);
 
   /* Check to see if any new players have magically appeared. */
   players_iterate(pplayer) {
-    if (is_barbarian(pplayer) || pplayer->fcdb.player_id > 0) {
+    if (is_barbarian(pplayer) || pplayer->wcdb.player_id > 0) {
       continue;
     }
-    if (!fcdb_insert_player(sock, pplayer)) {
+    if (!wcdb_insert_player(sock, pplayer)) {
       return FALSE;
     }
   } players_iterate_end;
@@ -1783,7 +1783,7 @@ bool fcdb_end_of_turn_update(void)
         "%d, %d, %d, %d, "
         "%d, %d, '%s', %d, "
         "%d, %d)",
-        turn_id, pplayer->fcdb.player_id,
+        turn_id, pplayer->wcdb.player_id,
         pplayer->is_alive ? "TRUE" : "FALSE",
         get_civ_score(pplayer),
 
@@ -1806,13 +1806,13 @@ bool fcdb_end_of_turn_update(void)
         unit_list_size(pplayer->units) - pplayer->score.units,
 
         pplayer->score.literacy, pplayer->score.wonders,
-        fcdb_escape(sock, get_gov_pplayer(pplayer)->name_orig),
+        wcdb_escape(sock, get_gov_pplayer(pplayer)->name_orig),
         pplayer->economic.tax,
 
         pplayer->economic.science, pplayer->economic.luxury);
 
-    fcdb_reset_escape_buffer();
-    fcdb_execute_or_return(sock, buf, FALSE);
+    wcdb_reset_escape_buffer();
+    wcdb_execute_or_return(sock, buf, FALSE);
     player_status_id = mysql_insert_id(sock);
 
     /* Record controlling user if any. */
@@ -1822,10 +1822,10 @@ bool fcdb_end_of_turn_update(void)
 
       my_snprintf(buf, sizeof(buf), "UPDATE player_status "
           "SET user_name = '%s' WHERE id = %d",
-          fcdb_escape(sock, pplayer->username),
+          wcdb_escape(sock, pplayer->username),
           player_status_id);
-      fcdb_reset_escape_buffer();
-      fcdb_execute_or_return(sock, buf, FALSE);
+      wcdb_reset_escape_buffer();
+      wcdb_execute_or_return(sock, buf, FALSE);
 
       turns = player_get_turns_played(pplayer, pplayer->username);
       player_set_turns_played(pplayer, pplayer->username, turns + 1);
@@ -1837,7 +1837,7 @@ bool fcdb_end_of_turn_update(void)
           "SET ai_mode = '%s' WHERE id = %d",
           name_of_skill_level(pplayer->ai.skill_level),
           player_status_id);
-      fcdb_execute_or_return(sock, buf, FALSE);
+      wcdb_execute_or_return(sock, buf, FALSE);
     }
 
     /* Record allies this turn. */
@@ -1849,14 +1849,14 @@ bool fcdb_end_of_turn_update(void)
       pplayer_ally = get_player(i);
       my_snprintf(buf, sizeof(buf), "INSERT INTO allies "
           "(player_status_id, ally_player_id) VALUES (%d, %d)",
-          player_status_id, pplayer_ally->fcdb.player_id);
-      fcdb_execute_or_return(sock, buf, FALSE);
+          player_status_id, pplayer_ally->wcdb.player_id);
+      wcdb_execute_or_return(sock, buf, FALSE);
     }
 
   } players_iterate_end;
 
-  fcdb_commit(sock);
-  fcdb_close(sock);
+  wcdb_commit(sock);
+  wcdb_close(sock);
 #endif
 
   return TRUE;
@@ -1866,39 +1866,39 @@ bool fcdb_end_of_turn_update(void)
   Called once at the end of game to update the database with the final
   state of the game.
 **************************************************************************/
-bool fcdb_record_game_end(void)
+bool wcdb_record_game_end(void)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
   char buf[1024];
 
-  if (!srvarg.fcdb.enabled) {
+  if (!srvarg.wcdb.enabled) {
     return TRUE;
   }
 
-  freelog(LOG_VERBOSE, _("FCDB: Recording game end into database."));
+  freelog(LOG_VERBOSE, _("WCDB: Recording game end into database."));
 
-  if (game.server.fcdb.id <= 0) {
-    fcdb_error("Current game_id is invalid.");
+  if (game.server.wcdb.id <= 0) {
+    wcdb_error("Current game_id is invalid.");
     return FALSE;
   }
 
-  if (!fcdb_connect(sock)) {
+  if (!wcdb_connect(sock)) {
     return FALSE;
   }
 
 
   /* Record player results and ranks. */
   players_iterate(pplayer) {
-    if (pplayer->fcdb.player_id <= 0) {
+    if (pplayer->wcdb.player_id <= 0) {
       continue;
     }
     my_snprintf(buf, sizeof(buf), "UPDATE players "
         "SET result = '%s', rank = %f WHERE id = %d",
         result_name_orig(pplayer->result),
         pplayer->rank,
-        pplayer->fcdb.player_id);
-    fcdb_execute_or_return(sock, buf, FALSE);
+        pplayer->wcdb.player_id);
+    wcdb_execute_or_return(sock, buf, FALSE);
     player_free_turns_played(pplayer);
   } players_iterate_end;
 
@@ -1908,24 +1908,24 @@ bool fcdb_record_game_end(void)
         "SET score = %f, rank = %f, result = '%s'"
         "WHERE game_id = %d AND STRCMP(name, '%s') = 0",
         pteam->server.score, pteam->server.rank,
-        result_name_orig(pteam->server.result), game.server.fcdb.id,
-        fcdb_escape(sock, get_team_name(pteam->id)));
-    fcdb_reset_escape_buffer();
-    fcdb_execute_or_return(sock, buf, FALSE);
+        result_name_orig(pteam->server.result), game.server.wcdb.id,
+        wcdb_escape(sock, get_team_name(pteam->id)));
+    wcdb_reset_escape_buffer();
+    wcdb_execute_or_return(sock, buf, FALSE);
   } team_iterate_end;
 
   /* Record game outcome. */
   my_snprintf(buf, sizeof(buf), "UPDATE games "
       "SET outcome = '%s' WHERE id = %d",
-      game_outcome_name_orig(game.server.fcdb.outcome), game.server.fcdb.id);
-  fcdb_execute_or_return(sock, buf, FALSE);
+      game_outcome_name_orig(game.server.wcdb.outcome), game.server.wcdb.id);
+  wcdb_execute_or_return(sock, buf, FALSE);
 
   if (game.server.rated) {
     players_iterate(pplayer) {
-      if (pplayer->fcdb.player_id <= 0
-          || pplayer->fcdb.rated_user_id <= 0
-          || pplayer->fcdb.new_rating == 0.0
-          || pplayer->fcdb.new_rating_deviation == 0.0) {
+      if (pplayer->wcdb.player_id <= 0
+          || pplayer->wcdb.rated_user_id <= 0
+          || pplayer->wcdb.new_rating == 0.0
+          || pplayer->wcdb.new_rating_deviation == 0.0) {
         continue;
       }
       my_snprintf(buf, sizeof(buf), "INSERT INTO ratings "
@@ -1933,35 +1933,35 @@ bool fcdb_record_game_end(void)
           " old_rating, old_rating_deviation,"
           " rating, rating_deviation, game_type) "
           "VALUES (%d, %d, %d, %f, %f, %f, %f, '%s')",
-          pplayer->fcdb.rated_user_id,
-          game.server.fcdb.id,
-          pplayer->fcdb.player_id,
-          pplayer->fcdb.rating,
-          pplayer->fcdb.rating_deviation,
-          pplayer->fcdb.new_rating,
-          pplayer->fcdb.new_rating_deviation,
-          game_type_name_orig(game.server.fcdb.type));
-      fcdb_execute_or_return(sock, buf, FALSE);
+          pplayer->wcdb.rated_user_id,
+          game.server.wcdb.id,
+          pplayer->wcdb.player_id,
+          pplayer->wcdb.rating,
+          pplayer->wcdb.rating_deviation,
+          pplayer->wcdb.new_rating,
+          pplayer->wcdb.new_rating_deviation,
+          game_type_name_orig(game.server.wcdb.type));
+      wcdb_execute_or_return(sock, buf, FALSE);
     } players_iterate_end;
   }
 
-  fcdb_commit(sock);
-  fcdb_close(sock);
+  wcdb_commit(sock);
+  wcdb_close(sock);
 #endif
 
   return TRUE;
 }
 
 /**************************************************************************
-  Fills player fcdb struct with rating information for the given game
+  Fills player wcdb struct with rating information for the given game
   type. May be called in pregame or during the game. If the boolean
   argument 'check_turns_played' is true, then ratings will be loaded
   taking into account which user played the most significantly for
   each given player.
 
-  NB: This function modifies the fcdb fields of the player structs.
+  NB: This function modifies the wcdb fields of the player structs.
 **************************************************************************/
-bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
+bool wcdb_load_player_ratings(int game_type, bool check_turns_played)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
@@ -1973,7 +1973,7 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
 
   freelog(LOG_DEBUG, "Loading player ratings from database...");
 
-  fcdb_connect_or_return(sock, FALSE);
+  wcdb_connect_or_return(sock, FALSE);
 
   players_iterate(pplayer) {
     if (pplayer->is_civil_war_split || is_barbarian(pplayer)) {
@@ -2007,13 +2007,13 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
        * have been played in the game for the game to be rated
        * at all (if not, the function game_can_be_rated in
        * score.c will handle the check). */
-      if (rate_user && game.info.turn >= srvarg.fcdb.min_rated_turns
-          && most_turns < srvarg.fcdb.min_rated_turns) {
+      if (rate_user && game.info.turn >= srvarg.wcdb.min_rated_turns
+          && most_turns < srvarg.wcdb.min_rated_turns) {
         notify_conn(NULL, _("Server: User %s will not receive an updated "
                             "rating because not enough turns were played "
                             "(only played %d, which is less than the "
                             "minimum of %d)."),
-                    most_user, most_turns, srvarg.fcdb.min_rated_turns);
+                    most_user, most_turns, srvarg.wcdb.min_rated_turns);
         rate_user = FALSE;
       }
 
@@ -2045,40 +2045,40 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
       }
 
       if (rate_user) {
-        pplayer->fcdb.rated_user_id = user_id_for_old_rating;
+        pplayer->wcdb.rated_user_id = user_id_for_old_rating;
         my_snprintf(buf, sizeof(buf),
           "SELECT name FROM %s WHERE id = %d",
           AUTH_TABLE, user_id_for_old_rating);
-        if (!fcdb_execute(sock, buf)) {
+        if (!wcdb_execute(sock, buf)) {
           goto FAILED;
         }
         res = mysql_store_result(sock);
         if (mysql_num_rows(res) == 1) {
           row = mysql_fetch_row(res);
           if (row[0]) {
-            sz_strlcpy(pplayer->fcdb.rated_user_name, row[0]);
+            sz_strlcpy(pplayer->wcdb.rated_user_name, row[0]);
           }
         } else {
-          pplayer->fcdb.rated_user_name[0] = '\0';
+          pplayer->wcdb.rated_user_name[0] = '\0';
         }
         mysql_free_result(res);
         res = NULL;
 
       } else {
-        pplayer->fcdb.rated_user_id = 0;
-        pplayer->fcdb.rated_user_name[0] = '\0';
+        pplayer->wcdb.rated_user_id = 0;
+        pplayer->wcdb.rated_user_name[0] = '\0';
       }
     } else {
       score_assign_ai_rating(pplayer, game_type);
 
       /* Make sure we are not putting AI ratings
        * into the database. */
-      pplayer->fcdb.rated_user_id = 0;
-      pplayer->fcdb.rated_user_name[0] = '\0';
+      pplayer->wcdb.rated_user_id = 0;
+      pplayer->wcdb.rated_user_name[0] = '\0';
     }
   } players_iterate_end;
 
-  fcdb_close(sock);
+  wcdb_close(sock);
   return TRUE;
 
 
@@ -2087,10 +2087,10 @@ FAILED:
   /* Make sure nobody gets a rating update if
    * we encounter some errors. */
   players_iterate(pplayer) {
-    pplayer->fcdb.rating = 0;
-    pplayer->fcdb.rating_deviation = 0;
-    pplayer->fcdb.rated_user_id = 0;
-    pplayer->fcdb.rated_user_name[0] = '\0';
+    pplayer->wcdb.rating = 0;
+    pplayer->wcdb.rating_deviation = 0;
+    pplayer->wcdb.rated_user_id = 0;
+    pplayer->wcdb.rated_user_name[0] = '\0';
   } players_iterate_end;
 
   if (res) {
@@ -2106,7 +2106,7 @@ FAILED:
 /**************************************************************************
   Fill the stats struct with statistics about the given user. Returns
   NULL on error. If the username is unknown, the 'id' field will be <= 0.
-  Call fcdb_user_stats_free when done with the returned pointer.
+  Call wcdb_user_stats_free when done with the returned pointer.
 
   If 'matchs' is not NULL and the given username matchs multiple
   users when used in a pattern as '%username%' (i.e. using MySQL
@@ -2116,7 +2116,7 @@ FAILED:
   NB: The caller must free the newly allocated strings inside 'matchs'
   when done.
 **************************************************************************/
-struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
+struct wcdb_user_stats *wcdb_user_stats_new(const char *username,
                                             struct string_list *matchs)
 {
 #ifdef HAVE_MYSQL
@@ -2124,17 +2124,17 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
   char buf[1024];
   MYSQL_RES *res = NULL;
   MYSQL_ROW row;
-  struct fcdb_user_stats *fus = NULL;
+  struct wcdb_user_stats *fus = NULL;
   int i, j, num_rows;
 
-  fcdb_connect_or_return(sock, NULL);
+  wcdb_connect_or_return(sock, NULL);
 
-  fus = wc_calloc(1, sizeof(struct fcdb_user_stats));
+  fus = wc_calloc(1, sizeof(struct wcdb_user_stats));
 
   if (username == NULL || username[0] == '\0') {
     /* Don't bother searching for an empty user name,
      * just say that we don't know any like that. ;) */
-    fcdb_close(sock);
+    wcdb_close(sock);
     return fus;
   }
 
@@ -2158,9 +2158,9 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
         "SELECT id, name FROM %s "
         "  WHERE name IS NOT NULL "
         "  AND name LIKE '%%%s%%' LIMIT 50",
-        AUTH_TABLE, fcdb_escape(sock, pattern));
-    fcdb_reset_escape_buffer();
-    if (!fcdb_execute(sock, buf)) {
+        AUTH_TABLE, wcdb_escape(sock, pattern));
+    wcdb_reset_escape_buffer();
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
 
@@ -2182,7 +2182,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
     mysql_free_result(res);
 
     if (num_rows != 1) {
-      fcdb_close(sock);
+      wcdb_close(sock);
       return fus;
     }
   }
@@ -2190,7 +2190,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
   my_snprintf(buf, sizeof(buf), "SELECT name, email, createtime, "
       "accesstime, address, createaddress, logincount FROM %s "
       "WHERE id = '%d'", AUTH_TABLE, fus->id);
-  if (!fcdb_execute(sock, buf)) {
+  if (!wcdb_execute(sock, buf)) {
     goto ERROR;
   }
 
@@ -2215,7 +2215,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
       "  WHERE user_id = %d"
       "  GROUP BY game_type",
       fus->id);
-  if (!fcdb_execute(sock, buf)) {
+  if (!wcdb_execute(sock, buf)) {
     goto ERROR;
   }
 
@@ -2242,7 +2242,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
       "  GROUP BY p.result",
       fus->id, fus->gt_stats[i].type);
 
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
 
@@ -2267,7 +2267,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
       "    SELECT MAX(id) FROM ratings"
       "      WHERE user_id = %d AND game_type = '%s')",
       fus->id, fus->gt_stats[i].type);
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
 
@@ -2281,12 +2281,12 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
     res = NULL;
   }
 
-  fcdb_close(sock);
+  wcdb_close(sock);
 
   return fus;
 
 ERROR:
-  fcdb_user_stats_free(fus);
+  wcdb_user_stats_free(fus);
   if (res) {
     mysql_free_result(res);
   }
@@ -2301,7 +2301,7 @@ ERROR:
 /**************************************************************************
   ...
 **************************************************************************/
-void fcdb_user_stats_free(struct fcdb_user_stats *fus)
+void wcdb_user_stats_free(struct wcdb_user_stats *fus)
 {
   if (fus == NULL) {
     return;
@@ -2318,19 +2318,19 @@ void fcdb_user_stats_free(struct fcdb_user_stats *fus)
   Returns a positive integer if the user exists or zero, if not. Returns
   -1 on error.
 **************************************************************************/
-int fcdb_user_exists(const char *username)
+int wcdb_user_exists(const char *username)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
   int id = 0;
 
-  fcdb_connect_or_return(sock, 0);
+  wcdb_connect_or_return(sock, 0);
 
   if (!get_user_id(sock, username, &id)) {
     return -1;
   }
 
-  fcdb_close(sock);
+  wcdb_close(sock);
 
   return id;
 #endif
@@ -2341,7 +2341,7 @@ int fcdb_user_exists(const char *username)
 /**************************************************************************
   ...
 **************************************************************************/
-bool fcdb_get_user_rating(const char *username,
+bool wcdb_get_user_rating(const char *username,
                           int game_type,
                           double *prating,
                           double *prating_deviation)
@@ -2353,7 +2353,7 @@ bool fcdb_get_user_rating(const char *username,
   MYSQL_ROW row;
   int id = 0;
 
-  fcdb_connect_or_return(sock, FALSE);
+  wcdb_connect_or_return(sock, FALSE);
 
   if (!get_user_id(sock, username, &id)) {
     return FALSE;
@@ -2362,12 +2362,12 @@ bool fcdb_get_user_rating(const char *username,
   if (id <= 0) {
     *prating = 0.0;
     *prating_deviation = 0.0;
-    fcdb_close(sock);
+    wcdb_close(sock);
     return TRUE;
   }
 
   if (game_type_name_orig(game_type) == NULL) {
-    game_type = game.server.fcdb.type;
+    game_type = game.server.wcdb.type;
   }
 
   my_snprintf(buf, sizeof(buf),
@@ -2376,7 +2376,7 @@ bool fcdb_get_user_rating(const char *username,
       "    SELECT MAX(id) FROM ratings"
       "      WHERE user_id = %d AND game_type = '%s')",
       id, game_type_name_orig(game_type));
-  fcdb_execute_or_return(sock, buf, FALSE);
+  wcdb_execute_or_return(sock, buf, FALSE);
 
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) == 1) {
@@ -2390,7 +2390,7 @@ bool fcdb_get_user_rating(const char *username,
   mysql_free_result(res);
 
 
-  fcdb_close(sock);
+  wcdb_close(sock);
 
   return TRUE;
 #endif
@@ -2400,7 +2400,7 @@ bool fcdb_get_user_rating(const char *username,
 /**************************************************************************
   ...
 **************************************************************************/
-bool fcdb_get_recent_games(const char *username,
+bool wcdb_get_recent_games(const char *username,
                            int *recent_games,
                            int *count)
 {
@@ -2411,7 +2411,7 @@ bool fcdb_get_recent_games(const char *username,
   MYSQL_ROW row;
   int id = 0, i;
 
-  fcdb_connect_or_return(sock, FALSE);
+  wcdb_connect_or_return(sock, FALSE);
 
   if (!get_user_id(sock, username, &id)) {
     return FALSE;
@@ -2428,7 +2428,7 @@ bool fcdb_get_recent_games(const char *username,
         "  LIMIT %d",
         id, *count);
     *count = 0;
-    fcdb_execute_or_return(sock, buf, FALSE);
+    wcdb_execute_or_return(sock, buf, FALSE);
 
     res = mysql_store_result(sock);
     *count = mysql_num_rows(res);
@@ -2439,7 +2439,7 @@ bool fcdb_get_recent_games(const char *username,
     mysql_free_result(res);
   }
 
-  fcdb_close(sock);
+  wcdb_close(sock);
 
   return TRUE;
 #endif
@@ -2450,9 +2450,9 @@ bool fcdb_get_recent_games(const char *username,
 /**************************************************************************
   The 'id' parameter is the game_id (a.k.a. game #) in the database.
   If the given id does not match any known game then a newly allocated
-  struct fcdb_game_info pointer is returned with its id field set to 0.
+  struct wcdb_game_info pointer is returned with its id field set to 0.
 **************************************************************************/
-struct fcdb_game_info *fcdb_game_info_new(int id)
+struct wcdb_game_info *wcdb_game_info_new(int id)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
@@ -2460,11 +2460,11 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   MYSQL_RES *res = NULL;
   MYSQL_ROW row;
   int i, last_turn_id = 0;
-  struct fcdb_game_info *fgi = NULL;
-  struct fcdb_player_in_game_info *fpigi;
-  struct fcdb_team_in_game_info *ftigi;
+  struct wcdb_game_info *fgi = NULL;
+  struct wcdb_player_in_game_info *fpigi;
+  struct wcdb_team_in_game_info *ftigi;
 
-  fcdb_connect_or_return(sock, NULL);
+  wcdb_connect_or_return(sock, NULL);
 
 
   /* Fetch information about the game. */
@@ -2474,14 +2474,14 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
       "    UNIX_TIMESTAMP(last_update), last_turn_id"
       "  FROM games WHERE id = %d",
       id);
-  fcdb_execute_or_return(sock, buf, NULL);
+  wcdb_execute_or_return(sock, buf, NULL);
 
-  fgi = wc_calloc(1, sizeof(struct fcdb_game_info));
+  fgi = wc_calloc(1, sizeof(struct wcdb_game_info));
 
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) != 1) {
     mysql_free_result(res);
-    fcdb_close(sock);
+    wcdb_close(sock);
 
     /* No game was found, returning with fgi->id set to 0. */
     return fgi;
@@ -2516,15 +2516,15 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
     my_snprintf(buf, sizeof(buf),
         "SELECT turn_no FROM turns WHERE id = %d",
         last_turn_id);
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
 
     res = mysql_store_result(sock);
     if (mysql_num_rows(res) != 1) {
-      fcdb_error(_("Did not get expected turn row from turns table. "
+      wcdb_error(_("Did not get expected turn row from turns table. "
                    "Database may be corrupted."));
-      fcdb_close(sock);
+      wcdb_close(sock);
       goto ERROR;
     }
 
@@ -2545,7 +2545,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
       "  WHERE p.game_id = %d"
       "  ORDER BY p.rank",
       id);
-  if (!fcdb_execute(sock, buf)) {
+  if (!wcdb_execute(sock, buf)) {
     goto ERROR;
   }
 
@@ -2553,7 +2553,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   fgi->num_players = mysql_num_rows(res);
   if (fgi->num_players > 0) {
     fgi->players = wc_calloc(fgi->num_players,
-                             sizeof(struct fcdb_player_in_game_info));
+                             sizeof(struct wcdb_player_in_game_info));
     for (i = 0; i < fgi->num_players; i++) {
       row = mysql_fetch_row(res);
       fpigi = &fgi->players[i];
@@ -2577,7 +2577,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   res = NULL;
 
 
-  if (srvarg.fcdb.more_game_info) {
+  if (srvarg.wcdb.more_game_info) {
 
     /* Fetch the players' final scores. */
 
@@ -2594,7 +2594,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
         "    AND t.id = g.last_turn_id"
         "  ORDER BY p.rank",
         id);
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
 
@@ -2624,7 +2624,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
         "  WHERE p.game_id = %d"
         "  ORDER BY p.rank",
         id);
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
 
@@ -2652,7 +2652,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
     mysql_free_result(res);
     res = NULL;
 
-  } /* srvarg.fcdb.more_game_info == TRUE */
+  } /* srvarg.wcdb.more_game_info == TRUE */
 
 
   /* Fetch information about the teams. */
@@ -2662,7 +2662,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
       "  WHERE game_id = %d"
       "  ORDER BY rank",
       id);
-  if (!fcdb_execute(sock, buf)) {
+  if (!wcdb_execute(sock, buf)) {
     goto ERROR;
   }
 
@@ -2670,7 +2670,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   fgi->num_teams = mysql_num_rows(res);
   if (fgi->num_teams > 0) {
     fgi->teams = wc_calloc(fgi->num_teams,
-                           sizeof(struct fcdb_team_in_game_info));
+                           sizeof(struct wcdb_team_in_game_info));
     for (i = 0; i < fgi->num_teams; i++) {
       row = mysql_fetch_row(res);
       ftigi = &fgi->teams[i];
@@ -2689,12 +2689,12 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   mysql_free_result(res);
   res = NULL;
 
-  fcdb_close(sock);
+  wcdb_close(sock);
   return fgi;
 
 ERROR:
   if (fgi) {
-    fcdb_game_info_free(fgi);
+    wcdb_game_info_free(fgi);
   }
   if (res) {
     mysql_free_result(res);
@@ -2707,7 +2707,7 @@ ERROR:
 /**************************************************************************
   ...
 **************************************************************************/
-void fcdb_game_info_free(struct fcdb_game_info *fgi)
+void wcdb_game_info_free(struct wcdb_game_info *fgi)
 {
   if (!fgi) {
     return;
@@ -2729,18 +2729,18 @@ void fcdb_game_info_free(struct fcdb_game_info *fgi)
 /**************************************************************************
   ...
 **************************************************************************/
-struct fcdb_topten_info *fcdb_topten_info_new(int type)
+struct wcdb_topten_info *wcdb_topten_info_new(int type)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
   char buf[1024];
   MYSQL_RES *res = NULL;
   MYSQL_ROW row;
-  struct fcdb_topten_info *ftti;
-  struct fcdb_topten_info_entry *tte;
+  struct wcdb_topten_info *ftti;
+  struct wcdb_topten_info_entry *tte;
   int i;
 
-  fcdb_connect_or_return(sock, NULL);
+  wcdb_connect_or_return(sock, NULL);
 
   my_snprintf(buf, sizeof(buf),
       "SELECT a.id, a.name, r.rating, r.rating_deviation"
@@ -2752,20 +2752,20 @@ struct fcdb_topten_info *fcdb_topten_info_new(int type)
       "  ORDER BY r.rating DESC"
       "  LIMIT 10",
       AUTH_TABLE, game_type_name_orig(type));
-  fcdb_execute_or_return(sock, buf, NULL);
+  wcdb_execute_or_return(sock, buf, NULL);
 
   res = mysql_store_result(sock);
-  ftti = wc_calloc(1, sizeof(struct fcdb_topten_info));
+  ftti = wc_calloc(1, sizeof(struct wcdb_topten_info));
   ftti->count = mysql_num_rows(res);
 
   if (ftti->count <= 0) {
     mysql_free_result(res);
-    fcdb_close(sock);
+    wcdb_close(sock);
     return ftti;
   }
 
   ftti->entries = wc_calloc(ftti->count,
-                            sizeof(struct fcdb_topten_info_entry));
+                            sizeof(struct wcdb_topten_info_entry));
 
   for (i = 0; i < ftti->count; i++) {
     row = mysql_fetch_row(res);
@@ -2789,7 +2789,7 @@ struct fcdb_topten_info *fcdb_topten_info_new(int type)
       "  ORDER BY FIELD(p.result, 'win', 'lose', 'draw')"
       "  LIMIT 3",
       tte->id, game_type_name_orig(type));
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
     res = mysql_store_result(sock);
@@ -2810,14 +2810,14 @@ struct fcdb_topten_info *fcdb_topten_info_new(int type)
     res = NULL;
   }
 
-  fcdb_close(sock);
+  wcdb_close(sock);
   return ftti;
 
 ERROR:
   if (res) {
     mysql_free_result(res);
   }
-  fcdb_topten_info_free(ftti);
+  wcdb_topten_info_free(ftti);
   return NULL;
 
 #else
@@ -2828,7 +2828,7 @@ ERROR:
 /**************************************************************************
   ...
 **************************************************************************/
-void fcdb_topten_info_free(struct fcdb_topten_info *ftti)
+void wcdb_topten_info_free(struct wcdb_topten_info *ftti)
 {
   if (ftti == NULL) {
     return;
@@ -2843,12 +2843,12 @@ void fcdb_topten_info_free(struct fcdb_topten_info *ftti)
 /**************************************************************************
   ...
 **************************************************************************/
-struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
+struct wcdb_gamelist *wcdb_gamelist_new(int type, const char *user,
                                         int first, int last)
 {
 #ifdef HAVE_MYSQL
-  struct fcdb_gamelist *fgl = NULL;
-  struct fcdb_gamelist_entry *fgle = NULL;
+  struct wcdb_gamelist *fgl = NULL;
+  struct wcdb_gamelist_entry *fgle = NULL;
   MYSQL mysql, *sock = &mysql;
   char buf[1024], range_clause[128];
   MYSQL_RES *res = NULL;
@@ -2856,9 +2856,9 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
   int i;
   const int MAX_GAMELIST_RESULTS = 50;
 
-  fcdb_connect_or_return(sock, NULL);
+  wcdb_connect_or_return(sock, NULL);
 
-  fgl = wc_calloc(1, sizeof(struct fcdb_gamelist));
+  fgl = wc_calloc(1, sizeof(struct wcdb_gamelist));
 
   if (first > 0 || last > 0) {
     if (first < 1) {
@@ -2896,7 +2896,7 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
         fgl->id,
         range_clause,
         MAX_GAMELIST_RESULTS);
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
   } else if (type != GT_NUM_TYPES) {
@@ -2912,7 +2912,7 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
         game_type_name_orig(type),
         range_clause,
         MAX_GAMELIST_RESULTS);
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
   } else {
@@ -2927,7 +2927,7 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
         "  LIMIT %d",
         range_clause,
         MAX_GAMELIST_RESULTS);
-    if (!fcdb_execute(sock, buf)) {
+    if (!wcdb_execute(sock, buf)) {
       goto ERROR;
     }
   }
@@ -2936,7 +2936,7 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
   fgl->count = mysql_num_rows(res);
   if (fgl->count > 0) {
     fgl->entries = wc_calloc(fgl->count,
-                             sizeof(struct fcdb_gamelist_entry));
+                             sizeof(struct wcdb_gamelist_entry));
     for (i = fgl->count - 1; i >= 0; i--) {
       fgle = &fgl->entries[i];
       row = mysql_fetch_row(res);
@@ -2951,12 +2951,12 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
   res = NULL;
 
 
-  fcdb_close(sock);
+  wcdb_close(sock);
   return fgl;
 
 ERROR:
   if (fgl) {
-    fcdb_gamelist_free(fgl);
+    wcdb_gamelist_free(fgl);
   }
   if (res) {
     mysql_free_result(res);
@@ -2968,7 +2968,7 @@ ERROR:
 /**************************************************************************
   ...
 **************************************************************************/
-void fcdb_gamelist_free(struct fcdb_gamelist *fgl)
+void wcdb_gamelist_free(struct wcdb_gamelist *fgl)
 {
   if (fgl == NULL) {
     return;
@@ -2983,11 +2983,11 @@ void fcdb_gamelist_free(struct fcdb_gamelist *fgl)
 /**************************************************************************
   ...
 **************************************************************************/
-struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
+struct wcdb_aliaslist *wcdb_aliaslist_new(const char *user)
 {
 #ifdef HAVE_MYSQL
-  struct fcdb_aliaslist *fal = NULL;
-  struct fcdb_aliaslist_entry *fale = NULL;
+  struct wcdb_aliaslist *fal = NULL;
+  struct wcdb_aliaslist_entry *fale = NULL;
   MYSQL mysql, *sock = &mysql;
   char buf[1024];
   MYSQL_RES *res = NULL;
@@ -2995,20 +2995,20 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
   int i;
   char addr[256], caddr[256];
 
-  fcdb_connect_or_return(sock, NULL);
+  wcdb_connect_or_return(sock, NULL);
 
   my_snprintf(buf, sizeof(buf),
     "SELECT id, address, createaddress FROM %s WHERE name = '%s'",
-    AUTH_TABLE, fcdb_escape(sock, user));
-  fcdb_reset_escape_buffer();
-  fcdb_execute_or_return(sock, buf, NULL);
+    AUTH_TABLE, wcdb_escape(sock, user));
+  wcdb_reset_escape_buffer();
+  wcdb_execute_or_return(sock, buf, NULL);
 
-  fal = wc_calloc(1, sizeof(struct fcdb_aliaslist));
+  fal = wc_calloc(1, sizeof(struct wcdb_aliaslist));
 
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) != 1) {
     mysql_free_result(res);
-    fcdb_close(sock);
+    wcdb_close(sock);
     return fal;
   }
 
@@ -3041,8 +3041,8 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
         "    AND id != %d",
         AUTH_TABLE, caddr, caddr, fal->id);
     }
-    if (!fcdb_execute(sock, buf)) {
-      fcdb_aliaslist_free(fal);
+    if (!wcdb_execute(sock, buf)) {
+      wcdb_aliaslist_free(fal);
       return NULL;
     }
     res = mysql_store_result(sock);
@@ -3050,7 +3050,7 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
 
     if (fal->count > 0) {
       fal->entries = wc_calloc(fal->count,
-                               sizeof(struct fcdb_aliaslist_entry));
+                               sizeof(struct wcdb_aliaslist_entry));
       for (i = 0; i < fal->count; i++) {
         row = mysql_fetch_row(res);
         fale = &fal->entries[i];
@@ -3064,7 +3064,7 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
     res = NULL;
   }
 
-  fcdb_close(sock);
+  wcdb_close(sock);
 
   return fal;
 
@@ -3074,7 +3074,7 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
 /**************************************************************************
   ...
 **************************************************************************/
-void fcdb_aliaslist_free(struct fcdb_aliaslist *fal)
+void wcdb_aliaslist_free(struct wcdb_aliaslist *fal)
 {
   if (fal == NULL) {
     return;
@@ -3091,14 +3091,14 @@ void fcdb_aliaslist_free(struct fcdb_aliaslist *fal)
   salted passwords. Otherwise, returns FALSE and a warning message is
   printed in the server console.
 **************************************************************************/
-bool fcdb_check_salted_passwords(void)
+bool wcdb_check_salted_passwords(void)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
   MYSQL_RES *res;
   unsigned count;
 
-  fcdb_connect_or_return(sock, FALSE);
+  wcdb_connect_or_return(sock, FALSE);
 
   res = mysql_list_fields(sock, AUTH_TABLE, "salt");
   count = mysql_num_fields(res);
@@ -3112,7 +3112,7 @@ bool fcdb_check_salted_passwords(void)
         "security of the users' passwords. The script authsalt in\n"
         "the contrib diretory can be used to modify your current\n"
         "auth table to support password salt.\n",
-        AUTH_TABLE, fcdb.dbname);
+        AUTH_TABLE, wcdb.dbname);
     srvarg.auth.salted = FALSE;
     return FALSE;
   }
@@ -3135,7 +3135,7 @@ static int get_params(lua_State *L)
 
 #define SET_PARAM(x)\
   lua_pushliteral(L, #x);\
-  lua_pushstring(L, fcdb.x);\
+  lua_pushstring(L, wcdb.x);\
   lua_rawset(L, -3)
 
   SET_PARAM(host);

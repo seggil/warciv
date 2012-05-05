@@ -1239,14 +1239,14 @@ void report_game_rankings(struct conn_list *dest)
     dest = game.game_connections;
   }
 
-  if (game.server.fcdb.type == GT_SOLO) {
+  if (game.server.wcdb.type == GT_SOLO) {
     double r, rd;
 
     r = score_calculate_solo_opponent_rating(&groupings[0]);
     rd = score_get_solo_opponent_rating_deviation();
 
     if (game.server.rated) {
-      if (game.server.fcdb.outcome == GOC_ENDED_BY_SPACESHIP) {
+      if (game.server.wcdb.outcome == GOC_ENDED_BY_SPACESHIP) {
         notify_conn(dest, _("Game: You have won this solo game at "
                             "turn %d and with score %.0f. It will "
                             "count as a win against an 'opponent' "
@@ -1275,7 +1275,7 @@ void report_game_rankings(struct conn_list *dest)
     page_conn(dest, _("Team Standings:"), head_line, buffer);
   }
 
-  if (game.server.fcdb.type != GT_SOLO) {
+  if (game.server.wcdb.type != GT_SOLO) {
     my_snprintf(head_line, sizeof(head_line), "%-16s %-16s %10s %10s %10s",
                 _("Name"), _("User"), _("Rank"), _("Score"),  _("Result"));
     buffer[0] = '\0';
@@ -1322,10 +1322,10 @@ void report_game_rankings(struct conn_list *dest)
         player_get_rated_username(pplayer, username, sizeof(username));
         cat_snprintf(buffer, sizeof(buffer),
                      "%-16s %10.2f %10.2f %12.2f %10.2f\n",
-                     username, pplayer->fcdb.rating,
-                     pplayer->fcdb.rating_deviation,
-                     pplayer->fcdb.new_rating,
-                     pplayer->fcdb.new_rating_deviation);
+                     username, pplayer->wcdb.rating,
+                     pplayer->wcdb.rating_deviation,
+                     pplayer->wcdb.new_rating,
+                     pplayer->wcdb.new_rating_deviation);
       }
     }
     page_conn(dest, _("Player Ratings:"), head_line, buffer);
