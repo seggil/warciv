@@ -8640,7 +8640,7 @@ static void show_actionlist(struct connection *caller)
 
   /* NB caller == NULL implies the command was requested
      from the server console */
-  if (caller && caller->server.access_level < ALLOW_ADMIN) {
+  if (caller && caller->u.server.access_level < ALLOW_ADMIN) {
     cmd_reply(CMD_LIST, caller, C_FAIL,
               _("You are not allowed to use this command."));
     return;
