@@ -1057,12 +1057,20 @@ static void pixmap_put_sprite(GdkDrawable *pixmap,
     gdk_gc_set_clip_mask(civ_gc, ssprite->mask);
   }
 
-  gdk_draw_drawable(pixmap, civ_gc, ssprite->pixmap,
-                    offset_x, offset_y,
-                    pixmap_x + offset_x, pixmap_y + offset_y,
-                    MIN(width, MAX(0, ssprite->width - offset_x)),
-                    MIN(height, MAX(0, ssprite->height - offset_y)));
-
+  if (GDK_IS_DRAWABLE(ssprite->pixmap))
+  {
+    gdk_draw_drawable(pixmap, civ_gc, ssprite->pixmap,
+                      offset_x, offset_y,
+                      pixmap_x + offset_x, pixmap_y + offset_y,
+                      MIN(width, MAX(0, ssprite->width - offset_x)),
+                      MIN(height, MAX(0, ssprite->height - offset_y)));
+  }
+  else
+  {
+    printf("ssprite->pixmap=%p is not a drawable %s %i %s\n",
+           ssprite->pixmap,
+           __FILE__, __LINE__, __FUNCTION__);
+  }
   gdk_gc_set_clip_mask(civ_gc, NULL);
 }
 
@@ -1274,6 +1282,11 @@ static void fog_sprite(struct Sprite *sprite)
 
   fogged = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8,
                           sprite->width, sprite->height);
+  if ( fogged == NULL) {
+    printf("%s %s %d sprite=%p w=%d h=%d\n", __FILE__, __FUNCTION__, __LINE__,
+          sprite, sprite->width, sprite->height);
+    return;
+  }
   gdk_pixbuf_get_from_drawable(fogged, sprite->pixmap, NULL,
                                0, 0, 0, 0, sprite->width, sprite->height);
 
