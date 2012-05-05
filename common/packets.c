@@ -694,6 +694,16 @@ void send_attribute_block(const struct player *pplayer,
       memset(packet.data + packet.chunk_length, 0,
              ATTRIBUTE_CHUNK_SIZE - packet.chunk_length);
     }
+    printf("send_attribute_block pplayer->attribute_block.length=%i;"
+           "ATTRIBUTE_CHUNK_SIZE=%i\n"
+           "offset=%i;"
+           "total_length=%i;"
+           "chunk_length=%i\n",
+           pplayer->attribute_block.length,
+           ATTRIBUTE_CHUNK_SIZE,
+           packet.offset,
+           packet.total_length,
+           packet.chunk_length);
 
     send_packet_player_attribute_chunk(pconn, &packet);
   }
