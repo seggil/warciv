@@ -109,9 +109,9 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
           get_packet_name(data[2]), data[2], len);
 
   if (!is_server) {
-    pc->client.last_request_id_used =
-        get_next_request_id(pc->client.last_request_id_used);
-    result = pc->client.last_request_id_used;
+    pc->u.client.last_request_id_used =
+        get_next_request_id(pc->u.client.last_request_id_used);
+    result = pc->u.client.last_request_id_used;
     freelog(BASIC_PACKET_LOG_LEVEL, "sending request %d", result);
   }
 
