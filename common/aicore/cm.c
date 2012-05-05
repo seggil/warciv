@@ -51,14 +51,15 @@
  * Tile type: usually, many tiles produce the same f/s/t.  So we bin the
  *      tiles into tile types.  Specialists are also a 'tile type.'
  *
- * Unlike the original CM code, which used a dynamic programming approach,
- * this code uses a branch-and-bound approach.  The DP approach allowed
+ * Unlike the original CM code, which used a dynamic programming approach, this
+ * code uses a branch-and-bound approach.  The dynamic programmin approach allowed
  * cacheing, but it was hard to guarantee the correctness of the cache, so
  * it was usually tossed and recomputed.
  *
- * The B&B approach also allows a very simple greedy search, whereas the DP
- * approach required a lot of pre-computing.  And, it appears to be very
- * slightly faster.  It evaluates about half as many solutions, but each
+ * The branch and bound approach also allows a very simple greedy search,
+ * whereas the dynamic programming approach required a lot of pre-computing.
+ * And, it appears to be very slightly faster.
+ * It evaluates about half as many solutions, but each
  * candidate solution is more expensive due to the lack of cacheing.
  *
  * We use highly specific knowledge about how the city computes its stats
@@ -330,10 +331,10 @@ void cm_free(void)
 ****************************************************************************/
 static void tile_type_init(struct cm_tile_type *type)
 {
-  memset(type, 0, sizeof(*type));
-  tile_vector_init(&type->tiles);
-  tile_type_vector_init(&type->better_types);
-  tile_type_vector_init(&type->worse_types);
+  memset(type, 0, sizeof(struct cm_tile_type));
+  //tile_vector_init(&type->tiles);
+  //tile_type_vector_init(&type->better_types);
+  //tile_type_vector_init(&type->worse_types);
 }
 
 /****************************************************************************
@@ -342,7 +343,7 @@ static void tile_type_init(struct cm_tile_type *type)
 ****************************************************************************/
 static struct cm_tile_type *tile_type_dup(const struct cm_tile_type *oldtype)
 {
-  struct cm_tile_type *newtype = wc_malloc(sizeof(*newtype));
+  struct cm_tile_type *newtype = wc_malloc(sizeof(struct cm_tile_type));
 
   memcpy(newtype, oldtype, sizeof(*oldtype));
   tile_vector_init(&newtype->tiles);
@@ -524,13 +525,10 @@ static bool fitness_better(struct cm_fitness a, struct cm_fitness b)
   Return a fitness struct that is the worst possible result we can
   represent.
 ****************************************************************************/
-static struct cm_fitness worst_fitness(void)
+static void worst_fitness(struct cm_fitness *cm_fit)
 {
-  struct cm_fitness f;
-
-  f.sufficient = FALSE;
-  f.weighted = -WC_INFINITY;
-  return f;
+  cm_fit->sufficient = FALSE;
+  cm_fit->weighted = -WC_INFINITY;
 }
 
 /****************************************************************************
@@ -1750,7 +1748,7 @@ struct cm_state *cm_init_state(city_t *pcity)
 
   /* We have no best solution yet, so its value is the worst possible. */
   init_partial_solution(&state->best, numtypes, pcity->common.pop_size);
-  state->best_value = worst_fitness();
+  worst_fitness(&state->best_value);
 
   /* Initialize the current solution and choice stack to empty */
   init_partial_solution(&state->current, numtypes, pcity->common.pop_size);
@@ -1779,7 +1777,7 @@ static void begin_search(struct cm_state *state,
   init_min_production(state);
 
   /* clear out the old solution */
-  state->best_value = worst_fitness();
+  worst_fitness(&state->best_value);
   destroy_partial_solution(&state->current);
   init_partial_solution(&state->current, num_types(state),
                         state->pcity->common.pop_size);
@@ -1823,11 +1821,12 @@ void cm_free_state(struct cm_state *state)
 
 
 /****************************************************************************
-  Run B&B until we find the best solution.
+  Run "branch and bound" until we find the best solution.
 ****************************************************************************/
 void cm_find_best_solution(struct cm_state *state,
-                      const struct cm_parameter *const parameter,
-                     struct cm_result *result) {
+                           const struct cm_parameter *const parameter,
+                           struct cm_result *result)
+{
 #ifdef GATHER_TIME_STATS
   performance.current = &performance.opt;
 #endif
