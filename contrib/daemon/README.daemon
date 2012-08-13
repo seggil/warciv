@@ -26,7 +26,7 @@ Files:
 	warserver.serv -- civservers default setup
 		install into /etc/freeciv
 
-	auth.serv	-- athorisation setup readed by warserver.serv
+	auth.serv	-- authorization setup readed by warserver.serv
 		install into /etc/freeciv
 
 	action.list	-- default action list 
@@ -56,3 +56,4 @@ If you like to have different server setups on different ports, just create a fi
 as first line and then add your changes.
 
 You have to edit auth.serv and /etc/default/warserver to setup the parameters to your needs.
+
