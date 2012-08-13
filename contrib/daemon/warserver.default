@@ -5,20 +5,21 @@
 #
 # Thomas Drillich <th@drillich.com> 12/7/2007
 #-------------------------------------------------------------------	
-ENABLED=no					# set to yes to enable warserver
-RUNAS=freeciv					# run as user
-RUNGROUP=games				# run with group id
-RUNDIR=/home/freeciv			# run in directory
+WC_ENABLED=no					# set to yes to enable warserver
+RUNAS=warciv					# run as user
+RUNGROUP=warciv					# run with group id
+RUNDIR=/home/warciv				# run in directory
 PORTS="5555 5556"				# a blank separated list of portnumbers for civserver
 SYSLOG=yes					# log operation to syslog
-CRASHRELOAD=yes				# automated reload on server crash ?
-CIVSERVER=/usr/games/civserver	# where to find the CIVSERVER
+CRASHRELOAD=yes					# automated reload on server crash ?
+CIVSERVER=/sdc1/wciv/server/civserver		# where to find the CIVSERVER
 ENGLISH=yes					# use english for server messages
-CORE=yes						# create coredump
+CORE=yes					# create coredump
 DEBUG=3						# debug mode 0 - 3
-CIVPUBLISH=no					# Publish the server to Metaserver
-#METASERVER=http://www.cazfi.net/freeciv/metaserver/
-	# link to alternate metaserver should be normally empty
+CIVPUBLISH=yes					# Publish the server to Metaserver
+#default_metaserver="http://meta.freeciv.org/metaserver.phtml"
+METASERVER=http://www.cazfi.net/freeciv/metaserver/
+# link to alternate metaserver should be normally empty
 
 #SENDHOST=dummydoo.some.net	
 	# send this name to metaserver instead of resolved hostname
