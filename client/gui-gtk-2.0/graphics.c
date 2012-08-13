@@ -220,7 +220,7 @@ struct Sprite *crop_sprite(struct Sprite *source,
 }
 
 /****************************************************************************
-  Find the dimensions of the sprite.
+  Get the width and height of the sprite.
 ****************************************************************************/
 void get_sprite_dimensions(struct Sprite *sprite, int *width, int *height)
 {
