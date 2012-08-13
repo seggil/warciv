@@ -1162,8 +1162,9 @@ void *cancel_async_server_list_request(int id)
 
   freelog(LOG_DEBUG, "caslr id=%d found in table ctx=%p", id, ctx);
   if (ctx->datafree) {
-    freelog(LOG_DEBUG, "caslr calling datafree %p on %p", ctx->datafree,
-      ctx->userdata);
+    freelog(LOG_DEBUG, "caslr calling datafree %p on %p",
+            ctx->datafree,
+            ctx->userdata);
     (*ctx->datafree) (ctx->userdata);
   } else {
     ret = ctx->userdata;
@@ -1544,7 +1545,8 @@ struct server_list *get_lan_server_list(void)
 
   /* Try to receive a packet from a server. */
   if (0 < recvfrom(socklan, msgbuf, sizeof(msgbuf), 0,
-                   &fromend.sockaddr, &fromlen)) {
+                   &fromend.sockaddr, &fromlen))
+  {
     struct server *pserver;
 
     dio_get_uint8(&din, &type);
