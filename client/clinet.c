@@ -1346,36 +1346,36 @@ struct server_list *create_server_list(char *errbuf, int n_errbuf)
 **************************************************************************/
 void delete_server_list(struct server_list *server_list)
 {
-  server_list_iterate(server_list, ptmp) {
+  server_list_iterate(server_list, list_it) {
     int i;
 
-    free(ptmp->host);
-    free(ptmp->port);
-    free(ptmp->version);
-    free(ptmp->state);
-    free(ptmp->message);
-    free(ptmp->patches);
+    free(list_it->host);
+    free(list_it->port);
+    free(list_it->version);
+    free(list_it->state);
+    free(list_it->message);
+    free(list_it->patches);
 
-    if (ptmp->players) {
-      for (i = 0; i < ptmp->nplayers; i++) {
-        free(ptmp->players[i].name);
-        free(ptmp->players[i].user);
-        free(ptmp->players[i].type);
-        free(ptmp->players[i].host);
-        free(ptmp->players[i].nation);
+    if (list_it->players) {
+      for (i = 0; i < list_it->nplayers; i++) {
+        free(list_it->players[i].name);
+        free(list_it->players[i].user);
+        free(list_it->players[i].type);
+        free(list_it->players[i].host);
+        free(list_it->players[i].nation);
       }
-      free(ptmp->players);
+      free(list_it->players);
     }
 
-    if (ptmp->vars) {
-      for (i = 0; i < ptmp->nvars; i++) {
-        free(ptmp->vars[i].name);
-        free(ptmp->vars[i].value);
+    if (list_it->vars) {
+      for (i = 0; i < list_it->nvars; i++) {
+        free(list_it->vars[i].name);
+        free(list_it->vars[i].value);
       }
-      free(ptmp->vars);
+      free(list_it->vars);
     }
 
-    free(ptmp);
+    free(list_it);
   } server_list_iterate_end;
 
   server_list_unlink_all(server_list);
