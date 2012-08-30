@@ -514,56 +514,56 @@ static const struct cm_tile *tile_get(const struct cm_tile_type *ptype, int j)
 /****************************************************************************
   Return TRUE iff fitness A is strictly better than fitness B.
 ****************************************************************************/
-static bool fitness_better(struct cm_fitness a, struct cm_fitness b)
+static bool fitness_better(struct cm_fitness *a, struct cm_fitness *b)
 {
-  if (a.sufficient != b.sufficient) {
-    return a.sufficient;
+  if (a->sufficient != b->sufficient) {
+    return a->sufficient;
   }
-  return a.weighted > b.weighted;
+  return a->weighted > b->weighted;
 }
 
 /****************************************************************************
   Return a fitness struct that is the worst possible result we can
   represent.
 ****************************************************************************/
-static void worst_fitness(struct cm_fitness *cm_fit)
+static void worst_fitness(struct cm_fitness *fitness)
 {
-  cm_fit->sufficient = FALSE;
-  cm_fit->weighted = -WC_INFINITY;
+  fitness->sufficient = FALSE;
+  fitness->weighted = -WC_INFINITY;
 }
 
 /****************************************************************************
   Compute the fitness of the given surplus (and disorder/happy status)
   according to the weights and minimums given in the parameter.
 ****************************************************************************/
-static struct cm_fitness compute_fitness(const int surplus[CM_NUM_STATS],
-                                         bool disorder, bool happy,
-                                        const struct cm_parameter *parameter)
+static void compute_fitness(const int surplus[CM_NUM_STATS],
+                            bool disorder,
+                            bool happy,
+                            const struct cm_parameter *parameter,
+                            struct cm_fitness *fitness)
 {
   enum cm_stat stat;
-  struct cm_fitness fitness;
+  /* struct cm_fitness *fitness = malloc(sizeof(struct cm_fitness)); */
 
-  fitness.sufficient = TRUE;
-  fitness.weighted = 0;
+  fitness->sufficient = TRUE;
+  fitness->weighted = 0;
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
-    fitness.weighted += surplus[stat] * parameter->factor[stat];
+    fitness->weighted += surplus[stat] * parameter->factor[stat];
     if (surplus[stat] < parameter->minimal_surplus[stat]) {
-      fitness.sufficient = FALSE;
+      fitness->sufficient = FALSE;
     }
   }
 
   if (happy) {
-    fitness.weighted += parameter->happy_factor;
+    fitness->weighted += parameter->happy_factor;
   } else if (parameter->require_happy) {
-    fitness.sufficient = FALSE;
+    fitness->sufficient = FALSE;
   }
 
   if (disorder && !parameter->allow_disorder) {
-    fitness.sufficient = FALSE;
+    fitness->sufficient = FALSE;
   }
-
-  return fitness;
 }
 
 /***************************************************************************
@@ -705,7 +705,7 @@ static void get_city_surplus(const city_t *pcity,
 /****************************************************************************
   Compute the fitness of the solution.  This is a fairly expensive operation.
 ****************************************************************************/
-static struct cm_fitness
+static struct cm_fitness *
 evaluate_solution(struct cm_state *state,
                   const struct partial_solution *soln)
 {
@@ -713,6 +713,7 @@ evaluate_solution(struct cm_state *state,
   city_t backup;
   int surplus[CM_NUM_STATS];
   bool disorder, happy;
+  struct cm_fitness *fitness = malloc(sizeof(struct cm_fitness));
 
   /* make a backup, apply and evaluate the solution, and restore.  This costs
    * one "apply". */
@@ -720,8 +721,8 @@ evaluate_solution(struct cm_state *state,
   apply_solution(state, soln);
   get_city_surplus(pcity, surplus, &disorder, &happy);
   memcpy(pcity, &backup, sizeof(backup));
-
-  return compute_fitness(surplus, disorder, happy, &state->parameter);
+  compute_fitness(surplus, disorder, happy, &state->parameter, fitness);
+  return fitness;
 }
 
 /****************************************************************************
@@ -750,8 +751,10 @@ static void convert_solution_to_result(struct cm_state *state,
 
   /* result->found_a_valid should be only true if it matches the
    * parameter ; figure out if it does */
-  fitness = compute_fitness(result->surplus, result->disorder,
-                            result->happy, &state->parameter);
+  compute_fitness(result->surplus,
+                  result->disorder, result->happy,
+		  &state->parameter,
+		  &fitness);
   result->found_a_valid = fitness.sufficient;
 }
 
@@ -1688,14 +1691,16 @@ static bool bb_next(struct cm_state *state)
 {
   /* if no idle workers, then look at our solution. */
   if (state->current.idle == 0) {
-    struct cm_fitness value = evaluate_solution(state, &state->current);
+    struct cm_fitness *fitness_ = evaluate_solution(state, &state->current);
 
     print_partial_solution(LOG_REACHED_LEAF, &state->current, state);
-    if (fitness_better(value, state->best_value)) {
+    if (fitness_better(fitness_, &state->best_value)) {
       freelog(LOG_BETTER_LEAF, "-> replaces previous best");
       copy_partial_solution(&state->best, &state->current, state);
-      state->best_value = value;
+      state->best_value.weighted = fitness_->weighted;
+      state->best_value.sufficient = fitness_->sufficient;
     }
+    free(fitness_);
   }
 
   /* try to move to a child branch, if we can.  If not (including if we're

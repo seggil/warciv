@@ -30,8 +30,8 @@ void sanity_check(void);
 
 #else /* SANITY_CHECKING */
 
-#  define sanity_check_city(x) (void)0
-#  define sanity_check() (void)0
+#  define sanity_check_city(x)
+#  define sanity_check()
 
 #endif /* SANITY_CHECKING */
 
