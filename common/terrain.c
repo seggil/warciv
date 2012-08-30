@@ -32,10 +32,10 @@ static struct tile_type tile_types[MAX_NUM_TERRAINS];
 ***************************************************************/
 struct tile_type *get_tile_type(Terrain_type_id type)
 {
+  /* HACK: return a dummy tile for out-of-range requests.  This is
+   * designed specifically to fix this problem in 2.0. */
+  static struct tile_type t_void;
   if (type < 0 || type >= T_COUNT) {
-    /* HACK: return a dummy tile for out-of-range requests.  This is
-     * designed specifically to fix this problem in 2.0. */
-    static struct tile_type t_void;
 
 #if 0 /* Currently this assertion triggers all the time. */
     assert(type >= 0 && type < T_COUNT);
