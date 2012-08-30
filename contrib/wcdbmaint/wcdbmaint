@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #-----------------------------------------------------------
-# perl script to delete entries in freeciv database
+# perl script to delete entries in warciv database
 #
 use DBI qw(:sql_types);
 use Getopt::Mixed "nextOption";
@@ -12,12 +12,12 @@ use strict;
 # default configuration file name
 my $dcfg='fcdb.cfg';
 # search path
-my $spath="/etc/freeciv:/usr/etc/freeciv:.";
+my $spath="/etc/warciv:/usr/etc/warciv:.";
 # defaults
 my $defaults={
-	'db'=>'freeciv',				# database name
-	'dbuser'=>'freeciv',			# db user
-	'dbpass'=>'freeciv',			# db password
+	'db'=>'warciv',				# database name
+	'dbuser'=>'warciv',			# db user
+	'dbpass'=>'warciv',			# db password
 	'gamesinterval'=>'3 month',		# games older than should be deleted
 	'loginloginterval'=>'6 month',	# loginlogs older than should be deleted
 	'unusedlogins'=>'1 week'		# unused logins should be deleted
@@ -336,7 +336,7 @@ given($do) {
 __END__
 =pod
 
-=head1 fcdbmaint -- administer freeciv database
+=head1 fcdbmaint -- administer warciv database
 
 =head2 Synopsis 
 
@@ -344,7 +344,7 @@ fcdmaint [OPTIONS] [ <nick> [<nick>]]
 
 =head2 Description
 
-fcdbmaint is a tool to administer the freeciv database.
+fcdbmaint is a tool to administer the warciv database.
 
 =head2 OPTIONS 
 
@@ -361,7 +361,7 @@ Use configuration file <file> instead of default configuration fcdb.cfg
 
 =item --db <database>
 
-use database instead of default database freeciv
+use database instead of default database warciv
 
 =item --dbpass <pass>
 
@@ -402,7 +402,7 @@ fcdbdelete.
 
 =item db=<db>
 
-the freeciv database name.
+the warciv database name.
 
 =item dbuser=<user>
 
@@ -422,7 +422,7 @@ The confguration file, default "fcdb.cfg", contains the setup to run fcdbdelete.
 
 =item db=<db>
 
-the freeciv database name.
+the warciv database name.
 
 =item dbuser=<user>
 
