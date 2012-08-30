@@ -536,8 +536,8 @@ extern struct terrain_misc terrain_control;
 
 #define adjc_dir_iterate_end adjc_dirlist_iterate_end
 
-#define adjc_dir_base_iterate(center_tile, dir_itr)                            \
-  adjc_dirlist_base_iterate(center_tile, dir_itr,                              \
+#define adjc_dir_base_iterate(center_tile, dir_itr)                         \
+  adjc_dirlist_base_iterate(center_tile, dir_itr,                           \
   map.valid_dirs, map.num_valid_dirs)
 
 #define adjc_dir_base_iterate_end adjc_dirlist_base_iterate_end
@@ -554,8 +554,8 @@ extern struct terrain_misc terrain_control;
 
 #define cardinal_adjc_dir_iterate_end adjc_dirlist_iterate_end
 
-#define cardinal_adjc_dir_base_iterate(center_tile, dir_itr)           \
-  adjc_dirlist_base_iterate(center_tile, dir_itr,                      \
+#define cardinal_adjc_dir_base_iterate(center_tile, dir_itr)                \
+  adjc_dirlist_base_iterate(center_tile, dir_itr,                           \
                             map.cardinal_dirs, map.num_cardinal_dirs)
 
 #define cardinal_adjc_dir_base_iterate_end adjc_dirlist_base_iterate_end
@@ -611,7 +611,7 @@ extern struct terrain_misc terrain_control;
     //itr_tile = map.board + map_pos_to_index(_x_itr, _y_itr);
 
 #define adjc_dirlist_base_iterate_end                                       \
-    }                                                                       \
+  }                                                                         \
 }
 
 /* Iterate over all positions on the globe. */
