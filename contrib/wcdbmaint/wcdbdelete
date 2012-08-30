@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #-------------------------------------------------------------------------------------------------------------
-# perl script to delete entries in freeciv database
+# perl script to delete entries in warciv database
 #
 use DBI;
 use Getopt::Mixed "nextOption";
@@ -8,14 +8,14 @@ use IO qw(File);;
 use feature ":5.10";
 use strict;
 # default configuration file name
-my $dcfg='fcdb.cfg';
-my $spath="/etc/freeciv:/usr/etc/freeciv:.";
+my $dcfg='wcdb.cfg';
+my $spath="/etc/warciv:/usr/etc/warciv:.";
 my $defaults={
-	'db'=>'freeciv',				# database name
-	'dbuser'=>'freeciv',			# db user
-	'dbpass'=>'freeciv',			# db password
+	'db'=>'warciv',				# database name
+	'dbuser'=>'warciv',			# db user
+	'dbpass'=>'warciv',			# db password
 	'gamesinterval'=>'3 month',		# games older than should be deleted
-	'loginloginterval'=>'6 month',	# loginlogs older than should be deleted
+	'loginloginterval'=>'6 month',		# loginlogs older than should be deleted
 	'unusedlogins'=>'1 week'		# unused logins should be deleted
 };
 #-------------------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ sub rollback($$) {
 }
 #-------------------------------------------------------------------------------------------------------------
 # parse options
-my($cfg,$go,$val,$FC,$cnt,$err,$tab,$do);
+my($cfg,$go,$val,$WC,$cnt,$err,$tab,$do);
 
 Getopt::Mixed::init("h help>h d=s db>d u=s dbuser>u p=s dbpass>p c=s config>c");
 while( ($_,$val)=nextOption()) {
@@ -85,101 +85,101 @@ foreach(keys(%{$go})) {
 	$defaults->{$_}=$go->{$_};
 }
 # connect to the database
-$FC=DBI->connect(
+$WC=DBI->connect(
 	"dbi:mysql:$defaults->{db}",
 	$defaults->{dbuser},
 	$defaults->{dbpass});
 
 die "Can't connect to database $defaults->{db}"
-	unless($FC);
+	unless($WC);
 
 WORK: {
-	$FC->begin_work() or die $FC->errstr();
+	$WC->begin_work() or die $WC->errstr();
 	# loginlog
-	$cnt = $FC->do("DELETE FROM loginlog 
+	$cnt = $WC->do("DELETE FROM loginlog 
 		WHERE logintime < (now() - interval $defaults->{loginloginterval})");
-	if($FC->err) {
-		rollback($FC,  "can't delete entries in loginlog, reason %s\n");
+	if($WC->err) {
+		rollback($WC,  "can't delete entries in loginlog, reason %s\n");
 		last WORK;
 	}
 	printf("%d entries deleted from loginlog\n",$cnt);
 	# unused logins after 
-	$cnt = $FC->do("
+	$cnt = $WC->do("
 		DELETE FROM auth
 			WHERE  email is NULL 
 			AND accesstime < ( now() - interval $defaults->{unusedlogins}) 
 			AND id not in (SELECT distinct user_id FROM ratings)
 	");
-	if($FC->err) {
-		rollback($FC,  "can't delete unused login entries in auth, reason %s\n");
+	if($WC->err) {
+		rollback($WC,  "can't delete unused login entries in auth, reason %s\n");
 		last WORK;
 	}
 	printf("%d entries deleted from auth\n",$cnt);
 	# delete obsolete entries in allies
-	$cnt = $FC->do("
+	$cnt = $WC->do("
 	DELETE allies from allies  INNER JOIN player_status INNER JOIN players INNER JOIN games
 	WHERE allies.player_status_id = player_status.id
 	        and player_status.player_id = players.id
                 and players.game_id = games.id
 		and games.last_update < (now() - interval $defaults->{gamesinterval})
 	");
-	if($FC->err) {
-		rollback($FC,  "can't delete obsolete allies entries reason %s\n");
+	if($WC->err) {
+		rollback($WC,  "can't delete obsolete allies entries reason %s\n");
 		last WORK;
 	}
 	printf("%d entries deleted from allies entries\n",$cnt);
 	# remove obsolete turns, turn_maps, changed_terrain
 	foreach $tab ('turn_maps','changed_terrain', 'player_status') {
-		$cnt = $FC->do("
+		$cnt = $WC->do("
 			DELETE $tab FROM $tab INNER JOIN turns INNER JOIN games
 			WHERE $tab.turn_id = turns.id
 			and turns.game_id = games.id
 			and  games.last_update < (now() - interval $defaults->{gamesinterval})
 		");
-		if($FC->err) {
-			rollback($FC,  "can't delete obsolete turns in $tab, reason %s\n");
+		if($WC->err) {
+			rollback($WC,  "can't delete obsolete turns in $tab, reason %s\n");
 			last WORK;
 		}
 		printf("%d entries deleted from %s\n",$cnt,$tab);
 	}
 	# delete obsolete entries 
 	foreach $tab ('turns','players','teams','terrain_maps','non_default_settings','ratings') {
-		$cnt = $FC->do("
+		$cnt = $WC->do("
 			DELETE $tab from $tab 
 			INNER JOIN games as g on g.id = $tab.game_id
 			WHERE g.last_update < (now() - interval $defaults->{gamesinterval})
 		");
-		if($FC->err) {
-			rollback($FC,  "can't delete obsolete entries in $tab reason %s\n");
+		if($WC->err) {
+			rollback($WC,  "can't delete obsolete entries in $tab reason %s\n");
 			last WORK;
 		}
 		printf("%d entries deleted from %s\n",$cnt,$tab);
 	}
 	# at least delete the obsolete entries in games
-	$cnt = $FC->do("
+	$cnt = $WC->do("
 		DELETE  FROM  games 
 		WHERE  games.last_update < (now() - interval $defaults->{gamesinterval})
 	");
-	if($FC->err) {
-		rollback($FC,  "can't delete obsolete games reason %s\n");
+	if($WC->err) {
+		rollback($WC,  "can't delete obsolete games reason %s\n");
 		last WORK;
 	}
 	printf("%d entries deleted from games\n",$cnt);
 	# when all jobs done
-	$FC->commit();	
+	$WC->commit();	
 }
 __END__
 =pod
 
-=head1 fcdbdelete -- delete entries from freeciv database
+=head1 wcdbdelete -- delete entries from warciv database
 
 =head2 Synopsis 
 
-fcdbdelete [OPTIONS]
+wcdbdelete [OPTIONS]
 
 =head2 Description
 
-fcdbdelete removes entries from the freeciv database.
+wcdbdelete removes entries from the warciv database.
 
 
 =head2 OPTIONS 
@@ -188,12 +188,12 @@ fcdbdelete removes entries from the freeciv database.
 
 =item -c || --config <file>
 
-Use configuration file <file> instead of default file "fcdb.cfg", searched in
-/etc/freeciv, /usr/etc/freeciv and curren directory.
+Use configuration file <file> instead of default file "wcdb.cfg", searched in
+/etc/warciv, /usr/etc/warciv and current directory.
 
 =item -d || --db <db>
 
-Use database <db> instead of default database "freeciv".
+Use database <db> instead of default database "warciv".
 
 =item -h || --help
 
@@ -209,13 +209,13 @@ Use password <pass> instead of default password.
 
 =head2 Configuration file format 
 
-The confguration file, default "fcdb.cfg", contains the setup to run fcdbdelete.
+The confguration file, default "wcdb.cfg", contains the setup to run wcdbdelete.
 
 =over 2
 
 =item db=<db>
 
-the freeciv database name.
+the warciv database name.
 
 =item dbuser=<user>
 
