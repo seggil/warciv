@@ -170,11 +170,12 @@ void real_sanity_check_city(struct city *pcity, const char *file, int line)
 
   /* Note that cities may be found on land or water. */
 
+  struct tile *ptile;
+  struct player *owner;
   city_map_iterate(x, y) {
-    struct tile *ptile;
-
-    if ((ptile = city_map_to_map(pcity, x, y))) {
-      struct player *owner = map_get_owner(ptile);
+    ptile = city_map_to_map(pcity, x, y);
+    if (ptile) {
+      owner = map_get_owner(ptile);
 
       switch (get_worker_city(pcity, x, y)) {
       case C_TILE_EMPTY:
