@@ -468,8 +468,9 @@ void send_tile_info(struct conn_list *dest, struct tile *ptile)
     info.spec_sprite[0] = '\0';
   }
 
+  struct player *pplayer;
   conn_list_iterate(dest, pconn) {
-    struct player *pplayer = pconn->player;
+    pplayer = pconn->player;
     if (!pplayer && !pconn->observer) {
       continue;
     }
