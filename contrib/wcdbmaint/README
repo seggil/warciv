@@ -1,0 +1,9 @@
+These are 2 perl scripts to maintain warciv database.
+
+To run the perl scripts you need the perl modules,
+DBI, DBD::mysql, Getopt::Mixed, Time::localtime,
+Digest::MD5.
+
+wcdbdelete -- delete entries in freeciv database
+wcdbmain -- maintenace tool to operate on freeciv database
+wcdb.cfg -- configuration file for programs above
