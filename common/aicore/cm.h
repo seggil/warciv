@@ -31,7 +31,9 @@
 
 /* A result which can examined. */
 struct cm_result {
-  bool found_a_valid, disorder, happy;
+  bool found_a_valid;
+  bool disorder;
+  bool happy;
 
   int surplus[CM_NUM_STATS];
 

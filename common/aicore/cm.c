@@ -117,7 +117,7 @@ static void print_performance(struct one_perf *counts);
 
 /* Fitness of a solution.  */
 struct cm_fitness {
-  int weighted; /* weighted sum */
+  int  weighted; /* weighted sum */
   bool sufficient; /* false => doesn't meet constraints */
 };
 
@@ -135,7 +135,8 @@ struct cm_tile;
  */
 struct cm_tile {
   const struct cm_tile_type *type;
-  int x, y; /* valid only if !is_specialist */
+  int x;
+  int y; /* valid only if !is_specialist */
 };
 
 /* define the tile_vector as array<cm_tile> */
@@ -155,7 +156,8 @@ struct cm_tile {
 #define tile_type_vector_iterate_end }} VECTOR_ITERATE_END; }
 
 static inline void tile_type_vector_add(struct tile_type_vector *tthis,
-    struct cm_tile_type *toadd) {
+                                        struct cm_tile_type *toadd)
+{
   tile_type_vector_append(tthis, &toadd);
 }
 
@@ -171,17 +173,17 @@ static inline void tile_type_vector_add(struct tile_type_vector *tthis,
  *
  * Specialists are special types; is_specialist is set, and the tile
  * vector is empty.  We can never run out of specialists.
-       */
+ */
 struct cm_tile_type {
-  int production[CM_NUM_STATS];
-  double estimated_fitness; /* weighted sum of production */
-  bool is_specialist;
-  enum specialist_type spec; /* valid only if is_specialist */
-  struct tile_vector tiles;  /* valid only if !is_specialist */
+  int    production[CM_NUM_STATS];
+  double estimated_fitness;    /* weighted sum of production */
+  bool   is_specialist;
+  enum   specialist_type spec; /* valid only if is_specialist */
+  struct tile_vector tiles;    /* valid only if !is_specialist */
   struct tile_type_vector better_types;
   struct tile_type_vector worse_types;
-  int lattice_index; /* index in state->lattice */
-  int lattice_depth; /* depth = sum(#tiles) over all better types */
+  int    lattice_index;        /* index in state->lattice */
+  int    lattice_depth;        /* depth = sum(#tiles) over all better types */
 };
 
 
@@ -244,12 +246,12 @@ static int num_types(const struct cm_state *state);
 /* debugging functions */
 #ifdef CM_DEBUG
 static void print_tile_type(int loglevel, const struct cm_tile_type *ptype,
-    const char *prefix);
+                            const char *prefix);
 static void print_lattice(int loglevel,
-    const struct tile_type_vector *lattice);
+                          const struct tile_type_vector *lattice);
 static void print_partial_solution(int loglevel,
-    const struct partial_solution *soln,
-    const struct cm_state *state);
+                                   const struct partial_solution *soln,
+                                   const struct cm_state *state);
 #else
 #  define print_tile_type(loglevel, ptype, prefix)
 #  define print_lattice(loglevel, lattice)
@@ -577,10 +579,11 @@ static void compute_fitness(const int surplus[CM_NUM_STATS],
   Allocate and initialize an empty solution.
 ****************************************************************************/
 static void init_partial_solution(struct partial_solution *into,
-                                  int ntypes, int idle)
+                                  int ntypes,
+                                  int idle)
 {
-  into->worker_counts = wc_calloc(ntypes, sizeof(*into->worker_counts));
-  into->prereqs_filled = wc_calloc(ntypes, sizeof(*into->prereqs_filled));
+  into->worker_counts  = wc_calloc(ntypes, sizeof(int));	/* sizeof(*into->worker_counts) */
+  into->prereqs_filled = wc_calloc(ntypes, sizeof(int));	/* sizeof(*into->prereqs_filled) */
   memset(into->production, 0, sizeof(into->production));
   into->idle = idle;
 }
