@@ -205,7 +205,7 @@ static const char *cr_entry_supported(const city_t *pcity)
 {
   static char buf[8];
   int num_supported = genlist_size((const genlist*)pcity->common.units_supported);
-
+  /* for people using debugger, allo */
   my_snprintf(buf, sizeof(buf), "%2d", num_supported);
   return buf;
 }
@@ -214,7 +214,7 @@ static const char *cr_entry_present(const city_t *pcity)
 {
   static char buf[8];
   int num_present = genlist_size((const genlist*)pcity->common.tile->units);
-
+  /* for people using debugger, allo */
   my_snprintf(buf, sizeof(buf), "%2d", num_present);
   return buf;
 }

@@ -1938,7 +1938,7 @@ static void server_set_tile_city(city_t *pcity, int city_x, int city_y,
       if (pcity2 && pcity2 != pcity) {
         int city_x2, city_y2;
 
-#ifndef NDEBUG
+#ifdef NDEBUG
         map_to_city_map(&city_x2, &city_y2, pcity2, ptile);
 #else
         assert(map_to_city_map(&city_x2, &city_y2, pcity2, ptile));

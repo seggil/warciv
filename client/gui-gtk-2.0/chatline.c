@@ -333,7 +333,8 @@ set_cursor_if_appropriate(GtkTextView    *text_view,
                           gint            x,
                           gint            y)
 {
-  GSList *tags = NULL, *tagp = NULL;
+  GSList *tags = NULL;
+  GSList *tagp = NULL;
   GtkTextIter iter;
   gboolean hovering = FALSE;
   gint link_type;

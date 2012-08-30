@@ -1580,35 +1580,35 @@ void popup_unit_select_dialog(struct tile *ptile)
 
     ready_cmd =
     gtk_dialog_add_button(GTK_DIALOG(shell),
-      _("_Ready all"), SELECT_UNIT_READY);
+        _("_Ready all"), SELECT_UNIT_READY);
 
     gtk_button_box_set_child_secondary(
-      GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
-      ready_cmd, TRUE);
+        GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
+        ready_cmd, TRUE);
 
     sentry_cmd =
     gtk_dialog_add_button(GTK_DIALOG(shell),
-      _("_Sentry idle"), SELECT_UNIT_SENTRY);
+        _("_Sentry idle"), SELECT_UNIT_SENTRY);
 
     gtk_button_box_set_child_secondary(
-      GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
-      sentry_cmd, TRUE);
+        GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
+        sentry_cmd, TRUE);
 
     select_cmd =
     gtk_dialog_add_button(GTK_DIALOG(shell),
-      _("Select"), SELECT_UNIT_SELECT);
+        _("Select"), SELECT_UNIT_SELECT);
 
     gtk_button_box_set_child_secondary(
-      GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
-      select_cmd, TRUE);
+        GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
+        select_cmd, TRUE);
 
     add_to_focus_cmd =
     gtk_dialog_add_button(GTK_DIALOG(shell),
-      _("Add units to focus"), SELECT_UNIT_ADD_TO_FOCUS);
+                          _("Add units to focus"), SELECT_UNIT_ADD_TO_FOCUS);
 
     gtk_button_box_set_child_secondary(
-      GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
-      add_to_focus_cmd, TRUE);
+        GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
+        add_to_focus_cmd, TRUE);
 
     gtk_dialog_add_button(GTK_DIALOG(shell),
                           GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);

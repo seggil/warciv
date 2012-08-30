@@ -2154,8 +2154,8 @@ static void city_menu_position(GtkMenu *menu, gint *x, gint *y,
   widget = GTK_WIDGET(data);
 
   gdk_window_get_origin(widget->window, x, y);
-  x += widget->allocation.x;
-  y += widget->allocation.y;
+  *x += widget->allocation.x;
+  *y += widget->allocation.y;
   *push_in = TRUE;
 }
 
