@@ -1732,47 +1732,47 @@ struct cm_state *cm_init_state(city_t *pcity)
 {
   int numtypes;
   enum cm_stat stat;
-  struct cm_state *state = wc_malloc(sizeof(struct cm_state));
+  struct cm_state *cmstate = wc_malloc(sizeof(struct cm_state));
 
   freelog(LOG_CM_STATE, "creating cm_state for %s (size %d)",
           pcity->common.name, pcity->common.pop_size);
 
   /* copy the arguments */
-  state->pcity = pcity;
+  cmstate->pcity = pcity;
 
   /* create the lattice */
-  tile_type_vector_init(&state->lattice);
-  init_tile_lattice(pcity, &state->lattice);
-  numtypes = tile_type_vector_size(&state->lattice);
+  tile_type_vector_init(&cmstate->lattice);
+  init_tile_lattice(pcity, &cmstate->lattice);
+  numtypes = tile_type_vector_size(&cmstate->lattice);
 
   /* For the heuristic, make sorted copies of the lattice */
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
-    tile_type_vector_init(&state->lattice_by_prod[stat]);
-    tile_type_vector_copy(&state->lattice_by_prod[stat], &state->lattice);
+    tile_type_vector_init(&cmstate->lattice_by_prod[stat]);
+    tile_type_vector_copy(&cmstate->lattice_by_prod[stat], &cmstate->lattice);
     compare_key = stat;
-    qsort(state->lattice_by_prod[stat].p, state->lattice_by_prod[stat].size,
-          sizeof(*state->lattice_by_prod[stat].p),
+    qsort(cmstate->lattice_by_prod[stat].p, cmstate->lattice_by_prod[stat].size,
+          sizeof(*cmstate->lattice_by_prod[stat].p),
           compare_tile_type_by_stat);
   }
 
   /* We have no best solution yet, so its value is the worst possible. */
-  init_partial_solution(&state->best, numtypes, pcity->common.pop_size);
-  worst_fitness(&state->best_value);
+  init_partial_solution(&cmstate->best, numtypes, pcity->common.pop_size);
+  worst_fitness(&cmstate->best_value);
 
   /* Initialize the current solution and choice stack to empty */
-  init_partial_solution(&state->current, numtypes, pcity->common.pop_size);
-  state->choice.stack = wc_malloc(pcity->common.pop_size
-                                  * sizeof(*state->choice.stack));
-  state->choice.size = 0;
+  init_partial_solution(&cmstate->current, numtypes, pcity->common.pop_size);
+  cmstate->choice.stack = wc_malloc(pcity->common.pop_size
+                                    * sizeof(*cmstate->choice.stack));
+  cmstate->choice.size = 0;
 
-  return state;
+  return cmstate;
 }
 
 /****************************************************************************
   Set the parameter for the state.  This is the first step in actually
   solving anything.
 ****************************************************************************/
-static void begin_search(struct cm_state *state,
+static void begin_search(struct cm_state *cmstate,
                          const struct cm_parameter *parameter)
 {
 #ifdef GATHER_TIME_STATS
@@ -1781,16 +1781,16 @@ static void begin_search(struct cm_state *state,
 #endif
 
   /* copy the parameter and sort the main lattice by it */
-  cm_copy_parameter(&state->parameter, parameter);
-  sort_lattice_by_fitness(state, &state->lattice);
-  init_min_production(state);
+  cm_copy_parameter(&cmstate->parameter, parameter);
+  sort_lattice_by_fitness(cmstate, &cmstate->lattice);
+  init_min_production(cmstate);
 
   /* clear out the old solution */
-  worst_fitness(&state->best_value);
-  destroy_partial_solution(&state->current);
-  init_partial_solution(&state->current, num_types(state),
-                        state->pcity->common.pop_size);
-  state->choice.size = 0;
+  worst_fitness(&cmstate->best_value);
+  destroy_partial_solution(&cmstate->current);
+  init_partial_solution(&cmstate->current, num_types(cmstate),
+                        cmstate->pcity->common.pop_size);
+  cmstate->choice.size = 0;
 }
 
 
@@ -1798,7 +1798,7 @@ static void begin_search(struct cm_state *state,
   Clean up after a search.
   Currently, does nothing except stop the timer and output.
 ****************************************************************************/
-static void end_search(struct cm_state *state)
+static void end_search(/*struct cm_state *cmstate*/)
 {
 #ifdef GATHER_TIME_STATS
   stop_timer(performance.current->wall_timer);
@@ -1844,13 +1844,13 @@ void cm_find_best_solution(struct cm_state *state,
 
   /* search until we find a feasible solution */
   while (!bb_next(state)) {
-    /* nothing */
+    ; /* nothing */
   }
 
   /* convert to the caller's format */
   convert_solution_to_result(state, &state->best, result);
 
-  end_search(state);
+  end_search(/*state*/);
 }
 
 /***************************************************************************
@@ -1861,15 +1861,16 @@ void cm_query_result(city_t *pcity,
                      const struct cm_parameter *param,
                      struct cm_result *result)
 {
-  struct cm_state *state = cm_init_state(pcity);
+  struct cm_state *cmstate;
+  cmstate = cm_init_state(pcity);
 
   /* Refresh the city.  Otherwise the CM can give wrong results or just be
    * slower than necessary.  Note that cities are often passed in in an
    * unrefreshed state (which should probably be fixed). */
   generic_city_refresh(pcity, TRUE, NULL);
 
-  cm_find_best_solution(state, param, result);
-  cm_free_state(state);
+  cm_find_best_solution(cmstate, param, result);
+  cm_free_state(cmstate);
 }
 
 
