@@ -1212,6 +1212,9 @@ static int tile_move_cost_ai(struct tile *tile0, struct tile *tile1,
 /***************************************************************
  ...
 ***************************************************************/
+#if defined(NDEBUG)
+# define debug_log_move_costs(str,tile)
+#else
 static void debug_log_move_costs(const char *str, struct tile *tile0)
 {
   /* the %x don't work so well for oceans, where
@@ -1224,6 +1227,7 @@ static void debug_log_move_costs(const char *str, struct tile *tile0)
           tile0->move_cost[4], tile0->move_cost[5],
           tile0->move_cost[6], tile0->move_cost[7]);
 }
+#endif
 
 /***************************************************************
   Recalculate tile->move_cost[] for (x,y), and for adjacent
