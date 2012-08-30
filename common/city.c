@@ -867,7 +867,7 @@ int base_city_get_food_tile(int city_x, int city_y, const city_t *pcity,
 **************************************************************************/
 bool city_can_be_built_here(const struct tile *ptile, struct unit *punit)
 {
-  if (terrain_has_flag(ptile->terrain, TER_NO_CITIES)) {
+  if (terrain_has_tag(ptile->terrain, TER_NO_CITIES)) {
     /* No cities on this terrain. */
     return FALSE;
   }

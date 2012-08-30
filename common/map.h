@@ -151,7 +151,7 @@ struct tile_type {
   Terrain_type_id warmer_wetter_result, warmer_drier_result;
   Terrain_type_id cooler_wetter_result, cooler_drier_result;
 
-  bv_terrain_flags flags;
+  bv_terrain_tags tags;
 
   char *helptext;
 };

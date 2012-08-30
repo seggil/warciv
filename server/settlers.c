@@ -355,7 +355,7 @@ static int ai_calc_irrigate(city_t *pcity, struct player *pplayer,
   if (old_terrain != new_terrain && new_terrain != T_NONE) {
     /* Irrigation would change the terrain type, clearing the mine
      * in the process.  Calculate the benefit of doing so. */
-    if (ptile->city && terrain_has_flag(new_terrain, TER_NO_CITIES)) {
+    if (ptile->city && terrain_has_tag(new_terrain, TER_NO_CITIES)) {
       return -1;
     }
     ptile->terrain = new_terrain;
@@ -418,7 +418,7 @@ static int ai_calc_mine(city_t *pcity,
   if (old_terrain != new_terrain && new_terrain != T_NONE) {
     /* Mining would change the terrain type, clearing the irrigation
      * in the process.  Calculate the benefit of doing so. */
-    if (ptile->city && terrain_has_flag(new_terrain, TER_NO_CITIES)) {
+    if (ptile->city && terrain_has_tag(new_terrain, TER_NO_CITIES)) {
       return -1;
     }
     ptile->terrain = new_terrain;
@@ -482,7 +482,7 @@ static int ai_calc_transform(city_t *pcity,
     return -1;
   }
 
-  if (ptile->city && terrain_has_flag(new_terrain, TER_NO_CITIES)) {
+  if (ptile->city && terrain_has_tag(new_terrain, TER_NO_CITIES)) {
     return -1;
   }
 
@@ -898,7 +898,7 @@ static int evaluate_improvements(struct unit *punit,
     /* try to work near the city */
     city_map_checked_iterate(pcity->common.tile, i, j, ptile) {
       if (get_worker_city(pcity, i, j) == C_TILE_UNAVAILABLE
-          || terrain_has_flag(pcity->common.tile->terrain, TER_UNSAFE)) {
+          || terrain_has_tag(pcity->common.tile->terrain, TER_UNSAFE)) {
         /* Don't risk bothering with this tile. */
         continue;
       }

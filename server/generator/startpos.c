@@ -177,7 +177,7 @@ static void initialize_isle_data(void)
 ****************************************************************************/
 static bool filter_starters(const struct tile *ptile, const void *data)
 {
-  return terrain_has_flag(map_get_terrain(ptile), TER_STARTER);
+  return terrain_has_tag(map_get_terrain(ptile), TER_STARTER);
 }
 
 /**************************************************************************

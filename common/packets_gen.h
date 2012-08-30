@@ -925,7 +925,7 @@ struct packet_ruleset_building { /* 104 */
 
 struct packet_ruleset_terrain { /* 105 */
   Terrain_type_id id;
-  bv_terrain_flags flags;
+  bv_terrain_tags tags;
   char terrain_name[MAX_LEN_NAME];
   char graphic_str[MAX_LEN_NAME];
   char graphic_alt[MAX_LEN_NAME];

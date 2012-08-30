@@ -28328,7 +28328,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
     }
   }
   if (BV_ISSET(fields, 1)) {
-    DIO_BV_GET(&din, real_packet->flags);
+    DIO_BV_GET(&din, real_packet->tags);
   }
   if (BV_ISSET(fields, 2)) {
     dio_get_string(&din, real_packet->terrain_name, sizeof(real_packet->terrain_name));
@@ -28606,7 +28606,7 @@ static int send_packet_ruleset_terrain_100(struct connection *pconn, const struc
   if(differ) {different++;}
   if(differ) {BV_SET(fields, 0);}
 
-  differ = !BV_ARE_EQUAL(old->flags, real_packet->flags);
+  differ = !BV_ARE_EQUAL(old->tags, real_packet->tags);
   if(differ) {different++;}
   if(differ) {BV_SET(fields, 1);}
 
@@ -28764,7 +28764,7 @@ static int send_packet_ruleset_terrain_100(struct connection *pconn, const struc
     dio_put_sint16(&dout, real_packet->id);
   }
   if (BV_ISSET(fields, 1)) {
-  DIO_BV_PUT(&dout, packet->flags);
+  DIO_BV_PUT(&dout, packet->tags);
   }
   if (BV_ISSET(fields, 2)) {
     dio_put_string(&dout, real_packet->terrain_name);

@@ -890,9 +890,9 @@ static void make_rivers(void)
           if (TEST_BIT(rmap(tile1), RS_RIVER)) {
             Terrain_type_id t = map_get_terrain(tile1);
 
-            if (!terrain_has_flag(t, TER_CAN_HAVE_RIVER)) {
+            if (!terrain_has_tag(t, TER_CAN_HAVE_RIVER)) {
               /* We have to change the terrain to put a river here. */
-              t = get_flag_terrain(TER_CAN_HAVE_RIVER);
+              t = get_tag_terrain(TER_CAN_HAVE_RIVER);
               map_set_terrain(tile1, t);
             }
             map_set_special(tile1, S_RIVER);
@@ -1251,7 +1251,7 @@ static void adjust_terrain_param(void)
 static bool near_safe_tiles(struct tile *ptile)
 {
   square_iterate(ptile, 1, tile1) {
-    if (!terrain_has_flag(map_get_terrain(tile1), TER_UNSAFE_COAST)) {
+    if (!terrain_has_tag(map_get_terrain(tile1), TER_UNSAFE_COAST)) {
       return TRUE;
     }
   } square_iterate_end;

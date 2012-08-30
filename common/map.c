@@ -707,7 +707,7 @@ bool is_safe_ocean(const struct tile *ptile)
 {
   adjc_iterate(ptile, tile1) {
     Terrain_type_id ter = map_get_terrain(tile1);
-    if (!terrain_has_flag(ter, TER_UNSAFE_COAST) && ter != T_UNKNOWN) {
+    if (!terrain_has_tag(ter, TER_UNSAFE_COAST) && ter != T_UNKNOWN) {
       return TRUE;
     }
   } adjc_iterate_end;

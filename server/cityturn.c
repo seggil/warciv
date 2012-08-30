@@ -1311,7 +1311,7 @@ static void check_pollution(city_t *pcity)
         continue;
       }
 
-      if (!terrain_has_flag(map_get_terrain(ptile), TER_NO_POLLUTION)
+      if (!terrain_has_tag(map_get_terrain(ptile), TER_NO_POLLUTION)
           && !map_has_special(ptile, S_POLLUTION)) {
         map_set_special(ptile, S_POLLUTION);
         update_tile_knowledge(ptile);

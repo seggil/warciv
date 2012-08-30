@@ -2745,7 +2745,7 @@ void handle_ruleset_terrain(struct packet_ruleset_terrain *p)
   t->clean_pollution_time = p->clean_pollution_time;
   t->clean_fallout_time = p->clean_fallout_time;
 
-  t->flags = p->flags;
+  t->tags = p->tags;
 
   t->helptext = mystrdup(p->helptext);
 

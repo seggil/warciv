@@ -214,7 +214,7 @@ void add_tile_in_trade_planning(struct tile *ptile, bool allow_remove)
       update_auto_caravan_menu();
       refresh_tile_mapcanvas(ptile, MUT_NORMAL);
     }
-  } else if (!terrain_has_flag(map_get_terrain(ptile), TER_NO_CITIES)) {
+  } else if (!terrain_has_tag(map_get_terrain(ptile), TER_NO_CITIES)) {
     tile_list_append(trade_cities, ptile);
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: Adding %s to the trade planning."),

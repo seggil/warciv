@@ -71,7 +71,7 @@ void assign_continent_flood(struct tile *ptile, bool is_land,
     return;
   }
 
-  if (skip_unsafe && terrain_has_flag(map_get_terrain(ptile), TER_UNSAFE)) {
+  if (skip_unsafe && terrain_has_tag(map_get_terrain(ptile), TER_UNSAFE)) {
     /* FIXME: This should check a specialized flag, not the TER_UNSAFE
      * flag which may not even be present. */
     return;
@@ -162,7 +162,7 @@ void assign_continent_numbers(bool skip_unsafe)
       continue;
     }
 
-    if (!skip_unsafe || !terrain_has_flag(ter, TER_UNSAFE)) {
+    if (!skip_unsafe || !terrain_has_tag(ter, TER_UNSAFE)) {
       if (!is_ocean(ter)) {
         map.num_continents++;
         assert(map.num_continents < MAP_NCONT);

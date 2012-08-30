@@ -70,14 +70,14 @@ const char *get_terrain_name(Terrain_type_id type)
 }
 
 /****************************************************************************
-  Return the terrain flag matching the given string, or TER_LAST if there's
+  Return the terrain tag matching the given string, or TER_LAST if there's
   no match.
 ****************************************************************************/
-enum terrain_flag_id terrain_flag_from_str(const char *s)
+enum terrain_tag_id terrain_tag_from_str(const char *s)
 {
-  enum terrain_flag_id flag;
-  const char *flag_names[] = {
-    /* Must match terrain flags in terrain.h. */
+  enum terrain_tag_id tag;
+  const char *tag_names[] = {
+    /* Must match terrain tags in terrain.h. */
     "NoBarbs",
     "NoPollution",
     "NoCities",
@@ -88,11 +88,11 @@ enum terrain_flag_id terrain_flag_from_str(const char *s)
     "Oceanic"
   };
 
-  assert(ARRAY_SIZE(flag_names) == TER_COUNT);
+  assert(ARRAY_SIZE(tag_names) == TER_COUNT);
 
-  for (flag = TER_FIRST; flag < TER_LAST; flag++) {
-    if (mystrcasecmp(flag_names[flag], s) == 0) {
-      return flag;
+  for (tag = TER_FIRST; tag < TER_LAST; tag++) {
+    if (mystrcasecmp(tag_names[tag], s) == 0) {
+      return tag;
     }
   }
 
@@ -100,22 +100,22 @@ enum terrain_flag_id terrain_flag_from_str(const char *s)
 }
 
 /****************************************************************************
-  Return a random terrain that has the specified flag.
+  Return a random terrain that has the specified tag.
 ****************************************************************************/
-Terrain_type_id get_flag_terrain(enum terrain_flag_id flag)
+Terrain_type_id get_tag_terrain(enum terrain_tag_id tag)
 {
-  bool has_flag[T_COUNT];
+  bool has_tag[T_COUNT];
   int count = 0;
 
   terrain_type_iterate(t) {
-    if ((has_flag[t] = terrain_has_flag(t, flag))) {
+    if ((has_tag[t] = terrain_has_tag(t, tag))) {
       count++;
     }
   } terrain_type_iterate_end;
 
   count = myrand(count);
   terrain_type_iterate(t) {
-    if (has_flag[t]) {
+    if (has_tag[t]) {
       if (count == 0) {
        return t;
       }
@@ -123,7 +123,7 @@ Terrain_type_id get_flag_terrain(enum terrain_flag_id flag)
     }
   } terrain_type_iterate_end;
 
-  die("Reached end of get_flag_terrain!");
+  die("Reached end of get_tag_terrain!");
   return T_NONE;
 }
 
@@ -237,13 +237,13 @@ int count_special_near_tile(const struct tile *ptile,
 }
 
 /****************************************************************************
-  Returns TRUE iff any adjacent tile contains terrain with the given flag.
+  Returns TRUE iff any adjacent tile contains terrain with the given tag.
 ****************************************************************************/
-bool is_terrain_flag_near_tile(const struct tile *ptile,
-                               enum terrain_flag_id flag)
+bool is_terrain_tag_near_tile(const struct tile *ptile,
+                              enum terrain_tag_id tag)
 {
   adjc_iterate(ptile, adjc_tile) {
-    if (terrain_has_flag(map_get_terrain(adjc_tile), flag)) {
+    if (terrain_has_tag(map_get_terrain(adjc_tile), tag)) {
       return TRUE;
     }
   } adjc_iterate_end;
@@ -252,16 +252,16 @@ bool is_terrain_flag_near_tile(const struct tile *ptile,
 }
 
 /****************************************************************************
-  Return the number of adjacent tiles that have terrain with the given flag.
+  Return the number of adjacent tiles that have terrain with the given tag.
 ****************************************************************************/
-int count_terrain_flag_near_tile(const struct tile *ptile,
-                                 bool cardinal_only, bool percentage,
-                                 enum terrain_flag_id flag)
+int count_terrain_tag_near_tile(const struct tile *ptile,
+                                bool cardinal_only, bool percentage,
+                                enum terrain_tag_id tag)
 {
   int count = 0, total = 0;
 
   variable_adjc_iterate(ptile, adjc_tile, cardinal_only) {
-    if (terrain_has_flag(map_get_terrain(adjc_tile), flag)) {
+    if (terrain_has_tag(map_get_terrain(adjc_tile), tag)) {
       count++;
     }
     total++;

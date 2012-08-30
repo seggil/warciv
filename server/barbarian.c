@@ -351,7 +351,7 @@ static void try_summon_barbarians(void)
    * gameplay. */
   ptile = rand_map_pos();
 
-  if (terrain_has_flag(map_get_terrain(ptile), TER_NO_BARBS)) {
+  if (terrain_has_tag(map_get_terrain(ptile), TER_NO_BARBS)) {
     return;
   }
 

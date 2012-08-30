@@ -1035,7 +1035,7 @@ bool can_unit_do_activity_targeted_at(struct unit *punit,
             && (is_ocean(ptile->terrain)
                 || !is_ocean(type->transform_result)
                 || can_channel_land(ptile))
-            && (!terrain_has_flag(type->transform_result, TER_NO_CITIES)
+            && (!terrain_has_tag(type->transform_result, TER_NO_CITIES)
                 || !(map_get_city(ptile)))
             && unit_flag(punit, F_TRANSFORM));
 
@@ -1671,7 +1671,7 @@ int unit_loss_pct(struct player *pplayer, const struct tile *ptile,
 
   /* All units may be lost on unsafe terrain.  (Actually air units are
    * exempt; see base_unsafe_terrain_loss_pct.) */
-  if (terrain_has_flag(map_get_terrain(ptile), TER_UNSAFE)) {
+  if (terrain_has_tag(map_get_terrain(ptile), TER_UNSAFE)) {
     return loss_pct + base_unsafe_terrain_loss_pct(pplayer, punit);
   }
 

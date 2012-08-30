@@ -1762,18 +1762,18 @@ static void load_ruleset_terrain(struct section_file *file)
                                             sec[i]), i);
 
       slist = secfile_lookup_str_vec(file, &nval, "%s.flags", sec[i]);
-      BV_CLR_ALL(t->flags);
+      BV_CLR_ALL(t->tags);
       for (j = 0; j < nval; j++) {
         const char *sval = slist[j];
-        enum terrain_flag_id flag = terrain_flag_from_str(sval);
+        enum terrain_tag_id tag = terrain_tag_from_str(sval);
 
-        if (flag == TER_LAST) {
+        if (tag == TER_LAST) {
           /* TRANS: message for an obscure ruleset error. */
           freelog(LOG_FATAL, _("Terrain %s has unknown flag %s"),
                   t->terrain_name, sval);
           exit(EXIT_FAILURE);
         } else {
-          BV_SET(t->flags, flag);
+          BV_SET(t->tags, tag);
         }
       }
       free(slist);
@@ -3023,7 +3023,7 @@ static void send_ruleset_terrain(struct conn_list *dest)
       packet.clean_pollution_time = t->clean_pollution_time;
       packet.clean_fallout_time = t->clean_fallout_time;
 
-      packet.flags = t->flags;
+      packet.tags = t->tags;
 
       if (t->helptext) {
         sz_strlcpy(packet.helptext, t->helptext);

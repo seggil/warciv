@@ -1178,7 +1178,7 @@ end
 PACKET_RULESET_TERRAIN=105;sc,lsend
   TERRAIN id;
 
-  bitvector(bv_terrain_flags) flags;
+  bitvector(bv_terrain_tags) tags;
 
   STRING terrain_name[MAX_LEN_NAME];
   STRING graphic_str[MAX_LEN_NAME];

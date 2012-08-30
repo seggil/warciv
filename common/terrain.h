@@ -62,8 +62,8 @@ enum tile_special_type {
    | S_FORTRESS             \
    | S_AIRBASE)
 
-#define T_NONE (-3) /* A special flag meaning no terrain type. */
-#define T_ANY (-2) /* A special flag that matches "any" terrain type. */
+#define T_NONE (-3) /* A special tag meaning no terrain type. */
+#define T_ANY (-2) /* A special tag that matches "any" terrain type. */
 #define T_UNKNOWN (-1) /* An unknown terrain. */
 
 /* The first terrain value and number of base terrains.  This is used in
@@ -74,16 +74,16 @@ enum tile_special_type {
 /* A hard limit on the number of terrains; useful for static arrays. */
 #define MAX_NUM_TERRAINS MAX_NUM_ITEMS
 
-/* Must match with terrain_flag_from_str in terrain.c. */
-enum terrain_flag_id {
-  TER_NO_BARBS, /* No barbarians summoned on this terrain. */
+/* Must match with terrain_tag_from_str in terrain.c. */
+enum terrain_tag_id {
+  TER_NO_BARBS,     /* No barbarians summoned on this terrain. */
   TER_NO_POLLUTION, /* This terrain cannot be polluted. */
-  TER_NO_CITIES, /* No cities on this terrain. */
-  TER_STARTER, /* Players will start on this terrain type. */
+  TER_NO_CITIES,    /* No cities on this terrain. */
+  TER_STARTER,      /* Players will start on this terrain type. */
   TER_CAN_HAVE_RIVER, /* Terrains with this type can have S_RIVER on them. */
-  TER_UNSAFE_COAST,/*this tile is not safe as coast, (all ocean / ice) */
-  TER_UNSAFE,  /*unsafe for all units (ice,...) */
-  TER_OCEANIC, /* This is an ocean terrain. */
+  TER_UNSAFE_COAST, /*this tile is not safe as coast, (all ocean / ice) */
+  TER_UNSAFE,       /*unsafe for all units (ice,...) */
+  TER_OCEANIC,      /* This is an ocean terrain. */
   TER_LAST
 };
 #define TER_FIRST (TER_NO_BARBS)
@@ -94,16 +94,16 @@ enum known_type {
  TILE_UNKNOWN, TILE_KNOWN_FOGGED, TILE_KNOWN
 };
 
-BV_DEFINE(bv_terrain_flags, TER_MAX);
+BV_DEFINE(bv_terrain_tags, TER_MAX);
 
 /* General accessor functions. */
 struct tile_type *get_tile_type(Terrain_type_id type);
 Terrain_type_id get_terrain_by_name(const char * name);
 const char *get_terrain_name(Terrain_type_id type);
-enum terrain_flag_id terrain_flag_from_str(const char *s);
-#define terrain_has_flag(terr, flag)            \
-  BV_ISSET(get_tile_type(terr)->flags, flag)
-Terrain_type_id get_flag_terrain(enum terrain_flag_id flag);
+enum terrain_tag_id terrain_tag_from_str(const char *s);
+#define terrain_has_tag(terr, tag)            \
+  BV_ISSET(get_tile_type(terr)->tags, tag)
+Terrain_type_id get_tag_terrain(enum terrain_tag_id tag);
 void tile_types_free(void);
 
 /* Functions to operate on a general terrain type. */
@@ -119,19 +119,19 @@ int count_special_near_tile(const struct tile *ptile,
                             bool cardinal_only, bool percentage,
                             enum tile_special_type spe);
 
-/* Functions to operate on a terrain flag. */
-bool is_terrain_flag_near_tile(const struct tile *ptile,
-                               enum terrain_flag_id flag);
-int count_terrain_flag_near_tile(const struct tile *ptile,
+/* Functions to operate on a terrain tag. */
+bool is_terrain_tag_near_tile(const struct tile *ptile,
+                               enum terrain_tag_id tag);
+int count_terrain_tag_near_tile(const struct tile *ptile,
                                  bool cardinal_only, bool percentage,
-                                 enum terrain_flag_id flag);
+                                 enum terrain_tag_id tag);
 
 /* Terrain-specific functions. */
-#define is_ocean(x) (terrain_has_flag((x), TER_OCEANIC))
+#define is_ocean(x) (terrain_has_tag((x), TER_OCEANIC))
 #define is_ocean_near_tile(ptile) \
-  is_terrain_flag_near_tile(ptile, TER_OCEANIC)
+  is_terrain_tag_near_tile(ptile, TER_OCEANIC)
 #define count_ocean_near_tile(ptile, cardinal_only, percentage)         \
-  count_terrain_flag_near_tile(ptile, cardinal_only, percentage, TER_OCEANIC)
+  count_terrain_tag_near_tile(ptile, cardinal_only, percentage, TER_OCEANIC)
 
 /* This iterator iterates over all terrain types. */
 #define terrain_type_iterate(id)             \

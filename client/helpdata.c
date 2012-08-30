@@ -1101,28 +1101,28 @@ void helptext_terrain(char *buf, int i, const char *user_text)
     return;
   pt = get_tile_type(i);
 
-  if (terrain_has_flag(i, TER_NO_POLLUTION)) {
+  if (terrain_has_tag(i, TER_NO_POLLUTION)) {
     sprintf(buf + strlen(buf),
             _("* Pollution cannot be generated on this terrain."));
     strcat(buf, "\n");
   }
-  if (terrain_has_flag(i, TER_NO_CITIES)) {
+  if (terrain_has_tag(i, TER_NO_CITIES)) {
     sprintf(buf + strlen(buf),
             _("* You cannot build cities on this terrain."));
     strcat(buf, "\n");
   }
-  if (terrain_has_flag(i, TER_UNSAFE_COAST)
+  if (terrain_has_tag(i, TER_UNSAFE_COAST)
       && !is_ocean(i)) {
     sprintf(buf + strlen(buf),
             _("* The coastline of this terrain is unsafe."));
     strcat(buf, "\n");
   }
-  if (terrain_has_flag(i, TER_UNSAFE)) {
+  if (terrain_has_tag(i, TER_UNSAFE)) {
     sprintf(buf + strlen(buf),
             _("* This terrain is unsafe for units to travel on."));
     strcat(buf, "\n");
   }
-  if (terrain_has_flag(i, TER_OCEANIC)) {
+  if (terrain_has_tag(i, TER_OCEANIC)) {
     sprintf(buf + strlen(buf),
             _("* Land units cannot travel on oceanic terrains."));
     strcat(buf, "\n");
