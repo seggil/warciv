@@ -101,7 +101,7 @@ static void cm_find_best_solution(struct cm_state *state,
 #define LOG_PRUNE_BRANCH                                LOG_DEBUG
 
 #ifdef GATHER_TIME_STATS
-static struct {
+static struct performance_s {
   struct one_perf {
     struct timer *wall_timer;
     int query_count;
