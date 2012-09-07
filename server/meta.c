@@ -382,7 +382,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
       } conn_list_iterate_end;
 
       astr_append_printf(&content, "&available=%d", available_players);
-      astr_append_printf(&content, "&humans=%d", humans_players);
+      astr_append_printf(&content, "&humans=%d", human_players);
     }
 
     /* send some variables: should be listed in inverted order
