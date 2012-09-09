@@ -98,7 +98,7 @@ static int num_valid_tileset_dirs, num_cardinal_tileset_dirs;
 static int num_index_valid, num_index_cardinal;
 static enum direction8 valid_tileset_dirs[8], cardinal_tileset_dirs[8];
 
-static struct {
+static struct layers_s {
   enum match_style match_style;
   int count;
   char **match_types;
@@ -307,7 +307,8 @@ const char *get_default_tilespec_name(void)
 static char *tilespec_fullname(const char *tileset_name)
 {
   const char *tileset_default = get_default_tilespec_name();
-  char *fname, *dname;
+  char *fname;
+  char *dname;
 
   if (!tileset_name || tileset_name[0] == '\0') {
     tileset_name = tileset_default;
@@ -767,8 +768,10 @@ static char *tilespec_gfx_filename(const char *gfx_filename)
 ***********************************************************************/
 bool tilespec_read_toplevel(const char *tileset_name)
 {
-  struct section_file the_file, *file = &the_file;
-  char *fname, *c;
+  struct section_file the_file;
+  struct section_file *file = &the_file;
+  char *fname;
+  char *c;
   int i;
   int num_spec_files, num_terrains, hex_side;
   char **spec_filenames, **terrains;
@@ -1311,9 +1314,11 @@ static void tilespec_lookup_sprite_tags(void)
      * all rails in the cardinal/diagonal directions.  The 0 entry is
      * unused (the "isolated" sprite is used instead). */
 
+    char c[64];
+    char d[64];
     for (i = 1; i < num_index; i++) {
-      char c[64] = "", d[64] = "";
-
+      c[0] = '\0';
+      d[0] = '\0';
       for (j = 0; j < num_valid_tileset_dirs / 2; j++) {
         int value = (i >> j) & 1;
 
@@ -1893,7 +1898,8 @@ Return the sprite needed to draw the city
 **************************************************************************/
 static struct Sprite *get_city_sprite(city_t *pcity)
 {
-  int size, style;
+  int size;
+  int style;
 
   style = get_city_style(pcity);    /* get style and match the best tile */
                                     /* based on city size                */
