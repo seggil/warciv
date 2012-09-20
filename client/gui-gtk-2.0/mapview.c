@@ -69,7 +69,7 @@ static void pixmap_put_overlay_tile_draw(GdkDrawable *pixmap,
 
 /* the intro picture is held in this pixmap, which is scaled to
    the screen size */
-static SPRITE *scaled_intro_sprite = NULL;
+static wc_Sprite *scaled_intro_sprite = NULL;
 
 static GtkObject *map_hadj, *map_vadj;
 

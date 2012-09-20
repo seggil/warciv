@@ -1909,7 +1909,8 @@ static void nation_start_callback(void)
 static GdkPixbuf *get_flag(char *flag_str)
 {
   GdkPixbuf *img;
-  SPRITE *cs, *s;
+  wc_Sprite *cs;
+  wc_Sprite *s;
 
   s = load_sprite(flag_str);
 

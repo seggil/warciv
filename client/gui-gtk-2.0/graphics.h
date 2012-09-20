@@ -30,12 +30,12 @@ struct Sprite
   GdkPixbuf *pixbuf;
 };
 
-typedef struct Sprite SPRITE;
+typedef struct Sprite wc_Sprite;
 
 void create_overlay_unit(struct canvas *pcanvas, int i);
 
-extern SPRITE *    intro_gfx_sprite;
-extern SPRITE *    radar_gfx_sprite;
+extern wc_Sprite *    intro_gfx_sprite;
+extern wc_Sprite *    radar_gfx_sprite;
 extern GdkCursor * goto_cursor;
 extern GdkCursor * drop_cursor;
 extern GdkCursor * nuke_cursor;
@@ -49,19 +49,17 @@ void gtk_draw_shadowed_string(GdkDrawable *drawable,
                               GdkGC *white_gc,
                               gint x, gint y, PangoLayout *layout);
 
-SPRITE *ctor_sprite_mask(GdkPixmap *mypixmap, GdkPixmap *mask,
-                         int width, int height);
-SPRITE* sprite_scale(SPRITE *src, int new_w, int new_h);
-void sprite_get_bounding_box(SPRITE * sprite, int *start_x,
+wc_Sprite* sprite_scale(wc_Sprite *src, int new_w, int new_h);
+void sprite_get_bounding_box(wc_Sprite * sprite, int *start_x,
                              int *start_y, int *end_x, int *end_y);
-SPRITE *crop_blankspace(SPRITE *s);
+wc_Sprite *crop_blankspace(wc_Sprite *s);
 
-GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src);
+GdkPixbuf *gdk_pixbuf_new_from_sprite(wc_Sprite *src);
 
 /********************************************************************
  NOTE: the pixmap and mask of a sprite must not change after this
        function is called!
  ********************************************************************/
-GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite);
+GdkPixbuf *sprite_get_pixbuf(wc_Sprite *sprite);
 
 #endif  /* WC_CLIENT_GUI_GRAPHICS_H */

@@ -55,8 +55,8 @@
 #include "../include/trade_cursor.xbm"
 #include "../include/trade_cursor_mask.xbm"
 
-SPRITE *intro_gfx_sprite;
-SPRITE *radar_gfx_sprite;
+wc_Sprite *intro_gfx_sprite;
+wc_Sprite *radar_gfx_sprite;
 
 GdkCursor *goto_cursor;
 GdkCursor *drop_cursor;
@@ -178,6 +178,7 @@ void load_intro_gfx(void)
 /****************************************************************************
   Create a new sprite by cropping and taking only the given portion of
   the image.
+  return: allocated Sprite
 ****************************************************************************/
 struct Sprite *crop_sprite(struct Sprite *source,
                            int x, int y,
@@ -185,7 +186,9 @@ struct Sprite *crop_sprite(struct Sprite *source,
                            struct Sprite *mask,
                            int mask_offset_x, int mask_offset_y)
 {
-  GdkPixmap *mypixmap, *mymask = NULL;
+  GdkPixmap *mypixmap;
+  GdkPixmap *mymask = NULL;
+  wc_Sprite *mysprite;
 
   mypixmap = gdk_pixmap_new(root_window, width, height, -1);
 
@@ -216,7 +219,20 @@ struct Sprite *crop_sprite(struct Sprite *source,
     }
   }
 
-  return ctor_sprite_mask(mypixmap, mymask, width, height);
+  mysprite = wc_malloc(sizeof(wc_Sprite));
+
+  mysprite->pixmap= mypixmap;
+  mysprite->fogged = NULL;
+  mysprite->has_mask = (mymask != NULL);
+  mysprite->mask = mymask;
+
+  mysprite->width= width;
+  mysprite->height= height;
+
+  mysprite->pixbuf= NULL;
+
+  return mysprite;
+
 }
 
 /****************************************************************************
@@ -336,34 +352,12 @@ void load_cursors(void)
   g_object_unref(mask);
 }
 
-/***************************************************************************
- Create a new sprite with the given pixmap, dimensions, and
- (optional) mask.
-***************************************************************************/
-SPRITE *ctor_sprite_mask( GdkPixmap *mypixmap, GdkPixmap *mask,
-                          int width, int height )
-{
-  SPRITE *mysprite = wc_calloc(1, sizeof(SPRITE));
 
-  mysprite->pixmap= mypixmap;
-  mysprite->fogged = NULL;
-  mysprite->has_mask = (mask != NULL);
-  mysprite->mask = mask;
-
-  mysprite->width= width;
-  mysprite->height= height;
-
-  mysprite->pixbuf= NULL;
-
-  return mysprite;
-}
-
-
-#ifdef UNUSED
+#if 0
 /***************************************************************************
 ...
 ***************************************************************************/
-void dtor_sprite( SPRITE *mysprite )
+void dtor_sprite( wc_Sprite *mysprite )
 {
   free_sprite( mysprite );
   return;
@@ -392,7 +386,7 @@ struct Sprite *load_gfxfile(const char *filename)
 {
   GdkPixbuf  *im;
   GdkPixbuf  *pixbuf3;
-  SPRITE     *mysprite;
+  wc_Sprite     *mysprite;
   int         w;
   int         h;
   GError      *pixbuf_error = NULL;
@@ -448,7 +442,7 @@ struct Sprite *load_gfxfile(const char *filename)
 /***************************************************************************
    Deletes a sprite.  These things can use a lot of memory.
 ***************************************************************************/
-void free_sprite(SPRITE *s)
+void free_sprite(wc_Sprite *s)
 {
   freelog(LOG_DEBUG, "free_sprite s=%p", s);
 
@@ -536,10 +530,10 @@ void free_intro_radar_sprites(void)
   Scales a sprite. If the sprite contains a mask, the mask is scaled
   as as well.
 ***************************************************************************/
-SPRITE* sprite_scale(SPRITE *src, int new_w, int new_h)
+wc_Sprite* sprite_scale(wc_Sprite *src, int new_w, int new_h)
 {
   GdkPixbuf *original, *im;
-  SPRITE    *mysprite;
+  wc_Sprite    *mysprite;
   GdkColormap *colormap;
   GdkScreen *screen;
 
@@ -571,7 +565,7 @@ SPRITE* sprite_scale(SPRITE *src, int new_w, int new_h)
  object/mask. The bounding box contains the border (pixel which have
  unset pixel as neighbours) pixel.
 ***************************************************************************/
-void sprite_get_bounding_box(SPRITE * sprite, int *start_x,
+void sprite_get_bounding_box(wc_Sprite * sprite, int *start_x,
                              int *start_y, int *end_x, int *end_y)
 {
   GdkImage *mask_image;
@@ -658,7 +652,7 @@ void sprite_get_bounding_box(SPRITE * sprite, int *start_x,
 /*********************************************************************
  Crops all blankspace from a sprite (insofar as is possible as a rectangle)
 *********************************************************************/
-SPRITE *crop_blankspace(SPRITE *s)
+wc_Sprite *crop_blankspace(wc_Sprite *s)
 {
   int x1, y1, x2, y2;
 
@@ -667,6 +661,7 @@ SPRITE *crop_blankspace(SPRITE *s)
     return s;
   }
   else {
+    /* return value need to be freed */
     return crop_sprite(s, x1, y1, x2 - x1 + 1, y2 - y1 + 1, NULL, -1, -1);
   }
 }
@@ -674,12 +669,12 @@ SPRITE *crop_blankspace(SPRITE *s)
 /*********************************************************************
  Converts a sprite to a GdkPixbuf.
 *********************************************************************/
-GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src)
+GdkPixbuf *gdk_pixbuf_new_from_sprite(wc_Sprite *src)
 {
   GdkPixbuf *dst;
   int w, h;
 
-  freelog(LOG_DEBUG, "gdk_pixbuf_new_from_sprite SPRITE src=%p", src);
+  freelog(LOG_DEBUG, "gdk_pixbuf_new_from_sprite wc_Sprite src=%p", src);
 
   w = src->width;
   h = src->height;
@@ -722,7 +717,7 @@ GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src)
  NOTE: the pixmap and mask of a sprite must not change after this
        function is called!
 ********************************************************************/
-GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite)
+GdkPixbuf *sprite_get_pixbuf(wc_Sprite *sprite)
 {
   freelog(LOG_DEBUG, "sprite_get_pixbuf sprite=%p", sprite);
 

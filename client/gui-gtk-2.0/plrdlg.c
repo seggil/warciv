@@ -480,7 +480,7 @@ void create_players_dialog(void)
 static GdkPixbuf *get_flag(struct nation_type *nation)
 {
   GdkPixbuf *img;
-  SPRITE *s;
+  wc_Sprite *s;
 
   /* We have to crop the image because some flags
    * contain extra "whitespace". :( */

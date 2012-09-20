@@ -1728,7 +1728,7 @@ static void create_races_dialog(void)
   /* Populate nation list store. */
   for (i = 0; i < game.ruleset_control.nation_count; i++) {
     struct nation_type *nation;
-    SPRITE *s;
+    wc_Sprite *s;
     GdkPixbuf *img;
     GtkTreeIter it;
     GValue value = { 0, };
@@ -1844,7 +1844,7 @@ static void create_races_dialog(void)
   /* Populate city style store. */
   for (i = 0; i < game.ruleset_control.style_count; i++) {
     GdkPixbuf *img;
-    SPRITE *s;
+    wc_Sprite *s;
     int last;
     GtkTreeIter it;
 
