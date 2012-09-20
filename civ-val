@@ -36,4 +36,4 @@ if [ "$EXE" = "" ]; then
   exit 1
 fi
 
-exec valgrind --leak-check=yes $EXE ${1+"$@"}
+exec valgrind --log-file=valgrind.log --gen-suppressions=yes --leak-check=yes $EXE ${1+"$@"}
