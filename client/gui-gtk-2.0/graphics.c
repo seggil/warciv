@@ -398,7 +398,8 @@ struct Sprite *load_gfxfile(const char *filename)
 
   freelog(LOG_DEBUG, "load_gfxfile filename=\"%s\"", filename);
 
-  if (!(im = gdk_pixbuf_new_from_file(filename,&pixbuf_error))) {
+  im = gdk_pixbuf_new_from_file(filename,&pixbuf_error);
+  if (!im) {
     freelog(LOG_FATAL, "Failed reading graphics file: %s \n"
             "Error : %s\n", filename,pixbuf_error->message);
     exit(EXIT_FAILURE);
