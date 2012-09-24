@@ -74,7 +74,7 @@
 /*
  * Misc statistic to analyze performance.
  */
-static struct {
+static struct stats_s {
   struct timer *wall_timer;
   int apply_result_ignored, apply_result_applied, refresh_forced;
 } stats;
