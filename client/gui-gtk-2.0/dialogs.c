@@ -1726,10 +1726,10 @@ static void create_races_dialog(void)
   gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
 
   /* Populate nation list store. */
+  struct nation_type *nation;
+  wc_Sprite *Sprite3;
+  GdkPixbuf *img;
   for (i = 0; i < game.ruleset_control.nation_count; i++) {
-    struct nation_type *nation;
-    wc_Sprite *s;
-    GdkPixbuf *img;
     GtkTreeIter it;
     GValue value = { 0, };
 
@@ -1737,9 +1737,9 @@ static void create_races_dialog(void)
 
     gtk_list_store_append(store, &it);
 
-    s = crop_blankspace(nation->flag_sprite);
-    img = gdk_pixbuf_new_from_sprite(s);
-    free_sprite(s);
+    Sprite3 = crop_blankspace(nation->flag_sprite);
+    img = gdk_pixbuf_new_from_sprite(Sprite3);
+    free_sprite(Sprite3);
     gtk_list_store_set(store, &it, 0, i, 1, FALSE, 2, img, -1);
     g_object_unref(img);
 
@@ -1843,8 +1843,6 @@ static void create_races_dialog(void)
 
   /* Populate city style store. */
   for (i = 0; i < game.ruleset_control.style_count; i++) {
-    GdkPixbuf *img;
-    wc_Sprite *s;
     int last;
     GtkTreeIter it;
 
@@ -1856,9 +1854,9 @@ static void create_races_dialog(void)
 
     last = city_styles[i].tiles_num-1;
 
-    s = crop_blankspace(sprites.city.tile[i][last]);
-    img = gdk_pixbuf_new_from_sprite(s);
-    free_sprite(s);
+    Sprite3 = crop_blankspace(sprites.city.tile[i][last]);
+    img = gdk_pixbuf_new_from_sprite(Sprite3);
+    free_sprite(Sprite3);
     gtk_list_store_set(store, &it, 0, i, 1, img, 2,
                        get_city_style_name(i), -1);
     g_object_unref(img);
