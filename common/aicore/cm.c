@@ -590,6 +590,7 @@ static void init_partial_solution(struct partial_solution *into,
   into->idle = idle;
 }
 
+#if 0
 /****************************************************************************
   Free all storage associated with the solution.  This is basically the
   opposite of init_partial_solution.
@@ -599,6 +600,7 @@ static void destroy_partial_solution(struct partial_solution *into)
   free(into->worker_counts);
   free(into->prereqs_filled);
 }
+#endif
 
 /****************************************************************************
   Copy the source solution into the destination one (the destination
@@ -1532,7 +1534,9 @@ compute_max_stats_heuristic(const struct cm_state *state,
     production[stat] = solnplus.production[stat];
   }
 
-  destroy_partial_solution(&solnplus);
+  /*destroy_partial_solution(&solnplus);*/
+  free(solnplus.worker_counts);
+  free(solnplus.prereqs_filled);
 }
 
 /****************************************************************************
@@ -1792,9 +1796,11 @@ static void begin_search(struct cm_state *cmstate,
 
   /* clear out the old solution */
   /*worst_fitness(&cmstate->best_value);*/
-  destroy_partial_solution(&cmstate->current);
   cmstate->best_value.sufficient = FALSE;
   cmstate->best_value.weighted = -WC_INFINITY;
+  /*destroy_partial_solution(&cmstate->current);*/
+  free(cmstate->current.worker_counts);
+  free(cmstate->current.prereqs_filled);
   init_partial_solution(&cmstate->current, num_types(cmstate),
                         cmstate->pcity->common.pop_size);
   cmstate->choice.size = 0;
