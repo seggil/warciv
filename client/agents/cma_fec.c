@@ -109,7 +109,8 @@ void cmafec_get_fe_parameter(city_t *pcity, struct cm_parameter *dest)
 
   /* our fe_parameter could be stale. our agents parameter is uptodate */
   if (cma_is_city_under_agent(pcity, &parameter)) {
-    cm_copy_parameter(dest, &parameter);
+    /*cm_copy_parameter(dest, &parameter);*/
+    memcpy(dest, &parameter, sizeof(struct cm_parameter));
     cmafec_set_fe_parameter(pcity, dest);
   } else {
     /* Create a dummy parameter to return. */
@@ -132,7 +133,8 @@ void cmafec_preset_add(const char *descr_name, struct cm_parameter *pparam)
     preset_list = preset_list_new();
   }
 
-  cm_copy_parameter(&ppreset->parameter, pparam);
+  /*cm_copy_parameter(&ppreset->parameter, pparam);*/
+  memcpy(&ppreset->parameter, pparam, sizeof(struct cm_parameter));
   ppreset->descr = wc_malloc(MAX_LEN_PRESET_NAME);
   (void) mystrlcpy(ppreset->descr, descr_name, MAX_LEN_PRESET_NAME);
   preset_list_prepend(preset_list, ppreset);

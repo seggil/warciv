@@ -1781,7 +1781,8 @@ static void begin_search(struct cm_state *cmstate,
 #endif
 
   /* copy the parameter and sort the main lattice by it */
-  cm_copy_parameter(&cmstate->parameter, parameter);
+  /*cm_copy_parameter(&cmstate->parameter, parameter);*/
+  memcpy(&cmstate->parameter, parameter, sizeof(struct cm_parameter));
   sort_lattice_by_fitness(cmstate, &cmstate->lattice);
   init_min_production(cmstate);
 
@@ -1931,6 +1932,7 @@ bool cm_are_parameter_equal(const struct cm_parameter *const p1,
   return TRUE;
 }
 
+#if 0
 /**************************************************************************
   Copy the parameter from the source to the destination field.
 **************************************************************************/
@@ -1939,6 +1941,7 @@ void cm_copy_parameter(struct cm_parameter *dest,
 {
   memcpy(dest, src, sizeof(struct cm_parameter));
 }
+#endif
 
 /**************************************************************************
   Initialize the parameter to sane default values.
