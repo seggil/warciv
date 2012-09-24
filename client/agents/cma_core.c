@@ -88,11 +88,6 @@ static struct {
   } city_map_checked_iterate_end;  \
 }
 
-
-#define T(x) if (result1->x != result2->x) {      \
-        freelog(RESULTS_ARE_EQUAL_LOG_LEVEL, #x); \
-        return FALSE; }
-
 /****************************************************************************
  Returns TRUE iff the two results are equal. Both results have to be
  results for the given city.
@@ -103,14 +98,39 @@ static bool results_are_equal(city_t *pcity,
 {
   enum cm_stat stat;
 
-  T(disorder);
-  T(happy);
-  T(specialists[SP_ELVIS]);
-  T(specialists[SP_SCIENTIST]);
-  T(specialists[SP_TAXMAN]);
+  //T(disorder);
+  if (result1->disorder != result2->disorder) {
+    freelog(RESULTS_ARE_EQUAL_LOG_LEVEL, "disorder");
+    return FALSE;
+  }
+
+  //T(happy);
+  if (result1->happy != result2->happy) {
+    freelog(RESULTS_ARE_EQUAL_LOG_LEVEL, "happy");
+    return FALSE;
+  }
+  //T(specialists[SP_ELVIS]);
+  if (result1->specialists[SP_ELVIS] != result2->specialists[SP_ELVIS]) {
+    freelog(RESULTS_ARE_EQUAL_LOG_LEVEL, "specialists[SP_ELVIS]");
+    return FALSE;
+  }
+  //T(specialists[SP_SCIENTIST]);
+  if (result1->specialists[SP_SCIENTIST] != result2->specialists[SP_SCIENTIST]) {
+    freelog(RESULTS_ARE_EQUAL_LOG_LEVEL, "specialists[SP_SCIENTIST]");
+    return FALSE;
+  }
+  //T(specialists[SP_TAXMAN]);
+  if (result1->specialists[SP_TAXMAN] != result2->specialists[SP_TAXMAN]) {
+    freelog(RESULTS_ARE_EQUAL_LOG_LEVEL, "specialists[SP_TAXMAN]");
+    return FALSE;
+  }
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
-    T(surplus[stat]);
+    //T(surplus[stat]);
+    if (result1->surplus[stat] != result2->surplus[stat]) {
+      freelog(RESULTS_ARE_EQUAL_LOG_LEVEL, "surplus[stat]");
+      return FALSE;
+    }
   }
 
   my_city_map_iterate(pcity, x, y) {
@@ -123,9 +143,6 @@ static bool results_are_equal(city_t *pcity,
 
   return TRUE;
 }
-
-#undef T
-
 
 /****************************************************************************
  Copy the current city state (citizen assignment, production stats and
