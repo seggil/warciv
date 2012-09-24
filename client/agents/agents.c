@@ -44,25 +44,25 @@
 
 struct agents_entries_s;
 
-struct call {
+struct agent_call_s {
   struct agents_entries_s *agent;
-  // guess, Obvious Call Type(OCT)
-  enum oct { OCT_NEW_TURN, OCT_UNIT, OCT_CITY, OCT_TILE } type;
+  // Agent Call Type(ACT)
+  enum act { ACT_NEW_TURN, ACT_UNIT, ACT_CITY, ACT_TILE } type;
   enum callback_type cb_type;
   int arg;
 };
 
-#define SPECLIST_TAG call
-#define SPECLIST_TYPE struct call
+#define SPECLIST_TAG agent_call
+#define SPECLIST_TYPE struct agent_call_s
 #include "speclist.h"
 
-#define call_list_iterate(calllist, pcall) \
-    TYPED_LIST_ITERATE(struct call, calllist, pcall)
-#define call_list_iterate_end  LIST_ITERATE_END
+#define agent_call_list_iterate(agent_call_list, pcall) \
+    TYPED_LIST_ITERATE(struct agent_call_s, agent_call_list, pcall)
+#define agent_call_list_iterate_end  LIST_ITERATE_END
 
 /*
  * Main data structure. Contains all registered agents and all
- * outstanding calls.
+ * outstanding agent calls.
  */
 static struct agents_s {
   int entries_used;
@@ -76,7 +76,7 @@ static struct agents_s {
       int wait_at_network_requests;
     } stats;
   } entries[MAX_AGENTS];
-  struct call_list *calls;
+  struct agent_call_list *calls;
 } agents;
 
 static bool initialized = FALSE;
@@ -84,21 +84,21 @@ static int frozen_level;
 static bool currently_running = FALSE;
 
 /****************************************************************************
-  Return TRUE iff the two agent calls are equal.
+  Return TRUE iff the two agent agent calls are equal.
 ****************************************************************************/
-static bool calls_are_equal(const struct call *pcall1,
-                            const struct call *pcall2)
+static bool calls_are_equal(const struct agent_call_s *pcall1,
+                            const struct agent_call_s *pcall2)
 {
   if (pcall1->type != pcall2->type && pcall1->cb_type != pcall2->cb_type) {
     return FALSE;
   }
 
   switch (pcall1->type) {
-  case OCT_UNIT:
-  case OCT_CITY:
-  case OCT_TILE:
+  case ACT_UNIT:
+  case ACT_CITY:
+  case ACT_TILE:
     return (pcall1->arg == pcall2->arg);
-  case OCT_NEW_TURN:
+  case ACT_NEW_TURN:
     return TRUE;
   }
 
@@ -107,15 +107,15 @@ static bool calls_are_equal(const struct call *pcall1,
 }
 
 /***********************************************************************
- If the call described by the given arguments isn't contained in
+ If the agent call described by the given arguments isn't contained in
  agents.calls list add the call to this list.
 ***********************************************************************/
 static void enqueue_call(struct agents_entries_s *agent,
-                         enum oct type,
+                         enum act type,
                          enum callback_type cb_type, ...)
 {
   va_list ap;
-  struct call *pcall2;
+  struct agent_call_s *pcall2;
   int arg = 0;
   const struct tile *ptile;
 
@@ -126,15 +126,15 @@ static void enqueue_call(struct agents_entries_s *agent,
   }
 
   switch (type) {
-  case OCT_UNIT:
-  case OCT_CITY:
+  case ACT_UNIT:
+  case ACT_CITY:
     arg = va_arg(ap, int);
     break;
-  case OCT_TILE:
+  case ACT_TILE:
     ptile = va_arg(ap, const struct tile *);
     arg = ptile->index;
     break;
-  case OCT_NEW_TURN:
+  case ACT_NEW_TURN:
     /* nothing */
     break;
   default:
@@ -142,24 +142,24 @@ static void enqueue_call(struct agents_entries_s *agent,
   }
   va_end(ap);
 
-  pcall2 = wc_malloc(sizeof(struct call));
+  pcall2 = wc_malloc(sizeof(struct agent_call_s));
 
   pcall2->agent = agent;
   pcall2->type = type;
   pcall2->cb_type = cb_type;
   pcall2->arg = arg;
 
-  call_list_iterate(agents.calls, pcall) {
+  agent_call_list_iterate(agents.calls, pcall) {
     if (calls_are_equal(pcall, pcall2)) {
       free(pcall2);
       return;
     }
-  } call_list_iterate_end;
+  } agent_call_list_iterate_end;
 
-  call_list_prepend(agents.calls, pcall2);
+  agent_call_list_prepend(agents.calls, pcall2);
 
   if (DEBUG_TODO_LISTS) {
-    freelog(LOG_NORMAL, "A: adding call");
+    freelog(LOG_NORMAL, "A: adding agent call");
   }
 
   update_turn_done_button_state();
@@ -168,57 +168,57 @@ static void enqueue_call(struct agents_entries_s *agent,
 /***********************************************************************
  Helper.
 ***********************************************************************/
-static int my_call_sort(const struct call * const *ppa,
-                        const struct call * const *ppb)
+static int my_call_sort(const struct agent_call_s * const *ppa,
+                        const struct agent_call_s * const *ppb)
 {
   return (*ppa)->agent->agent.level - (*ppb)->agent->agent.level;
 }
 
 /***********************************************************************
- Return an outstanding call. The call is removed from the agents.calls
- list. Returns NULL if there no more outstanding calls.
+ Return an outstanding agent call. The call is removed from the agents.calls
+ list. Returns NULL if there no more outstanding agent calls.
 ***********************************************************************/
-static struct call *remove_and_return_a_call(void)
+static struct agent_call_s *remove_and_return_a_call(void)
 {
-  struct call *result;
+  struct agent_call_s *result;
 
-  if (call_list_size(agents.calls) == 0) {
+  if (agent_call_list_size(agents.calls) == 0) {
     return NULL;
   }
 
   /* get calls to agents with low levels first */
-  call_list_sort(agents.calls, my_call_sort);
+  agent_call_list_sort(agents.calls, my_call_sort);
 
-  result = call_list_get(agents.calls, 0);
-  call_list_unlink(agents.calls, result);
+  result = agent_call_list_get(agents.calls, 0);
+  agent_call_list_unlink(agents.calls, result);
 
   if (DEBUG_TODO_LISTS) {
-    freelog(LOG_NORMAL, "A: removed call");
+    freelog(LOG_NORMAL, "A: removed agent call");
   }
   return result;
 }
 
 /***********************************************************************
- Calls an callback of an agent as described in the given call.
+ Calls an callback of an agent as described in the given agent call.
 ***********************************************************************/
-static void execute_call(const struct call *call)
+static void execute_call(const struct agent_call_s *my_call)
 {
-  if (call->type == OCT_NEW_TURN) {
-    call->agent->agent.turn_start_notify();
-  } else if (call->type == OCT_UNIT) {
-    call->agent->agent.unit_callbacks[call->cb_type] (call->arg);
-  } else if (call->type == OCT_CITY) {
-    call->agent->agent.city_callbacks[call->cb_type] (call->arg);
-  } else if (call->type == OCT_TILE) {
-    call->agent->agent.tile_callbacks[call->cb_type]
-      (index_to_tile(call->arg));
+  if (my_call->type == ACT_NEW_TURN) {
+    my_call->agent->agent.turn_start_notify();
+  } else if (my_call->type == ACT_UNIT) {
+    my_call->agent->agent.unit_callbacks[my_call->cb_type] (my_call->arg);
+  } else if (my_call->type == ACT_CITY) {
+    my_call->agent->agent.city_callbacks[my_call->cb_type] (my_call->arg);
+  } else if (my_call->type == ACT_TILE) {
+    my_call->agent->agent.tile_callbacks[my_call->cb_type]
+      (index_to_tile(my_call->arg));
   } else {
     assert(0);
   }
 }
 
 /***********************************************************************
- Execute all outstanding calls. This method will do nothing if the
+ Execute all outstanding agent calls. This method will do nothing if the
  dispatching is frozen (frozen_level > 0). Also call_handle_methods
  will ensure that only one instance is running at any given time.
 ***********************************************************************/
@@ -237,7 +237,7 @@ static void call_handle_methods(void)
    * a lower level are called first.
    */
   for (;;) {
-    struct call *pcall;
+    struct agent_call_s *pcall;
 
     pcall = remove_and_return_a_call();
     if (!pcall) {
@@ -270,7 +270,7 @@ static void freeze(void)
 
 /***********************************************************************
  Decrease the frozen_level by one. If the dispatching is not frozen
- anymore (frozen_level == 0) all outstanding calls are executed.
+ anymore (frozen_level == 0) all outstanding agent calls are executed.
 ***********************************************************************/
 static void thaw(void)
 {
@@ -343,7 +343,7 @@ static void print_stats(struct agents_entries_s *agent)
 void agents_init(void)
 {
   agents.entries_used = 0;
-  agents.calls = call_list_new();
+  agents.calls = agent_call_list_new();
 
   /* Add init calls of agents here */
   cma_init();
@@ -365,7 +365,7 @@ void agents_free(void)
   /* cmafec_free(); */
 
   for (;;) {
-    struct call *pcall = remove_and_return_a_call();
+    struct agent_call_s *pcall = remove_and_return_a_call();
     if (!pcall) {
       break;
     }
@@ -496,7 +496,7 @@ void agents_new_turn(void)
       continue;
     }
     if (agent->agent.turn_start_notify) {
-      enqueue_call(agent, OCT_NEW_TURN, CB_LAST);
+      enqueue_call(agent, ACT_NEW_TURN, CB_LAST);
     }
   }
   /*
@@ -529,7 +529,7 @@ void agents_unit_changed(struct unit *punit)
       continue;
     }
     if (agent->agent.unit_callbacks[CB_CHANGE]) {
-      enqueue_call(agent, OCT_UNIT, CB_CHANGE, punit->id);
+      enqueue_call(agent, ACT_UNIT, CB_CHANGE, punit->id);
     }
   }
   call_handle_methods();
@@ -555,7 +555,7 @@ void agents_unit_new(struct unit *punit)
       continue;
     }
     if (agent->agent.unit_callbacks[CB_NEW]) {
-      enqueue_call(agent, OCT_UNIT, CB_NEW, punit->id);
+      enqueue_call(agent, ACT_UNIT, CB_NEW, punit->id);
     }
   }
 
@@ -582,7 +582,7 @@ void agents_unit_remove(struct unit *punit)
       continue;
     }
     if (agent->agent.unit_callbacks[CB_REMOVE]) {
-      enqueue_call(agent, OCT_UNIT, CB_REMOVE, punit->id);
+      enqueue_call(agent, ACT_UNIT, CB_REMOVE, punit->id);
     }
   }
 
@@ -607,7 +607,7 @@ void agents_city_changed(city_t *pcity)
       continue;
     }
     if (agent->agent.city_callbacks[CB_CHANGE]) {
-      enqueue_call(agent, OCT_CITY, CB_CHANGE, pcity->common.id);
+      enqueue_call(agent, ACT_CITY, CB_CHANGE, pcity->common.id);
     }
   }
 
@@ -634,7 +634,7 @@ void agents_city_new(city_t *pcity)
       continue;
     }
     if (agent->agent.city_callbacks[CB_NEW]) {
-      enqueue_call(agent, OCT_CITY, CB_NEW, pcity->common.id);
+      enqueue_call(agent, ACT_CITY, CB_NEW, pcity->common.id);
     }
   }
 
@@ -661,7 +661,7 @@ void agents_city_remove(city_t *pcity)
       continue;
     }
     if (agent->agent.city_callbacks[CB_REMOVE]) {
-      enqueue_call(agent, OCT_CITY, CB_REMOVE, pcity->common.id);
+      enqueue_call(agent, ACT_CITY, CB_REMOVE, pcity->common.id);
     }
   }
 
@@ -686,7 +686,7 @@ void agents_tile_remove(struct tile *ptile)
       continue;
     }
     if (agent->agent.tile_callbacks[CB_REMOVE]) {
-      enqueue_call(agent, OCT_TILE, CB_REMOVE, ptile);
+      enqueue_call(agent, ACT_TILE, CB_REMOVE, ptile);
     }
   }
 
@@ -710,7 +710,7 @@ void agents_tile_changed(struct tile *ptile)
       continue;
     }
     if (agent->agent.tile_callbacks[CB_CHANGE]) {
-      enqueue_call(agent, OCT_TILE, CB_CHANGE, ptile);
+      enqueue_call(agent, ACT_TILE, CB_CHANGE, ptile);
     }
   }
 
@@ -734,7 +734,7 @@ void agents_tile_new(struct tile *ptile)
       continue;
     }
     if (agent->agent.tile_callbacks[CB_NEW]) {
-      enqueue_call(agent, OCT_TILE, CB_NEW, ptile);
+      enqueue_call(agent, ACT_TILE, CB_NEW, ptile);
     }
   }
 
@@ -788,7 +788,7 @@ void cause_a_unit_changed_for_agent(const char *name_of_calling_agent,
   struct agents_entries_s *agent = find_agent_by_name(name_of_calling_agent);
 
   assert(agent->agent.unit_callbacks[CB_CHANGE] != NULL);
-  enqueue_call(agent, OCT_UNIT, CB_CHANGE, punit->id);
+  enqueue_call(agent, ACT_UNIT, CB_CHANGE, punit->id);
   call_handle_methods();
 }
 
@@ -801,7 +801,7 @@ void cause_a_city_changed_for_agent(const char *name_of_calling_agent,
   struct agents_entries_s *agent = find_agent_by_name(name_of_calling_agent);
 
   assert(agent->agent.city_callbacks[CB_CHANGE] != NULL);
-  enqueue_call(agent, OCT_CITY, CB_CHANGE, pcity->common.id);
+  enqueue_call(agent, ACT_CITY, CB_CHANGE, pcity->common.id);
   call_handle_methods();
 }
 
@@ -813,7 +813,7 @@ bool agents_busy(void)
   int i;
 
   if (!initialized
-      || call_list_size(agents.calls) > 0
+      || agent_call_list_size(agents.calls) > 0
       || frozen_level > 0
       || currently_running)
   {
