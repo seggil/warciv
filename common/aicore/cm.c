@@ -524,6 +524,7 @@ static bool fitness_better(struct cm_fitness *a, struct cm_fitness *b)
   return a->weighted > b->weighted;
 }
 
+#if 0
 /****************************************************************************
   Return a fitness struct that is the worst possible result we can
   represent.
@@ -533,6 +534,7 @@ static void worst_fitness(struct cm_fitness *fitness)
   fitness->sufficient = FALSE;
   fitness->weighted = -WC_INFINITY;
 }
+#endif
 
 /****************************************************************************
   Compute the fitness of the given surplus (and disorder/happy status)
@@ -1757,7 +1759,9 @@ struct cm_state *cm_init_state(city_t *pcity)
 
   /* We have no best solution yet, so its value is the worst possible. */
   init_partial_solution(&cmstate->best, numtypes, pcity->common.pop_size);
-  worst_fitness(&cmstate->best_value);
+  /*worst_fitness(&cmstate->best_value);*/
+  cmstate->best_value.sufficient = FALSE;
+  cmstate->best_value.weighted = -WC_INFINITY;
 
   /* Initialize the current solution and choice stack to empty */
   init_partial_solution(&cmstate->current, numtypes, pcity->common.pop_size);
@@ -1787,8 +1791,10 @@ static void begin_search(struct cm_state *cmstate,
   init_min_production(cmstate);
 
   /* clear out the old solution */
-  worst_fitness(&cmstate->best_value);
+  /*worst_fitness(&cmstate->best_value);*/
   destroy_partial_solution(&cmstate->current);
+  cmstate->best_value.sufficient = FALSE;
+  cmstate->best_value.weighted = -WC_INFINITY;
   init_partial_solution(&cmstate->current, num_types(cmstate),
                         cmstate->pcity->common.pop_size);
   cmstate->choice.size = 0;
