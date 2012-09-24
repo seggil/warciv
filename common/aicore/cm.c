@@ -1807,13 +1807,13 @@ static void begin_search(struct cm_state *cmstate,
 }
 
 
+#ifdef GATHER_TIME_STATS
 /****************************************************************************
   Clean up after a search.
   Currently, does nothing except stop the timer and output.
 ****************************************************************************/
 static void end_search(/*struct cm_state *cmstate*/)
 {
-#ifdef GATHER_TIME_STATS
   stop_timer(performance.current->wall_timer);
 
 #ifdef PRINT_TIME_STATS_EVERY_QUERY
@@ -1821,8 +1821,8 @@ static void end_search(/*struct cm_state *cmstate*/)
 #endif
 
   performance.current = NULL;
-#endif
 }
+#endif
 
 /****************************************************************************
   Release all the memory allocated by the state.
@@ -1863,7 +1863,9 @@ void cm_find_best_solution(struct cm_state *state,
   /* convert to the caller's format */
   convert_solution_to_result(state, &state->best, result);
 
+#ifdef GATHER_TIME_STATS
   end_search(/*state*/);
+#endif
 }
 
 /***************************************************************************
