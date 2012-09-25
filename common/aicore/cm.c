@@ -259,6 +259,7 @@ static void print_partial_solution(int loglevel,
 #endif
 
 
+#ifdef GATHER_TIME_STATS
 /****************************************************************************
   Initialize the CM data at the start of each game.  Note the citymap
   indices will not have been initialized yet (cm_init_citymap is called
@@ -267,7 +268,6 @@ static void print_partial_solution(int loglevel,
 void cm_init(void)
 {
   /* In the B&B algorithm there's not really anything to initialize. */
-#ifdef GATHER_TIME_STATS
   memset(&performance, 0, sizeof(performance));
 
   if (!performance.greedy.wall_timer) {
@@ -278,8 +278,8 @@ void cm_init(void)
     performance.opt.wall_timer = new_timer(TIMER_USER, TIMER_ACTIVE);
     performance.opt.name = "opt";
   }
-#endif
 }
+#endif
 
 /****************************************************************************
   Initialize the CM citymap data.  This function is called when the

@@ -383,7 +383,9 @@ void game_init(void)
   init_our_capability();
 
   idex_init();
+#ifdef GATHER_TIME_STATS
   cm_init();
+#endif
   team_init();
 
   /* XXX Why is this here? */
