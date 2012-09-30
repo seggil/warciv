@@ -14,15 +14,16 @@ DESC=warserver
 test -x $DAEMON || exit 0
 
 OPTIONS="-q"
-[ -f /etc/default/$NAME ] && . /etc/default/$NAME
-[ "x$ENABLED" = "xyes" ] || { echo "$NAME not enabled"; exit 0; }
+#[ -f /etc/default/$NAME ] && . /etc/default/$NAME
+[ -f /sdd1/wciv/contrib/daemon/$NAME.default ] && . /sdd1/wciv/contrib/daemon/$NAME.default
+[ "x$WC_ENABLED" = "xyes" ] || { echo "$NAME not enabled"; exit 0; }
 
 # if subprocess should dump core on crash
 [ "x$CORE" = "xyes" ] && ulimit -c unlimited
 
 export CIVSERVER CIVPUBLISH SYSLOG CRASHRELOAD CORE ENGLISH DEBUG METASERVER SENDHOST
 
-. /lib/lsb/init-functions
+. /usr/lib/lsb/init-functions
 
 case "$1" in
   start)
@@ -48,7 +49,7 @@ case "$1" in
 			 continue
 			fi
 		fi
-		/sbin/start-stop-daemon  --start --quiet --make-pidfile --pidfile "/var/run/$NAME.$k.pid" --background --chdir $RUNDIR --group $RUNGROUP --chuid $RUNAS --exec $DAEMON $k >/dev/null 2>&1
+		/sbin/start-stop-kannel  --start --quiet --make-pidfile --pidfile "/var/run/$NAME.$k.pid" --background --chdir $RUNDIR --group $RUNGROUP --chuid $RUNAS --exec $DAEMON $k >/dev/null 2>&1
 		[ $? -eq 0 ] && log_progress_msg ok || log_progress_msg fail
 	done
         log_end_msg 0
