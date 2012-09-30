@@ -400,16 +400,16 @@ void input_from_server(int fd)
   freelog(LOG_DEBUG, "input_from_server");
 
   if (read_from_connection(&aconnection, FALSE) >= 0) {
-    enum packet_type type;
+    enum packet_type opcode;
 
     while (TRUE) {
       bool result;
       void *packet = get_packet_from_connection(&aconnection,
-                                                &type, &result);
+                                                &opcode, &result);
 
       if (result) {
         assert(packet != NULL);
-        handle_packet_input(packet, type);
+        handle_packet_input(packet, opcode);
         free(packet);
       } else {
         assert(packet == NULL);
