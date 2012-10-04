@@ -1205,7 +1205,8 @@ void handle_page_msg(char *message, enum event_type event) /* 84 */
   if (!get_player_ptr()
       || !get_player_ptr()->ai.control
       || ai_popup_windows
-      || event != E_BROADCAST_REPORT) {
+      || event != E_BROADCAST_REPORT)
+  {
     popup_notify_dialog(caption, headline, lines);
     play_sound_for_event(event);
   }
@@ -1948,9 +1949,13 @@ void handle_game_info(struct packet_game_info *pinfo) /* 15 */
     /* Only add in the improvement if it's in a "foreign" (i.e. unknown) city
      * and has equiv_range==World - otherwise we deal with it in its home
      * city anyway */
-    if (is_wonder(i) && improvement_types[i].equiv_range == IR_WORLD
-        && !find_city_by_id(game.info.global_wonders[i])) {
-      if (game.info.global_wonders[i] <= 0 && game.improvements[i] != I_NONE) {
+    if (is_wonder(i)
+        && improvement_types[i].equiv_range == IR_WORLD
+        && !find_city_by_id(game.info.global_wonders[i]))
+    {
+      if (game.info.global_wonders[i] <= 0
+          && game.improvements[i] != I_NONE)
+      {
         game.improvements[i] = I_NONE;
         need_effect_update = TRUE;
       } else if (game.info.global_wonders[i] > 0
@@ -3893,7 +3898,7 @@ void handle_processing_finished(void) /* 1 */
 ...
 **************************************************************************/
 void notify_about_incoming_packet(struct connection *pc,
-                                   int packet_type, int size)
+                                  int packet_type, int size)
 {
   assert(pc == &aconnection);
   freelog(LOG_DEBUG, "incoming packet={type=%d, size=%d}", packet_type,
