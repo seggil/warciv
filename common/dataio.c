@@ -339,7 +339,8 @@ void dio_put_bit_string(struct data_out *dout, const char *value)
 {
   /* Note that size_t is often an unsigned type, so we must be careful
    * with the math when calculating 'bytes'. */
-  size_t bits = strlen(value), bytes;
+  size_t bits = strlen(value);
+  size_t bytes;
   size_t max = (unsigned short)(-1);
 
   if (bits > max) {
