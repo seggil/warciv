@@ -90,11 +90,15 @@ static void diplo_dialog_returnkey(GtkWidget *w, gpointer data);
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted,
+void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted, /* 82 */
                                     bool other_accepted)
 {
-  struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(counterpart);
+  struct Diplomacy_dialog *pdialog;
+  printf("PACKET_DIPLOMACY_ACCEPT_TREATY\n");
+  printf("counterpart=%d I_accepted=%d other_accepted=%d\n",
+         counterpart, I_accepted, other_accepted);
 
+  pdialog = find_diplomacy_dialog(counterpart);
   if (!pdialog) {
     return;
   }
@@ -108,10 +112,12 @@ void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted,
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_init_meeting(int counterpart, int initiated_from)
+void handle_diplomacy_init_meeting(int counterpart, int initiated_from) /* 74 */
 {
   struct player *pplayer;
 
+  printf("PACKET_DIPLOMACY_INIT_MEETING counterpart=%d initiated_from=%d\n",
+          counterpart, initiated_from);
   if (!is_valid_player_id(counterpart)) {
     return;
   }
@@ -131,9 +137,12 @@ void handle_diplomacy_init_meeting(int counterpart, int initiated_from)
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_cancel_meeting(int counterpart, int initiated_from)
+void handle_diplomacy_cancel_meeting(int counterpart, int initiated_from) /* 76 */
 {
-  struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(counterpart);
+  struct Diplomacy_dialog *pdialog;
+  printf("PACKET_DIPLOMACY_CANCEL_MEETING counterpart=%d initiated_from=%d\n",
+          counterpart, initiated_from);
+  pdialog = find_diplomacy_dialog(counterpart);
 
   if (!pdialog) {
     return;
@@ -145,11 +154,15 @@ void handle_diplomacy_cancel_meeting(int counterpart, int initiated_from)
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_create_clause(int counterpart, int giver,
+void handle_diplomacy_create_clause(int counterpart, int giver, /* 78 */
                                     enum clause_type type, int value)
 {
-  struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(counterpart);
+  struct Diplomacy_dialog *pdialog;
+  printf("PACKET_DIPLOMACY_CREATE_CLAUSE"
+         "counterpart=%d giver=%d type=%d value=%d\n",
+         counterpart, giver, type, value);
 
+  pdialog = find_diplomacy_dialog(counterpart);
   if (!pdialog) {
     return;
   }
@@ -161,11 +174,15 @@ void handle_diplomacy_create_clause(int counterpart, int giver,
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_remove_clause(int counterpart, int giver,
+void handle_diplomacy_remove_clause(int counterpart, int giver, /* 80 */
                                     enum clause_type type, int value)
 {
-  struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(counterpart);
+  struct Diplomacy_dialog *pdialog;
+  printf("PACKET_DIPLOMACY_REMOVE_CLAUSE"
+         "counterpart=%d giver=%d type=%d value=%d\n",
+         counterpart, giver, type, value);
 
+  pdialog = find_diplomacy_dialog(counterpart);
   if (!pdialog) {
     return;
   }
