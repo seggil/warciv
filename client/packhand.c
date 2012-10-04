@@ -83,7 +83,7 @@ static int reports_thaw_requests_size = 0;
 /**************************************************************************
   Unpackage the unit information into a newly allocated unit structure.
 **************************************************************************/
-static struct unit * unpackage_unit(struct packet_unit_info *packet)
+static struct unit * unpackage_unit(struct packet_unit_info *packet)  /* 49 */
 {
   struct unit *punit = create_unit_virtual(get_player(packet->owner), NULL,
                                            packet->type, packet->veteran);
@@ -171,8 +171,10 @@ static struct unit *unpackage_short_unit(struct packet_unit_short_info *packet)
 /**************************************************************************
 ..
 **************************************************************************/
-void handle_server_join_reply(bool you_can_join, char *message,
-                              char *capability, char *challenge_file,
+void handle_server_join_reply(bool you_can_join, /* 5 */
+                              char *message,
+                              char *capability,
+                              char *challenge_file,
                               int conn_id)
 {
   char msg[MAX_LEN_MSG];
@@ -220,7 +222,7 @@ void handle_server_join_reply(bool you_can_join, char *message,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_remove(int city_id)
+void handle_city_remove(int city_id) /* 20 */
 {
   city_t *pcity = find_city_by_id(city_id);
   tile_t *ptile;
@@ -243,7 +245,7 @@ void handle_city_remove(int city_id)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_remove(int unit_id)
+void handle_unit_remove(int unit_id) /* 48 */
 {
   struct unit *punit = find_unit_by_id(unit_id);
   struct player *powner;
@@ -275,7 +277,7 @@ void handle_nuke_tile_info(int x, int y)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_combat_info(int attacker_unit_id, int defender_unit_id,
+void handle_unit_combat_info(int attacker_unit_id, int defender_unit_id, /* 51 */
                              int attacker_hp, int defender_hp,
                              bool make_winner_veteran)
 {
@@ -904,7 +906,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_new_year(int year, int turn)
+void handle_new_year(int year, int turn) /* 92 */
 {
   struct player *pplayer;
 
@@ -1016,7 +1018,7 @@ void play_sound_for_event(enum event_type type)
   Handle a message packet.  This includes all messages - both
   in-game messages and chats from other players.
 **************************************************************************/
-void handle_chat_msg(char *message, int x, int y,
+void handle_chat_msg(char *message, int x, int y, /* 18 */
                      enum event_type event, int conn_id)
 {
   tile_t *ptile = NULL;
@@ -2882,7 +2884,7 @@ void handle_ruleset_game(struct packet_ruleset_game *packet)
 /**************************************************************************
   ...
 **************************************************************************/
-void handle_unit_bribe_info(int unit_id, int cost)
+void handle_unit_bribe_info(int unit_id, int cost) /* 68 */
 {
   struct unit *punit = find_unit_by_id(unit_id);
 
@@ -2897,7 +2899,7 @@ void handle_unit_bribe_info(int unit_id, int cost)
 /**************************************************************************
   ...
 **************************************************************************/
-void handle_city_incite_info(int city_id, int cost)
+void handle_city_incite_info(int city_id, int cost) /* 34 */
 {
   city_t *pcity = find_city_by_id(city_id);
 
