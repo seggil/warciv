@@ -221,7 +221,7 @@ grouped together. There are the following groups:
   Spaceship
   Ruleset
 
-The last used packet number is 114.
+The last used packet number is 150.
 ****************************************************/
 
 
@@ -888,14 +888,6 @@ PACKET_NEW_YEAR=92;sc,lsend
   TURN turn;
 end
 
-# Freeze reports and agents
-PACKET_FREEZE_CLIENT=135;sc,lsend
-end
-
-# Thaw reports and agents
-PACKET_THAW_CLIENT=136;sc,lsend
-end
-
 /************** Spaceship packets **********************/
 
 PACKET_SPACESHIP_LAUNCH=93;cs
@@ -1402,6 +1394,8 @@ PACKET_VOTE_SUBMIT=128;cs,is-info,handle-per-conn
   SINT8 value;
 end
 
+/* 129 */
+
 /************** "extglobalinfo" capability packets **********************/
 
 PACKET_TRADE_ROUTE_PLAN=130;cs,dsend
@@ -1423,6 +1417,17 @@ PACKET_TRADE_ROUTE_INFO=133;sc,handle-via-packet
   UINT8 status; /* enum trade_route_status */
 end
 
+/* 134 */
+
+# Freeze reports and agents
+PACKET_FREEZE_CLIENT=135;sc,lsend
+end
+
+# Thaw reports and agents
+PACKET_THAW_CLIENT=136;sc,lsend
+end
+
+/* 137 */
 
 PACKET_CITY_SET_RALLY_POINT=138;cs,dsend
   CITY id;
@@ -1433,6 +1438,7 @@ PACKET_CITY_CLEAR_RALLY_POINT=139;cs,dsend
   CITY id;
 end
 
+/* 140 */
 
 PACKET_UNIT_AIR_PATROL=141;cs,dsend
   UNIT id;
@@ -1443,6 +1449,8 @@ PACKET_UNIT_AIR_PATROL_STOP=142;cs,dsend
   UNIT id;
 end
 
+/* 143 */
+/* 144 */
 
 /* CMA parameter */
 PACKET_CITY_MANAGER_PARAM=145;cs,sc,handle-via-packet
@@ -1459,6 +1467,9 @@ PACKET_CITY_NO_MANAGER_PARAM=146;cs,sc,dsend
   CITY id;
 end
 
+/* 147 */
+/* 148 */
+/* 149 */
 
 PACKET_PLAYER_INFO_REQ=150;cs,dsend,handle-per-conn
   PLAYER id;
