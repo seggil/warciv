@@ -215,16 +215,21 @@ struct city_common {
   struct trade_route_list *trade_routes;
 
   /* the productions */
-  int food_prod, food_surplus;
+  int food_prod;
+  int food_surplus;
   /* Shield production is shields produced minus shield_waste*/
-  int shield_prod, shield_surplus, shield_waste;
+  int shield_prod;
+  int shield_surplus;
+  int shield_waste;
   int trade_prod, corruption, tile_trade;
 
   /* Cached values for CPU savings. */
   int shield_bonus, luxury_bonus, tax_bonus, science_bonus;
 
   /* the totals */
-  int luxury_total, tax_total, science_total;
+  int luxury_total;
+  int tax_total;
+  int science_total;
 
   /* the physics */
   int food_stock;
@@ -269,7 +274,8 @@ typedef struct city_s {
     struct client_part_s {
       /* Only used at the client (the server is omniscient). */
       bool occupied;
-      bool happy, unhappy;
+      bool happy;
+      bool unhappy;
 
       /* Info for dipl/spy investigation. */
       struct unit_list *info_units_supported;
