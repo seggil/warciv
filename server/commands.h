@@ -101,7 +101,7 @@ enum command_id {
 
   /* potentially harmful: */
   CMD_AUTHDB,
-  CMD_FCDB,
+  CMD_WCDB,
 #endif
   CMD_END_GAME,
   CMD_DRAW,
