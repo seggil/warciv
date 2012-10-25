@@ -172,7 +172,7 @@ static void handle_stdin_close(void)
 #ifdef HAVE_LIBREADLINE
 /****************************************************************************/
 
-#define HISTORY_FILENAME  ".civserver_history"
+#define HISTORY_FILENAME  ".warserver_history"
 #define HISTORY_LENGTH    100
 
 static char *history_file = NULL;
