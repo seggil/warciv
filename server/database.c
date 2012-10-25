@@ -519,7 +519,7 @@ static bool has_salt(const struct connection *pconn)
   if (!pconn) {
     return FALSE;
   }
-  return pconn->server.salt != 0;
+  return pconn->u.server.salt != 0;
 }
 #endif /* HAVE_MYQL */
 
@@ -539,11 +539,11 @@ static bool check_password(struct connection *pconn,
 
   /* do the password checking right here */
   if (srvarg.auth.salted && has_salt(pconn)) {
-    create_salted_md5sum(password, passlen, pconn->server.salt, checksum);
+    create_salted_md5sum(password, passlen, pconn->u.server.salt, checksum);
   } else {
     create_md5sum(password, passlen, checksum);
   }
-  password_ok = (0 == strncmp(checksum, pconn->server.password,
+  password_ok = (0 == strncmp(checksum, pconn->u.server.password,
                               DIGEST_HEX_BYTES));
 
   /* we don't really need the stuff below here to
@@ -566,7 +566,7 @@ static bool check_password(struct connection *pconn,
   my_snprintf(buffer, sizeof(buffer),
       "insert into %s (name, logintime, address, succeed) "
       "values ('%s',unix_timestamp(),'%s','%s')",
-      LOGIN_TABLE, escaped_name, pconn->server.ipaddr,
+      LOGIN_TABLE, escaped_name, pconn->u.server.ipaddr,
       password_ok ? "S" : "F");
   if (mysql_query(sock, buffer)) {
     freelog(LOG_ERROR, "check_password insert loginlog failed for "
@@ -579,7 +579,7 @@ static bool check_password(struct connection *pconn,
     my_snprintf(buffer, sizeof(buffer),
         "update %s set accesstime=unix_timestamp(), address='%s', "
         "logincount=logincount+1 where name = '%s'",
-        AUTH_TABLE, pconn->server.ipaddr, escaped_name);
+        AUTH_TABLE, pconn->u.server.ipaddr, escaped_name);
     if (mysql_query(sock, buffer)) {
       freelog(LOG_ERROR, "check_password auth update failed for "
               "user: %s (%s)", pconn->username, mysql_error(sock));
@@ -590,11 +590,11 @@ static bool check_password(struct connection *pconn,
     /* Create a new salt if this user doesn't have one. */
     if (srvarg.auth.salted && !has_salt(pconn)) {
       create_salt(pconn);
-      create_salted_md5sum(password, passlen, pconn->server.salt,
+      create_salted_md5sum(password, passlen, pconn->u.server.salt,
                            checksum);
       my_snprintf(buffer, sizeof(buffer),
           "UPDATE %s SET password = '%s', salt = %d WHERE name = '%s'",
-          AUTH_TABLE, checksum, pconn->server.salt, escaped_name);
+          AUTH_TABLE, checksum, pconn->u.server.salt, escaped_name);
       if (mysql_query(sock, buffer)) {
         freelog(LOG_ERROR, "password salt update failed for "
                 "user: %s (%s)", pconn->username, mysql_error(sock));
@@ -677,13 +677,13 @@ static enum authdb_status load_user(struct connection *pconn)
 
   /* if there are rows, then fetch them and use the first one */
   row = mysql_fetch_row(res);
-  mystrlcpy(pconn->server.password, row[0],
-            sizeof(pconn->server.password));
+  mystrlcpy(pconn->u.server.password, row[0],
+            sizeof(pconn->u.server.password));
   if (srvarg.auth.salted) {
     if (row[1] != NULL) {
-      pconn->server.salt = atoi(row[1]);
+      pconn->u.server.salt = atoi(row[1]);
     } else {
-      pconn->server.salt = 0;
+      pconn->u.server.salt = 0;
     }
   }
 
@@ -726,12 +726,12 @@ static bool save_user(struct connection *pconn)
   mysql_real_escape_string(sock, escaped_name, pconn->username,
                            strlen(pconn->username));
 
-  passlen = strlen(pconn->server.password);
+  passlen = strlen(pconn->u.server.password);
   if (srvarg.auth.salted) {
-    create_salted_md5sum(pconn->server.password, passlen,
-                         pconn->server.salt, checksum);
+    create_salted_md5sum(pconn->u.server.password, passlen,
+                         pconn->u.server.salt, checksum);
   } else {
-    create_md5sum(pconn->server.password, passlen, checksum);
+    create_md5sum(pconn->u.server.password, passlen, checksum);
   }
 
   /* insert new user into table. we insert the following things: name
@@ -742,14 +742,14 @@ static bool save_user(struct connection *pconn)
     my_snprintf(buffer, sizeof(buffer), "insert into %s values "
                 "(NULL, '%s', '%s', %d, NULL, unix_timestamp(), "
                 "unix_timestamp(), '%s', '%s', 0)",
-                AUTH_TABLE, escaped_name, checksum, pconn->server.salt,
-                pconn->server.ipaddr, pconn->server.ipaddr);
+                AUTH_TABLE, escaped_name, checksum, pconn->u.server.salt,
+                pconn->u.server.ipaddr, pconn->u.server.ipaddr);
   } else {
     my_snprintf(buffer, sizeof(buffer), "insert into %s values "
                 "(NULL, '%s', '%s', NULL, unix_timestamp(), "
                 "unix_timestamp(), '%s', '%s', 0)",
                 AUTH_TABLE, escaped_name, checksum,
-                pconn->server.ipaddr, pconn->server.ipaddr);
+                pconn->u.server.ipaddr, pconn->u.server.ipaddr);
   }
 
   if (mysql_query(sock, buffer)) {
@@ -764,7 +764,7 @@ static bool save_user(struct connection *pconn)
   my_snprintf(buffer, sizeof(buffer),
               "insert into %s (name, logintime, address, succeed) "
               "values ('%s',unix_timestamp(),'%s', 'S')", LOGIN_TABLE,
-              escaped_name, pconn->server.ipaddr);
+              escaped_name, pconn->u.server.ipaddr);
 
   if (mysql_query(sock, buffer)) {
     freelog(LOG_ERROR, "db_load insert loginlog failed for user: %s (%s)",
@@ -1760,7 +1760,7 @@ bool wcdb_end_of_turn_update(void)
 
     lux_income = 0;
     city_list_iterate(pplayer->cities, pcity) {
-      lux_income += pcity->luxury_total;
+      lux_income += pcity->common.luxury_total;
     } city_list_iterate_end;
 
     /* Give my_snprintf a workout. */
