@@ -1617,6 +1617,7 @@ bool server_handle_packet(enum packet_type type, void *packet,
 
 bool client_handle_packet(enum packet_type type, void *packet)
 {
+  freelog(LOG_DEBUG, "input_from_server opcode=%d", type);
   switch(type) {
 ''')
     for p in packets:
