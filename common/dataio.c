@@ -119,7 +119,7 @@ static bool enough_space(struct data_out *dout, size_t size)
 /**************************************************************************
   Returns TRUE iff the input contains size unread bytes.
 **************************************************************************/
-static bool enough_data(struct data_in *din, size_t size)
+static bool enough_data_in(struct data_in *din, size_t size)
 {
   if (dio_input_remaining(din) < size) {
     din->too_short = TRUE;
@@ -406,7 +406,7 @@ void dio_put_worklist(struct data_out *dout, const struct worklist *pwl)
 **************************************************************************/
 void dio_get_uint8(struct data_in *din, int *dest)
 {
-  if (enough_data(din, 1)) {
+  if (enough_data_in(din, 1)) {
     if (dest) {
       uint8_t x;
 
@@ -426,7 +426,7 @@ void dio_get_uint8(struct data_in *din, int *dest)
 **************************************************************************/
 void dio_get_uint16(struct data_in *din, int *dest)
 {
-  if (enough_data(din, 2)) {
+  if (enough_data_in(din, 2)) {
     if (dest) {
       uint16_t x;
 
@@ -446,7 +446,7 @@ void dio_get_uint16(struct data_in *din, int *dest)
 **************************************************************************/
 void dio_get_uint32(struct data_in *din, int *dest)
 {
-  if (enough_data(din, 4)) {
+  if (enough_data_in(din, 4)) {
     if (dest) {
       uint32_t x;
 
@@ -531,7 +531,7 @@ void dio_get_sint16(struct data_in *din, int *dest)
 **************************************************************************/
 void dio_get_memory(struct data_in *din, void *dest, size_t dest_size)
 {
-  if (enough_data(din, dest_size)) {
+  if (enough_data_in(din, dest_size)) {
     if (dest) {
       memcpy(dest, ADD_TO_POINTER(din->src, din->current), dest_size);
     }
@@ -550,7 +550,7 @@ void dio_get_string(struct data_in *din, char *dest, size_t max_dest_size)
 
   assert(max_dest_size > 0 || dest == NULL);
 
-  if (!enough_data(din, 1)) {
+  if (!enough_data_in(din, 1)) {
     dest[0] = '\0';
     return;
   }
@@ -591,7 +591,7 @@ void dio_get_bit_string(struct data_in *din, char *dest,
 
   assert(dest != NULL && max_dest_size > 0);
 
-  if (!enough_data(din, 1)) {
+  if (!enough_data_in(din, 1)) {
     dest[0] = '\0';
     return;
   }
