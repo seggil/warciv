@@ -91,7 +91,7 @@ enum pf_node_status {
  * (aka internal buffer); index is map_pos_to_index(x, y);
  */
 struct path_finding_map {
-  struct tile *tile;            /* The current position */
+  tile_t *tile;                 /* The current position */
   struct pf_parameter *params;  /* Initial parameters */
   struct pqueue *queue;         /* Queue of nodes we have reached but not
                                  * processed yet (NS_NEW), sorted by their
@@ -105,9 +105,9 @@ struct path_finding_map {
 
 static bool danger_iterate_map(struct path_finding_map *pf_map);
 static struct pf_path* danger_construct_path(const struct path_finding_map *pf_map,
-                                             struct tile *ptile);
+                                             tile_t *ptile);
 static struct pf_path *danger_get_path(struct path_finding_map *pf_map,
-                                       struct tile *ptile);
+                                       tile_t *ptile);
 
 
 /* =================== manipulating the cost ===================== */
@@ -183,7 +183,7 @@ static int adjust_cost(const struct path_finding_map *pf_map, int cost)
   node_known_type and zoc
 ******************************************************************/
 static void init_node(struct path_finding_map *pf_map, struct path_finding_node * node,
-                      struct tile *ptile)
+                      tile_t *ptile)
 {
   struct pf_parameter *params = pf_map->params;
 
@@ -506,7 +506,7 @@ void pf_destroy_map(struct path_finding_map *pf_map)
   Fill in the position which must be discovered already. A helper
   for *_get_position functions.
 *******************************************************************/
-static void fill_position(const struct path_finding_map *pf_map, struct tile *ptile,
+static void fill_position(const struct path_finding_map *pf_map, tile_t *ptile,
                           struct pf_position *pos)
 {
   mapindex_t index = ptile->index;
@@ -555,7 +555,7 @@ void pf_next_get_position(const struct path_finding_map *pf_map,
   Should _always_ check the return value, forthe position might be
   unreachable.
 *******************************************************************/
-bool pf_get_position(struct path_finding_map *pf_map, struct tile *ptile,
+bool pf_get_position(struct path_finding_map *pf_map, tile_t *ptile,
                      struct pf_position *pos)
 {
   mapindex_t index = ptile->index;
@@ -583,13 +583,13 @@ bool pf_get_position(struct path_finding_map *pf_map, struct tile *ptile,
   discovered.  A helper for *get_path functions.
 *******************************************************************/
 static struct pf_path* construct_path(const struct path_finding_map *pf_map,
-                                      struct tile *dest_tile)
+                                      tile_t *dest_tile)
 {
   int i;
   int index = dest_tile->index;
   enum direction8 dir_next;
   struct pf_path *path;
-  struct tile *ptile;
+  tile_t *ptile;
 
   /* Debug period only!  Please remove after PF is settled */
   assert(!pf_map->params->is_pos_dangerous);
@@ -659,7 +659,7 @@ struct pf_path *pf_next_get_path(const struct path_finding_map *pf_map)
   Get the path to x, y, put it in "path".  If (x, y) has not been reached
   yet, iterate the map until we reach it or run out of map.
 ************************************************************************/
-struct pf_path *pf_get_path(struct path_finding_map *pf_map, struct tile *ptile)
+struct pf_path *pf_get_path(struct path_finding_map *pf_map, tile_t *ptile)
 {
   mapindex_t index = ptile->index;
   utiny_t status = pf_map->status[index];
@@ -738,7 +738,7 @@ void pf_destroy_path(struct pf_path *path)
 ************************************************************************/
 static void init_danger_node(struct path_finding_map *pf_map,
                              struct danger_node *d_node,
-                             struct path_finding_node *node, struct tile *ptile)
+                             struct path_finding_node *node, tile_t *ptile)
 {
   struct pf_parameter *params = pf_map->params;
 
@@ -760,7 +760,7 @@ static void create_danger_segment(struct path_finding_map *pf_map,
                                   struct danger_node *d_node1)
 {
   int i;
-  struct tile *ptile = pf_map->tile;
+  tile_t *ptile = pf_map->tile;
   struct path_finding_node *node = &pf_map->lattice[ptile->index];
   struct danger_node *d_node = &pf_map->d_lattice[ptile->index];
   int length = 0;
@@ -1042,7 +1042,7 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
   NB: will only find paths to safe tiles!
 *******************************************************************/
 static struct pf_path *danger_construct_path(const struct path_finding_map *pf_map,
-                                             struct tile *ptile)
+                                             tile_t *ptile)
 {
   struct pf_path *path = wc_malloc(sizeof(*path));
   int i;
@@ -1053,7 +1053,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
   struct path_finding_node *node = &pf_map->lattice[ptile->index];
   struct danger_node *d_node = &pf_map->d_lattice[ptile->index];
   int length = 1;
-  struct tile *iter_tile = ptile;
+  tile_t *iter_tile = ptile;
 
   if (pf_map->params->turn_mode != TM_BEST_TIME &&
       pf_map->params->turn_mode != TM_WORST_TIME) {
@@ -1181,7 +1181,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
   Danger version of pf_get_path.
 ************************************************************************/
 static struct pf_path *danger_get_path(struct path_finding_map *pf_map,
-                                       struct tile *ptile)
+                                       tile_t *ptile)
 {
   mapindex_t index = ptile->index;
   utiny_t status = pf_map->status[index];

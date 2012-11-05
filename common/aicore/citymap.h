@@ -16,10 +16,10 @@
 #include "wc_intl.h"
 
 void citymap_turn_init(struct player *pplayer);
-void citymap_reserve_city_spot(struct tile *ptile, int id);
-void citymap_free_city_spot(struct tile *ptile, int id);
-void citymap_reserve_tile(struct tile *ptile, int id);
-int citymap_read(struct tile *ptile);
-bool citymap_is_reserved(struct tile *ptile);
+void citymap_reserve_city_spot(tile_t *ptile, int id);
+void citymap_free_city_spot(tile_t *ptile, int id);
+void citymap_reserve_tile(tile_t *ptile, int id);
+int citymap_read(tile_t *ptile);
+bool citymap_is_reserved(tile_t *ptile);
 
 #endif

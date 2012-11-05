@@ -94,7 +94,7 @@ void citymap_turn_init(struct player *pplayer)
   a settler's or a city's id. Then it 'crowds' tiles that this city can
   use to make them less attractive to other cities we may consider making.
 **************************************************************************/
-void citymap_reserve_city_spot(struct tile *ptile, int id)
+void citymap_reserve_city_spot(tile_t *ptile, int id)
 {
 #ifdef DEBUG
   freelog(LOG_CITYMAP, "id %d reserving (%d, %d), was %d",
@@ -119,7 +119,7 @@ void citymap_reserve_city_spot(struct tile *ptile, int id)
 /**************************************************************************
   Reverse any reservations we have made in the surrounding area.
 **************************************************************************/
-void citymap_free_city_spot(struct tile *ptile, int id)
+void citymap_free_city_spot(tile_t *ptile, int id)
 {
   map_city_radius_iterate(ptile, ptile1) {
     if (citymap[ptile1->index] == -(id)) {
@@ -134,7 +134,7 @@ void citymap_free_city_spot(struct tile *ptile, int id)
   Reserve additional tiles as desired (eg I would reserve best available
   food tile in addition to adjacent tiles)
 **************************************************************************/
-void citymap_reserve_tile(struct tile *ptile, int id)
+void citymap_reserve_tile(tile_t *ptile, int id)
 {
 #ifdef DEBUG
   assert(!citymap_is_reserved(ptile));
@@ -148,7 +148,7 @@ void citymap_reserve_tile(struct tile *ptile, int id)
   cities you are within the radius of, or zero or less if not. A negative
   value means this tile is reserved by a city and should not be taken.
 **************************************************************************/
-int citymap_read(struct tile *ptile)
+int citymap_read(tile_t *ptile)
 {
   return citymap[ptile->index];
 }
@@ -157,7 +157,7 @@ int citymap_read(struct tile *ptile)
   A tile is reserved if it contains a city or unit id, or a worker is
   assigned to it.
 **************************************************************************/
-bool citymap_is_reserved(struct tile *ptile)
+bool citymap_is_reserved(tile_t *ptile)
 {
   if (ptile->worked || ptile->city) {
     return TRUE;

@@ -36,8 +36,8 @@ static void pft_fill_unit_default_parameter(struct pf_parameter *parameter,
   Should be used in conjunction with a TB callback which
   prohibits going through an enemy city/tile.
 *************************************************************/
-static int seamove(const struct tile *ptile, enum direction8 dir,
-                   const struct tile *ptile1, struct pf_parameter *param)
+static int seamove(const tile_t *ptile, enum direction8 dir,
+                   const tile_t *ptile1, struct pf_parameter *param)
 {
   /* MOVE_COST_FOR_VALID_SEA_STEP means ships can move between */
   if (ptile->move_cost[dir] == MOVE_COST_FOR_VALID_SEA_STEP
@@ -52,8 +52,8 @@ static int seamove(const struct tile *ptile, enum direction8 dir,
 /*************************************************************
   SINGLE_MOVE cost function for AIR_MOVING
 *************************************************************/
-static int single_airmove(const struct tile *ptile, enum direction8 dir,
-                          const struct tile *ptile1,
+static int single_airmove(const tile_t *ptile, enum direction8 dir,
+                          const tile_t *ptile1,
                           struct pf_parameter *param)
 {
   return SINGLE_MOVE; /* simple, eh? */
@@ -63,8 +63,8 @@ static int single_airmove(const struct tile *ptile, enum direction8 dir,
   A cost function for SEA_MOVING.  Does not allow shore
   bombardment.
 *************************************************************/
-static int seamove_no_bombard(const struct tile *ptile, enum direction8 dir,
-                              const struct tile *ptile1,
+static int seamove_no_bombard(const tile_t *ptile, enum direction8 dir,
+                              const tile_t *ptile1,
                               struct pf_parameter *param)
 {
   /* MOVE_COST_FOR_VALID_SEA_STEP means ships can move between */
@@ -83,8 +83,8 @@ static int seamove_no_bombard(const struct tile *ptile, enum direction8 dir,
   anywhere, unless we are leaving a friendly city, in which
   case we can move into the ocean but not into the land.
 ************************************************************/
-static int sea_overlap_move(const struct tile *ptile, enum direction8 dir,
-                            const struct tile *ptile1,
+static int sea_overlap_move(const tile_t *ptile, enum direction8 dir,
+                            const tile_t *ptile1,
                             struct pf_parameter *param)
 {
   if (is_ocean(ptile->terrain)) {
@@ -101,8 +101,8 @@ static int sea_overlap_move(const struct tile *ptile, enum direction8 dir,
   Sea attack is the same as overlap (consider bombardment) but we don't
   want to pass through enemy tiles.
 **********************************************************************/
-static int sea_attack_move(const struct tile *src_tile, enum direction8 dir,
-                           const struct tile *dest_tile,
+static int sea_attack_move(const tile_t *src_tile, enum direction8 dir,
+                           const tile_t *dest_tile,
                            struct pf_parameter *param)
 {
   if (is_ocean(src_tile->terrain)) {
@@ -121,8 +121,8 @@ static int sea_attack_move(const struct tile *src_tile, enum direction8 dir,
 /************************************************************
   LAND_MOVE cost function for a unit
 ************************************************************/
-static int normal_move_unit(const struct tile *ptile, enum direction8 dir,
-                            const struct tile *ptile1,
+static int normal_move_unit(const tile_t *ptile, enum direction8 dir,
+                            const tile_t *ptile1,
                             struct pf_parameter *param)
 {
   Terrain_type_id terrain1 = ptile1->terrain;
@@ -158,8 +158,8 @@ static int normal_move_unit(const struct tile *ptile, enum direction8 dir,
   LAND_MOVE cost function for a unit, but taking into account
   possibilities of attacking.
 *******************************************************************/
-static int land_attack_move(const struct tile *src_tile, enum direction8 dir,
-                            const struct tile *tgt_tile,
+static int land_attack_move(const tile_t *src_tile, enum direction8 dir,
+                            const tile_t *tgt_tile,
                             struct pf_parameter *param)
 {
   int move_cost;
@@ -221,8 +221,8 @@ static int land_attack_move(const struct tile *src_tile, enum direction8 dir,
   }
   which will achieve the same without call-back.
 ************************************************************/
-static int land_overlap_move(const struct tile *ptile, enum direction8 dir,
-                             const struct tile *ptile1,
+static int land_overlap_move(const tile_t *ptile, enum direction8 dir,
+                             const tile_t *ptile1,
                              struct pf_parameter *param)
 {
   Terrain_type_id terrain1 = ptile1->terrain;
@@ -244,8 +244,8 @@ static int land_overlap_move(const struct tile *ptile, enum direction8 dir,
   Will be used. DO NOT REMOVE.
 ************************************************************/
 #ifdef UNUSED
-static int reverse_move_unit(const struct tile *tile0, enum direction8 dir,
-                             const struct tile *ptile,
+static int reverse_move_unit(const tile_t *tile0, enum direction8 dir,
+                             const tile_t *ptile,
                              struct pf_parameter *param)
 {
   int terrain0 = map_get_terrain(tile0);
@@ -274,8 +274,8 @@ static int reverse_move_unit(const struct tile *tile0, enum direction8 dir,
 /************************************************************
   IGTER_MOVE cost function for a unit
 ************************************************************/
-static int igter_move_unit(const struct tile *ptile, enum direction8 dir,
-                           const struct tile *ptile1,
+static int igter_move_unit(const tile_t *ptile, enum direction8 dir,
+                           const tile_t *ptile1,
                            struct pf_parameter *param)
 {
   int move_cost;
@@ -310,9 +310,9 @@ static int igter_move_unit(const struct tile *ptile, enum direction8 dir,
   Will be used. DO NOT REMOVE.
 ************************************************************/
 #ifdef UNUSED
-static int reverse_igter_move_unit(const struct tile *tile0,
+static int reverse_igter_move_unit(const tile_t *tile0,
                                    enum direction8 dir,
-                                   const struct tile *ptile,
+                                   const tile_t *ptile,
                                    struct pf_parameter *param)
 {
   int move_cost;
@@ -342,7 +342,7 @@ static int reverse_igter_move_unit(const struct tile *tile0,
   An example of EC callback.  DO NOT REMOVE you pricks!
 *********************************************************************/
 #ifdef UNUSED
-static int afraid_of_dark_forest(const struct tile *ptile,
+static int afraid_of_dark_forest(const tile_t *ptile,
                                  enum known_type known,
                                  struct pf_parameter *param)
 {
@@ -362,7 +362,7 @@ static int afraid_of_dark_forest(const struct tile *ptile,
   A callback for maps overlapping one square into the ocean.  Insures
   that we don't continue walking over ocean.
 *********************************************************************/
-static enum tile_behavior dont_cross_ocean(const struct tile *ptile,
+static enum tile_behavior dont_cross_ocean(const tile_t *ptile,
                                            enum known_type known,
                                            struct pf_parameter *param)
 {
@@ -376,7 +376,7 @@ static enum tile_behavior dont_cross_ocean(const struct tile *ptile,
   PF callback to prohibit going into the unknown.  Also makes sure we
   don't plan to attack anyone.
 ***********************************************************************/
-enum tile_behavior no_fights_or_unknown(const struct tile *ptile,
+enum tile_behavior no_fights_or_unknown(const tile_t *ptile,
                                         enum known_type known,
                                         struct pf_parameter *param)
 {
@@ -392,7 +392,7 @@ enum tile_behavior no_fights_or_unknown(const struct tile *ptile,
 /**********************************************************************
   PF callback to prohibit attacking anyone.
 ***********************************************************************/
-enum tile_behavior no_fights(const struct tile *ptile, enum known_type known,
+enum tile_behavior no_fights(const tile_t *ptile, enum known_type known,
                              struct pf_parameter *param)
 {
   if (is_non_allied_unit_tile(ptile, param->owner)
@@ -410,7 +410,7 @@ enum tile_behavior no_fights(const struct tile *ptile, enum known_type known,
   An example of position-dangerous callback.  For triremes.
   FIXME: it cheats.
 ***********************************************************************/
-static bool trireme_is_pos_dangerous(const struct tile *ptile,
+static bool trireme_is_pos_dangerous(const tile_t *ptile,
                                      enum known_type known,
                                      struct pf_parameter *param)
 {
@@ -433,7 +433,7 @@ static bool trireme_is_pos_dangerous(const struct tile *ptile,
 /**********************************************************************
   Position-dangerous callback for all units other than triremes.
 ***********************************************************************/
-static bool is_pos_dangerous(const struct tile *ptile, enum known_type known,
+static bool is_pos_dangerous(const tile_t *ptile, enum known_type known,
                              struct pf_parameter *param)
 {
   /*hack for warclient*/
