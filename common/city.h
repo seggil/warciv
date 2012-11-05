@@ -406,8 +406,8 @@ const char *get_impr_name_ex(const city_t *pcity, Impr_Type_id id);
 /* tile production functions */
 
 int get_shields_tile(const tile_t *ptile); /* shield on spot */
-int get_trade_tile(const tile_t *ptile); /* trade on spot */
-int get_food_tile(const tile_t *ptile); /* food on spot */
+int get_trade_tile(const tile_t *ptile);   /* trade on spot */
+int get_food_tile(const tile_t *ptile);    /* food on spot */
 
 /* city map functions */
 

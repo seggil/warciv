@@ -102,7 +102,7 @@ Finds the map position for a given city map coordinate of a certain
 city. Returns true if the map position found is real.
 **************************************************************************/
 tile_t *base_city_map_to_map(const tile_t *city_tile,
-                                  int city_map_x, int city_map_y)
+                             int city_map_x, int city_map_y)
 {
   int x, y;
 
@@ -118,7 +118,7 @@ Finds the map position for a given city map coordinate of a certain
 city. Returns true if the map position found is real.
 **************************************************************************/
 tile_t *city_map_to_map(const city_t *const pcity,
-                             int city_map_x, int city_map_y)
+                        int city_map_x, int city_map_y)
 {
   return base_city_map_to_map(pcity->common.tile, city_map_x, city_map_y);
 }
@@ -1103,7 +1103,8 @@ static int best_value(const void *a, const void *b)
 /**************************************************************************
   Returns the maximum trade production of the tiles of the city.
 **************************************************************************/
-static int max_tile_trade(const city_t *pcity) {
+static int max_tile_trade(const city_t *pcity)
+{
   int i, total;
   int tile_trade[CITY_MAP_SIZE * CITY_MAP_SIZE];
   size_t size = 0;
@@ -1135,7 +1136,8 @@ static int max_tile_trade(const city_t *pcity) {
 /**************************************************************************
   Returns the maximum trade production of a city.
 **************************************************************************/
-static int max_trade_prod(const city_t *pcity) {
+static int max_trade_prod(const city_t *pcity)
+{
   int trade_prod, tile_trade;
   city_t *ocity;
 
