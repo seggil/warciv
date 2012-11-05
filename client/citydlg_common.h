@@ -58,7 +58,7 @@ void get_city_citizen_types(city_t *pcity, int index,
                             struct citizen_type *citizens);
 void city_rotate_specialist(city_t *pcity, int citizen_index);
 
-void activate_all_units(struct tile *ptile);
+void activate_all_units(tile_t *ptile);
 
 int city_change_production(city_t *pcity, bool is_unit, int build_id);
 int city_set_worklist(city_t *pcity, struct worklist *pworklist);
@@ -74,6 +74,6 @@ int city_change_specialist(city_t *pcity, Specialist_type_id from,
 int city_toggle_worker(city_t *pcity, int city_x, int city_y);
 int city_rename(city_t *pcity, const char *name);
 
-void refresh_city_dialog_maps(struct tile *ptile);
+void refresh_city_dialog_maps(tile_t *ptile);
 
 #endif /* WC_CLIENT_CITYDLG_COMMON_H */

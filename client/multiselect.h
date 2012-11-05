@@ -193,7 +193,7 @@ enum delayed_goto_type {
 struct delayed_goto_data {
   int id;
   enum delayed_goto_type type;
-  struct tile *ptile;
+  tile_t *ptile;
 };
 
 #define SPECLIST_TAG delayed_goto_data
@@ -243,7 +243,7 @@ extern int delayed_goto_need_tile_for;
 
 extern struct delayed_goto delayed_goto_list[DELAYED_GOTO_NUM];
 
-void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile);
+void delayed_goto_add_unit(int dg, int id, int type, tile_t *ptile);
 bool delayed_goto_auto_filter_change(filter *pfilter,
                                      enum automatic_execution value);
 void delayed_goto_auto_timers_init(void);
@@ -257,13 +257,13 @@ const char *delayed_goto_get_auto_name(enum automatic_execution value);
 void delayed_goto_init_all(void);
 void delayed_goto_move(int dest, int src);
 int delayed_goto_size(int dg);
-struct player *get_tile_player(struct tile *ptile);
+struct player *get_tile_player(tile_t *ptile);
 
-void add_unit_to_delayed_goto(struct tile *ptile);
+void add_unit_to_delayed_goto(tile_t *ptile);
 void request_player_execute_delayed_goto(struct player *pplayer, int dg);
 void request_unit_execute_delayed_goto(int dg);
-void request_execute_delayed_goto(struct tile *ptile, int dg);
-void schedule_delayed_airlift(struct tile *ptile);
+void request_execute_delayed_goto(tile_t *ptile, int dg);
+void schedule_delayed_airlift(tile_t *ptile);
 void add_pause_delayed_goto(void);
 
 /**************************************************************************
@@ -294,10 +294,10 @@ void airlift_queue_set_unit_type(int aq, Unit_Type_id utype);
 void airlift_queue_show(int aq);
 int airlift_queue_size(int aq);
 
-void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi);
+void add_city_to_auto_airlift_queue(tile_t *ptile, bool multi);
 void add_city_to_specific_auto_airlift_queue(int aq, city_t *pcity);
 void request_auto_airlift_source_selection_with_airport(void);
 void do_airlift_for(int aq, city_t *pcity);
-void do_airlift(struct tile *ptile);
+void do_airlift(tile_t *ptile);
 
 #endif /* WC_CLIENT_MULTISELECT_H */

@@ -22,7 +22,7 @@ void trade_free(void);
 
 void update_trade_route_infos(struct trade_route *ptr);
 
-void add_tile_in_trade_planning(struct tile *ptile, bool allow_remove);
+void add_tile_in_trade_planning(tile_t *ptile, bool allow_remove);
 void trade_city_new(city_t *pcity);
 void trade_remove_city(city_t *pcity);
 void clear_trade_city_list(void);

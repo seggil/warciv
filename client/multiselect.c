@@ -782,7 +782,7 @@ static struct auto_timer auto_timers[auto_timers_num];
 /**********************************************************************
   Add a delayed goto structure in a queue.
 ***********************************************************************/
-void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile)
+void delayed_goto_add_unit(int dg, int id, int type, tile_t *ptile)
 {
   dgassert(dg);
 
@@ -1075,7 +1075,7 @@ int delayed_goto_size(int dg)
 /**********************************************************************
   Try to evaluate the target player for the given tile.
 ***********************************************************************/
-struct player *get_tile_player(struct tile *ptile)
+struct player *get_tile_player(tile_t *ptile)
 {
   int count[game.info.nplayers], best = -1;
 
@@ -1133,7 +1133,7 @@ static bool unit_can_do_delayed_action(struct unit *punit,
 /**********************************************************************
   Add units to delayed goto queue.
 ***********************************************************************/
-void add_unit_to_delayed_goto(struct tile *ptile)
+void add_unit_to_delayed_goto(tile_t *ptile)
 {
   struct unit *punit_focus = get_unit_in_focus();
   struct unit_list *ulist;
@@ -1249,7 +1249,7 @@ void request_unit_execute_delayed_goto(int dg)
 /**********************************************************************
   Really execute it...
 ***********************************************************************/
-void request_execute_delayed_goto(struct tile *ptile, int dg)
+void request_execute_delayed_goto(tile_t *ptile, int dg)
 {
   char buf[256];
   int counter = 0;
@@ -1359,7 +1359,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
 /**********************************************************************
   Add a airlift request in the delayed queue.
 ***********************************************************************/
-void schedule_delayed_airlift(struct tile *ptile)
+void schedule_delayed_airlift(tile_t *ptile)
 {
   char buf[256];
 
@@ -1624,7 +1624,7 @@ int airlift_queue_size(int aq)
   Add a city to the current airlift queue. If multi is FALSE, it will
   remove the tile if the tile is already in the queue.
 ***********************************************************************/
-void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi)
+void add_city_to_auto_airlift_queue(tile_t *ptile, bool multi)
 {
   char buf[256] = "\0";
 
@@ -1709,7 +1709,7 @@ void do_airlift_for(int aq, city_t *pcity)
 /**********************************************************************
   Do massive airlift...
 ***********************************************************************/
-void do_airlift(struct tile *ptile)
+void do_airlift(tile_t *ptile)
 {
   if (!ptile->city) {
     char buf[256];

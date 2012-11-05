@@ -425,7 +425,7 @@ static void tilespec_free_toplevel(void)
 void tilespec_reread(const char *tileset_name)
 {
   int id;
-  struct tile *center_tile;
+  tile_t *center_tile;
   enum client_states state = get_client_state();
 
   freelog(LOG_NORMAL, "Loading tileset %s.", tileset_name);
@@ -1970,7 +1970,7 @@ static struct Sprite *get_city_occupied_sprite(city_t *pcity)
     ter_type_near  : terrain types of all adjacent terrain
     tspecial_near  : specials of all adjacent terrain
 **************************************************************************/
-static void build_tile_data(struct tile *ptile,
+static void build_tile_data(tile_t *ptile,
                             Terrain_type_id *ter_type,
                             enum tile_special_type *tspecial,
                             Terrain_type_id *ter_type_near,
@@ -1983,7 +1983,7 @@ static void build_tile_data(struct tile *ptile,
 
   /* Loop over all adjacent tiles.  We should have an iterator for this. */
   for (dir = 0; dir < 8; dir++) {
-    struct tile *tile1 = mapstep(ptile, dir);
+    tile_t *tile1 = mapstep(ptile, dir);
 
     if (tile1 && tile_get_known(tile1) != TILE_UNKNOWN) {
       tspecial_near[dir] = map_get_special(tile1);
@@ -2451,7 +2451,7 @@ static int fill_irrigation_sprite_array(struct drawn_sprite *sprs,
   Fill in the sprite array for blended terrain.
 ****************************************************************************/
 static int fill_blending_sprite_array(struct drawn_sprite *sprs,
-                                      struct tile *ptile,
+                                      tile_t *ptile,
                                       Terrain_type_id *ttype_near)
 {
   struct drawn_sprite *saved_sprs = sprs;
@@ -2470,7 +2470,7 @@ static int fill_blending_sprite_array(struct drawn_sprite *sprs,
      * get the "unknown" dither along the edge of the map.
      */
     for (dir = 0; dir < 4; dir++) {
-      struct tile *tile1 = mapstep(ptile, DIR4_TO_DIR8[dir]);
+      tile_t *tile1 = mapstep(ptile, DIR4_TO_DIR8[dir]);
       Terrain_type_id other = ttype_near[DIR4_TO_DIR8[dir]];
 
       if (!tile1
@@ -2493,7 +2493,7 @@ static int fill_blending_sprite_array(struct drawn_sprite *sprs,
   include specials or rivers.
 ****************************************************************************/
 static int fill_terrain_sprite_array(struct drawn_sprite *sprs,
-                                     struct tile *ptile,
+                                     tile_t *ptile,
                                      Terrain_type_id *ttype_near)
 {
   struct drawn_sprite *saved_sprs = sprs;
@@ -2501,7 +2501,7 @@ static int fill_terrain_sprite_array(struct drawn_sprite *sprs,
   Terrain_type_id ttype = ptile->terrain;
   struct terrain_drawing_data *draw = sprites.terrain[ttype];
   int l, i, tileno;
-  struct tile *adjc_tile;
+  tile_t *adjc_tile;
 
   if (!draw_terrain) {
     return 0;
@@ -2681,7 +2681,7 @@ static int fill_terrain_sprite_array(struct drawn_sprite *sprs,
   citymode specifies whether this is part of a citydlg.  If so some drawing
   is done differently.
 ****************************************************************************/
-int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
+int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
                       struct unit *punit, city_t *pcity,
                       bool citymode)
 {
@@ -3015,7 +3015,7 @@ static void classic_player_colors_init(void)
 /**********************************************************************
   Return color for overview map tile in classic warciv style.
 ***********************************************************************/
-static enum color_std classic_overview_tile_color(struct tile *ptile)
+static enum color_std classic_overview_tile_color(tile_t *ptile)
 {
   struct unit *punit;
   city_t *pcity;
@@ -3121,7 +3121,7 @@ static void team_player_colors_init(void)
 /**********************************************************************
   Return color for overview map tile with better emphasis on teams.
 ***********************************************************************/
-static enum color_std team_overview_tile_color(struct tile *ptile)
+static enum color_std team_overview_tile_color(tile_t *ptile)
 {
   struct unit *punit;
   city_t *pcity;
@@ -3188,7 +3188,7 @@ void player_colors_init(void)
 /**********************************************************************
   Return color for overview map tile.
 ***********************************************************************/
-enum color_std overview_tile_color(struct tile *ptile)
+enum color_std overview_tile_color(tile_t *ptile)
 {
   switch (player_colors_mode) {
   case PCM_CLASSIC:
@@ -3256,7 +3256,7 @@ void set_focus_unit_hidden_state(bool hide)
 /**********************************************************************
 ...
 ***********************************************************************/
-struct unit *get_drawable_unit(struct tile *ptile, bool citymode)
+struct unit *get_drawable_unit(tile_t *ptile, bool citymode)
 {
   struct unit *punit = find_visible_unit(ptile);
 

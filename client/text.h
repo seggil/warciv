@@ -21,8 +21,8 @@ struct player_spaceship;
 /****************************************************************************
   These functions return static strings with generally useful text.
 ****************************************************************************/
-const char *popup_info_text(struct tile *ptile);
-const char *concat_tile_activity_text(struct tile *ptile);
+const char *popup_info_text(tile_t *ptile);
+const char *concat_tile_activity_text(tile_t *ptile);
 const char *get_nearest_city_text(city_t *pcity, int sq_dist);
 const char *unit_description(struct unit *punit);
 const char *science_dialog_text(void);

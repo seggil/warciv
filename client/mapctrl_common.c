@@ -44,13 +44,14 @@
 
 /* Selection Rectangle */
 static int rec_anchor_x, rec_anchor_y;  /* canvas coordinates for anchor */
-static struct tile *rec_canvas_center_tile;
+static tile_t *rec_canvas_center_tile;
 static int rec_corner_x, rec_corner_y;  /* corner to iterate from */
 static int rec_w, rec_h;                /* width, heigth in pixels */
 
 bool rbutton_down = FALSE;
 bool rectangle_active = FALSE;
-struct tile *dist_first_tile = NULL, *dist_last_tile = NULL;
+tile_t *dist_first_tile = NULL;
+tile_t *dist_last_tile = NULL;
 
 /* This changes the behaviour of left mouse
    button in Area Selection mode. */
@@ -63,7 +64,7 @@ static bool clipboard_is_unit;
 /* Goto with drag and drop. */
 bool keyboardless_goto_button_down = FALSE;
 bool keyboardless_goto_active = FALSE;
-struct tile *keyboardless_goto_start_tile;
+tile_t *keyboardless_goto_start_tile;
 
 /* Update the workers for a city on the map, when the update is received */
 city_t *city_workers_display = NULL;
@@ -84,7 +85,7 @@ static void define_tiles_within_rectangle(void);
 **************************************************************************/
 void anchor_selection_rectangle(int canvas_x, int canvas_y)
 {
-  struct tile *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
 
   tile_to_canvas_pos(&rec_anchor_x, &rec_anchor_y, ptile);
   rec_anchor_x += NORMAL_TILE_WIDTH / 2;
@@ -123,7 +124,7 @@ static void define_tiles_within_rectangle(void)
   for (yy = 0; yy <= segments_y; yy++, y += inc_y) {
     x = rec_corner_x;
     for (xx = 0; xx <= segments_x; xx++, x += inc_x) {
-      struct tile *ptile;
+      tile_t *ptile;
 
       /*  For diamond shaped tiles, every other row is indented.
        */
@@ -185,10 +186,10 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
 {
   const int W = NORMAL_TILE_WIDTH,    half_W = W / 2;
   const int H = NORMAL_TILE_HEIGHT,   half_H = H / 2;
-  static struct tile *rec_tile = NULL;
+  static tile_t *rec_tile = NULL;
   int diff_x, diff_y;
-  struct tile *center_tile;
-  struct tile *ptile;
+  tile_t *center_tile;
+  tile_t *ptile;
 
   ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
 
@@ -274,7 +275,7 @@ void redraw_selection_rectangle(void)
 void update_distance_tool(int canvas_x, int canvas_y)
 {
   if (dist_first_tile) {
-    struct tile *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
+    tile_t *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
 
     if (ptile != dist_last_tile) {
       dist_last_tile = ptile;
@@ -349,7 +350,7 @@ void release_right_button(int canvas_x, int canvas_y)
 /**************************************************************************
  Left Mouse Button in Area Selection mode.
 **************************************************************************/
-void toggle_tile_hilite(struct tile *ptile)
+void toggle_tile_hilite(tile_t *ptile)
 {
   city_t *pcity = ptile->city;
 
@@ -377,7 +378,7 @@ void toggle_tile_hilite(struct tile *ptile)
 **************************************************************************/
 void key_city_overlay(int canvas_x, int canvas_y)
 {
-  struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (can_client_change_view() && ptile) {
     struct unit *punit;
@@ -396,7 +397,7 @@ void key_city_overlay(int canvas_x, int canvas_y)
 **************************************************************************/
 void key_cities_overlay(int canvas_x, int canvas_y)
 {
-  struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (can_client_change_view() && ptile) {
     city_t *pcity = find_city_or_settler_near_tile(ptile, NULL);
@@ -444,7 +445,7 @@ void key_cities_overlay(int canvas_x, int canvas_y)
 /**************************************************************************
  Shift-Left-Click on owned city or any visible unit to copy.
 **************************************************************************/
-void clipboard_copy_production(struct tile *ptile)
+void clipboard_copy_production(tile_t *ptile)
 {
   char msg[MAX_LEN_MSG];
   city_t *pcity = ptile->city;
@@ -548,7 +549,7 @@ void upgrade_canvas_clipboard(void)
 **************************************************************************/
 void release_goto_button(int canvas_x, int canvas_y)
 {
-  struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (keyboardless_goto_active && hover_state == HOVER_GOTO && ptile) {
     if (multi_select_size(0) == 1) {
@@ -572,7 +573,7 @@ void release_goto_button(int canvas_x, int canvas_y)
 **************************************************************************/
 void maybe_activate_keyboardless_goto(int canvas_x, int canvas_y)
 {
-  struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (ptile && get_unit_in_focus()
       && !same_pos(keyboardless_goto_start_tile, ptile)
@@ -620,7 +621,7 @@ void scroll_mapview(enum direction8 gui_dir)
 void action_button_pressed(int canvas_x, int canvas_y,
                            enum quickselect_type qtype)
 {
-  struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (can_client_change_view() && ptile) {
     /* FIXME: Some actions here will need to check can_client_issue_orders.
@@ -634,7 +635,7 @@ void action_button_pressed(int canvas_x, int canvas_y,
 **************************************************************************/
 void wakeup_button_pressed(int canvas_x, int canvas_y)
 {
-  struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (can_client_issue_orders() && ptile) {
     wakeup_sentried_units(ptile);
@@ -648,7 +649,7 @@ void adjust_workers_button_pressed(int canvas_x, int canvas_y)
 {
   int city_x, city_y;
   enum city_tile_type worker;
-  struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (can_client_issue_orders() && ptile) {
     city_t *pcity = find_city_near_tile(ptile);
@@ -686,7 +687,7 @@ void adjust_workers_button_pressed(int canvas_x, int canvas_y)
 void recenter_button_pressed(int canvas_x, int canvas_y)
 {
   /* We use the "nearest" tile here so off-map clicks will still work. */
-  struct tile *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
+  tile_t *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
 
   if (can_client_change_view() && ptile) {
     center_tile_mapcanvas(ptile);
@@ -740,7 +741,7 @@ void update_line(int canvas_x, int canvas_y)
        || hover_state == HOVER_PATROL
        || hover_state == HOVER_CONNECT)
       && draw_goto_line) {
-    struct tile *ptile, *old_tile;
+    tile_t *ptile, *old_tile;
 
     ptile = canvas_pos_to_tile(canvas_x, canvas_y);
     if (!ptile) {
@@ -763,7 +764,7 @@ void overview_update_line(int overview_x, int overview_y)
        || hover_state == HOVER_PATROL
        || hover_state == HOVER_CONNECT)
       && draw_goto_line) {
-    struct tile *ptile, *old_tile;
+    tile_t *ptile, *old_tile;
     int x, y;
 
     overview_to_map_pos(&x, &y, overview_x, overview_y);
@@ -781,7 +782,7 @@ void overview_update_line(int overview_x, int overview_y)
   given tile.  Return FALSE if the values cannot be determined (e.g., no
   units on the tile).
 **************************************************************************/
-bool get_chance_to_win(int *att_chance, int *def_chance, struct tile *ptile)
+bool get_chance_to_win(int *att_chance, int *def_chance, tile_t *ptile)
 {
   struct unit *my_unit, *defender, *attacker;
 
@@ -840,7 +841,7 @@ static int unit_list_compare(const void *a, const void *b)
 /****************************************************************************
   Fill and sort the list of units on the tile.
 ****************************************************************************/
-void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list)
+void fill_tile_unit_list(tile_t *ptile, struct unit **unit_list)
 {
   int i = 0;
 

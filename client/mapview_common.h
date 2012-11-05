@@ -102,7 +102,7 @@ extern bool can_slide;
     int GRI_y1 = DIVIDE(_gui_y0 + _height + H - 1, H);                      \
     int GRI_itr, GRI_x_itr, GRI_y_itr, _map_x, _map_y;                      \
     int count;                                                              \
-    struct tile *ptile;                                                     \
+    tile_t *ptile;                                                          \
                                                                             \
     if (is_isometric) {                                                     \
       /* Tiles to the left/above overlap with us. */                        \
@@ -133,12 +133,12 @@ extern bool can_slide;
   }                                                                         \
 }
 
-enum color_std get_grid_color(struct tile *ptile, enum direction8 dir);
+enum color_std get_grid_color(tile_t *ptile, enum direction8 dir);
 
 void map_to_gui_vector(int *gui_dx, int *gui_dy, int map_dx, int map_dy);
-bool tile_to_canvas_pos(int *canvas_x, int *canvas_y, struct tile *ptile);
-struct tile *canvas_pos_to_tile(int canvas_x, int canvas_y);
-struct tile *canvas_pos_to_nearest_tile(int canvas_x, int canvas_y);
+bool tile_to_canvas_pos(int *canvas_x, int *canvas_y, tile_t *ptile);
+tile_t *canvas_pos_to_tile(int canvas_x, int canvas_y);
+tile_t *canvas_pos_to_nearest_tile(int canvas_x, int canvas_y);
 
 void get_mapview_scroll_window(int *xmin, int *ymin,
                                int *xmax, int *ymax,
@@ -148,17 +148,17 @@ void get_mapview_scroll_pos(int *scroll_x, int *scroll_y);
 void set_mapview_scroll_pos(int scroll_x, int scroll_y);
 
 void set_mapview_origin(int gui_x0, int gui_y0);
-struct tile *get_center_tile_mapcanvas(void);
-void center_tile_mapcanvas(struct tile *ptile);
+tile_t *get_center_tile_mapcanvas(void);
+void center_tile_mapcanvas(tile_t *ptile);
 
-bool tile_visible_mapcanvas(struct tile *ptile);
-bool tile_visible_and_not_on_border_mapcanvas(struct tile *ptile);
+bool tile_visible_mapcanvas(tile_t *ptile);
+bool tile_visible_and_not_on_border_mapcanvas(tile_t *ptile);
 
 void put_unit(struct unit *punit,
               struct canvas *pcanvas, int canvas_x, int canvas_y);
 void put_city(city_t *pcity,
               struct canvas *pcanvas, int canvas_x, int canvas_y);
-void put_terrain(struct tile *ptile,
+void put_terrain(tile_t *ptile,
                  struct canvas *pcanvas, int canvas_x, int canvas_y);
 
 void put_city_tile_output(city_t *pcity, int city_x, int city_y,
@@ -172,13 +172,13 @@ void toggle_unit_color(struct unit *punit);
 void put_red_frame_tile(struct canvas *pcanvas,
                         int canvas_x, int canvas_y);
 
-void put_nuke_mushroom_pixmaps(struct tile *ptile);
+void put_nuke_mushroom_pixmaps(tile_t *ptile);
 
-void put_one_tile(struct canvas *pcanvas, struct tile *ptile,
+void put_one_tile(struct canvas *pcanvas, tile_t *ptile,
                   int canvas_x, int canvas_y, bool citymode);
-void put_one_tile_iso(struct canvas *pcanvas, struct tile *ptile,
+void put_one_tile_iso(struct canvas *pcanvas, tile_t *ptile,
                       int canvas_x, int canvas_y, bool citymode);
-void tile_draw_grid(struct canvas *pcanvas, struct tile *ptile,
+void tile_draw_grid(struct canvas *pcanvas, tile_t *ptile,
                     int canvas_x, int canvas_y, bool citymode);
 
 void draw_map_canvas(int canvas_x, int canvas_y,
@@ -186,7 +186,7 @@ void draw_map_canvas(int canvas_x, int canvas_y,
 void update_map_canvas(int canvas_x, int canvas_y,
                        int width, int height, enum map_update_type type);
 void update_map_canvas_visible(enum map_update_type type);
-void refresh_tile_mapcanvas(struct tile *ptile, enum map_update_type type);
+void refresh_tile_mapcanvas(tile_t *ptile, enum map_update_type type);
 void update_city_description(city_t *pcity);
 
 void flush_dirty_overview(void);
@@ -195,17 +195,17 @@ void show_city_descriptions(int canvas_x, int canvas_y,
                             int width, int height);
 bool show_unit_orders(struct unit *punit);
 
-void draw_segment(struct tile *ptile, enum direction8 dir);
-void undraw_segment(struct tile *ptile, enum direction8 dir);
+void draw_segment(tile_t *ptile, enum direction8 dir);
+void undraw_segment(tile_t *ptile, enum direction8 dir);
 
 void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
                              struct unit *punit1, int hp1);
 void move_unit_map_canvas(struct unit *punit,
-                          struct tile *ptile, int dx, int dy);
+                          tile_t *ptile, int dx, int dy);
 
-city_t *find_city_or_settler_near_tile(struct tile *ptile,
-                                         struct unit **punit);
-city_t *find_city_near_tile(struct tile *ptile);
+city_t *find_city_or_settler_near_tile(tile_t *ptile,
+                                       struct unit **punit);
+city_t *find_city_near_tile(tile_t *ptile);
 
 void get_city_mapview_production(city_t *pcity,
                                  char *buf, size_t buf_len);
@@ -226,7 +226,7 @@ void overview_to_map_pos(int *map_x, int *map_y,
                          int overview_x, int overview_y);
 
 void refresh_overview_canvas(void);
-void overview_update_tile(struct tile *ptile);
+void overview_update_tile(tile_t *ptile);
 void set_overview_dimensions(int width, int height);
 
 bool map_canvas_resized(int width, int height);

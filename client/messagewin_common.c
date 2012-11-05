@@ -109,7 +109,7 @@ void clear_notify_window(void)
 /**************************************************************************
 ...
 **************************************************************************/
-void add_notify_window(char *message, struct tile *ptile,
+void add_notify_window(char *message, tile_t *ptile,
                        enum event_type event)
 {
   const size_t min_msg_len = 50;
@@ -202,7 +202,7 @@ void meswin_popup_city(int message_index)
   }
 
   if (messages[message_index].city_ok) {
-    struct tile *ptile = messages[message_index].tile;
+    tile_t *ptile = messages[message_index].tile;
     city_t *pcity = map_get_city(ptile);
 
     if (center_when_popup_city) {

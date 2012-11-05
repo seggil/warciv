@@ -22,15 +22,15 @@ void free_client_goto(void);
 void enter_goto_state(struct unit *punit);
 void exit_goto_state(void);
 bool goto_is_active(void);
-struct tile *get_line_dest(void);
+tile_t *get_line_dest(void);
 int get_goto_turns(void);
 void goto_add_waypoint(void);
 bool goto_pop_waypoint(void);
 
-void draw_line(struct tile *dest_tile);
-bool is_drawn_line(struct tile *dest_tile, int dir);
+void draw_line(tile_t *dest_tile);
+bool is_drawn_line(tile_t *dest_tile, int dir);
 
-bool is_endpoint(struct tile *ptile);
+bool is_endpoint(tile_t *ptile);
 
 void request_orders_cleared(struct unit *punit);
 void send_goto_path(struct unit *punit, struct pf_path *path,
@@ -38,11 +38,11 @@ void send_goto_path(struct unit *punit, struct pf_path *path,
 void send_patrol_route(struct unit *punit);
 void send_goto_route(struct unit *punit);
 void send_connect_route(struct unit *punit, enum unit_activity activity);
-void unit_goto(struct unit *punit, struct tile *ptile);
+void unit_goto(struct unit *punit, tile_t *ptile);
 
 struct pf_path *path_to_nearest_allied_city(struct unit *punit);
 
-int calculate_move_cost(struct unit *punit, struct tile *dest_tile);
-struct tile *find_nearest_city(struct unit *punit, bool allies);
+int calculate_move_cost(struct unit *punit, tile_t *dest_tile);
+tile_t *find_nearest_city(struct unit *punit, bool allies);
 
 #endif  /* WC_CLIENT_GOTO_H */

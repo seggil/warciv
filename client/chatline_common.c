@@ -269,7 +269,7 @@ int insert_city_link(char *buf, size_t buflen, city_t *pcity)
 /**************************************************************************
   ...
 **************************************************************************/
-int insert_tile_link(char *buf, size_t buflen, struct tile *ptile)
+int insert_tile_link(char *buf, size_t buflen, tile_t *ptile)
 {
   assert(ptile != NULL);
 

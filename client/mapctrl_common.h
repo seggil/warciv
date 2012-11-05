@@ -25,9 +25,9 @@ extern bool tiles_hilited_cities;
 
 extern bool keyboardless_goto_button_down;
 extern bool keyboardless_goto_active;
-extern struct tile *keyboardless_goto_start_tile;
+extern tile_t *keyboardless_goto_start_tile;
 
-extern struct tile *dist_first_tile, *dist_last_tile;
+extern tile_t *dist_first_tile, *dist_last_tile;
 
 void anchor_selection_rectangle(int canvas_x, int canvas_y);
 void update_selection_rectangle(int canvas_x, int canvas_y);
@@ -39,12 +39,12 @@ void cancel_distance_tool(void);
 bool is_city_hilited(city_t *pcity);
 
 void cancel_tile_hiliting(void);
-void toggle_tile_hilite(struct tile *ptile);
+void toggle_tile_hilite(tile_t *ptile);
 
 void key_city_overlay(int canvas_x, int canvas_y);
 void key_cities_overlay(int canvas_x, int canvas_y);
 
-void clipboard_copy_production(struct tile *ptile);
+void clipboard_copy_production(tile_t *ptile);
 void clipboard_paste_production(city_t *pcity);
 void upgrade_canvas_clipboard(void);
 
@@ -65,9 +65,9 @@ void update_line(int canvas_x, int canvas_y);
 void overview_update_line(int overview_x, int overview_y);
 
 bool get_chance_to_win(int *att_chance, int *def_chance,
-                       struct tile *ptile);
+                       tile_t *ptile);
 
-void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list);
+void fill_tile_unit_list(tile_t *ptile, struct unit **unit_list);
 
 extern city_t *city_workers_display;
 

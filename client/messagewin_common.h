@@ -20,7 +20,7 @@
 
 struct message {
   char *descr;
-  struct tile *tile;
+  tile_t *tile;
   enum event_type event;
   bool location_ok, city_ok, visited;
 };
@@ -31,7 +31,7 @@ void meswin_force_thaw(void);
 
 void update_meswin_dialog(void);
 void clear_notify_window(void);
-void add_notify_window(char *message, struct tile *ptile,
+void add_notify_window(char *message, tile_t *ptile,
                        enum event_type event);
 
 struct message *get_message(int message_index);

@@ -148,7 +148,7 @@ static void real_add(char **buffer, size_t * buffer_size, const char *format,
 /***************************************************************
   Return a (static) string with a tile's food/prod/trade
 ***************************************************************/
-static const char *map_get_tile_fpt_text(const struct tile *ptile)
+static const char *map_get_tile_fpt_text(const tile_t *ptile)
 {
   static char s[64];
   char food[16];
@@ -209,7 +209,7 @@ static const char *get_player_nation_name(struct player *pplayer)
 /****************************************************************************
   Text to popup on a middle-click in the mapview.
 ****************************************************************************/
-const char *popup_info_text(struct tile *ptile)
+const char *popup_info_text(tile_t *ptile)
 {
   const char *activity_text;
   city_t *pcity = ptile->city;
@@ -436,7 +436,7 @@ const char *popup_info_text(struct tile *ptile)
   This should only be used inside popup_info_text and should eventually be
   made static.
 ****************************************************************************/
-const char *concat_tile_activity_text(struct tile *ptile)
+const char *concat_tile_activity_text(tile_t *ptile)
 {
   int activity_total[ACTIVITY_LAST];
   int activity_units[ACTIVITY_LAST];

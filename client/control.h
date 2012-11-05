@@ -127,13 +127,13 @@ void key_add_pause_delayed_goto(void);
 void enable_auto_mode(void);
 
 void do_move_unit(struct unit *punit, struct unit *target_unit);
-void do_unit_goto(struct tile *ptile);
+void do_unit_goto(tile_t *ptile);
 void do_unit_nuke(struct unit *punit);
-void do_unit_paradrop_to(struct unit *punit, struct tile *ptile);
-void do_unit_patrol_to(struct unit *punit, struct tile *ptile);
-void do_unit_connect(struct unit *punit, struct tile *ptile,
+void do_unit_paradrop_to(struct unit *punit, tile_t *ptile);
+void do_unit_patrol_to(struct unit *punit, tile_t *ptile);
+void do_unit_connect(struct unit *punit, tile_t *ptile,
                      enum unit_activity activity);
-void do_map_click(struct tile *ptile, enum quickselect_type qtype);
+void do_map_click(tile_t *ptile, enum quickselect_type qtype);
 void attack_after_move(struct unit *punit);
 
 void set_hover_state(struct unit *punit, enum cursor_hover_state state,
@@ -193,7 +193,7 @@ void request_toggle_units(void);
 void request_toggle_focus_unit(void);
 void request_toggle_fog_of_war(void);
 
-void wakeup_sentried_units(struct tile *ptile);
+void wakeup_sentried_units(tile_t *ptile);
 
 void auto_center_on_focus_unit(void);
 void advance_unit_focus(void);
@@ -202,7 +202,7 @@ void set_unit_focus(struct unit *punit);
 void set_unit_focus_and_active(struct unit *punit);
 void set_unit_focus_and_select(struct unit *punit);
 void update_unit_focus(void);
-struct unit *find_visible_unit(struct tile *ptile);
+struct unit *find_visible_unit(tile_t *ptile);
 void set_units_in_combat(struct unit *pattacker, struct unit *pdefender);
 void blink_active_unit(void);
 void update_unit_pix_label(struct unit *punit);

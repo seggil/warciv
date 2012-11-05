@@ -149,7 +149,7 @@ bool canvas_to_city_pos(int *city_x, int *city_y, int canvas_x, int canvas_y)
   for (_itr = 0; _itr < CITY_MAP_SIZE * CITY_MAP_SIZE; _itr++) {            \
     int city_x = _itr / CITY_MAP_SIZE, city_y = _itr % CITY_MAP_SIZE;       \
     int canvas_x, canvas_y;                                                 \
-    struct tile *ptile;                                                     \
+    tile_t *ptile;                                                          \
                                                                             \
     if (is_valid_city_coords(city_x, city_y)                                \
         && (ptile = city_map_to_map(pcity, city_x, city_y))                 \
@@ -450,7 +450,7 @@ void city_rotate_specialist(city_t *pcity, int citizen_index)
 /**************************************************************************
   Activate all units on the given map tile.
 **************************************************************************/
-void activate_all_units(struct tile *ptile)
+void activate_all_units(tile_t *ptile)
 {
   struct unit_list *punit_list = ptile->units;
   struct unit *pmyunit = NULL;
@@ -681,7 +681,7 @@ int city_rename(city_t *pcity, const char *name)
 /**************************************************************************
   Update all city dialog maps which can see that tile.
 **************************************************************************/
-void refresh_city_dialog_maps(struct tile *ptile)
+void refresh_city_dialog_maps(tile_t *ptile)
 {
   city_t *pcity;
   bool global_observer = client_is_global_observer();

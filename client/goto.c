@@ -42,7 +42,8 @@
  */
 struct path_part {
   int start_moves_left;
-  struct tile *start_tile, *end_tile;
+  tile_t *start_tile;
+  tile_t *end_tile;
   int end_moves_left;
   int time;
   struct pf_path *path;
@@ -71,8 +72,8 @@ static struct {
 
 #define DRAWN(ptile, dir) (goto_map.tiles[(ptile)->index].drawn[dir])
 
-static void increment_drawn(struct tile *src_tile, enum direction8 dir);
-static void decrement_drawn(struct tile *src_tile, enum direction8 dir);
+static void increment_drawn(tile_t *src_tile, enum direction8 dir);
+static void decrement_drawn(tile_t *src_tile, enum direction8 dir);
 static void reset_last_part(void);
 
 
@@ -129,11 +130,11 @@ void free_client_goto(void)
   Change the destination of the last part to the given position if a
   path can be found. If not the destination is set to the start.
 ***********************************************************************/
-static void update_last_part(struct tile *ptile)
+static void update_last_part(tile_t *ptile)
 {
   struct path_part *p = &goto_map.parts[goto_map.num_parts - 1];
   struct pf_path *new_path;
-  struct tile *old_tile = p->start_tile;
+  tile_t *old_tile = p->start_tile;
   int i, start_index = 0;
 
   freelog(LOG_DEBUG, "update_last_part(%d,%d) old (%d,%d)-(%d,%d)",
@@ -308,7 +309,7 @@ void goto_add_waypoint(void)
 bool goto_pop_waypoint(void)
 {
   struct path_part *p = &goto_map.parts[goto_map.num_parts - 1];
-  struct tile *end_tile = p->end_tile;
+  tile_t *end_tile = p->end_tile;
 
   assert(is_active);
   assert(find_unit_by_id(goto_map.unit_id)
@@ -334,7 +335,7 @@ bool goto_pop_waypoint(void)
   PF callback to get the path with the minimal number of steps (out of
   all shortest paths).
 ***********************************************************************/
-static int get_EC(const struct tile *ptile, enum known_type known,
+static int get_EC(const tile_t *ptile, enum known_type known,
                   struct pf_parameter *param)
 {
   return 1;
@@ -344,7 +345,7 @@ static int get_EC(const struct tile *ptile, enum known_type known,
   PF callback to prohibit going into the unknown.  Also makes sure we
   don't plan our route through enemy city/tile.
 ***********************************************************************/
-static enum tile_behavior get_TB_aggr(const struct tile *ptile,
+static enum tile_behavior get_TB_aggr(const tile_t *ptile,
                                       enum known_type known,
                                       struct pf_parameter *param)
 {
@@ -364,7 +365,7 @@ static enum tile_behavior get_TB_aggr(const struct tile *ptile,
   PF callback for caravans. Caravans doesn't go into the unknown and
   don't attack enemy units but enter enemy cities.
 ***********************************************************************/
-static enum tile_behavior get_TB_caravan(const struct tile *ptile,
+static enum tile_behavior get_TB_caravan(const tile_t *ptile,
                                          enum known_type known,
                                          struct pf_parameter *param)
 {
@@ -389,7 +390,7 @@ static enum tile_behavior get_TB_caravan(const struct tile *ptile,
   Return the number of MP needed to do the connect activity at this
   position.  A negative number means it's impossible.
 ****************************************************************************/
-static int get_activity_time(const struct tile *ptile,
+static int get_activity_time(const tile_t *ptile,
                              struct player *pplayer)
 {
   struct tile_type *ttype = get_tile_type(ptile->terrain);
@@ -444,7 +445,7 @@ static int get_activity_time(const struct tile *ptile,
   nonallied cities
 ****************************************************************************/
 static bool is_non_allied_city_adjacent(struct player *pplayer,
-                                        const struct tile *ptile)
+                                        const tile_t *ptile)
 {
   adjc_iterate(ptile, tile1) {
     if (is_non_allied_city_tile(tile1, pplayer)) {
@@ -465,8 +466,8 @@ static bool is_non_allied_city_adjacent(struct player *pplayer,
   param->data should contain the result of
   get_activity_rate(punit) / ACTIVITY_FACTOR.
 ****************************************************************************/
-static int get_connect_road(const struct tile *src_tile, enum direction8 dir,
-                            const struct tile *dest_tile,
+static int get_connect_road(const tile_t *src_tile, enum direction8 dir,
+                            const tile_t *dest_tile,
                             int src_cost, int src_extra,
                             int *dest_cost, int *dest_extra,
                             struct pf_parameter *param)
@@ -565,9 +566,9 @@ static int get_connect_road(const struct tile *src_tile, enum direction8 dir,
 
   param->data should contain the result of get_activity_rate(punit) / 10.
 ****************************************************************************/
-static int get_connect_irrig(const struct tile *src_tile,
+static int get_connect_irrig(const tile_t *src_tile,
                              enum direction8 dir,
-                             const struct tile *dest_tile,
+                             const tile_t *dest_tile,
                              int src_cost, int src_extra,
                              int *dest_cost, int *dest_extra,
                              struct pf_parameter *param)
@@ -636,7 +637,7 @@ static int get_connect_irrig(const struct tile *src_tile,
   PF callback to prohibit going into the unknown (conditionally).  Also
   makes sure we don't plan to attack anyone.
 ***********************************************************************/
-static enum tile_behavior no_fights_or_unknown_goto(const struct tile *ptile,
+static enum tile_behavior no_fights_or_unknown_goto(const tile_t *ptile,
                                                     enum known_type known,
                                                     struct pf_parameter *p)
 {
@@ -751,7 +752,7 @@ bool goto_is_active(void)
 /**********************************************************************
   Return the current end of the drawn goto line.
 ***********************************************************************/
-struct tile *get_line_dest(void)
+tile_t *get_line_dest(void)
 {
   struct path_part *p = &goto_map.parts[goto_map.num_parts - 1];
 
@@ -779,7 +780,7 @@ int get_goto_turns(void)
   goto_map.
   If there is no route to the dest then don't draw anything.
 ***********************************************************************/
-void draw_line(struct tile *dest_tile)
+void draw_line(tile_t *dest_tile)
 {
   assert(is_active);
 
@@ -820,7 +821,7 @@ static void send_path_orders(struct unit *punit, struct pf_path *path,
 {
   struct packet_unit_orders p;
   int i;
-  struct tile *old_tile;
+  tile_t *old_tile;
 
   p.unit_id = punit->id;
   p.repeat = repeat;
@@ -838,7 +839,7 @@ static void send_path_orders(struct unit *punit, struct pf_path *path,
 
   /* If the path has n positions it takes n-1 steps. */
   for (i = 0; i < path->length - 1; i++) {
-    struct tile *new_tile = path->positions[i + 1].tile;
+    tile_t *new_tile = path->positions[i + 1].tile;
 
     if (same_pos(new_tile, old_tile)) {
       p.orders[i] = ORDER_FULL_MP;
@@ -924,7 +925,7 @@ void send_connect_route(struct unit *punit, enum unit_activity activity)
   struct pf_path *path = NULL;
   int i;
   struct packet_unit_orders p;
-  struct tile *old_tile;
+  tile_t *old_tile;
 
   assert(is_active);
   assert(punit->id == goto_map.unit_id);
@@ -975,7 +976,7 @@ void send_connect_route(struct unit *punit, enum unit_activity activity)
     }
 
     if (i != path->length - 1) {
-      struct tile *new_tile = path->positions[i + 1].tile;
+      tile_t *new_tile = path->positions[i + 1].tile;
 
       assert(!same_pos(new_tile, old_tile));
 
@@ -1017,7 +1018,7 @@ void send_goto_route(struct unit *punit)
 /**************************************************************************
   Send a simple goto order.
 **************************************************************************/
-void unit_goto(struct unit *punit, struct tile *ptile)
+void unit_goto(struct unit *punit, tile_t *ptile)
 {
   if (!punit || !ptile) {
     return;
@@ -1047,9 +1048,9 @@ void unit_goto(struct unit *punit, struct tile *ptile)
   correct char. This function is for internal use only. Use get_drawn
   when in doubt.
 ***********************************************************************/
-static unsigned char *get_drawn_char(struct tile *ptile, enum direction8 dir)
+static unsigned char *get_drawn_char(tile_t *ptile, enum direction8 dir)
 {
-  struct tile *tile1;
+  tile_t *tile1;
 
   tile1 = mapstep(ptile, dir);
 
@@ -1065,7 +1066,7 @@ static unsigned char *get_drawn_char(struct tile *ptile, enum direction8 dir)
   Increments the number of segments at the location, and draws the
   segment if necessary.
 **************************************************************************/
-static void increment_drawn(struct tile *src_tile, enum direction8 dir)
+static void increment_drawn(tile_t *src_tile, enum direction8 dir)
 {
   unsigned char *count = get_drawn_char(src_tile, dir);
 
@@ -1088,7 +1089,7 @@ static void increment_drawn(struct tile *src_tile, enum direction8 dir)
   Decrements the number of segments at the location, and clears the
   segment if necessary.
 **************************************************************************/
-static void decrement_drawn(struct tile *src_tile, enum direction8 dir)
+static void decrement_drawn(tile_t *src_tile, enum direction8 dir)
 {
   unsigned char *count = get_drawn_char(src_tile, dir);
 
@@ -1111,7 +1112,7 @@ static void decrement_drawn(struct tile *src_tile, enum direction8 dir)
   Return TRUE if there is a line drawn from (x,y) in the given direction.
   This is used by mapview to determine whether to draw a goto line.
 ****************************************************************************/
-bool is_drawn_line(struct tile *ptile, int dir)
+bool is_drawn_line(tile_t *ptile, int dir)
 {
   if (!mapstep(ptile, dir)) {
     return 0;
@@ -1162,7 +1163,7 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 /**************************************************************************
   Calculate the move cost for the unit to reach the destination tile.
 ***************************************************************************/
-int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
+int calculate_move_cost(struct unit *punit, tile_t *dest_tile)
 {
   if (!punit) {
     return WC_INFINITY;
@@ -1192,7 +1193,7 @@ int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
 /**************************************************************************
   Return the nearest tile with a city.
 ***************************************************************************/
-struct tile *find_nearest_city(struct unit *punit, bool allies)
+tile_t *find_nearest_city(struct unit *punit, bool allies)
 {
   struct player *pplayer = get_player_ptr();
   city_t *pcity = map_get_city(punit->tile);

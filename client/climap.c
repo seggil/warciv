@@ -32,7 +32,7 @@
  uses the stock tilespec.c file, this function serves as a wrapper.
 
 *************************************************************************/
-enum known_type tile_get_known(const struct tile *ptile)
+enum known_type tile_get_known(const tile_t *ptile)
 {
   return ptile ? ptile->u.client.known : 0;
 }

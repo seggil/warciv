@@ -41,7 +41,7 @@ const char *get_embassy_status(struct player *me, struct player *them);
 const char *get_vision_status(struct player *me, struct player *them);
 void client_diplomacy_clause_string(char *buf, int bufsiz,
                                     struct Clause *pclause);
-char *get_tile_info(struct tile *ptile);
+char *get_tile_info(tile_t *ptile);
 
 int client_research_sprite(void);
 int client_warming_sprite(void);
@@ -110,9 +110,9 @@ int collect_cids5(cid * dest_cids, city_t *pcity);
 int num_present_units_in_city(city_t* pcity);
 int num_supported_units_in_city(city_t* pcity);
 
-void handle_event(char *message, struct tile *ptile,
+void handle_event(char *message, tile_t *ptile,
                   enum event_type event, int conn_id);
-void create_event(struct tile *ptile, enum event_type event,
+void create_event(tile_t *ptile, enum event_type event,
                   const char *format, ...)
      wc__attribute((__format__ (__printf__, 3, 4)));
 void write_chatline_content(const char *txt);
@@ -128,7 +128,7 @@ void cityrep_buy(city_t *pcity);
 void common_taxrates_callback(int i);
 
 int buy_production_in_selected_cities(void);
-void set_rally_point_for_selected_cities(struct tile *ptile);
+void set_rally_point_for_selected_cities(tile_t *ptile);
 
 void city_clear_worklist(city_t *pcity);
 void clear_worklists_in_selected_cities(void);
@@ -153,7 +153,7 @@ void set_default_user_tech_goal(void);
 void force_tech_goal(Tech_Type_id goal);
 
 void execute_air_patrol_orders(void);
-void do_unit_air_patrol(struct unit *punit, struct tile *ptile);
+void do_unit_air_patrol(struct unit *punit, tile_t *ptile);
 
 enum client_vote_type {
   CVT_NONE = 0,

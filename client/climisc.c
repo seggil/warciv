@@ -91,7 +91,7 @@ static struct map_link_list *link_marks = NULL;
 
 static void draw_link_mark(struct map_link *pml);
 
-struct tile *ltile = NULL;
+tile_t *ltile = NULL;
 int ltilex, ltiley;
 
 struct voteinfo_list *voteinfo_queue = NULL;
@@ -185,7 +185,7 @@ void client_remove_player(int plrno)
 void client_remove_unit(struct unit *punit)
 {
   city_t *pcity;
-  struct tile *ptile = punit->tile;
+  tile_t *ptile = punit->tile;
   int hc = punit->homecity;
   struct unit *ufocus = get_unit_in_focus();
 
@@ -252,7 +252,7 @@ void client_remove_unit(struct unit *punit)
 void client_remove_city(city_t *pcity)
 {
   bool effect_update;
-  struct tile *ptile = pcity->common.tile;
+  tile_t *ptile = pcity->common.tile;
 
   freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->common.name,
           get_nation_name(city_owner(pcity)->nation), TILE_XY(ptile));
@@ -427,7 +427,7 @@ void client_diplomacy_clause_string(char *buf, int bufsiz,
   Do not call this function both in a list of format arguments because
   it returns a static buffer.
 ***********************************************************************/
-char *get_tile_info(struct tile *ptile)
+char *get_tile_info(tile_t *ptile)
 {
   static char buf[256];
   city_t *pcity;
@@ -518,8 +518,8 @@ void center_on_something(void)
     assert(punit != NULL);
     center_tile_mapcanvas(punit->tile);
   } else {
-    struct tile *ctile = native_pos_to_tile(map.info.xsize / 2,
-                                            map.info.ysize / 2);
+    tile_t *ctile = native_pos_to_tile(map.info.xsize / 2,
+                                       map.info.ysize / 2);
 
     /* Just any known tile will do; search near the middle first. */
     /* Iterate outward from the center tile.  We have to give a radius that
@@ -1015,7 +1015,7 @@ int num_present_units_in_city(city_t *pcity)
 /**************************************************************************
   Handles a chat message.
 **************************************************************************/
-void handle_event(char *message, struct tile *ptile,
+void handle_event(char *message, tile_t *ptile,
                   enum event_type event, int conn_id)
 {
   int where = MW_OUTPUT;        /* where to display the message */
@@ -1049,7 +1049,7 @@ void handle_event(char *message, struct tile *ptile,
   Creates a struct packet_generic_message packet and injects it via
   handle_chat_msg.
 **************************************************************************/
-void create_event(struct tile *ptile, enum event_type event,
+void create_event(tile_t *ptile, enum event_type event,
                   const char *format, ...)
 {
   va_list ap;
@@ -1139,7 +1139,7 @@ void reports_force_thaw(void)
 /*************************************************************************
   On the client side, 'pplayer' is not used at all.
 *************************************************************************/
-enum known_type map_get_known(const struct tile *ptile,
+enum known_type map_get_known(const tile_t *ptile,
                               struct player *pplayer)
 {
   return tile_get_known(ptile);
@@ -1717,7 +1717,7 @@ void decrease_link_mark_turn_counters(void)
 /**********************************************************************
   Returns the location of the pointed mark.
 ***********************************************************************/
-static struct tile *get_link_mark_tile(struct map_link *pml)
+static tile_t *get_link_mark_tile(struct map_link *pml)
 {
   switch (pml->type) {
   case LINK_LOCATION:
@@ -1762,7 +1762,7 @@ static enum color_std get_link_mark_color(struct map_link *pml)
 void add_link_mark(enum tag_link_types type, int id)
 {
   struct map_link *pml = find_link_mark(type, id);
-  struct tile *ptile;
+  tile_t *ptile;
 
   if (!pml) {
     pml = map_link_new(type, id);
@@ -1785,7 +1785,7 @@ void restore_link_mark(enum tag_link_types type, int id)
   }
 
   struct map_link *pml;
-  struct tile *ptile;
+  tile_t *ptile;
 
   pml = map_link_new(type, id);
   pml->turns = 1;
@@ -1804,7 +1804,7 @@ static void draw_link_mark(struct map_link *pml)
   int xd = UNIT_TILE_WIDTH / 20, yd = UNIT_TILE_HEIGHT / 20;
   int xlen = UNIT_TILE_WIDTH / 3, ylen = UNIT_TILE_HEIGHT / 3;
   int canvas_x, canvas_y, x0, x1, y0, y1;
-  struct tile *ptile = get_link_mark_tile(pml);
+  tile_t *ptile = get_link_mark_tile(pml);
   enum color_std color = get_link_mark_color(pml);
 
   if (!ptile || !tile_visible_mapcanvas(ptile)) {
@@ -2165,7 +2165,7 @@ void toggle_traderoute_drawing_in_selected_cities(void)
   Else, do all locally.
   If ptile = NULL, remove it.
 ***********************************************************************/
-void set_rally_point_for_selected_cities(struct tile *ptile)
+void set_rally_point_for_selected_cities(tile_t *ptile)
 {
   if (!can_client_issue_orders()) {
     return;
@@ -2243,7 +2243,7 @@ void execute_air_patrol_orders(void)
 /**********************************************************************
   ...
 ***********************************************************************/
-void do_unit_air_patrol(struct unit *punit, struct tile *ptile)
+void do_unit_air_patrol(struct unit *punit, tile_t *ptile)
 {
   char buf[1024];
 

@@ -196,7 +196,7 @@ void handle_trade_route_remove(int city1, int city2)
 /**************************************************************************
   Add a city in the trade city list.
 **************************************************************************/
-void add_tile_in_trade_planning(struct tile *ptile, bool allow_remove)
+void add_tile_in_trade_planning(tile_t *ptile, bool allow_remove)
 {
   if (ptile->city && ptile->city->common.owner != get_player_idx()) {
     return;
@@ -970,7 +970,7 @@ bool trade_free_unit(struct unit *punit)
   in a such case.
 **************************************************************************/
 struct worked_tile {
-  struct tile *ptile; /* A pointer to the tile. */
+  tile_t *ptile; /* A pointer to the tile. */
   int cx, cy;         /* Coordonates for the city map. */
   int trade_value;    /* The trade value of the tile. */
   bool used;          /* TRUE when the tile is used */
@@ -1080,7 +1080,7 @@ static void drop_worked_tile(struct toggle_city *tcity, size_t tile)
   Returns TRUE if any city can still use this tile.
 **************************************************************************/
 static bool can_steal_tile_to_cities(struct toggle_city *cities, size_t size,
-                                     struct tile *ptile)
+                                     tile_t *ptile)
 {
   struct toggle_city *tcity;
   int i, j;
@@ -1215,7 +1215,7 @@ static void city_set_specialists(struct toggle_city *cities, size_t size,
 {
   struct toggle_city *tcity = &cities[vec];
   city_t *pcity = tcity->pcity;
-  struct tile *ptile;
+  tile_t *ptile;
   int i, cx, cy;
 
   /* Check tiles used by others cities. */

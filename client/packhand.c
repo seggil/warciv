@@ -223,7 +223,7 @@ void handle_server_join_reply(bool you_can_join, char *message,
 void handle_city_remove(int city_id)
 {
   city_t *pcity = find_city_by_id(city_id);
-  struct tile *ptile;
+  tile_t *ptile;
 
   if (!pcity)
     return;
@@ -423,7 +423,7 @@ void handle_city_info(struct packet_city_info *packet)
   enum city_update needs_update =
     UPDATE_TITLE | UPDATE_INFORMATION | UPDATE_CITIZENS | UPDATE_HAPPINESS;
   struct unit *pfocus_unit = get_unit_in_focus();
-  struct tile *ptile;
+  tile_t *ptile;
 
   pcity = find_city_by_id(packet->id);
 
@@ -787,7 +787,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   city_t *pcity;
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
   bool update_descriptions = FALSE, name_changed = FALSE;
-  struct tile *ptile;
+  tile_t *ptile;
 
   pcity = find_city_by_id(packet->id);
 
@@ -1019,7 +1019,7 @@ void play_sound_for_event(enum event_type type)
 void handle_chat_msg(char *message, int x, int y,
                      enum event_type event, int conn_id)
 {
-  struct tile *ptile = NULL;
+  tile_t *ptile = NULL;
 
   if (is_normal_map_pos(x, y)) {
     ptile = map_pos_to_tile(x, y);
@@ -1107,7 +1107,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
   bool need_update_menus = FALSE;
   bool repaint_unit = FALSE;
   enum city_update homecity_needs_update = UPDATE_NOTHING;
-  struct tile *old_tile = NULL;
+  tile_t *old_tile = NULL;
   bool check_focus = FALSE;     /* conservative focus change */
   bool moved = FALSE;
   bool ret = FALSE;
@@ -2175,7 +2175,7 @@ This was once very ugly...
 **************************************************************************/
 void handle_tile_info(struct packet_tile_info *packet)
 {
-  struct tile *ptile = map_pos_to_tile(packet->x, packet->y);
+  tile_t *ptile = map_pos_to_tile(packet->x, packet->y);
   enum known_type old_known = ptile->u.client.known;
   bool tile_changed = FALSE;
   bool known_changed = FALSE;
