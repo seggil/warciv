@@ -71,8 +71,8 @@ void flush_dirty(void);
 void gui_flush(void);
 void queue_flush(void);
 
-void update_queue_add_tile(struct tile *ptile);
-void update_queue_remove_tile(struct tile *ptile);
+void update_queue_add_tile(tile_t *ptile);
+void update_queue_remove_tile(tile_t *ptile);
 void update_queue_add_rectangle(int x, int y, int w, int h);
 void move_update_queue(int vector_x, int vector_y);
 
@@ -81,7 +81,7 @@ void free_mapview_updates(void);
 void update_map_canvas_scrollbars(void);
 void update_map_canvas_scrollbars_size(void);
 
-void put_cross_overlay_tile(struct tile *ptile);
+void put_cross_overlay_tile(tile_t *ptile);
 void put_city_worker(struct canvas *pcanvas,
                      enum color_std color, enum city_tile_type worker,
                      int canvas_x, int canvas_y);

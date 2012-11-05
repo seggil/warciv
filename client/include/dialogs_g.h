@@ -22,21 +22,21 @@
 struct packet_nations_selected_info;
 
 void popup_notify_goto_dialog(const char *headline, const char *lines,
-                              struct tile *ptile);
+                              tile_t *ptile);
 void popup_notify_dialog(const char *caption, const char *headline,
                          const char *lines);
 
 void popup_races_dialog(void);
 void popdown_races_dialog(void);
 
-void popup_unit_select_dialog(struct tile *ptile);
+void popup_unit_select_dialog(tile_t *ptile);
 
 void races_toggles_set_sensitive(bool *nations_used);
 
 void popup_caravan_dialog(struct unit *punit,
                           city_t *phomecity, city_t *pdestcity);
 bool caravan_dialog_is_open(void);
-void popup_diplomat_dialog(struct unit *punit, struct tile *ptile);
+void popup_diplomat_dialog(struct unit *punit, tile_t *ptile);
 bool diplomat_dialog_is_open(void);
 void popup_incite_dialog(city_t *pcity, int cost);
 void popup_bribe_dialog(struct unit *punit, int cost);
