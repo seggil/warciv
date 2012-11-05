@@ -706,7 +706,7 @@ void gui_flush(void)
 /****************************************************************************
   Add a tile which need to be updated.
 ****************************************************************************/
-void update_queue_add_tile(struct tile *ptile)
+void update_queue_add_tile(tile_t *ptile)
 {
   freelog(LOG_UPDATE_QUEUE, "update_queue_add_tile (%d, %d)",
           TILE_XY(ptile));
@@ -724,7 +724,7 @@ void update_queue_add_tile(struct tile *ptile)
 /****************************************************************************
   Remove a tile which has just been udpated.
 ****************************************************************************/
-void update_queue_remove_tile(struct tile *ptile)
+void update_queue_remove_tile(tile_t *ptile)
 {
   freelog(LOG_UPDATE_QUEUE, "update_queue_remove_tile (%d, %d)",
           TILE_XY(ptile));
@@ -1366,7 +1366,7 @@ static void pixmap_put_overlay_tile_draw(GdkDrawable *pixmap,
 /**************************************************************************
  Draws a cross-hair overlay on a tile
 **************************************************************************/
-void put_cross_overlay_tile(struct tile *ptile)
+void put_cross_overlay_tile(tile_t *ptile)
 {
   int canvas_x, canvas_y;
 

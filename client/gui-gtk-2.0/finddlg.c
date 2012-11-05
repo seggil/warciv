@@ -43,7 +43,7 @@ static void find_destroy_callback(GtkWidget *w, gpointer data);
 static void find_selection_callback(GtkTreeSelection *selection,
                                     GtkTreeModel *model);
 
-static struct tile *pos;
+static tile_t *pos;
 
 /****************************************************************
 popup the dialog 10% inside the main-window

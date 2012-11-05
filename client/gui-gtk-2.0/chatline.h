@@ -97,7 +97,7 @@ void reset_chatline_config(GtkWidget *widget);
 void reload_chatline_config(GtkWidget *widget, struct section_file *sf);
 
 void set_message_buffer_view_link_handlers(GtkTextView *view);
-void insert_chat_link(struct tile *ptile, bool unit);
+void insert_chat_link(tile_t *ptile, bool unit);
 void chatline_scroll_to_bottom(void);
 bool chatline_is_scrolled_to_bottom(void);
 

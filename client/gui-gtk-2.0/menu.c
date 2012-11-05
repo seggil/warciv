@@ -6034,7 +6034,7 @@ void setup_menus(GtkWidget *window, GtkWidget **menubar)
   Should only be called for irrigation, mining, or transformation, and
   only when the activity changes the base terrain type.
 ****************************************************************************/
-static const char *get_tile_change_menu_text(struct tile *ptile,
+static const char *get_tile_change_menu_text(tile_t *ptile,
                                              enum unit_activity activity)
 {
   Terrain_type_id old_terrain = ptile->terrain;

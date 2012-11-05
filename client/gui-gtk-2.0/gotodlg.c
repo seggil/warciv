@@ -48,7 +48,7 @@ static GtkWidget *view;
 static GtkWidget *all_toggle;
 static GtkListStore *store;
 static GtkTreeSelection *selection;
-struct tile *original_tile;
+tile_t *original_tile;
 
 static void update_goto_dialog(GtkToggleButton *button);
 static void goto_selection_callback(GtkTreeSelection *selection, gpointer data);

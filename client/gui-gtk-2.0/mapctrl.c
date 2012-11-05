@@ -75,7 +75,7 @@ static void popupinfo_positioning_callback(GtkWidget *w, GtkAllocation *alloc,
 {
   struct tmousepos *mousepos = data;
   gint x, y;
-  struct tile *ptile;
+  tile_t *ptile;
 
   ptile = canvas_pos_to_tile(mousepos->x, mousepos->y);
   if (tile_to_canvas_pos(&x, &y, ptile)) {
@@ -108,11 +108,11 @@ static void popupinfo_positioning_callback(GtkWidget *w, GtkAllocation *alloc,
   Popup a label with information about the tile, unit, city, when the user
   used the middle mouse button on the map.
 **************************************************************************/
-static void popit(GdkEventButton *event, struct tile *ptile)
+static void popit(GdkEventButton *event, tile_t *ptile)
 {
   GtkWidget *p;
-  static struct tile *cross_list[4 + 1];
-  struct tile **cross_head = cross_list;
+  static tile_t *cross_list[4 + 1];
+  tile_t **cross_head = cross_list;
   int i;
   static struct tmousepos mousepos;
   struct unit *punit;
@@ -247,7 +247,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
   static int press_waited = 0;
   city_t *pcity = NULL;
-  struct tile *ptile = NULL;
+  tile_t *ptile = NULL;
 
   if (!can_client_change_view()) {
     return TRUE;

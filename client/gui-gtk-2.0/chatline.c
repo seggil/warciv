@@ -102,7 +102,7 @@ static GdkCursor *regular_cursor = NULL;
 /**************************************************************************
   ...
 **************************************************************************/
-void insert_chat_link(struct tile *ptile, bool unit)
+void insert_chat_link(tile_t *ptile, bool unit)
 {
   GtkEditable *editable = GTK_EDITABLE(inputline);
   char link[256];
@@ -213,7 +213,7 @@ follow_if_link(GtkWidget   *text_view,
   int x, y, id;
   char buf[128];
   city_t *pcity;
-  struct tile *ptile;
+  tile_t *ptile;
   struct unit *punit;
 
   tags = gtk_text_iter_get_tags(iter);

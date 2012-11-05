@@ -2137,7 +2137,7 @@ static void city_dialog_update_prev_next(void)
 static void show_units_callback(GtkWidget * w, gpointer data)
 {
   struct city_dialog *pdialog = (struct city_dialog *) data;
-  struct tile *ptile = pdialog->pcity->common.tile;
+  tile_t *ptile = pdialog->pcity->common.tile;
 
   if (unit_list_size(ptile->units))
     popup_unit_select_dialog(ptile);

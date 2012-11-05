@@ -100,7 +100,7 @@ static GtkWidget *unit_select_dialog_shell;
 static GtkTreeStore *unit_select_store;
 static GtkWidget *unit_select_view;
 static GtkTreePath *unit_select_path;
-static struct tile *unit_select_ptile;
+static tile_t *unit_select_ptile;
 static GtkTreeSelection *unit_select_selection;
 
 static void select_random_race(void);
@@ -191,7 +191,7 @@ void popup_notify_dialog(const char *caption, const char *headline,
 static void notify_goto_response(GtkWidget *w, gint response)
 {
   city_t *pcity = NULL;
-  struct tile *ptile = g_object_get_data(G_OBJECT(w), "tile");
+  tile_t *ptile = g_object_get_data(G_OBJECT(w), "tile");
 
   switch (response) {
   case 1:
@@ -218,7 +218,7 @@ static void notify_goto_response(GtkWidget *w, gint response)
   location.
 **************************************************************************/
 void popup_notify_goto_dialog(const char *headline, const char *lines,
-                              struct tile *ptile)
+                              tile_t *ptile)
 {
   GtkWidget *shell, *label, *goto_command, *popcity_command;
 
@@ -819,7 +819,7 @@ static void diplomat_cancel_callback(GtkWidget *w, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-void popup_diplomat_dialog(struct unit *punit, struct tile *dest_tile)
+void popup_diplomat_dialog(struct unit *punit, tile_t *dest_tile)
 {
   city_t *pcity;
   struct unit *ptunit;
@@ -1411,7 +1411,7 @@ static void add_unit_iterate(GtkTreeModel *model, GtkTreePath *path,
 *****************************************************************/
 static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
 {
-  struct tile *ptile = unit_select_ptile;
+  tile_t *ptile = unit_select_ptile;
 
   switch (rid) {
   case SELECT_UNIT_READY:
@@ -1488,7 +1488,7 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
 *****************************************************************/
 #define NUM_UNIT_SELECT_COLUMNS 4
 
-void popup_unit_select_dialog(struct tile *ptile)
+void popup_unit_select_dialog(tile_t *ptile)
 {
   if (!unit_select_dialog_shell) {
     GtkTreeStore *store;
