@@ -117,7 +117,7 @@ static void enqueue_call(struct agents_entries_s *agent,
   va_list ap;
   struct agent_call_s *pcall2;
   int arg = 0;
-  const struct tile *ptile;
+  const tile_t *ptile;
 
   va_start(ap, cb_type);
 
@@ -131,7 +131,7 @@ static void enqueue_call(struct agents_entries_s *agent,
     arg = va_arg(ap, int);
     break;
   case ACT_TILE:
-    ptile = va_arg(ap, const struct tile *);
+    ptile = va_arg(ap, const tile_t *);
     arg = ptile->index;
     break;
   case ACT_NEW_TURN:
@@ -673,7 +673,7 @@ void agents_city_remove(city_t *pcity)
  documentation.
  Tiles got removed because of FOW.
 ***********************************************************************/
-void agents_tile_remove(struct tile *ptile)
+void agents_tile_remove(tile_t *ptile)
 {
   int i;
 
@@ -697,7 +697,7 @@ void agents_tile_remove(struct tile *ptile)
  Called from client/packhand.c. See agents_unit_changed for a generic
  documentation.
 ***********************************************************************/
-void agents_tile_changed(struct tile *ptile)
+void agents_tile_changed(tile_t *ptile)
 {
   int i;
 
@@ -721,7 +721,7 @@ void agents_tile_changed(struct tile *ptile)
  Called from client/packhand.c. See agents_unit_changed for a generic
  documentation.
 ***********************************************************************/
-void agents_tile_new(struct tile *ptile)
+void agents_tile_new(tile_t *ptile)
 {
   int i;
 

@@ -40,7 +40,7 @@ struct agent_s {
   void (*turn_start_notify) (void);
   void (*city_callbacks[CB_LAST]) (int);
   void (*unit_callbacks[CB_LAST]) (int);
-  void (*tile_callbacks[CB_LAST]) (struct tile *ptile);
+  void (*tile_callbacks[CB_LAST]) (tile_t *ptile);
 };
 
 void agents_init(void);
@@ -68,9 +68,9 @@ void agents_city_changed(city_t *pcity);
 void agents_city_new(city_t *pcity);
 void agents_city_remove(city_t *pcity);
 
-void agents_tile_changed(struct tile *ptile);
-void agents_tile_new(struct tile *ptile);
-void agents_tile_remove(struct tile *ptile);
+void agents_tile_changed(tile_t *ptile);
+void agents_tile_new(tile_t *ptile);
+void agents_tile_remove(tile_t *ptile);
 
 /* called from agents */
 void cause_a_city_changed_for_agent(const char *name_of_calling_agent,

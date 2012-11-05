@@ -16,7 +16,7 @@
 
 void simple_historian_init(void);
 
-struct tile* sha_tile_recall(struct tile *ptile);
+tile_t* sha_tile_recall(tile_t *ptile);
 struct unit* sha_unit_recall(int id);
 
 #endif  /* WC_CLIENT_AGENTS_SIMPLE_HISTORIAN_H */

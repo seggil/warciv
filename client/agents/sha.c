@@ -32,13 +32,13 @@ so it still keeps old values whereas all other agents
 allready got the new ones.
 **************************************************************************/
 
-static struct tile *previous_tiles = NULL;
+static tile_t *previous_tiles = NULL;
 static struct unit_list *previous_units = NULL;
 
 /**************************************************************************
 ...
 **************************************************************************/
-static void sha_tile_update(struct tile *ptile)
+static void sha_tile_update(tile_t *ptile)
 {
   freelog(LOG_DEBUG, "sha got tile: %d ~= (%d, %d)",
           ptile->index, TILE_XY(ptile));
@@ -123,7 +123,7 @@ Public interface
 /**************************************************************************
 ...
 **************************************************************************/
-struct tile *sha_tile_recall(struct tile *ptile)
+tile_t *sha_tile_recall(tile_t *ptile)
 {
   return &previous_tiles[ptile->index];
 }
