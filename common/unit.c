@@ -97,7 +97,7 @@ particular action there.
 **************************************************************************/
 bool diplomat_can_do_action(struct unit *pdiplomat,
                             enum diplomat_actions action,
-                            const struct tile *ptile)
+                            const tile_t *ptile)
 {
   if (!is_diplomat_action_available(pdiplomat, action, ptile)) {
     return FALSE;
@@ -122,7 +122,7 @@ action the diplomat can perform at the tile.
 **************************************************************************/
 bool is_diplomat_action_available(struct unit *pdiplomat,
                                   enum diplomat_actions action,
-                                  const struct tile *ptile)
+                                  const tile_t *ptile)
 {
   city_t *pcity=map_get_city(ptile);
 
@@ -305,7 +305,7 @@ bool unit_can_defend_here(struct unit *punit)
 /**************************************************************************
 Returns the number of free spaces for ground units. Can be 0 or negative.
 **************************************************************************/
-int ground_unit_transporter_capacity(const struct tile *ptile,
+int ground_unit_transporter_capacity(const tile_t *ptile,
                                      struct player *pplayer)
 {
   int availability = 0;
@@ -425,7 +425,7 @@ static bool is_ground_threat(struct player *pplayer, struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-bool is_square_threatened(struct player *pplayer, const struct tile *ptile)
+bool is_square_threatened(struct player *pplayer, const tile_t *ptile)
 {
   square_iterate(ptile, 2, ptile1) {
     unit_list_iterate(ptile1->units, punit) {
@@ -599,7 +599,7 @@ int get_activity_rate_this_turn(struct unit *punit)
 **************************************************************************/
 int get_turns_for_activity_at(struct unit *punit,
                               enum unit_activity activity,
-                              const struct tile *ptile)
+                              const tile_t *ptile)
 {
   /* FIXME: This is just an approximation since we don't account for
    * get_activity_rate_this_turn. */
@@ -865,7 +865,7 @@ bool can_unit_do_activity_targeted(struct unit *punit,
 bool can_unit_do_activity_targeted_at(struct unit *punit,
                                       enum unit_activity activity,
                                       enum tile_special_type target,
-                                      const struct tile *ptile)
+                                      const tile_t *ptile)
 {
   struct player *pplayer;
   struct tile_type *type;
@@ -1087,7 +1087,7 @@ void set_unit_activity_targeted(struct unit *punit,
 ...
 **************************************************************************/
 bool is_unit_activity_on_tile(enum unit_activity activity,
-                              const struct tile *ptile)
+                              const tile_t *ptile)
 {
   unit_list_iterate(ptile->units, punit)
     if(punit->activity==activity)
@@ -1099,7 +1099,7 @@ bool is_unit_activity_on_tile(enum unit_activity activity,
 /**************************************************************************
 ...
 **************************************************************************/
-enum tile_special_type get_unit_tile_pillage_set(const struct tile *ptile)
+enum tile_special_type get_unit_tile_pillage_set(const tile_t *ptile)
 {
   enum tile_special_type tgt_ret = S_NO_SPECIAL;
 
@@ -1262,7 +1262,7 @@ struct player *unit_owner(struct unit *punit)
   leave loading up to the caller.
 ****************************************************************************/
 static void count_carrier_capacity(int *airall, int *misonly,
-                                   const struct tile *ptile,
+                                   const tile_t *ptile,
                                    struct player *pplayer,
                                    bool count_units_with_extra_fuel)
 {
@@ -1297,7 +1297,7 @@ static void count_carrier_capacity(int *airall, int *misonly,
 /**************************************************************************
 Returns the number of free spaces for missiles. Can be 0 or negative.
 **************************************************************************/
-int missile_carrier_capacity(const struct tile *ptile,
+int missile_carrier_capacity(const tile_t *ptile,
                              struct player *pplayer,
                              bool count_units_with_extra_fuel)
 {
@@ -1315,7 +1315,7 @@ int missile_carrier_capacity(const struct tile *ptile,
 Returns the number of free spaces for airunits (includes missiles).
 Can be 0 or negative.
 **************************************************************************/
-int airunit_carrier_capacity(const struct tile *ptile,
+int airunit_carrier_capacity(const tile_t *ptile,
                              struct player *pplayer,
                              bool count_units_with_extra_fuel)
 {
@@ -1334,7 +1334,7 @@ Returns true if the tile contains an allied unit and only allied units.
 (ie, if your nation A is allied with B, and B is allied with C, a tile
 containing units from B and C will return false)
 **************************************************************************/
-struct unit *is_allied_unit_tile(const struct tile *ptile,
+struct unit *is_allied_unit_tile(const tile_t *ptile,
                                  struct player *pplayer)
 {
   struct unit *punit = NULL;
@@ -1353,7 +1353,7 @@ struct unit *is_allied_unit_tile(const struct tile *ptile,
 /**************************************************************************
  is there an enemy unit on this tile?
 **************************************************************************/
-struct unit *is_enemy_unit_tile(const struct tile *ptile,
+struct unit *is_enemy_unit_tile(const tile_t *ptile,
                                 struct player *pplayer)
 {
   unit_list_iterate(ptile->units, punit) {
@@ -1368,7 +1368,7 @@ struct unit *is_enemy_unit_tile(const struct tile *ptile,
 /**************************************************************************
  is there an non-allied unit on this tile?
 **************************************************************************/
-struct unit *is_non_allied_unit_tile(const struct tile *ptile,
+struct unit *is_non_allied_unit_tile(const tile_t *ptile,
                                      struct player *pplayer)
 {
   unit_list_iterate(ptile->units, punit) {
@@ -1383,7 +1383,7 @@ struct unit *is_non_allied_unit_tile(const struct tile *ptile,
 /**************************************************************************
  is there an unit we have peace or ceasefire with on this tile?
 **************************************************************************/
-struct unit *is_non_attack_unit_tile(const struct tile *ptile,
+struct unit *is_non_attack_unit_tile(const tile_t *ptile,
                                      struct player *pplayer)
 {
   unit_list_iterate(ptile->units, punit) {
@@ -1407,7 +1407,7 @@ struct unit *is_non_attack_unit_tile(const struct tile *ptile,
   client-specific features, like FoW and the fact that the client cannot
   see units inside enemy cities.
 **************************************************************************/
-bool is_my_zoc(struct player *pplayer, const struct tile *ptile0)
+bool is_my_zoc(struct player *pplayer, const tile_t *ptile0)
 {
   square_iterate(ptile0, 1, ptile) {
     if (is_ocean(ptile->terrain)) {
@@ -1455,8 +1455,8 @@ bool unit_type_really_ignores_zoc(Unit_Type_id type)
 **************************************************************************/
 bool can_step_taken_wrt_to_zoc(Unit_Type_id type,
                                struct player *unit_owner,
-                               const struct tile *src_tile,
-                               const struct tile *dst_tile)
+                               const tile_t *src_tile,
+                               const tile_t *dst_tile)
 {
   if (unit_type_really_ignores_zoc(type))
     return TRUE;
@@ -1477,8 +1477,8 @@ bool can_step_taken_wrt_to_zoc(Unit_Type_id type,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool zoc_ok_move_gen(struct unit *punit, const struct tile *ptile1,
-                            const struct tile *ptile2)
+static bool zoc_ok_move_gen(struct unit *punit, const tile_t *ptile1,
+                            const tile_t *ptile2)
 {
   return can_step_taken_wrt_to_zoc(punit->type, unit_owner(punit),
                                    ptile1, ptile2);
@@ -1488,7 +1488,7 @@ static bool zoc_ok_move_gen(struct unit *punit, const struct tile *ptile1,
   Convenience wrapper for zoc_ok_move_gen(), using the unit's (x,y)
   as the starting point.
 **************************************************************************/
-bool zoc_ok_move(struct unit *punit, const struct tile *ptile)
+bool zoc_ok_move(struct unit *punit, const tile_t *ptile)
 {
   return zoc_ok_move_gen(punit, punit->tile, ptile);
 }
@@ -1497,7 +1497,7 @@ bool zoc_ok_move(struct unit *punit, const struct tile *ptile)
   Return TRUE iff the unit can "exist" at this location.  This means it can
   physically be present on the tile (without the use of a transporter).
 ****************************************************************************/
-bool can_unit_exist_at_tile(struct unit *punit, const struct tile *ptile)
+bool can_unit_exist_at_tile(struct unit *punit, const tile_t *ptile)
 {
   if (ptile->city) {
     return TRUE;
@@ -1522,7 +1522,7 @@ bool can_unit_exist_at_tile(struct unit *punit, const struct tile *ptile)
   indefinitely on its own (without a transporter).  Units that require fuel
   or have a danger of drowning are examples of non-survivable units.
 ****************************************************************************/
-bool can_unit_survive_at_tile(struct unit *punit, const struct tile *ptile)
+bool can_unit_survive_at_tile(struct unit *punit, const tile_t *ptile)
 {
   if (!can_unit_exist_at_tile(punit, ptile)) {
     return FALSE;
@@ -1549,7 +1549,7 @@ bool can_unit_survive_at_tile(struct unit *punit, const struct tile *ptile)
 /**************************************************************************
   Convenience wrapper for test_unit_move_to_tile.
 **************************************************************************/
-bool can_unit_move_to_tile(struct unit *punit, const struct tile *dst_tile,
+bool can_unit_move_to_tile(struct unit *punit, const tile_t *dst_tile,
                            bool igzoc)
 {
   return MR_OK == test_unit_move_to_tile(punit->type, unit_owner(punit),
@@ -1575,8 +1575,8 @@ bool can_unit_move_to_tile(struct unit *punit, const struct tile *dst_tile,
 enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
                                              struct player *unit_owner,
                                              enum unit_activity activity,
-                                             const struct tile *pfromtile,
-                                             const struct tile *ptotile,
+                                             const tile_t *pfromtile,
+                                             const tile_t *ptotile,
                                              bool igzoc)
 {
   bool zoc;
@@ -1652,7 +1652,7 @@ enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
   to know more.  The AI code uses base_trireme_loss_pct and
   base_unsafe_terrain_loss_pct directly.
 **************************************************************************/
-int unit_loss_pct(struct player *pplayer, const struct tile *ptile,
+int unit_loss_pct(struct player *pplayer, const tile_t *ptile,
                   struct unit *punit)
 {
   int loss_pct = 0;
@@ -1859,7 +1859,7 @@ int get_transporter_occupancy(struct unit *ptrans)
   Find a transporter at the given location for the unit.
 ****************************************************************************/
 struct unit *find_transporter_for_unit(struct unit *pcargo,
-                                       const struct tile *ptile)
+                                       const tile_t *ptile)
 {
   struct unit *trans_ret = NULL;
 

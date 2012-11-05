@@ -104,7 +104,7 @@ extern int city_tiles;
  */
 #define city_map_checked_iterate(city_tile, cx, cy, itr_tile) {     \
   city_map_iterate_outwards(cx, cy) {                          \
-    struct tile *itr_tile;                                     \
+    tile_t *itr_tile;                                     \
     if ((itr_tile = base_city_map_to_map(city_tile, cx, cy))) {
 
 #define city_map_checked_iterate_end \
@@ -192,7 +192,7 @@ struct ai_city {
 struct city_common {
   int id;
   int owner;
-  struct tile *tile;
+  tile_t *tile;
   char name[MAX_LEN_NAME];
 
   int pop_size;  /* the people */
@@ -265,7 +265,7 @@ struct city_common {
 
   int turn_founded;             /* In which turn was the city founded? */
 
-  struct tile *rally_point;
+  tile_t *rally_point;
 };
 
 typedef struct city_s {
@@ -405,20 +405,20 @@ const char *get_impr_name_ex(const city_t *pcity, Impr_Type_id id);
 
 /* tile production functions */
 
-int get_shields_tile(const struct tile *ptile); /* shield on spot */
-int get_trade_tile(const struct tile *ptile); /* trade on spot */
-int get_food_tile(const struct tile *ptile); /* food on spot */
+int get_shields_tile(const tile_t *ptile); /* shield on spot */
+int get_trade_tile(const tile_t *ptile); /* trade on spot */
+int get_food_tile(const tile_t *ptile); /* food on spot */
 
 /* city map functions */
 
 bool is_valid_city_coords(const int city_x, const int city_y);
 bool map_to_city_map(int *city_map_x, int *city_map_y,
                      const city_t *const pcity,
-                     const struct tile *ptile);
+                     const tile_t *ptile);
 
-struct tile *base_city_map_to_map(const struct tile *city_center_tile,
+tile_t *base_city_map_to_map(const tile_t *city_center_tile,
                                   int city_map_x, int city_map_y);
-struct tile *city_map_to_map(const city_t *const pcity,
+tile_t *city_map_to_map(const city_t *const pcity,
                              int city_map_x, int city_map_y);
 
 /* Initialization functions */
@@ -442,12 +442,12 @@ void set_worker_city(city_t *pcity, int city_x, int city_y,
                      enum city_tile_type type);
 enum city_tile_type get_worker_city(const city_t *pcity, int city_x,
                                     int city_y);
-void get_worker_on_map_position(const struct tile *ptile,
+void get_worker_on_map_position(const tile_t *ptile,
                                 enum city_tile_type *result_city_tile_type,
                                 city_t **result_pcity);
 bool is_worker_here(const city_t *pcity, int city_x, int city_y);
 
-bool city_can_be_built_here(const struct tile *ptile, struct unit *punit);
+bool city_can_be_built_here(const tile_t *ptile, struct unit *punit);
 
 /* trade functions */
 bool can_cities_trade(const city_t *pc1, const city_t *pc2);
@@ -479,18 +479,18 @@ int get_style_by_name_orig(const char *);
 const char *get_city_style_name(int style);
 char* get_city_style_name_orig(int style);
 
-city_t *is_enemy_city_tile(const struct tile *ptile,
+city_t *is_enemy_city_tile(const tile_t *ptile,
                            struct player *pplayer);
-city_t *is_allied_city_tile(const struct tile *ptile,
+city_t *is_allied_city_tile(const tile_t *ptile,
                             struct player *pplayer);
-city_t *is_non_attack_city_tile(const struct tile *ptile,
+city_t *is_non_attack_city_tile(const tile_t *ptile,
                                 struct player *pplayer);
-city_t *is_non_allied_city_tile(const struct tile *ptile,
+city_t *is_non_allied_city_tile(const tile_t *ptile,
                                 struct player *pplayer);
 
 bool is_unit_near_a_friendly_city(struct unit *punit);
-bool is_friendly_city_near(struct player *owner, const struct tile *ptile);
-bool city_exists_within_city_radius(const struct tile *ptile,
+bool is_friendly_city_near(struct player *owner, const tile_t *ptile);
+bool city_exists_within_city_radius(const tile_t *ptile,
                                     bool may_be_on_center);
 
 /* granary size as a function of city size */
@@ -516,7 +516,7 @@ int get_city_science_bonus(const city_t *pcity);
 bool city_built_last_turn(const city_t *pcity);
 
 /* city creation / destruction */
-city_t *create_city_virtual(struct player *pplayer, struct tile *ptile,
+city_t *create_city_virtual(struct player *pplayer, tile_t *ptile,
                             const char *name);
 void remove_city_virtual(city_t *pcity);
 

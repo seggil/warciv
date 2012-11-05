@@ -167,7 +167,7 @@ void tile_types_free(void)
 /****************************************************************************
   Returns TRUE iff any adjacent tile contains the given terrain.
 ****************************************************************************/
-bool is_terrain_near_tile(const struct tile *ptile, Terrain_type_id t)
+bool is_terrain_near_tile(const tile_t *ptile, Terrain_type_id t)
 {
   adjc_iterate(ptile, adjc_tile) {
     if (adjc_tile->terrain == t) {
@@ -181,7 +181,7 @@ bool is_terrain_near_tile(const struct tile *ptile, Terrain_type_id t)
 /****************************************************************************
   Return the number of adjacent tiles that have the given terrain.
 ****************************************************************************/
-int count_terrain_near_tile(const struct tile *ptile,
+int count_terrain_near_tile(const tile_t *ptile,
                             bool cardinal_only, bool percentage,
                             Terrain_type_id t)
 {
@@ -203,7 +203,7 @@ int count_terrain_near_tile(const struct tile *ptile,
 /****************************************************************************
   Returns TRUE iff any tile adjacent to (map_x,map_y) has the given special.
 ****************************************************************************/
-bool is_special_near_tile(const struct tile *ptile, enum tile_special_type spe)
+bool is_special_near_tile(const tile_t *ptile, enum tile_special_type spe)
 {
   adjc_iterate(ptile, adjc_tile) {
     if (map_has_special(adjc_tile, spe)) {
@@ -217,7 +217,7 @@ bool is_special_near_tile(const struct tile *ptile, enum tile_special_type spe)
 /****************************************************************************
   Returns the number of adjacent tiles that have the given map special.
 ****************************************************************************/
-int count_special_near_tile(const struct tile *ptile,
+int count_special_near_tile(const tile_t *ptile,
                             bool cardinal_only, bool percentage,
                             enum tile_special_type spe)
 {
@@ -239,7 +239,7 @@ int count_special_near_tile(const struct tile *ptile,
 /****************************************************************************
   Returns TRUE iff any adjacent tile contains terrain with the given tag.
 ****************************************************************************/
-bool is_terrain_tag_near_tile(const struct tile *ptile,
+bool is_terrain_tag_near_tile(const tile_t *ptile,
                               enum terrain_tag_id tag)
 {
   adjc_iterate(ptile, adjc_tile) {
@@ -254,7 +254,7 @@ bool is_terrain_tag_near_tile(const struct tile *ptile,
 /****************************************************************************
   Return the number of adjacent tiles that have terrain with the given tag.
 ****************************************************************************/
-int count_terrain_tag_near_tile(const struct tile *ptile,
+int count_terrain_tag_near_tile(const tile_t *ptile,
                                 bool cardinal_only, bool percentage,
                                 enum terrain_tag_id tag)
 {

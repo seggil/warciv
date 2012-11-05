@@ -43,7 +43,7 @@
         if the game changes (no unit_type or player_type kept).
 **************************************************************************/
 static struct pf_parameter *get_caravan_parameter(struct player *pplayer,
-                                                  struct tile *ptile)
+                                                  tile_t *ptile)
 {
   static struct pf_parameter parameter, *pparameter = NULL;
 
@@ -108,8 +108,8 @@ static int calculate_default_move_cost(city_t *pcity1, city_t *pcity2)
 /**************************************************************************
   Calculate the move cost for the unit for going from to ptile1 to ptile2.
 **************************************************************************/
-static int base_calculate_move_cost(struct unit *punit, struct tile *ptile1,
-                                                        struct tile *ptile2)
+static int base_calculate_move_cost(struct unit *punit, tile_t *ptile1,
+                                                        tile_t *ptile2)
 {
   struct pf_parameter parameter;
   struct path_finding_map *pmap;
@@ -275,7 +275,7 @@ int calculate_trade_move_turns(struct trade_route *ptr)
 ****************************************************************************/
 static bool add_move_orders(struct unit *punit, struct unit_order *porders,
                             int *length, int max_length,
-                            struct tile *otile, struct tile *dtile)
+                            tile_t *otile, tile_t *dtile)
 {
   struct pf_parameter parameter;
   struct path_finding_map *pmap;
@@ -322,7 +322,7 @@ struct unit_order *make_unit_orders(struct trade_route *ptr, int *length)
   }
 
   struct unit_order orders[MAX_LEN_ROUTE], *porders;
-  struct tile *ptile = ptr->punit->tile;
+  tile_t *ptile = ptr->punit->tile;
   int i;
 
   *length = 0;
@@ -468,7 +468,7 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
                                   size_t size, int *free_slots)
 {
   struct precalc_city {
-    struct tile *ptile;
+    tile_t *ptile;
     city_t *pcity;
     int free_slots;
     int trade_routes_num;

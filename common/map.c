@@ -78,7 +78,7 @@ static const char *tile_special_type_names[] =
 /****************************************************************************
   Return a bitfield of the specials on the tile that are infrastructure.
 ****************************************************************************/
-enum tile_special_type get_tile_infrastructure_set(const struct tile *ptile)
+enum tile_special_type get_tile_infrastructure_set(const tile_t *ptile)
 {
   return (ptile->special
           & (S_ROAD | S_RAILROAD | S_IRRIGATION | S_FARMLAND | S_MINE
@@ -91,7 +91,7 @@ enum tile_special_type get_tile_infrastructure_set(const struct tile *ptile)
   eg: "Hills (Coals)"
   eg: "Hills (Coals) [Pollution]"
 ***************************************************************/
-const char *map_get_tile_info_text(const struct tile *ptile)
+const char *map_get_tile_info_text(const tile_t *ptile)
 {
   static char s[64];
   bool first;
@@ -353,7 +353,7 @@ void map_init_topology(bool set_sizes)
 /***************************************************************
 ...
 ***************************************************************/
-static void tile_init(struct tile *ptile)
+static void tile_init(tile_t *ptile)
 {
   ptile->terrain = T_UNKNOWN;
   ptile->special = S_NO_SPECIAL;
@@ -377,7 +377,7 @@ static void tile_init(struct tile *ptile)
   Step from the given tile in the given direction.  The new tile is returned,
   or NULL if the direction is invalid or leads off the map.
 ****************************************************************************/
-struct tile *mapstep(const struct tile *ptile, enum direction8 dir)
+tile_t *mapstep(const tile_t *ptile, enum direction8 dir)
 {
   int x, y;
 
@@ -398,7 +398,7 @@ struct tile *mapstep(const struct tile *ptile, enum direction8 dir)
   This is a backend function used by map_pos_to_tile and native_pos_to_tile.
   It is called extremely often so it is made inline.
 ****************************************************************************/
-static inline struct tile *base_native_pos_to_tile(int nat_x, int nat_y)
+static inline tile_t *base_native_pos_to_tile(int nat_x, int nat_y)
 {
   /* If the position is out of range in a non-wrapping direction, it is
    * unreal. */
@@ -421,7 +421,7 @@ static inline struct tile *base_native_pos_to_tile(int nat_x, int nat_y)
 /****************************************************************************
   Return the tile for the given cartesian (map) position.
 ****************************************************************************/
-struct tile *map_pos_to_tile(int map_x, int map_y)
+tile_t *map_pos_to_tile(int map_x, int map_y)
 {
   int nat_x, nat_y;
 
@@ -437,7 +437,7 @@ struct tile *map_pos_to_tile(int map_x, int map_y)
 /****************************************************************************
   Return the tile for the given native position.
 ****************************************************************************/
-struct tile *native_pos_to_tile(int nat_x, int nat_y)
+tile_t *native_pos_to_tile(int nat_x, int nat_y)
 {
   if (!map.board) {
     return NULL;
@@ -449,7 +449,7 @@ struct tile *native_pos_to_tile(int nat_x, int nat_y)
 /****************************************************************************
   Return the tile for the given index position.
 ****************************************************************************/
-struct tile *index_to_tile(int index)
+tile_t *index_to_tile(int index)
 {
   if (!map.board) {
     return NULL;
@@ -467,7 +467,7 @@ struct tile *index_to_tile(int index)
 /**************************************************************************
   Return the player who owns this tile (or NULL if none).
 **************************************************************************/
-struct player *map_get_owner(const struct tile *ptile)
+struct player *map_get_owner(const tile_t *ptile)
 {
   return ptile->owner;
 }
@@ -475,7 +475,7 @@ struct player *map_get_owner(const struct tile *ptile)
 /**************************************************************************
   Set the owner of a tile (may be NULL).
 **************************************************************************/
-void map_set_owner(struct tile *ptile, struct player *owner)
+void map_set_owner(tile_t *ptile, struct player *owner)
 {
   ptile->owner = owner;
 }
@@ -483,7 +483,7 @@ void map_set_owner(struct tile *ptile, struct player *owner)
 /***************************************************************
 ...
 ***************************************************************/
-static void tile_free(struct tile *ptile)
+static void tile_free(tile_t *ptile)
 {
   unit_list_free(ptile->units);
   ptile->units = NULL;
@@ -503,7 +503,7 @@ void map_allocate(void)
           map.board, map.info.xsize, map.info.ysize);
 
   assert(map.board == NULL);
-  map.board = wc_malloc(map.info.xsize * map.info.ysize * sizeof(struct tile));
+  map.board = wc_malloc(map.info.xsize * map.info.ysize * sizeof(tile_t));
   whole_map_iterate(ptile) {
     int index, nat_x, nat_y, map_x, map_y;
 
@@ -650,7 +650,7 @@ int map_vector_to_sq_distance(int dx, int dy)
 /***************************************************************
 ...
 ***************************************************************/
-int real_map_distance(const struct tile *tile0, const struct tile *tile1)
+int real_map_distance(const tile_t *tile0, const tile_t *tile1)
 {
   int dx, dy;
 
@@ -661,7 +661,7 @@ int real_map_distance(const struct tile *tile0, const struct tile *tile1)
 /***************************************************************
 ...
 ***************************************************************/
-int sq_map_distance(const struct tile *tile0, const struct tile *tile1)
+int sq_map_distance(const tile_t *tile0, const tile_t *tile1)
 {
   /* We assume map_distance_vector gives us the vector with the
      minimum squared distance. Right now this is true. */
@@ -674,7 +674,7 @@ int sq_map_distance(const struct tile *tile0, const struct tile *tile1)
 /***************************************************************
 ...
 ***************************************************************/
-int map_distance(const struct tile *tile0, const struct tile *tile1)
+int map_distance(const tile_t *tile0, const tile_t *tile1)
 {
   /* We assume map_distance_vector gives us the vector with the
      minimum map distance. Right now this is true. */
@@ -689,7 +689,7 @@ int map_distance(const struct tile *tile0, const struct tile *tile1)
   intentionally made awkward to prevent people from using it in place of
   is_ocean_near_tile
 *************************************************************************/
-bool is_cardinally_adj_to_ocean(const struct tile *ptile)
+bool is_cardinally_adj_to_ocean(const tile_t *ptile)
 {
   cardinal_adjc_iterate(ptile, tile1) {
     if (is_ocean(map_get_terrain(tile1))) {
@@ -703,7 +703,7 @@ bool is_cardinally_adj_to_ocean(const struct tile *ptile)
 /****************************************************************************
   Return TRUE if this ocean terrain is adjacent to a safe coastline.
 ****************************************************************************/
-bool is_safe_ocean(const struct tile *ptile)
+bool is_safe_ocean(const tile_t *ptile)
 {
   adjc_iterate(ptile, tile1) {
     Terrain_type_id ter = map_get_terrain(tile1);
@@ -719,7 +719,7 @@ bool is_safe_ocean(const struct tile *ptile)
 Returns whether you can put a city on land near enough to use
 the tile.
 ***************************************************************/
-bool is_sea_usable(const struct tile *ptile)
+bool is_sea_usable(const tile_t *ptile)
 {
   map_city_radius_iterate(ptile, tile1) {
     if (!is_ocean(map_get_terrain(tile1))) {
@@ -733,7 +733,7 @@ bool is_sea_usable(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int get_tile_food_base(const struct tile *ptile)
+int get_tile_food_base(const tile_t *ptile)
 {
   if (tile_has_special(ptile, S_SPECIAL_1))
     return get_tile_type(ptile->terrain)->food_special_1;
@@ -746,7 +746,7 @@ int get_tile_food_base(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int get_tile_shield_base(const struct tile *ptile)
+int get_tile_shield_base(const tile_t *ptile)
 {
   if (tile_has_special(ptile, S_SPECIAL_1))
     return get_tile_type(ptile->terrain)->shield_special_1;
@@ -759,7 +759,7 @@ int get_tile_shield_base(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int get_tile_trade_base(const struct tile *ptile)
+int get_tile_trade_base(const tile_t *ptile)
 {
   if (tile_has_special(ptile, S_SPECIAL_1))
     return get_tile_type(ptile->terrain)->trade_special_1;
@@ -851,7 +851,7 @@ enum tile_special_type get_preferred_pillage(enum tile_special_type pset)
 /***************************************************************
 ...
 ***************************************************************/
-bool is_water_adjacent_to_tile(const struct tile *ptile)
+bool is_water_adjacent_to_tile(const tile_t *ptile)
 {
   if (is_ocean(ptile->terrain)
       || tile_has_special(ptile, S_RIVER)
@@ -871,7 +871,7 @@ bool is_water_adjacent_to_tile(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_build_road_time(const struct tile *ptile)
+int map_build_road_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->road_time * ACTIVITY_FACTOR;
 }
@@ -879,7 +879,7 @@ int map_build_road_time(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_build_irrigation_time(const struct tile *ptile)
+int map_build_irrigation_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->irrigation_time * ACTIVITY_FACTOR;
 }
@@ -887,7 +887,7 @@ int map_build_irrigation_time(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_build_mine_time(const struct tile *ptile)
+int map_build_mine_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->mining_time * ACTIVITY_FACTOR;
 }
@@ -895,7 +895,7 @@ int map_build_mine_time(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_transform_time(const struct tile *ptile)
+int map_transform_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->transform_time * ACTIVITY_FACTOR;
 }
@@ -903,7 +903,7 @@ int map_transform_time(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_build_rail_time(const struct tile *ptile)
+int map_build_rail_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->rail_time * ACTIVITY_FACTOR;
 }
@@ -911,7 +911,7 @@ int map_build_rail_time(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_build_airbase_time(const struct tile *ptile)
+int map_build_airbase_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->airbase_time * ACTIVITY_FACTOR;
 }
@@ -919,7 +919,7 @@ int map_build_airbase_time(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_build_fortress_time(const struct tile *ptile)
+int map_build_fortress_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->fortress_time * ACTIVITY_FACTOR;
 }
@@ -927,7 +927,7 @@ int map_build_fortress_time(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_clean_pollution_time(const struct tile *ptile)
+int map_clean_pollution_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->clean_pollution_time * ACTIVITY_FACTOR;
 }
@@ -935,7 +935,7 @@ int map_clean_pollution_time(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-int map_clean_fallout_time(const struct tile *ptile)
+int map_clean_fallout_time(const tile_t *ptile)
 {
   return get_tile_type(ptile->terrain)->clean_fallout_time * ACTIVITY_FACTOR;
 }
@@ -943,7 +943,7 @@ int map_clean_fallout_time(const struct tile *ptile)
 /***************************************************************
   Time to complete given activity on given tile.
 ***************************************************************/
-int map_activity_time(enum unit_activity activity, const struct tile *ptile)
+int map_activity_time(enum unit_activity activity, const tile_t *ptile)
 {
   switch (activity) {
   case ACTIVITY_POLLUTION:
@@ -972,7 +972,7 @@ int map_activity_time(enum unit_activity activity, const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-static void clear_infrastructure(struct tile *ptile)
+static void clear_infrastructure(tile_t *ptile)
 {
   map_clear_special(ptile, S_INFRASTRUCTURE_MASK);
 }
@@ -980,7 +980,7 @@ static void clear_infrastructure(struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-static void clear_dirtiness(struct tile *ptile)
+static void clear_dirtiness(tile_t *ptile)
 {
   map_clear_special(ptile, S_POLLUTION | S_FALLOUT);
 }
@@ -988,7 +988,7 @@ static void clear_dirtiness(struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-void map_irrigate_tile(struct tile *ptile)
+void map_irrigate_tile(tile_t *ptile)
 {
   Terrain_type_id now, result;
 
@@ -1019,7 +1019,7 @@ void map_irrigate_tile(struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-void map_mine_tile(struct tile *ptile)
+void map_mine_tile(tile_t *ptile)
 {
   Terrain_type_id now, result;
 
@@ -1047,7 +1047,7 @@ void map_mine_tile(struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-void change_terrain(struct tile *ptile, Terrain_type_id type)
+void change_terrain(tile_t *ptile, Terrain_type_id type)
 {
   map_set_terrain(ptile, type);
   if (is_ocean(type)) {
@@ -1074,7 +1074,7 @@ void change_terrain(struct tile *ptile, Terrain_type_id type)
 /***************************************************************
 ...
 ***************************************************************/
-void map_transform_tile(struct tile *ptile)
+void map_transform_tile(tile_t *ptile)
 {
   Terrain_type_id now, result;
 
@@ -1091,7 +1091,7 @@ This function returns true if the tile at the given location can be
 "reclaimed" from ocean into land.  This is the case only when there are
 a sufficient number of adjacent tiles that are not ocean.
 **************************************************************************/
-bool can_reclaim_ocean(const struct tile *ptile)
+bool can_reclaim_ocean(const tile_t *ptile)
 {
   int land_tiles = 100 - count_ocean_near_tile(ptile, FALSE, TRUE);
 
@@ -1103,7 +1103,7 @@ This function returns true if the tile at the given location can be
 "channeled" from land into ocean.  This is the case only when there are
 a sufficient number of adjacent tiles that are ocean.
 **************************************************************************/
-bool can_channel_land(const struct tile *ptile)
+bool can_channel_land(const tile_t *ptile)
 {
   int ocean_tiles = count_ocean_near_tile(ptile, FALSE, TRUE);
 
@@ -1120,7 +1120,7 @@ bool can_channel_land(const struct tile *ptile)
   tests are not done (for unit-independent results).
 ***************************************************************/
 static int tile_move_cost_ptrs(struct unit *punit,
-                               const struct tile *t1, const struct tile *t2)
+                               const tile_t *t1, const tile_t *t2)
 {
   bool cardinal_move;
 
@@ -1182,7 +1182,7 @@ static int tile_move_cost_ptrs(struct unit *punit,
     - both tiles are ocean or
     - one of the tiles is ocean and the other is a city or is unknown
 ***************************************************************/
-static int tile_move_cost_ai(struct tile *tile0, struct tile *tile1,
+static int tile_move_cost_ai(tile_t *tile0, tile_t *tile1,
                              int maxcost)
 {
   assert(!is_server
@@ -1215,7 +1215,7 @@ static int tile_move_cost_ai(struct tile *tile0, struct tile *tile1,
 #if defined(NDEBUG)
 # define debug_log_move_costs(str,tile)
 #else
-static void debug_log_move_costs(const char *str, struct tile *tile0)
+static void debug_log_move_costs(const char *str, tile_t *tile0)
 {
   /* the %x don't work so well for oceans, where
      move_cost[]==-3 ,.. --dwp
@@ -1234,7 +1234,7 @@ static void debug_log_move_costs(const char *str, struct tile *tile0)
   tiles in direction back to (x,y).  That is, call this when
   something has changed on (x,y), eg roads, city, transform, etc.
 ***************************************************************/
-void reset_move_costs(struct tile *ptile)
+void reset_move_costs(tile_t *ptile)
 {
   int maxcost = 72; /* should be big enough without being TOO big */
 
@@ -1276,7 +1276,7 @@ void initialize_move_costs(void)
   The cost to move punit from where it is to tile x,y.
   It is assumed the move is a valid one, e.g. the tiles are adjacent.
 ***************************************************************/
-int map_move_cost(struct unit *punit, const struct tile *ptile)
+int map_move_cost(struct unit *punit, const tile_t *ptile)
 {
   return tile_move_cost_ptrs(punit, punit->tile, ptile);
 }
@@ -1284,7 +1284,7 @@ int map_move_cost(struct unit *punit, const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-bool is_tiles_adjacent(const struct tile *tile0, const struct tile *tile1)
+bool is_tiles_adjacent(const tile_t *tile0, const tile_t *tile1)
 {
   return real_map_distance(tile0, tile1) == 1;
 }
@@ -1292,7 +1292,7 @@ bool is_tiles_adjacent(const struct tile *tile0, const struct tile *tile1)
 /***************************************************************
 ...
 ***************************************************************/
-Continent_id map_get_continent(const struct tile *ptile)
+Continent_id map_get_continent(const tile_t *ptile)
 {
   return ptile->continent;
 }
@@ -1300,7 +1300,7 @@ Continent_id map_get_continent(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-void map_set_continent(struct tile *ptile, Continent_id val)
+void map_set_continent(tile_t *ptile, Continent_id val)
 {
   ptile->continent = val;
 }
@@ -1308,7 +1308,7 @@ void map_set_continent(struct tile *ptile, Continent_id val)
 /***************************************************************
 ...
 ***************************************************************/
-void map_set_spec_sprite(struct tile *ptile, const char *sprite)
+void map_set_spec_sprite(tile_t *ptile, const char *sprite)
 {
   if (ptile->spec_sprite) {
     free(ptile->spec_sprite);
@@ -1323,7 +1323,7 @@ void map_set_spec_sprite(struct tile *ptile, const char *sprite)
 /***************************************************************
 ...
 ***************************************************************/
-Terrain_type_id map_get_terrain(const struct tile *ptile)
+Terrain_type_id map_get_terrain(const tile_t *ptile)
 {
   return ptile->terrain;
 }
@@ -1331,7 +1331,7 @@ Terrain_type_id map_get_terrain(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-void map_set_terrain(struct tile *ptile, Terrain_type_id ter)
+void map_set_terrain(tile_t *ptile, Terrain_type_id ter)
 {
   ptile->terrain = ter;
 }
@@ -1339,7 +1339,7 @@ void map_set_terrain(struct tile *ptile, Terrain_type_id ter)
 /***************************************************************
 ...
 ***************************************************************/
-enum tile_special_type map_get_special(const struct tile *ptile)
+enum tile_special_type map_get_special(const tile_t *ptile)
 {
   return ptile->special;
 }
@@ -1348,7 +1348,7 @@ enum tile_special_type map_get_special(const struct tile *ptile)
  Returns TRUE iff the given special is found at the given map
  position.
 ***************************************************************/
-bool map_has_special(const struct tile *ptile, enum tile_special_type special)
+bool map_has_special(const tile_t *ptile, enum tile_special_type special)
 {
   return contains_special(ptile->special, special);
 }
@@ -1356,7 +1356,7 @@ bool map_has_special(const struct tile *ptile, enum tile_special_type special)
 /***************************************************************
  Returns TRUE iff the given tile has the given special.
 ***************************************************************/
-bool tile_has_special(const struct tile *ptile,
+bool tile_has_special(const tile_t *ptile,
                       enum tile_special_type special)
 {
   return contains_special(ptile->special, special);
@@ -1384,7 +1384,7 @@ bool contains_special(enum tile_special_type set,
 /***************************************************************
 ...
 ***************************************************************/
-void map_set_special(struct tile *ptile, enum tile_special_type spe)
+void map_set_special(tile_t *ptile, enum tile_special_type spe)
 {
   ptile->special |= spe;
 
@@ -1396,7 +1396,7 @@ void map_set_special(struct tile *ptile, enum tile_special_type spe)
 /***************************************************************
 ...
 ***************************************************************/
-void map_clear_special(struct tile *ptile, enum tile_special_type spe)
+void map_clear_special(tile_t *ptile, enum tile_special_type spe)
 {
   ptile->special &= ~spe;
 
@@ -1408,7 +1408,7 @@ void map_clear_special(struct tile *ptile, enum tile_special_type spe)
 /***************************************************************
   Remove any specials which may exist at these map co-ordinates.
 ***************************************************************/
-void map_clear_all_specials(struct tile *ptile)
+void map_clear_all_specials(tile_t *ptile)
 {
   ptile->special = S_NO_SPECIAL;
 }
@@ -1416,7 +1416,7 @@ void map_clear_all_specials(struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-city_t *map_get_city(const struct tile *ptile)
+city_t *map_get_city(const tile_t *ptile)
 {
   return ptile->city;
 }
@@ -1424,7 +1424,7 @@ city_t *map_get_city(const struct tile *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-void map_set_city(struct tile *ptile, city_t *pcity)
+void map_set_city(tile_t *ptile, city_t *pcity)
 {
   ptile->city = pcity;
 }
@@ -1433,7 +1433,7 @@ void map_set_city(struct tile *ptile, city_t *pcity)
   Are (x1,y1) and (x2,y2) really the same when adjusted?
   This function might be necessary ALOT of places...
 ***************************************************************/
-bool same_pos(const struct tile *tile1, const struct tile *tile2)
+bool same_pos(const tile_t *tile1, const tile_t *tile2)
 {
   assert(tile1 != NULL && tile2 != NULL);
   return (tile1 == tile2);
@@ -1468,7 +1468,7 @@ bool is_normal_map_pos(int x, int y)
 **************************************************************************/
 bool normalize_map_pos(int *x, int *y)
 {
-  struct tile *ptile = map_pos_to_tile(*x, *y);
+  tile_t *ptile = map_pos_to_tile(*x, *y);
 
   if (ptile) {
     *x = ptile->x;
@@ -1483,7 +1483,7 @@ bool normalize_map_pos(int *x, int *y)
 Twiddle *x and *y to point the the nearest real tile, and ensure that the
 position is normalized.
 **************************************************************************/
-struct tile *nearest_real_tile(int x, int y)
+tile_t *nearest_real_tile(int x, int y)
 {
   int nat_x, nat_y;
 
@@ -1562,8 +1562,8 @@ void base_map_distance_vector(int *dx, int *dy,
     -map.info.ysize   <  dy <  map.info.ysize
 ****************************************************************************/
 void map_distance_vector(int *dx, int *dy,
-                         const struct tile *tile0,
-                         const struct tile *tile1)
+                         const tile_t *tile0,
+                         const tile_t *tile1)
 {
   base_map_distance_vector(dx, dy,
                            tile0->x, tile0->y, tile1->x, tile1->y);
@@ -1572,10 +1572,10 @@ void map_distance_vector(int *dx, int *dy,
 /**************************************************************************
 Random neighbouring square.
 **************************************************************************/
-struct tile *rand_neighbour(const struct tile *ptile)
+tile_t *rand_neighbour(const tile_t *ptile)
 {
   int n;
-  struct tile *tile1;
+  tile_t *tile1;
 
   /*
    * list of all 8 directions
@@ -1609,7 +1609,7 @@ struct tile *rand_neighbour(const struct tile *ptile)
  Random square anywhere on the map.  Only normal positions (for which
  is_normal_map_pos returns true) will be found.
 **************************************************************************/
-struct tile *rand_map_pos(void)
+tile_t *rand_map_pos(void)
 {
   int nat_x = myrand(map.info.xsize), nat_y = myrand(map.info.ysize);
 
@@ -1622,11 +1622,11 @@ struct tile *rand_map_pos(void)
   NULL if any position is okay; if non-NULL it shouldn't have any side
   effects.
 **************************************************************************/
-struct tile *rand_map_pos_filtered(void *data,
-                                   bool (*filter)(const struct tile *ptile,
+tile_t *rand_map_pos_filtered(void *data,
+                                   bool (*filter)(const tile_t *ptile,
                                                   const void *data))
 {
-  struct tile *ptile;
+  tile_t *ptile;
   int tries = 0;
   const int max_tries = map.info.xsize * map.info.ysize / ACTIVITY_FACTOR;
 
@@ -1799,8 +1799,8 @@ Return true and sets dir to the direction of the step if (end_x,
 end_y) can be reached from (start_x, start_y) in one step. Return
 false otherwise (value of dir is unchanged in this case).
 **************************************************************************/
-bool base_get_direction_for_step(const struct tile *start_tile,
-                                 const struct tile *end_tile,
+bool base_get_direction_for_step(const tile_t *start_tile,
+                                 const tile_t *end_tile,
                                  enum direction8 *dir)
 {
   adjc_dir_iterate(start_tile, test_tile, test_dir) {
@@ -1817,8 +1817,8 @@ bool base_get_direction_for_step(const struct tile *start_tile,
 Return the direction which is needed for a step on the map from
 (start_x, start_y) to (end_x, end_y).
 **************************************************************************/
-int get_direction_for_step(const struct tile *start_tile,
-                           const struct tile *end_tile)
+int get_direction_for_step(const tile_t *start_tile,
+                           const tile_t *end_tile)
 {
   enum direction8 dir;
 
@@ -1834,8 +1834,8 @@ int get_direction_for_step(const struct tile *start_tile,
   Returns TRUE iff the move from the position (start_x,start_y) to
   (end_x,end_y) is a cardinal one.
 **************************************************************************/
-bool is_move_cardinal(const struct tile *start_tile,
-                      const struct tile *end_tile)
+bool is_move_cardinal(const tile_t *start_tile,
+                      const tile_t *end_tile)
 {
   return is_cardinal_dir(get_direction_for_step(start_tile, end_tile));
 }
@@ -1848,7 +1848,7 @@ bool is_move_cardinal(const struct tile *start_tile,
 
   dist is the "real" map distance.
 ****************************************************************************/
-bool is_singular_tile(const struct tile *ptile, int dist)
+bool is_singular_tile(const tile_t *ptile, int dist)
 {
   do_in_natural_pos(ntl_x, ntl_y, ptile->x, ptile->y) {
     /* Iso-natural coordinates are doubled in scale. */

@@ -29,6 +29,7 @@ struct city_s;
 struct government;
 struct player;
 struct tile;
+typedef struct tile tile_t;
 struct trade_route;
 struct unit;
 

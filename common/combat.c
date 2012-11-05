@@ -34,7 +34,7 @@
   2) the tile contains a non-enemy city or
   3) the tile contains a non-enemy unit
 ***********************************************************************/
-bool can_player_attack_tile(struct player *pplayer, const struct tile *ptile)
+bool can_player_attack_tile(struct player *pplayer, const tile_t *ptile)
 {
   city_t *pcity = ptile->city;
 
@@ -77,7 +77,7 @@ bool can_player_attack_tile(struct player *pplayer, const struct tile *ptile)
   3) Diplomatic status
 ***********************************************************************/
 bool can_unit_attack_unit_at_tile(struct unit *punit, struct unit *pdefender,
-                                  const struct tile *dest_tile)
+                                  const tile_t *dest_tile)
 {
   Terrain_type_id fromtile = punit->tile->terrain;
   Terrain_type_id totile = dest_tile->terrain;
@@ -119,7 +119,7 @@ bool can_unit_attack_unit_at_tile(struct unit *punit, struct unit *pdefender,
   including transported units).
 ************************************************************************/
 bool can_unit_attack_all_at_tile(struct unit *punit,
-                                 const struct tile *ptile)
+                                 const tile_t *ptile)
 {
   unit_list_iterate(ptile->units, aunit) {
     /* HACK: we don't count transported units here.  This prevents some
@@ -140,7 +140,7 @@ bool can_unit_attack_all_at_tile(struct unit *punit,
   Is unit (1) diplomatically allowed to attack and (2) physically able
   to do so?
 ***********************************************************************/
-bool can_unit_attack_tile(struct unit *punit, const struct tile *dest_tile)
+bool can_unit_attack_tile(struct unit *punit, const tile_t *dest_tile)
 {
   if (!can_player_attack_tile(unit_owner(punit), dest_tile)) {
     return FALSE;
@@ -324,7 +324,7 @@ bool unit_on_fortress(struct unit *punit)
   a wrapper function returns 1 if there is a sdi-defense close to the square
 **************************************************************************/
 city_t *sdi_defense_close(struct player *owner,
-                          const struct tile *ptile)
+                          const tile_t *ptile)
 {
   square_iterate(ptile, 2, ptile1) {
     city_t *pcity = map_get_city(ptile1);
@@ -421,7 +421,7 @@ effects.
 **************************************************************************/
 static int defense_multiplication(Unit_Type_id att_type,
                                   Unit_Type_id def_type,
-                                  const struct tile *ptile,
+                                  const tile_t *ptile,
                                   int defensepower, bool fortified)
 {
   city_t *pcity = map_get_city(ptile);
@@ -480,7 +480,7 @@ static int defense_multiplication(Unit_Type_id att_type,
  depend on the attacker.
 **************************************************************************/
 int get_virtual_defense_power(Unit_Type_id att_type, Unit_Type_id def_type,
-                              const struct tile *ptile,
+                              const tile_t *ptile,
                               bool fortified, int veteran)
 {
   int defensepower = unit_types[def_type].defense_strength;
@@ -543,7 +543,7 @@ static int get_defense_rating(struct unit *attacker, struct unit *defender)
   relationship of attacker and defender is ignored; the caller should check
   this.
 **************************************************************************/
-struct unit *get_defender(struct unit *attacker, const struct tile *ptile)
+struct unit *get_defender(struct unit *attacker, const tile_t *ptile)
 {
   struct unit *bestdef = NULL;
   int bestvalue = -1, best_cost = 0, rating_of_best = 0;
@@ -610,7 +610,7 @@ get unit at (x, y) that wants to kill defender.
 Works like get_defender; see comment there.
 This function is mostly used by the AI.
 **************************************************************************/
-struct unit *get_attacker(struct unit *defender, const struct tile *ptile)
+struct unit *get_attacker(struct unit *defender, const tile_t *ptile)
 {
   struct unit *bestatt = 0;
   int bestvalue = -1, unit_a, best_cost = 0;
@@ -636,7 +636,7 @@ struct unit *get_attacker(struct unit *defender, const struct tile *ptile)
 /**************************************************************************
   Is it a city/fortress/air base or will the whole stack die in an attack
 **************************************************************************/
-bool is_stack_vulnerable(const struct tile *ptile)
+bool is_stack_vulnerable(const tile_t *ptile)
 {
   return !(ptile->city != NULL
            || map_has_special(ptile, S_FORTRESS)

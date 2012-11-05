@@ -264,7 +264,7 @@ struct player *find_player_by_user(const char *name)
   (e) the unit isn't in a transporter, or we can see the transporter
 ****************************************************************************/
 bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
-                            struct tile *ptile)
+                            tile_t *ptile)
 {
   city_t *pcity;
 
@@ -399,7 +399,7 @@ struct unit *player_find_unit_by_id(const struct player *pplayer,
 /*************************************************************************
 Return 1 if x,y is inside any of the player's city radii.
 **************************************************************************/
-bool player_in_city_radius(struct player *pplayer, struct tile *ptile)
+bool player_in_city_radius(struct player *pplayer, tile_t *ptile)
 {
   city_t *pcity;
   map_city_radius_iterate(ptile, ptile1) {

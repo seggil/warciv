@@ -253,7 +253,7 @@ bool is_effect_useful(enum target_type target,
                       const struct player *target_player,
                       const city_t *target_pcity,
                       Impr_Type_id target_building,
-                      const struct tile *target_tile,
+                      const tile_t *target_tile,
                       Impr_Type_id source,
                       const struct effect *effect);
 
@@ -262,7 +262,7 @@ bool is_building_replaced(const city_t *pcity, Impr_Type_id building);
 /* functions to know the bonuses a certain effect is granting */
 int get_player_bonus(const struct player *plr, enum effect_type effect_type);
 int get_city_bonus(const city_t *pcity, enum effect_type effect_type);
-int get_city_tile_bonus(const city_t *pcity, const struct tile *ptile,
+int get_city_tile_bonus(const city_t *pcity, const tile_t *ptile,
                         enum effect_type effect_type);
 int get_building_bonus(const city_t *pcity, Impr_Type_id building,
                        enum effect_type effect_type);

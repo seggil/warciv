@@ -1023,7 +1023,7 @@ static bool are_effect_reqs_active(enum target_type target,
                                    const struct player *target_player,
                                    const city_t *target_city,
                                    Impr_Type_id target_building,
-                                   const struct tile *target_tile,
+                                   const tile_t *target_tile,
                                    Impr_Type_id source,
                                    const struct effect *peffect)
 {
@@ -1088,7 +1088,7 @@ bool is_effect_useful(enum target_type target,
                       const struct player *target_player,
                       const city_t *target_city,
                       Impr_Type_id target_building,
-                      const struct tile *target_tile,
+                      const tile_t *target_tile,
                       Impr_Type_id source, const struct effect *peffect)
 {
   if (is_effect_redundant(target, target_player, target_city,
@@ -1116,7 +1116,7 @@ static bool is_effect_active(enum target_type target,
                              const struct player *plr,
                              const city_t *pcity,
                              Impr_Type_id building,
-                             const struct tile *ptile,
+                             const tile_t *ptile,
                              Impr_Type_id source,
                              const struct effect *peffect)
 {
@@ -1168,7 +1168,7 @@ static int get_effect_value(enum target_type target,
                             const struct player *target_player,
                             const city_t *target_city,
                             Impr_Type_id target_building,
-                            const struct tile *target_tile,
+                            const tile_t *target_tile,
                             Impr_Type_id source,
                             enum effect_type effect_type)
 {
@@ -1205,7 +1205,7 @@ static int get_target_bonus_sources(struct effect_source_vector *sources,
                                     const struct player *target_player,
                                     const city_t *target_city,
                                     Impr_Type_id target_building,
-                                    const struct tile *target_tile,
+                                    const tile_t *target_tile,
                                     enum effect_type effect_type)
 {
   int bonus = 0;
@@ -1263,7 +1263,7 @@ int get_city_bonus(const city_t *pcity, enum effect_type effect_type)
 /**************************************************************************
   Returns the effect bonus at a city tile.
 **************************************************************************/
-int get_city_tile_bonus(const city_t *pcity, const struct tile *ptile,
+int get_city_tile_bonus(const city_t *pcity, const tile_t *ptile,
                         enum effect_type effect_type)
 {
   return get_target_bonus_sources(NULL, TARGET_CITY,
