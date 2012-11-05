@@ -41,11 +41,11 @@
 /****************************************************************************/
 
 static void diplomat_charge_movement (struct unit *pdiplomat,
-                                      struct tile *ptile);
+                                      tile_t *ptile);
 static bool diplomat_success_vs_defender(struct unit *patt, struct unit *pdef,
-                                                struct tile *pdefender_tile);
+                                         tile_t *pdefender_tile);
 static bool diplomat_infiltrate_tile(struct player *pplayer, struct player *cplayer,
-                                     struct unit *pdiplomat, struct tile *ptile);
+                                     struct unit *pdiplomat, tile_t *ptile);
 static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
                             const city_t *pcity);
 static void maybe_cause_incident(enum diplomat_actions action, struct player *offender,
@@ -379,7 +379,7 @@ void spy_sabotage_unit(struct player *pplayer, struct unit *pdiplomat,
   - A successful briber will try to move onto the victim's square.
 ****************************************************************************/
 void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
-                    struct tile *ptile)
+                    tile_t *ptile)
 {
   struct player *uplayer = NULL;
   int diplomat_id;
@@ -1111,7 +1111,7 @@ void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
 /**************************************************************************
   This subtracts the destination movement cost from a diplomat/spy.
 **************************************************************************/
-static void diplomat_charge_movement (struct unit *pdiplomat, struct tile *ptile)
+static void diplomat_charge_movement (struct unit *pdiplomat, tile_t *ptile)
 {
   pdiplomat->moves_left -=
     map_move_cost (pdiplomat, ptile);
@@ -1133,7 +1133,7 @@ static void diplomat_charge_movement (struct unit *pdiplomat, struct tile *ptile
 **************************************************************************/
 static bool diplomat_success_vs_defender(struct unit *pattacker,
                                          struct unit *pdefender,
-                                         struct tile *pdefender_tile)
+                                         tile_t *pdefender_tile)
 {
   int att = game.server.dipldefchance; /* I.e. "diplomat defeat chance". */
   int def = 100 - game.server.dipldefchance;
@@ -1175,7 +1175,7 @@ static bool diplomat_success_vs_defender(struct unit *pattacker,
 static bool diplomat_infiltrate_tile(struct player *pplayer,
                                      struct player *cplayer,
                                      struct unit *pdiplomat,
-                                     struct tile *ptile)
+                                     tile_t *ptile)
 {
   city_t *pcity = ptile->city;
 
@@ -1269,7 +1269,7 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
 static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
                             const city_t *pcity)
 {
-  struct tile *ptile;
+  tile_t *ptile;
   int escapechance;
   bool vet;
   city_t *spy_city;
@@ -1337,7 +1337,7 @@ static void maybe_cause_incident(enum diplomat_actions action, struct player *of
                                  struct unit *victim_unit, city_t *victim_city)
 {
   struct player *victim_player = 0;
-  struct tile *victim_tile = NULL;
+  tile_t *victim_tile = NULL;
 
   if (victim_city) {
     victim_tile = victim_city->common.tile;
@@ -1500,7 +1500,7 @@ int unit_bribe_cost(struct unit *punit)
 /**************************************************************************
  return number of diplomats on this square.  AJS 20000130
 **************************************************************************/
-int count_diplomats_on_tile(struct tile *ptile)
+int count_diplomats_on_tile(tile_t *ptile)
 {
   int count = 0;
 

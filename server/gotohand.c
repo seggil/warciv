@@ -53,7 +53,7 @@ struct move_cost_map warmap;
 #define AIR_ASSUMES_UNKNOWN_SAFE        TRUE
 #define AIR_ASSUMES_FOGGED_SAFE         TRUE
 
-static bool airspace_looks_safe(struct tile *ptile, struct player *pplayer);
+static bool airspace_looks_safe(tile_t *ptile, struct player *pplayer);
 
 
 /* These are used for all GOTO's */
@@ -67,7 +67,7 @@ static bool airspace_looks_safe(struct tile *ptile, struct player *pplayer);
 struct mappos_array {
   int first_pos;
   int last_pos;
-  struct tile *tile[ARRAYLENGTH];
+  tile_t *tile[ARRAYLENGTH];
   struct mappos_array *next_array;
 };
 
@@ -134,7 +134,7 @@ static struct mappos_array *get_empty_array(void)
 /**************************************************************************
 ...
 **************************************************************************/
-static void add_to_mapqueue(int cost, struct tile *ptile)
+static void add_to_mapqueue(int cost, tile_t *ptile)
 {
   struct mappos_array *our_array;
 
@@ -160,10 +160,10 @@ static void add_to_mapqueue(int cost, struct tile *ptile)
 /**************************************************************************
 ...
 **************************************************************************/
-static struct tile *get_from_mapqueue(void)
+static tile_t *get_from_mapqueue(void)
 {
   struct mappos_array *our_array;
-  struct tile *ptile;
+  tile_t *ptile;
 
   freelog(LOG_DEBUG, "trying get");
   while (lowest_cost < MAXCOST) {
@@ -194,7 +194,7 @@ static struct tile *get_from_mapqueue(void)
 /**************************************************************************
 Reset the movecosts of the warmap.
 **************************************************************************/
-static void init_warmap(struct tile *orig_tile, enum unit_move_type move_type)
+static void init_warmap(tile_t *orig_tile, enum unit_move_type move_type)
 {
   if (warmap.size != MAX_MAP_INDEX) {
     warmap.cost = wc_realloc(warmap.cost,
@@ -265,10 +265,10 @@ void really_generate_warmap(city_t *pcity, struct unit *punit,
                             enum unit_move_type move_type)
 {
   int move_cost;
-  struct tile *orig_tile;
+  tile_t *orig_tile;
   bool igter;
   int maxcost = THRESHOLD * 6 + 2; /* should be big enough without being TOO big */
-  struct tile *ptile;
+  tile_t *ptile;
   struct player *pplayer;
 
   if (pcity) {
@@ -419,8 +419,8 @@ FIXME: This is a bit crude; this only gives one correct path, but sometimes
        there can be more than one straight path (fx going NW then W is the
        same as going W then NW)
 **************************************************************************/
-static int straightest_direction(struct tile *src_tile,
-                                 struct tile *dst_tile)
+static int straightest_direction(tile_t *src_tile,
+                                 tile_t *dst_tile)
 {
   int best_dir;
   int diff_x, diff_y;
@@ -449,8 +449,8 @@ Can we move between for ZOC? (only for land units). Includes a special
 case only relevant for GOTOs (see below). came_from is a bit-vector
 containing the directions we could have come from.
 **************************************************************************/
-static bool goto_zoc_ok(struct unit *punit, struct tile *src_tile,
-                        struct tile *dest_tile, dir_vector came_from)
+static bool goto_zoc_ok(struct unit *punit, tile_t *src_tile,
+                        tile_t *dest_tile, dir_vector came_from)
 {
   if (can_step_taken_wrt_to_zoc
       (punit->type, unit_owner(punit), src_tile, dest_tile))
@@ -563,13 +563,13 @@ FIXME: this is a bit of a mess in not respecting FoW, and only sometimes
 respecting if a square is known. (not introduced by me though) -Thue
 **************************************************************************/
 static bool find_the_shortest_path(struct unit *punit,
-                                   struct tile *dest_tile,
-                                  enum goto_move_restriction restriction)
+                                   tile_t *dest_tile,
+                                   enum goto_move_restriction restriction)
 {
   struct player *pplayer = unit_owner(punit);
   bool igter;
-  struct tile *ptile, *orig_tile;
-  struct tile *psrctile, *pdesttile;
+  tile_t *ptile, *orig_tile;
+  tile_t *psrctile, *pdesttile;
   enum unit_move_type move_type = unit_type(punit)->move_type;
   int maxcost = MAXCOST;
   int move_cost, total_cost;
@@ -855,7 +855,7 @@ static bool find_the_shortest_path(struct unit *punit,
 /****************************************************************************
   Can the player see that the given ocean tile is along the coastline?
 ****************************************************************************/
-static bool is_coast_seen(struct tile *ptile, struct player *pplayer)
+static bool is_coast_seen(tile_t *ptile, struct player *pplayer)
 {
   bool ai_always_see_map = !ai_handicap(pplayer, H_MAP);
 
@@ -893,7 +893,7 @@ Notes on the implementation:
 **************************************************************************/
 static int find_a_direction(struct unit *punit,
                             enum goto_move_restriction restriction,
-                            struct tile *dest_tile)
+                            tile_t *dest_tile)
 {
 #define UNIT_DEFENSE(punit, ptile, defence_multiplier) \
   ((get_virtual_defense_power(U_LAST, (punit)->type, (ptile), FALSE, 0) * \
@@ -1216,7 +1216,7 @@ static int find_a_direction(struct unit *punit,
   Basic checks as to whether a GOTO is possible. The target (x,y) should
   be on the same continent as punit is, up to embarkation/disembarkation.
 **************************************************************************/
-bool goto_is_sane(struct unit *punit, struct tile *ptile, bool omni)
+bool goto_is_sane(struct unit *punit, tile_t *ptile, bool omni)
 {
   struct player *pplayer = unit_owner(punit);
 
@@ -1291,7 +1291,7 @@ enum goto_result do_unit_goto(struct unit *punit,
   struct player *pplayer = unit_owner(punit);
   int unit_id;
   enum goto_result status;
-  struct tile *ptile, *dest_tile, *waypoint_tile;
+  tile_t *ptile, *dest_tile, *waypoint_tile;
 
   assert(!unit_has_orders(punit));
 
@@ -1422,7 +1422,7 @@ Calculate and return cost (in terms of move points) for unit to move
 to specified destination.
 Currently only used in autoattack.c
 **************************************************************************/
-int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
+int calculate_move_cost(struct unit *punit, tile_t *dest_tile)
 {
   /* perhaps we should do some caching -- fisch */
 
@@ -1450,7 +1450,7 @@ int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
  there is an enemy unit on it. This is tricky, since we have to
  consider what the player knows/doesn't know about the tile.
 **************************************************************************/
-static bool airspace_looks_safe(struct tile *ptile, struct player *pplayer)
+static bool airspace_looks_safe(tile_t *ptile, struct player *pplayer)
 {
   /*
    * We do handicap checks for the player with ai_handicap(). This
@@ -1491,10 +1491,10 @@ Try to rule out the possibility in O(1) time              else
 Try to quickly verify in O(moves) time                    else
 Do an A* search using the warmap to completely search for the path.
 **************************************************************************/
-int air_can_move_between(int moves, struct tile *src_tile,
-                         struct tile *dest_tile, struct player *pplayer)
+int air_can_move_between(int moves, tile_t *src_tile,
+                         tile_t *dest_tile, struct player *pplayer)
 {
-  struct tile *ptile;
+  tile_t *ptile;
   int dist, total_distance = real_map_distance(src_tile, dest_tile);
 
   freelog(LOG_DEBUG,
@@ -1527,7 +1527,7 @@ int air_can_move_between(int moves, struct tile *src_tile,
     /* Warning: straightest_direction may not actually follow the
        straight line. */
     int dir = straightest_direction(ptile, dest_tile);
-    struct tile *new_tile;
+    tile_t *new_tile;
 
     if (!(new_tile = mapstep(ptile, dir))
         || !airspace_looks_safe(new_tile, pplayer)) {

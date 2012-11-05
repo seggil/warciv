@@ -19,17 +19,17 @@
 
 struct refuel;
 
-struct tile *get_refuel_tile(struct refuel *pRefuel);
+tile_t *get_refuel_tile(struct refuel *pRefuel);
 unsigned int get_turns_to_refuel(struct refuel *pRefuel);
 
-struct pqueue *refuel_iterate_init(struct player *pplayer, struct tile *ptile,
-                                   struct tile *dst_tile,
+struct pqueue *refuel_iterate_init(struct player *pplayer, tile_t *ptile,
+                                   tile_t *dst_tile,
                                    bool cities_only, int moves_left,
                                    int moves_per_turn, int max_moves);
 struct refuel *refuel_iterate_next(struct pqueue *rp_list);
 void refuel_iterate_end(struct pqueue *rp_list);
 void refuel_iterate_process(struct pqueue *rp_list, struct refuel *pfrom);
 
-bool find_air_first_destination(struct unit *punit, struct tile **dst_tile);
+bool find_air_first_destination(struct unit *punit, tile_t **dst_tile);
 
 #endif  /* WC_SERVER_AIRGOTO_H */

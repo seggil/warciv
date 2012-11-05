@@ -44,7 +44,7 @@ enum refuel_list_status {
 struct refuel {
   enum refuel_type type;
   enum refuel_list_status listed;
-  struct tile *tile;
+  tile_t *tile;
   int turns;
   int moves_left;
   struct refuel *coming_from;
@@ -73,7 +73,7 @@ static void make_list_of_refuel_points(struct player *pplayer,
 /******************************************************************
  * Access function for struct refuel
  *****************************************************************/
-struct tile *get_refuel_tile(struct refuel *point)
+tile_t *get_refuel_tile(struct refuel *point)
 {
   return point->tile;
 }
@@ -95,7 +95,7 @@ unsigned int get_turns_to_refuel(struct refuel *point)
  * If the last argument start is TRUE, the point will be written at
  * the head of the list.
  *****************************************************************/
-static void add_refuel_point(struct tile *ptile,
+static void add_refuel_point(tile_t *ptile,
                              enum refuel_type type, int turns,
                              int moves_left, bool start)
 {
@@ -198,8 +198,8 @@ static int queue_priority_function(const void *value)
  * max_fuel -- max fuel
  ************************************************************************/
 struct pqueue *refuel_iterate_init(struct player *pplayer,
-                                   struct tile *ptile,
-                                   struct tile *dest_tile,
+                                   tile_t *ptile,
+                                   tile_t *dest_tile,
                                    bool cities_only, int moves_left,
                                    int moves_per_turn, int max_fuel)
 {
@@ -358,7 +358,7 @@ void refuel_iterate_end(struct pqueue *rp_list)
  * satisfactory. We should also make sure that bombers given an order to
  * attack a unit will not make the attack on it's last fuel point etc. etc.
  ***********************************************************************/
-bool find_air_first_destination(struct unit *punit, struct tile **dest_tile)
+bool find_air_first_destination(struct unit *punit, tile_t **dest_tile)
 {
   unsigned int fullmoves = unit_move_rate(punit) / SINGLE_MOVE;
   unsigned int fullfuel = unit_type(punit)->fuel;

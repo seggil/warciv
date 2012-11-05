@@ -57,10 +57,10 @@
 
 #include "citytools.h"
 
-static int evaluate_city_name_priority(struct tile *ptile,
+static int evaluate_city_name_priority(tile_t *ptile,
                                        struct city_name *city_name,
                                        int default_priority);
-static char *search_for_city_name(struct tile *ptile, struct city_name *city_names,
+static char *search_for_city_name(tile_t *ptile, struct city_name *city_names,
                                   struct player *pplayer);
 static void server_set_tile_city(city_t *pcity, int city_x, int city_y,
                                  enum city_tile_type type);
@@ -121,7 +121,7 @@ more desired, and all priorities are non-negative.
 This function takes into account game.server.natural_city_names, and
 should be able to deal with any future options we want to add.
 *****************************************************************/
-static int evaluate_city_name_priority(struct tile *ptile,
+static int evaluate_city_name_priority(tile_t *ptile,
                                        struct city_name *city_name,
                                        int default_priority)
 {
@@ -229,7 +229,7 @@ static bool is_default_city_name(const char *name, struct player *pplayer)
   city name.  If the list has no valid entries in it, NULL will be
   returned.
 *****************************************************************/
-static char *search_for_city_name(struct tile *ptile, struct city_name *city_names,
+static char *search_for_city_name(tile_t *ptile, struct city_name *city_names,
                                   struct player *pplayer)
 {
   int choice, best_priority = -1;
@@ -368,7 +368,7 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
   buffer etc, and should be considered read-only (and not freed)
   by caller.
 *****************************************************************/
-char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
+char *city_name_suggestion(struct player *pplayer, tile_t *ptile)
 {
   int i = 0, j;
   bool nations_selected[game.ruleset_control.nation_count];
@@ -652,7 +652,7 @@ void transfer_city_units(struct player *pplayer, struct player *pvictim,
                          city_t *exclude_city,
                          int kill_outside, bool verbose)
 {
-  struct tile *ptile = pcity->common.tile;
+  tile_t *ptile = pcity->common.tile;
 
   /* Transfer enemy units in the city to the new owner.
    * Only relevant if we are transferring to another player. */
@@ -722,7 +722,7 @@ void transfer_city_units(struct player *pplayer, struct player *pvictim,
   If pexclcity, do not return it as the closest city.
   Returns NULL if no satisfactory city can be found.
 ***********************************************************************/
-city_t *find_closest_owned_city(struct player *pplayer, struct tile *ptile,
+city_t *find_closest_owned_city(struct player *pplayer, tile_t *ptile,
                                 bool sea_required, city_t *pexclcity)
 {
   int dist = -1;
@@ -944,7 +944,7 @@ void transfer_city(struct player *ptaker, city_t *pcity,
 /**************************************************************************
 ...
 **************************************************************************/
-void create_city(struct player *pplayer, struct tile *ptile,
+void create_city(struct player *pplayer, tile_t *ptile,
                  const char *name)
 {
   city_t *pcity;
@@ -1065,7 +1065,7 @@ void create_city(struct player *pplayer, struct tile *ptile,
 void remove_city(city_t *pcity)
 {
   struct player *pplayer = city_owner(pcity);
-  struct tile *ptile = pcity->common.tile;
+  tile_t *ptile = pcity->common.tile;
   struct packet_city_remove packet = {.city_id = ptile->city->common.id};
   bool had_palace = pcity->common.improvements[game.palace_building] != I_NONE;
   char *city_name = mystrdup(pcity->common.name);
@@ -1294,7 +1294,7 @@ static bool player_has_traderoute_with_city(struct player *pplayer,
 /**************************************************************************
 This fills out a package from a players dumb_city.
 **************************************************************************/
-static void package_dumb_city(struct player* pplayer, struct tile *ptile,
+static void package_dumb_city(struct player* pplayer, tile_t *ptile,
                               struct packet_city_short_info *packet)
 {
   struct dumb_city *pdcity = map_get_player_tile(ptile, pplayer)->city;
@@ -1514,7 +1514,7 @@ reality_check_city(pplayer, ptile) first. This is generally taken care of
 automatically when a tile becomes visible.
 **************************************************************************/
 void send_city_info_at_tile(struct player *pviewer, struct conn_list *dest,
-                            city_t *pcity, struct tile *ptile)
+                            city_t *pcity, tile_t *ptile)
 {
   struct player *powner = NULL;
   struct packet_city_info packet;
@@ -1732,7 +1732,7 @@ bool update_dumb_city(struct player *pplayer, city_t *pcity)
 /**************************************************************************
 Removes outdated (nonexistant) cities from a player
 **************************************************************************/
-void reality_check_city(struct player *pplayer, struct tile *ptile)
+void reality_check_city(struct player *pplayer, tile_t *ptile)
 {
   city_t *pcity;
   struct dumb_city *pdcity = map_get_player_tile(ptile, pplayer)->city;
@@ -1881,7 +1881,7 @@ city_x, city_y is in city map coords.
 **************************************************************************/
 bool city_can_work_tile(city_t *pcity, int city_x, int city_y)
 {
-  struct tile *ptile;
+  tile_t *ptile;
 
   if (!(ptile = city_map_to_map(pcity, city_x, city_y))) {
     return FALSE;
@@ -1930,7 +1930,7 @@ static void server_set_tile_city(city_t *pcity, int city_x, int city_y,
 
   /* Update adjacent cities. */
   {
-    struct tile *ptile = city_map_to_map(pcity, city_x, city_y);
+    tile_t *ptile = city_map_to_map(pcity, city_x, city_y);
 
     map_city_radius_iterate(ptile, tile1) {
       city_t *pcity2 = map_get_city(tile1);
@@ -1982,7 +1982,7 @@ void server_set_worker_city(city_t *pcity, int city_x, int city_y)
   It is safe to pass an out-of-range tile to this function.  The function
   returns TRUE if the tile is made unavailable.
 ****************************************************************************/
-bool update_city_tile_status_map(city_t *pcity, struct tile *ptile)
+bool update_city_tile_status_map(city_t *pcity, tile_t *ptile)
 {
   int city_x, city_y;
 
@@ -2079,7 +2079,7 @@ void check_city_workers(struct player *pplayer)
   to sell. In theory this could (should?) be generalised to sell
   relevant buildings after any change of terrain/special type
 **************************************************************************/
-void city_landlocked_sell_coastal_improvements(struct tile *ptile)
+void city_landlocked_sell_coastal_improvements(tile_t *ptile)
 {
   adjc_iterate(ptile, tile1) {
     city_t *pcity = map_get_city(tile1);

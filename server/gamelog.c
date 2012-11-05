@@ -574,7 +574,7 @@ void gamelog(int level, ...)
 
       for (nat_y = 0; nat_y < map.info.ysize; nat_y++) {
         for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {
-          struct tile *ptile = native_pos_to_tile(nat_x, nat_y);
+          tile_t *ptile = native_pos_to_tile(nat_x, nat_y);
 
           mapline[i++] = is_ocean(map_get_terrain(ptile)) ? ' ' : '.';
         }

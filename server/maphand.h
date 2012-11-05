@@ -61,36 +61,36 @@ void give_seamap_from_player_to_player(struct player *pfrom, struct player *pdes
 void give_citymap_from_player_to_player(city_t *pcity,
                                         struct player *pfrom, struct player *pdest);
 void send_all_known_tiles(struct conn_list *dest);
-void send_tile_info(struct conn_list *dest, struct tile *ptile);
-void reveal_hidden_units(struct player *pplayer, struct tile *ptile);
-void conceal_hidden_units(struct player *pplayer, struct tile *ptile);
-void unfog_area(struct player *pplayer, struct tile *ptile, int len);
-void fog_area(struct player *pplayer, struct tile *ptile, int len);
+void send_tile_info(struct conn_list *dest, tile_t *ptile);
+void reveal_hidden_units(struct player *pplayer, tile_t *ptile);
+void conceal_hidden_units(struct player *pplayer, tile_t *ptile);
+void unfog_area(struct player *pplayer, tile_t *ptile, int len);
+void fog_area(struct player *pplayer, tile_t *ptile, int len);
 void upgrade_city_rails(struct player *pplayer, bool discovery);
 void send_map_info(struct conn_list *dest);
 void map_fog_city_area(city_t *pcity);
 void map_unfog_city_area(city_t *pcity);
 void remove_unit_sight_points(struct unit *punit);
-void show_area(struct player *pplayer,struct tile *ptile, int len);
-void map_unfog_pseudo_city_area(struct player *pplayer, struct tile *ptile);
-void map_fog_pseudo_city_area(struct player *pplayer, struct tile *ptile);
+void show_area(struct player *pplayer,tile_t *ptile, int len);
+void map_unfog_pseudo_city_area(struct player *pplayer, tile_t *ptile);
+void map_fog_pseudo_city_area(struct player *pplayer, tile_t *ptile);
 
-bool map_is_known_and_seen(const struct tile *ptile, struct player *pplayer);
-void map_change_seen(struct tile *ptile, struct player *pplayer, int change);
-bool map_is_known(const struct tile *ptile, struct player *pplayer);
-void map_set_known(struct tile *ptile, struct player *pplayer);
-void map_clear_known(struct tile *ptile, struct player *pplayer);
+bool map_is_known_and_seen(const tile_t *ptile, struct player *pplayer);
+void map_change_seen(tile_t *ptile, struct player *pplayer, int change);
+bool map_is_known(const tile_t *ptile, struct player *pplayer);
+void map_set_known(tile_t *ptile, struct player *pplayer);
+void map_clear_known(tile_t *ptile, struct player *pplayer);
 void map_know_all(struct player *pplayer);
 void map_know_and_see_all(struct player *pplayer);
 void show_map_to_all(void);
 
 void player_map_allocate(struct player *pplayer);
 void player_map_free(struct player *pplayer);
-struct player_tile *map_get_player_tile(const struct tile *ptile,
+struct player_tile *map_get_player_tile(const tile_t *ptile,
                                         struct player *pplayer);
-bool update_player_tile_knowledge(struct player *pplayer,struct tile *ptile);
-void update_tile_knowledge(struct tile *ptile);
-void update_player_tile_last_seen(struct player *pplayer, struct tile *ptile);
+bool update_player_tile_knowledge(struct player *pplayer, tile_t *ptile);
+void update_tile_knowledge(tile_t *ptile);
+void update_player_tile_last_seen(struct player *pplayer, tile_t *ptile);
 
 void give_shared_vision(struct player *pfrom, struct player *pto);
 void remove_shared_vision(struct player *pfrom, struct player *pto);
@@ -98,17 +98,17 @@ void remove_shared_vision(struct player *pfrom, struct player *pto);
 void enable_fog_of_war(void);
 void disable_fog_of_war(void);
 
-void map_update_borders_city_destroyed(struct tile *ptile);
+void map_update_borders_city_destroyed(tile_t *ptile);
 void map_update_borders_city_change(city_t *pcity);
-void map_update_borders_landmass_change(struct tile *ptile);
+void map_update_borders_landmass_change(tile_t *ptile);
 void map_calculate_borders(void);
 
-enum ocean_land_change check_terrain_ocean_land_change(struct tile *ptile,
+enum ocean_land_change check_terrain_ocean_land_change(tile_t *ptile,
                                               Terrain_type_id oldter);
 int get_continent_size(Continent_id id);
 int get_ocean_size(Continent_id id);
 
-void assign_continent_flood(struct tile *ptile, bool is_land,
+void assign_continent_flood(tile_t *ptile, bool is_land,
                             int nr, bool skip_unsafe);
 
 #endif  /* WC_SERVER_MAPHAND_H */

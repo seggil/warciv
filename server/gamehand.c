@@ -66,7 +66,7 @@ static time_t saved_timeout_value = 0;
 /****************************************************************************
   prototypes
 ****************************************************************************/
-int calculate_team_distance(struct tile *ptile1, struct tile *ptile2);
+int calculate_team_distance(tile_t *ptile1, tile_t *ptile2);
 int calculate_score(int *start_pos);
 void swap_int(int *a, int *b);
 void shuffle_start_positions_by_iter(int *start_pos);
@@ -96,7 +96,7 @@ static void init_game_id(void)
 /****************************************************************************
   Place a starting unit for the player.
 ****************************************************************************/
-static void place_starting_unit(struct tile *ptile, struct player *pplayer,
+static void place_starting_unit(tile_t *ptile, struct player *pplayer,
                                 char crole)
 {
   Unit_Type_id utype;
@@ -179,7 +179,7 @@ static void place_starting_unit(struct tile *ptile, struct player *pplayer,
 /****************************************************************************
   Calculate the distance relative to the team placement type.
 ****************************************************************************/
-int calculate_team_distance(struct tile *ptile1, struct tile *ptile2)
+int calculate_team_distance(tile_t *ptile1, tile_t *ptile2)
 {
   int dx, dy;
 
@@ -605,7 +605,7 @@ void init_new_game(void)
   /* Place all other units. */
   players_iterate(pplayer) {
     int i, x, y;
-    struct tile *ptile;
+    tile_t *ptile;
     struct start_position p
       = map.server.start_positions[start_pos[pplayer->player_no]];
 

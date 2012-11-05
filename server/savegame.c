@@ -84,7 +84,7 @@
                                                                             \
   for (_nat_y = 0; _nat_y < map.info.ysize; _nat_y++) {                     \
     for (_nat_x = 0; _nat_x < map.info.xsize; _nat_x++) {                   \
-      struct tile *ptile = native_pos_to_tile(_nat_x, _nat_y);              \
+      tile_t *ptile = native_pos_to_tile(_nat_x, _nat_y);                   \
                                                                             \
       line[_nat_x] = (GET_XY_CHAR);                                         \
       if (!my_isprint(line[_nat_x] & 0x7f)) {                               \
@@ -170,7 +170,7 @@
     }                                                               \
     for (_nat_x = 0; _nat_x < map.info.xsize; _nat_x++) {           \
       const char ch = _line[_nat_x];                                \
-      struct tile *ptile = native_pos_to_tile(_nat_x, _nat_y);      \
+      tile_t *ptile = native_pos_to_tile(_nat_x, _nat_y);           \
                                                                     \
       (SET_XY_CHAR);                                                \
     }                                                               \
@@ -696,7 +696,7 @@ static void map_save(struct section_file *file)
                       "game.save_starts");
   if (game.server.save_options.save_starts) {
     for (i = 0; i < map.server.num_start_positions; i++) {
-      struct tile *ptile = map.server.start_positions[i].tile;
+      tile_t *ptile = map.server.start_positions[i].tile;
 
       secfile_insert_int(file, ptile->nat_x, "map.r%dsx", i);
       secfile_insert_int(file, ptile->nat_y, "map.r%dsy", i);
@@ -2002,7 +2002,7 @@ static void player_load(struct player *plr, int plrno,
     city_t *pcity;
     int nat_x = secfile_lookup_int(file, "player%d.c%d.x", plrno, i);
     int nat_y = secfile_lookup_int(file, "player%d.c%d.y", plrno, i);
-    struct tile *ptile = native_pos_to_tile(nat_x, nat_y);
+    tile_t *ptile = native_pos_to_tile(nat_x, nat_y);
     const char* name;
     int id, k;
 
@@ -2230,7 +2230,7 @@ static void player_load(struct player *plr, int plrno,
                           city_map_to_map(pcity, x, y) ?
                           C_TILE_EMPTY : C_TILE_UNAVAILABLE);
         } else if (*p=='1') {
-          struct tile *ptile;
+          tile_t *ptile;
 
           ptile = city_map_to_map(pcity, x, y);
 
@@ -2458,7 +2458,7 @@ static void player_map_load(struct player *plr, int plrno,
       i = secfile_lookup_int(file, "player%d.total_ncities", plrno);
       for (j = 0; j < i; j++) {
         int nat_x, nat_y;
-        struct tile *ptile;
+        tile_t *ptile;
 
         nat_x = secfile_lookup_int(file, "player%d.dc%d.x", plrno, j);
         nat_y = secfile_lookup_int(file, "player%d.dc%d.y", plrno, j);
@@ -3287,7 +3287,7 @@ static void check_city(city_t *pcity)
       break;
     case C_TILE_WORKER:
       if (!res) {
-        struct tile *ptile;
+        tile_t *ptile;
 
         pcity->common.specialists[SP_ELVIS]++;
         set_worker_city(pcity, x, y, C_TILE_UNAVAILABLE);

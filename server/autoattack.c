@@ -189,7 +189,7 @@ bool auto_attack_with_unit(struct player *pplayer,
 {
   int id = punit->id;
   struct unit *enemy;
-  struct tile *stile = punit->tile;
+  tile_t *stile = punit->tile;
 
   enemy = search_best_target(pplayer, punit);
 

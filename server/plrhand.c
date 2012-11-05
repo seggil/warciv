@@ -1386,7 +1386,7 @@ repeat_break_treaty:
   coordinates have been normalized.  For generic event use E_NOEVENT.
   (But current clients do not use (x,y) data for E_NOEVENT events.)
 **************************************************************************/
-void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
+void vnotify_conn_ex(struct conn_list *dest, tile_t *ptile,
                      enum event_type event, const char *format,
                      va_list vargs)
 {
@@ -1421,7 +1421,7 @@ void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
 /**************************************************************************
   See vnotify_conn_ex - this is just the "non-v" version, with varargs.
 **************************************************************************/
-void notify_conn_ex(struct conn_list *dest, struct tile *ptile,
+void notify_conn_ex(struct conn_list *dest, tile_t *ptile,
                     enum event_type event, const char *format, ...)
 {
   va_list args;
@@ -1452,7 +1452,7 @@ void notify_conn(struct conn_list *dest, const char *format, ...)
   old code, but this feature may go away - should use notify_conn with
   explicitly game.est_connections or game.game_connections as dest.
 **************************************************************************/
-void notify_player_ex(const struct player *pplayer, struct tile *ptile,
+void notify_player_ex(const struct player *pplayer, tile_t *ptile,
                       enum event_type event, const char *format, ...)
 {
   struct conn_list *dest;
@@ -1846,7 +1846,7 @@ void server_remove_player(struct player *pplayer)
   Update contact info.
 **************************************************************************/
 void make_contact(struct player *pplayer1, struct player *pplayer2,
-                  struct tile *ptile)
+                  tile_t *ptile)
 {
   int player1 = pplayer1->player_no, player2 = pplayer2->player_no;
 
@@ -1898,7 +1898,7 @@ void make_contact(struct player *pplayer1, struct player *pplayer2,
 /**************************************************************************
   Check if we make contact with anyone.
 **************************************************************************/
-void maybe_make_contact(struct tile *ptile, struct player *pplayer)
+void maybe_make_contact(tile_t *ptile, struct player *pplayer)
 {
   square_iterate(ptile, 1, tile1) {
     city_t *pcity = tile1->city;

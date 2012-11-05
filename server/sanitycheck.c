@@ -170,7 +170,7 @@ void real_sanity_check_city(struct city *pcity, const char *file, int line)
 
   /* Note that cities may be found on land or water. */
 
-  struct tile *ptile;
+  tile_t *ptile;
   struct player *owner;
   city_map_iterate(x, y) {
     ptile = city_map_to_map(pcity, x, y);
@@ -292,7 +292,7 @@ static void check_cities(void)
 static void check_units(void) {
   players_iterate(pplayer) {
     unit_list_iterate(pplayer->units, punit) {
-      struct tile *ptile = punit->tile;
+      tile_t *ptile = punit->tile;
       struct city *pcity;
       struct unit *transporter = NULL, *transporter2 = NULL;
 

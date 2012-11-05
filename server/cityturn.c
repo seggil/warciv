@@ -1303,7 +1303,7 @@ static void check_pollution(city_t *pcity)
       /* place pollution somewhere in city radius */
       int cx = myrand(CITY_MAP_SIZE);
       int cy = myrand(CITY_MAP_SIZE);
-      struct tile *ptile;
+      tile_t *ptile;
 
       /* if is a corner tile or not a real map position */
       if (!is_valid_city_coords(cx, cy)
@@ -1546,7 +1546,7 @@ static void update_city_activity(struct player *pplayer, city_t *pcity)
 static bool disband_city(city_t *pcity)
 {
   struct player *pplayer = city_owner(pcity);
-  struct tile *ptile = pcity->common.tile;
+  tile_t *ptile = pcity->common.tile;
   city_t *rcity=NULL;
 
   /* find closest city other than pcity */

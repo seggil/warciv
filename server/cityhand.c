@@ -446,7 +446,7 @@ void handle_city_set_rally_point(struct player *pplayer, int city_id,
                                  int x, int y)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
-  struct tile *rally_point = map_pos_to_tile(x, y);
+  tile_t *rally_point = map_pos_to_tile(x, y);
 
   if (!pcity || !rally_point || rally_point == pcity->common.rally_point) {
     return;

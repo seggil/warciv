@@ -29,7 +29,7 @@ void spy_poison(struct player *pplayer, struct unit *pdiplomat,
 void spy_sabotage_unit(struct player *pplayer, struct unit *pdiplomat,
                        struct unit *pvictim);
 void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
-                    struct tile *ptile);
+                    tile_t *ptile);
 void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
                        city_t  *pcity, int technology);
 void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
@@ -37,7 +37,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
 void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
                        city_t *pcity, Impr_Type_id improvement);
 
-int count_diplomats_on_tile(struct tile *ptile);
+int count_diplomats_on_tile(tile_t *ptile);
 int unit_bribe_cost(struct unit *punit);
 
 #endif  /* WC_SERVER_DIPLOMATS_H */

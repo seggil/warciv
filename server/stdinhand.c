@@ -3526,7 +3526,7 @@ static bool debug_command(struct connection *caller, char *str, bool check)
     }
   } else if (ntokens > 0 && strcmp(arg[0], "city") == 0) {
     int x, y;
-    struct tile *ptile;
+    tile_t *ptile;
     city_t *pcity;
     if (ntokens != 3) {
       cmd_reply(CMD_DEBUG, caller, C_SYNTAX, "%s", usage);
@@ -3558,7 +3558,7 @@ static bool debug_command(struct connection *caller, char *str, bool check)
     }
   } else if (ntokens > 0 && strcmp(arg[0], "units") == 0) {
     int x, y;
-    struct tile *ptile;
+    tile_t *ptile;
     if (ntokens != 3) {
       cmd_reply(CMD_DEBUG, caller, C_SYNTAX, "%s", usage);
       goto cleanup;

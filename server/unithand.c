@@ -67,7 +67,7 @@ static void handle_unit_activity_request_targeted(struct unit *punit,
                                                   new_target);
 static bool base_handle_unit_establish_trade(struct player *pplayer, int unit_id, city_t *pcity_dest);
 static void how_to_declare_war(struct player *pplayer);
-static bool unit_bombard(struct unit *punit, struct tile *ptile);
+static bool unit_bombard(struct unit *punit, tile_t *ptile);
 
 /**************************************************************************
 ...
@@ -75,7 +75,7 @@ static bool unit_bombard(struct unit *punit, struct tile *ptile);
 void handle_unit_goto(struct player *pplayer, int unit_id, int x, int y)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct tile *ptile = map_pos_to_tile(x, y);
+  tile_t *ptile = map_pos_to_tile(x, y);
 
   if (!ptile || !punit) {
     return;
@@ -574,7 +574,7 @@ void handle_unit_change_activity(struct player *pplayer, int unit_id,
 void handle_unit_move(struct player *pplayer, int unit_id, int x, int y)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct tile *ptile = map_pos_to_tile(x, y);
+  tile_t *ptile = map_pos_to_tile(x, y);
 
   if (!ptile || !punit) {
     return;
@@ -669,7 +669,7 @@ static void send_combat(struct unit *pattacker, struct unit *pdefender,
   This function assumes the bombard is legal. The calling function should
   have already made all necessary checks.
 **************************************************************************/
-static bool unit_bombard(struct unit *punit, struct tile *ptile)
+static bool unit_bombard(struct unit *punit, tile_t *ptile)
 {
   struct player *pplayer = unit_owner(punit);
   city_t *pcity = map_get_city(ptile);
@@ -740,7 +740,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
   struct unit *plooser, *pwinner;
   city_t *pcity;
   int moves_used, def_moves_used;
-  struct tile *def_tile = pdefender->tile;
+  tile_t *def_tile = pdefender->tile;
   int old_unit_vet, old_defender_vet, vet;
 
   freelog(LOG_DEBUG, "Start attack: %s's %s against %s's %s.",
@@ -940,11 +940,11 @@ static void how_to_declare_war(struct player *pplayer)
 ...
 **************************************************************************/
 static bool can_unit_move_to_tile_with_notify(struct unit *punit,
-                                              struct tile *dest_tile,
+                                              tile_t *dest_tile,
                                               bool igzoc)
 {
   enum unit_move_result reason;
-  struct tile *src_tile = punit->tile;
+  tile_t *src_tile = punit->tile;
 
   reason =
       test_unit_move_to_tile(punit->type, unit_owner(punit),
@@ -990,7 +990,7 @@ static bool can_unit_move_to_tile_with_notify(struct unit *punit,
 
   FIXME: This function needs a good cleaning.
 **************************************************************************/
-bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
+bool handle_unit_move_request(struct unit *punit, tile_t *pdesttile,
                               bool igzoc, bool move_diplomat_city)
 {
   struct player *pplayer = unit_owner(punit);
@@ -1467,7 +1467,7 @@ void handle_unit_paradrop_to(struct player *pplayer, int unit_id, int x,
                              int y)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct tile *ptile = map_pos_to_tile(x, y);
+  tile_t *ptile = map_pos_to_tile(x, y);
 
   if (!punit || !ptile) {
     return;
@@ -1584,7 +1584,7 @@ void handle_unit_orders(struct player *pplayer,
 void handle_unit_air_patrol(struct player *pplayer, int unit_id, int x, int y)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct tile *ptile = map_pos_to_tile(x, y);
+  tile_t *ptile = map_pos_to_tile(x, y);
 
   if (!punit
       || !can_unit_do_air_patrol(punit)

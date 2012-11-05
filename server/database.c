@@ -145,8 +145,8 @@ static char *etm_encode_turn_map(const char *termap,
                                  struct tile_list *changed_terrain_list);
 static unsigned long get_termap_len(void);
 static unsigned long get_turnmap_len(void);
-static unsigned long get_tile_termap_index(const struct tile *ptile);
-static char etm_encode_terrain(const struct tile *ptile,
+static unsigned long get_tile_termap_index(const tile_t *ptile);
+static char etm_encode_terrain(const tile_t *ptile,
                                const char *rdict);
 
 #define wcdb_reset_escape_buffer() (void)wcdb_escape(NULL, NULL)
@@ -1224,7 +1224,7 @@ static unsigned long get_termap_len(void)
 /**************************************************************************
   ...
 **************************************************************************/
-static char etm_encode_terrain(const struct tile *ptile,
+static char etm_encode_terrain(const tile_t *ptile,
                                const char *rdict)
 {
   char enc;
@@ -1295,7 +1295,7 @@ static void init_etm_rdict(char *termap)
 /**************************************************************************
   ...
 **************************************************************************/
-static unsigned long get_tile_termap_index(const struct tile *ptile)
+static unsigned long get_tile_termap_index(const tile_t *ptile)
 {
   return WCDB_ETM_HEADER_LEN
       + WCDB_ETM_DICT_LEN
@@ -1310,7 +1310,7 @@ static char *etm_encode_terrain_map(void)
   int len, i, j, index;
   char *termap;
   const char *rdict;
-  struct tile *ptile;
+  tile_t *ptile;
 
   if (game.ruleset_control.terrain_count > WCDB_ETM_DICT_LEN) {
     freelog(LOG_ERROR, _("Cannot encode more than %d terrain types! "
@@ -1363,7 +1363,7 @@ static unsigned long get_turnmap_len(void)
 static char *etm_encode_turn_map(const char *termap,
                                  struct tile_list *changed_terrain_list)
 {
-  struct tile *ptile;
+  tile_t *ptile;
   int i, j, len, index;
   char enc, *turnmap, tenc;
   const char *rdict;

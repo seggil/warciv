@@ -65,7 +65,7 @@ struct claim_map {
   struct claim_cell *claims;
   int *player_landarea;
   int *player_owndarea;
-  struct tile **edges;
+  tile_t **edges;
 };
 
 /**************************************************************************
@@ -196,7 +196,7 @@ static void build_landarea_map_new(struct claim_map *pcmap)
 static void build_landarea_map_turn_0(struct claim_map *pcmap)
 {
   int turn, owner;
-  struct tile **nextedge;
+  tile_t **nextedge;
   struct claim_cell *pclaim;
 
   turn = 0;
@@ -260,10 +260,10 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
 **************************************************************************/
 static void build_landarea_map_expand(struct claim_map *pcmap)
 {
-  struct tile **midedge;
+  tile_t **midedge;
   int turn, accum, other;
-  struct tile **thisedge;
-  struct tile **nextedge;
+  tile_t **thisedge;
+  tile_t **nextedge;
 
   midedge = &pcmap->edges[map.info.xsize * map.info.ysize];
 
@@ -272,7 +272,7 @@ static void build_landarea_map_expand(struct claim_map *pcmap)
     nextedge = ((turn & 0x1) == 1) ? midedge : pcmap->edges;
 
     for (accum = 0; *thisedge; thisedge++) {
-      struct tile *ptile = *thisedge;
+      tile_t *ptile = *thisedge;
       int i = ptile->index;
       int owner = pcmap->claims[i].whom;
 
@@ -579,7 +579,7 @@ void save_ppm(void)
 
   for (j = 0; j < map.info.ysize; j++) {
     for (i = 0; i < map.info.xsize; i++) {
-       struct tile *ptile = native_pos_to_tile(i, j);
+       tile_t *ptile = native_pos_to_tile(i, j);
        int *color;
 
        /* color for cities first, then units, then land */

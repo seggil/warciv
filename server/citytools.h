@@ -55,25 +55,25 @@ void transfer_city(struct player *ptaker, city_t *pcity,
                    int kill_outside, bool transfer_unit_verbose,
                    bool resolve_stack, bool raze);
 city_t *find_closest_owned_city(struct player *pplayer,
-                                struct tile *ptile,
+                                tile_t *ptile,
                                 bool sea_required,
                                 city_t *pexclcity);
 void handle_unit_enter_city(struct unit *punit, city_t *pcity);
 
 void send_city_info(struct player *dest, city_t *pcity);
 void send_city_info_at_tile(struct player *pviewer, struct conn_list *dest,
-                            city_t *pcity, struct tile *ptile);
+                            city_t *pcity, tile_t *ptile);
 void send_all_known_cities(struct conn_list *dest);
 void send_all_known_trade_routes(struct conn_list *dest);
 void send_player_cities(struct player *pplayer);
 void package_city(city_t *pcity, struct packet_city_info *packet,
                   bool dipl_invest);
 
-void reality_check_city(struct player *pplayer, struct tile *ptile);
+void reality_check_city(struct player *pplayer, tile_t *ptile);
 bool update_dumb_city(struct player *pplayer, city_t *pcity);
 void refresh_dumb_city(city_t *pcity);
 
-void create_city(struct player *pplayer, struct tile *ptile,
+void create_city(struct player *pplayer, tile_t *ptile,
                  const char *name);
 void remove_city(city_t *pcity);
 
@@ -87,17 +87,17 @@ void change_build_target(struct player *pplayer, city_t *pcity,
 
 bool is_allowed_city_name(struct player *pplayer, const char *city_name,
                           char *error_buf, size_t bufsz);
-char *city_name_suggestion(struct player *pplayer, struct tile *ptile);
+char *city_name_suggestion(struct player *pplayer, tile_t *ptile);
 
 
 bool city_can_work_tile(city_t *pcity, int city_x, int city_y);
 void server_remove_worker_city(city_t *pcity, int city_x, int city_y);
 void server_set_worker_city(city_t *pcity, int city_x, int city_y);
-bool update_city_tile_status_map(city_t *pcity, struct tile *ptile);
+bool update_city_tile_status_map(city_t *pcity, tile_t *ptile);
 void sync_cities(void);
 bool can_place_worker_here(city_t *pcity, int city_x, int city_y);
 void check_city_workers(struct player *pplayer);
-void city_landlocked_sell_coastal_improvements(struct tile *ptile);
+void city_landlocked_sell_coastal_improvements(tile_t *ptile);
 
 void send_city_manager_param(struct conn_list *clist,
                              struct packet_city_manager_param *packet,
