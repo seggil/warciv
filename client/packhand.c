@@ -20,7 +20,6 @@
 
 #include "capability.h"
 #include "wc_intl.h"
-#include "idex.h"
 #include "log.h"
 #include "mem.h"
 #include "support.h"
@@ -28,6 +27,7 @@
 #include "capstr.h"
 #include "events.h"
 #include "game.h"
+#include "idex.h"
 #include "government.h"
 #include "map.h"
 #include "nation.h"

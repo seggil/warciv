@@ -29,7 +29,6 @@ void output_window_thaw(void);
 void output_window_force_thaw(void);
 bool is_output_window_frozen(void);
 
-typedef struct city_s city_t;
 int insert_city_link(char *buf, size_t buflen, city_t *pcity);
 int insert_tile_link(char *buf, size_t buflen, tile_t *ptile);
 int insert_unit_link(char *buf, size_t buflen, struct unit *punit);
