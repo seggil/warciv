@@ -425,8 +425,8 @@ static bool trireme_is_pos_dangerous(const tile_t *ptile,
   /* We test TER_UNSAFE even though under the current ruleset there is no
    * way for a trireme to be on a TER_UNSAFE tile. */
   /* Unsafe or unsafe-ocean tiles without cities are dangerous. */
-  return ((terrain_has_flag(ptile->terrain, TER_UNSAFE)
-          || (is_ocean(ptile->terrain) && !is_safe_ocean(ptile)))
+  return ((terrain_has_tag(ptile->terrain, TER_UNSAFE)
+           || (is_ocean(ptile->terrain) && !is_safe_ocean(ptile)))
           && ptile->city == NULL);
 }
 
@@ -440,7 +440,7 @@ static bool is_pos_dangerous(const tile_t *ptile, enum known_type known,
   return FALSE;
 
   /* Unsafe tiles without cities are dangerous. */
-  return (terrain_has_flag(ptile->terrain, TER_UNSAFE)
+  return (terrain_has_tag(ptile->terrain, TER_UNSAFE)
           && ptile->city == NULL);
 }
 
