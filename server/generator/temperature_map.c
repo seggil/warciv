@@ -36,7 +36,7 @@ bool temperature_is_initialized(void)
 /*********************************************************
  return true if the tile has tt temperature type
 **********************************************************/
-bool tmap_is(const struct tile *ptile, temperature_type tt)
+bool tmap_is(const tile_t *ptile, temperature_type tt)
 {
   return BOOL_VAL(tmap(ptile) & (tt));
 }
@@ -44,7 +44,7 @@ bool tmap_is(const struct tile *ptile, temperature_type tt)
 /*****************************************************************
  return true if at last one tile has tt temperature type
 ****************************************************************/
-bool is_temperature_type_near(const struct tile *ptile, temperature_type tt)
+bool is_temperature_type_near(const tile_t *ptile, temperature_type tt)
 {
   adjc_iterate(ptile, tile1) {
     if (BOOL_VAL(tmap(tile1) & (tt))) {

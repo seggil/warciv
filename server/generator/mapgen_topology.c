@@ -35,7 +35,7 @@ double req_size;
   functions instead (x,y) coordinate to place terrains
   colatitude is 0 at poles and MAX_COLATITUDE at equator
 ****************************************************************************/
-int map_colatitude(const struct tile *ptile)
+int map_colatitude(const tile_t *ptile)
 {
   double x, y;
 
@@ -166,7 +166,7 @@ int map_colatitude(const struct tile *ptile)
   Return TRUE if the map in a city radius is SINGULAR.  This is used to
   avoid putting (non-polar) land near the edge of the map.
 ****************************************************************************/
-bool near_singularity(const struct tile *ptile)
+bool near_singularity(const tile_t *ptile)
 {
   return is_singular_tile(ptile, CITY_MAP_RADIUS);
 }

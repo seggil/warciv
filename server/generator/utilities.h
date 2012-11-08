@@ -22,7 +22,7 @@
  */
 #define do_in_map_pos(ptile, nat_x, nat_y)                                  \
 {                                                                           \
-  struct tile *ptile = native_pos_to_tile((nat_x), (nat_y));                \
+  tile_t *ptile = native_pos_to_tile((nat_x), (nat_y));                \
   {
 
 #define do_in_map_pos_end                                                   \
@@ -38,27 +38,27 @@
  index0, dist, Xaxe are side effect safe.
  ***************************************************************************/
 #define iterate_axe(iter_tile, i, center_tile, dist, Xaxe)              \
-  {                                                                     \
-    const int ___dist = (dist);                                         \
-    const struct tile *_center_tile = (center_tile);                    \
-    const bool ___Xaxe = (Xaxe);                                        \
-    int i, ___x, ___y;                                                  \
-    struct tile *iter_tile;                                             \
-                                                                        \
-    for (i = -___dist; i <= ___dist; i++) {                             \
-      ___x = _center_tile->nat_x + (___Xaxe ? i : 0);                   \
-      ___y = _center_tile->nat_y + (___Xaxe ? 0 : i);                   \
-      iter_tile = native_pos_to_tile(___x, ___y);                       \
-      if (!iter_tile) {                                                 \
-        continue;                                                       \
-      }
+{                                                                       \
+  const int ___dist = (dist);                                         \
+  const tile_t *_center_tile = (center_tile);                         \
+  const bool ___Xaxe = (Xaxe);                                        \
+  int i, ___x, ___y;                                                  \
+  tile_t *iter_tile;                                                  \
+                                                                      \
+  for (i = -___dist; i <= ___dist; i++) {                             \
+    ___x = _center_tile->nat_x + (___Xaxe ? i : 0);                   \
+    ___y = _center_tile->nat_y + (___Xaxe ? 0 : i);                   \
+    iter_tile = native_pos_to_tile(___x, ___y);                       \
+    if (!iter_tile) {                                                 \
+      continue;                                                       \
+    }
 
 #define iterate_axe_end \
-    } \
+  }                     \
 }
 #define whole_map_iterate_filtered(ptile, pdata, pfilter)                   \
 {                                                                           \
-  bool (*_filter)(const struct tile *ptile, const void *data) = (pfilter);  \
+  bool (*_filter)(const tile_t *ptile, const void *data) = (pfilter);       \
   const void *_data = (pdata);                                              \
                                                                             \
   whole_map_iterate(ptile) {                                                \
@@ -74,22 +74,22 @@ bool is_normal_nat_pos(int x, int y);
 
 /* int maps tools */
 void adjust_int_map_filtered(int *int_map, int int_map_max, void *data,
-                                   bool (*filter)(const struct tile *ptile,
+                                   bool (*filter)(const tile_t *ptile,
                                                   const void *data));
 #define adjust_int_map(int_map, int_map_max) \
   adjust_int_map_filtered(int_map, int_map_max, (void *)NULL, \
-             (bool (*)(const struct tile *ptile, const void *data) )NULL)
+             (bool (*)(const tile_t *ptile, const void *data) )NULL)
 void smooth_int_map(int *int_map, bool zeroes_at_edges);
 
 /* placed_map tool*/
 void create_placed_map(void);
 void destroy_placed_map(void);
-void map_set_placed(struct tile *ptile);
-void map_unset_placed(struct tile *ptile);
-bool not_placed(const struct tile *ptile);
+void map_set_placed(tile_t *ptile);
+void map_unset_placed(tile_t *ptile);
+bool not_placed(const tile_t *ptile);
 bool placed_map_is_initialized(void);
 void set_all_ocean_tiles_placed(void) ;
-void set_placed_near_pos(struct tile *ptile, int dist);
+void set_placed_near_pos(tile_t *ptile, int dist);
 
 
 

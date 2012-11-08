@@ -58,18 +58,18 @@ void destroy_placed_map(void)
 #define pmap(ptile) (placed_map[(ptile)->index])
 
 /* Checks if land has not yet been placed on pmap at (x, y) */
-bool not_placed(const struct tile *ptile)
+bool not_placed(const tile_t *ptile)
 {
   return !pmap(ptile);
 }
 
 /* set has placed or not placed position in the pmap */
-void map_set_placed(struct tile *ptile)
+void map_set_placed(tile_t *ptile)
 {
   pmap(ptile) = TRUE;
 }
 
-void map_unset_placed(struct tile *ptile)
+void map_unset_placed(tile_t *ptile)
 {
   pmap(ptile) = FALSE;
 }
@@ -89,7 +89,7 @@ void set_all_ocean_tiles_placed(void)
 /****************************************************************************
   Set all nearby tiles as placed on pmap.
 ****************************************************************************/
-void set_placed_near_pos(struct tile *ptile, int dist)
+void set_placed_near_pos(tile_t *ptile, int dist)
 {
   square_iterate(ptile, dist, tile1) {
     map_set_placed(tile1);
@@ -105,7 +105,7 @@ void set_placed_near_pos(struct tile *ptile, int dist)
   TRUE will be considered.
 **************************************************************************/
 void adjust_int_map_filtered(int *int_map, int int_map_max, void *data,
-                             bool (*filter)(const struct tile *ptile,
+                             bool (*filter)(const tile_t *ptile,
                                             const void *data))
 {
   int minval = 0, maxval = 0, total = 0;

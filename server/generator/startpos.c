@@ -41,7 +41,7 @@ static int *islands_index;
 /****************************************************************************
   Return an approximation of the goodness of a tile to a civilization.
 ****************************************************************************/
-static int get_tile_value(struct tile *ptile)
+static int get_tile_value(tile_t *ptile)
 {
   Terrain_type_id old_terrain;
   enum tile_special_type old_special;
@@ -95,7 +95,7 @@ struct start_filter_data {
     'nr' is the number of other start positions in
     map.start_positions to check for too closeness.
 **************************************************************************/
-static bool is_valid_start_pos(const struct tile *ptile, const void *dataptr)
+static bool is_valid_start_pos(const tile_t *ptile, const void *dataptr)
 {
   const struct start_filter_data *pdata = dataptr;
   int i;
@@ -129,7 +129,7 @@ static bool is_valid_start_pos(const struct tile *ptile, const void *dataptr)
   cont_size = get_continent_size(cont);
   island = islands + islands_index[cont];
   for (i = 0; i < pdata->count; i++) {
-    struct tile *tile1 = map.server.start_positions[i].tile;
+    tile_t *tile1 = map.server.start_positions[i].tile;
 
     if ((map_get_continent(ptile) == map_get_continent(tile1)
          && (real_map_distance(ptile, tile1) * 1000 / pdata->min_value
@@ -175,7 +175,7 @@ static void initialize_isle_data(void)
 /****************************************************************************
   A function that filters for TER_STARTER tiles.
 ****************************************************************************/
-static bool filter_starters(const struct tile *ptile, const void *data)
+static bool filter_starters(const tile_t *ptile, const void *data)
 {
   return terrain_has_tag(map_get_terrain(ptile), TER_STARTER);
 }
@@ -193,7 +193,7 @@ static bool filter_starters(const struct tile *ptile, const void *data)
 **************************************************************************/
 bool create_start_positions(enum start_mode mode)
 {
-  struct tile *ptile;
+  tile_t *ptile;
   int k, sum;
   struct start_filter_data data;
   int tile_value_aux[MAX_MAP_INDEX], tile_value[MAX_MAP_INDEX];

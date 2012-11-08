@@ -117,7 +117,7 @@ static void gen5rec(int step, int x0, int y0, int x1, int y1)
   /* unset points are zero, don't reset if set */
 #define set_midpoints(X, Y, V)                                          \
   {                                                                     \
-    struct tile *ptile = native_pos_to_tile((X), (Y));                  \
+    tile_t *ptile = native_pos_to_tile((X), (Y));                       \
     if (!near_singularity(ptile)                                        \
         && map_colatitude(ptile) >  ICE_BASE_LEVEL/2                    \
         && hmap(ptile) == 0) {                                          \
