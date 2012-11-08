@@ -5689,7 +5689,7 @@ static int send_packet_city_info_100(struct connection *pconn, const struct pack
 
 
     {
-      differ = (SP_COUNT != SP_COUNT);
+      differ = FALSE;
       if(!differ) {
         int i;
         for (i = 0; i < SP_COUNT; i++) {
@@ -6617,7 +6617,7 @@ static int send_packet_city_info_101(struct connection *pconn, const struct pack
 
 
     {
-      differ = (SP_COUNT != SP_COUNT);
+      differ = FALSE;
       if(!differ) {
         int i;
         for (i = 0; i < SP_COUNT; i++) {
@@ -24966,7 +24966,7 @@ static int send_packet_ruleset_game_100(struct connection *pconn, const struct p
 
 
     {
-      differ = (SP_COUNT != SP_COUNT);
+      differ = FALSE;
       if(!differ) {
         int i;
         for (i = 0; i < SP_COUNT; i++) {
@@ -24982,7 +24982,7 @@ static int send_packet_ruleset_game_100(struct connection *pconn, const struct p
 
 
     {
-      differ = (SP_COUNT != SP_COUNT);
+      differ = FALSE;
       if(!differ) {
         int i;
         for (i = 0; i < SP_COUNT; i++) {
@@ -24998,7 +24998,7 @@ static int send_packet_ruleset_game_100(struct connection *pconn, const struct p
 
 
     {
-      differ = (SP_COUNT != SP_COUNT);
+      differ = FALSE;
       if(!differ) {
         int i;
         for (i = 0; i < SP_COUNT; i++) {
@@ -34586,7 +34586,7 @@ static int send_packet_city_manager_param_100(struct connection *pconn, const st
 
 
     {
-      differ = (CM_NUM_STATS != CM_NUM_STATS);
+      differ = FALSE;
       if(!differ) {
         int i;
         for (i = 0; i < CM_NUM_STATS; i++) {
@@ -34614,7 +34614,7 @@ static int send_packet_city_manager_param_100(struct connection *pconn, const st
 
 
     {
-      differ = (CM_NUM_STATS != CM_NUM_STATS);
+      differ = FALSE;
       if(!differ) {
         int i;
         for (i = 0; i < CM_NUM_STATS; i++) {

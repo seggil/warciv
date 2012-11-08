@@ -281,7 +281,7 @@ const char *get_unit_name(Unit_Type_id id)
 **************************************************************************/
 const char *unit_class_name(Unit_Class_id id)
 {
-  if ((id >= 0) && (id < UCL_LAST)) {
+  if ( id < UCL_LAST ) {
     return unit_class_names[id];
   } else {
     return "";

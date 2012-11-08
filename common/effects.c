@@ -159,7 +159,7 @@ enum effect_range effect_range_from_str(const char *str)
 const char *effect_range_name(enum effect_range effect_range)
 {
   assert(ARRAY_SIZE(effect_range_names) == EFR_LAST);
-  if (effect_range >= 0 && effect_range < EFR_LAST) {
+  if ( effect_range < EFR_LAST) {
     return effect_range_names[effect_range];
   } else {
     assert(0);
@@ -193,7 +193,7 @@ enum effect_type effect_type_from_str(const char *str)
 const char *effect_type_name(enum effect_type effect_type)
 {
   assert(ARRAY_SIZE(effect_type_names) == EFT_LAST);
-  if (effect_type >= 0 && effect_type < EFT_LAST) {
+  if ( effect_type < EFT_LAST) {
     return effect_type_names[effect_type];
   } else {
     assert(0);
