@@ -19,9 +19,9 @@
 #include "wc_intl.h"
 #include "support.h"
 
+#include "gui_main.h"
 #include "../chatline_common.h"
 
-#include "gui_main.h"
 #include "gui_stuff.h"
 #include "resources.h"
 

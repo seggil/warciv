@@ -21,8 +21,8 @@
 #include "log.h"
 #include "support.h"
 
-#include "government.h"
 #include "packets.h"
+#include "government.h"
 #include "unittype.h"
 #include "traderoute.h"
 
