@@ -20,8 +20,6 @@
 
 #include "wc_types.h"
 
-typedef struct city_s city_t;
-
 void idex_init(void);
 void idex_free(void);
 

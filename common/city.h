@@ -268,7 +268,7 @@ struct city_common {
   tile_t *rally_point;
 };
 
-typedef struct city_s {
+struct city_s {
   struct city_common common;
   union tata_u {
     struct client_part_s {
@@ -318,7 +318,11 @@ typedef struct city_s {
   } u;
 
   /* Nothing behind the union please! */
-} city_t;
+};
+
+#ifndef CITY_T_DEFINED
+typedef struct city_s city_t;
+#endif
 
 /* city drawing styles */
 

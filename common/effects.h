@@ -246,9 +246,9 @@ enum target_type {
   TARGET_CITY,
   TARGET_BUILDING
 };
-
+#if 0
 typedef struct city_s city_t;
-
+#endif
 bool is_effect_useful(enum target_type target,
                       const struct player *target_player,
                       const city_t *target_pcity,
