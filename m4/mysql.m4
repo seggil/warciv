@@ -84,8 +84,6 @@ AC_DEFUN([WC_CHECK_MYSQL],
 
   if test x$mysql = xtrue; then
     AC_DEFINE(HAVE_MYSQL, 1, [have mysql for authentication, game logging, etc.])
-  else
-    AC_DEFINE(HAVE_MYSQL, 0, [ does not have mysql for authentication, game logging, etc.])
   fi
   AM_CONDITIONAL([HAVE_MYSQL], [test x$mysql = xtrue])
 
