@@ -17,23 +17,23 @@
 #include "map.h"        /* struct tile_list */
 
 enum trade_route_status {
-  TR_NONE = 0,
-  TR_PLANNED = 1 << 0,
-  TR_IN_ROUTE = 1 << 1,
-  TR_PL_AND_IR = TR_PLANNED | TR_IN_ROUTE,
+  TR_NONE        = 0,
+  TR_PLANNED     = 1 << 0,
+  TR_IN_ROUTE    = 1 << 1,
+  TR_PL_AND_IR   = TR_PLANNED | TR_IN_ROUTE,
   TR_ESTABLISHED = 1 << 2
 };
 
 /* the pcity1 owner is the trade route owner */
 struct trade_route {
-  city_t *pcity1;
-  city_t *pcity2;
-  struct unit *punit;
+  city_t                  *pcity1;
+  city_t                  *pcity2;
+  struct unit             *punit;
   enum trade_route_status status;
-  int value;
-
+  int                     value;
   /* Are not usually updated */
-  int move_cost, move_turns;
+  int                     move_cost;
+  int                     move_turns;
 };
 
 #define SPECLIST_TAG trade_route
