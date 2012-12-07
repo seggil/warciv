@@ -1379,19 +1379,24 @@ int get_city_style(const city_t *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-int get_player_city_style(struct player *plr)
+int get_player_city_style(struct player *_player)
 {
+  return 0;
+#if 0
   int replace, style, prev;
 
-  style = plr->city_style;
+  style = _player->city_style;
   prev = style;
 
-  while ( (replace = city_styles[prev].replaced_by) != -1) {
+  replace = city_styles[prev].replaced_by;
+  while ( replace != -1) {
     prev = replace;
-    if (get_invention( plr, city_styles[replace].techreq) == TECH_KNOWN)
+    if (get_invention( _player, city_styles[replace].techreq) == TECH_KNOWN)
       style = replace;
+    replace = city_styles[prev].replaced_by;
   }
   return style;
+#endif
 }
 
 /**************************************************************************
