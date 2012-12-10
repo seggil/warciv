@@ -104,7 +104,7 @@ static void check_misc(void)
 static void check_map(void)
 {
   whole_map_iterate(ptile) {
-    struct city *pcity = map_get_city(ptile);
+    city_t *pcity = map_get_city(ptile);
     int cont = map_get_continent(ptile), x, y;
 
     CHECK_INDEX(ptile->index);
@@ -134,7 +134,7 @@ static void check_map(void)
     }
 
     if (pcity) {
-      assert(same_pos(pcity->tile, ptile));
+      assert(same_pos(pcity->common.tile, ptile));
     }
 
     unit_list_iterate(ptile->units, punit) {
@@ -154,17 +154,17 @@ static void check_map(void)
 /**************************************************************************
   Verify that the city has sane values.
 **************************************************************************/
-void real_sanity_check_city(struct city *pcity, const char *file, int line)
+void real_sanity_check_city(city_t *pcity, const char *file, int line)
 {
   int workers = 0;
   struct player *pplayer = city_owner(pcity);
 
-  assert(pcity->size >= 1);
-  assert(!terrain_has_flag(map_get_terrain(pcity->tile),
+  assert(pcity->common.pop_size >= 1);
+  assert(!terrain_has_flag(map_get_terrain(pcity->common.tile),
                            TER_NO_CITIES));
 
-  unit_list_iterate(pcity->units_supported, punit) {
-    assert(punit->homecity == pcity->id);
+  unit_list_iterate(pcity->common.units_supported, punit) {
+    assert(punit->homecity == pcity->common.id);
     assert(unit_owner(punit) == pplayer);
   } unit_list_iterate_end;
 
@@ -182,56 +182,56 @@ void real_sanity_check_city(struct city *pcity, const char *file, int line)
         if (ptile->worked) {
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "empty but worked by %s!",
-                  pcity->name, TILE_XY(ptile),
-                  (ptile)->worked->name);
+                  pcity->common.name, TILE_XY(ptile),
+                  (ptile)->worked->common.name);
         }
         if (is_enemy_unit_tile(ptile, pplayer)) {
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "empty but occupied by an enemy unit!",
-                  pcity->name, TILE_XY(ptile));
+                  pcity->common.name, TILE_XY(ptile));
         }
         if (game.ruleset_control.borders > 0
-            && owner && owner->player_no != pcity->owner) {
+            && owner && owner->player_no != pcity->common.owner) {
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "empty but in enemy territory!",
-                  pcity->name, TILE_XY(ptile));
+                  pcity->common.name, TILE_XY(ptile));
         }
         if (!city_can_work_tile(pcity, x, y)) {
           /* Complete check. */
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "empty but is unavailable!",
-                  pcity->name, TILE_XY(ptile));
+                  pcity->common.name, TILE_XY(ptile));
         }
         break;
       case C_TILE_WORKER:
         if ((ptile)->worked != pcity) {
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "worked but main map disagrees!",
-                  pcity->name, TILE_XY(ptile));
+                  pcity->common.name, TILE_XY(ptile));
         }
         if (is_enemy_unit_tile(ptile, pplayer)) {
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "worked but occupied by an enemy unit!",
-                  pcity->name, TILE_XY(ptile));
+                  pcity->common.name, TILE_XY(ptile));
         }
         if (game.ruleset_control.borders > 0
-            && owner && owner->player_no != pcity->owner) {
+            && owner && owner->player_no != pcity->common.owner) {
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "worked but in enemy territory!",
-                  pcity->name, TILE_XY(ptile));
+                  pcity->common.name, TILE_XY(ptile));
         }
         if (!city_can_work_tile(pcity, x, y)) {
           /* Complete check. */
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "worked but is unavailable!",
-                  pcity->name, TILE_XY(ptile));
+                  pcity->common.name, TILE_XY(ptile));
         }
         break;
       case C_TILE_UNAVAILABLE:
         if (city_can_work_tile(pcity, x, y)) {
           freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
                   "unavailable but seems to be available!",
-                  pcity->name, TILE_XY(ptile));
+                  pcity->common.name, TILE_XY(ptile));
         }
         break;
       }
@@ -246,10 +246,10 @@ void real_sanity_check_city(struct city *pcity, const char *file, int line)
       workers++;
     }
   } city_map_iterate_end;
-  if (workers + city_specialists(pcity) != pcity->size + 1) {
+  if (workers + city_specialists(pcity) != pcity->common.pop_size + 1) {
     die("%s is illegal (size%d w%d e%d t%d s%d) in %s line %d",
-        pcity->name, pcity->size, workers, pcity->specialists[SP_ELVIS],
-        pcity->specialists[SP_TAXMAN], pcity->specialists[SP_SCIENTIST], file, line);
+        pcity->common.name, pcity->common.pop_size, workers, pcity->common.specialists[SP_ELVIS],
+        pcity->common.specialists[SP_TAXMAN], pcity->common.specialists[SP_SCIENTIST], file, line);
   }
 }
 
@@ -268,19 +268,19 @@ static void check_cities(void)
 
   whole_map_iterate(ptile) {
     if (ptile->worked) {
-      struct city *pcity = ptile->worked;
+      city_t *pcity = ptile->worked;
       int city_x, city_y;
       bool is_valid;
 
       is_valid = map_to_city_map(&city_x, &city_y, pcity, ptile);
       assert(is_valid);
 
-      if (pcity->city_map[city_x][city_y] != C_TILE_WORKER) {
+      if (pcity->common.city_map[city_x][city_y] != C_TILE_WORKER) {
         freelog(LOG_ERROR, "%d,%d is listed as being worked by %s "
                 "on the map, but %s lists the tile %d,%d as having "
                 "status %d\n",
-                TILE_XY(ptile), pcity->name, pcity->name, city_x, city_y,
-                pcity->city_map[city_x][city_y]);
+                TILE_XY(ptile), pcity->common.name, pcity->common.name, city_x, city_y,
+                pcity->common.city_map[city_x][city_y]);
       }
     }
   } whole_map_iterate_end;
@@ -293,7 +293,7 @@ static void check_units(void) {
   players_iterate(pplayer) {
     unit_list_iterate(pplayer->units, punit) {
       tile_t *ptile = punit->tile;
-      struct city *pcity;
+      city_t *pcity;
       struct unit *transporter = NULL, *transporter2 = NULL;
 
       assert(unit_owner(punit) == pplayer);
