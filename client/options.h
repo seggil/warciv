@@ -62,13 +62,15 @@ struct client_option {
   const enum client_option_type type;
 
   union client_option_u {
-    struct {
+    struct client_option_boolean {
       bool *const pvalue;
       const bool def;
     } boolean;
     struct client_option_integer {
       int *const pvalue;
-      const int def, min, max;
+      const int def;
+      const int min;
+      const int max;
     } integer;
     struct client_option_string {
       char *const pvalue;
