@@ -249,14 +249,14 @@ void reset_move_costs(tile_t *ptile);
 #define MAX_MAP_INDEX (map.info.xsize * map.info.ysize)
 
 #ifdef DEBUG
-#define CHECK_MAP_POS(x,y) assert(is_normal_map_pos((x),(y)))
-#define CHECK_NATIVE_POS(x, y) assert((x) >= 0 && (x) < map.info.xsize \
-                                      && (y) >= 0 && (y) < map.info.ysize)
-#define CHECK_INDEX(index) assert((index) >= 0 && (index) < MAX_MAP_INDEX)
+# define CHECK_MAP_POS(x,y) assert(is_normal_map_pos((x),(y)))
+# define CHECK_NATIVE_POS(x, y) assert((x) >= 0 && (x) < map.info.xsize \
+                                       && (y) >= 0 && (y) < map.info.ysize)
+# define CHECK_INDEX(index) assert((index) >= 0 && (index) < MAX_MAP_INDEX)
 #else
-#define CHECK_MAP_POS(x,y) ((void)0)
-#define CHECK_NATIVE_POS(x, y) ((void)0)
-#define CHECK_INDEX(index) ((void)0)
+# define CHECK_MAP_POS(x,y) ((void)0)
+# define CHECK_NATIVE_POS(x, y) ((void)0)
+# define CHECK_INDEX(index) ((void)0)
 #endif
 
 #define native_pos_to_index(nat_x, nat_y)                                   \
