@@ -1,0 +1,22 @@
+#!/bin/sh
+
+BUILDDIR=`dirname $0`
+
+# Use cd + pwd instead of manual concatentation in case of absolute paths
+BUILDDATA=$(cd $BUILDDIR/data ; pwd)
+SRCDATA=$(cd $BUILDDIR ; cd ./data ; pwd)
+
+if [ "x$WARCIV_PATH" = "x" ] ; then
+  WARCIV_PATH=".:data:~/.warciv"
+fi
+export WARCIV_PATH="$WARCIV_PATH:$BUILDDATA:$SRCDATA"
+
+[ -x $BUILDDIR/client/civclient ] && EXE=$BUILDDIR/client/civclient
+[ -x $BUILDDIR/civclient ] && EXE=$BUILDDIR/civclient
+
+if [ "$EXE" = "" ]; then
+  echo $0: Unable to find civclient.
+  exit 1
+fi
+
+exec kdbg $EXE ${1+"$@"}
