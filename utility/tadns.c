@@ -205,7 +205,8 @@ static int getdnsip(struct dns *dns)
   char line[512];
   int a, b, c, d;
 
-  if ((fp = fopen("/etc/resolv.conf", "r")) == NULL) {
+  fp = fopen("/etc/resolv.conf", "r");
+  if ( fp == NULL) {
     ret = -1;
   } else {
     /* Try to figure out what DNS server to use */
@@ -235,7 +236,8 @@ struct dns *dns_new(void)
   dns = wc_calloc(1, sizeof(struct dns));
   dns->sock = -1;
 
-  if ((dns->sock = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
+  dns->sock = socket(PF_INET, SOCK_DGRAM, 0);
+  if ( dns->sock == (void*)-1) {
     freelog(LOG_ERROR, _("Failed to create UDP socket: %s"),
             mystrsocketerror(mysocketerrno()));
     goto FAILED;
@@ -416,7 +418,8 @@ static void parse_udp(struct dns *dns)
   }
 
   /* Return if we did not send that query */
-  if ((q = find_active_query(dns, header->tid)) == NULL) {
+  q = find_active_query(dns, header->tid);
+  if ( q == NULL) {
     freelog(LOG_DEBUG, "pu ignoring packet, unknown tid=%x", header->tid);
     return;
   }
@@ -630,21 +633,25 @@ void dns_destroy(struct dns *dns)
   }
 
   if (dns->active) {
-    while ((q = hash_key_by_number(dns->active, 1))) {
+    q = hash_key_by_number(dns->active, 1);
+    while ( q ) {
       hash_delete_entry(dns->active, q);
       destroy_query(dns, (struct query *) q);
+      q = hash_key_by_number(dns->active, 1);
     }
     hash_free(dns->active);
     dns->active = NULL;
   }
 
   if (dns->cache) {
-    while ((q = hash_key_by_number(dns->cache, 1))) {
+    q = hash_key_by_number(dns->cache, 1);
+    while ( q ) {
       hash_delete_entry_full(dns->cache, q, &key);
       if (key) {
         free(key);
       }
       destroy_query(dns, (struct query *) q);
+      q = hash_key_by_number(dns->cache, 1);
     }
     hash_free(dns->cache);
     dns->cache = NULL;
@@ -675,7 +682,8 @@ void dns_queue(struct dns *dns,
           callback);
 
   /* Search the cache first */
-  if ((query = find_cached_query(dns, qtype, name)) != NULL) {
+  query = find_cached_query(dns, qtype, name);
+  if ( query != NULL) {
     freelog(LOG_DEBUG, "dq found cached query for \"%s\": query %p",
             name, query);
     query->callback = callback;
@@ -713,7 +721,8 @@ void dns_queue(struct dns *dns,
   /* Don't bother asking the resolver for reverse look-up
    * if the query is for 127.0.0.1. */
   if (qtype == DNS_PTR_RECORD
-      && 0 == strcmp(name, LOCALHOST_RLQUERY)) {
+      && 0 == strcmp(name, LOCALHOST_RLQUERY))
+  {
     size_t len;
 
     /* On some strange platforms, strlen does not
@@ -744,7 +753,8 @@ void dns_queue(struct dns *dns,
   p = (char *) &header->data;   /* For encoding host name into packet */
 
   do {
-    if ((s = strchr(name, '.')) == NULL) {
+    s = strchr(name, '.');
+    if ( s  == NULL) {
       s = name + name_len;
     }
 
