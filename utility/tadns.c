@@ -176,8 +176,8 @@ static int getdnsip(struct dns *dns)
   char subkey[512], value[128], *key =
     "SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces";
 
-  if ((err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &hKey))
-      != ERROR_SUCCESS) {
+  err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &hKey);
+  if ( err != ERROR_SUCCESS) {
     freelog(LOG_ERROR, "Cannot open registry key %s: %d", key, err);
   } else {
     for (i = 0, tlen =  sizeof(subkey);
