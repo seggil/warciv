@@ -187,6 +187,10 @@ enum delayed_goto_type {
   DGT_NUKE,
   DGT_PARADROP,
   DGT_AIRLIFT,
+  DGT_CITIES,
+  DGT_PILLAGE,
+  DGT_FORT,
+  DGT_ROAD,
   DGT_BREAK
 };
 

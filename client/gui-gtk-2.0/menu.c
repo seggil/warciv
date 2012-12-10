@@ -1766,6 +1766,65 @@ static void callback_delayed_goto_delayed_nuke(GtkAction *action,
 /****************************************************************
   ...
 *****************************************************************/
+static void callback_delayed_goto_delayed_city(GtkAction *action,
+                                               gpointer user_data)
+{
+  struct unit *punit = get_unit_in_focus();
+
+  if (punit) {
+    if (unit_flag(punit, F_CITIES)) {
+      key_unit_delayed_goto(DGT_CITIES);
+    }
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_delayed_goto_delayed_fort(GtkAction *action,
+                                               gpointer user_data)
+{
+  struct unit *punit = get_unit_in_focus();
+
+  if (punit) {
+    if (can_unit_do_activity(punit, ACTIVITY_FORTRESS)) {
+    //if (unit_flag(punit, F_SETTLERS)) {
+      key_unit_delayed_goto(DGT_FORT);
+    }
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_delayed_goto_delayed_pillage(GtkAction *action,
+                                                  gpointer user_data)
+{
+  struct unit *punit = get_unit_in_focus();
+
+  if (punit)
+    key_unit_delayed_goto(DGT_PILLAGE);
+
+}
+
+/****************************************************************
+* ...
+*****************************************************************/
+static void callback_delayed_goto_delayed_road_build ( GtkAction *action,
+                                                       gpointer user_data )
+{
+  struct unit *punit = get_unit_in_focus();
+
+  if ( punit ) {
+    if ( unit_flag ( punit, F_SETTLERS ) ) {
+      key_unit_delayed_goto ( DGT_ROAD );
+    }
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
 static void callback_delayed_goto_delayed_paradrop(GtkAction *action,
                                                    gpointer user_data)
 {
@@ -2463,6 +2522,18 @@ static const char *load_menu_delayed_goto(void)
      _("Delayed _nuke"),
      "<Control>z", _("Delayed _nuke"),
      G_CALLBACK(callback_delayed_goto_delayed_nuke)},
+    {"DELAYED_GOTO_DELAYED_CITY", NULL,
+     _("Delayed _city"),NULL, _("Delayed _city"),
+     G_CALLBACK(callback_delayed_goto_delayed_city)},
+    {"DELAYED_GOTO_DELAYED_FORT", NULL,
+     _("Delayed _fort"),NULL, _("Delayed _fort"),
+     G_CALLBACK(callback_delayed_goto_delayed_fort)},
+    {"DELAYED_GOTO_DELAYED_PILLAGE", NULL,
+     _("Delayed road _pillage"),NULL, _("Delayed road _pillage"),
+     G_CALLBACK(callback_delayed_goto_delayed_pillage)},
+    {"DELAYED_GOTO_DELAYED_ROAD_BUILD", NULL,
+     _("Delayed road _build"),NULL, _("Delayed road _build"),
+     G_CALLBACK(callback_delayed_goto_delayed_road_build)},
     {"DELAYED_GOTO_DELAYED_PARADROP", NULL,
      _("Delayed _paradrop"),
      "<Control>z", _("Delayed _paradrop"),
@@ -2760,6 +2831,9 @@ static const char *load_menu_delayed_goto(void)
               "<menu action=\"DELAYED_GOTO\">\n"
               "<menuitem action=\"DELAYED_GOTO_DELAYED_GOTO\" />\n"
               "<menuitem action=\"DELAYED_GOTO_DELAYED_NUKE\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_DELAYED_CITY\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_DELAYED_FORT\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_DELAYED_PILLAGE\" />\n"
               "<menuitem action=\"DELAYED_GOTO_DELAYED_PARADROP\" />\n"
               "<menuitem action=\"DELAYED_GOTO_DELAYED_AIRLIFT\" />\n"
               "<menuitem action=\"DELAYED_GOTO_ADD_PAUSE\" />\n"
@@ -6385,7 +6459,12 @@ void update_menus(void)
     menu_set_sensitive(action_group_delayed_goto,
                        "DELAYED_GOTO_DELAYED_PARADROP",
                        unit_flag(punit, F_PARATROOPERS));
-
+    menu_set_sensitive(action_group_delayed_goto,
+                       "DELAYED_GOTO_DELAYED_CITY",
+                       unit_flag(punit, F_CITIES));
+    menu_set_sensitive(action_group_delayed_goto,
+                       "DELAYED_GOTO_DELAYED_FORT", 
+                       can_unit_do_activity(punit, ACTIVITY_FORTRESS));
     cond = can_unit_do_air_patrol(punit);
     menu_set_sensitive(action_group_miscellaneous,
                        "MISCELLANEOUS_AIR_PATROL", cond

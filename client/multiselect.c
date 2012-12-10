@@ -1117,11 +1117,18 @@ static bool unit_can_do_delayed_action(struct unit *punit,
 {
   switch (dgtype) {
   case DGT_NORMAL:
+  case DGT_PILLAGE:
     return TRUE;
   case DGT_NUKE:
     return unit_flag(punit, F_NUCLEAR);
   case DGT_PARADROP:
     return unit_flag(punit, F_PARATROOPERS);
+  case DGT_CITIES:
+    return unit_flag(punit, F_CITIES);
+  case DGT_ROAD:
+    return unit_flag(punit, F_SETTLERS);
+  case DGT_FORT:
+    return unit_flag(punit, F_SETTLERS);
   case DGT_AIRLIFT:
   case DGT_BREAK:
     return FALSE;
@@ -1200,6 +1207,26 @@ void add_unit_to_delayed_goto(tile_t *ptile)
   case DGT_PARADROP:
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: Adding %d %s paradrop to %s to queue."),
+                count, PL_("unit", "units", count), get_tile_info(ptile));
+    break;
+   case DGT_CITIES:
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s to make city to %s to queue."),
+                count, PL_("unit", "units", count), get_tile_info(ptile));
+    break;
+   case DGT_FORT:
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s to make fort to %s to queue."),
+                count, PL_("unit", "units", count), get_tile_info(ptile));
+    break;
+   case DGT_PILLAGE:
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s to pillage to %s to queue."),
+                count, PL_("unit", "units", count), get_tile_info(ptile));
+    break;
+   case DGT_ROAD:
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s to build road to %s to queue."),
                 count, PL_("unit", "units", count), get_tile_info(ptile));
     break;
   default:
@@ -1332,6 +1359,33 @@ void request_execute_delayed_goto(tile_t *ptile, int dg)
           do_unit_paradrop_to(punit, dgd->ptile);
           punit->is_new = FALSE;
         }
+        break;
+      case DGT_CITIES:
+        /* Build city */
+        send_goto_unit(punit, dgd->ptile);
+        request_unit_build_city(punit);
+        punit->is_new = FALSE;
+        break;
+      case DGT_FORT:
+        /* Build fortress */
+        send_goto_unit(punit, dgd->ptile);
+        if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_FORTRESS)) {
+          key_unit_fortress();
+        }
+        punit->is_new = FALSE;
+        break;
+      case DGT_PILLAGE:
+        /*Road/Rail pillage */
+        send_goto_unit(punit, dgd->ptile);
+        request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, S_ROAD | S_RAILROAD);
+        punit->is_new = FALSE;
+        break;  
+      case DGT_ROAD:
+        send_goto_unit(punit, dgd->ptile);
+        request_new_unit_activity_targeted(punit,
+                                           ACTIVITY_RAILROAD, S_RAILROAD );
+        request_new_unit_activity_targeted(punit,ACTIVITY_ROAD, S_ROAD );
+        punit->is_new = FALSE;
         break;
       default:
         freelog(LOG_ERROR, "Unkown delayed goto type varient (%d).", dgd->type);
