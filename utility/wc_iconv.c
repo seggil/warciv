@@ -83,11 +83,11 @@ void init_character_encodings(char *my_internal_encoding,
 #ifdef HAVE_LIBCHARSET
     local_encoding = my_locale_charset();
 #else
-#ifdef HAVE_LANGINFO_CODESET
+# ifdef HAVE_LANGINFO_CODESET
     local_encoding = nl_langinfo(CODESET);
-#else
+# else
     local_encoding = "";
-#endif
+# endif
 #endif
     if (mystrcasecmp(local_encoding, "ANSI_X3.4-1968") == 0
         || mystrcasecmp(local_encoding, "ASCII") == 0
@@ -121,10 +121,10 @@ void init_character_encodings(char *my_internal_encoding,
   bind_textdomain_codeset(PACKAGE, internal_encoding);
 #endif
 
-#ifdef DEBUG
+#ifdef FIXME
   /* FIXME: Remove this output when this code has stabilized. */
   fprintf(stderr, "Encodings: Data=%s, Local=%s, Internal=%s\n",
-             data_encoding, local_encoding, internal_encoding);
+          data_encoding, local_encoding, internal_encoding);
 #endif
 
 #else
