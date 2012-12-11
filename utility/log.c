@@ -68,7 +68,8 @@ int log_parse_level_str(const char *level_str)
 #ifdef DEBUG
   const int max_level = LOG_DEBUG;
 #else
-  const int max_level = LOG_VERBOSE;
+  const int max_level = LOG_DEBUG;
+  /* const int max_level = LOG_VERBOSE; */
 #endif
 
   /* re-entrant: */
