@@ -49,6 +49,10 @@ libcivserver_a_SOURCES = \
 		diplhand.h	\
 		diplomats.c	\
 		diplomats.h	\
+		game_load.c	\
+		game_load.h	\
+		game_save.c	\
+		game_save.h	\
 		gamehand.c	\
 		gamehand.h	\
 		gamelog.c	\
@@ -59,6 +63,7 @@ libcivserver_a_SOURCES = \
 		handchat.h	\
 		hand_gen.h	\
 		hand_gen.c	\
+        load_save_aux.h \
 		maphand.c	\
 		maphand.h	\
 		meta.c		\
@@ -71,8 +76,6 @@ libcivserver_a_SOURCES = \
 		ruleset.h	\
 		sanitycheck.c	\
 		sanitycheck.h	\
-		savegame.c	\
-		savegame.h	\
 		score.c		\
 		score.h		\
 		script.c	\

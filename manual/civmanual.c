@@ -50,7 +50,7 @@
 #include "plrhand.h"
 #include "report.h"
 #include "ruleset.h"
-#include "savegame.h"
+#include "game_save.h"
 #include "srv_main.h"
 
 #include "stdinhand.h"

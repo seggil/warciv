@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef WC_SERVER_SAVEGAME_H
-#define WC_SERVER_SAVEGAME_H
+#ifndef WC_SERVER_GAME_SAVE_H
+#define WC_SERVER_GAME_SAVE_H
 
 #include "registry.h"
 
@@ -21,4 +21,4 @@ void game_load(struct section_file *file);
 bool game_loadmap(struct section_file *file);
 void game_save(struct section_file *file);
 
-#endif  /* WC_SERVER_SAVEGAME_H */
+#endif  /* WC_SERVER_GAME_SAVE_H */
