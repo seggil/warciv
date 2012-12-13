@@ -91,98 +91,98 @@ bool player_owns_city(struct player *pplayer, city_t *pcity)
 /***************************************************************
 In the server you must use server_player_init
 ***************************************************************/
-void player_init(struct player *plr)
+void player_init(struct player *_player)
 {
   int i;
 
-  plr->player_no=plr-game.players;
+  _player->player_no=_player-game.players;
 
-  sz_strlcpy(plr->name, ANON_PLAYER_NAME);
-  sz_strlcpy(plr->username, ANON_USER_NAME);
-  plr->is_male = TRUE;
-  plr->government = game.ruleset_control.default_government;
-  plr->target_government = game.ruleset_control.default_government;
-  plr->nation = NO_NATION_SELECTED;
-  plr->team = TEAM_NONE;
-  plr->is_started = FALSE;
-  plr->revolution_finishes = -1;
-  plr->capital = FALSE;
-  plr->units = unit_list_new();
-  plr->cities = city_list_new();
-  plr->connections = conn_list_new();
-  plr->current_conn = NULL;
-  plr->is_connected = FALSE;
-  plr->was_created = FALSE;
-  plr->is_civil_war_split = FALSE;
-  plr->is_alive=TRUE;
-  plr->is_dying = FALSE;
-  plr->embassy=0;
-  plr->reputation=GAME_DEFAULT_REPUTATION;
+  sz_strlcpy(_player->name, ANON_PLAYER_NAME);
+  sz_strlcpy(_player->username, ANON_USER_NAME);
+  _player->is_male = TRUE;
+  _player->government = game.ruleset_control.default_government;
+  _player->target_government = game.ruleset_control.default_government;
+  _player->nation = NO_NATION_SELECTED;
+  _player->team = TEAM_NONE;
+  _player->is_started = FALSE;
+  _player->revolution_finishes = -1;
+  _player->capital = FALSE;
+  _player->units = unit_list_new();
+  _player->cities = city_list_new();
+  _player->connections = conn_list_new();
+  _player->current_conn = NULL;
+  _player->is_connected = FALSE;
+  _player->was_created = FALSE;
+  _player->is_civil_war_split = FALSE;
+  _player->is_alive=TRUE;
+  _player->is_dying = FALSE;
+  _player->embassy=0;
+  _player->reputation=GAME_DEFAULT_REPUTATION;
   for(i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-    plr->diplstates[i].type = DS_NO_CONTACT;
-    plr->diplstates[i].has_reason_to_cancel = 0;
-    plr->diplstates[i].contact_turns_left = 0;
+    _player->diplstates[i].type = DS_NO_CONTACT;
+    _player->diplstates[i].has_reason_to_cancel = 0;
+    _player->diplstates[i].contact_turns_left = 0;
   }
-  plr->ignore_diplomacy = FALSE;
-  plr->city_style=0;            /* should be first basic style */
-  plr->ai.control=FALSE;
-  plr->ai.tech_goal = A_UNSET;
-  plr->ai.handicap = 0;
-  plr->ai.skill_level = 0;
-  plr->ai.fuzzy = 0;
-  plr->ai.expand = 100;
-  plr->ai.barbarian_type = NOT_A_BARBARIAN;
-  plr->future_tech=0;
-  plr->economic.tax=PLAYER_DEFAULT_TAX_RATE;
-  plr->economic.science=PLAYER_DEFAULT_SCIENCE_RATE;
-  plr->economic.luxury=PLAYER_DEFAULT_LUXURY_RATE;
-  plr->research.changed_from = -1;
-  player_limit_to_government_rates(plr);
-  spaceship_init(&plr->spaceship);
+  _player->ignore_diplomacy = FALSE;
+  _player->city_style=0;            /* should be first basic style */
+  _player->ai.control=FALSE;
+  _player->ai.tech_goal = A_UNSET;
+  _player->ai.handicap = 0;
+  _player->ai.skill_level = 0;
+  _player->ai.fuzzy = 0;
+  _player->ai.expand = 100;
+  _player->ai.barbarian_type = NOT_A_BARBARIAN;
+  _player->future_tech=0;
+  _player->economic.tax=PLAYER_DEFAULT_TAX_RATE;
+  _player->economic.science=PLAYER_DEFAULT_SCIENCE_RATE;
+  _player->economic.luxury=PLAYER_DEFAULT_LUXURY_RATE;
+  _player->research.changed_from = -1;
+  player_limit_to_government_rates(_player);
+  spaceship_init(&_player->spaceship);
 
-  plr->gives_shared_vision = 0;
-  plr->really_gives_vision = 0;
+  _player->gives_shared_vision = 0;
+  _player->really_gives_vision = 0;
 
   /* Initialise list of improvements with Player-wide equiv_range */
-  improvement_status_init(plr->improvements, ARRAY_SIZE(plr->improvements));
+  improvement_status_init(_player->improvements, ARRAY_SIZE(_player->improvements));
 
   /* Initialise list of improvements with Island-wide equiv_range */
-  plr->island_improv = NULL;
+  _player->island_improv = NULL;
 
   if (map.num_continents > 0 && game.ruleset_control.num_impr_types > 0) {
-    plr->island_improv = wc_malloc((map.num_continents + 1)
+    _player->island_improv = wc_malloc((map.num_continents + 1)
         * game.ruleset_control.num_impr_types * sizeof(Impr_Status));
     for (i = 1; i <= map.num_continents; i++) {
-      improvement_status_init(&plr->island_improv[i
+      improvement_status_init(&_player->island_improv[i
                                   * game.ruleset_control.num_impr_types],
                               game.ruleset_control.num_impr_types);
     }
   }
 
-  plr->attribute_block.data = NULL;
-  plr->attribute_block.length = 0;
-  plr->attribute_block_buffer.data = NULL;
-  plr->attribute_block_buffer.length = 0;
+  _player->attribute_block.data = NULL;
+  _player->attribute_block.length = 0;
+  _player->attribute_block_buffer.data = NULL;
+  _player->attribute_block_buffer.length = 0;
 
-  plr->debug = FALSE;
+  _player->debug = FALSE;
 
-  plr->result = PR_NONE;
-  plr->rank = RANK_NONE;
-  plr->team_rank = RANK_NONE;
+  _player->result = PR_NONE;
+  _player->rank = RANK_NONE;
+  _player->team_rank = RANK_NONE;
 
-  plr->wcdb.player_id = 0;
-  plr->wcdb.rated_user_id = 0;
-  plr->wcdb.rated_user_name[0] = '\0';
-  plr->wcdb.rating = 0;
-  plr->wcdb.rating_deviation = 0;
-  plr->wcdb.last_rating_timestamp = 0;
-  plr->wcdb.new_rating = 0;
-  plr->wcdb.new_rating_deviation = 0;
-  player_free_turns_played(plr);
+  _player->wcdb.player_id = 0;
+  _player->wcdb.rated_user_id = 0;
+  _player->wcdb.rated_user_name[0] = '\0';
+  _player->wcdb.rating = 0;
+  _player->wcdb.rating_deviation = 0;
+  _player->wcdb.last_rating_timestamp = 0;
+  _player->wcdb.new_rating = 0;
+  _player->wcdb.new_rating_deviation = 0;
+  player_free_turns_played(_player);
 
-  plr->score.units_built = 0;
-  plr->score.units_killed = 0;
-  plr->score.units_lost = 0;
+  _player->score.units_built = 0;
+  _player->score.units_killed = 0;
+  _player->score.units_lost = 0;
 }
 
 /***************************************************************
@@ -933,17 +933,17 @@ void player_set_ignore_diplomacy(struct player *pplayer, bool value)
 /****************************************************************************
   ...
 ****************************************************************************/
-void player_set_turns_played(struct player *plr, const char *username,
+void player_set_turns_played(struct player *_player, const char *username,
                              int turns)
 {
   struct hash_table *h;
   struct turns_played_info *tp;
 
-  if (!plr || !username) {
+  if (!_player || !username) {
     return;
   }
 
-  h = plr->wcdb.turns_played_table;
+  h = _player->wcdb.turns_played_table;
   if (!h) {
     return;
   }
@@ -960,29 +960,29 @@ void player_set_turns_played(struct player *plr, const char *username,
 /****************************************************************************
   ...
 ****************************************************************************/
-void player_setup_turns_played(struct player *plr)
+void player_setup_turns_played(struct player *_player)
 {
   struct hash_table *h;
 
-  player_free_turns_played(plr);
+  player_free_turns_played(_player);
 
   h = hash_new(hash_fval_string2, hash_fcmp_string);
-  plr->wcdb.turns_played_table = h;
+  _player->wcdb.turns_played_table = h;
 }
 
 /****************************************************************************
   ...
 ****************************************************************************/
-int player_get_turns_played(const struct player *plr, const char *username)
+int player_get_turns_played(const struct player *_player, const char *username)
 {
   struct hash_table *h;
   struct turns_played_info *tp;
 
-  if (!plr || !username) {
+  if (!_player || !username) {
     return 0;
   }
 
-  h = plr->wcdb.turns_played_table;
+  h = _player->wcdb.turns_played_table;
   if (!h) {
     return 0;
   }
@@ -994,14 +994,14 @@ int player_get_turns_played(const struct player *plr, const char *username)
 /****************************************************************************
   ...
 ****************************************************************************/
-void player_free_turns_played(struct player *plr)
+void player_free_turns_played(struct player *_player)
 {
   struct hash_table *h;
-  if (!plr) {
+  if (!_player) {
     return;
   }
 
-  h = plr->wcdb.turns_played_table;
+  h = _player->wcdb.turns_played_table;
   if (h) {
     hash_values_iterate(h, tp) {
       if (tp) {
@@ -1011,5 +1011,5 @@ void player_free_turns_played(struct player *plr)
     hash_free(h);
   }
 
-  plr->wcdb.turns_played_table = NULL;
+  _player->wcdb.turns_played_table = NULL;
 }
