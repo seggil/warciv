@@ -190,7 +190,7 @@ static void my_init_adns(void)
                            my_adns_input_ready_cb,
                            NULL,
                            NULL);
-    add_timer_callback(5000,
+    add_timer_callback(500000,
                        my_adns_timer_cb,
                        NULL);
   }
@@ -236,7 +236,8 @@ int main(int argc, char *argv[])
   audio_init();
 
   /* default argument values are set in options.c */
-  loglevel = LOG_NORMAL;
+  //loglevel = LOG_NORMAL;
+  loglevel = LOG_DEBUG;
 
   i = 1;
 
@@ -619,7 +620,8 @@ void set_client_state(enum client_states newstate)
       set_client_page(PAGE_GAME);
       if (!client_is_observer()
           && pplayer
-          && game.info.turn == 0) {
+          && game.info.turn == 0)
+      {
         set_default_user_tech_goal();
       }
       init_menus();
