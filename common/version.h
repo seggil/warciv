@@ -71,7 +71,7 @@
 const char *warciv_name_version(void);
 const char *warclient_name_version(void);
 const char *word_version(void);
-const char *fc_svn_revision(void);
+const char *wc_svn_revision(void);
 
 const char *warciv_motto(void);
 
