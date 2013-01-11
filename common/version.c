@@ -84,7 +84,7 @@ const char *word_version(void)
   Returns string with svn revision information if it is possible to
   determine. Can return also some fallback string or even NULL.
 ***********************************************************************/
-const char *fc_svn_revision(void)
+const char *wc_svn_revision(void)
 {
 #if 0
 //#if defined(SVNREV) && !defined(WC_SVNREV_OFF)
