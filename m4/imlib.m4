@@ -10,12 +10,18 @@ AC_DEFUN([AM_PATH_IMLIB],
 [dnl 
 dnl Get the cflags and libraries from the imlib-config script
 dnl
-AC_ARG_WITH(imlib-prefix,[  --with-imlib-prefix=PFX   Prefix where IMLIB is installed (optional)],
-            imlib_prefix="$withval", imlib_prefix="")
-AC_ARG_WITH(imlib-exec-prefix,[  --with-imlib-exec-prefix=PFX Exec prefix where IMLIB is installed (optional)],
-            imlib_exec_prefix="$withval", imlib_exec_prefix="")
-AC_ARG_ENABLE(imlibtest, [  --disable-imlibtest       Do not try to compile and run a test IMLIB program],
-		    , enable_imlibtest=yes)
+AC_ARG_WITH(imlib-prefix,
+            AS_HELP_STRING([--with-imlib-prefix=PFX],
+                           [Prefix where IMLIB is installed (optional)]),
+            [imlib_prefix="$withval"],[imlib_prefix=""])
+AC_ARG_WITH(imlib-exec-prefix,
+            AS_HELP_STRING([--with-imlib-exec-prefix=PFX],
+                           [Exec prefix where IMLIB is installed (optional)]),
+            [imlib_exec_prefix="$withval"],[imlib_exec_prefix=""])
+AC_ARG_ENABLE(imlibtest,
+              AS_HELP_STRING([--disable-imlibtest],
+                             [Do not try to compile and run a test IMLIB program]),
+              [],[enable_imlibtest=yes])
 
   if test x$imlib_exec_prefix != x ; then
      imlib_args="$imlib_args --exec-prefix=$imlib_exec_prefix"
@@ -168,12 +174,18 @@ AC_DEFUN([AM_PATH_GDK_IMLIB],
 [dnl 
 dnl Get the cflags and libraries from the imlib-config script
 dnl
-AC_ARG_WITH(imlib-prefix,[  --with-imlib-prefix=PFX   Prefix where IMLIB is installed (optional)],
-            imlib_prefix="$withval", imlib_prefix="")
-AC_ARG_WITH(imlib-exec-prefix,[  --with-imlib-exec-prefix=PFX Exec prefix where IMLIB is installed (optional)],
-            imlib_exec_prefix="$withval", imlib_exec_prefix="")
-AC_ARG_ENABLE(imlibtest, [  --disable-imlibtest       Do not try to compile and run a test IMLIB program],
-		    , enable_imlibtest=yes)
+AC_ARG_WITH(imlib-prefix,
+            AS_HELP_STRING([--with-imlib-prefix=PFX],
+                           [Prefix where IMLIB is installed (optional)]),
+            [imlib_prefix="$withval"],[imlib_prefix=""])
+AC_ARG_WITH(imlib-exec-prefix,
+            AS_HELP_STRING([--with-imlib-exec-prefix=PFX],
+                           [Exec prefix where IMLIB is installed (optional)]),
+            [imlib_exec_prefix="$withval"],[imlib_exec_prefix=""])
+AC_ARG_ENABLE(imlibtest,
+              AS_HELP_STRING([--disable-imlibtest],
+                             [Do not try to compile and run a test IMLIB program]),
+              [],[enable_imlibtest=yes])
 
   if test x$imlib_exec_prefix != x ; then
      imlib_args="$imlib_args --exec-prefix=$imlib_exec_prefix"
@@ -299,3 +311,4 @@ int main ()
   AC_SUBST(GDK_IMLIB_LIBS)
   rm -f conf.gdkimlibtest
 ])
+

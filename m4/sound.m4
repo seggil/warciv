@@ -1,18 +1,22 @@
 AC_DEFUN([WC_CHECK_SOUND],[
  AC_ARG_ENABLE(esd,
-   [  --disable-esd           Do not try to use Esound],
-   USE_SOUND=no, USE_SOUND_ESD=yes)
+   AS_HELP_STRING([--disable-esd],
+                  [Do not try to use Esound(default is off)]),
+   USE_SOUND=no, USE_SOUND_ESD=no)
 
  AC_ARG_ENABLE(sdl-mixer,
-   [  --disable-sdl-mixer     Do not try to use the SDL mixer],
+   AS_HELP_STRING([--disable-sdl-mixer],
+                  [Do not try to use the SDL mixer]),
    USE_SOUND=no, USE_SOUND_SDL=yes)
 
  AC_ARG_ENABLE(alsa,
-   [  --disable-alsa          Do not try to use ALSA],
+   AS_HELP_STRING([--disable-alsa],
+                  [Do not try to use ALSA]),
    USE_SOUND=no, USE_SOUND_ALSA=yes)
 
  AC_ARG_ENABLE(winmm,
-   [  --disable-winmm         Do not try to use WinMM for sound],
+   AS_HELP_STRING([--disable-winmm],
+                  [Do not try to use WinMM for sound]),
    USE_SOUND=no, USE_SOUND_WINMM=yes)
 
  if test "x$USE_SOUND_ESD" = "xyes"; then

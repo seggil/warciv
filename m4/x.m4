@@ -116,10 +116,11 @@ AC_DEFUN([WC_XPM_PATHS],
 dnl General Xpm prefix:
 dnl "no" means no prefix is required, "yes" means try /usr/local
 AC_ARG_WITH(xpm-prefix,
-    [  --with-xpm-prefix=DIR   Xpm files are in DIR/lib and DIR/include,
-                          or use the following to set them separately:],
-    xpm_prefix="$withval", 
-    xpm_prefix="yes"
+    AS_HELP_STRING([--with-xpm-prefix=DIR],
+                   [Xpm files are in DIR/lib and DIR/include, 
+                    or use the following to set them separately:]),
+    [xpm_prefix="$withval"], 
+    [xpm_prefix="yes"]
 )
 if test "$xpm_prefix" = "yes" || test "$xpm_prefix" = "no"; then
     xpm_libdir="$xpm_prefix"
@@ -130,12 +131,14 @@ else
 fi
 dnl May override general Xpm prefix with explicit individual paths:
 AC_ARG_WITH(xpm-lib,
-    [  --with-xpm-lib=DIR      Xpm library is in DIR],
-    xpm_libdir="$withval" 
+    AS_HELP_STRING([--with-xpm-lib=DIR],
+                   [Xpm library is in DIR]),
+    [xpm_libdir="$withval"]
 )
 AC_ARG_WITH(xpm-include,
-    [  --with-xpm-include=DIR  Xpm header file is in DIR (that is, DIR/X11/xpm.h)],
-    xpm_incdir="$withval" 
+    AS_HELP_STRING([--with-xpm-include=DIR],
+                   [Xpm header file is in DIR (that is, DIR/X11/xpm.h)]),
+    [xpm_incdir="$withval"]
 )
 dnl If xpm-lib path was not specified, try /usr/local/lib if that 
 dnl looks likely; we don't actually try to link.
@@ -225,8 +228,10 @@ AC_DEFUN([WC_CHECK_X_PROTO_FETCH],
 AC_MSG_CHECKING(whether Xfuncproto was supplied)
 dnl May override determined defines with explicit argument:
 AC_ARG_WITH(x-funcproto,
-    [  --with-x-funcproto=DEFS Xfuncproto control definitions are DEFS
-                          (e.g.: --with-x-funcproto='FUNCPROTO=15 NARROWPROTO']dnl
+    AS_HELP_STRING([--with-x-funcproto=DEFS],
+                   [Xfuncproto control definitions are DEFS
+                    (e.g.: --with-x-funcproto='FUNCPROTO=15 NARROWPROTO']),
+    []
 )
 if test "x$with_x_funcproto" = "x"; then
   wc_x_proto_defines=

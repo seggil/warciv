@@ -6,15 +6,18 @@ AC_DEFUN([WC_CHECK_MYSQL],
 [
   dnl  no=compile mysql database support,  yes=compile in mysql database support,  *=error
   AC_ARG_ENABLE(mysql, 
-  [  --enable-mysql          enable database support via mysql],
-  [case "${enableval}" in
-    yes) mysql=true ;;
-    no)  mysql=false ;;
-    *)   AC_MSG_ERROR(bad value ${enableval} for --enable-mysql) ;;
-   esac], [mysql=false])
+    AS_HELP_STRING([--enable-mysql],
+                   [enable database support via mysql]),
+    [case "${enableval}" in
+      yes) mysql=true ;;
+      no)  mysql=false ;;
+      *)   AC_MSG_ERROR(bad value ${enableval} for --enable-mysql) ;;
+    esac], [mysql=false])
 
-  AC_ARG_WITH(mysql-prefix,[  --with-mysql-prefix=PFX   Prefix where MySQL is installed (optional)],
-              mysql_prefix="$withval", mysql_prefix="")
+  AC_ARG_WITH(mysql-prefix,
+              AS_HELP_STRING([--with-mysql-prefix=PFX],
+                             [Prefix where MySQL is installed (optional)]),
+              [mysql_prefix="$withval"],[mysql_prefix=""])
 
   if test x$mysql = xtrue; then
 
@@ -88,3 +91,4 @@ AC_DEFUN([WC_CHECK_MYSQL],
   AM_CONDITIONAL([HAVE_MYSQL], [test x$mysql = xtrue])
 
 ])
+
