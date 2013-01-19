@@ -47,12 +47,14 @@ WC_CHECK_MYSQL
 
 dnl  no=do not compile server,  yes=compile server,  *=error
 AC_ARG_ENABLE(server,
-[  --disable-server        do not compile the server],
-[case "${enableval}" in
-  yes) server=true ;;
-  no)  server=false ;;
-  *)   AC_MSG_ERROR(bad value ${enableval} for --disable-server) ;;
-esac], [server=true])
+  AS_HELP_STRING([--disable-server],
+                 [do not compile the server]),
+  [case "${enableval}" in
+    yes) server=true ;;
+    no)  server=false ;;
+    *)   AC_MSG_ERROR(bad value ${enableval} for --disable-server) ;;
+  esac],
+  [server=true])
 AM_CONDITIONAL(SERVER, test x$server = xtrue)
 
 AC_ARG_WITH(readline,
@@ -64,8 +66,8 @@ WITH_READLINE="maybe"	dnl maybe  - use if found [default]
 AC_HEADER_ASSERT
 dnl  no=do not compile client,  yes=compile client,  *=use this client or error
 AC_ARG_ENABLE(client,
-[  --enable-client[=no/yes/gtk2]
-                          compile a client [default=yes] (if yes, guess type)],
+  AS_HELP_STRING([--enable-client[=no/yes/gtk2]],
+                 [compile a client [default=yes] (if yes, guess type)]),
 [case "${enableval}" in
   yes)	  client=yes ;;
   no)	  client=no ;;
@@ -80,50 +82,58 @@ esac], [client=yes])
 AM_CONDITIONAL(CLIENT, test x$client != xno)
 
 AC_ARG_ENABLE([svnrev],
-[  --enable-svnrev         add svn revision information to
-                           version number [default=no]],
-[case "${enableval}" in
-  yes) svnrev=true  ;;
-  no)  svnrev=false ;;
-  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-svnrev]) ;;
-esac], [svnrev=no])
+  AS_HELP_STRING([--enable-svnrev],
+                 [add svn revision information to version number (default=no)]),
+  [case "${enableval}" in
+    yes) svnrev=true  ;;
+    no)  svnrev=false ;;
+    *)   AC_MSG_ERROR([bad value ${enableval} for --enable-svnrev]) ;;
+  esac],
+  [svnrev=no])
 AM_CONDITIONAL([SVNREV], [test x$svnrev = xyes])
 if test x$svnrev = xyes ; then
   AC_DEFINE([SVNREV], [1], [Add svn revision information to version number])
 fi
 
 AC_ARG_ENABLE(make_data,
-[  --disable-make-data     do not recurse make into data directories
-                          (ok to disable unless you will 'make install')],
-[case "${enableval}" in
-  yes) make_data=true ;;
-  no)  make_data=false ;;
-  *)   AC_MSG_ERROR(bad value ${enableval} for --disable-make-data) ;;
-esac], [make_data=true])
+  AS_HELP_STRING([--disable-make-data],
+                 [do not recurse make into data directories
+                  (ok to disable unless you will 'make install')]),
+  [case "${enableval}" in
+    yes) make_data=true ;;
+    no)  make_data=false ;;
+    *)   AC_MSG_ERROR(bad value ${enableval} for --disable-make-data) ;;
+  esac],
+  [make_data=true])
 AM_CONDITIONAL(MAKE_DATA, test x$make_data = xtrue)
 
 AC_ARG_ENABLE(make_include,
-[  --enable-make-include   force make to recurse into include directory
-                          (useful for 'make tags')],
-[case "${enableval}" in
-  yes) make_include=true ;;
-  no)  make_include=false ;;
-  *)   AC_MSG_ERROR(bad value ${enableval} for --enable-make-include) ;;
-esac], [make_include=false])
+  AS_HELP_STRING([--enable-make-include],
+                 [force make to recurse into include directory
+                  (useful for 'make tags')]),
+  [case "${enableval}" in
+    yes) make_include=true ;;
+    no)  make_include=false ;;
+    *)   AC_MSG_ERROR(bad value ${enableval} for --enable-make-include) ;;
+  esac],
+  [make_include=false])
 AM_CONDITIONAL(MAKE_CLIENT_INCLUDE, test "$make_include" = "true")
 
 AC_ARG_ENABLE([auto_deps],
-[  --disable-auto-deps     remove automatic deps calcs, which require gmake,gcc],
-[case "${enableval}" in
-  yes) enable_auto_deps=true ;;
-  no)  enable_auto_deps=false;;
-  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-auto-deps]) ;;
-esac], [enable_auto_deps="maybe"])
+  AS_HELP_STRING([--disable-auto-deps],
+                 [remove automatic deps calcs, which require gmake,gcc]),
+  [case "${enableval}" in
+    yes) enable_auto_deps=true ;;
+    no)  enable_auto_deps=false;;
+    *)   AC_MSG_ERROR([bad value ${enableval} for --enable-auto-deps]) ;;
+  esac],
+  [enable_auto_deps="maybe"])
 AUTO_DEPS=$enable_auto_deps
 
 AC_ARG_WITH(efence,
-	[  --with-efence           use Electric Fence, malloc debugger ],
-	WITH_EFENCE=1
+  AS_HELP_STRING([--with-efence],
+                 [use Electric Fence, malloc debugger]),
+  WITH_EFENCE=1
 )
 
 dnl Checks for programs.
