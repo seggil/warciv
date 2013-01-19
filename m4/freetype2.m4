@@ -9,17 +9,17 @@ AC_DEFUN([AC_CHECK_FT2],
 dnl Get the cflags and libraries from the freetype-config script
 dnl
 AC_ARG_WITH(ft-prefix,
-[  --with-ft-prefix=PREFIX
-                          Prefix where FreeType is installed (optional)],
-            ft_config_prefix="$withval", ft_config_prefix="")
+  AS_HELP_STRING([--with-ft-prefix=PREFIX],
+                 [Prefix where FreeType is installed (optional)]),
+  [ft_config_prefix="$withval"],[ft_config_prefix=""])
 AC_ARG_WITH(ft-exec-prefix,
-[  --with-ft-exec-prefix=PREFIX
-                          Exec prefix where FreeType is installed (optional)],
-            ft_config_exec_prefix="$withval", ft_config_exec_prefix="")
+  AS_HELP_STRING([--with-ft-exec-prefix=PREFIX],
+                 [Exec prefix where FreeType is installed (optional)]),
+  [ft_config_exec_prefix="$withval"],[ft_config_exec_prefix=""])
 AC_ARG_ENABLE(freetypetest,
-[  --disable-freetypetest  Do not try to compile and run
-                          a test FreeType program],
-              [], enable_fttest=yes)
+  AS_HELP_STRING([--disable-freetypetest  Do not try to compile and run],
+                 [a test FreeType program]),
+  [],[enable_fttest=yes])
 
 if test x$ft_config_exec_prefix != x ; then
   ft_config_args="$ft_config_args --exec-prefix=$ft_config_exec_prefix"
@@ -141,3 +141,4 @@ fi
 AC_SUBST(FT2_CFLAGS)
 AC_SUBST(FT2_LIBS)
 ])
+

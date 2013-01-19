@@ -9,8 +9,10 @@ AC_DEFUN([AM_PATH_GLIB_2_0],
 [dnl 
 dnl Get the cflags and libraries from pkg-config
 dnl
-AC_ARG_ENABLE(glibtest, [  --disable-glibtest      do not try to compile and run a test GLIB program],
-		    , enable_glibtest=yes)
+AC_ARG_ENABLE(glibtest,
+              AS_HELP_STRING([--disable-glibtest],
+                             [do not try to compile and run a test GLIB program]),
+              [],[enable_glibtest=yes])
 
   pkg_config_args=glib-2.0
   for module in . $4
@@ -210,3 +212,4 @@ main ()
   AC_SUBST(GLIB_MKENUMS)
   rm -f conf.glibtest
 ])
+
