@@ -397,16 +397,17 @@ void input_from_server(int fd)
 {
   assert(fd == aconnection.sock);
 
-  freelog(LOG_DEBUG, "input_from_server");
+  //freelog(LOG_DEBUG, 
+  printf("%s\n", __FUNCTION__);
 
   if (read_from_connection(&aconnection, FALSE) >= 0) {
     enum packet_type opcode;
-
+    bool result;
+    void *packet;
     while (TRUE) {
-      bool result;
-      void *packet = get_packet_from_connection(&aconnection,
-                                                &opcode, &result);
-
+      packet = get_packet_from_connection(&aconnection,
+                                          &opcode,
+                                          &result);
       if (result) {
         assert(packet != NULL);
         handle_packet_input(packet, opcode);
