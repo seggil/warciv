@@ -16,11 +16,11 @@
 #endif
 
 #ifdef WIN32_NATIVE
-#include <windows.h>    /* LoadLibrary() */
+#  include <windows.h>    /* LoadLibrary() */
 #endif
 
 #ifdef SDL
-# include "SDL/SDL.h"
+#  include "SDL/SDL.h"
 #endif
 
 #include <assert.h>
@@ -111,7 +111,7 @@ bool turn_done_sent = FALSE;
   Convert a text string from the internal to the data encoding, when it
   is written to the network.
 **************************************************************************/
-static char *put_conv(const char *src, size_t *length)
+static char *put_convert(const char *src, size_t *length)
 {
   char *out = internal_to_data_string_malloc(src);
 
@@ -129,8 +129,8 @@ static char *put_conv(const char *src, size_t *length)
   first read from the network.  Returns FALSE if the destination isn't
   large enough or the source was bad.
 **************************************************************************/
-static bool get_conv(char *dst, size_t ndst,
-                     const char *src, size_t nsrc)
+static bool get_convert(char *dst, size_t ndst,
+                        const char *src, size_t nsrc)
 {
   char *out = data_to_internal_string_malloc(src);
   bool ret = TRUE;
@@ -159,8 +159,8 @@ static bool get_conv(char *dst, size_t ndst,
 **************************************************************************/
 static void charsets_init(void)
 {
-  dio_set_put_conv_callback(put_conv);
-  dio_set_get_conv_callback(get_conv);
+  dio_set_put_conv_callback(put_convert);
+  dio_set_get_conv_callback(get_convert);
 }
 /**************************************************************************
   ...
@@ -210,7 +210,8 @@ static void at_exit(void)
 **************************************************************************/
 int main(int argc, char *argv[])
 {
-  int i, loglevel;
+  int i;
+  int loglevel;
   int ui_options = 0;
   bool ui_separator = FALSE;
   char *option = NULL;
@@ -459,11 +460,12 @@ void ui_exit(void)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_packet_input(void *packet, int type)
+void handle_packet_input(void *packet, int opcode)
 {
-  if (!client_handle_packet(type, packet)) {
-    freelog(LOG_ERROR, "Received unknown packet (type %d) from server!",
-            type);
+  if (!client_handle_packet(opcode, packet)) {
+    freelog(LOG_ERROR,
+            "Received unknown packet (opcode %d) from server!",
+            opcode);
   }
 }
 
