@@ -178,7 +178,7 @@ static gboolean player_colors_mode_label_click(GtkWidget *w,
 static void end_turn_callback(GtkWidget *w, gpointer data);
 static gboolean get_net_input(GIOChannel *source, GIOCondition cond,
                               gpointer data);
-static void set_wait_for_writable_socket(struct connection *pc,
+static void set_wait_for_writable_socket(struct connection *pconn,
                                          bool socket_writable);
 
 static void print_usage(const char *argv0);
@@ -2229,14 +2229,14 @@ static gboolean get_net_input(GIOChannel *source,
 /**************************************************************************
 ...
 **************************************************************************/
-static void set_wait_for_writable_socket(struct connection *pc,
+static void set_wait_for_writable_socket(struct connection *pconn,
                                          bool socket_writable)
 {
   static bool previous_state = FALSE;
   GIOChannel *gioc;
   GIOCondition cond = 0;
 
-  assert(pc == &aconnection);
+  assert(pconn == &aconnection);
 
   if (previous_state == socket_writable)
     return;
@@ -2249,7 +2249,7 @@ static void set_wait_for_writable_socket(struct connection *pc,
 #else
   gioc = g_io_channel_unix_new(aconnection.sock);
 #endif
-
+  /* gilles: socket_writable is always false */
   cond = G_IO_IN | G_IO_PRI | (socket_writable ? G_IO_OUT : 0) | G_IO_ERR |
     G_IO_HUP | G_IO_NVAL;
   input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
