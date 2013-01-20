@@ -4196,7 +4196,7 @@ void handle_city_manager_param(struct packet_city_manager_param *packet)/* 145 *
   printf("require_happy=%d ", packet->require_happy);
   printf("allow_disorder=%d ", packet->allow_disorder);
   printf("allow_specialists=%d ", packet->allow_specialists);
-  printf("factor[%n]={\n", CM_NUM_STATS);
+  printf("factor[%d]={\n", CM_NUM_STATS);
   for ( i = 0; i < CM_NUM_STATS; i++) {
     printf("%d ", packet->factor[i]);
   }
