@@ -320,33 +320,33 @@ Returns:
     >0  :  number of bytes read
     =0  :  no data read, would block
 **************************************************************************/
-static int read_from_connection(struct connection *pc, bool block)
+static int read_from_connection(struct connection *pconn, bool block)
 {
   freelog(LOG_DEBUG, "client read_from_connection");
-
+  fd_set readfs, writefs, exceptfs;
+  bool have_data_for_server;
+  int n;
+  struct timeval tv;
+  
   for (;;) {
-    fd_set readfs, writefs, exceptfs;
-    bool have_data_for_server = (pc->used && pc->send_buffer
-                                && pc->send_buffer->ndata > 0);
-    int n;
-    struct timeval tv;
-
+    have_data_for_server = (pconn->used && pconn->send_buffer
+                            && pconn->send_buffer->ndata > 0);
     tv.tv_sec = 0;
     tv.tv_usec = 0;
 
     MY_FD_ZERO(&readfs);
-    FD_SET(pc->sock, &readfs);
+    FD_SET(pconn->sock, &readfs);
 
     MY_FD_ZERO(&exceptfs);
-    FD_SET(pc->sock, &exceptfs);
+    FD_SET(pconn->sock, &exceptfs);
 
     if (have_data_for_server) {
       MY_FD_ZERO(&writefs);
-      FD_SET(pc->sock, &writefs);
-      n = select(pc->sock + 1, &readfs, &writefs, &exceptfs,
+      FD_SET(pconn->sock, &writefs);
+      n = select(pconn->sock + 1, &readfs, &writefs, &exceptfs,
                  block ? NULL : &tv);
     } else {
-      n = select(pc->sock + 1, &readfs, NULL, &exceptfs,
+      n = select(pconn->sock + 1, &readfs, NULL, &exceptfs,
                  block ? NULL : &tv);
     }
 
@@ -371,18 +371,18 @@ static int read_from_connection(struct connection *pc, bool block)
       return -1;
     }
 
-    if (FD_ISSET(pc->sock, &exceptfs)) {
+    if (FD_ISSET(pconn->sock, &exceptfs)) {
       return -1;
     }
 
-    if (have_data_for_server && FD_ISSET(pc->sock, &writefs)) {
-      flush_connection_send_buffer_all(pc);
+    if (have_data_for_server && FD_ISSET(pconn->sock, &writefs)) {
+      flush_connection_send_buffer_all(pconn);
     }
 
-    if (FD_ISSET(pc->sock, &readfs)) {
+    if (FD_ISSET(pconn->sock, &readfs)) {
       int rv;
 
-      rv = read_socket_data(pc, pc->buffer);
+      rv = read_socket_data(pconn, pconn->buffer);
 
       return rv < 0 ? -1 : rv;
     }
