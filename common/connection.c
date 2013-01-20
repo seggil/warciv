@@ -127,13 +127,14 @@ void close_socket_set_callback(CLOSE_FUN fun)
 /**************************************************************************
   Call the callback to close the socket.
 **************************************************************************/
-void call_close_socket_callback(struct connection *pc, enum exit_state state)
+void call_close_socket_callback(struct connection *pconn,
+                                enum exit_state state)
 {
-  assert(pc != NULL);
+  assert(pconn != NULL);
   assert(close_callback != NULL);
 
-  pc->exit_state = state;
-  (*close_callback)(pc);
+  pconn->exit_state = state;
+  (*close_callback)(pconn);
 }
 
 /**************************************************************************
@@ -171,24 +172,24 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
     >0  :  number of bytes read
     =0  :  non-blocking sockets only; no data read, would block
 **************************************************************************/
-int read_socket_data(struct connection *pc,
+int read_socket_data(struct connection *pconn,
                      struct socket_packet_buffer *buffer)
 {
   int nb;
   long err_no;
   int sock;
 
-  if (pc == NULL || buffer == NULL || !pc->used
-      || (is_server && pc->u.server.is_closing) || pc->sock < 0) {
+  if (pconn == NULL || buffer == NULL || !pconn->used
+      || (is_server && pconn->u.server.is_closing) || pconn->sock < 0) {
     /* Hmm, not the best way to "ignore" a "bad" call
      * to this function. In any case, this situation
      * should not happen very often. */
     freelog(LOG_DEBUG, "Tried to read from an invalid connection: %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
 
-  sock = pc->sock;
+  sock = pconn->sock;
 
   if (!buffer_ensure_free_extra_space(buffer, MAX_LEN_PACKET)) {
     freelog(LOG_ERROR, "Failed to increase size of packet read buffer.");
@@ -200,7 +201,7 @@ int read_socket_data(struct connection *pc,
   nb = my_readsocket(sock, (char *) (buffer->data + buffer->ndata),
                      buffer->nsize - buffer->ndata);
   err_no = mysocketerrno();
-  pc->error_code = err_no;
+  pconn->error_code = err_no;
   freelog(LOG_DEBUG, "my_readsocket nb=%d: %s",
           nb, mystrsocketerror(err_no));
 
@@ -227,14 +228,14 @@ int read_socket_data(struct connection *pc,
   Returns -1 on error and >= 0 otherwise.
   NB: May call call_close_socket_callback on write error.
 **************************************************************************/
-static int write_socket_data(struct connection *pc,
+static int write_socket_data(struct connection *pconn,
                              struct socket_packet_buffer *buf)
 {
   int count = 0, nput = 0, nblock = 0, ret = 0;
   long err_no;
 
-  if (pc == NULL || buf == NULL || buf->ndata <= 0
-      || !pc->used || (is_server && pc->u.server.is_closing)) {
+  if (pconn == NULL || buf == NULL || buf->ndata <= 0
+      || !pconn->used || (is_server && pconn->u.server.is_closing)) {
     return 0;
   }
 
@@ -242,10 +243,10 @@ static int write_socket_data(struct connection *pc,
     nblock = MIN(buf->ndata - count, MAX_LEN_PACKET);
 
     freelog(LOG_DEBUG, "trying to write %d bytes to %s",
-            nblock, conn_description(pc));
-    nput = my_writesocket(pc->sock, buf->data + count, nblock);
+            nblock, conn_description(pconn));
+    nput = my_writesocket(pconn->sock, buf->data + count, nblock);
     err_no = mysocketerrno();
-    pc->error_code = err_no;
+    pconn->error_code = err_no;
     freelog(LOG_DEBUG, "write returns nput=%d: %s",
             nput, mystrsocketerror(err_no));
 
@@ -274,8 +275,8 @@ static int write_socket_data(struct connection *pc,
     buf->ndata -= count;
     memmove(buf->data, buf->data + count, buf->ndata);
 
-    pc->write_wait_time = 0.0;
-    pc->statistics.bytes_send += count;
+    pconn->write_wait_time = 0.0;
+    pconn->statistics.bytes_send += count;
 
     if (ret != -1) {
       ret = count;
@@ -284,7 +285,7 @@ static int write_socket_data(struct connection *pc,
 
   if (ret == -1) {
     /* I guess we have to close it here. */
-    call_close_socket_callback(pc, ES_WRITE_ERROR);
+    call_close_socket_callback(pconn, ES_WRITE_ERROR);
   }
 
   return ret;
@@ -295,26 +296,26 @@ static int write_socket_data(struct connection *pc,
   NB: May call call_close_socket_callback if write fails.
   Returns -1 on error, or the number of bytes flushed.
 **************************************************************************/
-int flush_connection_send_buffer_all(struct connection *pc)
+int flush_connection_send_buffer_all(struct connection *pconn)
 {
   int ret = 0;
 
-  if (pc == NULL || !pc->used
-      || (is_server && pc->u.server.is_closing)
-      || pc->send_buffer == NULL || pc->send_buffer->ndata <= 0)
+  if (pconn == NULL || !pconn->used
+      || (is_server && pconn->u.server.is_closing)
+      || pconn->send_buffer == NULL || pconn->send_buffer->ndata <= 0)
   {
     return 0;
   }
 
-  freelog(LOG_DEBUG, "flushing data for %s", conn_description(pc));
+  freelog(LOG_DEBUG, "flushing data for %s", conn_description(pconn));
 
-  ret = write_socket_data(pc, pc->send_buffer);
+  ret = write_socket_data(pconn, pconn->send_buffer);
 
   if (!is_server
-      && pc->u.client.notify_of_writable_data
-      && pc->send_buffer)
+      && pconn->u.client.notify_of_writable_data
+      && pconn->send_buffer)
   {
-    pc->u.client.notify_of_writable_data(pc, pc->send_buffer->ndata > 0);
+    pconn->u.client.notify_of_writable_data(pconn, pconn->send_buffer->ndata > 0);
   }
 
   return ret;
@@ -324,21 +325,21 @@ int flush_connection_send_buffer_all(struct connection *pc)
   NB: May call call_close_socket_callback if buffer space allocation
   fails. In that case FALSE will be returned.
 **************************************************************************/
-static bool add_connection_data(struct connection *pc,
+static bool add_connection_data(struct connection *pconn,
                                 const unsigned char *data, int len)
 {
   struct socket_packet_buffer *buf;
 
-  if (pc == NULL || !pc->used
-      || (is_server && pc->u.server.is_closing)
-      || pc->send_buffer == NULL || data == NULL || len <= 0) {
+  if (pconn == NULL || !pconn->used
+      || (is_server && pconn->u.server.is_closing)
+      || pconn->send_buffer == NULL || data == NULL || len <= 0) {
     return TRUE;
   }
 
-  buf = pc->send_buffer;
+  buf = pconn->send_buffer;
 
   if (!buffer_ensure_free_extra_space(buf, len)) {
-    call_close_socket_callback(pc, ES_BUFFER_OVERFLOW);
+    call_close_socket_callback(pconn, ES_BUFFER_OVERFLOW);
     return FALSE;
   }
 
@@ -346,7 +347,7 @@ static bool add_connection_data(struct connection *pc,
   buf->ndata += len;
 
   freelog(LOG_DEBUG, "added %d bytes to buffer for %s",
-          len, conn_description(pc));
+          len, conn_description(pconn));
 
   return TRUE;
 }
@@ -354,45 +355,46 @@ static bool add_connection_data(struct connection *pc,
 /**************************************************************************
   NB: May call call_close_socket_callback if an error occurs.
 **************************************************************************/
-int send_connection_data(struct connection *pc, const unsigned char *data,
+int send_connection_data(struct connection *pconn,
+                         const unsigned char *data,
                          int len)
 {
-  if (pc == NULL || !pc->used
-      || (is_server && pc->u.server.is_closing)
-      || pc->send_buffer == NULL || data == NULL || len <= 0) {
+  if (pconn == NULL || !pconn->used
+      || (is_server && pconn->u.server.is_closing)
+      || pconn->send_buffer == NULL || data == NULL || len <= 0) {
     return 0;
   }
 
-  if (!add_connection_data(pc, data, len)) {
+  if (!add_connection_data(pconn, data, len)) {
     return -1;
   }
 
-  if (pc->send_buffer->do_buffer_sends > 0) {
+  if (pconn->send_buffer->do_buffer_sends > 0) {
     /* Data will be sent on the last call to
      * connection_do_unbuffer. */
     freelog(LOG_DEBUG, "send_connection_data waiting for unbuffer");
     return 0;
   }
 
-  return flush_connection_send_buffer_all(pc);
+  return flush_connection_send_buffer_all(pconn);
 }
 
 /**************************************************************************
   Turn on buffering, using a counter so that calls may be nested.
 **************************************************************************/
-void connection_do_buffer(struct connection *pc)
+void connection_do_buffer(struct connection *pconn)
 {
-  if (pc == NULL || !pc->used
-      || (is_server && pc->u.server.is_closing)
-      || pc->send_buffer == NULL)
+  if (pconn == NULL || !pconn->used
+      || (is_server && pconn->u.server.is_closing)
+      || pconn->send_buffer == NULL)
   {
     return;
   }
 
-  pc->send_buffer->do_buffer_sends++;
+  pconn->send_buffer->do_buffer_sends++;
 
   freelog(LOG_DEBUG, "connection_do_buffer @ %d",
-          pc->send_buffer->do_buffer_sends);
+          pconn->send_buffer->do_buffer_sends);
 }
 
 /**************************************************************************
@@ -400,28 +402,28 @@ void connection_do_buffer(struct connection *pc)
   was turned on falls to zero, to handle nested buffer/unbuffer pairs.
   When counter is zero, flush any pending data.
 **************************************************************************/
-void connection_do_unbuffer(struct connection *pc)
+void connection_do_unbuffer(struct connection *pconn)
 {
-  if (pc == NULL || !pc->used
-      || (is_server && pc->u.server.is_closing)
-      || pc->send_buffer == NULL)
+  if (pconn == NULL || !pconn->used
+      || (is_server && pconn->u.server.is_closing)
+      || pconn->send_buffer == NULL)
   {
     return;
   }
 
-  pc->send_buffer->do_buffer_sends--;
+  pconn->send_buffer->do_buffer_sends--;
 
   freelog(LOG_DEBUG, "connection_do_unbuffer @ %d",
-          pc->send_buffer->do_buffer_sends);
+          pconn->send_buffer->do_buffer_sends);
 
-  if (pc->send_buffer->do_buffer_sends < 0) {
+  if (pconn->send_buffer->do_buffer_sends < 0) {
     freelog(LOG_ERROR, "connection_do_unbuffer called too many "
-            "times on %s!", conn_description(pc));
-    pc->send_buffer->do_buffer_sends = 0;
+            "times on %s!", conn_description(pconn));
+    pconn->send_buffer->do_buffer_sends = 0;
   }
 
-  if (pc->send_buffer->do_buffer_sends == 0) {
-    flush_connection_send_buffer_all(pc);
+  if (pconn->send_buffer->do_buffer_sends == 0) {
+    flush_connection_send_buffer_all(pconn);
   }
 }
 
@@ -635,65 +637,65 @@ int get_next_request_id(int old_request_id)
 /**************************************************************************
  ...
 **************************************************************************/
-void free_compression_queue(struct connection *pc)
+void free_compression_queue(struct connection *pconn)
 {
 #ifdef USE_COMPRESSION
-  byte_vector_free(&pc->compression.queue);
+  byte_vector_free(&pconn->compression.queue);
 #endif
 }
 
 /**************************************************************************
  ...
 **************************************************************************/
-static void init_packet_hashs(struct connection *pc)
+static void init_packet_hashs(struct connection *pconn)
 {
   enum packet_type i;
 
-  pc->phs.sent = wc_malloc(sizeof(*pc->phs.sent) * PACKET_LAST);
-  pc->phs.received = wc_malloc(sizeof(*pc->phs.received) * PACKET_LAST);
-  pc->phs.variant = wc_malloc(sizeof(*pc->phs.variant) * PACKET_LAST);
+  pconn->phs.sent = wc_malloc(sizeof(*pconn->phs.sent) * PACKET_LAST);
+  pconn->phs.received = wc_malloc(sizeof(*pconn->phs.received) * PACKET_LAST);
+  pconn->phs.variant = wc_malloc(sizeof(*pconn->phs.variant) * PACKET_LAST);
 
   for (i = 0; i < PACKET_LAST; i++) {
-    pc->phs.sent[i] = NULL;
-    pc->phs.received[i] = NULL;
-    pc->phs.variant[i] = -1;
+    pconn->phs.sent[i] = NULL;
+    pconn->phs.received[i] = NULL;
+    pconn->phs.variant[i] = -1;
   }
 }
 
 /**************************************************************************
  ...
 **************************************************************************/
-static void free_packet_hashes(struct connection *pc)
+static void free_packet_hashes(struct connection *pconn)
 {
   int i;
 
-  conn_clear_packet_cache(pc);
+  conn_clear_packet_cache(pconn);
 
-  if (pc->phs.sent) {
+  if (pconn->phs.sent) {
     for (i = 0; i < PACKET_LAST; i++) {
-      if (pc->phs.sent[i] != NULL) {
-        hash_free(pc->phs.sent[i]);
-        pc->phs.sent[i] = NULL;
+      if (pconn->phs.sent[i] != NULL) {
+        hash_free(pconn->phs.sent[i]);
+        pconn->phs.sent[i] = NULL;
       }
     }
-    free(pc->phs.sent);
-    pc->phs.sent = NULL;
+    free(pconn->phs.sent);
+    pconn->phs.sent = NULL;
   }
 
-  if (pc->phs.received) {
+  if (pconn->phs.received) {
     for (i = 0; i < PACKET_LAST; i++) {
-      if (pc->phs.received[i] != NULL) {
-        hash_free(pc->phs.received[i]);
-        pc->phs.received[i] = NULL;
+      if (pconn->phs.received[i] != NULL) {
+        hash_free(pconn->phs.received[i]);
+        pconn->phs.received[i] = NULL;
       }
     }
-    free(pc->phs.received);
-    pc->phs.received = NULL;
+    free(pconn->phs.received);
+    pconn->phs.received = NULL;
   }
 
-  if (pc->phs.variant) {
-    free(pc->phs.variant);
-    pc->phs.variant = NULL;
+  if (pconn->phs.variant) {
+    free(pconn->phs.variant);
+    pconn->phs.variant = NULL;
   }
 }
 
@@ -775,21 +777,21 @@ void connection_common_close(struct connection *pconn)
  Remove all cached packets from the connection. This resets the
  delta-state.
 **************************************************************************/
-void conn_clear_packet_cache(struct connection *pc)
+void conn_clear_packet_cache(struct connection *pconn)
 {
   int i;
 
   for (i = 0; i < PACKET_LAST; i++) {
-    if (pc->phs.sent != NULL && pc->phs.sent[i] != NULL) {
-      struct hash_table *hash = pc->phs.sent[i];
+    if (pconn->phs.sent != NULL && pconn->phs.sent[i] != NULL) {
+      struct hash_table *hash = pconn->phs.sent[i];
       while (hash_num_entries(hash) > 0) {
         const void *key = hash_key_by_number(hash, 0);
         hash_delete_entry(hash, key);
         free((void *) key);
       }
     }
-    if (pc->phs.received != NULL && pc->phs.received[i] != NULL) {
-      struct hash_table *hash = pc->phs.received[i];
+    if (pconn->phs.received != NULL && pconn->phs.received[i] != NULL) {
+      struct hash_table *hash = pconn->phs.received[i];
       while (hash_num_entries(hash) > 0) {
         const void *key = hash_key_by_number(hash, 0);
         hash_delete_entry(hash, key);
