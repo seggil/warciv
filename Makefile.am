@@ -28,7 +28,7 @@ else
 DATASUBDIRS =
 endif
 
-ACLOCAL_AMFLAGS= "-I ${top_builddir}/m4"
+ACLOCAL_AMFLAGS= "-I ${abs_top_builddir}/m4"
 
 SUBDIRS= $(DATASUBDIRS) intl utility common tests win32 $(SERVERSUBDIRS) $(CLIENTSUBDIRS) \
          po doc $(MANUALSUBDIRS) contrib
