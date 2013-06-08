@@ -85,7 +85,7 @@ static void cm_find_best_solution(struct cm_state *cmstate,
 *****************************************************************************/
 
 #ifdef DEBUG
-#  define GATHER_TIME_STATS
+//#  define GATHER_TIME_STATS   gilles FIXME
 #  define CM_DEBUG
 #endif
 
