@@ -245,13 +245,14 @@ static int num_types(const struct cm_state *cmstate);
 
 /* debugging functions */
 #ifdef CM_DEBUG
-static void print_tile_type(int loglevel, const struct cm_tile_type *ptype,
+static void print_tile_type(int loglevel,
+                            const struct cm_tile_type *ptype,
                             const char *prefix);
 static void print_lattice(int loglevel,
                           const struct tile_type_vector *lattice);
 static void print_partial_solution(int loglevel,
                                    const struct partial_solution *soln,
-                                   const struct cm_state *cmstate);
+                                   const struct cm_state         *cmstate);
 #else
 #  define print_tile_type(loglevel, ptype, prefix)
 #  define print_lattice(loglevel, lattice)
