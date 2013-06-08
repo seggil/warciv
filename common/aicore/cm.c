@@ -128,7 +128,6 @@ struct cm_fitness {
  * structs
  */
 struct cm_tile_type;
-struct cm_tile;
 
 /*
  * A tile.  Has a pointer to the type, and the x/y coords.
