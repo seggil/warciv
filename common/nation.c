@@ -422,7 +422,8 @@ void team_id_add_player(struct player *pplayer, Team_Type_id id)
 ***************************************************************/
 void team_add_player(struct player *pplayer, const char *team_name)
 {
-  Team_Type_id team_id, i;
+  Team_Type_id team_id;
+  Team_Type_id i;
 
   assert(pplayer != NULL && team_name != NULL);
 
