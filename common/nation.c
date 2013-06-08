@@ -438,14 +438,16 @@ void team_add_player(struct player *pplayer, const char *team_name)
         break;
       }
     }
+    /* add another team */
+    if ( i < MAX_NUM_TEAMS ) {
+      teams[team_id].id = team_id;
+      set_team_name(team_id, team_name);
+      teams[team_id].member_count = 0;
+    } else {
     /* check if too many teams */
-    if (team_id == TEAM_NONE) {
+    //if (team_id == TEAM_NONE) {
       die("Impossible: Too many teams!");
     }
-    /* add another team */
-    teams[team_id].id = team_id;
-    set_team_name(team_id, team_name);
-    teams[team_id].member_count = 0;
   }
   pplayer->team = team_id;
   teams[team_id].member_count++;
