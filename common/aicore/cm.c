@@ -607,9 +607,9 @@ static void destroy_partial_solution(struct partial_solution *into)
   Copy the source solution into the destination one (the destination
   solution must already be allocated).
 ****************************************************************************/
-static void copy_partial_solution(struct partial_solution *dst,
+static void copy_partial_solution(struct partial_solution       *dst,
                                   const struct partial_solution *src,
-                                  const struct cm_state *cmstate)
+                                  const struct cm_state         *cmstate)
 {
   memcpy(dst->worker_counts, src->worker_counts,
          sizeof(*dst->worker_counts) * num_types(cmstate));
