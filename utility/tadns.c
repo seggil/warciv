@@ -237,7 +237,7 @@ struct dns *dns_new(void)
   dns->sock = -1;
 
   dns->sock = socket(PF_INET, SOCK_DGRAM, 0);
-  if ( dns->sock == (void*)-1) {
+  if ( dns->sock == -1) {
     freelog(LOG_ERROR, _("Failed to create UDP socket: %s"),
             mystrsocketerror(mysocketerrno()));
     goto FAILED;
