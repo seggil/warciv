@@ -398,7 +398,7 @@ void input_from_server(int fd)
   assert(fd == aconnection.sock);
 
   //freelog(LOG_DEBUG, 
-  printf("%s\n", __FUNCTION__);
+  //printf("%s\n", __FUNCTION__);
 
   if (read_from_connection(&aconnection, FALSE) >= 0) {
     enum packet_type opcode;
