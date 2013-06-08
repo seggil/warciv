@@ -545,7 +545,7 @@ static void compute_fitness(const int surplus[CM_NUM_STATS],
                             bool disorder,
                             bool happy,
                             const struct cm_parameter *parameter,
-                            struct cm_fitness *fitness)
+                            struct cm_fitness         *fitness)
 {
   enum cm_stat stat;
   /* struct cm_fitness *fitness = malloc(sizeof(struct cm_fitness)); */
