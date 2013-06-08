@@ -8,6 +8,7 @@
 #include "wc_intl.h"
 #include "log.h"
 #include "game_load.h"
+#include "load_save_aux.h"
 #include "rand.h"
 #include "support.h"
 #include "capability.h"

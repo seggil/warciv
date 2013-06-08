@@ -160,7 +160,7 @@ void real_sanity_check_city(city_t *pcity, const char *file, int line)
   struct player *pplayer = city_owner(pcity);
 
   assert(pcity->common.pop_size >= 1);
-  assert(!terrain_has_flag(map_get_terrain(pcity->common.tile),
+  assert(!terrain_has_tag(map_get_terrain(pcity->common.tile),
                            TER_NO_CITIES));
 
   unit_list_iterate(pcity->common.units_supported, punit) {
