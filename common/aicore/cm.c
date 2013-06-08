@@ -107,7 +107,8 @@ static struct performance_s {
     int query_count;
     int apply_count;
     const char *name;
-  } greedy, opt;
+  } greedy;
+  struct one_perf opt;
 
   struct one_perf *current;
 } performance;
