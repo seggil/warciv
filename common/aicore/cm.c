@@ -444,7 +444,7 @@ static bool tile_type_better(const struct cm_tile_type *a,
 ****************************************************************************/
 static int tile_type_vector_find_equivalent(
                                 const struct tile_type_vector *vec,
-                                const struct cm_tile_type *ptype)
+                                const struct cm_tile_type     *ptype)
 {
   int i;
 
