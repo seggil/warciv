@@ -2208,7 +2208,9 @@ void cm_print_city(const city_t *pcity)
 void cm_print_result(const city_t *pcity,
                      const struct cm_result *result)
 {
-  int y, i, worker = cm_count_worker(pcity, result);
+  int y;
+  int i;
+  int worker = cm_count_worker(pcity, result);
   freelog(LOG_NORMAL, "print_result(result=%p)", result);
   freelog(LOG_NORMAL,
       "print_result:  found_a_valid=%d disorder=%d happy=%d",
