@@ -2222,7 +2222,7 @@ static gboolean get_net_input(GIOChannel *source,
                               GIOCondition cond,
                               gpointer data)
 {
-  printf("%s@@", __FUNCTION__);
+  //printf("%s@@", __FUNCTION__);
   input_from_server(GPOINTER_TO_INT(data));
   return TRUE;
 }
@@ -2243,7 +2243,7 @@ static void set_wait_for_writable_socket(struct connection *pconn,
     return;
 
   //freelog(LOG_DEBUG, 
-  printf("%s(%d)\n", __FUNCTION__, socket_writable);
+  //printf("%s(%d)\n", __FUNCTION__, socket_writable);
   g_source_remove(input_id);
 
 #ifdef WIN32_NATIVE
@@ -2287,7 +2287,7 @@ void add_net_input(int sock)
   GIOChannel *gioc;
   GIOCondition cond = 0;
 
-  printf("%s\n", __FUNCTION__);
+  //printf("%s\n", __FUNCTION__);
 #ifdef WIN32_NATIVE
   gioc = g_io_channel_win32_new_socket(sock);
 #else
@@ -2310,7 +2310,7 @@ static gboolean gioc_input_ready(GIOChannel *source,
   int flags = 0;
   gboolean keep;
 
-  printf("%s\n", __FUNCTION__);
+  //printf("%s\n", __FUNCTION__);
   freelog(LOG_DEBUG, "%s source=%p cond=%d ctx=%p, "
           "sock=%d", __FUNCTION__, source, cond, ctx, ctx->sock);
 
@@ -2330,8 +2330,8 @@ static gboolean gioc_input_ready(GIOChannel *source,
   }
 
   //freelog(LOG_DEBUG, 
-  printf( "%s calling cb=%p userdata=%p with flags=%d\n",
-          __FUNCTION__, ctx->callback, ctx->userdata, flags);
+  //printf( "%s calling cb=%p userdata=%p with flags=%d\n",
+  //        __FUNCTION__, ctx->callback, ctx->userdata, flags);
   keep = (*ctx->callback) (ctx->sock, flags, ctx->userdata);
   freelog(LOG_DEBUG, "%s callback returned keep=%d",
           __FUNCTION__, keep);
@@ -2419,12 +2419,12 @@ int add_net_input_callback(int sock,
 #endif
 
   //freelog(LOG_DEBUG, 
-  printf("%s gioc=%p\n", __FUNCTION__, gioc);
+  //printf("%s gioc=%p\n", __FUNCTION__, gioc);
   id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
                            gioc_input_ready, ctx, destroy_net_input_ctx);
   //freelog(LOG_DEBUG, 
-  printf("%s g_io_add_watch_full returns id=%d\n",
-          __FUNCTION__, id);
+  //printf("%s g_io_add_watch_full returns id=%d\n",
+  //        __FUNCTION__, id);
 
   return id;
 }
