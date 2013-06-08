@@ -133,10 +133,19 @@ void *md5_finish_ctx(struct md5_ctx *ctx, void *resbuf)
   memcpy(&ctx->buffer[bytes], fillbuf, pad);
 
   /* Put the 64-bit file length in *bits* at the end of the buffer.  */
+#ifdef WORDS_BIGENDIAN
   *(md5_uint32 *) & ctx->buffer[bytes + pad] = SWAP(ctx->total[0] << 3);
   *(md5_uint32 *) & ctx->buffer[bytes + pad + 4] =
       SWAP((ctx->total[1] << 3) | (ctx->total[0] >> 29));
-
+#else
+  // *(md5_uint32 *) & ctx->buffer[bytes + pad] = ctx->total[0] << 3;
+  md5_uint32 temp = ctx->total[0] << 3;
+  memcpy(& ctx->buffer[bytes + pad], &temp, sizeof(md5_uint32));
+  //*(md5_uint32 *) & ctx->buffer[bytes + pad + 4] =
+  //    (ctx->total[1] << 3) | (ctx->total[0] >> 29);
+  temp = (ctx->total[1] << 3) | (ctx->total[0] >> 29);
+  memcpy(& ctx->buffer[bytes + pad + 4], &temp, sizeof(md5_uint32));
+#endif
   /* Process last bytes.  */
   md5_process_block(ctx->buffer, bytes + pad + 8, ctx);
 
