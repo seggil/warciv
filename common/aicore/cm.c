@@ -41,30 +41,30 @@
  *
  * Stats: food, shields, trade, luxury, science, and gold.
  * Production: amount of stats you get directly from farming tiles or
- *      having specialists.
+ *             having specialists.
  * Surplus: amount of stats you get, taking buildings, taxes, disorder, and
- *      any other effects into account.
+ *          any other effects into account.
  *
  * Happy City Management State: disorder (unhappy), content (!unhappy && !happy)
- *  and happy (happy)
+ *                              and happy (happy)
  *
- * Tile type: usually, many tiles produce the same f/s/t.  So we bin the
- *      tiles into tile types.  Specialists are also a 'tile type.'
+ * Tile type: usually, many tiles produce the same food/shield/trade.
+ * So we group the tiles into tile types.  Specialists are also a 'tile type.'
  *
- * Unlike the original CM code, which used a dynamic programming approach, this
- * code uses a branch-and-bound approach.  The dynamic programmin approach allowed
- * cacheing, but it was hard to guarantee the correctness of the cache, so
- * it was usually tossed and recomputed.
+ * Unlike the original CM code, which used a dynamic programming approach,
+ * this code uses a branch-and-bound approach.  The dynamic programmin approach
+ * allowed cacheing, but it was hard to guarantee the correctness of the cache,
+ * so it was usually tossed and recomputed.
  *
  * The branch and bound approach also allows a very simple greedy search,
  * whereas the dynamic programming approach required a lot of pre-computing.
  * And, it appears to be very slightly faster.
- * It evaluates about half as many solutions, but each
- * candidate solution is more expensive due to the lack of cacheing.
+ * It evaluates about half as many solutions, but each candidate solution is
+ * more expensive due to the lack of cacheing.
  *
  * We use highly specific knowledge about how the city computes its stats
  * in two places:
- * - setting the min_production array.  Ideally the city should tell us.
+ * - setting the min_production array.   Ideally the city should tell us.
  * - computing the weighting for tiles.  Ditto.
  */
 
