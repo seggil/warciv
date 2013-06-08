@@ -45,7 +45,7 @@ SUBDIRS = $(GUI_SUBDIR) $(CLI_INCLUDE) agents
 bin_PROGRAMS = civclient
 
 #    -I$(top_srcdir)/common/aicore \
-# -I$(srcdir)/agents -I$(srcdir)/include
+#    -I$(srcdir)/agents -I$(srcdir)/include
 AM_CPPFLAGS = \
     -I$(top_srcdir)/utility \
     -I$(top_srcdir)/common \
