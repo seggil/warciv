@@ -217,7 +217,7 @@ struct cm_state {
 
   /* the best known solution, and its fitness */
   struct partial_solution best;
-  struct cm_fitness best_value;
+  struct cm_fitness       best_value;
 
   /* hard constraints on production: any solution with less production than
    * this fails to satisfy the constraints, so we can stop investigating
