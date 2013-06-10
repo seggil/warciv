@@ -185,10 +185,15 @@ static void get_current_as_result(city_t *pcity,
 static bool check_city(int city_id, struct cm_parameter *parameter)
 {
   city_t *pcity = find_city_by_id(city_id);
-  struct cm_parameter dummy;
+  struct cm_parameter *dummy;
 
   if (!parameter) {
-    parameter = &dummy;
+    dummy = wc_malloc( sizeof(struct cm_parameter));
+    if ( dummy == 0) {
+      printf("in %s, malloc failled\n", __FUNCTION__);
+      exit(1);
+    }
+    parameter = dummy;
   }
 
   if (!pcity
@@ -391,7 +396,10 @@ static void handle_city(city_t *pcity)
   struct cm_result result;
   bool handled;
   int i;
-  int city_id = pcity->common.id;
+  int city_id2;
+  int city_id = city_id2 = pcity->common.id;
+  struct cm_parameter parameter;
+
 
   freelog(HANDLE_CITY_LOG_LEVEL,
           "handle_city(city='%s'(%d) pos=(%d,%d) owner=%s)", pcity->common.name,
@@ -402,8 +410,6 @@ static void handle_city(city_t *pcity)
 
   handled = FALSE;
   for (i = 0; i < 5; i++) {
-    struct cm_parameter parameter;
-
     freelog(HANDLE_CITY_LOG_LEVEL2, "  try %d", i);
 
     if (!check_city(city_id, &parameter)) {
@@ -411,7 +417,10 @@ static void handle_city(city_t *pcity)
       break;
     }
 
-    pcity = find_city_by_id(city_id);
+    if ( city_id2 != city_id) {
+      pcity = find_city_by_id(city_id);
+      printf("in %s, using find_city_by_id\n", __FUNCTION__);
+    }
 
     cm_query_result(pcity, &parameter, &result);
     if (!result.found_a_valid) {
@@ -443,8 +452,10 @@ static void handle_city(city_t *pcity)
     }
   }
 
-  pcity = find_city_by_id(city_id);
-
+  if ( city_id2 != city_id) {
+    pcity = find_city_by_id(city_id);
+    printf("in %s, using find_city_by_id\n", __FUNCTION__);
+  }
   if (!handled) {
     assert(pcity != NULL);
     freelog(HANDLE_CITY_LOG_LEVEL2, "  not handled");
