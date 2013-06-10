@@ -76,7 +76,9 @@
  */
 static struct stats_s {
   struct timer *wall_timer;
-  int apply_result_ignored, apply_result_applied, refresh_forced;
+  int apply_result_ignored;
+  int apply_result_applied;
+  int refresh_forced;
 } stats;
 
 #define my_city_map_iterate(pcity, cx, cy) {                     \
