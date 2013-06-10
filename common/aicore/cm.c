@@ -76,9 +76,9 @@ struct cm_state;
 
 static struct cm_state *cm_init_cmstate(city_t *pcity);
 static void cm_free_cmstate(struct cm_state *cmstate);
-static void cm_find_best_solution(struct cm_state *cmstate,
-                                  const struct cm_parameter *const parameter,
-                                  struct cm_result *result);
+static void             cm_find_best_solution(struct cm_state *cmstate,
+                            const struct cm_parameter *const parameter,
+                            struct cm_result *result);
 
 /****************************************************************************
  defines, structs, globals, forward declarations
@@ -2075,15 +2075,19 @@ static void snprint_production(char *buffer, size_t bufsz,
 /****************************************************************************
   Print debugging data about a particular tile type.
 ****************************************************************************/
-static void print_tile_type(int loglevel, const struct cm_tile_type *ptype,
+static void print_tile_type(int loglevel,
+                            const struct cm_tile_type *ptype,
                             const char *prefix)
 {
   char prodstr[256];
 
   snprint_production(prodstr, sizeof(prodstr), ptype->production);
-  freelog(loglevel, "%s%s fitness %g depth %d, idx %d; %d tiles", prefix,
-          prodstr, ptype->estimated_fitness, ptype->lattice_depth,
-          ptype->lattice_index, tile_type_num_tiles(ptype));
+  freelog(loglevel, "%s%s fitness %g depth %d, idx %d; %d tiles",
+          prefix,
+          prodstr, ptype->estimated_fitness,
+          ptype->lattice_depth,
+          ptype->lattice_index,
+          cm_tile_type_num_tiles(ptype));
 }
 
 /****************************************************************************
