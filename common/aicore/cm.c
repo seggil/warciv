@@ -75,7 +75,6 @@
 struct cm_state;
 
 static struct cm_state *cm_init_cmstate(city_t *pcity);
-static void cm_free_cmstate(struct cm_state *cmstate);
 static void             cm_find_best_solution(struct cm_state *cmstate,
                             const struct cm_parameter *const parameter,
                             struct cm_result *result);
@@ -1829,7 +1828,7 @@ static void end_search(/*struct cm_state *cmstate*/)
 /****************************************************************************
   Release all the memory allocated for cmstate.
 ****************************************************************************/
-void cm_free_cmstate(struct cm_state *cmstate)
+static void cm_free_cmstate(struct cm_state *cmstate)
 {
   enum cm_stat cmstat;
 
