@@ -1461,7 +1461,7 @@ static void complete_solution(struct partial_solution *soln,
    * Respect lexicographic order and prerequisites.  */
   tile_type_vector_iterate(lattice, ptype) {
     int used = soln->worker_counts[ptype->lattice_index];
-    int total = tile_type_num_tiles(ptype);
+    int total = cm_tile_type_num_tiles(ptype);
     int touse;
 
     if (ptype->lattice_index < last_choice) {
@@ -1514,7 +1514,7 @@ compute_max_stats_heuristic(const struct cm_state *cmstate,
     /* Then the total solution is soln + this new worker.  So we know the
        production exactly, and can shortcut the later code. */
     enum cm_stat stat;
-    const struct cm_tile_type *ptype = tile_type_get(cmstate, check_choice);
+    const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, check_choice);
 
     memcpy(production, &soln->production, sizeof(soln->production));
     for (stat = 0; stat < CM_NUM_STATS; stat++) {
@@ -1750,14 +1750,14 @@ struct cm_state *cm_init_cmstate(city_t *pcity)
   cmstate->pcity = pcity;
 
   /* create the lattice */
-  tile_type_vector_init(&cmstate->lattice);
+  cm_tile_type_vector_init(&cmstate->lattice);
   init_tile_lattice(pcity, &cmstate->lattice);
-  numtypes = tile_type_vector_size(&cmstate->lattice);
+  numtypes = cm_tile_type_vector_size(&cmstate->lattice);
 
   /* For the heuristic, make sorted copies of the lattice */
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
-    tile_type_vector_init(&cmstate->lattice_by_prod[stat]);
-    tile_type_vector_copy(&cmstate->lattice_by_prod[stat], &cmstate->lattice);
+    cm_tile_type_vector_init(&cmstate->lattice_by_prod[stat]);
+    cm_tile_type_vector_copy(&cmstate->lattice_by_prod[stat], &cmstate->lattice);
     compare_key = stat;
     qsort(cmstate->lattice_by_prod[stat].p, cmstate->lattice_by_prod[stat].size,
           sizeof(*cmstate->lattice_by_prod[stat].p),
