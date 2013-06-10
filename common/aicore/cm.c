@@ -1590,7 +1590,8 @@ static void init_min_production(struct cm_state *cmstate)
 
   /* make sure the city's numbers make sense (sometimes they don't,
    * somehow) */
-  memcpy(&backup, pcity, (sizeof(city_t) + 8) & ~7);  //valgrind
+  //memcpy(&backup, pcity, (sizeof(city_t) + 8) & ~7);  valgrind
+  memcpy(&backup, pcity, sizeof(city_t));
   generic_city_refresh(pcity, FALSE, NULL);
 
   memset(cmstate->min_production, 0, sizeof(cmstate->min_production));
