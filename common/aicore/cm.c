@@ -1594,7 +1594,7 @@ static void init_min_production(struct cm_state *cmstate)
   memcpy(&backup, pcity, sizeof(city_t));
   generic_city_refresh(pcity, FALSE, NULL);
 
-  memset(cmstate->min_production, 0, sizeof(cmstate->min_production));
+  memset(&cmstate->min_production, 0, sizeof(cmstate->min_production));
 
   /* If the city is content, then we know the food usage is just
    * prod-surplus; otherwise, we know it's at least 2*size but we
