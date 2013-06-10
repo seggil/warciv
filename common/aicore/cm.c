@@ -1878,6 +1878,7 @@ void cm_find_best_solution(struct cm_state *cmstate,
 /***************************************************************************
   Wrapper that actually runs the branch & bound, and returns the best
   solution.
+  call with empty structure for result
  ***************************************************************************/
 void cm_query_result(city_t *pcity,
                      const struct cm_parameter *param,
