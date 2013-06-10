@@ -139,13 +139,13 @@ struct cm_tile {
   int y; /* valid only if !is_specialist */
 };
 
-/* define the tile_vector as array<cm_tile> */
-#define SPECVEC_TAG tile
+/* define the cm_tile_vector as array<struct cm_tile> */
+#define SPECVEC_TAG cm_tile
 #define SPECVEC_TYPE struct cm_tile
 #include "specvec.h"
 
-/* define the tile_type_vector as array <cm_tile_type*> */
-#define SPECVEC_TAG tile_type
+/* define the cm_tile_type_vector as array <cm_tile_type*> */
+#define SPECVEC_TAG cm_tile_type
 #define SPECVEC_TYPE struct cm_tile_type *
 #include "specvec.h"
 #define tile_type_vector_iterate(vector, var) { \
@@ -155,10 +155,10 @@ struct cm_tile {
       {
 #define tile_type_vector_iterate_end }} VECTOR_ITERATE_END; }
 
-static inline void tile_type_vector_add(struct tile_type_vector *tthis,
-                                        struct cm_tile_type *toadd)
+static inline void cm_tile_type_vector_add(struct cm_tile_type_vector *tthis,
+                                           struct cm_tile_type *toadd)
 {
-  tile_type_vector_append(tthis, &toadd);
+  cm_tile_type_vector_append(tthis, &toadd);
 }
 
 
@@ -179,9 +179,9 @@ struct cm_tile_type {
   double estimated_fitness;    /* weighted sum of production */
   bool   is_specialist;
   enum   specialist_type spec; /* valid only if is_specialist */
-  struct tile_vector tiles;    /* valid only if !is_specialist */
-  struct tile_type_vector better_types;
-  struct tile_type_vector worse_types;
+  struct cm_tile_vector tiles; /* valid only if !is_specialist */
+  struct cm_tile_type_vector better_types;
+  struct cm_tile_type_vector worse_types;
   int    lattice_index;        /* index in cmstate->lattice */
   int    lattice_depth;        /* depth = sum(#tiles) over all better types */
 };
@@ -212,8 +212,8 @@ struct cm_state {
   /*mutable*/ city_t *pcity;
 
   /* the tile lattice */
-  struct tile_type_vector lattice;
-  struct tile_type_vector lattice_by_prod[CM_NUM_STATS];
+  struct cm_tile_type_vector lattice;
+  struct cm_tile_type_vector lattice_by_prod[CM_NUM_STATS];
 
   /* the best known solution, and its fitness */
   struct partial_solution best;
@@ -333,7 +333,7 @@ void cm_free(void)
 /****************************************************************************
   Set all production to zero and initialize the vectors for this tile type.
 ****************************************************************************/
-static void tile_type_init(struct cm_tile_type *type)
+static void cm_tile_type_init(struct cm_tile_type *type)
 {
   memset(type, 0, sizeof(struct cm_tile_type));
   //tile_vector_init(&type->tiles);
@@ -345,42 +345,43 @@ static void tile_type_init(struct cm_tile_type *type)
   Duplicate a tile type, except for the vectors - the vectors of the new tile
   type will be empty.
 ****************************************************************************/
-static struct cm_tile_type *tile_type_dup(const struct cm_tile_type *oldtype)
+static struct cm_tile_type *
+cm_tile_type_dup(const struct cm_tile_type *oldtype)
 {
   struct cm_tile_type *newtype = wc_malloc(sizeof(struct cm_tile_type));
 
   memcpy(newtype, oldtype, sizeof(*oldtype));
-  tile_vector_init(&newtype->tiles);
-  tile_type_vector_init(&newtype->better_types);
-  tile_type_vector_init(&newtype->worse_types);
+  cm_tile_vector_init(&newtype->tiles);
+  cm_tile_type_vector_init(&newtype->better_types);
+  cm_tile_type_vector_init(&newtype->worse_types);
   return newtype;
 }
 
 /****************************************************************************
   Free all the storage in the tile type (but don't free the type itself).
 ****************************************************************************/
-static void tile_type_destroy(struct cm_tile_type *type)
+static void cm_tile_type_destroy(struct cm_tile_type *type)
 {
   /* The call to vector_free() will magically free all the tiles in the
    * vector. */
-  tile_vector_free(&type->tiles);
-  tile_type_vector_free(&type->better_types);
-  tile_type_vector_free(&type->worse_types);
+  cm_tile_vector_free(&type->tiles);
+  cm_tile_type_vector_free(&type->better_types);
+  cm_tile_type_vector_free(&type->worse_types);
 }
 
 /****************************************************************************
   Destroy and free all types in the vector, and the vector itself.  This
   will free all memory associated with the vector.
 ****************************************************************************/
-static void tile_type_vector_free_all(struct tile_type_vector *vec)
+static void cm_tile_type_vector_free_all(struct cm_tile_type_vector *vec)
 {
   tile_type_vector_iterate(vec, type) {
     /* Destroy all data in the type, and free the type itself. */
-    tile_type_destroy(type);
+    cm_tile_type_destroy(type);
     free(type);
   } tile_type_vector_iterate_end;
 
-  tile_type_vector_free(vec);
+  cm_tile_type_vector_free(vec);
 }
 
 /****************************************************************************
@@ -388,8 +389,8 @@ static void tile_type_vector_free_all(struct tile_type_vector *vec)
   all production outputs are equal and the is_specialist fields are also
   equal.
 ****************************************************************************/
-static bool tile_type_equal(const struct cm_tile_type *a,
-                            const struct cm_tile_type *b)
+static bool cm_tile_type_equal(const struct cm_tile_type *a,
+                               const struct cm_tile_type *b)
 {
   enum cm_stat stat;
 
@@ -412,8 +413,8 @@ static bool tile_type_equal(const struct cm_tile_type *a,
   Specialists are considered better than workers (all else being equal)
   since we have an unlimited number of them.
 ****************************************************************************/
-static bool tile_type_better(const struct cm_tile_type *a,
-                             const struct cm_tile_type *b)
+static bool cm_tile_type_better(const struct cm_tile_type *a,
+                                const struct cm_tile_type *b)
 {
   enum cm_stat stat;
 
@@ -442,14 +443,14 @@ static bool tile_type_better(const struct cm_tile_type *a,
 
   Equivalence is defined in tile_type_equal().
 ****************************************************************************/
-static int tile_type_vector_find_equivalent(
-                                const struct tile_type_vector *vec,
+static int cm_tile_type_vector_find_equivalent(
+                                const struct cm_tile_type_vector *vec,
                                 const struct cm_tile_type     *ptype)
 {
   int i;
 
   for (i = 0; i < vec->size; i++) {
-    if (tile_type_equal(vec->p[i], ptype)) {
+    if (cm_tile_type_equal(vec->p[i], ptype)) {
       return i;
     }
   }
@@ -462,12 +463,12 @@ static int tile_type_vector_find_equivalent(
   is_specialist types this will always be infinite but for other types of
   tiles it is limited by what's available in the citymap.
 ****************************************************************************/
-static int tile_type_num_tiles(const struct cm_tile_type *type)
+static int cm_tile_type_num_tiles(const struct cm_tile_type *type)
 {
   if(type->is_specialist) {
     return WC_INFINITY;
   } else {
-    return tile_vector_size(&type->tiles);
+    return cm_tile_vector_size(&type->tiles);
   }
 }
 
@@ -475,9 +476,9 @@ static int tile_type_num_tiles(const struct cm_tile_type *type)
   Return the number of tile types that are better than this type.
 
   Note this isn't the same as the number of *tiles* that are better.  There
-  may be more than one tile of each type (see tile_type_num_tiles).
+  may be more than one tile of each type (see cm_tile_type_num_tiles).
 ****************************************************************************/
-static int tile_type_num_prereqs(const struct cm_tile_type *ptype)
+static int cm_tile_type_num_prereqs(const struct cm_tile_type *ptype)
 {
   return ptype->better_types.size;
 }
@@ -487,8 +488,8 @@ static int tile_type_num_prereqs(const struct cm_tile_type *ptype)
   number of tile types, which may be iterated over using this function
   as a lookup.
 ****************************************************************************/
-static const struct cm_tile_type *tile_type_get(const struct cm_state *cmstate,
-                                                int type)
+static const struct cm_tile_type *cm_tile_type_get(const struct cm_state *cmstate,
+                                                   int type)
 {
   /* Sanity check the index. */
   assert(type >= 0);
@@ -500,9 +501,9 @@ static const struct cm_tile_type *tile_type_get(const struct cm_state *cmstate,
   Retrieve a tile of a particular type by index.  For a given tile type
   there are a certain number of tiles (1 or more), which may be iterated
   over using this function for index.  Don't call this for is_specialist
-  types.  See also tile_type_num_tiles().
+  types.  See also cm_tile_type_num_tiles().
 ****************************************************************************/
-static const struct cm_tile *tile_get(const struct cm_tile_type *ptype, int j)
+static const struct cm_tile *cm_tile_get(const struct cm_tile_type *ptype, int j)
 {
   assert(j >= 0);
   assert(j < ptype->tiles.size);
@@ -668,7 +669,7 @@ static void apply_solution(struct cm_state *cmstate,
     }
     sumworkers += nworkers;
 
-    type = tile_type_get(cmstate, i);
+    type = cm_tile_type_get(cmstate, i);
 
     if (type->is_specialist) {
       /* Just increase the number of specialists. */
@@ -678,7 +679,7 @@ static void apply_solution(struct cm_state *cmstate,
 
       /* Place citizen workers onto the citymap tiles. */
       for (j = 0; j < nworkers; j++) {
-        const struct cm_tile *tile = tile_get(type, j);
+        const struct cm_tile *tile = cm_tile_get(type, j);
 
         pcity->common.city_map[tile->x][tile->y] = C_TILE_WORKER;
       }
@@ -888,35 +889,35 @@ static void compute_tile_production(const city_t *pcity, int x, int y,
   If the type is new, it is linked in and the lattice_index set.
   The lattice_depth is not set.
 ****************************************************************************/
-static void tile_type_lattice_add(struct tile_type_vector *lattice,
-                                  const struct cm_tile_type *newtype,
-                                  int x, int y)
+static void cm_tile_type_lattice_add(struct cm_tile_type_vector *lattice,
+                                     const struct cm_tile_type *newtype,
+                                     int x, int y)
 {
   struct cm_tile_type *type;
   int i;
 
-  i = tile_type_vector_find_equivalent(lattice, newtype);
+  i = cm_tile_type_vector_find_equivalent(lattice, newtype);
   if(i >= 0) {
     /* We already have this type of tile; use it. */
     type = lattice->p[i];
   } else {
     /* This is a new tile type; add it to the lattice. */
-    type = tile_type_dup(newtype);
+    type = cm_tile_type_dup(newtype);
 
     /* link up to the types we dominate, and those that dominate us */
     tile_type_vector_iterate(lattice, other) {
-      if (tile_type_better(other, type)) {
-        tile_type_vector_add(&type->better_types, other);
-        tile_type_vector_add(&other->worse_types, type);
-      } else if (tile_type_better(type, other)) {
-        tile_type_vector_add(&other->better_types, type);
-        tile_type_vector_add(&type->worse_types, other);
+      if (cm_tile_type_better(other, type)) {
+        cm_tile_type_vector_add(&type->better_types, other);
+        cm_tile_type_vector_add(&other->worse_types, type);
+      } else if (cm_tile_type_better(type, other)) {
+        cm_tile_type_vector_add(&other->better_types, type);
+        cm_tile_type_vector_add(&type->worse_types, other);
       }
     } tile_type_vector_iterate_end;
 
     /* insert into the list */
     type->lattice_index = lattice->size;
-    tile_type_vector_add(lattice, type);
+    cm_tile_type_vector_add(lattice, type);
   }
 
   /* Finally, add the tile to the tile type. */
@@ -926,7 +927,7 @@ static void tile_type_lattice_add(struct tile_type_vector *lattice,
     tile.type = type;
     tile.x = x;
     tile.y = y;
-    tile_vector_append(&type->tiles, &tile);
+    cm_tile_vector_append(&type->tiles, &tile);
   }
 }
 
@@ -950,12 +951,12 @@ const static struct spec_stat_pair pairs[SP_COUNT] =  {
   Create lattice nodes for each type of specialist.  This adds a new
   tile_type for each specialist type.
 ****************************************************************************/
-static void init_specialist_lattice_nodes(struct tile_type_vector *lattice,
+static void init_specialist_lattice_nodes(struct cm_tile_type_vector *lattice,
                                           const city_t *pcity)
 {
   struct cm_tile_type type;
 
-  tile_type_init(&type);
+  cm_tile_type_init(&type);
   type.is_specialist = TRUE;
 
   /* for each specialist type, create a tile_type that has as production
@@ -966,7 +967,7 @@ static void init_specialist_lattice_nodes(struct tile_type_vector *lattice,
       type.production[pairs[i].stat]
         = game.ruleset_game.specialist_bonus[pairs[i].spec];
 
-      tile_type_lattice_add(lattice, &type, 0, 0);
+      cm_tile_type_lattice_add(lattice, &type, 0, 0);
 
       type.production[pairs[i].stat] = 0;
     }
@@ -980,26 +981,26 @@ static void init_specialist_lattice_nodes(struct tile_type_vector *lattice,
   closure of the lattice. That is, better_types includes all types that
   are better.
 ****************************************************************************/
-static void top_sort_lattice(struct tile_type_vector *lattice)
+static void top_sort_lattice(struct cm_tile_type_vector *lattice)
 {
   int i;
   bool marked[lattice->size];
   bool will_mark[lattice->size];
-  struct tile_type_vector vectors[2];
-  struct tile_type_vector *current, *next;
+  struct cm_tile_type_vector vectors[2];
+  struct cm_tile_type_vector *current, *next;
 
   memset(marked, 0, sizeof(marked));
   memset(will_mark, 0, sizeof(will_mark));
 
-  tile_type_vector_init(&vectors[0]);
-  tile_type_vector_init(&vectors[1]);
+  cm_tile_type_vector_init(&vectors[0]);
+  cm_tile_type_vector_init(&vectors[1]);
   current = &vectors[0];
   next = &vectors[1];
 
   /* fill up 'next' */
   tile_type_vector_iterate(lattice, ptype) {
-    if (tile_type_num_prereqs(ptype) == 0) {
-      tile_type_vector_add(next, ptype);
+    if (cm_tile_type_num_prereqs(ptype) == 0) {
+      cm_tile_type_vector_add(next, ptype);
     }
   } tile_type_vector_iterate_end;
 
@@ -1007,7 +1008,7 @@ static void top_sort_lattice(struct tile_type_vector *lattice)
    * all been visited.  Then, store all the new nodes on the frontier. */
   while (next->size != 0) {
     /* what was the next frontier is now the current frontier */
-    struct tile_type_vector *vtmp = current;
+    struct cm_tile_type_vector *vtmp = current;
 
     current = next;
     next = vtmp;
@@ -1028,7 +1029,7 @@ static void top_sort_lattice(struct tile_type_vector *lattice)
           can_mark = FALSE;
           break;
         } else {
-          sumdepth += tile_type_num_tiles(better);
+          sumdepth += cm_tile_type_num_tiles(better);
           if (sumdepth >= WC_INFINITY) {
             /* if this is the case, then something better could
                always be used, and the same holds for our children */
@@ -1042,7 +1043,7 @@ static void top_sort_lattice(struct tile_type_vector *lattice)
         /* mark and put successors on the next frontier */
         will_mark[ptype->lattice_index] = TRUE;
         tile_type_vector_iterate(&ptype->worse_types, worse) {
-          tile_type_vector_add(next, worse);
+          cm_tile_type_vector_add(next, worse);
         } tile_type_vector_iterate_end;
 
         /* this is what we spent all this time computing. */
@@ -1057,8 +1058,8 @@ static void top_sort_lattice(struct tile_type_vector *lattice)
     }
   }
 
-  tile_type_vector_free(&vectors[0]);
-  tile_type_vector_free(&vectors[1]);
+  cm_tile_type_vector_free(&vectors[0]);
+  cm_tile_type_vector_free(&vectors[1]);
 }
 
 /****************************************************************************
@@ -1077,16 +1078,16 @@ static void top_sort_lattice(struct tile_type_vector *lattice)
   we can use only the first tile of a depth 1 tile type), but that
   wouldn't save us anything later.
 ****************************************************************************/
-static void clean_lattice(struct tile_type_vector *lattice,
+static void clean_lattice(struct cm_tile_type_vector *lattice,
                           const city_t *pcity)
 {
   int i, j; /* i is the index we read, j is the index we write */
-  struct tile_type_vector tofree;
+  struct cm_tile_type_vector tofree;
   bool forced_loop = FALSE;
 
   /* We collect the types we want to remove and free them in one fell
      swoop at the end, in order to avoid memory errors.  */
-  tile_type_vector_init(&tofree);
+  cm_tile_type_vector_init(&tofree);
 
   /* forced_loop is workaround for what seems like gcc optimization
    * bug.
@@ -1100,7 +1101,7 @@ static void clean_lattice(struct tile_type_vector *lattice,
     forced_loop = FALSE;
 
     if (ptype->lattice_depth >= pcity->common.pop_size) {
-      tile_type_vector_add(&tofree, ptype);
+      cm_tile_type_vector_add(&tofree, ptype);
     } else {
       /* Remove links to children that are being removed. */
 
@@ -1123,7 +1124,7 @@ static void clean_lattice(struct tile_type_vector *lattice,
   }
   lattice->size = j;
 
-  tile_type_vector_free_all(&tofree);
+  cm_tile_type_vector_free_all(&tofree);
 }
 
 /****************************************************************************
@@ -1135,7 +1136,7 @@ static double estimate_fitness(const struct cm_state *cmstate,
                                const int production[CM_NUM_STATS]);
 
 static void sort_lattice_by_fitness(const struct cm_state *cmstate,
-                                    struct tile_type_vector *lattice)
+                                    struct cm_tile_type_vector *lattice)
 {
   int i;
 
@@ -1161,19 +1162,19 @@ static void sort_lattice_by_fitness(const struct cm_state *cmstate,
   Create the lattice.
 ****************************************************************************/
 static void init_tile_lattice(const city_t *pcity,
-                              struct tile_type_vector *lattice)
+                              struct cm_tile_type_vector *lattice)
 {
   struct cm_tile_type type;
 
   /* add all the fields into the lattice */
-  tile_type_init(&type); /* init just once */
+  cm_tile_type_init(&type); /* init just once */
   my_city_map_iterate(pcity, x, y) {
     if (pcity->common.city_map[x][y] == C_TILE_UNAVAILABLE) {
       continue;
     }
     if (!is_city_center(x, y)) {
       compute_tile_production(pcity, x, y, &type); /* clobbers type */
-      tile_type_lattice_add(lattice, &type, x, y); /* copy type if needed */
+      cm_tile_type_lattice_add(lattice, &type, x, y); /* copy type if needed */
     }
   } my_city_map_iterate_end;
 
@@ -1220,7 +1221,7 @@ static int last_choice(struct cm_state *cmstate)
 ****************************************************************************/
 static int num_types(const struct cm_state *cmstate)
 {
-  return tile_type_vector_size(&cmstate->lattice);
+  return cm_tile_type_vector_size(&cmstate->lattice);
 }
 
 /****************************************************************************
@@ -1234,7 +1235,7 @@ static void add_workers(struct partial_solution *soln,
                         const struct cm_state *cmstate)
 {
   enum cm_stat stat;
-  const struct cm_tile_type *ptype = tile_type_get(cmstate, itype);
+  const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, itype);
   int newcount;
   int old_worker_count = soln->worker_counts[itype];
 
@@ -1251,23 +1252,23 @@ static void add_workers(struct partial_solution *soln,
   /* update the worker counts */
   newcount = soln->worker_counts[itype] + number;
   assert(newcount >= 0);
-  assert(newcount <= tile_type_num_tiles(ptype));
+  assert(newcount <= cm_tile_type_num_tiles(ptype));
   soln->worker_counts[itype] = newcount;
 
   /* update prereqs array: if we are no longer full but we were,
    * we need to decrement the count, and vice-versa. */
-  if (old_worker_count == tile_type_num_tiles(ptype)) {
+  if (old_worker_count == cm_tile_type_num_tiles(ptype)) {
     assert(number < 0);
     tile_type_vector_iterate(&ptype->worse_types, other) {
       soln->prereqs_filled[other->lattice_index]--;
       assert(soln->prereqs_filled[other->lattice_index] >= 0);
     } tile_type_vector_iterate_end;
-  } else if (soln->worker_counts[itype] == tile_type_num_tiles(ptype)) {
+  } else if (soln->worker_counts[itype] == cm_tile_type_num_tiles(ptype)) {
     assert(number > 0);
     tile_type_vector_iterate(&ptype->worse_types, other) {
       soln->prereqs_filled[other->lattice_index]++;
       assert(soln->prereqs_filled[other->lattice_index]
-          <= tile_type_num_prereqs(other));
+          <= cm_tile_type_num_prereqs(other));
     } tile_type_vector_iterate_end;
   }
 
@@ -1317,8 +1318,8 @@ static bool prereqs_filled(const struct partial_solution *soln,
                            int type,
                            const struct cm_state *cmstate)
 {
-  const struct cm_tile_type *ptype = tile_type_get(cmstate, type);
-  int prereqs = tile_type_num_prereqs(ptype);
+  const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, type);
+  int prereqs = cm_tile_type_num_prereqs(ptype);
 
   return soln->prereqs_filled[type] == prereqs;
 }
@@ -1342,10 +1343,10 @@ static int next_choice(struct cm_state *cmstate, int oldchoice)
        newchoice < num_types(cmstate);
        newchoice++)
   {
-    const struct cm_tile_type *ptype = tile_type_get(cmstate, newchoice);
+    const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, newchoice);
 
     if(!ptype->is_specialist
-       && (cmstate->current.worker_counts[newchoice] == tile_vector_size(&ptype->tiles)))
+       && (cmstate->current.worker_counts[newchoice] == cm_tile_vector_size(&ptype->tiles)))
     {
       /* we've already used all these tiles */
       continue;
@@ -1439,7 +1440,7 @@ static bool take_child_choice(struct cm_state *cmstate)
 ****************************************************************************/
 static void complete_solution(struct partial_solution *soln,
                               const struct cm_state *cmstate,
-                              const struct tile_type_vector *lattice)
+                              const struct cm_tile_type_vector *lattice)
 {
   int last_choice = -1;
   int i;
@@ -1832,9 +1833,9 @@ void cm_free_cmstate(struct cm_state *cmstate)
 {
   enum cm_stat cmstat;
 
-  tile_type_vector_free_all(&cmstate->lattice);
+  cm_tile_type_vector_free_all(&cmstate->lattice);
   for (cmstat = 0; cmstat < CM_NUM_STATS; cmstat++) {
-    tile_type_vector_free(&cmstate->lattice_by_prod[cmstat]);
+    cm_tile_type_vector_free(&cmstate->lattice_by_prod[cmstat]);
   }
   /*destroy_partial_solution(&cmstate->best);*/
   free(cmstate->best.worker_counts);
@@ -2141,8 +2142,8 @@ static void print_partial_solution(int loglevel,
   for (i = last_type; i < num_types(cmstate); i++) {
     const struct cm_tile_type *ptype = tile_type_get(cmstate, i);
 
-    if (soln->prereqs_filled[i] == tile_type_num_prereqs(ptype)
-        && soln->worker_counts[i] < tile_type_num_tiles(ptype)) {
+    if (soln->prereqs_filled[i] == cm_tile_type_num_prereqs(ptype)
+        && soln->worker_counts[i] < cm_tile_type_num_tiles(ptype)) {
       print_tile_type(loglevel, tile_type_get(cmstate, i), "  ");
     }
   }
