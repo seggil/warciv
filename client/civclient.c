@@ -237,8 +237,8 @@ int main(int argc, char *argv[])
   audio_init();
 
   /* default argument values are set in options.c */
-  //loglevel = LOG_NORMAL;
-  loglevel = LOG_DEBUG;
+  loglevel = LOG_NORMAL;
+  //loglevel = LOG_DEBUG;
 
   i = 1;
 
