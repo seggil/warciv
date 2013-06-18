@@ -97,9 +97,11 @@ bool has_capabilities(const char *us, const char *them)
 ***************************************************************************/
 bool has_svn_revision(int svnrev, const char *capstr)
 {
-  const char *p, *end;
-  char buf[32], *q;
-  int n;
+  const char *p;
+  const char *end;
+  char        buf[32];
+  char       *q;
+  int         n;
 
   if (svnrev < 1 || !capstr || capstr[0] == '\0') {
     return FALSE;

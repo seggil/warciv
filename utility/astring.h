@@ -24,7 +24,7 @@
 #include "shared.h"             /* ADD_TO_POINTER */
 
 struct astring {
-  char *str;                    /* the string */
+  char  *str;                   /* the string */
   size_t len;                   /* length of the string */
   size_t n;                     /* size most recently requested */
   size_t n_alloc;               /* total allocated */

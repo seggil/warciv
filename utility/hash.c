@@ -133,7 +133,8 @@ struct hash_table {
 
 struct hash_iter {
   struct iterator vtable;
-  const struct hash_bucket *b, *end;
+  const struct hash_bucket *b;
+  const struct hash_bucket *end;
 };
 
 #define HASH_ITER(p) ((struct hash_iter *)(p))
@@ -188,8 +189,9 @@ static void zero_htable(struct hash_table *h)
 #endif
 static uint32_t SuperFastHash (const char *data, int len)
 {
-  uint32_t hash = len, tmp;
-  int rem;
+  uint32_t hash = len;
+  uint32_t tmp;
+  int      rem;
 
   if (len <= 0 || data == NULL)
     return 0;
@@ -333,7 +335,7 @@ unsigned int hash_fval_string2 (const void *vkey, unsigned int num_buckets)
 unsigned int hash_fval_string(const void *vkey, unsigned int num_buckets)
 {
   const char *key = (const char*)vkey;
-  unsigned long result=0;
+  unsigned long result = 0;
 
   for (; *key != '\0'; key++) {
     result *= 5;
@@ -414,8 +416,10 @@ static const unsigned long ht_sizes[] =
 **************************************************************************/
 static unsigned int calc_appropriate_nbuckets(unsigned int num_entries)
 {
-  const unsigned long *pframe=&ht_sizes[0], *pmid;
-  int fsize=NSIZES-1, lpart;
+  const unsigned long *pframe=&ht_sizes[0];
+  const unsigned long *pmid;
+  int fsize=NSIZES-1;
+  int lpart;
 
   num_entries <<= 1; /* breathing room */
 
@@ -592,7 +596,9 @@ static void hash_resize_table(struct hash_table *h, unsigned int new_nbuckets)
 #define hash_maybe_shrink(htab) hash_maybe_resize((htab), FALSE)
 void hash_maybe_resize(struct hash_table *h, bool expandingp)
 {
-  unsigned int num_used, limit, new_nbuckets;
+  unsigned int num_used;
+  unsigned int limit;
+  unsigned int new_nbuckets;
 
   freelog (LOG_DEBUG, "hash_maybe_resize h=%p expandingp=%d", h, expandingp);
 
@@ -849,7 +855,8 @@ unsigned int hash_num_deleted(const struct hash_table *h)
 const void *hash_key_by_number(const struct hash_table *h,
                                unsigned int entry_number)
 {
-  unsigned int bucket_nr, counter = 0;
+  unsigned int bucket_nr;
+  unsigned int counter = 0;
   assert(entry_number < h->num_entries);
 
   for (bucket_nr = 0; bucket_nr < h->num_buckets; bucket_nr++) {

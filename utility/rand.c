@@ -79,7 +79,9 @@ static RANDOM_STATE rand_state;
 *************************************************************************/
 RANDOM_TYPE myrand(RANDOM_TYPE size)
 {
-  RANDOM_TYPE new_rand, divisor, max;
+  RANDOM_TYPE new_rand;
+  RANDOM_TYPE divisor;
+  RANDOM_TYPE max;
   int bailout = 0;
 
   assert(rand_state.is_init);
@@ -192,9 +194,13 @@ void set_myrand_state(RANDOM_STATE state)
 void test_random1(int n)
 {
   RANDOM_STATE saved_state;
-  int i, old_value = 0, new_value;
-  bool didchange, olddidchange = FALSE;
-  int behaviourchange = 0, behavioursame = 0;
+  int  i;
+  int  old_value = 0;
+  int  new_value;
+  bool didchange;
+  bool olddidchange = FALSE;
+  int  behaviourchange = 0;
+  int  behavioursame = 0;
 
   saved_state = get_myrand_state();
   /* mysrand(time(NULL)); */  /* use current state */

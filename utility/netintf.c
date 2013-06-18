@@ -817,7 +817,10 @@ fz_FILE *my_querysocket(int sock, void *buf, size_t size)
 *************************************************************************/
 const char *my_lookup_httpd(char *server, int *port, const char *url)
 {
-  const char *purl, *str, *ppath, *pport;
+  const char *purl;
+  const char *str;
+  const char *ppath;
+  const char *pport;
 
   if ((purl = getenv("http_proxy")) && purl[0] != '\0') {
     if (strncmp(purl, "http://", strlen("http://")) != 0) {
@@ -914,7 +917,8 @@ const char *my_url_encode(const char *txt)
 **************************************************************************/
 int find_next_free_port(int starting_port)
 {
-  int port, s = socket(AF_INET, SOCK_STREAM, 0);
+  int port;
+  int s = socket(AF_INET, SOCK_STREAM, 0);
 
   for (port = starting_port;; port++) {
     union my_sockaddr tmp;

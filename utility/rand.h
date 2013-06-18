@@ -22,17 +22,19 @@ typedef unsigned int RANDOM_TYPE;
 
 typedef struct RANDOM_STATE_S {
   RANDOM_TYPE v[56];
-  int j, k, x;
+  int j;
+  int k;
+  int x;
   bool is_init;                 /* initially 0 for static storage */
 } RANDOM_STATE;
 
-RANDOM_TYPE myrand(RANDOM_TYPE size);
-void mysrand(RANDOM_TYPE seed);
+RANDOM_TYPE  myrand(RANDOM_TYPE size);
+void         mysrand(RANDOM_TYPE seed);
 
-bool myrand_is_init(void);
+bool         myrand_is_init(void);
 RANDOM_STATE get_myrand_state(void);
-void set_myrand_state(RANDOM_STATE state);
+void         set_myrand_state(RANDOM_STATE state);
 
-void test_random1(int n);
+void         test_random1(int n);
 
 #endif  /* WC_UTILITY_RAND_H */

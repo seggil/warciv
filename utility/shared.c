@@ -196,8 +196,10 @@ bool is_option(const char *option_name,char *option)
 ***************************************************************/
 static size_t my_strcspn(const char *s, const char *reject)
 {
-  bool in_single_quotes = FALSE, in_double_quotes = FALSE;
-  size_t i, len = strlen(s);
+  bool in_single_quotes = FALSE;
+  bool in_double_quotes = FALSE;
+  size_t i;
+  size_t len = strlen(s);
 
   for (i = 0; i < len; i++) {
     if (s[i] == '"' && !in_single_quotes) {
@@ -415,7 +417,8 @@ static bool is_ascii(char ch)
 bool is_ascii_name(const char *name)
 {
   const char illegal_chars[] = {'|', '%', '"', ',', '*', '<', '>', '\0'};
-  int i, j;
+  int i;
+  int j;
 
   /* must not be NULL or empty */
   if (!name || *name == '\0') {
@@ -840,7 +843,8 @@ const char *user_username(void)
 static const char **get_data_dirs(int *num_dirs)
 {
   const char *path;
-  char *path2, *tok;
+  char *path2;
+  char *tok;
   static int num = 0;
   static const char **dirs = NULL;
 
@@ -945,7 +949,9 @@ const char **datafilelist(const char* suffix)
   char **file_list = NULL;
   int num_matches = 0;
   int list_size = 0;
-  int dir_num, i, j;
+  int dir_num;
+  int i;
+  int j;
   size_t suffix_len = strlen(suffix);
 
   assert(!strchr(suffix, '/'));
@@ -1038,7 +1044,8 @@ const char **datafilelist(const char* suffix)
 ***************************************************************************/
 char *datafilename(const char *filename)
 {
-  int num_dirs, i;
+  int num_dirs;
+  int i;
   const char **dirs = get_data_dirs(&num_dirs);
   static struct astring realfile = ASTRING_INIT;
 
@@ -1428,7 +1435,9 @@ enum m_pre_result match_prefix_full(m_pre_accessor_fn_t accessor_fn,
                                     int max_matches,
                                     int *pnum_matches)
 {
-  int i, len, nmatches;
+  int i;
+  int len;
+  int nmatches;
 
   len = strlen(prefix);
   if (len == 0) {
@@ -1951,7 +1960,7 @@ const char *string_vector_get(const struct string_vector *psv, size_t index)
 struct string_iter
 {
   struct iterator vtable;
-  union {
+  union string_iter_u {
     struct string_vector *psv;
     const struct string_vector *pcsv;
   };
