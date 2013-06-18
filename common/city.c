@@ -2574,7 +2574,7 @@ static size_t struct_city_size(void)
     }
   }
   //valgrind & gcc, size is multiple of 8
-  return (size+8) & ~7;
+  return (size+7) & ~7;
 }
 
 /**************************************************************************
