@@ -32,7 +32,12 @@
 ****************************************************************************/
 void distribute(int number, int groups, int *ratios, int *result)
 {
-  int i, sum = 0, rest[groups], max_groups[groups], max_count, max;
+  int i;
+  int sum = 0;
+  int rest[groups];
+  int max_groups[groups];
+  int max_count;
+  int max;
 #ifndef NDEBUG
   const int original_number = number;
 #endif
@@ -92,7 +97,8 @@ void distribute(int number, int groups, int *ratios, int *result)
       rest[max_groups[0]] = 0;
       number--;
     } else {
-      int min = result[max_groups[0]], which_min = max_groups[0];
+      int min = result[max_groups[0]];
+      int which_min = max_groups[0];
 
       /* Give an extra source to the target with largest remainder and
        * smallest whole number. */

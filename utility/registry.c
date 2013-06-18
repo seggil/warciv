@@ -658,8 +658,11 @@ bool section_file_save(struct section_file *my_section_file,
 {
   char real_filename[1024];
   fz_FILE *fs;
-  const genlist_link *ent_iter, *save_iter, *col_iter;
-  struct entry *pentry, *col_pentry;
+  const genlist_link *ent_iter;
+  const genlist_link *save_iter;
+  const genlist_link *col_iter;
+  struct entry *pentry;
+  struct entry *col_pentry;
   int i;
 
   interpret_tilde(real_filename, sizeof(real_filename), filename);
@@ -1479,7 +1482,8 @@ int *secfile_lookup_int_vec(struct section_file *my_section_file,
 {
   char buf[MAX_LEN_BUFFER];
   va_list ap;
-  int j, *res;
+  int j;
+  int *res;
 
   va_start(ap, path);
   my_vsnprintf(buf, sizeof(buf), path, ap);
@@ -1578,7 +1582,8 @@ static char *moutstr(char *str)
   static int nalloc = 0;
 
   int len;                      /* required length, including terminator */
-  char *c, *dest;
+  char *c;
+  char *dest;
 
   if (!str) {
     freelog(LOG_DEBUG, "moutstr alloc was %d", nalloc);
@@ -1632,7 +1637,8 @@ char **secfile_get_secnames_prefix(struct section_file *my_section_file,
                                    const char *prefix, int *num)
 {
   char **ret;
-  int len, i;
+  int len;
+  int i;
 
   len = strlen(prefix);
 

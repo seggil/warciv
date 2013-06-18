@@ -59,7 +59,8 @@ logd_init_counter.  Does _not_ set wc_log_level.
 **************************************************************************/
 int log_parse_level_str(const char *level_str)
 {
-  const char *c, *tok;
+  const char *c;
+  const char *tok;
   char *dup;
   int n = 0;                    /* number of filenames */
   int i;
@@ -243,8 +244,8 @@ Let the callback do its own level formating and add a '\n' if it wants.
 **************************************************************************/
 static void log_write(FILE *fs, int level, char *message)
 {
-        static time_t ltime;
-        char *timebuf;
+  static time_t ltime;
+  char *timebuf;
 
   if ((!log_filename) && log_callback) {
     log_callback(level, message);
