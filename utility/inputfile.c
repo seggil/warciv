@@ -351,8 +351,11 @@ static bool check_include(struct inputfile *inf)
 {
   const char *include_prefix = "*include";
   static size_t len = 0;
-  char *bare_name, *full_name, *c;
-  struct inputfile *new_inf, temp;
+  char *bare_name;
+  char *full_name;
+  char *c;
+  struct inputfile *new_inf;
+  struct inputfile  temp;
 
   if (len==0) {
     len = strlen(include_prefix);
@@ -642,7 +645,8 @@ int inf_discard_tokens(struct inputfile *inf, enum inf_token_type type)
 ***********************************************************************/
 static const char *get_token_section_name(struct inputfile *inf)
 {
-  char *c, *start;
+  char *c;
+  char *start;
 
   assert(have_line(inf));
 
@@ -667,7 +671,9 @@ static const char *get_token_section_name(struct inputfile *inf)
 ***********************************************************************/
 static const char *get_token_entry_name(struct inputfile *inf)
 {
-  char *c, *start, *end;
+  char *c;
+  char *start;
+  char *end;
 
   assert(have_line(inf));
 
@@ -775,7 +781,8 @@ static const char *get_token_comma(struct inputfile *inf)
 static const char *get_token_value(struct inputfile *inf)
 {
   struct astring *partial;
-  char *c, *start;
+  char *c;
+  char *start;
   char trailing;
   bool has_i18n_marking = FALSE;
 

@@ -110,7 +110,8 @@ void astr_free(struct astring *astr)
 ****************************************************************************/
 static void vadd(struct astring *astr, const char *format, va_list ap)
 {
-  size_t new_len, nb;
+  size_t new_len;
+  size_t nb;
   char buf[1024];
 
   nb = my_vsnprintf(buf, sizeof(buf), format, ap);

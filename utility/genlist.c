@@ -30,7 +30,8 @@
    data, and pointers to the next and previous elements:
 */
 struct _genlist_link {
-  genlist_link *next, *prev;
+  genlist_link *next;
+  genlist_link *prev;
   void *dataptr;
 };
 

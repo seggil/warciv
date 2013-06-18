@@ -65,7 +65,7 @@ struct sbuffer {
 
 /* used to try to align returned memory pessimisticly: */
 struct aligner {
-  union {
+  union aligner_u {
     /* double d; */      /* (un)necessary? */
     long l;
     void *v;
