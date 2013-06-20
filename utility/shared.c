@@ -1963,7 +1963,7 @@ struct string_iter
   union string_iter_u {
     struct string_vector *psv;
     const struct string_vector *pcsv;
-  };
+  } u;
   size_t index;
   bool removed;
 };
@@ -2000,7 +2000,7 @@ static void *string_iter_get(const struct iterator *string_iter)
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 
-  return (void *) string_vector_get(iter->pcsv, iter->index);
+  return (void *) string_vector_get(iter->u.pcsv, iter->index);
 }
 
 /**************************************************************************
@@ -2010,7 +2010,7 @@ static bool string_iter_valid(const struct iterator *string_iter)
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 
-  return string_vector_index_valid(iter->pcsv, iter->index);
+  return string_vector_index_valid(iter->u.pcsv, iter->index);
 }
 
 /**************************************************************************
@@ -2022,7 +2022,7 @@ struct iterator *string_iter_init(struct string_iter *iter,
   iter->vtable.next = string_iter_next;
   iter->vtable.get = string_iter_get;
   iter->vtable.valid = string_iter_valid;
-  iter->pcsv = psv;
+  iter->u.pcsv = psv;
   iter->index = 0;
   iter->removed = FALSE;
 
@@ -2036,7 +2036,7 @@ const char *string_iter_get_string(const struct iterator *string_iter)
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 
-  return string_vector_get(iter->pcsv, iter->index);
+  return string_vector_get(iter->u.pcsv, iter->index);
 }
 
 /**************************************************************************
@@ -2055,7 +2055,7 @@ void string_iter_insert_before(const struct iterator *string_iter,
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 
-  string_vector_insert(iter->psv, iter->index, string);
+  string_vector_insert(iter->u.psv, iter->index, string);
 }
 
 /**************************************************************************
@@ -2066,7 +2066,7 @@ void string_iter_insert_after(const struct iterator *string_iter,
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 
-  string_vector_insert(iter->psv, iter->index + 1, string);
+  string_vector_insert(iter->u.psv, iter->index + 1, string);
 }
 
 /**************************************************************************
@@ -2076,7 +2076,7 @@ void string_iter_set(struct iterator *string_iter, const char *string)
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 
-  string_vector_set(iter->psv, iter->index, string);
+  string_vector_set(iter->u.psv, iter->index, string);
 }
 
 /**************************************************************************
@@ -2086,7 +2086,7 @@ void string_iter_remove(struct iterator *string_iter)
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 
-  if (string_vector_remove(iter->psv, iter->index)) {
+  if (string_vector_remove(iter->u.psv, iter->index)) {
     /* Prevent to jump over a string in the iteration. */
     iter->removed = TRUE;
   }
