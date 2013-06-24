@@ -1363,15 +1363,14 @@ void request_execute_delayed_goto(tile_t *ptile, int dg)
       case DGT_CITIES:
         /* Build city */
         send_goto_unit(punit, dgd->ptile);
-        request_unit_build_city(punit);
+        request_unit_build_city_random_name(punit);
         punit->is_new = FALSE;
         break;
       case DGT_FORT:
         /* Build fortress */
         send_goto_unit(punit, dgd->ptile);
-        if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_FORTRESS)) {
-          key_unit_fortress();
-        }
+        request_new_unit_activity_targeted(punit, 
+                                           ACTIVITY_FORTRESS, S_FORTRESS);
         punit->is_new = FALSE;
         break;
       case DGT_PILLAGE:
@@ -1383,8 +1382,8 @@ void request_execute_delayed_goto(tile_t *ptile, int dg)
       case DGT_ROAD:
         send_goto_unit(punit, dgd->ptile);
         request_new_unit_activity_targeted(punit,
-                                           ACTIVITY_RAILROAD, S_RAILROAD );
-        request_new_unit_activity_targeted(punit,ACTIVITY_ROAD, S_ROAD );
+                                           ACTIVITY_RAILROAD, S_RAILROAD);
+        request_new_unit_activity_targeted(punit,ACTIVITY_ROAD, S_ROAD);
         punit->is_new = FALSE;
         break;
       default:
