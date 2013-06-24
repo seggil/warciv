@@ -63,7 +63,7 @@ libcivcommon_a_SOURCES = \
 		version.h
 
 #BUILT_SOURCES = packets_gen.c packets_gen.h wc_svnrev_gen.h
-BUILT_SOURCES = wc_svnrev_gen.h
+BUILT_SOURCES =
 
 # ./generate_packets makes both packets_gen.[ch]
 # Feed the dependence through a fake intermediate file to avoid
