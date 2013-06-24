@@ -1109,6 +1109,27 @@ void request_unit_build_city(struct unit *punit)
 }
 
 /**************************************************************************
++The same as above except if there is no name sugestion from server
++then is picked up some random name for city
++**************************************************************************/
+void request_unit_build_city_random_name (struct unit* punit )
+{
+  int random_nmb;
+  char *name;
+  if (can_unit_build_city(punit)) {
+    dsend_packet_city_name_suggestion_req(&aconnection, punit->id);
+    /* the reply will trigger a dialog to name the new city */
+  } else {
+    if (!(name = malloc((5) * sizeof(char)))) {
+      freelog(LOG_ERROR, "malloc failed in function request_unit_build_city_random_name");
+    }
+    random_nmb=rand() % 9999;
+    snprintf(name,5,"%d",random_nmb);
+    dsend_packet_unit_build_city(&aconnection, punit->id, name);
+  }
+}
+
+/**************************************************************************
   This function is called whenever the player pressed an arrow key.
 
   We do NOT take into account that punit might be a caravan or a diplomat
