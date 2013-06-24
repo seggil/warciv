@@ -149,6 +149,7 @@ void request_unit_load(struct unit *pcargo, struct unit *ptransporter);
 void request_unit_unload(struct unit *pcargo);
 void request_unit_auto(struct unit *punit);
 void request_unit_build_city(struct unit *punit);
+void request_unit_build_city_random_name(struct unit* punit);
 void request_unit_caravan_action(struct unit *punit, enum packet_type action);
 void request_unit_change_homecity(struct unit *punit);
 void request_unit_connect(enum unit_activity activity);
