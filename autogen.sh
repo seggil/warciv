@@ -7,7 +7,7 @@ WANT_AUTOMAKE=1.8
 export WANT_AUTOMAKE
 
 DIE=0
-package=freeciv
+package=warciv
 srcfile=client/civclient.c
 
 SRCDIR=`dirname $0`
@@ -16,23 +16,23 @@ BUILDDIR=`pwd`
 # Uncomment the line below to debug this file
 #DEBUG=defined
 
-FC_USE_NLS=yes
-FC_HELP=no
-FC_RUN_CONFIGURE=yes
+WC_USE_NLS=yes
+WC_HELP=no
+WC_RUN_CONFIGURE=yes
 
 # Leave out NLS checks
 for NAME in $@ ; do
   if [ "x$NAME" = "x--help" ]; then 
-    FC_HELP=yes
+    WC_HELP=yes
   fi
   if [ "x$NAME" = "x--disable-nls" ]; then 
     echo "! nls checks disabled"
-    FC_USE_NLS=no
+    WC_USE_NLS=no
   fi
   if [ "x$NAME" = "x--no-configure-run" ]; then 
-    FC_RUN_CONFIGURE=no
+    WC_RUN_CONFIGURE=no
   fi
-  FC_NEWARGLINE="$FC_NEWARGLINE $NAME"
+  WC_NEWARGLINE="$WC_NEWARGLINE $NAME"
 done
 
 debug ()
@@ -243,7 +243,7 @@ AUTOMAKE=$REALPKGNAME
 real_package_name "aclocal" "ftp://ftp.gnu.org/pub/gnu/automake/" 1 6 || DIE=1
 ACLOCAL=$REALPKGNAME
 
-if [ "$FC_USE_NLS" = "yes" ]; then
+if [ "$WC_USE_NLS" = "yes" ]; then
   DIE2=0
   version_check 1 "xgettext" "xgettext" "ftp://ftp.gnu.org/pub/gnu/gettext/" 0 10 36 || DIE2=1
   version_check 1 "msgfmt" "msgfmt" "ftp://ftp.gnu.org/pub/gnu/gettext/" 0 10 36 || DIE2=1
@@ -293,30 +293,30 @@ echo "+ removing config.cache ... "
 rm -f config.cache
 
 # exit if we did --no-configure-run
-if [ "$FC_RUN_CONFIGURE" = "no" ]; then
+if [ "$WC_RUN_CONFIGURE" = "no" ]; then
   echo
-  echo "Now type 'configure' to configure $package."
+  echo "Now type './configure' to configure $package."
   exit 0
 fi
  
 echo "+ running configure ... "
 echo
-if [ -z "$FC_NEWARGLINE" ]; then
+if [ -z "$WC_NEWARGLINE" ]; then
   echo "I am going to run ./configure with no arguments - if you wish "
   echo "to pass any to it, please specify them on the $0 command line."
 else
-  echo "using: $FC_NEWARGLINE"
+  echo "using: $WC_NEWARGLINE"
 fi
 echo
 
-$SRCDIR/configure $FC_NEWARGLINE || {
+$SRCDIR/configure $WC_NEWARGLINE || {
   echo
   echo "configure failed"
   exit 1
 }
 
 # abort if we did --help
-if [ "$FC_HELP" = "yes" ]; then
+if [ "$WC_HELP" = "yes" ]; then
   exit 1
 fi
 
@@ -324,3 +324,4 @@ echo
 echo "Now type 'make' to compile $package."
 
 exit 0
+
