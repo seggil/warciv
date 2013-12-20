@@ -50,7 +50,7 @@ void map_scrollbars_callback(struct client_option *poption);
 void mapview_redraw_callback(struct client_option *poption);
 void split_message_window_callback(struct client_option *poption);
 
-static const char *category_name[COC_NUM] = {
+static const char *category_name[COC_NUM] = { /* client_option_category */
   N_("Graphics"),               /* COC_GRAPHICS */
   N_("Interface"),              /* COC_INTERFACE */
   N_("Sound"),                  /* COC_SOUND */
