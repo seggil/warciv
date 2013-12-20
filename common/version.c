@@ -57,7 +57,7 @@ const char *warciv_name_version(void)
 {
   static char msgbuf[128];
 
-#if IS_BETA_VERSION
+#if defined(IS_BETA_VERSION)
   my_snprintf(msgbuf, sizeof (msgbuf), _("Warciv version %s %s"),
               VERSION_STRING, _("(beta version)"));
 #else
@@ -73,7 +73,7 @@ const char *warciv_name_version(void)
 ***********************************************************************/
 const char *word_version(void)
 {
-#if IS_BETA_VERSION
+#if defined(IS_BETA_VERSION)
   return _("betatest version ");
 #else
   return _("version ");
@@ -100,7 +100,7 @@ const char *wc_svn_revision(void)
 ***********************************************************************/
 const char *beta_message(void)
 {
-#if IS_BETA_VERSION
+#if defined(IS_BETA_VERSION)
   static char msgbuf[128];
   static const char *month[] =
   {
