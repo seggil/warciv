@@ -60,9 +60,10 @@ AC_ARG_ENABLE(server,
 AM_CONDITIONAL(SERVER, test x$server = xtrue)
 
 AC_ARG_WITH(readline,
-[  --with-readline         support fancy command line editing],
-WITH_READLINE=$withval,	dnl yes/no - required to use / never use
-WITH_READLINE="maybe"	dnl maybe  - use if found [default]
+  AS_HELP_STRING([--with-readline],
+                 [support fancy command line editing]),
+  WITH_READLINE=$withval,   dnl yes/no - required to use / never use
+  WITH_READLINE="maybe"     dnl maybe  - use if found [default]
 )
 
 AC_HEADER_ASSERT
