@@ -1,4 +1,4 @@
-# Do checks for Freeciv mysql database support
+# Do checks for Warciv mysql database support
 #
 # Called without any parameters.
 
