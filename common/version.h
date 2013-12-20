@@ -14,9 +14,9 @@
 #define WC_COMMON_VERSION_H
 
 #ifdef HAVE_CONFIG_H
-#ifndef WC_CONFIG_H             /* this should be defined in config.h */
-#error Files including versions.h should also include config.h directly
-#endif
+#  ifndef WC_CONFIG_H             /* this should be defined in config.h */
+#    error Files including versions.h should also include config.h directly
+#  endif
 #endif
 
 /* The following is for the benefit (?) of non-configure make methods. */
@@ -28,29 +28,29 @@
 #define MINOR_VERSION           0
 #endif
 #ifndef PATCH_VERSION
-#define PATCH_VERSION           10
+#  define PATCH_VERSION           10
 #endif
 #ifndef WARCLIENT_VERSION
-#define WARCLIENT_VERSION       5
+#  define WARCLIENT_VERSION       5
 #endif
 #ifndef VERSION_LABEL
-#define VERSION_LABEL           ""
+#  define VERSION_LABEL           ""
 #endif
 #ifndef IS_DEVEL_VERSION
-#define IS_DEVEL_VERSION        0
+#  define IS_DEVEL_VERSION        0
 #endif
 #ifndef IS_BETA_VERSION
-#define IS_BETA_VERSION         0
+#  define IS_BETA_VERSION         0
 #endif
 
 /* This is only used if IS_BETA_VERSION is true. */
 #ifndef NEXT_STABLE_VERSION
-#define NEXT_STABLE_VERSION     "2.0.3"
+#  define NEXT_STABLE_VERSION     "2.0.3"
 #endif
 /* This is only used in version.c, and only if IS_BETA_VERSION is true.
    The month[] array is defined in version.c (index: 1==Jan, 2==Feb, ...). */
 #ifndef NEXT_RELEASE_MONTH
-#define NEXT_RELEASE_MONTH      (month[7])
+#  define NEXT_RELEASE_MONTH      (month[7])
 #endif
 
 #define VER_STRINGIFY1(x) #x

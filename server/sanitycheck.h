@@ -15,8 +15,8 @@
 
 #include "wc_types.h"
 
-#if ( (IS_BETA_VERSION || IS_DEVEL_VERSION) \
-      && !defined NDEBUG) \
+#if ( (defined(IS_BETA_VERSION) || defined(IS_DEVEL_VERSION)) \
+      && !defined(NDEBUG) ) \
     || defined DEBUG
 #  define SANITY_CHECKING
 #endif
