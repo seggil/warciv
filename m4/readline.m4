@@ -30,7 +30,7 @@ AC_TRY_RUN([
 #define TEMP_FILE "./conftest.readline.runtime"
 
 static void handle_readline_input_callback(char *line) {
-/* Generally taken from freeciv-1.11.4/server/sernet.c. */
+/* Generally taken from warciv-1.11.4/server/sernet.c. */
   if(line) {
     if(*line)
       add_history(line);
