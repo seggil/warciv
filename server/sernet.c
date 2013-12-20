@@ -73,6 +73,7 @@
 #  include <ws2tcpip.h>
 #endif
 
+#include "version.h"
 #include "wc_iconv.h"
 
 #include "capability.h"
