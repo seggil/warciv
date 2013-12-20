@@ -44,7 +44,7 @@ endif
 pkgdata_DATA = $(SERVER_FILES) $(CLIENT_FILES)
 
 EXTRA_DIST =            \
-	Freeciv	        \
+	Warciv	        \
 	warciv.rc-2.0	\
 	isophex.tilespec	 \
 	isotrident.tilespec      \
