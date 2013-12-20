@@ -18,7 +18,7 @@ BUILDDIR=`pwd`
 
 WC_USE_NLS=yes
 WC_HELP=no
-WC_RUN_CONFIGURE=yes
+WC_RUN_CONFIGURE=no
 
 # Leave out NLS checks
 for NAME in $@ ; do
