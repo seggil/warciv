@@ -27,7 +27,7 @@ SERVER_FILES =              \
 	database.lua	\
 	example-actions.txt \
 	example-welcome.txt \
-	fcdb.sql	    \
+	wcdb.sql	    \
 	history.serv	    \
 	nowonder+1.2.serv   \
 	nowonder+-1.3.serv  \
@@ -64,7 +64,7 @@ EXTRA_DIST =            \
 	example-actions.txt	\
 	example-welcome.txt	\
 	auth.sql	        \
-	fcdb.sql	        \
+	wcdb.sql	        \
 	database.lua		\
 	stdsounds.soundspec
 
