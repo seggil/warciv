@@ -43,7 +43,9 @@ static bool is_init = FALSE;
 static char convert_buffer[4096];
 
 #ifdef HAVE_ICONV
-static const char *local_encoding, *data_encoding, *internal_encoding;
+static const char *local_encoding;
+static const char *data_encoding;
+static const char *internal_encoding;
 static const char *transliteration_string;
 #else
 /* Hack to confuse the compiler into working. */
@@ -80,15 +82,15 @@ void init_character_encodings(char *my_internal_encoding,
    * then ask the system. */
   local_encoding = getenv("WARCIV_LOCAL_ENCODING");
   if (!local_encoding) {
-#ifdef HAVE_LIBCHARSET
+#  ifdef HAVE_LIBCHARSET
     local_encoding = my_locale_charset();
-#else
-# ifdef HAVE_LANGINFO_CODESET
+#  else
+#    ifdef HAVE_LANGINFO_CODESET
     local_encoding = nl_langinfo(CODESET);
-# else
+#    else
     local_encoding = "";
-# endif
-#endif
+#    endif
+#  endif
     if (mystrcasecmp(local_encoding, "ANSI_X3.4-1968") == 0
         || mystrcasecmp(local_encoding, "ASCII") == 0
         || mystrcasecmp(local_encoding, "US-ASCII") == 0) {
@@ -117,15 +119,15 @@ void init_character_encodings(char *my_internal_encoding,
     }
   }
 
-#ifdef ENABLE_NLS
+#  ifdef ENABLE_NLS
   bind_textdomain_codeset(PACKAGE, internal_encoding);
-#endif
+#  endif
 
-#ifdef FIXME
+#  ifdef FIXME
   /* FIXME: Remove this output when this code has stabilized. */
   fprintf(stderr, "Encodings: Data=%s, Local=%s, Internal=%s\n",
           data_encoding, local_encoding, internal_encoding);
-#endif
+#  endif
 
 #else
 #  error No iconv present!
