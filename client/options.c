@@ -579,7 +579,7 @@ struct client_option client_options[] = {
                           "how tiles, cities, and units are drawn in the map "
                           "overview window"),
                        CLIENT_OPTION_CATEGORY_GRAPHICS,
-                       PCM_CLASSIC,
+                       PLAYER_COLORS_MODES_CLASSIC,
                        player_colors_mode_get_name,
                        player_colors_mode_option_callback),
 
