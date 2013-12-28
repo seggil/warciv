@@ -1458,11 +1458,13 @@ static void option_dialog_callback(GtkWidget *window, gint rid)
 *****************************************************************/
 static void create_option_dialog(void)
 {
-  GtkWidget *notebook, *sw, *vbox[COC_NUM], *hbox, *ebox;
+  GtkWidget *notebook, *sw;
+  GtkWidget *vbox[CLIENT_OPTION_CATEGORY_NUM];
+  GtkWidget *hbox, *ebox;
   static GtkStyle *style = NULL;
   GtkTooltips *tips;
   int i;
-  bool even[COC_NUM];
+  bool even[CLIENT_OPTION_CATEGORY_NUM];
 
   if (!style) {
     style = gtk_style_new();
@@ -1492,7 +1494,7 @@ static void create_option_dialog(void)
                      notebook, TRUE, TRUE, 2);
 
   /* Build the pages */
-  for (i = 0; i < COC_NUM; i++) {
+  for (i = 0; i < CLIENT_OPTION_CATEGORY_NUM; i++) {
     sw = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
                                    GTK_POLICY_AUTOMATIC,
@@ -1671,16 +1673,16 @@ static void create_option_dialog(void)
   /* Extra options (e.g. chat colors) */
   extra_options = extra_option_list_new();
 
-  extra_option_new(create_chatline_config(), vbox[COC_CHAT],
+  extra_option_new(create_chatline_config(), vbox[CLIENT_OPTION_CATEGORY_CHAT],
                    _("Chat colors configuration"),
                    apply_chatline_config, refresh_chatline_config,
                    reset_chatline_config, reload_chatline_config);
-  extra_option_new(create_messages_configuration(), vbox[COC_MESSAGE],
+  extra_option_new(create_messages_configuration(), vbox[CLIENT_OPTION_CATEGORY_MESSAGE],
                    _("Message options"),
                    apply_message_options, refresh_message_options,
                    reset_message_options, reload_message_options);
   if (get_client_state() >= CLIENT_SELECT_RACE_STATE) {
-    extra_option_new(create_worklists_report(), vbox[COC_GAMEPLAY],
+    extra_option_new(create_worklists_report(), vbox[CLIENT_OPTION_CATEGORY_GAMEPLAY],
                      _("Global Worklists"),
                      apply_global_worklists, refresh_global_worklists,
                      reset_global_worklists, reload_global_worklists);
