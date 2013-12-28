@@ -310,7 +310,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                                  \
   .help_text = ohelp,                                                    \
   .category = ocat,                                                      \
-  .type = COT_INTEGER,                                                   \
+  .type = CLIENT_OPTION_TYPE_INTEGER,                                    \
   {                                                                      \
     .integer = {                                                         \
       .pvalue = &oname,                                                  \
@@ -327,7 +327,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                       \
   .help_text = ohelp,                                         \
   .category = ocat,                                           \
-  .type = COT_BOOLEAN,                                        \
+  .type = CLIENT_OPTION_TYPE_BOOLEAN,                         \
   {                                                           \
     .boolean = {                                              \
       .pvalue = &oname,                                       \
@@ -342,7 +342,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                      \
   .help_text = ohelp,                                        \
   .category = ocat,                                          \
-  .type = COT_STRING,                                        \
+  .type = CLIENT_OPTION_TYPE_STRING,                         \
   {                                                          \
     .string = {                                              \
       .pvalue = oname,                                       \
@@ -359,7 +359,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                      \
   .help_text = ohelp,                                        \
   .category = ocat,                                          \
-  .type = COT_PASSWORD,                                      \
+  .type = CLIENT_OPTION_TYPE_PASSWORD,                       \
   {                                                          \
     .string = {                                              \
       .pvalue = oname,                                       \
@@ -376,7 +376,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                                 \
   .help_text = ohelp,                                                   \
   .category = ocat,                                                     \
-  .type = COT_STRING,                                                   \
+  .type = CLIENT_OPTION_TYPE_STRING,                                    \
   {                                                                     \
     .string = {                                                         \
       .pvalue = oname,                                                  \
@@ -393,7 +393,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                          \
   .help_text = ohelp,                                            \
   .category = ocat,                                              \
-  .type = COT_STRING_VEC,                                        \
+  .type = CLIENT_OPTION_TYPE_STRING_VEC,                         \
   {                                                              \
     .string_vec = {                                              \
       .pvector = &oname,                                         \
@@ -408,7 +408,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                                  \
   .help_text = ohelp,                                                    \
   .category = ocat,                                                      \
-  .type = COT_ENUM_LIST,                                                 \
+  .type = CLIENT_OPTION_TYPE_ENUM_LIST,                                  \
   {                                                                      \
     .enum_list = {                                                       \
       .pvalue = (int *)(void *) &oname,                                  \
@@ -424,7 +424,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                                        \
   .help_text = ohelp,                                                          \
   .category = ocat,                                                            \
-  .type = COT_FILTER,                                                          \
+  .type = CLIENT_OPTION_TYPE_FILTER,                                           \
   {                                                                            \
     .filter = {                                                                \
       .pvalue = &oname,                                                        \
@@ -442,7 +442,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .description = odesc,                                                     \
   .help_text = ohelp,                                                       \
   .category = ocat,                                                         \
-  .type = COT_VOLUME,                                                       \
+  .type = CLIENT_OPTION_TYPE_VOLUME,                                        \
   {                                                                         \
     .integer = {                                                            \
       .pvalue = &oname,                                                     \
@@ -1458,17 +1458,17 @@ void client_options_init(void)
 
   client_options_iterate(op) {
     switch (op->type) {
-    case COT_BOOLEAN:
+    case CLIENT_OPTION_TYPE_BOOLEAN:
       *op->u.boolean.pvalue = op->u.boolean.def;
       continue;
-    case COT_INTEGER:
-    case COT_VOLUME:
+    case CLIENT_OPTION_TYPE_INTEGER:
+    case CLIENT_OPTION_TYPE_VOLUME:
       assert(op->u.integer.def >= op->u.integer.min);
       assert(op->u.integer.def <= op->u.integer.max);
       *op->u.integer.pvalue = op->u.integer.def;
       continue;
-    case COT_STRING:
-    case COT_PASSWORD:
+    case CLIENT_OPTION_TYPE_STRING:
+    case CLIENT_OPTION_TYPE_PASSWORD:
       /* HACK: fix default username */
       if (op->u.string.pvalue == default_user_name) {
         op->u.string.def = user_username();
@@ -1479,7 +1479,7 @@ void client_options_init(void)
       }
       mystrlcpy(op->u.string.pvalue, op->u.string.def, op->u.string.size);
       continue;
-    case COT_STRING_VEC:
+    case CLIENT_OPTION_TYPE_STRING_VEC:
       *op->u.string_vec.pvector = string_vector_new();
       if (op->u.string_vec.def) {
         /* Fill with default values. */
@@ -1487,12 +1487,12 @@ void client_options_init(void)
         string_vector_remove_empty(*op->u.string_vec.pvector);
       }
       continue;
-    case COT_ENUM_LIST:
+    case CLIENT_OPTION_TYPE_ENUM_LIST:
       assert(NULL != op->u.enum_list.str_accessor);
       assert(NULL != op->u.enum_list.str_accessor(op->u.enum_list.def));
       *op->u.enum_list.pvalue = op->u.enum_list.def;
       continue;
-    case COT_FILTER:
+    case CLIENT_OPTION_TYPE_FILTER:
       *op->u.filter.pvalue = op->u.filter.def;
       continue;
     }
@@ -1511,19 +1511,19 @@ void client_options_free(void)
 {
   client_options_iterate(op) {
     switch (op->type) {
-    case COT_STRING_VEC:
+    case CLIENT_OPTION_TYPE_STRING_VEC:
       if (NULL != *op->u.string_vec.pvector) {
         string_vector_destroy(*op->u.string_vec.pvector);
         *op->u.string_vec.pvector = NULL;
       }
       break;
-    case COT_BOOLEAN:
-    case COT_INTEGER:
-    case COT_VOLUME:
-    case COT_STRING:
-    case COT_PASSWORD:
-    case COT_ENUM_LIST:
-    case COT_FILTER:
+    case CLIENT_OPTION_TYPE_BOOLEAN:
+    case CLIENT_OPTION_TYPE_INTEGER:
+    case CLIENT_OPTION_TYPE_VOLUME:
+    case CLIENT_OPTION_TYPE_STRING:
+    case CLIENT_OPTION_TYPE_PASSWORD:
+    case CLIENT_OPTION_TYPE_ENUM_LIST:
+    case CLIENT_OPTION_TYPE_FILTER:
       break;
     }
   } client_options_iterate_end;
@@ -1619,7 +1619,7 @@ bool load_option_bool(struct section_file *file,
                       struct client_option *op, bool def)
 {
   assert(file != NULL);
-  assert(op != NULL && op->type == COT_BOOLEAN);
+  assert(op != NULL && op->type == CLIENT_OPTION_TYPE_BOOLEAN);
 
   return secfile_lookup_bool_default(file, def, "client.%s", op->name);
 }
@@ -1633,7 +1633,7 @@ int load_option_int(struct section_file *file,
   int value;
 
   assert(file != NULL);
-  assert(op != NULL && (op->type == COT_INTEGER || op->type == COT_VOLUME));
+  assert(op != NULL && (op->type == CLIENT_OPTION_TYPE_INTEGER || op->type == CLIENT_OPTION_TYPE_VOLUME));
 
   value = secfile_lookup_int_default(file, def, "client.%s", op->name);
 
@@ -1654,7 +1654,7 @@ const char *load_option_string(struct section_file *file,
                                struct client_option *op, const char *def)
 {
   assert(file != NULL);
-  assert(op != NULL && (op->type == COT_STRING || op->type == COT_PASSWORD));
+  assert(op != NULL && (op->type == CLIENT_OPTION_TYPE_STRING || op->type == CLIENT_OPTION_TYPE_PASSWORD));
 
   return secfile_lookup_str_default(file, def, "client.%s", op->name);
 }
@@ -1672,7 +1672,7 @@ void load_option_string_vec(struct section_file *file,
   int size;
 
   assert(file != NULL);
-  assert(op != NULL && op->type == COT_STRING_VEC);
+  assert(op != NULL && op->type == CLIENT_OPTION_TYPE_STRING_VEC);
   assert(vector != NULL);
 
   vec = secfile_lookup_str_vec(file, &size, "client.%s", op->name);
@@ -1699,7 +1699,7 @@ int load_option_enum_list(struct section_file *file,
   int value;
 
   assert(file != NULL);
-  assert(op != NULL && op->type == COT_ENUM_LIST);
+  assert(op != NULL && op->type == CLIENT_OPTION_TYPE_ENUM_LIST);
 
   value = revert_str_accessor(op->u.enum_list.str_accessor,
                               secfile_lookup_str_default(file, NULL,
@@ -1724,7 +1724,7 @@ filter load_option_filter(struct section_file *file,
   filter ret = 0, f;
 
   assert(file != NULL);
-  assert(op != NULL && op->type == COT_FILTER);
+  assert(op != NULL && op->type == CLIENT_OPTION_TYPE_FILTER);
 
   vec = secfile_lookup_str_vec(file, &size, "client.%s", op->name);
   if (!vec || !size) {
@@ -1769,26 +1769,26 @@ void load_general_options(void)
 
   client_options_iterate(op) {
     switch (op->type) {
-    case COT_BOOLEAN:
+    case CLIENT_OPTION_TYPE_BOOLEAN:
       *op->u.boolean.pvalue = load_option_bool(&sf, op, op->u.boolean.def);
       break;
-    case COT_INTEGER:
-    case COT_VOLUME:
+    case CLIENT_OPTION_TYPE_INTEGER:
+    case CLIENT_OPTION_TYPE_VOLUME:
       *op->u.integer.pvalue = load_option_int(&sf, op, op->u.integer.def);
       break;
-    case COT_STRING:
-    case COT_PASSWORD:
+    case CLIENT_OPTION_TYPE_STRING:
+    case CLIENT_OPTION_TYPE_PASSWORD:
       mystrlcpy(op->u.string.pvalue, load_option_string(&sf, op, op->u.string.def),
                 op->u.string.size);
       break;
-    case COT_STRING_VEC:
+    case CLIENT_OPTION_TYPE_STRING_VEC:
       load_option_string_vec(&sf, op, op->u.string_vec.def, *op->u.string_vec.pvector);
       break;
-    case COT_ENUM_LIST:
+    case CLIENT_OPTION_TYPE_ENUM_LIST:
       *op->u.enum_list.pvalue =
           load_option_enum_list(&sf, op, op->u.enum_list.def);
       break;
-    case COT_FILTER:
+    case CLIENT_OPTION_TYPE_FILTER:
       *op->u.filter.pvalue = load_option_filter(&sf, op, op->u.filter.def);
       break;
     }
@@ -1870,18 +1870,18 @@ void save_options(void)
 
   client_options_iterate(op) {
     switch (op->type) {
-    case COT_BOOLEAN:
+    case CLIENT_OPTION_TYPE_BOOLEAN:
       secfile_insert_bool(&sf, *op->u.boolean.pvalue, "client.%s", op->name);
       break;
-    case COT_INTEGER:
-    case COT_VOLUME:
+    case CLIENT_OPTION_TYPE_INTEGER:
+    case CLIENT_OPTION_TYPE_VOLUME:
       secfile_insert_int(&sf, *op->u.integer.pvalue, "client.%s", op->name);
       break;
-    case COT_STRING:
-    case COT_PASSWORD:
+    case CLIENT_OPTION_TYPE_STRING:
+    case CLIENT_OPTION_TYPE_PASSWORD:
       secfile_insert_str(&sf, op->u.string.pvalue, "client.%s", op->name);
       break;
-    case COT_STRING_VEC:
+    case CLIENT_OPTION_TYPE_STRING_VEC:
       if (string_vector_size(*op->u.string_vec.pvector) > 0) {
         secfile_insert_str_vec(&sf, string_vector_data(*op->u.string_vec.pvector),
                                string_vector_size(*op->u.string_vec.pvector),
@@ -1892,11 +1892,11 @@ void save_options(void)
         secfile_insert_str(&sf, "", "client.%s", op->name);
       }
       break;
-    case COT_ENUM_LIST:
+    case CLIENT_OPTION_TYPE_ENUM_LIST:
       secfile_insert_str(&sf, op->u.enum_list.str_accessor(*op->u.enum_list.pvalue),
                          "client.%s", op->name);
       break;
-    case COT_FILTER:
+    case CLIENT_OPTION_TYPE_FILTER:
       {
 #define MAX_VALUES 64
         const char *values[MAX_VALUES];
