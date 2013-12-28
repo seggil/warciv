@@ -3084,6 +3084,6 @@ void put_last_unit_focus(void)
 **************************************************************************/
 void key_cycle_player_colors_modes(void)
 {
-  player_colors_mode = (player_colors_mode + 1) % NUM_PLAYER_COLORS_MODES;
+  player_colors_mode = (player_colors_mode + 1) % PLAYER_COLORS_MODES_NUM;
   player_colors_mode_changed();
 }
