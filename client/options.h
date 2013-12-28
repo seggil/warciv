@@ -48,10 +48,9 @@ enum client_option_type {
 };
 
 enum player_colors_modes {
-  PCM_CLASSIC = 0,
-  PCM_TEAM,
-
-  NUM_PLAYER_COLORS_MODES
+  PLAYER_COLORS_MODES_CLASSIC = 0,
+  PLAYER_COLORS_MODES_TEAM,
+  PLAYER_COLORS_MODES_NUM
 };
 
 struct client_option {

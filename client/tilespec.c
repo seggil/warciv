@@ -3169,13 +3169,13 @@ static enum color_std team_overview_tile_color(tile_t *ptile)
 void player_colors_init(void)
 {
   switch (player_colors_mode) {
-  case PCM_CLASSIC:
+  case PLAYER_COLORS_MODES_CLASSIC:
     classic_player_colors_init();
     return;
-  case PCM_TEAM:
+  case PLAYER_COLORS_MODES_TEAM:
     team_player_colors_init();
     return;
-  case NUM_PLAYER_COLORS_MODES:
+  case PLAYER_COLORS_MODES_NUM:
     /* Not a valid case */
     break;
   }
@@ -3191,11 +3191,11 @@ void player_colors_init(void)
 enum color_std overview_tile_color(tile_t *ptile)
 {
   switch (player_colors_mode) {
-  case PCM_CLASSIC:
+  case PLAYER_COLORS_MODES_CLASSIC:
     return classic_overview_tile_color(ptile);
-  case PCM_TEAM:
+  case PLAYER_COLORS_MODES_TEAM:
     return team_overview_tile_color(ptile);
-  case NUM_PLAYER_COLORS_MODES:
+  case PLAYER_COLORS_MODES_NUM:
     /* Not a valid case */
     break;
   }
@@ -3212,11 +3212,11 @@ enum color_std overview_tile_color(tile_t *ptile)
 const char *player_colors_mode_get_name(enum player_colors_modes mode)
 {
   switch (mode) {
-  case PCM_CLASSIC:
+  case PLAYER_COLORS_MODES_CLASSIC:
     return N_("Classic");
-  case PCM_TEAM:
+  case PLAYER_COLORS_MODES_TEAM:
     return N_("Team");
-  case NUM_PLAYER_COLORS_MODES:
+  case PLAYER_COLORS_MODES_NUM:
     /* Not a valid case */
     break;
   }
