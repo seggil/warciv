@@ -1018,7 +1018,7 @@ int num_present_units_in_city(city_t *pcity)
 void handle_event(char *message, tile_t *ptile,
                   enum event_type event, int conn_id)
 {
-  int where = MW_OUTPUT;        /* where to display the message */
+  int where = MSG_TO_OUTPUT_WIN;        /* where to display the message */
 
   if (event >= E_LAST) {
     /* Server may have added a new event; leave as MW_OUTPUT */
@@ -1027,17 +1027,17 @@ void handle_event(char *message, tile_t *ptile,
     where = messages_where[event];
   }
 
-  if (BOOL_VAL(where & MW_OUTPUT)
+  if (BOOL_VAL(where & MSG_TO_OUTPUT_WIN)
       || get_client_state() != CLIENT_GAME_RUNNING_STATE) {
     /* When the game isn't running, the messages dialog isn't present and
      * we want to send all messages to the chatline.  There shouldn't be
      * any problem with server spam in pregame anyway. */
     append_output_window_full(message, conn_id);
   }
-  if (BOOL_VAL(where & MW_MESSAGES)) {
+  if (BOOL_VAL(where & MSG_TO_MESSAGES_WIN)) {
     add_notify_window(message, ptile, event);
   }
-  if (BOOL_VAL(where & MW_POPUP) && get_player_ptr()
+  if (BOOL_VAL(where & MSG_TO_POPUP_WIN) && get_player_ptr()
       && (!get_player_ptr()->ai.control || ai_popup_windows)) {
     popup_notify_goto_dialog(_("Popup Request"), message, ptile);
   }

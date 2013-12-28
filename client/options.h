@@ -233,10 +233,10 @@ extern view_option view_options[];
 /** Message Options: **/
 
 /* for specifying which event messages go where: */
-#define NUM_MW 3
-#define MW_OUTPUT    1          /* add to the output window */
-#define MW_MESSAGES  2          /* add to the messages window */
-#define MW_POPUP     4          /* popup an individual window */
+#define MSG_TO_NUM 3
+#define MSG_TO_OUTPUT_WIN    1          /* add to the output window */
+#define MSG_TO_MESSAGES_WIN  2          /* add to the messages window */
+#define MSG_TO_POPUP_WIN     4          /* popup an individual window */
 
 extern unsigned int messages_where[];   /* OR-ed MW_ values [E_LAST] */
 extern int sorted_events[];             /* [E_LAST], sorted by the
