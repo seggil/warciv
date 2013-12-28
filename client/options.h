@@ -114,14 +114,16 @@ struct client_option {
   /* volatile */
   void *gui_data;
 };
-extern struct client_option *const options;
-extern const int num_options;
 
-#define client_options_iterate(o)             \
+extern const unsigned int client_options_size;
+extern struct client_option client_options[];
+
+#define client_options_iterate(op)            \
 {                                             \
   int _i;                                     \
-  for (_i = 0; _i < num_options; _i++) {      \
-    struct client_option *o = options + _i;   \
+  struct client_option *op;                         \
+  for (_i = 0; _i < client_options_size; _i++) {   \
+    op = &client_options[_i];                      \
     {
 
 #define client_options_iterate_end            \
@@ -252,19 +254,19 @@ void save_options(void);
 
 void load_general_options(void);
 bool load_option_bool(struct section_file *file,
-                      struct client_option *o, bool def);
+                      struct client_option *op, bool def);
 int load_option_int(struct section_file *file,
-                    struct client_option *o, int def);
+                    struct client_option *op, int def);
 const char *load_option_string(struct section_file *file,
-                               struct client_option *o, const char *def);
+                               struct client_option *op, const char *def);
 void load_option_string_vec(struct section_file *file,
-                            struct client_option *o,
+                            struct client_option *op,
                             const char *const *def,
                             struct string_vector *vector);
 int load_option_enum_list(struct section_file *file,
-                          struct client_option *o, int def);
+                          struct client_option *op, int def);
 filter load_option_filter(struct section_file *file,
-                          struct client_option *o, filter def);
+                          struct client_option *op, filter def);
 
 const char *get_sound_tag_for_event(enum event_type event);
 bool is_city_event(enum event_type event);

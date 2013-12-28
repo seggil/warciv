@@ -454,7 +454,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .change_callback = ocb,                                                   \
 }
 
-static struct client_option client_options[] = {
+struct client_option client_options[] = {
   GEN_STR_LIST_OPTION(default_tileset_name, N_("Tileset"),
                       N_("By changing this option you change the active "
                          "tileset. This is the same as using the -t "
@@ -958,7 +958,7 @@ static struct client_option client_options[] = {
 #undef GEN_VOLUME_OPTION
 
 struct client_option *const options = client_options;
-const int num_options = ARRAY_SIZE(client_options);
+const unsigned int client_options_size = ARRAY_SIZE(client_options);
 
 /** View Options: **/
 
@@ -1233,47 +1233,47 @@ void client_options_init(void)
 {
   int i;
 
-  client_options_iterate(o) {
-    switch (o->type) {
+  client_options_iterate(op) {
+    switch (op->type) {
     case COT_BOOLEAN:
-      *o->u.boolean.pvalue = o->u.boolean.def;
+      *op->u.boolean.pvalue = op->u.boolean.def;
       continue;
     case COT_INTEGER:
     case COT_VOLUME:
-      assert(o->u.integer.def >= o->u.integer.min);
-      assert(o->u.integer.def <= o->u.integer.max);
-      *o->u.integer.pvalue = o->u.integer.def;
+      assert(op->u.integer.def >= op->u.integer.min);
+      assert(op->u.integer.def <= op->u.integer.max);
+      *op->u.integer.pvalue = op->u.integer.def;
       continue;
     case COT_STRING:
     case COT_PASSWORD:
       /* HACK: fix default username */
-      if (o->u.string.pvalue == default_user_name) {
-        o->u.string.def = user_username();
+      if (op->u.string.pvalue == default_user_name) {
+        op->u.string.def = user_username();
       }
       /* HACK: fix default tileset */
-      if (o->u.string.pvalue == default_tileset_name) {
-        o->u.string.def = get_default_tilespec_name();
+      if (op->u.string.pvalue == default_tileset_name) {
+        op->u.string.def = get_default_tilespec_name();
       }
-      mystrlcpy(o->u.string.pvalue, o->u.string.def, o->u.string.size);
+      mystrlcpy(op->u.string.pvalue, op->u.string.def, op->u.string.size);
       continue;
     case COT_STRING_VEC:
-      *o->u.string_vec.pvector = string_vector_new();
-      if (o->u.string_vec.def) {
+      *op->u.string_vec.pvector = string_vector_new();
+      if (op->u.string_vec.def) {
         /* Fill with default values. */
-        string_vector_store(*o->u.string_vec.pvector, o->u.string_vec.def, -1);
-        string_vector_remove_empty(*o->u.string_vec.pvector);
+        string_vector_store(*op->u.string_vec.pvector, op->u.string_vec.def, -1);
+        string_vector_remove_empty(*op->u.string_vec.pvector);
       }
       continue;
     case COT_ENUM_LIST:
-      assert(NULL != o->u.enum_list.str_accessor);
-      assert(NULL != o->u.enum_list.str_accessor(o->u.enum_list.def));
-      *o->u.enum_list.pvalue = o->u.enum_list.def;
+      assert(NULL != op->u.enum_list.str_accessor);
+      assert(NULL != op->u.enum_list.str_accessor(op->u.enum_list.def));
+      *op->u.enum_list.pvalue = op->u.enum_list.def;
       continue;
     case COT_FILTER:
-      *o->u.filter.pvalue = o->u.filter.def;
+      *op->u.filter.pvalue = op->u.filter.def;
       continue;
     }
-    die("Option type not supported for '%s' (%d).", o->name, o->type);
+    die("Option type not supported for '%s' (%d).", op->name, op->type);
   } client_options_iterate_end;
 
   for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
@@ -1286,12 +1286,12 @@ void client_options_init(void)
 *****************************************************************/
 void client_options_free(void)
 {
-  client_options_iterate(o) {
-    switch (o->type) {
+  client_options_iterate(op) {
+    switch (op->type) {
     case COT_STRING_VEC:
-      if (NULL != *o->u.string_vec.pvector) {
-        string_vector_destroy(*o->u.string_vec.pvector);
-        *o->u.string_vec.pvector = NULL;
+      if (NULL != *op->u.string_vec.pvector) {
+        string_vector_destroy(*op->u.string_vec.pvector);
+        *op->u.string_vec.pvector = NULL;
       }
       break;
     case COT_BOOLEAN:
@@ -1393,31 +1393,31 @@ const char *option_file_name(void)
   This loads a boolean option from the rc file.
 *****************************************************************/
 bool load_option_bool(struct section_file *file,
-                      struct client_option *o, bool def)
+                      struct client_option *op, bool def)
 {
   assert(file != NULL);
-  assert(o != NULL && o->type == COT_BOOLEAN);
+  assert(op != NULL && op->type == COT_BOOLEAN);
 
-  return secfile_lookup_bool_default(file, def, "client.%s", o->name);
+  return secfile_lookup_bool_default(file, def, "client.%s", op->name);
 }
 
 /****************************************************************
   This loads a integer option from the rc file.
 *****************************************************************/
 int load_option_int(struct section_file *file,
-                    struct client_option *o, int def)
+                    struct client_option *op, int def)
 {
   int value;
 
   assert(file != NULL);
-  assert(o != NULL && (o->type == COT_INTEGER || o->type == COT_VOLUME));
+  assert(op != NULL && (op->type == COT_INTEGER || op->type == COT_VOLUME));
 
-  value = secfile_lookup_int_default(file, def, "client.%s", o->name);
+  value = secfile_lookup_int_default(file, def, "client.%s", op->name);
 
-  if (value < o->u.integer.min || value > o->u.integer.max) {
+  if (value < op->u.integer.min || value > op->u.integer.max) {
     freelog(LOG_ERROR,
             "The value %d for option '%s' is out of scale [%d, %d].",
-            value, o->name, o->u.integer.min, o->u.integer.max);
+            value, op->name, op->u.integer.min, op->u.integer.max);
     return def;
   }
 
@@ -1428,12 +1428,12 @@ int load_option_int(struct section_file *file,
   This loads a string option from the rc file.
 *****************************************************************/
 const char *load_option_string(struct section_file *file,
-                               struct client_option *o, const char *def)
+                               struct client_option *op, const char *def)
 {
   assert(file != NULL);
-  assert(o != NULL && (o->type == COT_STRING || o->type == COT_PASSWORD));
+  assert(op != NULL && (op->type == COT_STRING || op->type == COT_PASSWORD));
 
-  return secfile_lookup_str_default(file, def, "client.%s", o->name);
+  return secfile_lookup_str_default(file, def, "client.%s", op->name);
 }
 
 /****************************************************************
@@ -1441,7 +1441,7 @@ const char *load_option_string(struct section_file *file,
   stored in vector.
 *****************************************************************/
 void load_option_string_vec(struct section_file *file,
-                            struct client_option *o,
+                            struct client_option *op,
                             const char *const *def,
                             struct string_vector *vector)
 {
@@ -1449,10 +1449,10 @@ void load_option_string_vec(struct section_file *file,
   int size;
 
   assert(file != NULL);
-  assert(o != NULL && o->type == COT_STRING_VEC);
+  assert(op != NULL && op->type == COT_STRING_VEC);
   assert(vector != NULL);
 
-  vec = secfile_lookup_str_vec(file, &size, "client.%s", o->name);
+  vec = secfile_lookup_str_vec(file, &size, "client.%s", op->name);
   if (!vec || !size) {
     if (def) {
       string_vector_store(vector, def, -1);
@@ -1471,16 +1471,16 @@ void load_option_string_vec(struct section_file *file,
   This loads an enum option (saved as a string) from the rc file.
 *****************************************************************/
 int load_option_enum_list(struct section_file *file,
-                          struct client_option *o, int def)
+                          struct client_option *op, int def)
 {
   int value;
 
   assert(file != NULL);
-  assert(o != NULL && o->type == COT_ENUM_LIST);
+  assert(op != NULL && op->type == COT_ENUM_LIST);
 
-  value = revert_str_accessor(o->u.enum_list.str_accessor,
+  value = revert_str_accessor(op->u.enum_list.str_accessor,
                               secfile_lookup_str_default(file, NULL,
-                                                         "client.%s", o->name));
+                                                         "client.%s", op->name));
   if (value == -1) {
     /* Failed, see comment in revert_str_accessor(). */
     return def;
@@ -1493,7 +1493,7 @@ int load_option_enum_list(struct section_file *file,
   This loads a filter (saved as many strings) option from the rc file.
 *****************************************************************/
 filter load_option_filter(struct section_file *file,
-                          struct client_option *o, filter def)
+                          struct client_option *op, filter def)
 {
   char **vec;
   int i, size;
@@ -1501,21 +1501,21 @@ filter load_option_filter(struct section_file *file,
   filter ret = 0, f;
 
   assert(file != NULL);
-  assert(o != NULL && o->type == COT_FILTER);
+  assert(op != NULL && op->type == COT_FILTER);
 
-  vec = secfile_lookup_str_vec(file, &size, "client.%s", o->name);
+  vec = secfile_lookup_str_vec(file, &size, "client.%s", op->name);
   if (!vec || !size) {
     return def;
   }
 
   for (i = 0; i < size; i++) {
-    f = filter_revert_str_accessor(o->u.filter.str_accessor, vec[i]);
+    f = filter_revert_str_accessor(op->u.filter.str_accessor, vec[i]);
     if (f) {
-      o->u.filter.change(&ret, f);
+      op->u.filter.change(&ret, f);
       ok = TRUE;
     } else {
       freelog(LOG_NORMAL, _("The value '%s' is not supported for option '%s'."),
-              vec[i], o->name);
+              vec[i], op->name);
     }
   }
 
@@ -1544,29 +1544,29 @@ void load_general_options(void)
     return;
   }
 
-  client_options_iterate(o) {
-    switch (o->type) {
+  client_options_iterate(op) {
+    switch (op->type) {
     case COT_BOOLEAN:
-      *o->u.boolean.pvalue = load_option_bool(&sf, o, o->u.boolean.def);
+      *op->u.boolean.pvalue = load_option_bool(&sf, op, op->u.boolean.def);
       break;
     case COT_INTEGER:
     case COT_VOLUME:
-      *o->u.integer.pvalue = load_option_int(&sf, o, o->u.integer.def);
+      *op->u.integer.pvalue = load_option_int(&sf, op, op->u.integer.def);
       break;
     case COT_STRING:
     case COT_PASSWORD:
-      mystrlcpy(o->u.string.pvalue, load_option_string(&sf, o, o->u.string.def),
-                o->u.string.size);
+      mystrlcpy(op->u.string.pvalue, load_option_string(&sf, op, op->u.string.def),
+                op->u.string.size);
       break;
     case COT_STRING_VEC:
-      load_option_string_vec(&sf, o, o->u.string_vec.def, *o->u.string_vec.pvector);
+      load_option_string_vec(&sf, op, op->u.string_vec.def, *op->u.string_vec.pvector);
       break;
     case COT_ENUM_LIST:
-      *o->u.enum_list.pvalue =
-          load_option_enum_list(&sf, o, o->u.enum_list.def);
+      *op->u.enum_list.pvalue =
+          load_option_enum_list(&sf, op, op->u.enum_list.def);
       break;
     case COT_FILTER:
-      *o->u.filter.pvalue = load_option_filter(&sf, o, o->u.filter.def);
+      *op->u.filter.pvalue = load_option_filter(&sf, op, op->u.filter.def);
       break;
     }
   } client_options_iterate_end;
@@ -1645,52 +1645,52 @@ void save_options(void)
   section_file_init(&sf);
   secfile_insert_str(&sf, VERSION_STRING, "client.version");
 
-  client_options_iterate(o) {
-    switch (o->type) {
+  client_options_iterate(op) {
+    switch (op->type) {
     case COT_BOOLEAN:
-      secfile_insert_bool(&sf, *o->u.boolean.pvalue, "client.%s", o->name);
+      secfile_insert_bool(&sf, *op->u.boolean.pvalue, "client.%s", op->name);
       break;
     case COT_INTEGER:
     case COT_VOLUME:
-      secfile_insert_int(&sf, *o->u.integer.pvalue, "client.%s", o->name);
+      secfile_insert_int(&sf, *op->u.integer.pvalue, "client.%s", op->name);
       break;
     case COT_STRING:
     case COT_PASSWORD:
-      secfile_insert_str(&sf, o->u.string.pvalue, "client.%s", o->name);
+      secfile_insert_str(&sf, op->u.string.pvalue, "client.%s", op->name);
       break;
     case COT_STRING_VEC:
-      if (string_vector_size(*o->u.string_vec.pvector) > 0) {
-        secfile_insert_str_vec(&sf, string_vector_data(*o->u.string_vec.pvector),
-                               string_vector_size(*o->u.string_vec.pvector),
-                               "client.%s", o->name);
+      if (string_vector_size(*op->u.string_vec.pvector) > 0) {
+        secfile_insert_str_vec(&sf, string_vector_data(*op->u.string_vec.pvector),
+                               string_vector_size(*op->u.string_vec.pvector),
+                               "client.%s", op->name);
       } else {
         /* Insert an empty string that will be removed at next load
          * to overwrite the default. */
-        secfile_insert_str(&sf, "", "client.%s", o->name);
+        secfile_insert_str(&sf, "", "client.%s", op->name);
       }
       break;
     case COT_ENUM_LIST:
-      secfile_insert_str(&sf, o->u.enum_list.str_accessor(*o->u.enum_list.pvalue),
-                         "client.%s", o->name);
+      secfile_insert_str(&sf, op->u.enum_list.str_accessor(*op->u.enum_list.pvalue),
+                         "client.%s", op->name);
       break;
     case COT_FILTER:
       {
 #define MAX_VALUES 64
         const char *values[MAX_VALUES];
         size_t size = 0, vec;
-        filter f = *o->u.filter.pvalue;
+        filter f = *op->u.filter.pvalue;
 
-        for (f = *o->u.filter.pvalue, vec = 0; f != 0 && size < MAX_VALUES;
+        for (f = *op->u.filter.pvalue, vec = 0; f != 0 && size < MAX_VALUES;
              f >>= 1, vec++) {
           if (f & 1) {
-            values[size++] = o->u.filter.str_accessor(1 << vec);
+            values[size++] = op->u.filter.str_accessor(1 << vec);
           }
         }
         if (f != 0) {
           freelog(LOG_ERROR, "The filter '%s' required more values number.",
-                  o->name);
+                  op->name);
         } else {
-          secfile_insert_str_vec(&sf, values, size, "client.%s", o->name);
+          secfile_insert_str_vec(&sf, values, size, "client.%s", op->name);
         }
       }
       break;
