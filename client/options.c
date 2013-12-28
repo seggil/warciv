@@ -1406,9 +1406,9 @@ unsigned int get_default_messages_where(enum event_type type)
     return 0;
     break;
   case E_MESSAGE_WALL:
-    return MW_MESSAGES | MW_POPUP;
+    return MSG_TO_MESSAGES_WIN | MSG_TO_POPUP_WIN;
   default:
-    return MW_MESSAGES;
+    return MSG_TO_MESSAGES_WIN;
   }
 }
 
