@@ -943,8 +943,13 @@ receive_packet_processing_started(struct connection *pconn, enum packet_type typ
   ensure_valid_variant_packet_processing_started(pconn);
 
   switch(pconn->phs.variant[PACKET_PROCESSING_STARTED]) {
-    case 100: return receive_packet_processing_started_100(pconn, type);
-    default: die("unknown variant"); return NULL;
+    case 100: {
+      return receive_packet_processing_started_100(pconn, type);
+    }
+    default: {
+      die("unknown variant");
+      return NULL;
+    }
   }
 }
 
@@ -7044,10 +7049,14 @@ static void ensure_valid_variant_packet_city_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if((has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
+
+  if((has_capability("extglobalinfo", pconn->capability)
+      && has_capability("extglobalinfo", our_capability)))
+  {
     variant = 100;
-  } else if(!(has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if(!(has_capability("extglobalinfo", pconn->capability)
+              && has_capability("extglobalinfo", our_capability)))
+  {
     variant = 101;
   } else {
     die("unknown variant");
@@ -12502,14 +12511,37 @@ static void ensure_valid_variant_packet_player_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if((has_capability("username_info", pconn->capability) && has_capability("username_info", our_capability)) && (has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
+  if((has_capability("username_info", pconn->capability)
+      && has_capability("username_info", our_capability)
+     )
+     && (has_capability("exttechleakage", pconn->capability)
+         && has_capability("exttechleakage", our_capability)
+        ))
+  {
     variant = 100;
-  } else if((has_capability("username_info", pconn->capability) && has_capability("username_info", our_capability)) && !(has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
+  } else if((has_capability("username_info", pconn->capability)
+             && has_capability("username_info", our_capability)
+            )
+            && !(has_capability("exttechleakage", pconn->capability)
+                 && has_capability("exttechleakage", our_capability)
+                ))
+  {
     variant = 101;
-  } else if((has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability)) && !(has_capability("username_info", pconn->capability) && has_capability("username_info", our_capability))) {
+  } else if((has_capability("exttechleakage", pconn->capability)
+             && has_capability("exttechleakage", our_capability)
+            )
+            && !(has_capability("username_info", pconn->capability)
+                 && has_capability("username_info", our_capability)
+                ))
+  {
     variant = 102;
-  } else if(!(has_capability("username_info", pconn->capability) && has_capability("username_info", our_capability)) && !(has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
+  } else if(!(has_capability("username_info", pconn->capability)
+              && has_capability("username_info", our_capability)
+             )
+             && !(has_capability("exttechleakage", pconn->capability)
+                  && has_capability("exttechleakage", our_capability)
+                 ))
+  {
     variant = 103;
   } else {
     die("unknown variant");
@@ -15051,10 +15083,13 @@ static void ensure_valid_variant_packet_unit_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if((has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
+  if((has_capability("extglobalinfo", pconn->capability)
+      && has_capability("extglobalinfo", our_capability)))
+  {
     variant = 100;
-  } else if(!(has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if(!(has_capability("extglobalinfo", pconn->capability)
+              && has_capability("extglobalinfo", our_capability)))
+  {
     variant = 101;
   } else {
     die("unknown variant");
@@ -22648,10 +22683,13 @@ static void ensure_valid_variant_packet_conn_ping_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if((has_capability("conn_ping_info", pconn->capability) && has_capability("conn_ping_info", our_capability))) {
+  if((has_capability("conn_ping_info", pconn->capability)
+      && has_capability("conn_ping_info", our_capability)))
+  {
     variant = 100;
-  } else if(!(has_capability("conn_ping_info", pconn->capability) && has_capability("conn_ping_info", our_capability))) {
+  } else if(!(has_capability("conn_ping_info", pconn->capability)
+              && has_capability("conn_ping_info", our_capability)))
+  {
     variant = 101;
   } else {
     die("unknown variant");
@@ -29693,10 +29731,13 @@ static void ensure_valid_variant_packet_single_want_hack_req(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if((has_capability("new_hack", pconn->capability) && has_capability("new_hack", our_capability))) {
+  if((has_capability("new_hack", pconn->capability)
+      && has_capability("new_hack", our_capability)))
+  {
     variant = 100;
-  } else if(!(has_capability("new_hack", pconn->capability) && has_capability("new_hack", our_capability))) {
+  } else if(!(has_capability("new_hack", pconn->capability)
+              && has_capability("new_hack", our_capability)))
+  {
     variant = 101;
   } else {
     die("unknown variant");
@@ -31677,10 +31718,13 @@ static void ensure_valid_variant_packet_traderoute_info(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if((has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
+  if((has_capability("extglobalinfo", pconn->capability)
+      && has_capability("extglobalinfo", our_capability)))
+  {
     variant = 100;
-  } else if(!(has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if(!(has_capability("extglobalinfo", pconn->capability)
+              && has_capability("extglobalinfo", our_capability)))
+  {
     variant = 101;
   } else {
     die("unknown variant");
@@ -32092,10 +32136,13 @@ static void ensure_valid_variant_packet_extgame_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if((has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
+  if((has_capability("exttechleakage", pconn->capability)
+      && has_capability("exttechleakage", our_capability)))
+  {
     variant = 100;
-  } else if(!(has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
+  } else if(!(has_capability("exttechleakage", pconn->capability)
+              && has_capability("exttechleakage", our_capability)))
+  {
     variant = 101;
   } else {
     die("unknown variant");
