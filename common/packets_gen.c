@@ -918,12 +918,7 @@ static void ensure_valid_variant_packet_processing_started(struct connection *pc
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PROCESSING_STARTED] = variant;
 }
 
@@ -994,12 +989,7 @@ static void ensure_valid_variant_packet_processing_finished(struct connection *p
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PROCESSING_FINISHED] = variant;
 }
 
@@ -1064,12 +1054,7 @@ static void ensure_valid_variant_packet_freeze_hint(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_FREEZE_HINT] = variant;
 }
 
@@ -1141,12 +1126,7 @@ static void ensure_valid_variant_packet_thaw_hint(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_THAW_HINT] = variant;
 }
 
@@ -1249,12 +1229,7 @@ static void ensure_valid_variant_packet_server_join_req(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_SERVER_JOIN_REQ] = variant;
 }
 
@@ -1351,12 +1326,7 @@ static void ensure_valid_variant_packet_server_join_reply(struct connection *pco
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_SERVER_JOIN_REPLY] = variant;
 }
 
@@ -1514,12 +1484,7 @@ static void ensure_valid_variant_packet_authentication_req(struct connection *pc
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_AUTHENTICATION_REQ] = variant;
 }
 
@@ -1672,12 +1637,7 @@ static void ensure_valid_variant_packet_authentication_reply(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_AUTHENTICATION_REPLY] = variant;
 }
 
@@ -1742,12 +1702,7 @@ static void ensure_valid_variant_packet_server_shutdown(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_SERVER_SHUTDOWN] = variant;
 }
 
@@ -1902,12 +1857,7 @@ static void ensure_valid_variant_packet_nation_unavailable(struct connection *pc
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_NATION_UNAVAILABLE] = variant;
 }
 
@@ -1979,12 +1929,7 @@ static void ensure_valid_variant_packet_select_races(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_SELECT_RACES] = variant;
 }
 
@@ -2170,12 +2115,7 @@ static void ensure_valid_variant_packet_nation_select_req(struct connection *pco
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_NATION_SELECT_REQ] = variant;
 }
 
@@ -2252,12 +2192,7 @@ static void ensure_valid_variant_packet_nation_select_ok(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_NATION_SELECT_OK] = variant;
 }
 
@@ -2414,12 +2349,7 @@ static void ensure_valid_variant_packet_game_state(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_GAME_STATE] = variant;
 }
 
@@ -3222,12 +3152,7 @@ static void ensure_valid_variant_packet_endgame_report(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_ENDGAME_REPORT] = variant;
 }
 
@@ -3494,12 +3419,7 @@ static void ensure_valid_variant_packet_tile_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_TILE_INFO] = variant;
 }
 
@@ -4156,12 +4076,7 @@ static void ensure_valid_variant_packet_game_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_GAME_INFO] = variant;
 }
 
@@ -4339,12 +4254,7 @@ static void ensure_valid_variant_packet_map_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_MAP_INFO] = variant;
 }
 
@@ -4514,12 +4424,7 @@ static void ensure_valid_variant_packet_nuke_tile_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_NUKE_TILE_INFO] = variant;
 }
 
@@ -4766,12 +4671,7 @@ static void ensure_valid_variant_packet_chat_msg(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CHAT_MSG] = variant;
 }
 
@@ -4947,12 +4847,7 @@ static void ensure_valid_variant_packet_chat_msg_req(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CHAT_MSG_REQ] = variant;
 }
 
@@ -5109,12 +5004,7 @@ static void ensure_valid_variant_packet_city_remove(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_REMOVE] = variant;
 }
 
@@ -7345,12 +7235,7 @@ static void ensure_valid_variant_packet_city_short_info(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_SHORT_INFO] = variant;
 }
 
@@ -7520,12 +7405,7 @@ static void ensure_valid_variant_packet_city_sell(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_SELL] = variant;
 }
 
@@ -7683,12 +7563,7 @@ static void ensure_valid_variant_packet_city_buy(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_BUY] = variant;
 }
 
@@ -7866,12 +7741,7 @@ static void ensure_valid_variant_packet_city_change(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_CHANGE] = variant;
 }
 
@@ -8040,12 +7910,7 @@ static void ensure_valid_variant_packet_city_worklist(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_WORKLIST] = variant;
 }
 
@@ -8233,12 +8098,7 @@ static void ensure_valid_variant_packet_city_make_specialist(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_MAKE_SPECIALIST] = variant;
 }
 
@@ -8427,12 +8287,7 @@ static void ensure_valid_variant_packet_city_make_worker(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_MAKE_WORKER] = variant;
 }
 
@@ -8621,12 +8476,7 @@ static void ensure_valid_variant_packet_city_change_specialist(struct connection
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_CHANGE_SPECIALIST] = variant;
 }
 
@@ -8795,12 +8645,7 @@ static void ensure_valid_variant_packet_city_rename(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_RENAME] = variant;
 }
 
@@ -8973,12 +8818,7 @@ static void ensure_valid_variant_packet_city_options_req(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_OPTIONS_REQ] = variant;
 }
 
@@ -9136,12 +8976,7 @@ static void ensure_valid_variant_packet_city_refresh(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_REFRESH] = variant;
 }
 
@@ -9298,12 +9133,7 @@ static void ensure_valid_variant_packet_city_incite_inq(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_INCITE_INQ] = variant;
 }
 
@@ -9475,12 +9305,7 @@ static void ensure_valid_variant_packet_city_incite_info(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_INCITE_INFO] = variant;
 }
 
@@ -9638,12 +9463,7 @@ static void ensure_valid_variant_packet_city_name_suggestion_req(struct connecti
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ] = variant;
 }
 
@@ -9810,12 +9630,7 @@ static void ensure_valid_variant_packet_city_name_suggestion_info(struct connect
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO] = variant;
 }
 
@@ -10015,12 +9830,7 @@ static void ensure_valid_variant_packet_city_sabotage_list(struct connection *pc
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_SABOTAGE_LIST] = variant;
 }
 
@@ -10175,12 +9985,7 @@ static void ensure_valid_variant_packet_player_remove(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_REMOVE] = variant;
 }
 
@@ -12616,12 +12421,7 @@ static void ensure_valid_variant_packet_player_turn_done(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_TURN_DONE] = variant;
 }
 
@@ -12799,12 +12599,7 @@ static void ensure_valid_variant_packet_player_rates(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_RATES] = variant;
 }
 
@@ -12963,12 +12758,7 @@ static void ensure_valid_variant_packet_player_change_government(struct connecti
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT] = variant;
 }
 
@@ -13125,12 +12915,7 @@ static void ensure_valid_variant_packet_player_research(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_RESEARCH] = variant;
 }
 
@@ -13287,12 +13072,7 @@ static void ensure_valid_variant_packet_player_tech_goal(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_TECH_GOAL] = variant;
 }
 
@@ -13366,12 +13146,7 @@ static void ensure_valid_variant_packet_player_attribute_block(struct connection
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK] = variant;
 }
 
@@ -13580,12 +13355,7 @@ static void ensure_valid_variant_packet_player_attribute_chunk(struct connection
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK] = variant;
 }
 
@@ -13727,12 +13497,7 @@ static void ensure_valid_variant_packet_unit_remove(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_REMOVE] = variant;
 }
 
@@ -15446,12 +15211,7 @@ static void ensure_valid_variant_packet_unit_short_info(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_SHORT_INFO] = variant;
 }
 
@@ -15657,12 +15417,7 @@ static void ensure_valid_variant_packet_unit_combat_info(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_COMBAT_INFO] = variant;
 }
 
@@ -15847,12 +15602,7 @@ static void ensure_valid_variant_packet_unit_move(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_MOVE] = variant;
 }
 
@@ -16021,12 +15771,7 @@ static void ensure_valid_variant_packet_unit_build_city(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_BUILD_CITY] = variant;
 }
 
@@ -16184,12 +15929,7 @@ static void ensure_valid_variant_packet_unit_disband(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_DISBAND] = variant;
 }
 
@@ -16361,12 +16101,7 @@ static void ensure_valid_variant_packet_unit_change_homecity(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_CHANGE_HOMECITY] = variant;
 }
 
@@ -16524,12 +16259,7 @@ static void ensure_valid_variant_packet_unit_establish_trade(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_ESTABLISH_TRADE] = variant;
 }
 
@@ -16686,12 +16416,7 @@ static void ensure_valid_variant_packet_unit_help_build_wonder(struct connection
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER] = variant;
 }
 
@@ -16878,12 +16603,7 @@ static void ensure_valid_variant_packet_unit_goto(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_GOTO] = variant;
 }
 
@@ -17234,12 +16954,7 @@ static void ensure_valid_variant_packet_unit_orders(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_ORDERS] = variant;
 }
 
@@ -17387,12 +17102,7 @@ static void ensure_valid_variant_packet_unit_auto(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_AUTO] = variant;
 }
 
@@ -17564,12 +17274,7 @@ static void ensure_valid_variant_packet_unit_load(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_LOAD] = variant;
 }
 
@@ -17742,12 +17447,7 @@ static void ensure_valid_variant_packet_unit_unload(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_UNLOAD] = variant;
 }
 
@@ -17905,12 +17605,7 @@ static void ensure_valid_variant_packet_unit_upgrade(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_UPGRADE] = variant;
 }
 
@@ -18067,12 +17762,7 @@ static void ensure_valid_variant_packet_unit_nuke(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_NUKE] = variant;
 }
 
@@ -18259,12 +17949,7 @@ static void ensure_valid_variant_packet_unit_paradrop_to(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_PARADROP_TO] = variant;
 }
 
@@ -18438,12 +18123,7 @@ static void ensure_valid_variant_packet_unit_airlift(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_AIRLIFT] = variant;
 }
 
@@ -18601,12 +18281,7 @@ static void ensure_valid_variant_packet_unit_bribe_inq(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_BRIBE_INQ] = variant;
 }
 
@@ -18778,12 +18453,7 @@ static void ensure_valid_variant_packet_unit_bribe_info(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_BRIBE_INFO] = variant;
 }
 
@@ -18941,12 +18611,7 @@ static void ensure_valid_variant_packet_unit_type_upgrade(struct connection *pco
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_TYPE_UPGRADE] = variant;
 }
 
@@ -19148,12 +18813,7 @@ static void ensure_valid_variant_packet_unit_diplomat_action(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION] = variant;
 }
 
@@ -19328,12 +18988,7 @@ static void ensure_valid_variant_packet_unit_diplomat_popup_dialog(struct connec
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG] = variant;
 }
 
@@ -19538,12 +19193,7 @@ static void ensure_valid_variant_packet_unit_change_activity(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY] = variant;
 }
 
@@ -19702,12 +19352,7 @@ static void ensure_valid_variant_packet_diplomacy_init_meeting_req(struct connec
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ] = variant;
 }
 
@@ -19879,12 +19524,7 @@ static void ensure_valid_variant_packet_diplomacy_init_meeting(struct connection
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING] = variant;
 }
 
@@ -20059,12 +19699,7 @@ static void ensure_valid_variant_packet_diplomacy_cancel_meeting_req(struct conn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ] = variant;
 }
 
@@ -20236,12 +19871,7 @@ static void ensure_valid_variant_packet_diplomacy_cancel_meeting(struct connecti
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING] = variant;
 }
 
@@ -20461,12 +20091,7 @@ static void ensure_valid_variant_packet_diplomacy_create_clause_req(struct conne
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ] = variant;
 }
 
@@ -20671,12 +20296,7 @@ static void ensure_valid_variant_packet_diplomacy_create_clause(struct connectio
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE] = variant;
 }
 
@@ -20900,12 +20520,7 @@ static void ensure_valid_variant_packet_diplomacy_remove_clause_req(struct conne
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ] = variant;
 }
 
@@ -21110,12 +20725,7 @@ static void ensure_valid_variant_packet_diplomacy_remove_clause(struct connectio
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE] = variant;
 }
 
@@ -21294,12 +20904,7 @@ static void ensure_valid_variant_packet_diplomacy_accept_treaty_req(struct conne
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ] = variant;
 }
 
@@ -21468,12 +21073,7 @@ static void ensure_valid_variant_packet_diplomacy_accept_treaty(struct connectio
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY] = variant;
 }
 
@@ -21665,12 +21265,7 @@ static void ensure_valid_variant_packet_diplomacy_cancel_pact(struct connection 
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT] = variant;
 }
 
@@ -21838,12 +21433,7 @@ static void ensure_valid_variant_packet_page_msg(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PAGE_MSG] = variant;
 }
 
@@ -21998,12 +21588,7 @@ static void ensure_valid_variant_packet_report_req(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_REPORT_REQ] = variant;
 }
 
@@ -22251,12 +21836,7 @@ static void ensure_valid_variant_packet_conn_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CONN_INFO] = variant;
 }
 
@@ -22767,12 +22347,7 @@ static void ensure_valid_variant_packet_conn_ping(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CONN_PING] = variant;
 }
 
@@ -22837,12 +22412,7 @@ static void ensure_valid_variant_packet_conn_pong(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CONN_PONG] = variant;
 }
 
@@ -22907,12 +22477,7 @@ static void ensure_valid_variant_packet_before_new_year(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_BEFORE_NEW_YEAR] = variant;
 }
 
@@ -22984,12 +22549,7 @@ static void ensure_valid_variant_packet_start_turn(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_START_TURN] = variant;
 }
 
@@ -23159,12 +22719,7 @@ static void ensure_valid_variant_packet_new_year(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_NEW_YEAR] = variant;
 }
 
@@ -23236,12 +22791,7 @@ static void ensure_valid_variant_packet_freeze_client(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_FREEZE_CLIENT] = variant;
 }
 
@@ -23313,12 +22863,7 @@ static void ensure_valid_variant_packet_thaw_client(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_THAW_CLIENT] = variant;
 }
 
@@ -23390,12 +22935,7 @@ static void ensure_valid_variant_packet_spaceship_launch(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_SPACESHIP_LAUNCH] = variant;
 }
 
@@ -23558,12 +23098,7 @@ static void ensure_valid_variant_packet_spaceship_place(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_SPACESHIP_PLACE] = variant;
 }
 
@@ -23984,12 +23519,7 @@ static void ensure_valid_variant_packet_spaceship_info(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_SPACESHIP_INFO] = variant;
 }
 
@@ -24690,12 +24220,7 @@ static void ensure_valid_variant_packet_ruleset_unit(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_UNIT] = variant;
 }
 
@@ -25382,12 +24907,7 @@ static void ensure_valid_variant_packet_ruleset_game(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_GAME] = variant;
 }
 
@@ -25592,12 +25112,7 @@ static void ensure_valid_variant_packet_ruleset_government_ruler_title(struct co
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE] = variant;
 }
 
@@ -25893,12 +25408,7 @@ static void ensure_valid_variant_packet_ruleset_tech(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_TECH] = variant;
 }
 
@@ -26693,12 +26203,7 @@ static void ensure_valid_variant_packet_ruleset_government(struct connection *pc
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_GOVERNMENT] = variant;
 }
 
@@ -27127,12 +26632,7 @@ static void ensure_valid_variant_packet_ruleset_terrain_control(struct connectio
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_TERRAIN_CONTROL] = variant;
 }
 
@@ -27479,12 +26979,7 @@ static void ensure_valid_variant_packet_ruleset_nation(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_NATION] = variant;
 }
 
@@ -27719,12 +27214,7 @@ static void ensure_valid_variant_packet_ruleset_city(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_CITY] = variant;
 }
 
@@ -28305,12 +27795,7 @@ static void ensure_valid_variant_packet_ruleset_building(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_BUILDING] = variant;
 }
 
@@ -28965,12 +28450,7 @@ static void ensure_valid_variant_packet_ruleset_terrain(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_TERRAIN] = variant;
 }
 
@@ -29480,12 +28960,7 @@ static void ensure_valid_variant_packet_ruleset_control(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_CONTROL] = variant;
 }
 
@@ -29882,12 +29357,7 @@ static void ensure_valid_variant_packet_single_want_hack_reply(struct connection
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY] = variant;
 }
 
@@ -30300,12 +29770,7 @@ static void ensure_valid_variant_packet_game_load(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_GAME_LOAD] = variant;
 }
 
@@ -30515,12 +29980,7 @@ static void ensure_valid_variant_packet_options_settable_control(struct connecti
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL] = variant;
 }
 
@@ -30808,12 +30268,7 @@ static void ensure_valid_variant_packet_options_settable(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_OPTIONS_SETTABLE] = variant;
 }
 
@@ -31101,12 +30556,7 @@ static void ensure_valid_variant_packet_ruleset_cache_group(struct connection *p
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_CACHE_GROUP] = variant;
 }
 
@@ -31357,12 +30807,7 @@ static void ensure_valid_variant_packet_ruleset_cache_effect(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_RULESET_CACHE_EFFECT] = variant;
 }
 
@@ -32352,12 +31797,7 @@ static void ensure_valid_variant_packet_vote_new(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_VOTE_NEW] = variant;
 }
 
@@ -32565,12 +32005,7 @@ static void ensure_valid_variant_packet_vote_update(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_VOTE_UPDATE] = variant;
 }
 
@@ -32718,12 +32153,7 @@ static void ensure_valid_variant_packet_vote_remove(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_VOTE_REMOVE] = variant;
 }
 
@@ -32877,12 +32307,7 @@ static void ensure_valid_variant_packet_vote_resolve(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_VOTE_RESOLVE] = variant;
 }
 
@@ -33045,12 +32470,7 @@ static void ensure_valid_variant_packet_vote_submit(struct connection *pconn)
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_VOTE_SUBMIT] = variant;
 }
 
@@ -33213,12 +32633,7 @@ static void ensure_valid_variant_packet_trade_route_plan(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_TRADE_ROUTE_PLAN] = variant;
 }
 
@@ -33391,12 +32806,7 @@ static void ensure_valid_variant_packet_trade_route_remove(struct connection *pc
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_TRADE_ROUTE_REMOVE] = variant;
 }
 
@@ -33578,12 +32988,7 @@ static void ensure_valid_variant_packet_unit_trade_route(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_TRADE_ROUTE] = variant;
 }
 
@@ -33787,12 +33192,7 @@ static void ensure_valid_variant_packet_trade_route_info(struct connection *pcon
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_TRADE_ROUTE_INFO] = variant;
 }
 
@@ -33970,12 +33370,7 @@ static void ensure_valid_variant_packet_city_set_rally_point(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_SET_RALLY_POINT] = variant;
 }
 
@@ -34134,12 +33529,7 @@ static void ensure_valid_variant_packet_city_clear_rally_point(struct connection
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT] = variant;
 }
 
@@ -34326,12 +33716,7 @@ static void ensure_valid_variant_packet_unit_air_patrol(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_AIR_PATROL] = variant;
 }
 
@@ -34490,12 +33875,7 @@ static void ensure_valid_variant_packet_unit_air_patrol_stop(struct connection *
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_UNIT_AIR_PATROL_STOP] = variant;
 }
 
@@ -34767,12 +34147,7 @@ static void ensure_valid_variant_packet_city_manager_param(struct connection *pc
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_MANAGER_PARAM] = variant;
 }
 
@@ -34914,12 +34289,7 @@ static void ensure_valid_variant_packet_city_no_manager_param(struct connection 
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_CITY_NO_MANAGER_PARAM] = variant;
 }
 
@@ -35070,12 +34440,7 @@ static void ensure_valid_variant_packet_player_info_req(struct connection *pconn
     return;
   }
 
-  if(FALSE) {
-  } else if(TRUE) {
-    variant = 100;
-  } else {
-    die("unknown variant");
-  }
+  variant = 100;
   pconn->phs.variant[PACKET_PLAYER_INFO_REQ] = variant;
 }
 
