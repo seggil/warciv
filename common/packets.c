@@ -667,11 +667,10 @@ void send_attribute_block(const struct player *pplayer,
     return;
   }
 
-  assert(pplayer->attribute_block.length > 0 &&
-         pplayer->attribute_block.length < MAX_ATTRIBUTE_BLOCK);
+  assert(pplayer->attribute_block.length > 0
+         && pplayer->attribute_block.length < MAX_ATTRIBUTE_BLOCK);
 
-  chunks =
-      (pplayer->attribute_block.length - 1) / ATTRIBUTE_CHUNK_SIZE + 1;
+  chunks = (pplayer->attribute_block.length - 1) / ATTRIBUTE_CHUNK_SIZE + 1;
   bytes_left = pplayer->attribute_block.length;
 
   connection_do_buffer(pconn);
@@ -694,6 +693,7 @@ void send_attribute_block(const struct player *pplayer,
       memset(packet.data + packet.chunk_length, 0,
              ATTRIBUTE_CHUNK_SIZE - packet.chunk_length);
     }
+#if 0
     printf("send_attribute_block pplayer->attribute_block.length=%i;"
            "ATTRIBUTE_CHUNK_SIZE=%i\n"
            "offset=%i;"
@@ -704,7 +704,7 @@ void send_attribute_block(const struct player *pplayer,
            packet.offset,
            packet.total_length,
            packet.chunk_length);
-
+#endif
     send_packet_player_attribute_chunk(pconn, &packet);
   }
 
