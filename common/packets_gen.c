@@ -895,7 +895,9 @@ const char *get_packet_name(enum packet_type type)
   }
 }
 
-static struct packet_processing_started *receive_packet_processing_started_100(struct connection *pconn, enum packet_type type)
+static struct packet_processing_started *
+receive_packet_processing_started_100(struct connection *pconn,
+                                      enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_processing_started, real_packet);
 
@@ -925,7 +927,8 @@ static void ensure_valid_variant_packet_processing_started(struct connection *pc
   pconn->phs.variant[PACKET_PROCESSING_STARTED] = variant;
 }
 
-struct packet_processing_started *receive_packet_processing_started(struct connection *pconn, enum packet_type type)
+struct packet_processing_started *
+receive_packet_processing_started(struct connection *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1189,7 +1192,8 @@ void lsend_packet_thaw_hint(struct conn_list *dest)
   } conn_list_iterate_end;
 }
 
-static struct packet_server_join_req *receive_packet_server_join_req_100(struct connection *pconn, enum packet_type type)
+static struct packet_server_join_req *
+receive_packet_server_join_req_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_server_join_req, real_packet);
   dio_get_string(&din, real_packet->username, sizeof(real_packet->username));
