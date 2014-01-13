@@ -1036,7 +1036,7 @@ void handle_chat_msg(char *message, int x, int y, /* 18 */
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_page_msg(char *message, enum event_type event)
+void handle_page_msg(char *message, enum event_type event) /* 84 */
 {
   char *caption;
   char *headline;
@@ -1069,11 +1069,13 @@ void handle_page_msg(char *message, enum event_type event)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_info(struct packet_unit_info *packet)
+void handle_unit_info(struct packet_unit_info *packet) /* 49 */
 {
   struct unit *punit;
 
-  if (!client_is_global_observer() && packet->owner != get_player_idx()) {
+  if (!client_is_global_observer()
+      && packet->owner != get_player_idx())
+  {
     freelog(LOG_ERROR, "Got packet_unit_info for unit of %s.",
             game.players[packet->owner].name);
   }
@@ -1600,10 +1602,12 @@ void handle_extgame_info(struct packet_extgame_info *packet) /* 123 */
 /**************************************************************************
   ...
 **************************************************************************/
-void handle_game_info(struct packet_game_info *pinfo)
+void handle_game_info(struct packet_game_info *pinfo) /* 15 */
 {
   int i;
-  bool boot_help, need_effect_update = FALSE, timeout_changed;
+  bool boot_help;
+  bool need_effect_update = FALSE;
+  bool timeout_changed;
 
   boot_help = (can_client_change_view()
                && game.info.spacerace != pinfo->spacerace);
@@ -1727,7 +1731,7 @@ void start_revolution(void)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_player_info(struct packet_player_info *pinfo)
+void handle_player_info(struct packet_player_info *pinfo) /* 39 */
 {
   int i;
   bool poptechup, new_tech = FALSE;
@@ -1889,7 +1893,7 @@ void handle_player_info(struct packet_player_info *pinfo)
   Updates player and game connection lists.
   Calls update_players_dialog() in case info for that has changed.
 **************************************************************************/
-void handle_conn_info(struct packet_conn_info *pinfo)
+void handle_conn_info(struct packet_conn_info *pinfo) /* 86 */
 {
   struct connection *pconn = find_conn_by_id(pinfo->id);
 
