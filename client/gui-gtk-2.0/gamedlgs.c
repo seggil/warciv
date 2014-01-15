@@ -602,19 +602,22 @@ static void extra_option_destroy(struct extra_option *op)
 *****************************************************************/
 static void cell_edited(GtkCellRendererText *cell,
                         const gchar *spath,
-                        const gchar *text, gpointer data)
+                        const gchar *text,
+                        gpointer data)
 {
   struct client_option *op = (struct client_option *) data;
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(op->gui_data));
   GtkTreePath *path;
   GtkTreeIter it;
-  gint pos;
+  gchar *edited;
 
   path = gtk_tree_path_new_from_string(spath);
   gtk_tree_model_get_iter(model, &it, path);
-  gtk_tree_model_get(model, &it, 0, &pos, -1);
-  gtk_list_store_set(GTK_LIST_STORE(model), &it, 0, text, -1);
   gtk_tree_path_free(path);
+
+  gtk_tree_model_get(model, &it, 0, &edited, -1);
+  gtk_list_store_set(GTK_LIST_STORE(model), &it, 0, text, -1);
+  g_free(edited);
 }
 
 /*************************************************************************
