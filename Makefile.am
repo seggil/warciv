@@ -33,6 +33,7 @@ ACLOCAL_AMFLAGS= "-I ${abs_top_builddir}/m4"
 SUBDIRS= $(DATASUBDIRS) intl utility common tests win32 $(SERVERSUBDIRS) $(CLIENTSUBDIRS) \
          po doc $(MANUALSUBDIRS) contrib
 
+#		debian/warclient*       \
 EXTRA_DIST=	autogen.sh \
 		config.mac.h   \
 		configure.ac   \
@@ -49,7 +50,6 @@ EXTRA_DIST=	autogen.sh \
 		debian/control          \
 		debian/copyright        \
 		debian/rules            \
-		debian/warclient*       \
 		debian/watch            \
 		debian/patches/01_configure_ac_localedir.dpatch     \
 		debian/patches/series       \
