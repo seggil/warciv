@@ -104,7 +104,7 @@ data/experimental/governments.ruleset
 data/experimental/techs.ruleset
 data/experimental/terrain.ruleset
 data/experimental/units.ruleset
-data/Freeciv.in
+data/Warciv.in
 data/helpdata.txt
 data/history/buildings.ruleset
 data/history/cities.ruleset
@@ -369,6 +369,8 @@ server/diplhand.c
 server/diplomats.c
 server/gamehand.c
 server/gamelog.c
+server/game_save.c
+server/game_load.c
 server/generator/mapgen.c
 server/generator/mapgen_topology.c
 server/generator/startpos.c
@@ -378,7 +380,6 @@ server/meta.c
 server/plrhand.c
 server/report.c
 server/ruleset.c
-server/savegame.c
 server/score.c
 server/sernet.c
 server/settings.c
@@ -390,9 +391,6 @@ server/unittools.c
 server/tradehand.c
 server/vote.c
 utility/astring.h
-utility/fciconv.c
-utility/fcintl.c
-utility/fcintl.h
 utility/hash.c
 utility/inputfile.c
 utility/log.c
@@ -405,3 +403,6 @@ utility/speclist.h
 utility/specvec.h
 utility/support.c
 utility/tadns.c
+utility/wc_iconv.c
+utility/wc_intl.c
+utility/wc_intl.h
