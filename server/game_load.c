@@ -406,6 +406,7 @@ const char* old_civ2_governments[] =
 };
 const int old_civ2_governments_size = ARRAY_SIZE(old_civ2_governments);
 
+#ifndef NDEBUG
 /***************************************************************
 Unquote a string. The unquoted data is written into dest. If the
 unqoted data will be largern than dest_length the function aborts. It
@@ -439,6 +440,7 @@ static int unquote_block(const char *const quoted_, void *dest,
   }
   return length;
 }
+#endif
 
 /****************************************************************************
   Convert an old-style unit type id into a unit type name.
