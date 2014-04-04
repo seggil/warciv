@@ -105,7 +105,7 @@ static struct layers_s {
 } layers[MAX_NUM_LAYERS];
 
 /* Darkness style.  Don't reorder this enum since tilesets depend on it. */
-static enum {
+static enum darkness_style_e {
   /* No darkness sprites are drawn. */
   DARKNESS_NONE = 0,
 

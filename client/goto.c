@@ -50,7 +50,7 @@ struct path_part {
   struct path_finding_map *map;
 };
 
-static struct {
+static struct goto_map_s {
   /* For each tile and each direction we store the number of lines going out
    * of the tile in this direction.  Since each line is undirected, we only
    * store the 4 lower-numbered directions for each tile; the 4 upper-numbered
@@ -61,7 +61,7 @@ static struct {
    *   only one has number less than 4
    * 2. There _can_ be more than one line drawn between two tiles, because of
    * the waypoints. */
-  struct {
+  struct goto_map_tiles {
     unsigned char drawn[4];
   } *tiles;
   int unit_id;                  /* The unit of the goto map */

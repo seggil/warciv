@@ -1246,7 +1246,7 @@ int sorted_events[E_LAST];
  * Holds information about all event types. The entries don't have
  * to be sorted.
  */
-static struct {
+static struct events_s {
   const char *enum_name;
   char *tag_name;
   const char *descr_orig;

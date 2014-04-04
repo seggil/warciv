@@ -224,7 +224,7 @@ extern bool draw_focus_unit;
 extern bool draw_fog_of_war;
 extern bool draw_borders;
 
-typedef struct {
+typedef struct view_option_s {
   const char *name;
   bool *p_value;
 } view_option;
