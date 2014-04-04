@@ -19,24 +19,29 @@
 #include "unit.h"               /* struct unit_list */
 #include "worklist.h"
 
-enum city_options {
+typedef enum city_unit_option_e {
   /* The first 4 are whether to auto-attack versus each unit move_type
    * from with auto-attack units within this city.  Note that these
    * should stay the first four, and must stay in the same order as
-   * enum unit_move_type.
-   *
-   * The next is whether building a settler at size 1 disbands a city.
-   *
-   * The following 2 are what to do of new citizens when the city grows:
+   * enum unit_move_type. */
+  CITY_UNIT_AUTO_ATTACK_LAND=0,
+  CITY_UNIT_AUTO_ATTACK_SEA,
+  CITY_UNIT_AUTO_ATTACK_HELI,
+  CITY_UNIT_AUTO_ATTACK_AIR,
+
+  /* The next is whether building a settler at size 1 disbands a city. */
+  CITY_NEW_SETTLER_DISBAND,
+
+  /* The following 2 are what to do of new citizens when the city grows:
    * make them workers, scientists, or taxmen. Should have only one set,
-   * or if neither is set, that means make workers.
-   *
-   * Any more than 8 options requires a protocol extension, since
+   * or if neither is set, that means make workers. */
+  CITY_NEW_CITIZEN_EINSTEIN,
+  CITY_NEW_CITIZEN_TAXMAN
+
+  /* Any more than 8 options requires a protocol extension, since
    * we only send 8 bits.
    */
-  CITYO_ATT_LAND=0, CITYO_ATT_SEA, CITYO_ATT_HELI, CITYO_ATT_AIR,
-  CITYO_DISBAND, CITYO_NEW_EINSTEIN, CITYO_NEW_TAXMAN
-};
+} city_unit_option;
 
 /* first four bits are for auto-attack: */
 #define CITYOPT_AUTOATTACK_BITS 0xF
@@ -270,7 +275,7 @@ struct city_common {
 
 struct city_s {
   struct city_common common;
-  union tata_u {
+  union city_u {
     struct client_part_s {
       /* Only used at the client (the server is omniscient). */
       bool occupied;
@@ -525,7 +530,7 @@ city_t *create_city_virtual(struct player *pplayer, tile_t *ptile,
 void remove_city_virtual(city_t *pcity);
 
 /* misc */
-bool is_city_option_set(const city_t *pcity, enum city_options option);
+bool is_city_option_set(const city_t *pcity, city_unit_option option);
 void city_styles_alloc(int num);
 void city_styles_free(void);
 

@@ -3244,19 +3244,19 @@ static void cityopt_callback(GtkWidget * w, gpointer data)
     return;
   }
 
-  if(!pdialog->misc.block_signal){
+  if (!pdialog->misc.block_signal) {
     int i, new_options = 0;
     city_t *pcity = pdialog->pcity;
 
-    for(i = 0; i < NUM_CITY_OPTS; i++){
-      if(GTK_TOGGLE_BUTTON(pdialog->misc.city_opts[i])->active)
+    for (i = 0; i < NUM_CITY_OPTS; i++) {
+      if (GTK_TOGGLE_BUTTON(pdialog->misc.city_opts[i])->active)
         new_options |= (1 << i);
     }
 
     if (GTK_TOGGLE_BUTTON(pdialog->misc.new_citizens_radio[1])->active) {
-      new_options |= (1 << CITYO_NEW_EINSTEIN);
-    } else if(GTK_TOGGLE_BUTTON(pdialog->misc.new_citizens_radio[2])->active) {
-      new_options |= (1 << CITYO_NEW_TAXMAN);
+      new_options |= (1 << CITY_NEW_CITIZEN_EINSTEIN);
+    } else if (GTK_TOGGLE_BUTTON(pdialog->misc.new_citizens_radio[2])->active) {
+      new_options |= (1 << CITY_NEW_CITIZEN_TAXMAN);
     }
 
     dsend_packet_city_options_req(&aconnection, pcity->common.id, new_options);
@@ -3279,10 +3279,10 @@ static void set_cityopt_values(struct city_dialog *pdialog)
                                  is_city_option_set(pcity, i));
   }
 
-  if (is_city_option_set(pcity, CITYO_NEW_EINSTEIN)) {
+  if (is_city_option_set(pcity, CITY_NEW_CITIZEN_EINSTEIN)) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON
                                  (pdialog->misc.new_citizens_radio[1]), TRUE);
-  } else if (is_city_option_set(pcity, CITYO_NEW_TAXMAN)) {
+  } else if (is_city_option_set(pcity, CITY_NEW_CITIZEN_TAXMAN)) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON
                                  (pdialog->misc.new_citizens_radio[2]), TRUE);
   } else {
