@@ -624,11 +624,11 @@ static void city_increase_size(city_t *pcity)
   } city_map_iterate_end;
   if (((pcity->common.food_surplus >= 2) || !have_square)
       && pcity->common.pop_size >= 5
-      && (is_city_option_set(pcity, CITYO_NEW_EINSTEIN)
-          || is_city_option_set(pcity, CITYO_NEW_TAXMAN)))
+      && (is_city_option_set(pcity, CITY_NEW_CITIZEN_EINSTEIN)
+          || is_city_option_set(pcity, CITY_NEW_CITIZEN_TAXMAN)))
   {
 
-    if (is_city_option_set(pcity, CITYO_NEW_EINSTEIN)) {
+    if (is_city_option_set(pcity, CITY_NEW_CITIZEN_EINSTEIN)) {
       pcity->common.specialists[SP_SCIENTIST]++;
     } else { /* now pcity->common.city_options & (1<<CITYO_NEW_TAXMAN) is true */
       pcity->common.specialists[SP_TAXMAN]++;
@@ -1209,7 +1209,7 @@ static bool city_build_unit(struct player *pplayer, city_t *pcity)
 
     /* Should we disband the city? -- Massimo */
     if (pcity->common.pop_size == pop_cost
-        && is_city_option_set(pcity, CITYO_DISBAND)) {
+        && is_city_option_set(pcity, CITY_NEW_SETTLER_DISBAND)) {
       return !disband_city(pcity);
     }
 
