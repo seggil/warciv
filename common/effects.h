@@ -24,12 +24,12 @@
 /* Range of effects (used in equiv_range and effect.range fields)
  * These must correspond to effect_range_names[] in improvement.c. */
 enum effect_range {
-  EFR_LOCAL,
-  EFR_CITY,
-  EFR_CONTINENT,
-  EFR_PLAYER,
-  EFR_WORLD,
-  EFR_LAST   /* keep this last */
+  EFFECT_RANGE_LOCAL,
+  EFFECT_RANGE_CITY,
+  EFFECT_RANGE_CONTINENT,
+  EFFECT_RANGE_PLAYER,
+  EFFECT_RANGE_WORLD,
+  EFFECT_RANGE_LAST   /* keep this last */
 };
 
 /* Type of effects. (Used in effect.type field)

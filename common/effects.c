@@ -37,7 +37,7 @@
 /* Names of effect ranges.
  * (These must correspond to enum effect_range_id in effects.h.)
  * do not change these unless you know what you're doing! */
-static const char *effect_range_names[EFR_LAST] = {
+static const char *effect_range_names[EFFECT_RANGE_LAST] = {
   "Local",
   "City",
   "Continent",
@@ -141,15 +141,15 @@ enum effect_range effect_range_from_str(const char *str)
 {
   enum effect_range effect_range;
 
-  assert(ARRAY_SIZE(effect_range_names) == EFR_LAST);
+  assert(ARRAY_SIZE(effect_range_names) == EFFECT_RANGE_LAST);
 
-  for (effect_range = 0; effect_range < EFR_LAST; effect_range++) {
+  for (effect_range = 0; effect_range < EFFECT_RANGE_LAST; effect_range++) {
     if (0 == mystrcasecmp(effect_range_names[effect_range], str)) {
       return effect_range;
     }
   }
 
-  return EFR_LAST;
+  return EFFECT_RANGE_LAST;
 }
 
 /**************************************************************************
@@ -158,8 +158,8 @@ enum effect_range effect_range_from_str(const char *str)
 **************************************************************************/
 const char *effect_range_name(enum effect_range effect_range)
 {
-  assert(ARRAY_SIZE(effect_range_names) == EFR_LAST);
-  if ( effect_range < EFR_LAST) {
+  assert(ARRAY_SIZE(effect_range_names) == EFFECT_RANGE_LAST);
+  if ( effect_range < EFFECT_RANGE_LAST) {
     return effect_range_names[effect_range];
   } else {
     assert(0);
@@ -883,11 +883,11 @@ static bool is_target_possible(enum target_type target,
 {
   switch (target) {
   case TARGET_PLAYER:
-    return (range >= EFR_PLAYER);
+    return (range >= EFFECT_RANGE_PLAYER);
   case TARGET_CITY:
-    return (range >= EFR_CITY);
+    return (range >= EFFECT_RANGE_CITY);
   case TARGET_BUILDING:
-    return (range >= EFR_LOCAL);
+    return (range >= EFFECT_RANGE_LOCAL);
   }
   assert(0);
   return FALSE;
@@ -927,7 +927,7 @@ static int count_sources_in_range(enum target_type target,
   }
 
   if (survives) {
-    if (range == EFR_WORLD) {
+    if (range == EFFECT_RANGE_WORLD) {
       return num_world_buildings_total(source);
     } else {
       /* There is no sources cache for this. */
@@ -939,25 +939,25 @@ static int count_sources_in_range(enum target_type target,
   }
 
   switch (range) {
-  case EFR_WORLD:
+  case EFFECT_RANGE_WORLD:
     return num_world_buildings(source);
-  case EFR_PLAYER:
+  case EFFECT_RANGE_PLAYER:
     return num_player_buildings(target_player, source);
-  case EFR_CONTINENT:
+  case EFFECT_RANGE_CONTINENT:
     {
       int continent = map_get_continent(target_city->common.tile);
 
       return num_continent_buildings(target_player, continent, source);
     }
-  case EFR_CITY:
+  case EFFECT_RANGE_CITY:
     return num_city_buildings(target_city, source);
-  case EFR_LOCAL:
+  case EFFECT_RANGE_LOCAL:
     if (target_building == source) {
       return num_city_buildings(target_city, source);
     } else {
       return 0;
     }
-  case EFR_LAST:
+  case EFFECT_RANGE_LAST:
     break;
   }
   assert(0);
@@ -1051,7 +1051,8 @@ static bool are_effect_reqs_active(enum target_type target,
      * in the city.  (This is a slightly nonstandard use of
      * count_sources_in_range.) */
     return (count_sources_in_range(target, target_player, target_city,
-                                   target_building, EFR_CITY, FALSE,
+                                   target_building, EFFECT_RANGE_CITY,
+                                   FALSE,
                                    peffect->req.value.building) > 0);
     break;
   case REQ_SPECIAL:
