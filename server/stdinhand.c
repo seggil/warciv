@@ -6612,7 +6612,7 @@ static bool end_command(struct connection *caller, char *str, bool check)
     }
   }
 
-  game.server.wcdb.outcome = GOC_ENDED_BY_VOTE;
+  game.server.wcdb.outcome = GAME_ENDED_BY_VOTE;
   if (declared_winner) {
     players_iterate(pplayer) {
       if (BV_ISSET(srvarg.draw, pplayer->player_no)) {
@@ -6662,7 +6662,7 @@ static bool draw_command(struct connection *caller, char *str, bool check)
     return TRUE;
   }
 
-  game.server.wcdb.outcome = GOC_ENDED_BY_VOTE;
+  game.server.wcdb.outcome = GAME_ENDED_BY_VOTE;
   players_iterate(pplayer) {
     pplayer->result = PR_DRAW;
   } players_iterate_end;

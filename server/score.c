@@ -1034,7 +1034,7 @@ static void update_ratings(void)
         rj = score_calculate_solo_opponent_rating(&groupings[0]);
 
         /* You only 'win' if you get to Alpha Centauri. */
-        sj = game.server.wcdb.outcome == GOC_ENDED_BY_SPACESHIP ? 1.0 : 0.0;
+        sj = game.server.wcdb.outcome == GAME_ENDED_BY_SPACESHIP ? 1.0 : 0.0;
 
       } else {
         if (i == j) {
@@ -1270,7 +1270,7 @@ void score_update_grouping_results(void)
   if (groupings[0].result == PR_NONE) {
     if (num_groupings < 2) {
       if (game.server.wcdb.type == GT_SOLO
-          && game.server.wcdb.outcome != GOC_ENDED_BY_SPACESHIP) {
+          && game.server.wcdb.outcome != GAME_ENDED_BY_SPACESHIP) {
         groupings[0].result = PR_LOSE;
       } else {
         groupings[0].result = PR_WIN;
