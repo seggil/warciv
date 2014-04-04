@@ -453,9 +453,9 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
           break;
         }
       case CLAUSE_CEASEFIRE:
-        pgiver->diplstates[pdest->player_no].type=DS_CEASEFIRE;
+        pgiver->diplstates[pdest->player_no].type=DIPLSTATE_CEASEFIRE;
         pgiver->diplstates[pdest->player_no].turns_left=16;
-        pdest->diplstates[pgiver->player_no].type=DS_CEASEFIRE;
+        pdest->diplstates[pgiver->player_no].type=DIPLSTATE_CEASEFIRE;
         pdest->diplstates[pgiver->player_no].turns_left=16;
         notify_player_ex(pgiver, NULL, E_TREATY_CEASEFIRE,
                          _("Game: You agree on a cease-fire with %s."),
@@ -464,15 +464,15 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
                          _("Game: You agree on a cease-fire with %s."),
                          pgiver->name);
         gamelog(GAMELOG_TREATY, GL_CEASEFIRE, pgiver, pdest);
-        if (old_diplstate == DS_ALLIANCE) {
+        if (old_diplstate == DIPLSTATE_ALLIANCE) {
           update_players_after_alliance_breakup(pgiver, pdest);
         }
         check_city_workers(pplayer);
         check_city_workers(pother);
         break;
       case CLAUSE_PEACE:
-        pgiver->diplstates[pdest->player_no].type=DS_PEACE;
-        pdest->diplstates[pgiver->player_no].type=DS_PEACE;
+        pgiver->diplstates[pdest->player_no].type=DIPLSTATE_PEACE;
+        pdest->diplstates[pgiver->player_no].type=DIPLSTATE_PEACE;
         notify_player_ex(pgiver, NULL, E_TREATY_PEACE,
                          _("Game: You agree on a peace treaty with %s."),
                          pdest->name);
@@ -480,15 +480,15 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
                          _("Game: You agree on a peace treaty with %s."),
                          pgiver->name);
         gamelog(GAMELOG_TREATY, GL_PEACE, pgiver, pdest);
-        if (old_diplstate == DS_ALLIANCE) {
+        if (old_diplstate == DIPLSTATE_ALLIANCE) {
           update_players_after_alliance_breakup(pgiver, pdest);
         }
         check_city_workers(pplayer);
         check_city_workers(pother);
         break;
       case CLAUSE_ALLIANCE:
-        pgiver->diplstates[pdest->player_no].type=DS_ALLIANCE;
-        pdest->diplstates[pgiver->player_no].type=DS_ALLIANCE;
+        pgiver->diplstates[pdest->player_no].type=DIPLSTATE_ALLIANCE;
+        pdest->diplstates[pgiver->player_no].type=DIPLSTATE_ALLIANCE;
         notify_player_ex(pgiver, NULL, E_TREATY_ALLIANCE,
                          _("Game: You agree on an alliance with %s."),
                          pdest->name);
@@ -816,10 +816,10 @@ void cancel_diplomacy(struct player *pplayer)
       remove_shared_vision(pplayer2, pplayer);
       message = TRUE;
     }
-    if (pplayer_get_diplstate(pplayer, pplayer2)->type != DS_NO_CONTACT
-        && pplayer_get_diplstate(pplayer, pplayer2)->type != DS_WAR) {
-      pplayer->diplstates[pplayer2->player_no].type = DS_WAR;
-      pplayer2->diplstates[pplayer->player_no].type = DS_WAR;
+    if (pplayer_get_diplstate(pplayer, pplayer2)->type != DIPLSTATE_NO_CONTACT
+        && pplayer_get_diplstate(pplayer, pplayer2)->type != DIPLSTATE_WAR) {
+      pplayer->diplstates[pplayer2->player_no].type = DIPLSTATE_WAR;
+      pplayer2->diplstates[pplayer->player_no].type = DIPLSTATE_WAR;
       message = TRUE;
     }
     if (message) {

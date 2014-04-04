@@ -511,7 +511,7 @@ static void update_diplomatics(void)
       pdiplstate->contact_turns_left =
           MAX(pdiplstate->contact_turns_left - 1, 0);
 
-      if(pdiplstate->type == DS_CEASEFIRE) {
+      if(pdiplstate->type == DIPLSTATE_CEASEFIRE) {
         switch(--pdiplstate->turns_left) {
         case 1:
           notify_player(player1,
@@ -525,7 +525,7 @@ static void update_diplomatics(void)
                           "run out. You are now neutral towards the %s."),
                         player2->name,
                         get_nation_name_plural(player2->nation));
-          pdiplstate->type = DS_NEUTRAL;
+          pdiplstate->type = DIPLSTATE_NEUTRAL;
           check_city_workers(player1);
           check_city_workers(player2);
           break;
@@ -2031,7 +2031,7 @@ MAIN_START_PLAYERS:
       players_iterate(pdest) {
         if (players_on_same_team(pplayer, pdest)
             && pplayer->player_no != pdest->player_no) {
-          pplayer->diplstates[pdest->player_no].type = DS_TEAM;
+          pplayer->diplstates[pdest->player_no].type = DIPLSTATE_TEAM;
           give_shared_vision(pplayer, pdest);
           pplayer->embassy |= (1 << pdest->player_no);
         }

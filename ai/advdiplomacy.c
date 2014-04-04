@@ -147,7 +147,7 @@ static bool shared_vision_is_safe(struct player* pplayer,
     if (gives_shared_vision(aplayer, eplayer)) {
       enum diplstate_type ds = pplayer_get_diplstate(pplayer, eplayer)->type;
 
-      if (ds != DS_NO_CONTACT && ds != DS_ALLIANCE) {
+      if (ds != DIPLSTATE_NO_CONTACT && ds != DIPLSTATE_ALLIANCE) {
         return FALSE;
       }
     }
@@ -286,8 +286,8 @@ static int ai_goldequiv_clause(struct player *pplayer,
     {
       enum diplstate_type ds = pplayer_get_diplstate(pplayer, aplayer)->type;
 
-      if ((pclause->type == CLAUSE_PEACE && ds > DS_PEACE)
-          || (pclause->type == CLAUSE_CEASEFIRE && ds > DS_CEASEFIRE)) {
+      if ((pclause->type == CLAUSE_PEACE && ds > DIPLSTATE_PEACE)
+          || (pclause->type == CLAUSE_CEASEFIRE && ds > DIPLSTATE_CEASEFIRE)) {
         notify(aplayer, _("*%s (AI)* I will not let you go that easy, %s. "
                "The current treaty stands."), pplayer->name, aplayer->name);
         worth = -BIG_NUMBER;
@@ -304,7 +304,8 @@ static int ai_goldequiv_clause(struct player *pplayer,
     /* If this lucky fella got a ceasefire with da boss, then
      * let him live. */
     if (pplayer_get_diplstate(aplayer, ai->diplomacy.alliance_leader)->type
-        == DS_CEASEFIRE && pclause->type == CLAUSE_CEASEFIRE) {
+        == DIPLSTATE_CEASEFIRE && pclause->type == CLAUSE_CEASEFIRE)
+    {
         notify(aplayer, _("*%s (AI)* %s recommended that I give you a ceasefire."
                " This is your lucky day."), pplayer->name,
                ai->diplomacy.alliance_leader->name);
@@ -655,13 +656,13 @@ static int ai_war_desire(struct player *pplayer, struct player *aplayer,
 
     /* Remember: pplayers_allied() returns true when aplayer == eplayer */
     if (!cancel_excuse && pplayers_allied(aplayer, eplayer)) {
-      if (ds == DS_CEASEFIRE) {
+      if (ds == DIPLSTATE_CEASEFIRE) {
         kill_desire -= kill_desire / 10; /* 10% off */
-      } else if (ds == DS_NEUTRAL) {
+      } else if (ds == DIPLSTATE_NEUTRAL) {
         kill_desire -= kill_desire / 7; /* 15% off */
-      } else if (ds == DS_PEACE) {
+      } else if (ds == DIPLSTATE_PEACE) {
         kill_desire -= kill_desire / 5; /* 20% off */
-      } else if (ds == DS_ALLIANCE) {
+      } else if (ds == DIPLSTATE_ALLIANCE) {
         kill_desire -= kill_desire / 3; /* 33% off here, more later */
       }
     }
@@ -738,7 +739,7 @@ void ai_diplomacy_calculate(struct player *pplayer, struct ai_data *ai)
       pplayer->ai.love[aplayer->player_no] += ai->diplomacy.love_incr;
       PLAYER_LOG(LOG_DEBUG, pplayer, ai, "Increased love for %s (now %d)",
                  aplayer->name, pplayer->ai.love[aplayer->player_no]);
-    } else if (pplayer->diplstates[aplayer->player_no].type == DS_WAR) {
+    } else if (pplayer->diplstates[aplayer->player_no].type == DIPLSTATE_WAR) {
       pplayer->ai.love[aplayer->player_no] -= ai->diplomacy.love_incr;
       if (ai->diplomacy.target != aplayer &&
           pplayer->ai.love[aplayer->player_no] < 0) {
@@ -828,13 +829,13 @@ void ai_diplomacy_calculate(struct player *pplayer, struct ai_data *ai)
      */
     if (aplayer == pplayer
         || !aplayer->is_alive
-        || ds == DS_NO_CONTACT
+        || ds == DIPLSTATE_NO_CONTACT
         || players_on_same_team(pplayer, aplayer)
         || (pplayer != ai->diplomacy.alliance_leader &&
             aplayer != ai->diplomacy.alliance_leader &&
             adip->is_allied_with_ally)
         || (pplayer_get_diplstate(aplayer, ai->diplomacy.alliance_leader)->type
-            == DS_CEASEFIRE)) {
+            == DIPLSTATE_CEASEFIRE)) {
       continue;
     }
     war_desire[aplayer->player_no] = ai_war_desire(pplayer, aplayer, ai);
@@ -1059,7 +1060,7 @@ void ai_diplomacy_actions(struct player *pplayer)
         && adip->at_war_with_ally
         && !adip->is_allied_with_ally
         && !pplayers_at_war(pplayer, aplayer)
-        && (pplayer_get_diplstate(pplayer, aplayer)->type != DS_CEASEFIRE ||
+        && (pplayer_get_diplstate(pplayer, aplayer)->type != DIPLSTATE_CEASEFIRE ||
             myrand(5) < 1)) {
       notify(aplayer, _("*%s (AI)* Your aggression against my allies was "
                         "your last mistake!"), pplayer->name);
@@ -1123,10 +1124,10 @@ void ai_diplomacy_actions(struct player *pplayer)
     }
 
     switch (ds) {
-    case DS_TEAM:
+    case DIPLSTATE_TEAM:
       ai_share(pplayer, aplayer);
       break;
-    case DS_ALLIANCE:
+    case DIPLSTATE_ALLIANCE:
       if (players_on_same_team(pplayer, aplayer)
           || (target && (!pplayers_at_war(pplayer, target)
               || pplayers_at_war(aplayer, target)))) {
@@ -1180,7 +1181,7 @@ void ai_diplomacy_actions(struct player *pplayer)
       }
       break;
 
-    case DS_PEACE:
+    case DIPLSTATE_PEACE:
       clause.type = CLAUSE_ALLIANCE;
       if (ai_goldequiv_clause(pplayer, aplayer, &clause, ai, FALSE) < 0
           || (adip->asked_about_alliance > 0 && !aplayer->ai.control)
@@ -1194,8 +1195,8 @@ void ai_diplomacy_actions(struct player *pplayer)
              "a joint campaign against %s?"), pplayer->name, target->name);
       break;
 
-    case DS_CEASEFIRE:
-    case DS_NEUTRAL:
+    case DIPLSTATE_CEASEFIRE:
+    case DIPLSTATE_NEUTRAL:
       clause.type = CLAUSE_PEACE;
       if (ai_goldequiv_clause(pplayer, aplayer, &clause, ai, FALSE) < 0
           || (adip->asked_about_peace > 0 && !aplayer->ai.control)
@@ -1209,8 +1210,8 @@ void ai_diplomacy_actions(struct player *pplayer)
              "a joint campaign against %s?"), pplayer->name, target->name);
       break;
 
-    case DS_NO_CONTACT: /* but we do have embassy! weird. */
-    case DS_WAR:
+    case DIPLSTATE_NO_CONTACT: /* but we do have embassy! weird. */
+    case DIPLSTATE_WAR:
       clause.type = CLAUSE_CEASEFIRE;
       if (ai_goldequiv_clause(pplayer, aplayer, &clause, ai, FALSE) < 0
           || (adip->asked_about_ceasefire > 0 && !aplayer->ai.control)

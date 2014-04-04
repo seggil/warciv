@@ -274,7 +274,7 @@ void ai_manage_tech(struct player *pplayer)
   players_iterate(aplayer) {
     const struct player_diplstate *ds = pplayer_get_diplstate(pplayer, aplayer);
 
-    if (ds->type == DS_TEAM) {
+    if (ds->type == DIPLSTATE_TEAM) {
       return;
     }
   } players_iterate_end;

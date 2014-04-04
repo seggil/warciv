@@ -1399,23 +1399,23 @@ static void maybe_cause_incident(enum diplomat_actions action, struct player *of
       die("Bug in maybe_cause_incident()");
     }
     switch (ds) {
-    case DS_WAR:
-    case DS_NO_CONTACT:
+    case DIPLSTATE_WAR:
+    case DIPLSTATE_NO_CONTACT:
       freelog(LOG_VERBOSE,"Trying to cause an incident between players at war");
       punishment = 0;
       break;
-    case DS_NEUTRAL:
+    case DIPLSTATE_NEUTRAL:
       punishment = GAME_MAX_REPUTATION/20;
       break;
-    case DS_CEASEFIRE:
-    case DS_PEACE:
+    case DIPLSTATE_CEASEFIRE:
+    case DIPLSTATE_PEACE:
       punishment = GAME_MAX_REPUTATION/10;
       break;
-    case DS_ALLIANCE:
-    case DS_TEAM:
+    case DIPLSTATE_ALLIANCE:
+    case DIPLSTATE_TEAM:
       punishment = GAME_MAX_REPUTATION/5;
       break;
-    case DS_LAST:
+    case DIPLSTATE_LAST:
       assert(FALSE);
       break;
     }

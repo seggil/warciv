@@ -1417,7 +1417,7 @@ static void player_load(struct player *plr, int plrno,
                                              "player%d.reputation", plrno);
   for (i=0; i < game.info.nplayers; i++) {
     plr->diplstates[i].type =
-      secfile_lookup_int_default(file, DS_WAR,
+      secfile_lookup_int_default(file, DIPLSTATE_WAR,
                                  "player%d.diplstate%d.type", plrno, i);
     plr->diplstates[i].turns_left =
       secfile_lookup_int_default(file, -2,
@@ -1433,7 +1433,7 @@ static void player_load(struct player *plr, int plrno,
   /* We don't need this info, but savegames carry it anyway.
      To avoid getting "unused" warnings we touch the values like this. */
   for (i=game.info.nplayers; i<MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS; i++) {
-    secfile_lookup_int_default(file, DS_NEUTRAL,
+    secfile_lookup_int_default(file, DIPLSTATE_NEUTRAL,
                                "player%d.diplstate%d.type", plrno, i);
     secfile_lookup_int_default(file, 0,
                                "player%d.diplstate%d.turns_left", plrno, i);
@@ -1452,8 +1452,8 @@ static void player_load(struct player *plr, int plrno,
       freelog(LOG_ERROR, _("Illegal alliance structure detected: "
               "%s's alliance to %s reduced to peace treaty."),
               plr->name, aplayer->name);
-      plr->diplstates[aplayer->player_no].type = DS_PEACE;
-      aplayer->diplstates[plr->player_no].type = DS_PEACE;
+      plr->diplstates[aplayer->player_no].type = DIPLSTATE_PEACE;
+      aplayer->diplstates[plr->player_no].type = DIPLSTATE_PEACE;
     }
   } players_iterate_end;
 

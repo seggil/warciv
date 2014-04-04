@@ -1233,20 +1233,20 @@ repeat_break_treaty:
   /* check what the new status will be, and what will happen to our
      reputation */
   switch(old_type) {
-  case DS_NO_CONTACT: /* possible if someone declares war on our ally */
-  case DS_NEUTRAL:
-    new_type = DS_WAR;
+  case DIPLSTATE_NO_CONTACT: /* possible if someone declares war on our ally */
+  case DIPLSTATE_NEUTRAL:
+    new_type = DIPLSTATE_WAR;
     break;
-  case DS_CEASEFIRE:
-    new_type = DS_NEUTRAL;
+  case DIPLSTATE_CEASEFIRE:
+    new_type = DIPLSTATE_NEUTRAL;
     reppenalty += GAME_MAX_REPUTATION/6;
     break;
-  case DS_PEACE:
-    new_type = DS_NEUTRAL;
+  case DIPLSTATE_PEACE:
+    new_type = DIPLSTATE_NEUTRAL;
     reppenalty += GAME_MAX_REPUTATION/5;
     break;
-  case DS_ALLIANCE:
-    new_type = DS_PEACE;
+  case DIPLSTATE_ALLIANCE:
+    new_type = DIPLSTATE_PEACE;
     reppenalty += GAME_MAX_REPUTATION/4;
     break;
   default:
@@ -1266,13 +1266,13 @@ repeat_break_treaty:
 
   /* If the old state was alliance, the players' units can share tiles
      illegally, and we need to call resolve_unit_stacks() */
-  if (old_type == DS_ALLIANCE) {
+  if (old_type == DIPLSTATE_ALLIANCE) {
     update_players_after_alliance_breakup(pplayer, pplayer2);
   }
 
   /* We want to go all the way to war, whatever the cost!
    * This is only used by the AI. */
-  if (clause == CLAUSE_LAST && new_type != DS_WAR) {
+  if (clause == CLAUSE_LAST && new_type != DIPLSTATE_WAR) {
     repeat = TRUE;
     old_type = new_type;
     goto repeat_break_treaty;
@@ -1311,7 +1311,7 @@ repeat_break_treaty:
   send_player_info(pplayer2, NULL);
 
 
-  if (old_type == DS_ALLIANCE) {
+  if (old_type == DIPLSTATE_ALLIANCE) {
     /* Inform clients about units that have been hidden.  Units in cities
      * and transporters are visible to allies but not visible once the
      * alliance is broken.  We have to call this after resolve_unit_stacks
@@ -1347,7 +1347,7 @@ repeat_break_treaty:
   /* Check fall-out of a war declaration. */
   players_iterate(other) {
     if (other->is_alive && other != pplayer && other != pplayer2
-        && new_type == DS_WAR && pplayers_allied(pplayer2, other)
+        && new_type == DIPLSTATE_WAR && pplayers_allied(pplayer2, other)
         && pplayers_allied(pplayer, other)) {
       if (!players_on_same_team(pplayer, other)) {
         /* If an ally declares war on another ally, break off your alliance
@@ -1682,7 +1682,7 @@ static void package_player_info(struct player *plr,
     }
 
     for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-      packet->diplstates[i].type       = DS_NEUTRAL;
+      packet->diplstates[i].type       = DIPLSTATE_NEUTRAL;
       packet->diplstates[i].turns_left = 0;
       packet->diplstates[i].has_reason_to_cancel = 0;
       packet->diplstates[i].contact_turns_left = 0;
@@ -1703,7 +1703,7 @@ static void package_player_info(struct player *plr,
   /* Make absolutely sure - in case you lose your embassy! */
   if (info_level >= INFO_EMBASSY
       || (receiver
-          && pplayer_get_diplstate(plr, receiver)->type == DS_TEAM)) {
+          && pplayer_get_diplstate(plr, receiver)->type == DIPLSTATE_TEAM)) {
     packet->bulbs_last_turn = plr->research.bulbs_last_turn;
   } else {
     packet->bulbs_last_turn = 0;
@@ -1745,7 +1745,7 @@ static void package_player_info(struct player *plr,
 
   if (info_level >= INFO_FULL
       || (receiver
-          && plr->diplstates[receiver->player_no].type == DS_TEAM)) {
+          && plr->diplstates[receiver->player_no].type == DIPLSTATE_TEAM)) {
     packet->tech_goal       = plr->ai.tech_goal;
     packet->researching_cost = total_bulbs_required(plr);
   } else {
@@ -1859,11 +1859,11 @@ void make_contact(struct player *pplayer1, struct player *pplayer2,
   pplayer1->diplstates[player2].contact_turns_left = game.server.contactturns;
   pplayer2->diplstates[player1].contact_turns_left = game.server.contactturns;
 
-  if (pplayer_get_diplstate(pplayer1, pplayer2)->type == DS_NO_CONTACT) {
+  if (pplayer_get_diplstate(pplayer1, pplayer2)->type == DIPLSTATE_NO_CONTACT) {
     /* Set default new diplomatic state depending on game.info.diplomacy
      * server setting. Default is zero, which gives DS_NEUTRAL. */
     enum diplstate_type dipstate = diplomacy_possible(pplayer1,pplayer2)
-                                    ? DS_NEUTRAL : DS_WAR;
+                                    ? DIPLSTATE_NEUTRAL : DIPLSTATE_WAR;
 
     pplayer1->diplstates[player2].type
       = pplayer2->diplstates[player1].type
@@ -1885,7 +1885,7 @@ void make_contact(struct player *pplayer1, struct player *pplayer2,
     check_city_workers(pplayer2);
     return;
   } else {
-    assert(pplayer_get_diplstate(pplayer2, pplayer1)->type != DS_NO_CONTACT);
+    assert(pplayer_get_diplstate(pplayer2, pplayer1)->type != DIPLSTATE_NO_CONTACT);
   }
   if (player_has_embassy(pplayer1, pplayer2)
       || player_has_embassy(pplayer2, pplayer1)) {
@@ -2087,11 +2087,11 @@ static struct player *split_player(struct player *pplayer)
   players_iterate(other_player) {
     /* Barbarians are at war with everybody */
     if (is_barbarian(other_player)) {
-      cplayer->diplstates[other_player->player_no].type = DS_WAR;
-      other_player->diplstates[cplayer->player_no].type = DS_WAR;
+      cplayer->diplstates[other_player->player_no].type = DIPLSTATE_WAR;
+      other_player->diplstates[cplayer->player_no].type = DIPLSTATE_WAR;
     } else {
-      cplayer->diplstates[other_player->player_no].type = DS_NO_CONTACT;
-      other_player->diplstates[cplayer->player_no].type = DS_NO_CONTACT;
+      cplayer->diplstates[other_player->player_no].type = DIPLSTATE_NO_CONTACT;
+      other_player->diplstates[cplayer->player_no].type = DIPLSTATE_NO_CONTACT;
     }
 
     cplayer->diplstates[other_player->player_no].has_reason_to_cancel = 0;

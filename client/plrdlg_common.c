@@ -152,7 +152,7 @@ static const char *col_diplstate(struct player *player)
     return "-";
   } else {
     pds = pplayer_get_diplstate(get_player_ptr(), player);
-    if (pds->type == DS_CEASEFIRE) {
+    if (pds->type == DIPLSTATE_CEASEFIRE) {
       my_snprintf(buf, sizeof(buf), "%s (%d)",
                   diplstate_text(pds->type), pds->turns_left);
       return buf;

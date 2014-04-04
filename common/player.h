@@ -157,14 +157,14 @@ struct player_ai {
  * Adding to or reordering this array will break many things.
  */
 enum diplstate_type {
-  DS_NEUTRAL = 0,
-  DS_WAR,
-  DS_CEASEFIRE,
-  DS_PEACE,
-  DS_ALLIANCE,
-  DS_NO_CONTACT,
-  DS_TEAM,
-  DS_LAST       /* leave this last */
+  DIPLSTATE_NEUTRAL = 0,
+  DIPLSTATE_WAR,
+  DIPLSTATE_CEASEFIRE,
+  DIPLSTATE_PEACE,
+  DIPLSTATE_ALLIANCE,
+  DIPLSTATE_NO_CONTACT,
+  DIPLSTATE_TEAM,
+  DIPLSTATE_LAST       /* leave this last */
 };
 
 struct player_diplstate {

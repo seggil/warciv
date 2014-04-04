@@ -58,7 +58,7 @@ bool pplayer_can_ally(struct player *p1, struct player *p2)
     if (pplayer != p1
         && pplayer != p2
         && pplayers_allied(p2, pplayer)
-        && ds == DS_WAR /* do not count 'never met' as war here */
+        && ds == DIPLSTATE_WAR /* do not count 'never met' as war here */
         && pplayer->is_alive) {
       return FALSE;
     }
@@ -119,7 +119,7 @@ void player_init(struct player *_player)
   _player->embassy=0;
   _player->reputation=GAME_DEFAULT_REPUTATION;
   for(i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-    _player->diplstates[i].type = DS_NO_CONTACT;
+    _player->diplstates[i].type = DIPLSTATE_NO_CONTACT;
     _player->diplstates[i].has_reason_to_cancel = 0;
     _player->diplstates[i].contact_turns_left = 0;
   }
@@ -645,7 +645,7 @@ const char *reputation_text(const int rep)
 **************************************************************************/
 const char *diplstate_text(const enum diplstate_type type)
 {
-  static const char *ds_names[DS_LAST] =
+  static const char *ds_names[DIPLSTATE_LAST] =
   {
     N_("?diplomatic_state:Neutral"),
     N_("?diplomatic_state:War"),
@@ -656,7 +656,7 @@ const char *diplstate_text(const enum diplstate_type type)
     N_("?diplomatic_state:Team")
   };
 
-  if (type < DS_LAST) {
+  if (type < DIPLSTATE_LAST) {
     return Q_(ds_names[type]);
   }
   die("Bad diplstate_type in diplstate_text: %d", type);
@@ -685,7 +685,7 @@ bool pplayers_at_war(const struct player *pplayer,
   if (is_barbarian(pplayer) || is_barbarian(pplayer2)) {
     return TRUE;
   }
-  return ds == DS_WAR || ds == DS_NO_CONTACT;
+  return ds == DIPLSTATE_WAR || ds == DIPLSTATE_NO_CONTACT;
 }
 
 /***************************************************************
@@ -701,7 +701,7 @@ bool pplayers_allied(const struct player *pplayer,
   if (is_barbarian(pplayer) || is_barbarian(pplayer2)) {
     return FALSE;
   }
-  return (ds == DS_ALLIANCE || ds == DS_TEAM);
+  return (ds == DIPLSTATE_ALLIANCE || ds == DIPLSTATE_TEAM);
 }
 
 /***************************************************************
@@ -718,7 +718,7 @@ bool pplayers_in_peace(const struct player *pplayer,
   if (is_barbarian(pplayer) || is_barbarian(pplayer2)) {
     return FALSE;
   }
-  return (ds == DS_PEACE || ds == DS_ALLIANCE || ds == DS_TEAM);
+  return (ds == DIPLSTATE_PEACE || ds ==DIPLSTATE_ALLIANCE || ds == DIPLSTATE_TEAM);
 }
 
 /***************************************************************
@@ -734,7 +734,7 @@ bool pplayers_non_attack(const struct player *pplayer,
   if (is_barbarian(pplayer) || is_barbarian(pplayer2)) {
     return FALSE;
   }
-  return (ds == DS_PEACE || ds == DS_CEASEFIRE || ds == DS_NEUTRAL);
+  return (ds == DIPLSTATE_PEACE || ds == DIPLSTATE_CEASEFIRE || ds == DIPLSTATE_NEUTRAL);
 }
 
 /**************************************************************************
@@ -786,7 +786,7 @@ int player_allies_count(const struct player *pplayer)
     if(pplayer == oplayer || !oplayer->is_alive)
       continue;
     ds = pplayer_get_diplstate(pplayer, oplayer)->type;
-    if(ds == DS_ALLIANCE || ds == DS_TEAM)
+    if(ds == DIPLSTATE_ALLIANCE || ds == DIPLSTATE_TEAM)
       count++;
   } players_iterate_end;
   return count;
