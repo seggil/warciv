@@ -596,7 +596,7 @@ void multi_select_spread(void)
     city_list_iterate(pplayer->cities, pcity) {
       if (pcity->common.tile->continent != cid
           || (multi_select_spread_airport_cities
-              && get_city_bonus(pcity, EFT_AIRLIFT) == 0)) {
+              && get_city_bonus(pcity, EFFECT_TYPE_AIRLIFT) == 0)) {
         continue;
       }
       pscity = wc_malloc(sizeof(struct scity));
@@ -1369,7 +1369,7 @@ void request_execute_delayed_goto(tile_t *ptile, int dg)
       case DGT_FORT:
         /* Build fortress */
         send_goto_unit(punit, dgd->ptile);
-        request_new_unit_activity_targeted(punit, 
+        request_new_unit_activity_targeted(punit,
                                            ACTIVITY_FORTRESS, S_FORTRESS);
         punit->is_new = FALSE;
         break;
@@ -1378,7 +1378,7 @@ void request_execute_delayed_goto(tile_t *ptile, int dg)
         send_goto_unit(punit, dgd->ptile);
         request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, S_ROAD | S_RAILROAD);
         punit->is_new = FALSE;
-        break;  
+        break;
       case DGT_ROAD:
         send_goto_unit(punit, dgd->ptile);
         request_new_unit_activity_targeted(punit,
@@ -1719,7 +1719,7 @@ void add_city_to_auto_airlift_queue(tile_t *ptile, bool multi)
 void request_auto_airlift_source_selection_with_airport(void)
 {
   city_list_iterate(get_player_ptr()->cities, pcity) {
-    if (get_city_bonus(pcity, EFT_AIRLIFT) > 0) {
+    if (get_city_bonus(pcity, EFFECT_TYPE_AIRLIFT) > 0) {
       add_city_to_auto_airlift_queue(pcity->common.tile, TRUE);
     }
   } city_list_iterate_end;

@@ -2267,7 +2267,7 @@ void get_city_mapview_production(struct city_s *pcity,
   } else {
     struct impr_type *pimprovement_type =
                 get_improvement_type(pcity->common.currently_building);
-    if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+    if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
       my_snprintf(buffer, buffer_len, "%s", pimprovement_type->name);
     } else if (turns < 999) {
       my_snprintf(buffer, buffer_len, "%s %d%s",

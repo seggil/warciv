@@ -500,15 +500,15 @@ int game_next_year(int year)
       if (!improvement_exists(impr)) {
         continue;
       }
-      if (building_has_effect(impr, EFT_SS_STRUCTURAL)
+      if (building_has_effect(impr, EFFECT_TYPE_SS_STRUCTURAL)
           && tech_exists(t) && game.info.global_advances[t] != 0) {
         space_parts[0] = 1;
       }
-      if (building_has_effect(impr, EFT_SS_COMPONENT)
+      if (building_has_effect(impr, EFFECT_TYPE_SS_COMPONENT)
           && tech_exists(t) && game.info.global_advances[t] != 0) {
         space_parts[1] = 1;
       }
-      if (building_has_effect(impr, EFT_SS_MODULE)
+      if (building_has_effect(impr, EFFECT_TYPE_SS_MODULE)
           && tech_exists(t) && game.info.global_advances[t] != 0) {
         space_parts[2] = 1;
       }

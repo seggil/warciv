@@ -425,14 +425,14 @@ void send_all_info(struct conn_list *dest)
 static void do_reveal_effects(void)
 {
   players_iterate(pplayer) {
-    if (get_player_bonus(pplayer, EFT_REVEAL_CITIES) > 0) {
+    if (get_player_bonus(pplayer, EFFECT_TYPE_REVEAL_CITIES) > 0) {
       players_iterate(other_player) {
         city_list_iterate(other_player->cities, pcity) {
           show_area(pplayer, pcity->common.tile, 0);
         } city_list_iterate_end;
       } players_iterate_end;
     }
-    if (get_player_bonus(pplayer, EFT_REVEAL_MAP) > 0) {
+    if (get_player_bonus(pplayer, EFFECT_TYPE_REVEAL_MAP) > 0) {
       /* map_know_all will mark all unknown tiles as known and send
        * tile, unit, and city updates as necessary.  No other actions are
        * needed. */
@@ -448,7 +448,7 @@ static void do_reveal_effects(void)
 static void do_have_embassies_effect(void)
 {
   players_iterate(pplayer) {
-    if (get_player_bonus(pplayer, EFT_HAVE_EMBASSIES) > 0) {
+    if (get_player_bonus(pplayer, EFFECT_TYPE_HAVE_EMBASSIES) > 0) {
       players_iterate(pother) {
         /* Note this gives pplayer contact with pother, but doesn't give
          * pother contact with pplayer.  This may cause problems in other
@@ -533,7 +533,7 @@ static void update_diplomatics(void)
         }
     } players_iterate_end;
     player1->reputation =
-      MIN((get_player_bonus(player1, EFT_REGEN_REPUTATION) *
+      MIN((get_player_bonus(player1, EFFECT_TYPE_REGEN_REPUTATION) *
            GAME_MAX_REPUTATION / 1000) +
           player1->reputation + GAME_REPUTATION_INCR,
           GAME_MAX_REPUTATION);

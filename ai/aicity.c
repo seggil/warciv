@@ -179,7 +179,7 @@ static int base_want(struct player *pplayer, struct city_s *pcity,
 
   /* Ensure that we didn't inadvertantly move our palace */
   if (find_palace(pplayer) != capital) {
-    city_add_improvement(capital, get_building_for_effect(EFT_CAPITAL_CITY));
+    city_add_improvement(capital, get_building_for_effect(EFFECT_TYPE_CAPITAL_CITY));
   }
 
   return final_want;
@@ -238,63 +238,63 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
         struct city_s *palace = find_palace(pplayer);
 
         switch (*ptype) {
-          case EFT_PROD_TO_GOLD:
+          case EFFECT_TYPE_PROD_TO_GOLD:
             /* Since coinage contains some entirely spurious ruleset values,
              * we need to return here with some spurious want. */
             pcity->u.server.ai.building_want[id] = TRADE_WEIGHTING;
             return;
           /* These have already been evaluated in base_want() */
-          case EFT_CAPITAL_CITY:
-          case EFT_UPKEEP_FREE:
-          case EFT_POLLU_POP_PCT:
-          case EFT_POLLU_PROD_PCT:
-          case EFT_TRADE_PER_TILE:
-          case EFT_TRADE_INC_TILE:
-          case EFT_FOOD_INC_TILE:
-          case EFT_TRADE_ADD_TILE:
-          case EFT_PROD_INC_TILE:
-          case EFT_PROD_PER_TILE:
-          case EFT_PROD_ADD_TILE:
-          case EFT_FOOD_PER_TILE:
-          case EFT_FOOD_ADD_TILE:
-          case EFT_PROD_BONUS:
-          case EFT_TAX_BONUS:
-          case EFT_SCIENCE_BONUS:
-          case EFT_LUXURY_BONUS:
-          case EFT_CORRUPT_PCT:
-          case EFT_WASTE_PCT:
+          case EFFECT_TYPE_CAPITAL_CITY:
+          case EFFECT_TYPE_UPKEEP_FREE:
+          case EFFECT_TYPE_POLLU_POP_PCT:
+          case EFFECT_TYPE_POLLU_PROD_PCT:
+          case EFFECT_TYPE_TRADE_PER_TILE:
+          case EFFECT_TYPE_TRADE_INC_TILE:
+          case EFFECT_TYPE_FOOD_INC_TILE:
+          case EFFECT_TYPE_TRADE_ADD_TILE:
+          case EFFECT_TYPE_PROD_INC_TILE:
+          case EFFECT_TYPE_PROD_PER_TILE:
+          case EFFECT_TYPE_PROD_ADD_TILE:
+          case EFFECT_TYPE_FOOD_PER_TILE:
+          case EFFECT_TYPE_FOOD_ADD_TILE:
+          case EFFECT_TYPE_PROD_BONUS:
+          case EFFECT_TYPE_TAX_BONUS:
+          case EFFECT_TYPE_SCIENCE_BONUS:
+          case EFFECT_TYPE_LUXURY_BONUS:
+          case EFFECT_TYPE_CORRUPT_PCT:
+          case EFFECT_TYPE_WASTE_PCT:
             break;
 
           /* WAG evaluated effects */
-          case EFT_INCITE_DIST_PCT:
+          case EFFECT_TYPE_INCITE_DIST_PCT:
             if (palace) {
               v += real_map_distance(pcity->common.tile, palace->common.tile);
             }
             break;
-          case EFT_MAKE_HAPPY:
+          case EFFECT_TYPE_MAKE_HAPPY:
             /* TODO */
             break;
-          case EFT_UNIT_RECOVER:
+          case EFFECT_TYPE_UNIT_RECOVER:
             /* TODO */
             break;
-          case EFT_NO_UNHAPPY:
+          case EFFECT_TYPE_NO_UNHAPPY:
             v += (pcity->common.specialists[SP_ELVIS] + pcity->common.people_unhappy[4]) * 20;
             break;
-          case EFT_FORCE_CONTENT:
+          case EFFECT_TYPE_FORCE_CONTENT:
             if (!government_has_flag(gov, G_NO_UNHAPPY_CITIZENS)) {
               v += (pcity->common.people_unhappy[4] + pcity->common.specialists[SP_ELVIS]) * 20;
               v += 5 * c;
             }
             break;
-          case EFT_MAKE_CONTENT_MIL_PER:
-          case EFT_MAKE_CONTENT:
+          case EFFECT_TYPE_MAKE_CONTENT_MIL_PER:
+          case EFFECT_TYPE_MAKE_CONTENT:
             if (!government_has_flag(gov, G_NO_UNHAPPY_CITIZENS)) {
               v += MIN(pcity->common.people_unhappy[4] + pcity->common.specialists[SP_ELVIS],
                        amount) * 20;
               v += MIN(amount, 5) * c;
             }
             break;
-          case EFT_MAKE_CONTENT_MIL:
+          case EFFECT_TYPE_MAKE_CONTENT_MIL:
             if (!government_has_flag(gov, G_NO_UNHAPPY_CITIZENS)) {
               v += pcity->common.people_unhappy[4] * amount
                 * MAX(unit_list_size(pcity->common.units_supported)
@@ -302,29 +302,29 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
               v += c * MAX(amount + 2 - gov->free_happy, 1);
             }
             break;
-          case EFT_TECH_PARASITE:
+          case EFFECT_TYPE_TECH_PARASITE:
             v += (total_bulbs_required(pplayer) * (100 - game.info.freecost)
                 * (nplayers - amount)) / (nplayers * amount * 100);
             break;
-          case EFT_GROWTH_FOOD:
+          case EFFECT_TYPE_GROWTH_FOOD:
             v += c * 4 + (amount / 7) * pcity->common.food_surplus;
             break;
-          case EFT_AIRLIFT:
+          case EFFECT_TYPE_AIRLIFT:
             /* FIXME: We need some smart algorithm here. The below is
              * totally braindead. */
             v += c + MIN(ai->stats.units.land, 13);
             break;
-          case EFT_ANY_GOVERNMENT:
+          case EFFECT_TYPE_ANY_GOVERNMENT:
             if (!can_change_to_government(pplayer, ai->goal.govt.idx)) {
               v += MIN(MIN(ai->goal.govt.val, 65),
                   num_unknown_techs_for_goal(pplayer, ai->goal.govt.req) * 10);
             }
             break;
-          case EFT_ENABLE_NUKE:
+          case EFFECT_TYPE_ENABLE_NUKE:
             /* Treat nuke as a Cruise Missile upgrade */
             v += 20 + ai->stats.units.missiles * 5;
             break;
-          case EFT_ENABLE_SPACE:
+          case EFFECT_TYPE_ENABLE_SPACE:
             if (game.info.spacerace) {
               v += 5;
               if (ai->diplomacy.production_leader == pplayer) {
@@ -332,34 +332,34 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
               }
             }
             break;
-          case EFT_GIVE_IMM_TECH:
+          case EFFECT_TYPE_GIVE_IMM_TECH:
             if (!ai_wants_no_science(pplayer)) {
               v += amount * (game.info.researchcost + 1);
             }
             break;
-          case EFT_HAVE_EMBASSIES:
+          case EFFECT_TYPE_HAVE_EMBASSIES:
             v += 5 * nplayers;
             break;
-          case EFT_REVEAL_CITIES:
-          case EFT_NO_ANARCHY:
+          case EFFECT_TYPE_REVEAL_CITIES:
+          case EFFECT_TYPE_NO_ANARCHY:
             break;  /* Useless for AI */
-          case EFT_NO_SINK_DEEP:
+          case EFFECT_TYPE_NO_SINK_DEEP:
             v += 15 + ai->stats.units.triremes * 5;
             break;
-          case EFT_NUKE_PROOF:
+          case EFFECT_TYPE_NUKE_PROOF:
             if (ai->threats.nuclear) {
               v += pcity->common.pop_size * unit_list_size(ptile->units) * (capital + 1);
             }
             break;
-          case EFT_REVEAL_MAP:
+          case EFFECT_TYPE_REVEAL_MAP:
             if (!ai->explore.land_done || !ai->explore.sea_done) {
               v += 10;
             }
             break;
-          case EFT_SIZE_UNLIMIT:
+          case EFFECT_TYPE_SIZE_UNLIMIT:
             amount = 20; /* really big city */
             /* there not being a break here is deliberate, mind you */
-          case EFT_SIZE_ADJ:
+          case EFFECT_TYPE_SIZE_ADJ:
             if (!city_can_grow_to(pcity, pcity->common.pop_size + 1)) {
               v += pcity->common.food_surplus * ai->food_priority * amount;
               if (pcity->common.pop_size == game.ruleset_control.aqueduct_size) {
@@ -368,9 +368,9 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
             }
             v += c * amount * 4 / game.ruleset_control.aqueduct_size;
             break;
-          case EFT_SS_STRUCTURAL:
-          case EFT_SS_COMPONENT:
-          case EFT_SS_MODULE:
+          case EFFECT_TYPE_SS_STRUCTURAL:
+          case EFFECT_TYPE_SS_COMPONENT:
+          case EFFECT_TYPE_SS_MODULE:
             if (game.info.spacerace
                 /* If someone has started building spaceship already or
                  * we have chance to win a spacerace */
@@ -379,37 +379,37 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
               v += 95;
             }
             break;
-          case EFT_SPY_RESISTANT:
+          case EFFECT_TYPE_SPY_RESISTANT:
             /* Uhm, problem: City Wall has -50% here!! */
             break;
-          case EFT_SEA_MOVE:
+          case EFFECT_TYPE_SEA_MOVE:
             v += ai->stats.units.sea * 8 * amount;
             break;
-          case EFT_UNIT_NO_LOSE_POP:
+          case EFFECT_TYPE_UNIT_NO_LOSE_POP:
             v += unit_list_size(ptile->units) * 2;
             break;
-          case EFT_LAND_REGEN:
+          case EFFECT_TYPE_LAND_REGEN:
             v += 15 * c + ai->stats.units.land * 3;
             break;
-          case EFT_SEA_REGEN:
+          case EFFECT_TYPE_SEA_REGEN:
             v += 15 * c + ai->stats.units.sea * 3;
             break;
-          case EFT_AIR_REGEN:
+          case EFFECT_TYPE_AIR_REGEN:
             v += 15 * c + ai->stats.units.air * 3;
             break;
-          case EFT_LAND_VET_COMBAT:
+          case EFFECT_TYPE_LAND_VET_COMBAT:
             v += 2 * c + ai->stats.units.land * 2;
             break;
-          case EFT_LAND_VETERAN:
+          case EFFECT_TYPE_LAND_VETERAN:
             v += 5 * c + ai->stats.units.land;
             break;
-          case EFT_SEA_VETERAN:
+          case EFFECT_TYPE_SEA_VETERAN:
             v += 5 * c + ai->stats.units.sea;
             break;
-          case EFT_AIR_VETERAN:
+          case EFFECT_TYPE_AIR_VETERAN:
             v += 5 * c + ai->stats.units.air;
             break;
-          case EFT_UPGRADE_UNIT:
+          case EFFECT_TYPE_UPGRADE_UNIT:
             v += ai->stats.units.upgradeable;
             if (amount == 1) {
               v *= 2;
@@ -419,7 +419,7 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
               v *= 4;
             }
             break;
-          case EFT_SEA_DEFEND:
+          case EFFECT_TYPE_SEA_DEFEND:
             if (ai_handicap(pplayer, H_DEFENSIVE)) {
               v += amount / 10; /* make AI slow */
             }
@@ -441,20 +441,20 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
               v += amount; /* defend capital! */
             }
             break;
-          case EFT_AIR_DEFEND:
+          case EFFECT_TYPE_AIR_DEFEND:
             if (ai_handicap(pplayer, H_DEFENSIVE)) {
               v += amount / 15; /* make AI slow */
             }
             v += (ai->threats.air && ai->threats.continent[ptile->continent])
               ? amount/10 * 5 + amount/10 * c : c;
             break;
-          case EFT_MISSILE_DEFEND:
+          case EFFECT_TYPE_MISSILE_DEFEND:
             if (ai->threats.missile
                 && (ai->threats.continent[ptile->continent] || capital)) {
               v += amount/10 * 5 + (amount/10 - 1) * c;
             }
             break;
-          case EFT_LAND_DEFEND:
+          case EFFECT_TYPE_LAND_DEFEND:
             if (ai_handicap(pplayer, H_DEFENSIVE)) {
               v += amount / 10; /* make AI slow */
             }
@@ -466,7 +466,7 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
             }
             v += (1 + ai->threats.invasions + !ai->threats.igwall) * c;
             break;
-          case EFT_NO_INCITE:
+          case EFFECT_TYPE_NO_INCITE:
             if (!government_has_flag(gov, G_UNBRIBABLE)) {
               v += MAX((game.server.diplchance * 2
                         - game.server.incite_cost.total_factor) / 2
@@ -474,12 +474,12 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
                   - game.server.incite_cost.unit_factor * 5, 0);
             }
             break;
-          case EFT_REGEN_REPUTATION:
+          case EFFECT_TYPE_REGEN_REPUTATION:
             v += (GAME_MAX_REPUTATION - pplayer->reputation) * 50 /
                     GAME_MAX_REPUTATION +
                   amount * 4;
             break;
-          case EFT_GAIN_AI_LOVE:
+          case EFFECT_TYPE_GAIN_AI_LOVE:
             players_iterate(aplayer) {
               if (aplayer->ai.control) {
                 if (ai_handicap(pplayer, H_DEFENSIVE)) {
@@ -490,7 +490,7 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
               }
             } players_iterate_end;
             break;
-          case EFT_LAST:
+          case EFFECT_TYPE_LAST:
             freelog(LOG_ERROR, "Bad effect type.");
             break;
         }
@@ -747,7 +747,7 @@ static void try_to_sell_stuff(struct player *pplayer, struct city_s *pcity)
 {
   impr_type_iterate(id) {
     if (can_sell_building(pcity, id)
-        && !building_has_effect(id, EFT_LAND_DEFEND)) {
+        && !building_has_effect(id, EFFECT_TYPE_LAND_DEFEND)) {
 /* selling walls to buy defenders is counterproductive -- Syela */
       really_handle_city_sell(pplayer, pcity, id);
       break;
@@ -880,7 +880,7 @@ static void ai_spend_gold(struct player *pplayer)
 
     if (bestchoice.type != CT_BUILDING
         && unit_type_flag(bestchoice.choice, F_CITIES)) {
-      if (get_city_bonus(pcity, EFT_GROWTH_FOOD) == 0
+      if (get_city_bonus(pcity, EFFECT_TYPE_GROWTH_FOOD) == 0
           && pcity->common.pop_size == 1
           && city_granary_size(pcity->common.pop_size)
              > pcity->common.food_stock + pcity->common.food_surplus) {
@@ -1005,7 +1005,7 @@ void ai_manage_cities(struct player *pplayer)
 static bool building_unwanted(struct player *plr, Impr_Type_id i)
 {
   return (ai_wants_no_science(plr)
-          && building_has_effect(i, EFT_SCIENCE_BONUS));
+          && building_has_effect(i, EFFECT_TYPE_SCIENCE_BONUS));
 }
 
 /**************************************************************************
@@ -1017,7 +1017,7 @@ static void ai_sell_obsolete_buildings(struct city_s *pcity)
 
   built_impr_iterate(pcity, i) {
     if(!is_wonder(i)
-       && !building_has_effect(i, EFT_LAND_DEFEND)
+       && !building_has_effect(i, EFFECT_TYPE_LAND_DEFEND)
               /* selling city walls is really, really dumb -- Syela */
        && (is_building_replaced(pcity, i)
            || building_unwanted(city_owner(pcity), i))) {

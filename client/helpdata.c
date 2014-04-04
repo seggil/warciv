@@ -527,7 +527,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
                 improvement_types[which].name);
   }
 
-  if (building_has_effect(which, EFT_ENABLE_NUKE)
+  if (building_has_effect(which, EFFECT_TYPE_ENABLE_NUKE)
       && num_role_units(F_NUCLEAR) > 0) {
     Unit_Type_id u;
     Tech_Type_id t;

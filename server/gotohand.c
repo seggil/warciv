@@ -919,7 +919,7 @@ static int find_a_direction(struct unit *punit,
   struct player *pplayer = unit_owner(punit);
   bool afraid_of_sinking = (unit_flag(punit, F_TRIREME)
                             && get_player_bonus(pplayer,
-                                                EFT_NO_SINK_DEEP) == 0);
+                                                EFFECT_TYPE_NO_SINK_DEEP) == 0);
 
   /*
    * If the destination is one step away, look around first or just go
@@ -1003,10 +1003,10 @@ static int find_a_direction(struct unit *punit,
     defence_multiplier = 2;
     if (pcity) {
       /* This isn't very accurate. */
-      defence_multiplier += (get_city_bonus(pcity, EFT_LAND_DEFEND)
-                             + get_city_bonus(pcity, EFT_MISSILE_DEFEND)
-                             + get_city_bonus(pcity, EFT_AIR_DEFEND)
-                             + get_city_bonus(pcity, EFT_SEA_DEFEND)) / 100;
+      defence_multiplier += (get_city_bonus(pcity, EFFECT_TYPE_LAND_DEFEND)
+                             + get_city_bonus(pcity, EFFECT_TYPE_MISSILE_DEFEND)
+                             + get_city_bonus(pcity, EFFECT_TYPE_AIR_DEFEND)
+                             + get_city_bonus(pcity, EFFECT_TYPE_SEA_DEFEND)) / 100;
     }
 
     /*

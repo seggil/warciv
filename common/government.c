@@ -250,7 +250,7 @@ bool can_change_to_government(struct player *pplayer, int government)
     return FALSE;
   } else {
     return (get_invention(pplayer, req) == TECH_KNOWN
-            || get_player_bonus(pplayer, EFT_ANY_GOVERNMENT) > 0);
+            || get_player_bonus(pplayer, EFFECT_TYPE_ANY_GOVERNMENT) > 0);
   }
 }
 

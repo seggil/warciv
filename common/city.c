@@ -520,7 +520,7 @@ int improvement_upkeep(const city_t *pcity, Impr_Type_id i)
   if (is_wonder(i))
     return 0;
   if (improvement_types[i].upkeep
-      <= get_building_bonus(pcity, i, EFT_UPKEEP_FREE)) {
+      <= get_building_bonus(pcity, i, EFFECT_TYPE_UPKEEP_FREE)) {
     return 0;
   }
 
@@ -561,15 +561,15 @@ static int base_get_shields_tile(const tile_t *ptile,
     int before_penalty = (is_celebrating ? g->celeb_shields_before_penalty
                           : g->shields_before_penalty);
 
-    s += get_city_tile_bonus(pcity, ptile, EFT_PROD_ADD_TILE);
+    s += get_city_tile_bonus(pcity, ptile, EFFECT_TYPE_PROD_ADD_TILE);
 
     /* Government & effect shield bonus/penalty. */
     if (s > 0) {
       s += (is_celebrating ? g->celeb_shield_bonus : g->shield_bonus);
-      s += get_city_tile_bonus(pcity, ptile, EFT_PROD_INC_TILE);
+      s += get_city_tile_bonus(pcity, ptile, EFFECT_TYPE_PROD_INC_TILE);
     }
 
-    s += (s * get_city_tile_bonus(pcity, ptile, EFT_PROD_PER_TILE)) / 100;
+    s += (s * get_city_tile_bonus(pcity, ptile, EFFECT_TYPE_PROD_PER_TILE)) / 100;
 
     if (before_penalty > 0 && s > before_penalty) {
       s--;
@@ -672,14 +672,14 @@ static int base_get_trade_tile(const tile_t *ptile,
     int before_penalty = (is_celebrating ? g->celeb_trade_before_penalty
                           : g->trade_before_penalty);
 
-    t += get_city_tile_bonus(pcity, ptile, EFT_TRADE_ADD_TILE);
+    t += get_city_tile_bonus(pcity, ptile, EFFECT_TYPE_TRADE_ADD_TILE);
 
     if (t > 0) {
       t += (is_celebrating ? g->celeb_trade_bonus : g->trade_bonus);
-      t += get_city_tile_bonus(pcity, ptile, EFT_TRADE_INC_TILE);
+      t += get_city_tile_bonus(pcity, ptile, EFFECT_TYPE_TRADE_INC_TILE);
     }
 
-    t += (t * get_city_tile_bonus(pcity, ptile, EFT_TRADE_PER_TILE)) / 100;
+    t += (t * get_city_tile_bonus(pcity, ptile, EFFECT_TYPE_TRADE_PER_TILE)) / 100;
 
     /* government trade penalty -- SKi */
     if (before_penalty > 0 && t > before_penalty) {
@@ -793,14 +793,14 @@ static int base_get_food_tile(const tile_t *ptile,
     int before_penalty = (is_celebrating ? g->celeb_food_before_penalty
                           : g->food_before_penalty);
 
-    f += get_city_tile_bonus(pcity, &tile, EFT_FOOD_ADD_TILE);
+    f += get_city_tile_bonus(pcity, &tile, EFFECT_TYPE_FOOD_ADD_TILE);
 
     if (f > 0) {
       f += (is_celebrating ? g->celeb_food_bonus : g->food_bonus);
-      f += get_city_tile_bonus(pcity, &tile, EFT_FOOD_INC_TILE);
+      f += get_city_tile_bonus(pcity, &tile, EFFECT_TYPE_FOOD_INC_TILE);
     }
 
-    f += (f * get_city_tile_bonus(pcity, &tile, EFT_FOOD_PER_TILE) / 100);
+    f += (f * get_city_tile_bonus(pcity, &tile, EFFECT_TYPE_FOOD_PER_TILE) / 100);
 
     if (before_penalty > 0 && f > before_penalty) {
       f--;
@@ -1228,7 +1228,7 @@ int city_gold_surplus(const city_t *pcity, int tax_total)
 **************************************************************************/
 bool is_capital(const city_t *pcity)
 {
-  return get_city_bonus(pcity, EFT_CAPITAL_CITY) != 0;
+  return get_city_bonus(pcity, EFFECT_TYPE_CAPITAL_CITY) != 0;
 }
 
 /**************************************************************************
@@ -1236,7 +1236,7 @@ bool is_capital(const city_t *pcity)
 **************************************************************************/
 bool city_got_citywalls(const city_t *pcity)
 {
-  return get_city_bonus(pcity, EFT_LAND_DEFEND) > 0;
+  return get_city_bonus(pcity, EFFECT_TYPE_LAND_DEFEND) > 0;
 }
 
 /**************************************************************************
@@ -1563,13 +1563,13 @@ int city_turns_to_grow(const city_t *pcity)
 ****************************************************************************/
 bool city_can_grow_to(const city_t *pcity, int pop_size)
 {
-  if (get_city_bonus(pcity, EFT_SIZE_UNLIMIT) > 0) {
+  if (get_city_bonus(pcity, EFFECT_TYPE_SIZE_UNLIMIT) > 0) {
     return TRUE;
   } else {
     int max_size;
 
     max_size = game.ruleset_control.aqueduct_size
-               + get_city_bonus(pcity, EFT_SIZE_ADJ);
+               + get_city_bonus(pcity, EFFECT_TYPE_SIZE_ADJ);
     return (pop_size <= max_size);
   }
 }
@@ -1724,7 +1724,7 @@ static int content_citizens(struct player *pplayer)
 **************************************************************************/
 int get_city_shield_bonus(const city_t *pcity)
 {
-  const int bonus = 100 + get_city_bonus(pcity, EFT_PROD_BONUS);
+  const int bonus = 100 + get_city_bonus(pcity, EFFECT_TYPE_PROD_BONUS);
 
   return MAX(bonus, 0);
 }
@@ -1734,7 +1734,7 @@ int get_city_shield_bonus(const city_t *pcity)
 **************************************************************************/
 int get_city_tax_bonus(const city_t *pcity)
 {
-  const int bonus = 100 + get_city_bonus(pcity, EFT_TAX_BONUS);
+  const int bonus = 100 + get_city_bonus(pcity, EFFECT_TYPE_TAX_BONUS);
 
   return MAX(bonus, 0);
 }
@@ -1744,7 +1744,7 @@ int get_city_tax_bonus(const city_t *pcity)
 **************************************************************************/
 int get_city_luxury_bonus(const city_t *pcity)
 {
-  const int bonus = 100 + get_city_bonus(pcity, EFT_LUXURY_BONUS);
+  const int bonus = 100 + get_city_bonus(pcity, EFFECT_TYPE_LUXURY_BONUS);
 
   return MAX(bonus, 0);
 }
@@ -1762,8 +1762,8 @@ int get_city_tithes_bonus(const city_t *pcity)
     return 0;
   }
 
-  tithes_bonus += get_city_bonus(pcity, EFT_MAKE_CONTENT);
-  tithes_bonus += get_city_bonus(pcity, EFT_FORCE_CONTENT);
+  tithes_bonus += get_city_bonus(pcity, EFFECT_TYPE_MAKE_CONTENT);
+  tithes_bonus += get_city_bonus(pcity, EFFECT_TYPE_FORCE_CONTENT);
 
   return tithes_bonus;
 }
@@ -1775,7 +1775,7 @@ int get_city_science_bonus(const city_t *pcity)
 {
   int science_bonus;
 
-  science_bonus = 100 + get_city_bonus(pcity, EFT_SCIENCE_BONUS);
+  science_bonus = 100 + get_city_bonus(pcity, EFFECT_TYPE_SCIENCE_BONUS);
 
   if (government_has_flag(get_gov_pcity(pcity), G_REDUCED_RESEARCH)) {
     science_bonus /= 2;
@@ -1996,7 +1996,7 @@ static inline void citizen_content_buildings(city_t *pcity)
   int faces = 0;
   happy_copy(pcity, 1);
 
-  faces += get_city_bonus(pcity, EFT_MAKE_CONTENT);
+  faces += get_city_bonus(pcity, EFFECT_TYPE_MAKE_CONTENT);
 
   /* make people content (but not happy):
      get rid of angry first, then make unhappy content. */
@@ -2021,7 +2021,7 @@ static inline void citizen_happy_wonders(city_t *pcity)
 
   happy_copy(pcity, 3);
 
-  if ((mod = get_city_bonus(pcity, EFT_MAKE_HAPPY)) > 0) {
+  if ((mod = get_city_bonus(pcity, EFFECT_TYPE_MAKE_HAPPY)) > 0) {
     bonus += mod;
 
     while (bonus > 0 && pcity->common.people_content[4] > 0) {
@@ -2033,7 +2033,7 @@ static inline void citizen_happy_wonders(city_t *pcity)
     }
   }
 
-  bonus += get_city_bonus(pcity, EFT_FORCE_CONTENT);
+  bonus += get_city_bonus(pcity, EFFECT_TYPE_FORCE_CONTENT);
 
   /* get rid of angry first, then make unhappy content */
   while (bonus > 0 && pcity->common.people_angry[4] > 0) {
@@ -2047,7 +2047,7 @@ static inline void citizen_happy_wonders(city_t *pcity)
     bonus--;
   }
 
-  if (get_city_bonus(pcity, EFT_NO_UNHAPPY) > 0) {
+  if (get_city_bonus(pcity, EFFECT_TYPE_NO_UNHAPPY) > 0) {
     pcity->common.people_content[4] += pcity->common.people_unhappy[4]
                                        + pcity->common.people_angry[4];
     pcity->common.people_unhappy[4] = 0;
@@ -2085,12 +2085,12 @@ int city_pollution(city_t *pcity, int shield_total)
   int mod, pollution;
 
   /* Add one one pollution per shield, multipled by the bonus. */
-  mod = 100 + get_city_bonus(pcity, EFT_POLLU_PROD_PCT);
+  mod = 100 + get_city_bonus(pcity, EFFECT_TYPE_POLLU_PROD_PCT);
   mod = MAX(0, mod);
   pollution = shield_total * mod / 100;
 
   /* Add one 1/4 pollution per citizen per tech, multiplied by the bonus. */
-  mod = 100 + get_city_bonus(pcity, EFT_POLLU_POP_PCT);
+  mod = 100 + get_city_bonus(pcity, EFFECT_TYPE_POLLU_POP_PCT);
   mod = MAX(0, mod);
   pollution += (pcity->common.pop_size
                 * num_known_tech_with_flag(pplayer,
@@ -2165,7 +2165,7 @@ static inline void city_support(city_t *pcity,
   int free_gold = citygov_free_gold(pcity, g);
 
   /* ??  This does the right thing for normal Republic and Democ -- dwp */
-  free_happy += get_city_bonus(pcity, EFT_MAKE_CONTENT_MIL);
+  free_happy += get_city_bonus(pcity, EFFECT_TYPE_MAKE_CONTENT_MIL);
 
   happy_copy(pcity, 2);
 
@@ -2238,7 +2238,7 @@ static inline void city_support(city_t *pcity,
       }
     }
     if (happy_cost > 0
-        && get_city_bonus(pcity, EFT_MAKE_CONTENT_MIL_PER) > 0) {
+        && get_city_bonus(pcity, EFFECT_TYPE_MAKE_CONTENT_MIL_PER) > 0) {
       happy_cost--;
     }
 
@@ -2384,7 +2384,7 @@ int city_corruption(const city_t *pcity, int trade)
   /* Now calculate the final corruption.  Ordered to reduce integer
    * roundoff errors. */
   val = trade * MAX(dist, 1) * g->corruption_level;
-  val -= (val * get_city_bonus(pcity, EFT_CORRUPT_PCT)) / 100;
+  val -= (val * get_city_bonus(pcity, EFFECT_TYPE_CORRUPT_PCT)) / 100;
   val /= 100 * 100; /* Level is a % multiplied by 100 */
   val = CLIP(trade_penalty, val, trade);
   return val;
@@ -2420,7 +2420,7 @@ int city_waste(const city_t *pcity, int shields)
   val = shields * MAX(dist, 1) * g->waste_level;
   val /= 100 * 100; /* Level is a % multiplied by 100 */
 
-  val -= (val * get_city_bonus(pcity, EFT_WASTE_PCT)) / 100;
+  val -= (val * get_city_bonus(pcity, EFFECT_TYPE_WASTE_PCT)) / 100;
 
   val = CLIP(shield_penalty, val, shields);
   return val;

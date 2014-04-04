@@ -225,7 +225,7 @@ void really_handle_city_buy(struct player *pplayer, city_t *pcity)
     return;
   }
 
-  if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+  if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
     assert(!pcity->common.is_building_unit);
     notify_player_ex(pplayer, pcity->common.tile, E_NOEVENT,
                      _("Game: You don't buy %s!"),

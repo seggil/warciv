@@ -113,7 +113,7 @@ static bool is_likely_trireme_loss(struct player *pplayer,
    */
   if ((likely_ocean(ptile, pplayer) < 50) ||
       is_likely_coastline(ptile, pplayer) ||
-      get_player_bonus(pplayer, EFT_NO_SINK_DEEP) > 0) {
+      get_player_bonus(pplayer, EFFECT_TYPE_NO_SINK_DEEP) > 0) {
     return FALSE;
   } else {
     return TRUE;

@@ -340,7 +340,7 @@ static const char *cr_entry_building(const city_t *pcity)
     worklist_is_empty(&pcity->common.worklist) ? "" :
     concise_city_production ? "*" : _("(worklist)");
 
-  if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+  if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
     my_snprintf(buf, sizeof(buf), "%s (%d/X/X/X)%s",
                 get_impr_name_ex(pcity, pcity->common.currently_building),
                 MAX(0, pcity->common.shield_surplus), from_worklist);

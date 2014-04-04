@@ -1393,7 +1393,7 @@ static void load_ruleset_buildings(struct section_file *file)
         enum effect_req_type type;
         int req, equiv;
 
-        if ((eff = effect_type_from_str(item)) == EFT_LAST) {
+        if ((eff = effect_type_from_str(item)) == EFFECT_TYPE_LAST) {
           freelog(LOG_ERROR,
                   /* TRANS: Obscure ruleset error */
                   _("Building %s lists unknown effect type: \"%s\" (%s)"),
@@ -1486,7 +1486,7 @@ static void load_ruleset_buildings(struct section_file *file)
    * Hack to allow code that explicitly checks for Palace or City Walls
    * to work.
    */
-  game.palace_building = get_building_for_effect(EFT_CAPITAL_CITY);
+  game.palace_building = get_building_for_effect(EFFECT_TYPE_CAPITAL_CITY);
   if (game.palace_building == B_LAST) {
     freelog(LOG_FATAL,
             /* TRANS: Obscure ruleset error */
@@ -1494,7 +1494,7 @@ static void load_ruleset_buildings(struct section_file *file)
     exit(EXIT_FAILURE);
   }
 
-  game.land_defend_building = get_building_for_effect(EFT_LAND_DEFEND);
+  game.land_defend_building = get_building_for_effect(EFFECT_TYPE_LAND_DEFEND);
   if (game.land_defend_building == B_LAST) {
     freelog(LOG_FATAL,
             /* TRANS: Obscure ruleset error */

@@ -129,9 +129,9 @@ bool improvement_exists(Impr_Type_id id)
     return FALSE;
 
   if (!game.info.spacerace
-      && (building_has_effect(id, EFT_SS_STRUCTURAL)
-          || building_has_effect(id, EFT_SS_COMPONENT)
-          || building_has_effect(id, EFT_SS_MODULE))) {
+      && (building_has_effect(id, EFFECT_TYPE_SS_STRUCTURAL)
+          || building_has_effect(id, EFFECT_TYPE_SS_COMPONENT)
+          || building_has_effect(id, EFFECT_TYPE_SS_MODULE))) {
     /* This assumes that space parts don't have any other effects. */
     return FALSE;
   }
@@ -179,7 +179,7 @@ int impr_buy_gold_cost(Impr_Type_id id, int shields_in_stock)
   int cost = 0, missing =
     improvement_types[id].build_cost - shields_in_stock;
 
-  if (building_has_effect(id, EFT_PROD_TO_GOLD)) {
+  if (building_has_effect(id, EFFECT_TYPE_PROD_TO_GOLD)) {
     /* Can't buy capitalization. */
     return 0;
   }
@@ -380,27 +380,28 @@ bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id)
 
   /* Check for space part construction.  This assumes that space parts have
    * no other effects. */
-  if (building_has_effect(id, EFT_SS_STRUCTURAL)) {
+  if (building_has_effect(id, EFFECT_TYPE_SS_STRUCTURAL)) {
     space_part = TRUE;
     if (p->spaceship.structurals >= NUM_SS_STRUCTURALS) {
       return FALSE;
     }
   }
-  if (building_has_effect(id, EFT_SS_COMPONENT)) {
+  if (building_has_effect(id, EFFECT_TYPE_SS_COMPONENT)) {
     space_part = TRUE;
     if (p->spaceship.components >= NUM_SS_COMPONENTS) {
       return FALSE;
     }
   }
-  if (building_has_effect(id, EFT_SS_MODULE)) {
+  if (building_has_effect(id, EFFECT_TYPE_SS_MODULE)) {
     space_part = TRUE;
     if (p->spaceship.modules >= NUM_SS_MODULES) {
       return FALSE;
     }
   }
-  if (space_part &&
-      (!get_player_bonus(p, EFT_ENABLE_SPACE) > 0
-       || p->spaceship.state >= SSHIP_LAUNCHED)) {
+  if (space_part
+      && (!get_player_bonus(p, EFFECT_TYPE_ENABLE_SPACE) > 0
+          || p->spaceship.state >= SSHIP_LAUNCHED))
+  {
     return FALSE;
   }
 

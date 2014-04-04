@@ -728,7 +728,7 @@ void ai_advisor_choose_building(struct city_s *pcity, struct ai_choice *choice)
 
   impr_type_iterate(i) {
     if (!plr->ai.control
-        && (get_building_for_effect(EFT_CAPITAL_CITY) == i
+        && (get_building_for_effect(EFFECT_TYPE_CAPITAL_CITY) == i
             || is_wonder(i))) {
       continue; /* Humans should not be advised to build wonders or palace */
     }
@@ -791,7 +791,7 @@ bool ai_assess_military_unhappiness(struct city_s *pcity,
   free_happy  = citygov_free_happy(pcity, g);
 
   /* ??  This does the right thing for normal Republic and Democ -- dwp */
-  free_happy += get_city_bonus(pcity, EFT_MAKE_CONTENT_MIL);
+  free_happy += get_city_bonus(pcity, EFFECT_TYPE_MAKE_CONTENT_MIL);
 
   unit_list_iterate(pcity->common.units_supported, punit) {
     int happy_cost = utype_happy_cost(unit_type(punit), g);
@@ -812,7 +812,7 @@ bool ai_assess_military_unhappiness(struct city_s *pcity,
       continue;
     }
 
-    if (get_city_bonus(pcity, EFT_MAKE_CONTENT_MIL_PER) > 0) {
+    if (get_city_bonus(pcity, EFFECT_TYPE_MAKE_CONTENT_MIL_PER) > 0) {
       happy_cost--;
     }
     adjust_city_free_cost(&free_happy, &happy_cost);

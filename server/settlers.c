@@ -840,7 +840,7 @@ static int unit_foodbox_cost(struct unit *punit)
     city_t *pcity = map_get_city(punit->tile);
 
     /* The default is to lose 100%.  The growth bonus reduces this. */
-    int foodloss_pct = 100 - get_city_bonus(pcity, EFT_GROWTH_FOOD);
+    int foodloss_pct = 100 - get_city_bonus(pcity, EFFECT_TYPE_GROWTH_FOOD);
 
     foodloss_pct = CLIP(0, foodloss_pct, 100);
     assert(pcity != NULL);

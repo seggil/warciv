@@ -750,7 +750,7 @@ void name_and_sort_items(int *pcids, int num_cids, struct item *items,
       pitem->section = unit_type_flag(id, F_NONMIL) ? 2 : 3;
     } else {
       name = get_impr_name_ex(pcity, id);
-      if (building_has_effect(id, EFT_PROD_TO_GOLD)) {
+      if (building_has_effect(id, EFFECT_TYPE_PROD_TO_GOLD)) {
         cost = -1;
         pitem->section = 1;
       } else {
@@ -1552,7 +1552,7 @@ void cityrep_buy(city_t *pcity)
 {
   int value = city_buy_cost(pcity);
 
-  if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+  if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
     char buf[512];
 
     assert(!pcity->common.is_building_unit);
@@ -1628,7 +1628,7 @@ int buy_production_in_selected_cities(void)
   connection_do_buffer(&aconnection);
   city_list_iterate(get_player_ptr()->cities, pcity) {
 
-    if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+    if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
       continue;
     }
 

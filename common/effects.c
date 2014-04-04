@@ -47,7 +47,7 @@ static const char *effect_range_names[EFFECT_RANGE_LAST] = {
 
 /* Names of effect types.
  * (These must correspond to enum effect_type_id in effects.h.) */
-static const char *effect_type_names[EFT_LAST] = {
+static const char *effect_type_names[EFFECT_TYPE_LAST] = {
   "Tech_Parasite",
   "Airlift",
   "Any_Government",
@@ -175,15 +175,15 @@ enum effect_type effect_type_from_str(const char *str)
 {
   enum effect_type effect_type;
 
-  assert(ARRAY_SIZE(effect_type_names) == EFT_LAST);
+  assert(ARRAY_SIZE(effect_type_names) == EFFECT_TYPE_LAST);
 
-  for (effect_type = 0; effect_type < EFT_LAST; effect_type++) {
+  for (effect_type = 0; effect_type < EFFECT_TYPE_LAST; effect_type++) {
     if (0 == mystrcasecmp(effect_type_names[effect_type], str)) {
       return effect_type;
     }
   }
 
-  return EFT_LAST;
+  return EFFECT_TYPE_LAST;
 }
 
 /**************************************************************************
@@ -192,8 +192,8 @@ enum effect_type effect_type_from_str(const char *str)
 **************************************************************************/
 const char *effect_type_name(enum effect_type effect_type)
 {
-  assert(ARRAY_SIZE(effect_type_names) == EFT_LAST);
-  if ( effect_type < EFT_LAST) {
+  assert(ARRAY_SIZE(effect_type_names) == EFFECT_TYPE_LAST);
+  if ( effect_type < EFFECT_TYPE_LAST) {
     return effect_type_names[effect_type];
   } else {
     assert(0);
@@ -323,7 +323,7 @@ static struct ruleset_cache_s {
     /* This array provides a full list of the effects of this type provided
      * by each building.  (It's not really a cache, it's the real data.) */
     struct effect_list *buckets[B_LAST];
-  } effects[EFT_LAST];
+  } effects[EFFECT_TYPE_LAST];
 
   /* This cache shows for each building, which effect types it provides. */
   struct ruleset_cache_building {
@@ -688,7 +688,7 @@ static void send_ruleset_cache_effects(struct conn_list *dest)
   struct packet_ruleset_cache_effect packet;
   enum effect_type effect_type;
 
-  for (effect_type = 0; effect_type < EFT_LAST; effect_type++) {
+  for (effect_type = 0; effect_type < EFFECT_TYPE_LAST; effect_type++) {
     packet.effect_type = effect_type;
 
     building_vector_iterate(get_buildings_with_effect(effect_type),

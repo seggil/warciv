@@ -238,7 +238,7 @@ void get_city_dialog_production(city_t *pcity,
     cost = impr_build_shield_cost(pcity->common.currently_building);
   }
 
-  if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+  if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
     my_snprintf(buffer, buffer_len, _("%3d gold per turn"),
                 MAX(0, pcity->common.shield_surplus));
   } else {
@@ -279,7 +279,7 @@ void get_city_dialog_production_full(char *buffer, size_t buffer_len,
                                      int id, bool is_unit,
                                      city_t *pcity)
 {
-  if (!is_unit && building_has_effect(id, EFT_PROD_TO_GOLD)) {
+  if (!is_unit && building_has_effect(id, EFFECT_TYPE_PROD_TO_GOLD)) {
     my_snprintf(buffer, buffer_len, _("%s (XX) %d/turn"),
                 get_impr_name_ex(pcity, id),
                 MAX(0, pcity->common.shield_surplus));
@@ -332,7 +332,7 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
     my_snprintf(buf[2], column_size, "%d", unit_build_shield_cost(id));
   } else {
     /* Total & turns left meaningless on capitalization */
-    if (building_has_effect(id, EFT_PROD_TO_GOLD)) {
+    if (building_has_effect(id, EFFECT_TYPE_PROD_TO_GOLD)) {
       mystrlcpy(buf[0], get_improvement_type(id)->name, column_size);
       buf[1][0] = '\0';
       my_snprintf(buf[2], column_size, "---");
@@ -364,7 +364,7 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
 
   /* Add the turns-to-build entry in the 4th position */
   if (pcity) {
-    if (!is_unit && building_has_effect(id, EFT_PROD_TO_GOLD)) {
+    if (!is_unit && building_has_effect(id, EFFECT_TYPE_PROD_TO_GOLD)) {
       my_snprintf(buf[3], column_size, _("%d/turn"),
                   MAX(0, pcity->common.shield_surplus));
     } else {
