@@ -276,7 +276,7 @@ static bool is_game_over(void)
     gamelog(GAMELOG_JUDGE, GL_DRAW,
             "Game ended in a draw as end year exceeded");
 
-    game.server.wcdb.outcome = GOC_DRAWN_BY_ENDYEAR;
+    game.server.wcdb.outcome = GAME_ENDED_DRAWN_BY_ENDYEAR;
     players_iterate(pplayer) {
       pplayer->result = PR_DRAW;
     } players_iterate_end;
@@ -318,7 +318,7 @@ static bool is_game_over(void)
                      _("Team victory to %s"), get_team_name(pteam->id));
       gamelog(GAMELOG_JUDGE, GL_TEAMWIN, pteam);
 
-      game.server.wcdb.outcome = GOC_ENDED_BY_TEAM_VICTORY;
+      game.server.wcdb.outcome = GAME_ENDED_BY_TEAM_VICTORY;
       players_iterate(pplayer) {
         if (pplayer->team == pteam->id)
           pplayer->result = PR_WIN;
@@ -336,7 +336,7 @@ static bool is_game_over(void)
                    _("Game ended in victory for %s"), victor->name);
     gamelog(GAMELOG_JUDGE, GL_LONEWIN, victor);
 
-    game.server.wcdb.outcome = GOC_ENDED_BY_LONE_SURVIVAL;
+    game.server.wcdb.outcome = GAME_ENDED_BY_LONE_SURVIVAL;
     players_iterate(pplayer) {
       if (pplayer == victor)
         pplayer->result = PR_WIN;
@@ -350,7 +350,7 @@ static bool is_game_over(void)
                    _("Game ended in a draw"));
     gamelog(GAMELOG_JUDGE, GL_DRAW);
 
-    game.server.wcdb.outcome = GOC_DRAWN_BY_MUTUAL_DESTRUCTION;
+    game.server.wcdb.outcome = GAME_ENDED_DRAWN_BY_MUTUAL_DESTRUCTION;
     players_iterate(pplayer) {
       pplayer->result = PR_DRAW;
     } players_iterate_end;
@@ -379,7 +379,7 @@ static bool is_game_over(void)
                    _("Game ended in allied victory"));
     gamelog(GAMELOG_JUDGE, GL_ALLIEDWIN);
 
-    game.server.wcdb.outcome = GOC_ENDED_BY_ALLIED_VICTORY;
+    game.server.wcdb.outcome = GAME_ENDED_BY_ALLIED_VICTORY;
     players_iterate(pplayer) {
       if (pplayer->is_alive)
         pplayer->result = PR_WIN;

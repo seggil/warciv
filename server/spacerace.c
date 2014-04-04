@@ -375,7 +375,7 @@ void check_spaceship_arrivals(void)
        get_nation_name(best_pplayer->nation));
   gamelog(GAMELOG_JUDGE, GL_LONEWIN, best_pplayer);
 
-  game.server.wcdb.outcome = GOC_ENDED_BY_SPACESHIP;
+  game.server.wcdb.outcome = GAME_ENDED_BY_SPACESHIP;
   players_iterate (pplayer) {
     if (pplayer == best_pplayer
         || players_on_same_team(pplayer, best_pplayer)) {

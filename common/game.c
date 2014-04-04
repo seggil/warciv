@@ -43,7 +43,7 @@ void dealloc_id(int id);
 struct civ_game game;
 
 /* Must match enum game_outcomes in game.h */
-static const char *game_outcome_strings[GOC_NUM_OUTCOMES] = {
+static const char *game_outcome_strings[GAME_ENDED_NUM] = {
   N_("none"),
   N_("drawn by endyear"),
   N_("drawn by mutual destruction"),
@@ -375,7 +375,7 @@ void game_init(void)
     game.server.meta_info.user_message[0] = '\0';
 
     game.server.wcdb.id = 0;
-    game.server.wcdb.outcome = GOC_NONE;
+    game.server.wcdb.outcome = GAME_ENDED_NONE;
     game.server.wcdb.type = GT_FFA;
     game.server.wcdb.termap = NULL;
   }
@@ -830,7 +830,7 @@ const char *game_type_name(enum game_types type)
 ****************************************************************************/
 const char *game_outcome_name_orig(enum game_outcomes outcome)
 {
-  assert(0 <= outcome && outcome < GOC_NUM_OUTCOMES);
+  assert(0 <= outcome && outcome < GAME_ENDED_NUM);
   return game_outcome_strings[outcome];
 }
 
@@ -839,7 +839,7 @@ const char *game_outcome_name_orig(enum game_outcomes outcome)
 ****************************************************************************/
 const char *game_outcome_name(enum game_outcomes outcome)
 {
-  assert(0 <= outcome && outcome < GOC_NUM_OUTCOMES);
+  assert(0 <= outcome && outcome < GAME_ENDED_NUM);
   return _(game_outcome_strings[outcome]);
 }
 

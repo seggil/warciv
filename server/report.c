@@ -1246,7 +1246,7 @@ void report_game_rankings(struct conn_list *dest)
     rd = score_get_solo_opponent_rating_deviation();
 
     if (game.server.rated) {
-      if (game.server.wcdb.outcome == GOC_ENDED_BY_SPACESHIP) {
+      if (game.server.wcdb.outcome == GAME_ENDED_BY_SPACESHIP) {
         notify_conn(dest, _("Game: You have won this solo game at "
                             "turn %d and with score %.0f. It will "
                             "count as a win against an 'opponent' "
