@@ -56,15 +56,15 @@ enum impr_range impr_range_from_str(const char *str)
 {
   enum impr_range ret_id;
 
-  assert(ARRAY_SIZE(impr_range_names) == IR_LAST);
+  assert(ARRAY_SIZE(impr_range_names) == IMPR_RANGE_LAST);
 
-  for (ret_id = 0; ret_id < IR_LAST; ret_id++) {
+  for (ret_id = 0; ret_id < IMPR_RANGE_LAST; ret_id++) {
     if (0 == mystrcasecmp(impr_range_names[ret_id], str)) {
       return ret_id;
     }
   }
 
-  return IR_LAST;
+  return IMPR_RANGE_LAST;
 }
 
 /**************************************************************************
@@ -72,9 +72,9 @@ enum impr_range impr_range_from_str(const char *str)
 **************************************************************************/
 const char *impr_range_name(enum impr_range id)
 {
-  assert(ARRAY_SIZE(impr_range_names) == IR_LAST);
+  assert(ARRAY_SIZE(impr_range_names) == IMPR_RANGE_LAST);
 
-  if (id < IR_LAST) {
+  if (id < IMPR_RANGE_LAST) {
     return impr_range_names[id];
   } else {
     return NULL;
@@ -266,33 +266,33 @@ bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id)
  Fills in lists of improvements at all impr_ranges that might affect the
  given city (owned by the given player)
 **************************************************************************/
-static void fill_ranges_improv_lists(Impr_Status *equiv_list[IR_LAST],
+static void fill_ranges_improv_lists(Impr_Status *equiv_list[IMPR_RANGE_LAST],
                                      const city_t *pcity,
                                      struct player *pplayer)
 {
   Continent_id cont = 0;
   enum impr_range i;
 
-  for (i = IR_NONE; i < IR_LAST; i++) {
+  for (i = IMPR_RANGE_NONE; i < IMPR_RANGE_LAST; i++) {
     equiv_list[i] = NULL;
   }
 
   if (pcity) {
-    equiv_list[IR_CITY] = (Impr_Status *) &pcity->common.improvements;
+    equiv_list[IMPR_RANGE_CITY] = (Impr_Status *) &pcity->common.improvements;
     cont = map_get_continent(pcity->common.tile);
     /* Negative continents mean ocean cities. */
   }
 
   if (pplayer) {
-    equiv_list[IR_PLAYER] = pplayer->improvements;
+    equiv_list[IMPR_RANGE_PLAYER] = pplayer->improvements;
 
     if (cont > 0 && pplayer->island_improv) {
-      equiv_list[IR_ISLAND] =
+      equiv_list[IMPR_RANGE_ISLAND] =
         &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
     }
   }
 
-  equiv_list[IR_WORLD] = game.improvements;
+  equiv_list[IMPR_RANGE_WORLD] = game.improvements;
 }
 
 /**************************************************************************
@@ -303,7 +303,7 @@ bool improvement_redundant(struct player *pplayer, const city_t *pcity,
                            Impr_Type_id id, bool want_to_build)
 {
   enum impr_range i;
-  Impr_Status *equiv_list[IR_LAST];
+  Impr_Status *equiv_list[IMPR_RANGE_LAST];
   Impr_Type_id *ept;
 
   /* Make lists of improvements that affect this city */
@@ -313,7 +313,7 @@ bool improvement_redundant(struct player *pplayer, const city_t *pcity,
      its presence in any of the lists (we check only for its presence, and
      assume that it has the "equiv" effect even if it itself is redundant) */
   for (ept = improvement_types[id].equiv_repl; ept && *ept != B_LAST; ept++) {
-    for (i = IR_CITY; i < IR_LAST; i++) {
+    for (i = IMPR_RANGE_CITY; i < IMPR_RANGE_LAST; i++) {
       if (equiv_list[i]) {
         Impr_Status stat = equiv_list[i][*ept];
         if (stat != I_NONE && stat != I_OBSOLETE) return TRUE;
@@ -326,7 +326,7 @@ bool improvement_redundant(struct player *pplayer, const city_t *pcity,
   if (!want_to_build) {
     for (ept = improvement_types[id].equiv_dupl; ept
            && *ept != B_LAST; ept++) {
-      for (i = IR_CITY; i < IR_LAST; i++) {
+      for (i = IMPR_RANGE_CITY; i < IMPR_RANGE_LAST; i++) {
         if (equiv_list[i]) {
           Impr_Status stat = equiv_list[i][*ept];
           if (stat != I_NONE && stat != I_OBSOLETE) return TRUE;
@@ -453,7 +453,7 @@ void mark_improvement(city_t *pcity, Impr_Type_id id,
                       Impr_Status status)
 {
   enum impr_range range;
-  Impr_Status *improvements = NULL, *equiv_list[IR_LAST];
+  Impr_Status *improvements = NULL, *equiv_list[IMPR_RANGE_LAST];
 
   pcity->common.improvements[id] = status;
   range = improvement_types[id].equiv_range;
@@ -495,7 +495,7 @@ void allot_island_improvs(void)
         &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
 
       built_impr_iterate(pcity, id) {
-        if (improvement_types[id].equiv_range != IR_ISLAND) {
+        if (improvement_types[id].equiv_range != IMPR_RANGE_ISLAND) {
           continue;
         }
 
@@ -504,7 +504,7 @@ void allot_island_improvs(void)
     } city_list_iterate_end;
   } players_iterate_end;
 
-  improvements_update_redundant(NULL, NULL, 0, IR_WORLD);
+  improvements_update_redundant(NULL, NULL, 0, IMPR_RANGE_WORLD);
 }
 
 /**************************************************************************
@@ -538,7 +538,7 @@ void improvements_update_obsolete(void)
   /* Ideally, we could track at what max range and for which players, but
    * that's overoptimizing by a bit */
   if (did_mark) {
-    improvements_update_redundant(NULL, NULL, 0, IR_WORLD);
+    improvements_update_redundant(NULL, NULL, 0, IMPR_RANGE_WORLD);
   }
 }
 
@@ -583,26 +583,26 @@ void improvements_update_redundant(struct player *pplayer, city_t *pcity,
   }
 
   switch (range) {
-  case IR_NONE:
+  case IMPR_RANGE_NONE:
     break;
-  case IR_CITY:
+  case IMPR_RANGE_CITY:
     assert(pcity != NULL);
     CHECK_CITY_IMPR(pcity);
     break;
-  case IR_WORLD:
+  case IMPR_RANGE_WORLD:
     players_iterate(plr) {
       city_list_iterate(plr->cities, pcity2) {
         CHECK_CITY_IMPR(pcity2);
       } city_list_iterate_end;
     } players_iterate_end;
     break;
-  case IR_PLAYER:
+  case IMPR_RANGE_PLAYER:
     assert(pplayer != NULL);
     city_list_iterate(pplayer->cities, pcity2) {
       CHECK_CITY_IMPR(pcity2);
     } city_list_iterate_end;
     break;
-  case IR_ISLAND:
+  case IMPR_RANGE_ISLAND:
     assert(cont > 0);
     city_list_iterate(pplayer->cities, pcity2) {
       if (map_get_continent(pcity2->common.tile) == cont) {
