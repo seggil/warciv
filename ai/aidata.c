@@ -365,11 +365,11 @@ void ai_data_turn_init(struct player *pplayer)
         continue;
       }
       if (pplayers_allied(aplayer, check_pl)
-          && pplayer_get_diplstate(pplayer, check_pl)->type == DS_WAR) {
+          && pplayer_get_diplstate(pplayer, check_pl)->type == DIPLSTATE_WAR) {
        ai->diplomacy.player_intel[i].is_allied_with_enemy = check_pl;
       }
       if (pplayers_allied(pplayer, check_pl)
-          && pplayer_get_diplstate(aplayer, check_pl)->type == DS_WAR) {
+          && pplayer_get_diplstate(aplayer, check_pl)->type == DIPLSTATE_WAR) {
         ai->diplomacy.player_intel[i].at_war_with_ally = check_pl;
       }
       if (pplayers_allied(aplayer, check_pl)

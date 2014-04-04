@@ -2117,9 +2117,9 @@ void handle_player_info(struct packet_player_info *pinfo) /* 39 */
   for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
     if (can_client_issue_orders()
         && pplayer->diplstates[i].type != pinfo->diplstates[i].type) {
-      if (pplayer->diplstates[i].type != DS_WAR
-          && pinfo->diplstates[i].type == DS_WAR
-          && !(pplayer->diplstates[i].type == DS_NO_CONTACT
+      if (pplayer->diplstates[i].type != DIPLSTATE_WAR
+          && pinfo->diplstates[i].type == DIPLSTATE_WAR
+          && !(pplayer->diplstates[i].type == DIPLSTATE_NO_CONTACT
                && game.info.diplomacy >= 2)) {
         if (pplayer == get_player_ptr()) {
           delayed_goto_event(AUTO_WAR_DIPLSTATE, get_player(i));

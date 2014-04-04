@@ -215,13 +215,13 @@ const char *popup_info_text(tile_t *ptile)
   city_t *pcity = ptile->city;
   struct unit *punit = find_visible_unit(ptile);
   struct unit *pfocus_unit = get_unit_in_focus();
-  const char *diplo_nation_plural_adjectives[DS_LAST] =
+  const char *diplo_nation_plural_adjectives[DIPLSTATE_LAST] =
     {Q_("?nation:Neutral"), Q_("?nation:Hostile"),
      "" /* unused, DS_CEASEFIRE*/,
      Q_("?nation:Peaceful"), Q_("?nation:Friendly"),
     Q_("?nation:Mysterious"), Q_("?nation:Friendly(team)")
   };
-  const char *diplo_city_adjectives[DS_LAST] =
+  const char *diplo_city_adjectives[DIPLSTATE_LAST] =
     {Q_("?city:Neutral"), Q_("?city:Hostile"),
      "" /*unused, DS_CEASEFIRE */,
      Q_("?city:Peaceful"), Q_("?city:Friendly"), Q_("?city:Mysterious"),
@@ -251,7 +251,7 @@ const char *popup_info_text(tile_t *ptile)
     } else if (!client_is_global_observer() && owner) {
       struct player_diplstate *ds =
           &get_player_ptr()->diplstates[owner->player_no];
-      if (ds[owner->player_no].type == DS_CEASEFIRE) {
+      if (ds[owner->player_no].type == DIPLSTATE_CEASEFIRE) {
         int turns = ds[owner->player_no].turns_left;
 
         /* TRANS: "Territory of Username (Polish) (5 turn ceasefire)" */
@@ -292,7 +292,7 @@ const char *popup_info_text(tile_t *ptile)
     } else {
       struct player_diplstate *ds =
           &get_player_ptr()->diplstates[owner->player_no];
-      if (ds->type == DS_CEASEFIRE) {
+      if (ds->type == DIPLSTATE_CEASEFIRE) {
         int turns = ds[owner->player_no].turns_left;
 
         /* TRANS:  "City: Warsaw | Username (5 turn ceasefire, Polish)" */
@@ -369,7 +369,7 @@ const char *popup_info_text(tile_t *ptile)
     } else {
       struct player_diplstate *ds =
           &get_player_ptr()->diplstates[owner->player_no];
-      if (ds->type == DS_CEASEFIRE) {
+      if (ds->type == DIPLSTATE_CEASEFIRE) {
         int turns = ds[owner->player_no].turns_left;
 
         /* TRANS:  "Unit: Musketeers | Username (5 turn ceasefire, Polish)" */
@@ -541,7 +541,7 @@ const char *science_dialog_text(void)
   players_iterate(pplayer) {
     enum diplstate_type ds = pplayer_get_diplstate(plr, pplayer)->type;
 
-    if (plr != pplayer && ds == DS_TEAM) {
+    if (plr != pplayer && ds == DIPLSTATE_TEAM) {
       if (theirs == -1) {
         theirs = 0;
       }

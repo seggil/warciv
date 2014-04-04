@@ -287,7 +287,7 @@ void update_intel_dialog(struct player *p)
   struct intel_dialog *pdialog = get_intel_dialog(p);
 
   if (pdialog) {
-    GtkTreeIter diplstates[DS_LAST];
+    GtkTreeIter diplstates[DIPLSTATE_LAST];
     char buf[64];
     int i;
 

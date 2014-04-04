@@ -389,7 +389,7 @@ static void check_players(void)
     players_iterate(pplayer2) {
       assert(pplayer->diplstates[pplayer2->player_no].type
              == pplayer2->diplstates[pplayer->player_no].type);
-      if (pplayer->diplstates[pplayer2->player_no].type == DS_CEASEFIRE) {
+      if (pplayer->diplstates[pplayer2->player_no].type == DIPLSTATE_CEASEFIRE) {
         assert(pplayer->diplstates[pplayer2->player_no].turns_left
                == pplayer2->diplstates[pplayer->player_no].turns_left);
       }

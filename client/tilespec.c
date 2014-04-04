@@ -3031,16 +3031,16 @@ static enum color_std classic_overview_tile_color(tile_t *ptile)
       return COLOR_STD_WHITE;
     } else {
       switch (pplayer_get_diplstate(pplayer, me)->type) {
-      case DS_NO_CONTACT:
+      case DIPLSTATE_NO_CONTACT:
         if (game.info.diplomacy >= 2) {
           return COLOR_STD_FORANGE;
         }
-      case DS_NEUTRAL:
-      case DS_PEACE:
-      case DS_CEASEFIRE:
+      case DIPLSTATE_NEUTRAL:
+      case DIPLSTATE_PEACE:
+      case DIPLSTATE_CEASEFIRE:
         return COLOR_STD_CYAN;
-      case DS_ALLIANCE:
-      case DS_TEAM:
+      case DIPLSTATE_ALLIANCE:
+      case DIPLSTATE_TEAM:
         return COLOR_STD_FGREEN;
       default: /* DS_WAR */
         return COLOR_STD_FORANGE;
@@ -3052,16 +3052,16 @@ static enum color_std classic_overview_tile_color(tile_t *ptile)
       return COLOR_STD_YELLOW;
     } else {
       switch (pplayer_get_diplstate(pplayer, me)->type) {
-      case DS_NO_CONTACT:
+      case DIPLSTATE_NO_CONTACT:
         if (game.info.diplomacy >= 2) {
           return COLOR_STD_RED;
         }
-      case DS_NEUTRAL:
-      case DS_PEACE:
-      case DS_CEASEFIRE:
+      case DIPLSTATE_NEUTRAL:
+      case DIPLSTATE_PEACE:
+      case DIPLSTATE_CEASEFIRE:
         return COLOR_STD_ORANGE;
-      case DS_ALLIANCE:
-      case DS_TEAM:
+      case DIPLSTATE_ALLIANCE:
+      case DIPLSTATE_TEAM:
         return COLOR_STD_GREEN;
       default: /* DS_WAR */
         return COLOR_STD_RED;

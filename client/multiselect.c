@@ -1091,11 +1091,11 @@ struct player *get_tile_player(tile_t *ptile)
 
   unit_list_iterate(ptile->units, punit) {
     switch (pplayer_get_diplstate(get_player_ptr(), unit_owner(punit))->type) {
-    case DS_NEUTRAL:
-    case DS_WAR:
-    case DS_CEASEFIRE:
-    case DS_PEACE:
-    case DS_NO_CONTACT:
+    case DIPLSTATE_NEUTRAL:
+    case DIPLSTATE_WAR:
+    case DIPLSTATE_CEASEFIRE:
+    case DIPLSTATE_PEACE:
+    case DIPLSTATE_NO_CONTACT:
       count[punit->owner]++;
       if (best < 0 || count[punit->owner] > count[best]) {
         best = punit->owner;

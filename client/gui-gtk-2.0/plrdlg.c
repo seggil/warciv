@@ -131,8 +131,8 @@ static void update_players_menu(void)
 
     if (!client_is_global_observer()) {
       switch (pplayer_get_diplstate(get_player_ptr(), get_player(plrno))->type) {
-      case DS_WAR:
-      case DS_NO_CONTACT:
+      case DIPLSTATE_WAR:
+      case DIPLSTATE_NO_CONTACT:
         gtk_widget_set_sensitive(players_war_command, FALSE);
         break;
       default:
@@ -539,11 +539,11 @@ static void build_row(GtkTreeIter *it, int i)
   if (me) {
     if (plr != me) {
       switch (pplayer_get_diplstate(me, plr)->type) {
-      case DS_WAR:
+      case DIPLSTATE_WAR:
         style = PANGO_STYLE_ITALIC;
         break;
-      case DS_ALLIANCE:
-      case DS_TEAM:
+      case DIPLSTATE_ALLIANCE:
+      case DIPLSTATE_TEAM:
         weight = PANGO_WEIGHT_BOLD;
         break;
       default:

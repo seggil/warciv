@@ -388,7 +388,7 @@ static void ai_hunter_try_launch(struct player *pplayer,
           enum diplstate_type ds = pplayer_get_diplstate(pplayer,
                                                          unit_owner(victim))->type;
 
-          if (ds != DS_WAR) {
+          if (ds != DIPLSTATE_WAR) {
             continue;
           }
           if (victim == target) {

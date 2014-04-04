@@ -158,9 +158,9 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
   }
 
   if (is_pact_clause(type)
-      && ((ds == DS_PEACE && type == CLAUSE_PEACE)
-          || (ds == DS_ALLIANCE && type == CLAUSE_ALLIANCE)
-          || (ds == DS_CEASEFIRE && type == CLAUSE_CEASEFIRE))) {
+      && ((ds == DIPLSTATE_PEACE && type == CLAUSE_PEACE)
+          || (ds == DIPLSTATE_ALLIANCE && type == CLAUSE_ALLIANCE)
+          || (ds == DIPLSTATE_CEASEFIRE && type == CLAUSE_CEASEFIRE))) {
     /* we already have this diplomatic state */
     freelog(LOG_ERROR, "Illegal treaty suggested between %s and %s - they "
                        "already have this treaty level.", ptreaty->plr0->name,

@@ -149,8 +149,8 @@ static struct player *create_barbarian_player(bool land)
   /* Ensure that we are at war with everyone else */
   players_iterate(pplayer) {
     if (pplayer != barbarians) {
-      pplayer->diplstates[barbarians->player_no].type = DS_WAR;
-      barbarians->diplstates[pplayer->player_no].type = DS_WAR;
+      pplayer->diplstates[barbarians->player_no].type = DIPLSTATE_WAR;
+      barbarians->diplstates[pplayer->player_no].type = DIPLSTATE_WAR;
     }
   } players_iterate_end;
 
