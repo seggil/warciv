@@ -1950,7 +1950,7 @@ void handle_game_info(struct packet_game_info *pinfo) /* 15 */
      * and has equiv_range==World - otherwise we deal with it in its home
      * city anyway */
     if (is_wonder(i)
-        && improvement_types[i].equiv_range == IR_WORLD
+        && improvement_types[i].equiv_range == IMPR_RANGE_WORLD
         && !find_city_by_id(game.info.global_wonders[i]))
     {
       if (game.info.global_wonders[i] <= 0

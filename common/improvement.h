@@ -48,12 +48,12 @@ typedef unsigned char Impr_Status;
 /* Range of equivalence (used in equiv_range fields)
  * These must correspond to impr_range_names[] in improvement.c. */
 enum impr_range {
-  IR_NONE,
-  IR_CITY,
-  IR_ISLAND,
-  IR_PLAYER,
-  IR_WORLD,
-  IR_LAST      /* keep this last */
+  IMPR_RANGE_NONE,
+  IMPR_RANGE_CITY,
+  IMPR_RANGE_ISLAND,
+  IMPR_RANGE_PLAYER,
+  IMPR_RANGE_WORLD,
+  IMPR_RANGE_LAST      /* keep this last */
 };
 
 /* Type of improvement. (Read from buildings.ruleset file.) */
