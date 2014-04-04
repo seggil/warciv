@@ -1254,7 +1254,8 @@ static void load_ruleset_buildings(struct section_file *file)
       item = secfile_lookup_str_default(file, NULL, "%s.elements%d.range",
                                         sec[i], j);
       if (item) {
-        if ((range = effect_range_from_str(item)) == EFR_LAST) {
+        range = effect_range_from_str(item);
+        if ( range == EFFECT_RANGE_LAST) {
           freelog(LOG_ERROR,
                   /* TRANS: Obscure ruleset error */
                   _("Group %s lists bad range: \"%s\" (%s)"),
@@ -1262,7 +1263,7 @@ static void load_ruleset_buildings(struct section_file *file)
           continue;
         }
       } else {
-        range = EFR_CITY;
+        range = EFFECT_RANGE_CITY;
       }
 
       survives
@@ -1403,7 +1404,7 @@ static void load_ruleset_buildings(struct section_file *file)
         item = secfile_lookup_str_default(file, NULL, "%s.effect%d.range",
                                           sec[i], j);
         if (item) {
-          if ((range = effect_range_from_str(item)) == EFR_LAST) {
+          if ((range = effect_range_from_str(item)) == EFFECT_RANGE_LAST) {
             freelog(LOG_ERROR,
                     /* TRANS: Obscure ruleset error */
                     _("Building %s lists bad range: \"%s\" (%s)"),
@@ -1411,7 +1412,7 @@ static void load_ruleset_buildings(struct section_file *file)
             continue;
           }
         } else {
-          range = EFR_CITY;
+          range = EFFECT_RANGE_CITY;
         }
 
         survives = secfile_lookup_bool_default(file, FALSE, "%s.effect%d.survives",

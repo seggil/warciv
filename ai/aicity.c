@@ -59,11 +59,11 @@
 {                                                                   \
   Continent_id continent = map_get_continent(city_here->common.tile); \
   city_list_iterate(list, city) {                                   \
-    if ((range == EFR_CITY && city == city_here)                    \
-        || (range == EFR_LOCAL && city == city_here)                \
-        || (range == EFR_CONTINENT                                  \
+    if ((range == EFFECT_RANGE_CITY && city == city_here)                    \
+        || (range == EFFECT_RANGE_LOCAL && city == city_here)                \
+        || (range == EFFECT_RANGE_CONTINENT                                  \
             && map_get_continent(city->common.tile) == continent)   \
-        || (range == EFR_PLAYER)) {
+        || (range == EFFECT_RANGE_PLAYER)) {
 #define city_range_iterate_end \
   } } city_list_iterate_end; }
 
@@ -204,7 +204,7 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
   struct player *pplayer = city_owner(pcity);
   struct impr_type *pimpr = get_improvement_type(id);
   int v = 0;
-  int cities[EFR_LAST];
+  int cities[EFFECT_RANGE_LAST];
   int nplayers = game.info.nplayers
                  - game.server.nbarbarians
                  - team_count_members_alive(pplayer->team);
@@ -221,13 +221,13 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
   }
 
   /* Find number of cities per range.  */
-  cities[EFR_PLAYER] = city_list_size(pplayer->cities);
-  cities[EFR_WORLD] = cities[EFR_PLAYER]; /* kludge. */
+  cities[EFFECT_RANGE_PLAYER] = city_list_size(pplayer->cities);
+  cities[EFFECT_RANGE_WORLD] = cities[EFFECT_RANGE_PLAYER]; /* kludge. */
 
-  cities[EFR_CONTINENT] = ai->stats.cities[ptile->continent];
+  cities[EFFECT_RANGE_CONTINENT] = ai->stats.cities[ptile->continent];
 
-  cities[EFR_CITY] = 1;
-  cities[EFR_LOCAL] = 0;
+  cities[EFFECT_RANGE_CITY] = 1;
+  cities[EFFECT_RANGE_LOCAL] = 0;
 
   /* Calculate desire value. */
   effect_type_vector_iterate(get_building_effect_types(id), ptype) {

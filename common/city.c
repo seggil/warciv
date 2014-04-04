@@ -1627,7 +1627,7 @@ city_t *is_non_allied_city_tile(const tile_t *ptile,
 {
   city_t *pcity = ptile->city;
 
-  if (pcity 
+  if (pcity
       && !pplayers_allied(pplayer, city_owner(pcity)))
   {
     return pcity;
@@ -2525,7 +2525,7 @@ void get_worker_on_map_position(const tile_t *ptile,
 /**************************************************************************
  Returns TRUE iff the city has set the given option.
 **************************************************************************/
-bool is_city_option_set(const city_t *pcity, enum city_options option)
+bool is_city_option_set(const city_t *pcity, city_unit_option option)
 {
   return TEST_BIT(pcity->common.city_options, option);
 }
