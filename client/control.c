@@ -1044,7 +1044,7 @@ void request_unit_return(struct unit *punit)
 
     if (punit->hp
         + turns * get_player_bonus(get_player_ptr(),
-                                   EFT_UNIT_RECOVER)< unit_type(punit)->hp)
+                                   EFFECT_TYPE_UNIT_RECOVER)< unit_type(punit)->hp)
     {
       activity = ACTIVITY_SENTRY;
     }

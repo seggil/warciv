@@ -54,7 +54,7 @@ int unit_move_rate(struct unit *punit)
   case SEA_MOVING:
     move_rate = (base_move_rate * punit->hp) / unit_type(punit)->hp;
 
-    move_rate += (get_player_bonus(unit_owner(punit), EFT_SEA_MOVE)
+    move_rate += (get_player_bonus(unit_owner(punit), EFFECT_TYPE_SEA_MOVE)
                   * SINGLE_MOVE);
 
     if (player_knows_techs_with_flag(unit_owner(punit), TF_BOAT_FAST)) {
@@ -1684,7 +1684,7 @@ int unit_loss_pct(struct player *pplayer, const tile_t *ptile,
 **************************************************************************/
 int base_trireme_loss_pct(struct player *pplayer, struct unit *punit)
 {
-  if (get_player_bonus(pplayer, EFT_NO_SINK_DEEP) > 0) {
+  if (get_player_bonus(pplayer, EFFECT_TYPE_NO_SINK_DEEP) > 0) {
     return 0;
   } else if (player_knows_techs_with_flag(pplayer, TF_REDUCE_TRIREME_LOSS2)) {
     return game.ruleset_game.trireme_loss_chance[punit->veteran] / 4;

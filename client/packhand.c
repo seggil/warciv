@@ -1626,14 +1626,14 @@ void handle_game_info(struct packet_game_info *pinfo) /* 15 */
      * to work.
      */
     /* WTF? FIXME: get rid of this hack. */
-    game.palace_building = get_building_for_effect(EFT_CAPITAL_CITY);
+    game.palace_building = get_building_for_effect(EFFECT_TYPE_CAPITAL_CITY);
     if (game.palace_building == B_LAST) {
       /* This does not appear to affect anything when
        * we reach here; it certainly is not fatal. */
       freelog(LOG_VERBOSE, "Cannot find any palace building");
     }
 
-    game.land_defend_building = get_building_for_effect(EFT_LAND_DEFEND);
+    game.land_defend_building = get_building_for_effect(EFFECT_TYPE_LAND_DEFEND);
     if (game.land_defend_building == B_LAST) {
       freelog(LOG_VERBOSE, "Cannot find any land defend building");
     }

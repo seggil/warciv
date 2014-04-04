@@ -324,10 +324,10 @@ static unsigned int assess_danger_unit(city_t *pcity, struct unit *punit)
   }
 
   danger = unit_att_rating(punit);
-  if (sailing && get_city_bonus(pcity, EFT_SEA_DEFEND) > 0) {
+  if (sailing && get_city_bonus(pcity, EFFECT_TYPE_SEA_DEFEND) > 0) {
     danger /= 2;
   }
-  if (is_air_unit(punit) && get_city_bonus(pcity, EFT_AIR_DEFEND) > 0) {
+  if (is_air_unit(punit) && get_city_bonus(pcity, EFFECT_TYPE_AIR_DEFEND) > 0) {
     danger /= 2;
   }
 
@@ -559,10 +559,10 @@ static unsigned int assess_danger(city_t *pcity)
 
   /* HACK: This needs changing if multiple improvements provide
    * this effect. */
-  defender[0] = ai_find_source_building(pplayer, EFT_LAND_DEFEND);
-  defender[1] = ai_find_source_building(pplayer, EFT_SEA_DEFEND);
-  defender[2] = ai_find_source_building(pplayer, EFT_AIR_DEFEND);
-  defender[3] = ai_find_source_building(pplayer, EFT_MISSILE_DEFEND);
+  defender[0] = ai_find_source_building(pplayer, EFFECT_TYPE_LAND_DEFEND);
+  defender[1] = ai_find_source_building(pplayer, EFFECT_TYPE_SEA_DEFEND);
+  defender[2] = ai_find_source_building(pplayer, EFFECT_TYPE_AIR_DEFEND);
+  defender[3] = ai_find_source_building(pplayer, EFFECT_TYPE_MISSILE_DEFEND);
 
   if (defender[0] != B_LAST) {
     ai_reevaluate_building(pcity, &pcity->u.server.ai.building_want[defender[0]],
@@ -826,7 +826,7 @@ static void process_attacker_want(city_t *pcity,
         && move_type == orig_move_type) {
       /* TODO: Case for Airport. -- Raahul */
       int will_be_veteran = (move_type == LAND_MOVING
-          || ai_find_source_building(pplayer, EFT_SEA_VETERAN) != B_LAST);
+          || ai_find_source_building(pplayer, EFFECT_TYPE_SEA_VETERAN) != B_LAST);
       /* Cost (shield equivalent) of gaining these techs. */
       /* FIXME? Katvrr advises that this should be weighted more heavily in big
        * danger. */
@@ -1185,20 +1185,20 @@ static void adjust_ai_unit_choice(city_t *pcity,
   move_type = get_unit_type(choice->choice)->move_type;
   switch(move_type) {
   case LAND_MOVING:
-    if ((id = ai_find_source_building(pplayer, EFT_LAND_VETERAN)) != B_LAST) {
+    if ((id = ai_find_source_building(pplayer, EFFECT_TYPE_LAND_VETERAN)) != B_LAST) {
       choice->choice = id;
       choice->type = CT_BUILDING;
     }
     break;
   case SEA_MOVING:
-    if ((id = ai_find_source_building(pplayer, EFT_SEA_VETERAN)) != B_LAST) {
+    if ((id = ai_find_source_building(pplayer, EFFECT_TYPE_SEA_VETERAN)) != B_LAST) {
       choice->choice = id;
       choice->type = CT_BUILDING;
     }
     break;
   case HELI_MOVING:
   case AIR_MOVING:
-    if ((id = ai_find_source_building(pplayer, EFT_AIR_VETERAN)) != B_LAST
+    if ((id = ai_find_source_building(pplayer, EFFECT_TYPE_AIR_VETERAN)) != B_LAST
         && pcity->common.shield_surplus > impr_build_shield_cost(id) / 10) {
       /* Only build this if we have really high production */
       choice->choice = id;
@@ -1270,9 +1270,9 @@ void military_advisor_choose_build(struct player *pplayer, city_t *pcity,
 
     /* HACK: This needs changing if multiple improvements provide
      * this effect. */
-    land_id = ai_find_source_building(pplayer, EFT_LAND_DEFEND);
-    sea_id = ai_find_source_building(pplayer, EFT_SEA_DEFEND);
-    air_id = ai_find_source_building(pplayer, EFT_AIR_DEFEND);
+    land_id = ai_find_source_building(pplayer, EFFECT_TYPE_LAND_DEFEND);
+    sea_id = ai_find_source_building(pplayer, EFFECT_TYPE_SEA_DEFEND);
+    air_id = ai_find_source_building(pplayer, EFFECT_TYPE_AIR_DEFEND);
 
     if (land_id != B_LAST
         && pcity->u.server.ai.building_want[land_id] != 0 && our_def != 0
@@ -1320,7 +1320,7 @@ void military_advisor_choose_build(struct player *pplayer, city_t *pcity,
       /* Consider building defensive units units */
       process_defender_want(pplayer, pcity, danger, choice);
       if (urgency == 0 && unit_types[choice->choice].defense_strength == 1) {
-        if (get_city_bonus(pcity, EFT_LAND_REGEN) > 0) {
+        if (get_city_bonus(pcity, EFFECT_TYPE_LAND_REGEN) > 0) {
           /* unlikely */
           choice->want = MIN(49, danger);
         } else {
@@ -1337,7 +1337,7 @@ void military_advisor_choose_build(struct player *pplayer, city_t *pcity,
 
   if (pcity->common.shield_surplus <= 0
       || pcity->common.people_unhappy[4] > pcity->common.people_unhappy[2]) {
-    /* Things we consider below are not life-saving so we don't want to 
+    /* Things we consider below are not life-saving so we don't want to
      * build them if our populace doesn't feel like it */
     return;
   }

@@ -146,7 +146,7 @@ void do_tech_parasite_effect(struct player *pplayer)
   /* Note that two EFT_TECH_PARASITE effects will combine into a single,
    * much worse effect. */
   if ((mod = get_player_bonus_sources(&sources, pplayer,
-                                      EFT_TECH_PARASITE)) > 0) {
+                                      EFFECT_TYPE_TECH_PARASITE)) > 0) {
     char buf[512];
 
     buf[0] = '\0';
@@ -291,7 +291,7 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
 
   players_iterate(aplr) {
     had_embassy[aplr->player_no]
-      = (get_player_bonus(aplr, EFT_HAVE_EMBASSIES) > 0);
+      = (get_player_bonus(aplr, EFFECT_TYPE_HAVE_EMBASSIES) > 0);
   } players_iterate_end;
 
   /* This is a hack which makes buggy team research work somehow
@@ -487,7 +487,7 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
    */
   players_iterate(owner) {
     if (had_embassy[owner->player_no]
-        && get_player_bonus(owner, EFT_HAVE_EMBASSIES) == 0) {
+        && get_player_bonus(owner, EFFECT_TYPE_HAVE_EMBASSIES) == 0) {
       players_iterate(other_player) {
         send_player_info(owner, other_player);
       } players_iterate_end;
@@ -996,7 +996,7 @@ static void start_revolution(struct player *pplayer)
   if (pplayer->revolution_finishes > 0) {
     /* Player already has an active revolution. */
   } else if ((pplayer->ai.control && !ai_handicap(pplayer, H_REVOLUTION))
-             || get_player_bonus(pplayer, EFT_NO_ANARCHY)) {
+             || get_player_bonus(pplayer, EFFECT_TYPE_NO_ANARCHY)) {
     /* AI players without the H_REVOLUTION handicap can skip anarchy */
     pplayer->revolution_finishes = game.info.turn;
   } else if (game.server.revolution_length == 0) {

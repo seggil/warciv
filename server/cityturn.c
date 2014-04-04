@@ -344,8 +344,8 @@ void send_city_turn_notifications(struct conn_list *dest, city_t *pcity)
     turns_growth = (city_granary_size(pcity->common.pop_size) - pcity->common.food_stock - 1)
                    / pcity->common.food_surplus;
 
-    if (get_city_bonus(pcity, EFT_GROWTH_FOOD) == 0
-        && get_current_construction_bonus(pcity, EFT_GROWTH_FOOD) > 0
+    if (get_city_bonus(pcity, EFFECT_TYPE_GROWTH_FOOD) == 0
+        && get_current_construction_bonus(pcity, EFFECT_TYPE_GROWTH_FOOD) > 0
         && pcity->common.shield_surplus > 0) {
       turns_granary = (impr_build_shield_cost(pcity->common.currently_building)
                        - pcity->common.shield_stock) / pcity->common.shield_surplus;
@@ -569,7 +569,7 @@ bool city_reduce_size(city_t *pcity, int pop_loss)
 **************************************************************************/
 static int granary_savings(const city_t *pcity)
 {
-  int savings = get_city_bonus(pcity, EFT_GROWTH_FOOD);
+  int savings = get_city_bonus(pcity, EFFECT_TYPE_GROWTH_FOOD);
 
   return CLIP(0, savings, 100);
 }
@@ -585,8 +585,8 @@ static void city_increase_size(city_t *pcity)
   bool rapture_grow = city_rapture_grow(pcity); /* check before size increase! */
 
   if (!city_can_grow_to(pcity, pcity->common.pop_size + 1)) { /* need improvement */
-    if (get_current_construction_bonus(pcity, EFT_SIZE_ADJ) > 0
-        || get_current_construction_bonus(pcity, EFT_SIZE_UNLIMIT) > 0) {
+    if (get_current_construction_bonus(pcity, EFFECT_TYPE_SIZE_ADJ) > 0
+        || get_current_construction_bonus(pcity, EFFECT_TYPE_SIZE_UNLIMIT) > 0) {
       notify_player_ex(powner, pcity->common.tile, E_CITY_AQ_BUILDING,
                        _("Game: %s needs %s (being built) "
                          "to grow any further."), pcity->common.name,
@@ -710,7 +710,7 @@ void advisor_choose_build(struct player *pplayer, city_t *pcity)
   /* Build something random, undecided. */
   impr_type_iterate(i) {
     if (can_build_improvement(pcity, i)
-        && !building_has_effect(i, EFT_CAPITAL_CITY)) {
+        && !building_has_effect(i, EFFECT_TYPE_CAPITAL_CITY)) {
       change_build_target(pplayer, pcity, i, FALSE, E_IMP_AUTO);
       return;
     }
@@ -1050,7 +1050,7 @@ static bool city_build_building(struct player *pplayer, city_t *pcity)
   bool advance_worklist = FALSE, space_part;
   int mod;
 
-  if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+  if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
     assert(pcity->common.shield_surplus >= 0);
     /* pcity->common.before_change_shields already contains the surplus from
      * this turn. */
@@ -1085,11 +1085,11 @@ static bool city_build_building(struct player *pplayer, city_t *pcity)
     }
 
     space_part = TRUE;
-    if (get_current_construction_bonus(pcity, EFT_SS_STRUCTURAL) > 0) {
+    if (get_current_construction_bonus(pcity, EFFECT_TYPE_SS_STRUCTURAL) > 0) {
       pplayer->spaceship.structurals++;
-    } else if (get_current_construction_bonus(pcity, EFT_SS_COMPONENT) > 0) {
+    } else if (get_current_construction_bonus(pcity, EFFECT_TYPE_SS_COMPONENT) > 0) {
       pplayer->spaceship.components++;
-    } else if (get_current_construction_bonus(pcity, EFT_SS_MODULE) > 0) {
+    } else if (get_current_construction_bonus(pcity, EFFECT_TYPE_SS_MODULE) > 0) {
       pplayer->spaceship.modules++;
     } else {
       space_part = FALSE;
@@ -1118,7 +1118,7 @@ static bool city_build_building(struct player *pplayer, city_t *pcity)
                      improvement_types[pcity->common.currently_building].name);
 
 
-    if ((mod = get_current_construction_bonus(pcity, EFT_GIVE_IMM_TECH))) {
+    if ((mod = get_current_construction_bonus(pcity, EFFECT_TYPE_GIVE_IMM_TECH))) {
       int i;
 
       notify_player(pplayer, PL_("Game: %s boosts research; "
@@ -1341,7 +1341,7 @@ int city_incite_cost(struct player *pplayer, city_t *pcity)
   if (government_has_flag(get_gov_pcity(pcity), G_UNBRIBABLE)) {
     return INCITE_IMPOSSIBLE_COST;
   }
-  if (get_city_bonus(pcity, EFT_NO_INCITE) > 0) {
+  if (get_city_bonus(pcity, EFFECT_TYPE_NO_INCITE) > 0) {
     return INCITE_IMPOSSIBLE_COST;
   }
 
@@ -1391,7 +1391,7 @@ int city_incite_cost(struct player *pplayer, city_t *pcity)
     /* No capital? Take max penalty! */
     dist = 32;
   }
-  dist -= (dist * get_city_bonus(pcity, EFT_INCITE_DIST_PCT)) / 100;
+  dist -= (dist * get_city_bonus(pcity, EFFECT_TYPE_INCITE_DIST_PCT)) / 100;
   if (g->fixed_corruption_distance != 0) {
     dist = MIN(g->fixed_corruption_distance, dist);
   }
@@ -1496,7 +1496,7 @@ static void update_city_activity(struct player *pplayer, city_t *pcity)
 
     pcity->common.did_sell = FALSE;
     pcity->common.did_buy = FALSE;
-    pcity->common.airlift = (get_city_bonus(pcity, EFT_AIRLIFT) > 0);
+    pcity->common.airlift = (get_city_bonus(pcity, EFFECT_TYPE_AIRLIFT) > 0);
     update_tech(pplayer, pcity->common.science_total);
     pplayer->economic.gold += pcity->common.tax_total;
     /* Pay for units */

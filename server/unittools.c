@@ -129,7 +129,7 @@ bool maybe_make_veteran(struct unit *punit)
     plr = get_player(punit->owner);
 
     if (is_ground_unittype(punit->type)) {
-      mod += get_player_bonus(plr, EFT_LAND_VET_COMBAT);
+      mod += get_player_bonus(plr, EFFECT_TYPE_LAND_VET_COMBAT);
     }
 
     /* The modification is tacked on as a multiplier to the base chance.
@@ -209,7 +209,7 @@ void unit_versus_unit(struct unit *attacker, struct unit *defender,
 ****************************************************************************/
 static void do_upgrade_effects(struct player *pplayer)
 {
-  int upgrades = get_player_bonus(pplayer, EFT_UPGRADE_UNIT);
+  int upgrades = get_player_bonus(pplayer, EFFECT_TYPE_UPGRADE_UNIT);
   struct unit_list *candidates = unit_list_new();
 
   if (upgrades <= 0) {
@@ -286,7 +286,7 @@ static bool trireme_is_too_far(const struct unit *punit)
   pplayer = get_player(punit->owner);
   ptile = punit->tile;
 
-  if (get_player_bonus(pplayer, EFT_NO_SINK_DEEP) > 0
+  if (get_player_bonus(pplayer, EFFECT_TYPE_NO_SINK_DEEP) > 0
       || player_knows_techs_with_flag(pplayer, TF_REDUCE_TRIREME_LOSS2)
       || is_safe_ocean(ptile)) {
     return FALSE;
@@ -461,7 +461,7 @@ static void unit_restore_hitpoints(struct player *pplayer, struct unit *punit)
   }
 
   /* Bonus recovery HP (traditionally from the United Nations) */
-  punit->hp += get_player_bonus(pplayer, EFT_UNIT_RECOVER);
+  punit->hp += get_player_bonus(pplayer, EFFECT_TYPE_UNIT_RECOVER);
 
   if(is_heli_unit(punit)) {
     city_t *pcity = map_get_city(punit->tile);
@@ -523,11 +523,11 @@ static int hp_gain_coord(struct unit *punit)
   else
     hp=0;
   if((pcity=map_get_city(punit->tile))) {
-    if ((get_city_bonus(pcity, EFT_LAND_REGEN) > 0
+    if ((get_city_bonus(pcity, EFFECT_TYPE_LAND_REGEN) > 0
          && is_ground_unit(punit))
-        || (get_city_bonus(pcity, EFT_AIR_REGEN) > 0
+        || (get_city_bonus(pcity, EFFECT_TYPE_AIR_REGEN) > 0
             && (is_air_unit(punit) || is_heli_unit(punit)))
-        || (get_city_bonus(pcity, EFT_SEA_REGEN) > 0
+        || (get_city_bonus(pcity, EFFECT_TYPE_SEA_REGEN) > 0
             && is_sailing_unit(punit))) {
       hp=unit_type(punit)->hp;
     }

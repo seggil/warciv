@@ -329,7 +329,7 @@ city_t *sdi_defense_close(struct player *owner,
   square_iterate(ptile, 2, ptile1) {
     city_t *pcity = map_get_city(ptile1);
     if (pcity && (!pplayers_allied(city_owner(pcity), owner))
-        && get_city_bonus(pcity, EFT_NUKE_PROOF) > 0) {
+        && get_city_bonus(pcity, EFFECT_TYPE_NUKE_PROOF) > 0) {
       return pcity;
     }
   } square_iterate_end;
@@ -439,22 +439,22 @@ static int defense_multiplication(Unit_Type_id att_type,
     }
 
     if (is_air_unittype(att_type) && pcity) {
-      if ((mod = get_city_bonus(pcity, EFT_AIR_DEFEND)) > 0) {
+      if ((mod = get_city_bonus(pcity, EFFECT_TYPE_AIR_DEFEND)) > 0) {
         defensepower = defensepower * (100 + mod) / 100;
       }
-      if ((mod = get_city_bonus(pcity, EFT_MISSILE_DEFEND)) > 0
+      if ((mod = get_city_bonus(pcity, EFFECT_TYPE_MISSILE_DEFEND)) > 0
           && unit_type_flag(att_type, F_MISSILE)) {
         defensepower = defensepower * (100 + mod) / 100;
       }
     } else if (is_water_unit(att_type) && pcity) {
-      if ((mod = get_city_bonus(pcity, EFT_SEA_DEFEND)) > 0) {
+      if ((mod = get_city_bonus(pcity, EFFECT_TYPE_SEA_DEFEND)) > 0) {
         defensepower = defensepower * (100 + mod) / 100;
       }
     }
     if (!unit_type_flag(att_type, F_IGWALL)
         && (is_ground_unittype(att_type) || is_heli_unittype(att_type))
         && pcity
-        && (mod = get_city_bonus(pcity, EFT_LAND_DEFEND)) > 0) {
+        && (mod = get_city_bonus(pcity, EFFECT_TYPE_LAND_DEFEND)) > 0) {
       defensepower = defensepower * (100 + mod) / 100;
     }
 

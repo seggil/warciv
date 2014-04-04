@@ -74,7 +74,7 @@ bool player_has_embassy(struct player *pplayer, struct player *pplayer2)
 {
   return (TEST_BIT(pplayer->embassy, pplayer2->player_no)
           || (pplayer == pplayer2)
-          || (get_player_bonus(pplayer, EFT_HAVE_EMBASSIES) > 0
+          || (get_player_bonus(pplayer, EFFECT_TYPE_HAVE_EMBASSIES) > 0
               && !is_barbarian(pplayer2)));
 }
 
@@ -437,7 +437,7 @@ int player_get_expected_income(struct player *pplayer)
     income += city_gold_surplus(pcity, pcity->common.tax_total);
 
     /* Capitalization income. */
-    if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+    if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
       income += pcity->common.shield_stock + pcity->common.shield_surplus;
     }
   } city_list_iterate_end;

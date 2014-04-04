@@ -66,32 +66,32 @@ static void ai_data_city_impr_calc(struct player *pplayer, struct ai_data *ai)
       switch (*ptype) {
 #if 0
       /* TODO */
-      case EFT_FORCE_CONTENT:
-      case EFT_FORCE_CONTENT_PCT:
-      case EFT_MAKE_CONTENT:
-      case EFT_MAKE_CONTENT_MIL:
-      case EFT_MAKE_CONTENT_MIL_PER:
-      case EFT_MAKE_CONTENT_PCT:
-      case EFT_MAKE_HAPPY:
+      case EFFECT_TYPE_FORCE_CONTENT:
+      case EFFECT_TYPE_FORCE_CONTENT_PCT:
+      case EFFECT_TYPE_MAKE_CONTENT:
+      case EFFECT_TYPE_MAKE_CONTENT_MIL:
+      case EFFECT_TYPE_MAKE_CONTENT_MIL_PER:
+      case EFFECT_TYPE_MAKE_CONTENT_PCT:
+      case EFFECT_TYPE_MAKE_HAPPY:
 #endif
-      case EFT_LUXURY_BONUS:
-      case EFT_SCIENCE_BONUS:
-      case EFT_TAX_BONUS:
-      case EFT_CAPITAL_CITY:
-      case EFT_CORRUPT_PCT:
-      case EFT_FOOD_ADD_TILE:
-      case EFT_FOOD_INC_TILE:
-      case EFT_FOOD_PER_TILE:
-      case EFT_POLLU_POP_PCT:
-      case EFT_POLLU_PROD_PCT:
-      case EFT_PROD_ADD_TILE:
-      case EFT_PROD_BONUS:
-      case EFT_PROD_INC_TILE:
-      case EFT_PROD_PER_TILE:
-      case EFT_TRADE_ADD_TILE:
-      case EFT_TRADE_INC_TILE:
-      case EFT_TRADE_PER_TILE:
-      case EFT_UPKEEP_FREE:
+      case EFFECT_TYPE_LUXURY_BONUS:
+      case EFFECT_TYPE_SCIENCE_BONUS:
+      case EFFECT_TYPE_TAX_BONUS:
+      case EFFECT_TYPE_CAPITAL_CITY:
+      case EFFECT_TYPE_CORRUPT_PCT:
+      case EFFECT_TYPE_FOOD_ADD_TILE:
+      case EFFECT_TYPE_FOOD_INC_TILE:
+      case EFFECT_TYPE_FOOD_PER_TILE:
+      case EFFECT_TYPE_POLLU_POP_PCT:
+      case EFFECT_TYPE_POLLU_PROD_PCT:
+      case EFFECT_TYPE_PROD_ADD_TILE:
+      case EFFECT_TYPE_PROD_BONUS:
+      case EFFECT_TYPE_PROD_INC_TILE:
+      case EFFECT_TYPE_PROD_PER_TILE:
+      case EFFECT_TYPE_TRADE_ADD_TILE:
+      case EFFECT_TYPE_TRADE_INC_TILE:
+      case EFFECT_TYPE_TRADE_PER_TILE:
+      case EFFECT_TYPE_UPKEEP_FREE:
       effect_list_iterate(get_building_effects(id, *ptype), peff) {
         ai->impr_calc[id] = AI_IMPR_CALCULATE;
         if (peff->range > ai->impr_range[id]) {

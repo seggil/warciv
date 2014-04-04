@@ -1724,12 +1724,12 @@ struct city_s *find_nearest_safe_city(struct unit *punit)
       city_list_iterate(aplayer->cities, pcity) {
         if (ground) {
           cur = WARMAP_COST(pcity->common.tile);
-          if (get_city_bonus(pcity, EFT_LAND_REGEN) > 0) {
+          if (get_city_bonus(pcity, EFFECT_TYPE_LAND_REGEN) > 0) {
             cur /= 3;
           }
         } else {
           cur = WARMAP_SEACOST(pcity->common.tile);
-          if (get_city_bonus(pcity, EFT_SEA_REGEN) > 0) {
+          if (get_city_bonus(pcity, EFFECT_TYPE_SEA_REGEN) > 0) {
             cur /= 3;
           }
         }

@@ -531,12 +531,12 @@ int do_make_unit_veteran(city_t *pcity, Unit_Type_id id)
   }
 
   if (is_ground_unittype(id)) {
-    return (get_city_bonus(pcity, EFT_LAND_VETERAN) > 0) ? 1 : 0;
+    return (get_city_bonus(pcity, EFFECT_TYPE_LAND_VETERAN) > 0) ? 1 : 0;
   } else {
     if (is_water_unit(id)) {
-      return (get_city_bonus(pcity, EFT_SEA_VETERAN) > 0) ? 1 : 0;
+      return (get_city_bonus(pcity, EFFECT_TYPE_SEA_VETERAN) > 0) ? 1 : 0;
     } else {
-      return (get_city_bonus(pcity, EFT_AIR_VETERAN) > 0) ? 1 : 0;
+      return (get_city_bonus(pcity, EFFECT_TYPE_AIR_VETERAN) > 0) ? 1 : 0;
     }
   }
 

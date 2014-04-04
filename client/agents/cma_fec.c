@@ -293,7 +293,7 @@ static const char *get_prod_complete_string(city_t *pcity, int surplus)
   if (pcity->common.is_building_unit) {
     cost = unit_build_shield_cost(pcity->common.currently_building);
   } else {
-    if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
+    if (get_current_construction_bonus(pcity, EFFECT_TYPE_PROD_TO_GOLD) > 0) {
       sz_strlcpy(buffer, get_improvement_type(pcity->common.currently_building)->name);
       return buffer;
     }

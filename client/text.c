@@ -872,7 +872,7 @@ const char *get_happiness_buildings(const city_t *pcity)
 
   add_line(_("Buildings: "));
 
-  get_city_bonus_sources(&sources, pcity, EFT_MAKE_CONTENT);
+  get_city_bonus_sources(&sources, pcity, EFFECT_TYPE_MAKE_CONTENT);
   effect_source_vector_iterate(&sources, src) {
     faces++;
     add(_("%s. "), get_improvement_name(src->building));
@@ -897,21 +897,21 @@ const char *get_happiness_wonders(const city_t *pcity)
 
   add_line(_("Wonders: "));
 
-  get_city_bonus_sources(&sources, pcity, EFT_MAKE_HAPPY);
+  get_city_bonus_sources(&sources, pcity, EFFECT_TYPE_MAKE_HAPPY);
   effect_source_vector_iterate(&sources, src) {
     faces++;
     add(_("%s. "), get_improvement_name(src->building));
   } effect_source_vector_iterate_end;
   effect_source_vector_free(&sources);
 
-  get_city_bonus_sources(&sources, pcity, EFT_FORCE_CONTENT);
+  get_city_bonus_sources(&sources, pcity, EFFECT_TYPE_FORCE_CONTENT);
   effect_source_vector_iterate(&sources, src) {
     faces++;
     add(_("%s. "), get_improvement_name(src->building));
   } effect_source_vector_iterate_end;
   effect_source_vector_free(&sources);
 
-  get_city_bonus_sources(&sources, pcity, EFT_NO_UNHAPPY);
+  get_city_bonus_sources(&sources, pcity, EFFECT_TYPE_NO_UNHAPPY);
   effect_source_vector_iterate(&sources, src) {
     faces++;
     add(_("%s. "), get_improvement_name(src->building));

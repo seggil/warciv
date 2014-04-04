@@ -779,7 +779,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   }
 
   /* See if the city is subvertable. */
-  if (get_city_bonus(pcity, EFT_NO_INCITE) > 0) {
+  if (get_city_bonus(pcity, EFFECT_TYPE_NO_INCITE) > 0) {
     notify_player_ex(pplayer, pcity->common.tile, E_MY_DIPLOMAT_FAILED,
                      _("Game: You can't subvert this city."));
     freelog(LOG_DEBUG, "incite: city is protected");
@@ -1064,7 +1064,7 @@ void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
     vulnerability = get_improvement_type(target)->sabotage;
 
     vulnerability -= (vulnerability
-                      * get_city_bonus(pcity, EFT_SPY_RESISTANT) / 100);
+                      * get_city_bonus(pcity, EFFECT_TYPE_SPY_RESISTANT) / 100);
     if (myrand(100) >= vulnerability) {
       /* Caught! */
       notify_player_ex(pplayer, pcity->common.tile, E_MY_DIPLOMAT_FAILED,
@@ -1153,7 +1153,7 @@ static bool diplomat_success_vs_defender(struct unit *pattacker,
 
   if (pdefender_tile->city) {
     def = def * (100 + get_city_bonus(pdefender_tile->city,
-                                      EFT_SPY_RESISTANT)) / 100;
+                                      EFFECT_TYPE_SPY_RESISTANT)) / 100;
   } else {
     if (tile_has_special(pdefender_tile, S_FORTRESS)
         || tile_has_special(pdefender_tile, S_AIRBASE)) {
