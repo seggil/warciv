@@ -3746,7 +3746,7 @@ static bool set_command(struct connection *caller,
    * setting in running SOLO games. */
   if (server_state == RUN_GAME_STATE
       && op->bool_value == &game.server.rated
-      && game.server.wcdb.type == GT_SOLO
+      && game.server.wcdb.type == GAME_TYPE_SOLO
       && (game.info.turn >= srvarg.wcdb.min_rated_turns
           || (game.server.rated == FALSE && sv->bool_value == TRUE))) {
     cmd_reply(CMD_SET, caller, C_REJECTED,
@@ -6579,7 +6579,7 @@ static bool end_command(struct connection *caller, char *str, bool check)
     ntokens = get_tokens(buf, arg, MAX_NUM_PLAYERS, TOKEN_DELIMITERS);
   }
 
-  if (game.server.wcdb.type == GT_SOLO && ntokens > 0) {
+  if (game.server.wcdb.type == GAME_TYPE_SOLO && ntokens > 0) {
     cmd_reply(CMD_END_GAME, caller, C_REJECTED,
               _("You can only win a solo game by building a spaceship!"));
     return FALSE;
@@ -6652,7 +6652,7 @@ static bool draw_command(struct connection *caller, char *str, bool check)
     return FALSE;
   }
 
-  if (game.server.wcdb.type == GT_SOLO) {
+  if (game.server.wcdb.type == GAME_TYPE_SOLO) {
     cmd_reply(CMD_DRAW, caller, C_REJECTED,
               _("This command is not allowed for SOLO games."));
     return FALSE;
@@ -6740,7 +6740,7 @@ static bool check_settings_for_rated_game(void)
     game.server.rated = FALSE;
   }
 
-  if (!game.server.rated || type == GT_MIXED) {
+  if (!game.server.rated || type == GAME_TYPE_MIXED) {
     /* For unrated games or 'mixed' type games, any settings are ok. */
     return TRUE;
   }
@@ -6762,14 +6762,14 @@ static bool check_settings_for_rated_game(void)
       continue;
     }
 
-    if (type == GT_TEAM && op->int_value == &game.info.diplomacy
+    if (type == GAME_TYPE_TEAM && op->int_value == &game.info.diplomacy
         && *op->int_value != 4) {
       notify_conn(NULL, _("Game: Warning: Diplomacy is not disabled "
                           "for this team game."));
       continue;
     }
 
-    if (type == GT_FFA && op->int_value == &game.ext_info.maxallies
+    if (type == GAME_TYPE_FFA && op->int_value == &game.ext_info.maxallies
         && *op->int_value > 1) {
       notify_conn(NULL, _("Game: Warning: The setting 'maxallies' "
                           "is greater than one, this may result in "
@@ -6777,7 +6777,7 @@ static bool check_settings_for_rated_game(void)
       continue;
     }
 
-    if (type != GT_SOLO) {
+    if (type != GAME_TYPE_SOLO) {
       /* Non-default settings can only prevent a solo game from
        * being rated. */
       continue;
@@ -6865,7 +6865,7 @@ static bool start_command(struct connection *caller, char *name, bool check)
   int started = 0, notstarted = 0;
   static int failed_rated_start = 0;
   const int MAX_FAILED_RATED_STARTS = 3;
-  enum game_types type = GT_NUM_TYPES;
+  enum game_types type = GAME_TYPE_NUM;
 
   switch (server_state) {
 
