@@ -1239,7 +1239,7 @@ void report_game_rankings(struct conn_list *dest)
     dest = game.game_connections;
   }
 
-  if (game.server.wcdb.type == GT_SOLO) {
+  if (game.server.wcdb.type == GAME_TYPE_SOLO) {
     double r, rd;
 
     r = score_calculate_solo_opponent_rating(&groupings[0]);
@@ -1275,7 +1275,7 @@ void report_game_rankings(struct conn_list *dest)
     page_conn(dest, _("Team Standings:"), head_line, buffer);
   }
 
-  if (game.server.wcdb.type != GT_SOLO) {
+  if (game.server.wcdb.type != GAME_TYPE_SOLO) {
     my_snprintf(head_line, sizeof(head_line), "%-16s %-16s %10s %10s %10s",
                 _("Name"), _("User"), _("Rank"), _("Score"),  _("Result"));
     buffer[0] = '\0';

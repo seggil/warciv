@@ -48,14 +48,14 @@ enum game_outcomes {
 };
 
 enum game_types {
-  GT_FFA, /* i.e. free for all */
-  GT_TEAM,
-  GT_DUEL,
-  GT_SOLO,
+  GAME_TYPE_FFA, /* i.e. free for all */
+  GAME_TYPE_TEAM,
+  GAME_TYPE_DUEL,
+  GAME_TYPE_SOLO,
 
-  GT_MIXED, /* everything else */
+  GAME_TYPE_MIXED, /* everything else */
 
-  GT_NUM_TYPES
+  GAME_TYPE_NUM
 };
 
 bool game_type_supports_rating(enum game_types gtype);

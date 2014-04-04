@@ -783,8 +783,8 @@ static bool game_can_be_rated(void)
   freelog(LOG_DEBUG, "game_can_be_rated num_rated_users=%d game.info.turn=%d",
           num_rated_users, game.info.turn);
 
-  if ((game.server.wcdb.type == GT_SOLO && num_rated_users < 1)
-      || (game.server.wcdb.type != GT_SOLO && num_rated_users < 2)) {
+  if ((game.server.wcdb.type == GAME_TYPE_SOLO && num_rated_users < 1)
+      || (game.server.wcdb.type != GAME_TYPE_SOLO && num_rated_users < 2)) {
     notify_conn(NULL, _("Game: The game cannot be rated because there "
                         "are not enough rated users in the game."));
     return FALSE;
@@ -980,7 +980,7 @@ static void update_ratings(void)
   double rj, sj, E, new_r, new_RD, gRD[MAX_NUM_PLAYERS];
   time_t now_time;
 
-  if (game.server.wcdb.type == GT_SOLO) {
+  if (game.server.wcdb.type == GAME_TYPE_SOLO) {
     assert(num_groupings == 1);
     assert(groupings[0].num_players == 1);
   }
@@ -1011,7 +1011,7 @@ static void update_ratings(void)
   /* Update ratings. (Glicko Step 2) */
 
   /* Fill gRD[j] table to avoid recalculation. */
-  if (game.server.wcdb.type == GT_SOLO) {
+  if (game.server.wcdb.type == GAME_TYPE_SOLO) {
     gRD[0] = glicko_g_function(score_get_solo_opponent_rating_deviation());
   } else {
     for (i = 0; i < num_groupings; i++) {
@@ -1030,7 +1030,7 @@ static void update_ratings(void)
     inv_d2 = 0.0;
     for (j = 0; j < num_groupings; j++) {
 
-      if (game.server.wcdb.type == GT_SOLO) {
+      if (game.server.wcdb.type == GAME_TYPE_SOLO) {
         rj = score_calculate_solo_opponent_rating(&groupings[0]);
 
         /* You only 'win' if you get to Alpha Centauri. */
@@ -1269,7 +1269,7 @@ void score_update_grouping_results(void)
 
   if (groupings[0].result == PR_NONE) {
     if (num_groupings < 2) {
-      if (game.server.wcdb.type == GT_SOLO
+      if (game.server.wcdb.type == GAME_TYPE_SOLO
           && game.server.wcdb.outcome != GAME_ENDED_BY_SPACESHIP) {
         groupings[0].result = PR_LOSE;
       } else {
@@ -1524,7 +1524,7 @@ void score_get_ai_rating(int skill_level, int game_type,
 {
   /* I assume higher skill level implies a better ai. */
   *prating = 600 + skill_level * 50;
-  if (game_type == GT_TEAM) {
+  if (game_type == GAME_TYPE_TEAM) {
     *prating -= 100;
   }
   *prd = 50;

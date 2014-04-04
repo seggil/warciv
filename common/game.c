@@ -55,7 +55,7 @@ static const char *game_outcome_strings[GAME_ENDED_NUM] = {
 };
 
 /* Must match enum game_types in game.h. */
-static const char *game_type_strings[GT_NUM_TYPES] = {
+static const char *game_type_strings[GAME_TYPE_NUM] = {
   N_("ffa"),
   N_("team"),
   N_("duel"),
@@ -376,7 +376,7 @@ void game_init(void)
 
     game.server.wcdb.id = 0;
     game.server.wcdb.outcome = GAME_ENDED_NONE;
-    game.server.wcdb.type = GT_FFA;
+    game.server.wcdb.type = GAME_TYPE_FFA;
     game.server.wcdb.termap = NULL;
   }
 
@@ -764,27 +764,27 @@ enum game_types game_determine_type(void)
   } team_iterate_end;
 
   if (players == 1 && ais == 0) {
-    return GT_SOLO;
+    return GAME_TYPE_SOLO;
 
   } else if (players == 2
              && ais == 0
              && max_team_size < 2) {
-    return GT_DUEL;
+    return GAME_TYPE_DUEL;
 
   } else if (players > 2
              && num_teams > 0
              && max_team_size > 1) {
-    return GT_TEAM;
+    return GAME_TYPE_TEAM;
 
   } else if (max_team_size < 2
              && players > 2) {
-    return GT_FFA;
+    return GAME_TYPE_FFA;
 
   } else {
-    return GT_MIXED;
+    return GAME_TYPE_MIXED;
   }
 
-  return GT_NUM_TYPES;
+  return GAME_TYPE_NUM;
 }
 
 /****************************************************************************
@@ -794,7 +794,7 @@ enum game_types game_get_type_from_string(const char *s)
 {
   int i;
 
-  for (i = 0; i < GT_NUM_TYPES; i++) {
+  for (i = 0; i < GAME_TYPE_NUM; i++) {
 #ifdef ENABLE_NLS
     if (0 == mystrcasecmp(s, game_type_strings[i])
         || 0 == mystrcasecmp(s, _(game_type_strings[i]))) {
@@ -804,7 +804,7 @@ enum game_types game_get_type_from_string(const char *s)
       return i;
     }
   }
-  return GT_NUM_TYPES;
+  return GAME_TYPE_NUM;
 }
 
 /****************************************************************************
@@ -812,7 +812,7 @@ enum game_types game_get_type_from_string(const char *s)
 ****************************************************************************/
 const char *game_type_name_orig(enum game_types type)
 {
-  assert(0 <= type && type < GT_NUM_TYPES);
+  assert(0 <= type && type < GAME_TYPE_NUM);
   return game_type_strings[type];
 }
 
@@ -821,7 +821,7 @@ const char *game_type_name_orig(enum game_types type)
 ****************************************************************************/
 const char *game_type_name(enum game_types type)
 {
-  assert(0 <= type && type < GT_NUM_TYPES);
+  assert(0 <= type && type < GAME_TYPE_NUM);
   return _(game_type_strings[type]);
 }
 
@@ -848,5 +848,5 @@ const char *game_outcome_name(enum game_outcomes outcome)
 **************************************************************************/
 bool game_type_supports_rating(enum game_types gtype)
 {
-  return gtype == GT_DUEL || gtype == GT_FFA;
+  return gtype == GAME_TYPE_DUEL || gtype == GAME_TYPE_FFA;
 }
