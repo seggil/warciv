@@ -225,7 +225,7 @@ static void rates_destroy_callback(GtkWidget *widget, gpointer data)
 *****************************************************************/
 static GtkWidget *create_rates_dialog(void)
 {
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
   GtkWidget *shell;
   GtkWidget *frame, *hbox;
   GtkWidget *scale;

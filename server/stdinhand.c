@@ -99,7 +99,7 @@ static bool set_ai_level(struct connection *caller, char *name, int level,
                          bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
 static void setup_observer(struct connection *pconn,
-                           struct player *pplayer);
+                           player_t *pplayer);
 static void process_observe_requests(void);
 static bool observe_command(struct connection *caller, char *name,
                             bool check);
@@ -1262,7 +1262,7 @@ static bool save_command(struct connection *caller, char *arg, bool check)
 ...
 **************************************************************************/
 void toggle_ai_player_direct(struct connection *caller,
-                             struct player *pplayer)
+                             player_t *pplayer)
 {
   assert(pplayer != NULL);
   if (is_barbarian(pplayer)) {
@@ -1316,7 +1316,7 @@ static bool toggle_ai_player(struct connection *caller, char *arg,
                              bool check)
 {
   enum m_pre_result match_result;
-  struct player *pplayer;
+  player_t *pplayer;
   pplayer = find_player_by_name_prefix(arg, &match_result);
   if (!pplayer) {
     cmd_reply_no_such_player(CMD_AITOGGLE, caller, arg, match_result);
@@ -1333,7 +1333,7 @@ static bool toggle_ai_player(struct connection *caller, char *arg,
 static bool create_ai_player(struct connection *caller, char *arg,
                              bool check)
 {
-  struct player *pplayer;
+  player_t *pplayer;
   PlayerNameStatus PNameStatus;
   if (server_state != PRE_GAME_STATE) {
     cmd_reply(CMD_CREATE, caller, C_SYNTAX,
@@ -1409,7 +1409,7 @@ static bool create_ai_player(struct connection *caller, char *arg,
 static bool remove_player(struct connection *caller, char *arg, bool check)
 {
   enum m_pre_result match_result;
-  struct player *pplayer;
+  player_t *pplayer;
   char name[MAX_LEN_NAME];
   pplayer = find_player_by_name_prefix(arg, &match_result);
   if (!pplayer) {
@@ -1451,7 +1451,8 @@ static bool switch_command(struct connection *caller, char *str, bool check)
   int ntokens;
   enum m_pre_result match_result;
   const struct team *pteam;
-  struct player *pplayer1, *pplayer2;
+  player_t *pplayer1;
+  player_t *pplayer2;
   struct unit_list *player2_units, *player1_units;
   struct unit *aunit;
 
@@ -2090,7 +2091,8 @@ static bool autoteam_command(struct connection *caller, char *str,
                              bool check)
 {
   const int maxp = MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS;
-  struct player *players[maxp], *tmp;
+  player_t *players[maxp];
+  player_t *tmp;
   int n, i, t, r, count = 0;
   char **team_names = NULL;
 
@@ -2779,7 +2781,7 @@ void report_settable_server_options(struct connection *dest, int which)
 /******************************************************************
   Set an AI level and related quantities, with no feedback.
 ******************************************************************/
-void set_ai_level_directer(struct player *pplayer, int level)
+void set_ai_level_directer(player_t *pplayer, int level)
 {
   pplayer->ai.handicap = handicap_of_skill_level(level);
   pplayer->ai.fuzzy = fuzzy_of_skill_level(level);
@@ -2815,7 +2817,7 @@ static enum command_id cmd_of_level(int level)
 /******************************************************************
   Set an AI level from the server prompt.
 ******************************************************************/
-void set_ai_level_direct(struct player *pplayer, int level)
+void set_ai_level_direct(player_t *pplayer, int level)
 {
   set_ai_level_directer(pplayer, level);
   cmd_reply(cmd_of_level(level), NULL, C_OK,
@@ -2830,8 +2832,8 @@ static bool set_ai_level(struct connection *caller, char *name,
                          int level, bool check)
 {
   enum m_pre_result match_result;
-  struct player *pplayer;
-//
+  player_t *pplayer;
+
   assert(level > 0 && level < 11);
   pplayer = find_player_by_name_prefix(name, &match_result);
   if (pplayer) {
@@ -3119,7 +3121,7 @@ static bool is_ok_opt_name_value_sep_char(char c)
 ******************************************************************/
 static bool team_command(struct connection *caller, char *str, bool check)
 {
-  struct player *pplayer;
+  player_t *pplayer;
   enum m_pre_result match_result;
   char buf[MAX_LEN_CONSOLE_LINE];
   char *arg[2];
@@ -3504,7 +3506,7 @@ static bool debug_command(struct connection *caller, char *str, bool check)
     ntokens = 0;
   }
   if (ntokens > 0 && strcmp(arg[0], "player") == 0) {
-    struct player *pplayer;
+    player_t *pplayer;
     enum m_pre_result match_result;
     if (ntokens != 2) {
       cmd_reply(CMD_DEBUG, caller, C_SYNTAX, "%s", usage);
@@ -3886,7 +3888,7 @@ bool is_allowed(enum user_allow_behavior uab)
   may be NULL; it is used only for testing if another user may take a
   player originally controlled by another user.
 **************************************************************************/
-bool is_allowed_to_attach(const struct player *pplayer,
+bool is_allowed_to_attach(const player_t *pplayer,
                           const struct connection *caller,
                           bool will_obs, char *msgbuf, int msgbuf_len)
 {
@@ -3991,7 +3993,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
       && game.server.is_new_game;
   enum m_pre_result result;
   struct connection *pconn = NULL;
-  struct player *pplayer = NULL;
+  player_t *pplayer = NULL;
   bool res = FALSE;
 
   /******** PART I: fill pconn and pplayer ********/
@@ -4116,7 +4118,7 @@ CLEANUP:
   relevant checks have already been made.
 **************************************************************************/
 static void setup_observer(struct connection *pconn,
-                           struct player *pplayer)
+                           player_t *pplayer)
 {
   struct hash_table *affected_players = NULL;
   bool need_full_update = FALSE;
@@ -4127,7 +4129,7 @@ static void setup_observer(struct connection *pconn,
    * unattach and cleanup old player (rename, remove, etc) */
   if (pconn->player || pconn->observer) {
     char name[MAX_LEN_NAME];
-    struct player *new_pplayer;
+    player_t *new_pplayer;
     /* if a pconn->player is removed, we'll lose pplayer */
     sz_strlcpy(name, pplayer ? pplayer->name : "");
     detach_command(pconn, "", FALSE);
@@ -4215,7 +4217,7 @@ static void process_observe_requests(void)
 {
   conn_list_iterate(game.est_connections, pconn) {
     if (pconn->u.server.observe_requested) {
-      struct player *target = pconn->u.server.observe_target;
+      player_t *target = pconn->u.server.observe_target;
       if (target) {
         notify_conn(pconn->self, _("Server: Processing your "
                                    "request to observe %s..."),
@@ -4247,7 +4249,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
       && game.server.is_new_game;
   enum m_pre_result match_result;
   struct connection *pconn = NULL;
-  struct player *pplayer = NULL;
+  player_t *pplayer = NULL;
   bool res = FALSE;
 
   /******** PART I: fill pconn and pplayer ********/
@@ -4398,7 +4400,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
 
   enum m_pre_result match_result;
   struct connection *pconn = NULL;
-  struct player *pplayer = NULL;
+  player_t *pplayer = NULL;
   bool is_newgame = (server_state == PRE_GAME_STATE ||
                      server_state == SELECT_RACES_STATE)
       && game.server.is_new_game;
@@ -6587,7 +6589,7 @@ static bool end_command(struct connection *caller, char *str, bool check)
 
   /* Ensure players exist */
   for (i = 0; i < ntokens; i++) {
-    struct player *pplayer =
+    player_t *pplayer =
         find_player_by_name_prefix(arg[i], &plr_result);
     if (!pplayer) {
       cmd_reply_no_such_player(CMD_TEAM, caller, arg[i], plr_result);
@@ -8193,7 +8195,7 @@ static void show_teams(struct connection *caller, bool send_to_all)
 {
   bool listed[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   int i, teamid = -1, count = 0, tc = 0;
-  struct player *pplayer;
+  player_t *pplayer;
   char buf[1024], buf2[1024];
   memset(listed, 0, sizeof(bool) * (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS));
 

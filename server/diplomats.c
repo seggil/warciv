@@ -44,11 +44,11 @@ static void diplomat_charge_movement (struct unit *pdiplomat,
                                       tile_t *ptile);
 static bool diplomat_success_vs_defender(struct unit *patt, struct unit *pdef,
                                          tile_t *pdefender_tile);
-static bool diplomat_infiltrate_tile(struct player *pplayer, struct player *cplayer,
+static bool diplomat_infiltrate_tile(player_t *pplayer, player_t *cplayer,
                                      struct unit *pdiplomat, tile_t *ptile);
-static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
+static void diplomat_escape(player_t *pplayer, struct unit *pdiplomat,
                             const city_t *pcity);
-static void maybe_cause_incident(enum diplomat_actions action, struct player *offender,
+static void maybe_cause_incident(enum diplomat_actions action, player_t *offender,
                                  struct unit *victim_unit, city_t *victim_city);
 
 /******************************************************************************
@@ -63,10 +63,10 @@ static void maybe_cause_incident(enum diplomat_actions action, struct player *of
 
   - The poisoner may be captured and executed, or escape to its home town.
 ****************************************************************************/
-void spy_poison(struct player *pplayer, struct unit *pdiplomat,
+void spy_poison(player_t *pplayer, struct unit *pdiplomat,
                 city_t *pcity)
 {
-  struct player *cplayer;
+  player_t *cplayer;
 
   /* Fetch target city's player.  Sanity checks. */
   if (!pcity)
@@ -134,10 +134,10 @@ void spy_poison(struct player *pplayer, struct unit *pdiplomat,
   - Diplomats die after investigation.
   - Spies always survive.  There is no risk.
 ****************************************************************************/
-void diplomat_investigate(struct player *pplayer, struct unit *pdiplomat,
+void diplomat_investigate(player_t *pplayer, struct unit *pdiplomat,
                           city_t *pcity)
 {
-  struct player *cplayer;
+  player_t *cplayer;
   bool first_packet;
   struct packet_unit_short_info unit_packet;
   struct packet_city_info city_packet;
@@ -204,7 +204,7 @@ void diplomat_investigate(struct player *pplayer, struct unit *pdiplomat,
 
   Only send back to the originating connection, if there is one. (?)
 ****************************************************************************/
-void spy_get_sabotage_list(struct player *pplayer, struct unit *pdiplomat,
+void spy_get_sabotage_list(player_t *pplayer, struct unit *pdiplomat,
                            city_t *pcity)
 {
   struct packet_city_sabotage_list packet;
@@ -238,10 +238,10 @@ void spy_get_sabotage_list(struct player *pplayer, struct unit *pdiplomat,
   - Diplomats are consumed in creation of embassy.
   - Spies always survive.
 ****************************************************************************/
-void diplomat_embassy(struct player *pplayer, struct unit *pdiplomat,
+void diplomat_embassy(player_t *pplayer, struct unit *pdiplomat,
                       city_t *pcity)
 {
-  struct player *cplayer;
+  player_t *cplayer;
 
   /* Fetch target city's player.  Sanity checks. */
   if (!pcity)
@@ -306,10 +306,10 @@ void diplomat_embassy(struct player *pplayer, struct unit *pdiplomat,
 
   - The saboteur may be captured and executed, or escape to its home town.
 ****************************************************************************/
-void spy_sabotage_unit(struct player *pplayer, struct unit *pdiplomat,
+void spy_sabotage_unit(player_t *pplayer, struct unit *pdiplomat,
                        struct unit *pvictim)
 {
-  struct player *uplayer;
+  player_t *uplayer;
 
   /* Fetch target unit's player.  Sanity checks. */
   if (!pvictim)
@@ -378,10 +378,10 @@ void spy_sabotage_unit(struct player *pplayer, struct unit *pdiplomat,
 
   - A successful briber will try to move onto the victim's square.
 ****************************************************************************/
-void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
+void diplomat_bribe(player_t *pplayer, struct unit *pdiplomat,
                     tile_t *ptile)
 {
-  struct player *uplayer = NULL;
+  player_t *uplayer = NULL;
   int diplomat_id;
   bool vet = FALSE;
   struct unit *gained_unit = NULL;
@@ -537,10 +537,10 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
   FIXME: It should give a loss of reputation to steal from a player you are
   not at war with
 ****************************************************************************/
-void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
+void diplomat_get_tech(player_t *pplayer, struct unit *pdiplomat,
                        city_t  *pcity, int technology)
 {
-  struct player *cplayer;
+  player_t *cplayer;
   int count, /*which,*/ target;
 
   /* Fetch target civilization's player.  Sanity checks. */
@@ -752,10 +752,10 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
 
   - The provocateur may be captured and executed, or escape to its home town.
 **************************************************************************/
-void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
+void diplomat_incite(player_t *pplayer, struct unit *pdiplomat,
                      city_t *pcity)
 {
-  struct player *cplayer;
+  player_t *cplayer;
   int revolt_cost;
 
   /* Fetch target civilization's player.  Sanity checks. */
@@ -894,10 +894,10 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
 
   - The saboteur may be captured and executed, or escape to its home town.
 **************************************************************************/
-void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
+void diplomat_sabotage(player_t *pplayer, struct unit *pdiplomat,
                        city_t *pcity, Impr_Type_id improvement)
 {
-  struct player *cplayer;
+  player_t *cplayer;
   int count, which, target;
   const char *prod;
   /* Twice as difficult if target is specified. */
@@ -1172,8 +1172,8 @@ static bool diplomat_success_vs_defender(struct unit *pattacker,
 
   - Return TRUE if the infiltrator succeeds.
 **************************************************************************/
-static bool diplomat_infiltrate_tile(struct player *pplayer,
-                                     struct player *cplayer,
+static bool diplomat_infiltrate_tile(player_t *pplayer,
+                                     player_t *cplayer,
                                      struct unit *pdiplomat,
                                      tile_t *ptile)
 {
@@ -1266,7 +1266,7 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
     - Escapes to home city.
     - Escapee may become a veteran.
 **************************************************************************/
-static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
+static void diplomat_escape(player_t *pplayer, struct unit *pdiplomat,
                             const city_t *pcity)
 {
   tile_t *ptile;
@@ -1333,10 +1333,10 @@ static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
 /**************************************************************************
 ...
 **************************************************************************/
-static void maybe_cause_incident(enum diplomat_actions action, struct player *offender,
+static void maybe_cause_incident(enum diplomat_actions action, player_t *offender,
                                  struct unit *victim_unit, city_t *victim_city)
 {
-  struct player *victim_player = 0;
+  player_t *victim_player = 0;
   tile_t *victim_tile = NULL;
 
   if (victim_city) {

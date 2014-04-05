@@ -18,11 +18,11 @@
 #include "wc_types.h"
 #include "city.h"               /* struct ai_choice */
 
-void ai_manage_diplomat(struct player *pplayer, struct unit *punit);
-void ai_choose_diplomat_defensive(struct player *pplayer,
+void ai_manage_diplomat(player_t *pplayer, struct unit *punit);
+void ai_choose_diplomat_defensive(player_t *pplayer,
                                   city_t *pcity,
                                   struct ai_choice *choice, int def);
-void ai_choose_diplomat_offensive(struct player *pplayer,
+void ai_choose_diplomat_offensive(player_t *pplayer,
                                   city_t *pcity,
                                   struct ai_choice *choice);
 

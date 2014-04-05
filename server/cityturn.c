@@ -60,26 +60,26 @@
 static void check_pollution(city_t *pcity);
 static void city_populate(city_t *pcity);
 
-static bool worklist_change_build_target(struct player *pplayer,
+static bool worklist_change_build_target(player_t *pplayer,
                                          city_t *pcity);
 
-static bool city_distribute_surplus_shields(struct player *pplayer,
+static bool city_distribute_surplus_shields(player_t *pplayer,
                                             city_t *pcity);
-static bool city_build_building(struct player *pplayer, city_t *pcity);
-static bool city_build_unit(struct player *pplayer, city_t *pcity);
-static bool city_build_stuff(struct player *pplayer, city_t *pcity);
+static bool city_build_building(player_t *pplayer, city_t *pcity);
+static bool city_build_unit(player_t *pplayer, city_t *pcity);
+static bool city_build_stuff(player_t *pplayer, city_t *pcity);
 static Impr_Type_id building_upgrades_to(city_t *pcity, Impr_Type_id b);
 static bool upgrade_building_prod(city_t *pcity);
 static Unit_Type_id unit_upgrades_to(city_t *pcity, Unit_Type_id id);
 static bool upgrade_unit_prod(city_t *pcity);
 
-static bool sell_random_improvement(struct player *pplayer);
-static bool drop_random_unit(struct player *pplayer);
+static bool sell_random_improvement(player_t *pplayer);
+static bool drop_random_unit(player_t *pplayer);
 
 static bool disband_city(city_t *pcity);
 
 static void define_orig_production_values(city_t *pcity);
-static void update_city_activity(struct player *pplayer, city_t *pcity);
+static void update_city_activity(player_t *pplayer, city_t *pcity);
 static void nullify_caravan_and_disband_plus(city_t *pcity);
 
 /**************************************************************************
@@ -98,7 +98,7 @@ void city_refresh(city_t *pcity)
 ...
 called on government change or wonder completion or stuff like that -- Syela
 **************************************************************************/
-void global_city_refresh(struct player *pplayer)
+void global_city_refresh(player_t *pplayer)
 {
   conn_list_do_buffer(pplayer->connections);
   city_list_iterate(pplayer->cities, pcity) {
@@ -113,7 +113,7 @@ void global_city_refresh(struct player *pplayer)
 **************************************************************************/
 void remove_obsolete_buildings_city(city_t *pcity, bool refresh)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   bool sold = FALSE;
 
   built_impr_iterate(pcity, i) {
@@ -137,7 +137,7 @@ void remove_obsolete_buildings_city(city_t *pcity, bool refresh)
 /**************************************************************************
 ...
 **************************************************************************/
-void remove_obsolete_buildings(struct player *pplayer)
+void remove_obsolete_buildings(player_t *pplayer)
 {
   city_list_iterate(pplayer->cities, pcity) {
     remove_obsolete_buildings_city(pcity, FALSE);
@@ -184,7 +184,7 @@ void auto_arrange_workers(city_t *pcity)
 {
   struct cm_parameter cmp;
   struct cm_result cmr;
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
 
   /* See comment in freeze_workers(). */
   if (pcity->u.server.workers_frozen > 0) {
@@ -384,7 +384,7 @@ void send_city_turn_notifications(struct conn_list *dest, city_t *pcity)
   Choose a radom improvement and sell it.
   Returns TRUE if a imoprvement has been sold.
 **************************************************************************/
-static bool sell_random_improvement(struct player *pplayer)
+static bool sell_random_improvement(player_t *pplayer)
 {
   city_t *ccity = NULL;
   Impr_Type_id cimpr = B_LAST;
@@ -425,7 +425,7 @@ static bool sell_random_improvement(struct player *pplayer)
   Choose a radom unit and disband it.
   Returns TRUE if a unit has been wiped up.
 **************************************************************************/
-static bool drop_random_unit(struct player *pplayer)
+static bool drop_random_unit(player_t *pplayer)
 {
   struct unit *cunit = NULL;
   int r = 0;
@@ -455,7 +455,7 @@ static bool drop_random_unit(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-void update_city_activities(struct player *pplayer)
+void update_city_activities(player_t *pplayer)
 {
   int gold;
 
@@ -579,7 +579,7 @@ Note: We do not send info about the city to the clients as part of this function
 **************************************************************************/
 static void city_increase_size(city_t *pcity)
 {
-  struct player *powner = city_owner(pcity);
+  player_t *powner = city_owner(pcity);
   bool have_square;
   int savings_pct = granary_savings(pcity), new_food;
   bool rapture_grow = city_rapture_grow(pcity); /* check before size increase! */
@@ -696,7 +696,7 @@ static void city_populate(city_t *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-void advisor_choose_build(struct player *pplayer, city_t *pcity)
+void advisor_choose_build(player_t *pplayer, city_t *pcity)
 {
   struct ai_choice choice;
 
@@ -723,7 +723,7 @@ void advisor_choose_build(struct player *pplayer, city_t *pcity)
   the side-effect of removing from the worklist any no-longer-available
   targets as well as the target actually selected, if any.
 **************************************************************************/
-static bool worklist_change_build_target(struct player *pplayer,
+static bool worklist_change_build_target(player_t *pplayer,
                                          city_t *pcity)
 {
   bool success = FALSE;
@@ -900,7 +900,7 @@ static Impr_Type_id building_upgrades_to(city_t *pcity, Impr_Type_id id)
 static bool upgrade_building_prod(city_t *pcity)
 {
   struct impr_type *ptype = get_improvement_type(pcity->common.currently_building);
-  struct player *pplayer;
+  player_t *pplayer;
   Impr_Type_id upgrades_to;
 
   if (!pcity->u.server.delayed_build && ptype && ptype->obsolete_by != A_LAST) {
@@ -954,7 +954,7 @@ static Unit_Type_id unit_upgrades_to(city_t *pcity, Unit_Type_id id)
 static bool upgrade_unit_prod(city_t *pcity)
 {
   struct unit_type *ptype = get_unit_type(pcity->common.currently_building);
-  struct player *pplayer;
+  player_t *pplayer;
   int id, id2;
 
   if (!pcity->u.server.delayed_build
@@ -992,7 +992,7 @@ static bool upgrade_unit_prod(city_t *pcity)
   Disband units if we don't have enough shields to support them.  Returns
   FALSE if the _city_ is disbanded as a result.
 **************************************************************************/
-static bool city_distribute_surplus_shields(struct player *pplayer,
+static bool city_distribute_surplus_shields(player_t *pplayer,
                                             city_t *pcity)
 {
   struct government *g = get_gov_pplayer(pplayer);
@@ -1045,7 +1045,7 @@ static bool city_distribute_surplus_shields(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool city_build_building(struct player *pplayer, city_t *pcity)
+static bool city_build_building(player_t *pplayer, city_t *pcity)
 {
   bool advance_worklist = FALSE, space_part;
   int mod;
@@ -1182,7 +1182,7 @@ static bool city_build_building(struct player *pplayer, city_t *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool city_build_unit(struct player *pplayer, city_t *pcity)
+static bool city_build_unit(player_t *pplayer, city_t *pcity)
 {
   struct unit *punit = NULL;
 
@@ -1276,7 +1276,7 @@ static bool city_build_unit(struct player *pplayer, city_t *pcity)
 return 0 if the city is removed
 return 1 otherwise
 **************************************************************************/
-static bool city_build_stuff(struct player *pplayer, city_t *pcity)
+static bool city_build_stuff(player_t *pplayer, city_t *pcity)
 {
   if (!city_distribute_surplus_shields(pplayer, pcity)) {
     return FALSE;
@@ -1332,7 +1332,7 @@ static void check_pollution(city_t *pcity)
   celebrating, how close it is to the capital, how many units it has and
   upkeeps, presence of courthouse and its buildings and wonders.
 **************************************************************************/
-int city_incite_cost(struct player *pplayer, city_t *pcity)
+int city_incite_cost(player_t *pplayer, city_t *pcity)
 {
   struct government *g = get_gov_pcity(pcity);
   city_t *capital;
@@ -1456,7 +1456,7 @@ void nullify_prechange_production(city_t *pcity)
 /**************************************************************************
  Called every turn, at end of turn, for every city.
 **************************************************************************/
-static void update_city_activity(struct player *pplayer, city_t *pcity)
+static void update_city_activity(player_t *pplayer, city_t *pcity)
 {
   struct government *g = get_gov_pcity(pcity);
 
@@ -1545,7 +1545,7 @@ static void update_city_activity(struct player *pplayer, city_t *pcity)
 **************************************************************************/
 static bool disband_city(city_t *pcity)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   tile_t *ptile = pcity->common.tile;
   city_t *rcity=NULL;
 

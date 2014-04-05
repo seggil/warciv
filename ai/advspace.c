@@ -31,7 +31,7 @@
  *  AJS, 19990610
  */
 
-bool ai_spaceship_autoplace(struct player *pplayer, struct player_spaceship *ship)
+bool ai_spaceship_autoplace(player_t *pplayer, struct player_spaceship *ship)
 {
   enum spaceship_place_type type;
   int num, i;

@@ -38,7 +38,7 @@ void really_generate_warmap(city_t *pcity, struct unit *punit,
                             enum unit_move_type move_type);
 int calculate_move_cost(struct unit *punit, tile_t *dst_tile);
 int air_can_move_between(int moves, tile_t *src_tile,
-                         tile_t *dst_tile, struct player *pplayer);
+                         tile_t *dst_tile, player_t *pplayer);
 
 /* all other functions are internal */
 

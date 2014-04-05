@@ -50,7 +50,7 @@
 #include "spaceshipdlg.h"
 
 struct spaceship_dialog {
-  struct player *pplayer;
+  player_t *pplayer;
   struct gui_dialog *shell;
   GtkWidget *main_form;
   GtkWidget *info_label;
@@ -67,9 +67,8 @@ struct spaceship_dialog {
 
 static struct dialog_list *dialog_list = NULL;
 
-static struct spaceship_dialog *get_spaceship_dialog(struct player *pplayer);
-static struct spaceship_dialog *create_spaceship_dialog(struct player
-                                                        *pplayer);
+static struct spaceship_dialog *get_spaceship_dialog(player_t *pplayer);
+static struct spaceship_dialog *create_spaceship_dialog(player_t *pplayer);
 
 static void spaceship_dialog_update_image(struct spaceship_dialog *pdialog);
 static void spaceship_dialog_update_info(struct spaceship_dialog *pdialog);
@@ -77,7 +76,7 @@ static void spaceship_dialog_update_info(struct spaceship_dialog *pdialog);
 /****************************************************************
 ...
 *****************************************************************/
-struct spaceship_dialog *get_spaceship_dialog(struct player *pplayer)
+struct spaceship_dialog *get_spaceship_dialog(player_t *pplayer)
 {
   if (!dialog_list) {
     dialog_list = dialog_list_new();
@@ -95,7 +94,7 @@ struct spaceship_dialog *get_spaceship_dialog(struct player *pplayer)
 /****************************************************************
 ...
 *****************************************************************/
-void refresh_spaceship_dialog(struct player *pplayer)
+void refresh_spaceship_dialog(player_t *pplayer)
 {
   struct spaceship_dialog *pdialog;
   struct player_spaceship *pship;
@@ -123,7 +122,7 @@ void refresh_spaceship_dialog(struct player *pplayer)
 /****************************************************************
 popup the dialog 10% inside the main-window
 *****************************************************************/
-void popup_spaceship_dialog(struct player *pplayer)
+void popup_spaceship_dialog(player_t *pplayer)
 {
   struct spaceship_dialog *pdialog;
 
@@ -136,7 +135,7 @@ void popup_spaceship_dialog(struct player *pplayer)
 /****************************************************************
 popdown the dialog
 *****************************************************************/
-void popdown_spaceship_dialog(struct player *pplayer)
+void popdown_spaceship_dialog(player_t *pplayer)
 {
   struct spaceship_dialog *pdialog;
 
@@ -193,7 +192,7 @@ static void spaceship_response(struct gui_dialog *dlg, int response)
 /****************************************************************
 ...
 *****************************************************************/
-struct spaceship_dialog *create_spaceship_dialog(struct player *pplayer)
+struct spaceship_dialog *create_spaceship_dialog(player_t *pplayer)
 {
   struct spaceship_dialog *pdialog;
   GtkWidget *hbox, *frame;

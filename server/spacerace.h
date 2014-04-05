@@ -20,12 +20,12 @@ struct player_spaceship;
 struct conn_list;
 
 void spaceship_calc_derived(struct player_spaceship *ship);
-void send_spaceship_info(struct player *src, struct conn_list *dest);
-void spaceship_lost(struct player *pplayer);
+void send_spaceship_info(player_t *src, struct conn_list *dest);
+void spaceship_lost(player_t *pplayer);
 void check_spaceship_arrivals(void);
 
-void handle_spaceship_launch(struct player *pplayer);
-void handle_spaceship_place(struct player *pplayer,
+void handle_spaceship_launch(player_t *pplayer);
+void handle_spaceship_place(player_t *pplayer,
                             enum spaceship_place_type type, int num);
 
 #endif /* WC_SERVER_SPACERACE_H */

@@ -18,12 +18,12 @@
 #include <assert.h>
 #include <stdarg.h>
 
-#include "diptreaty.h"
 #include "events.h"
 #include "wc_intl.h"
 #include "log.h"
 #include "mem.h"
 #include "packets.h"
+#include "diptreaty.h"
 #include "government.h"
 #include "player.h"
 #include "rand.h"
@@ -55,18 +55,18 @@
 
 #include "plrhand.h"
 
-static void package_player_common(struct player *plr,
+static void package_player_common(player_t *plr,
                                   struct packet_player_info *packet);
 
-static void package_player_info(struct player *plr,
+static void package_player_info(player_t *plr,
                                 struct packet_player_info *packet,
-                                struct player *receiver,
+                                player_t *receiver,
                                 enum plr_info_level min_info_level);
 static Nation_Type_id pick_available_nation(Nation_Type_id *choices);
-static void tech_researched(struct player* plr);
-static Tech_Type_id pick_random_tech(struct player *plr);
-static enum plr_info_level player_info_level(struct player *plr,
-                                             struct player *receiver);
+static void tech_researched(player_t *plr);
+static Tech_Type_id pick_random_tech(player_t *plr);
+static enum plr_info_level player_info_level(player_t *plr,
+                                             player_t *receiver);
 
 static bool allow_notify = TRUE;
 
@@ -80,7 +80,7 @@ void notify_enabled(bool yes) {
 /**************************************************************************
 ...
 **************************************************************************/
-void do_dipl_cost(struct player *pplayer, Tech_Type_id new_tech)
+void do_dipl_cost(player_t *pplayer, Tech_Type_id new_tech)
 {
   pplayer->research.bulbs_researched -=
       (base_total_bulbs_required(pplayer,new_tech) * game.info.diplcost) / 100;
@@ -90,7 +90,7 @@ void do_dipl_cost(struct player *pplayer, Tech_Type_id new_tech)
 /**************************************************************************
 ...
 **************************************************************************/
-void do_free_cost(struct player *pplayer)
+void do_free_cost(player_t *pplayer)
 {
   pplayer->research.bulbs_researched -=
       (total_bulbs_required(pplayer) * game.info.freecost) / 100;
@@ -100,7 +100,7 @@ void do_free_cost(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-void do_conquer_cost(struct player *pplayer)
+void do_conquer_cost(player_t *pplayer)
 {
   pplayer->research.bulbs_researched -=
       (total_bulbs_required(pplayer) * game.info.conquercost) / 100;
@@ -115,7 +115,7 @@ void send_player_turn_notifications(struct conn_list *dest)
 {
   if (dest) {
     conn_list_iterate(dest, pconn) {
-      struct player *pplayer = pconn->player;
+      player_t *pplayer = pconn->player;
       if (pplayer) {
         city_list_iterate(pplayer->cities, pcity) {
           send_city_turn_notifications(pconn->self, pcity);
@@ -138,7 +138,7 @@ void send_player_turn_notifications(struct conn_list *dest)
   Give technologies to players with EFT_TECH_PARASITE (traditionally from
   the Great Library).
 **************************************************************************/
-void do_tech_parasite_effect(struct player *pplayer)
+void do_tech_parasite_effect(player_t *pplayer)
 {
   int mod;
   struct effect_source_vector sources;
@@ -211,7 +211,7 @@ void kill_dying_players(void)
 /**************************************************************************
   Murder a player in cold blood.
 **************************************************************************/
-void kill_player(struct player *pplayer) {
+void kill_player(player_t *pplayer) {
   bool palace;
 
   pplayer->is_dying = FALSE; /* Can't get more dead than this. */
@@ -281,7 +281,7 @@ void kill_player(struct player *pplayer) {
   it depends on how the tech came. If next_tech is other than A_NONE, this
   is the next tech to research.
 **************************************************************************/
-void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
+void found_new_tech(player_t *plr, int tech_found, bool was_discovery,
                     bool saving_bulbs, int next_tech)
 {
   bool bonus_tech_hack = FALSE;
@@ -505,7 +505,7 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
 Player has a new future technology (from somewhere). Logging &
 notification is not done here as it depends on how the tech came.
 **************************************************************************/
-void found_new_future_tech(struct player *pplayer)
+void found_new_future_tech(player_t *pplayer)
 {
   pplayer->future_tech++;
   pplayer->research.techs_researched++;
@@ -514,7 +514,7 @@ void found_new_future_tech(struct player *pplayer)
 /**************************************************************************
 Player has researched a new technology
 **************************************************************************/
-static void tech_researched(struct player* plr)
+static void tech_researched(player_t *plr)
 {
   int tech = plr->research.researching;
 
@@ -555,7 +555,7 @@ static void tech_researched(struct player* plr)
 /**************************************************************************
   Called from each city to update the research.
 **************************************************************************/
-void update_tech(struct player *plr, int bulbs)
+void update_tech(player_t *plr, int bulbs)
 {
   int excessive_bulbs;
 
@@ -577,7 +577,7 @@ void update_tech(struct player *plr, int bulbs)
 /**************************************************************************
 ...
 **************************************************************************/
-Tech_Type_id choose_goal_tech(struct player *plr)
+Tech_Type_id choose_goal_tech(player_t *plr)
 {
   Tech_Type_id sub_goal;
 
@@ -605,7 +605,7 @@ Tech_Type_id choose_goal_tech(struct player *plr)
   Returns random researchable tech or A_FUTURE.
   No side effects
 **************************************************************************/
-static Tech_Type_id pick_random_tech(struct player *plr)
+static Tech_Type_id pick_random_tech(player_t *plr)
 {
   int researchable, chosen;
 
@@ -637,7 +637,7 @@ static Tech_Type_id pick_random_tech(struct player *plr)
   Gives a player random tech, which he hasn't researched yet. Applies freecost
   Returns the tech.
 ****************************************************************************/
-Tech_Type_id give_random_free_tech(struct player* pplayer)
+Tech_Type_id give_random_free_tech(player_t *pplayer)
 {
   Tech_Type_id tech;
 
@@ -651,7 +651,7 @@ Tech_Type_id give_random_free_tech(struct player* pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-void choose_random_tech(struct player *plr)
+void choose_random_tech(player_t *plr)
 {
   if (plr->research.researching != A_UNSET) {
     freelog(LOG_ERROR, "Error: choose_random_tech should only be called "
@@ -668,7 +668,7 @@ void choose_random_tech(struct player *plr)
 /**************************************************************************
 ...
 **************************************************************************/
-void choose_tech(struct player *plr, int tech)
+void choose_tech(player_t *plr, int tech)
 {
   if (plr->research.researching == tech) {
     return;
@@ -702,7 +702,7 @@ void choose_tech(struct player *plr, int tech)
 /**************************************************************************
   ...
 **************************************************************************/
-void choose_tech_goal(struct player *plr, int tech)
+void choose_tech_goal(player_t *plr, int tech)
 {
   if (plr->ai.tech_goal != tech) {
     notify_player(plr, _("Game: Technology goal is %s."),
@@ -714,7 +714,7 @@ void choose_tech_goal(struct player *plr, int tech)
 /**************************************************************************
   Initializes tech data for the player
 **************************************************************************/
-void init_tech(struct player *plr)
+void init_tech(player_t *plr)
 {
   tech_type_iterate(i) {
     set_invention(plr, i, TECH_UNKNOWN);
@@ -738,7 +738,7 @@ void init_tech(struct player *plr)
 /**************************************************************************
   Gives initial techs to the player
 **************************************************************************/
-void give_initial_techs(struct player* plr)
+void give_initial_techs(player_t *plr)
 {
   struct nation_type *nation = get_nation_by_plr(plr);
   int i;
@@ -767,7 +767,7 @@ void give_initial_techs(struct player* plr)
   Gives a player random tech, which he hasn't researched yet.
   Returns the tech. Does not apply free cost.
 **************************************************************************/
-Tech_Type_id give_random_initial_tech(struct player* pplayer)
+Tech_Type_id give_random_initial_tech(player_t *pplayer)
 {
   Tech_Type_id tech;
 
@@ -781,7 +781,7 @@ Tech_Type_id give_random_initial_tech(struct player* pplayer)
   these, the clients will both be notified and the conquer cost
   penalty applied. Used for diplomats and city conquest.
 **************************************************************************/
-void get_a_tech(struct player *pplayer, struct player *target)
+void get_a_tech(player_t *pplayer, player_t *target)
 {
   Tech_Type_id stolen_tech;
   int j=0;
@@ -842,7 +842,7 @@ void get_a_tech(struct player *pplayer, struct player *target)
   Handle a client or AI request to change the tax/luxury/science rates.
   This function does full sanity checking.
 **************************************************************************/
-void handle_player_rates(struct player *pplayer,
+void handle_player_rates(player_t *pplayer,
                          int tax, int luxury, int science)
 {
   int maxrate;
@@ -894,7 +894,7 @@ void handle_player_rates(struct player *pplayer,
   If there are enough accumulated research points, the tech may be
   acquired immediately.
 **************************************************************************/
-void handle_player_research(struct player *pplayer, int tech)
+void handle_player_research(player_t *pplayer, int tech)
 {
   if (tech != A_FUTURE && !tech_exists(tech)) {
     return;
@@ -911,7 +911,7 @@ void handle_player_research(struct player *pplayer, int tech)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_player_tech_goal(struct player *pplayer, int tech)
+void handle_player_tech_goal(player_t *pplayer, int tech)
 {
   if (tech != A_FUTURE && !tech_exists(tech)) {
     return;
@@ -939,7 +939,7 @@ void handle_player_tech_goal(struct player *pplayer, int tech)
   as the player has set a target_government and the revolution_finishes
   turn has arrived.
 **************************************************************************/
-static void finish_revolution(struct player *pplayer)
+static void finish_revolution(player_t *pplayer)
 {
   int government = pplayer->target_government;
 
@@ -988,7 +988,7 @@ static void finish_revolution(struct player *pplayer)
   Start a revolution.  This can be called even for AI players; it will
   call finish_revolution immediately if no revolution is needed.
 **************************************************************************/
-static void start_revolution(struct player *pplayer)
+static void start_revolution(player_t *pplayer)
 {
   pplayer->government = game.ruleset_control.government_when_anarchy;
 
@@ -1030,7 +1030,7 @@ static void start_revolution(struct player *pplayer)
 /**************************************************************************
   Called by the client or AI to change government.
 **************************************************************************/
-void handle_player_change_government(struct player *pplayer, int government)
+void handle_player_change_government(player_t *pplayer, int government)
 {
   if (government < 0 || government >= game.ruleset_control.government_count
       || !can_change_to_government(pplayer, government)) {
@@ -1074,7 +1074,7 @@ void handle_player_change_government(struct player *pplayer, int government)
   See if the player has finished their revolution.  This function should
   be called at the beginning of a player's phase.
 **************************************************************************/
-void update_revolution(struct player *pplayer)
+void update_revolution(player_t *pplayer)
 {
   /* The player's revolution counter is stored in the revolution_finishes
    * field.  This value has the following meanings:
@@ -1131,7 +1131,7 @@ The following checks that government rates are acceptable for the present
 form of government. Has to be called when switching governments or when
 toggling from AI to human.
 **************************************************************************/
-void check_player_government_rates(struct player *pplayer)
+void check_player_government_rates(player_t *pplayer)
 {
   struct player_economic old_econ = pplayer->economic;
   bool changed = FALSE;
@@ -1166,8 +1166,8 @@ void check_player_government_rates(struct player *pplayer)
     cities
   - Remove units stacked together
 **************************************************************************/
-void update_players_after_alliance_breakup(struct player* pplayer,
-                                          struct player* pplayer2)
+void update_players_after_alliance_breakup(player_t *pplayer,
+                                           player_t *pplayer2)
 {
   /* The client needs updated diplomatic state, because it is used
    * during calculation of new states of occupied flags in cities */
@@ -1188,13 +1188,13 @@ void update_players_after_alliance_breakup(struct player* pplayer,
     a pact treaty type, we break one pact level. If it is CLAUSE_LAST
     we break _all_ treaties and go straight to war.
 **************************************************************************/
-void handle_diplomacy_cancel_pact(struct player *pplayer,
+void handle_diplomacy_cancel_pact(player_t *pplayer,
                                   int other_player_id,
                                   enum clause_type clause)
 {
   enum diplstate_type old_type;
   enum diplstate_type new_type;
-  struct player *pplayer2;
+  player_t *pplayer2;
   int reppenalty = 0;
   bool has_senate, repeat = FALSE;
 
@@ -1452,7 +1452,7 @@ void notify_conn(struct conn_list *dest, const char *format, ...)
   old code, but this feature may go away - should use notify_conn with
   explicitly game.est_connections or game.game_connections as dest.
 **************************************************************************/
-void notify_player_ex(const struct player *pplayer, tile_t *ptile,
+void notify_player_ex(const player_t *pplayer, tile_t *ptile,
                       enum event_type event, const char *format, ...)
 {
   struct conn_list *dest;
@@ -1472,7 +1472,7 @@ void notify_player_ex(const struct player *pplayer, tile_t *ptile,
 /**************************************************************************
   Just like notify_player_ex, but no (x,y) nor event type.
 **************************************************************************/
-void notify_player(const struct player *pplayer, const char *format, ...)
+void notify_player(const player_t *pplayer, const char *format, ...)
 {
   struct conn_list *dest;
   va_list args;
@@ -1492,7 +1492,7 @@ void notify_player(const struct player *pplayer, const char *format, ...)
   Send message to all players who have an embassy with pplayer,
   but excluding pplayer and specified player.
 **************************************************************************/
-void notify_embassies(struct player *pplayer, struct player *exclude,
+void notify_embassies(player_t *pplayer, player_t *exclude,
                       const char *format, ...)
 {
   struct packet_chat_msg genmsg;
@@ -1553,7 +1553,7 @@ void notify_team(const struct team *pteam, const char *format, ...)
   Note: package_player_info contains incomplete info if it has NULL as a
         dest arg and and info is < INFO_EMBASSY.
 **************************************************************************/
-void send_player_info_c(struct player *src, struct conn_list *dest)
+void send_player_info_c(player_t *src, struct conn_list *dest)
 {
   players_iterate(pplayer) {
     if (!src || pplayer == src) {
@@ -1585,7 +1585,7 @@ void send_player_info_c(struct player *src, struct conn_list *dest)
   As convenience to old code, dest may be NULL meaning send to
   game.game_connections.
 **************************************************************************/
-void send_player_info(struct player *src, struct player *dest)
+void send_player_info(player_t *src, player_t *dest)
 {
   send_player_info_c(src, (dest ? dest->connections : game.game_connections));
 }
@@ -1593,7 +1593,7 @@ void send_player_info(struct player *src, struct player *dest)
 /**************************************************************************
  Package player information that is always sent.
 **************************************************************************/
-static void package_player_common(struct player *plr,
+static void package_player_common(player_t *plr,
                                   struct packet_player_info *packet)
 {
   int i;
@@ -1628,9 +1628,9 @@ static void package_player_common(struct player *plr,
   Receiver may be NULL in which cases dummy values are sent for some
   fields.
 **************************************************************************/
-static void package_player_info(struct player *plr,
+static void package_player_info(player_t *plr,
                                 struct packet_player_info *packet,
-                                struct player *receiver,
+                                player_t *receiver,
                                 enum plr_info_level min_info_level)
 {
   int i;
@@ -1769,8 +1769,8 @@ static void package_player_info(struct player *plr,
 /**************************************************************************
   ...
 **************************************************************************/
-static enum plr_info_level player_info_level(struct player *plr,
-                                             struct player *receiver)
+static enum plr_info_level player_info_level(player_t *plr,
+                                             player_t *receiver)
 {
   if (!receiver || plr == receiver) {
     return INFO_FULL;
@@ -1788,7 +1788,7 @@ static enum plr_info_level player_info_level(struct player *plr,
   Convenience function to return "reply" destination connection list
   for player: pplayer->current_conn if set, else pplayer->connections.
 **************************************************************************/
-struct conn_list *player_reply_dest(struct player *pplayer)
+struct conn_list *player_reply_dest(player_t *pplayer)
 {
   return (pplayer->current_conn ?
           pplayer->current_conn->self :
@@ -1799,7 +1799,7 @@ struct conn_list *player_reply_dest(struct player *pplayer)
 The initmap option is used because we don't want to initialize the map
 before the x and y sizes have been determined
 ***********************************************************************/
-void server_player_init(struct player *pplayer, bool initmap)
+void server_player_init(player_t *pplayer, bool initmap)
 {
   if (initmap) {
     player_map_allocate(pplayer);
@@ -1812,7 +1812,7 @@ void server_player_init(struct player *pplayer, bool initmap)
  This function does _not_ close any connections attached to this player.
  cut_connection is used for that.
 ***********************************************************************/
-void server_remove_player(struct player *pplayer)
+void server_remove_player(player_t *pplayer)
 {
   /* Not allowed after a game has started */
   if (!(game.server.is_new_game && (server_state==PRE_GAME_STATE ||
@@ -1845,7 +1845,7 @@ void server_remove_player(struct player *pplayer)
 /**************************************************************************
   Update contact info.
 **************************************************************************/
-void make_contact(struct player *pplayer1, struct player *pplayer2,
+void make_contact(player_t *pplayer1, player_t *pplayer2,
                   tile_t *ptile)
 {
   int player1 = pplayer1->player_no, player2 = pplayer2->player_no;
@@ -1898,7 +1898,7 @@ void make_contact(struct player *pplayer1, struct player *pplayer2,
 /**************************************************************************
   Check if we make contact with anyone.
 **************************************************************************/
-void maybe_make_contact(tile_t *ptile, struct player *pplayer)
+void maybe_make_contact(tile_t *ptile, player_t *pplayer)
 {
   square_iterate(ptile, 1, tile1) {
     city_t *pcity = tile1->city;
@@ -1914,7 +1914,7 @@ void maybe_make_contact(tile_t *ptile, struct player *pplayer)
 /**************************************************************************
   To be used only by shuffle_players() and shuffled_player() below:
 **************************************************************************/
-static struct player *shuffled_plr[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
+static player_t *shuffled_plr[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
 static int shuffled_nplayers = 0;
 
 /**************************************************************************
@@ -1923,7 +1923,7 @@ static int shuffled_nplayers = 0;
 void shuffle_players(void)
 {
   int i, pos;
-  struct player *tmp_plr;
+  player_t *tmp_plr;
 
   freelog(LOG_DEBUG, "shuffling %d players", game.info.nplayers);
 
@@ -1974,7 +1974,7 @@ void set_shuffled_players(int *shuffled_players)
   re-shuffles, added players are given in unshuffled order at the end.
   Number of players should not have shrunk.
 **************************************************************************/
-struct player *shuffled_player(int i)
+player_t *shuffled_player(int i)
 {
   assert(i>=0 && i<game.info.nplayers);
 
@@ -2060,10 +2060,10 @@ research etc.  Players are both thrown into anarchy and gold is
 split between both players.
                                - Kris Bubendorfer
 ***********************************************************************/
-static struct player *split_player(struct player *pplayer)
+static player_t *split_player(player_t *pplayer)
 {
   int newplayer = game.info.nplayers;
-  struct player *cplayer = &game.players[newplayer];
+  player_t *cplayer = &game.players[newplayer];
   Nation_Type_id *civilwar_nations = get_nation_civilwar(pplayer->nation);
 
   /* make a new player */
@@ -2208,7 +2208,7 @@ guarantees a civil war.
 if a civil war is triggered.
                                    - Kris Bubendorfer
 ***********************************************************************/
-bool civil_war_triggered(struct player *pplayer)
+bool civil_war_triggered(player_t *pplayer)
 {
   /* Get base probabilities */
 
@@ -2260,10 +2260,10 @@ ensures that each side gets roughly half, which ones is still
 determined randomly.
                                    - Kris Bubendorfer
 ***********************************************************************/
-void civil_war(struct player *pplayer)
+void civil_war(player_t *pplayer)
 {
   int i, j;
-  struct player *cplayer;
+  player_t *cplayer;
 
   if (!game.server.civilwar) {
     return;
@@ -2341,7 +2341,7 @@ void civil_war(struct player *pplayer)
 /**************************************************************************
  The client has send as a chunk of the attribute block.
 **************************************************************************/
-void handle_player_attribute_chunk(struct player *pplayer,
+void handle_player_attribute_chunk(player_t *pplayer,
                                    struct packet_player_attribute_chunk *chunk)
 {
   generic_handle_player_attribute_chunk(pplayer, chunk, pplayer->current_conn);
@@ -2350,7 +2350,7 @@ void handle_player_attribute_chunk(struct player *pplayer,
 /**************************************************************************
  The client request an attribute block.
 **************************************************************************/
-void handle_player_attribute_block(struct player *pplayer)
+void handle_player_attribute_block(player_t *pplayer)
 {
   send_attribute_block(pplayer, pplayer->current_conn);
 }
@@ -2359,7 +2359,7 @@ void handle_player_attribute_block(struct player *pplayer)
 ...
 (Hmm, how should "turn done" work for multi-connected non-observer players?)
 **************************************************************************/
-void handle_player_turn_done(struct player *pplayer)
+void handle_player_turn_done(player_t *pplayer)
 {
   pplayer->turn_done = TRUE;
 
@@ -2374,7 +2374,7 @@ void handle_player_turn_done(struct player *pplayer)
 **************************************************************************/
 void handle_player_info_req(struct connection *pconn, int player_id)
 {
-  struct player *pplayer = get_player(player_id);
+  player_t *pplayer = get_player(player_id);
 
   if (pplayer) {
     send_player_info_c(pplayer, pconn->self);

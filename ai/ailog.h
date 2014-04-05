@@ -30,7 +30,7 @@ struct ai_data;
 #define LOGLEVEL_BUILD LOG_DEBUG
 #define LOGLEVEL_HUNT LOG_DEBUG
 
-void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
+void PLAYER_LOG(int level, player_t *pplayer, struct ai_data *ai,
                 const char *msg, ...)
      wc__attribute((__format__ (__printf__, 4, 5)));
 void CITY_LOG(int level, city_t *pcity, const char *msg, ...)

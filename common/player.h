@@ -186,7 +186,7 @@ struct attribute_block_s {
 #define MAX_ATTRIBUTE_BLOCK     (256*1024)      /* largest attribute block */
 };
 
-struct player {
+struct player_s {
   int player_no;
   char name[MAX_LEN_NAME];
   char username[MAX_LEN_NAME];
@@ -273,6 +273,8 @@ struct player {
   } wcdb;
 };
 
+//typedef struct player_s player_t; in common/wc_types.h
+
 enum player_results {
   PR_NONE = 0,
   PR_WIN,
@@ -289,80 +291,79 @@ const char *result_name_orig(enum player_results res);
    hardcoding a set value. */
 #define RANK_NONE 255
 
-void player_init(struct player *plr);
-struct player *find_player_by_name(const char *name);
-struct player *find_player_by_name_prefix(const char *name,
+void player_init(player_t *plr);
+player_t *find_player_by_name(const char *name);
+player_t *find_player_by_name_prefix(const char *name,
                                           enum m_pre_result *result);
-struct player *find_player_by_user(const char *name);
-void player_set_unit_focus_status(struct player *pplayer);
-bool player_has_embassy(struct player *pplayer, struct player *pplayer2);
+player_t *find_player_by_user(const char *name);
+void player_set_unit_focus_status(player_t *pplayer);
+bool player_has_embassy(player_t *pplayer, player_t *pplayer2);
 
-bool can_player_see_unit(struct player *pplayer, struct unit *punit);
-bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
+bool can_player_see_unit(player_t *pplayer, struct unit *punit);
+bool can_player_see_unit_at(player_t *pplayer, struct unit *punit,
                             tile_t *ptile);
 
-bool can_player_see_units_in_city(struct player *pplayer,
+bool can_player_see_units_in_city(player_t *pplayer,
                                   city_t *pcity);
-bool can_player_see_city_internals(struct player *pplayer,
+bool can_player_see_city_internals(player_t *pplayer,
                                    city_t *pcity);
 
-bool player_owns_city(struct player *pplayer, city_t *pcity);
+bool player_owns_city(player_t *pplayer, city_t *pcity);
 
-city_t *player_find_city_by_id(const struct player *pplayer,
+city_t *player_find_city_by_id(const player_t *pplayer,
                                int city_id);
-struct unit *player_find_unit_by_id(const struct player *pplayer,
+struct unit *player_find_unit_by_id(const player_t *pplayer,
                                     int unit_id);
 
-bool player_in_city_radius(struct player *pplayer, tile_t *ptile);
-bool player_knows_improvement_tech(struct player *pplayer,
+bool player_in_city_radius(player_t *pplayer, tile_t *ptile);
+bool player_knows_improvement_tech(player_t *pplayer,
                                    Impr_Type_id id);
-bool player_knows_techs_with_flag(struct player *pplayer,
+bool player_knows_techs_with_flag(player_t *pplayer,
                                  enum tech_flag_id flag);
-int num_known_tech_with_flag(struct player *pplayer, enum tech_flag_id flag);
-int player_get_expected_income(struct player *pplayer);
-int player_get_expected_bulbs(struct player *pplayer);
+int num_known_tech_with_flag(player_t *pplayer, enum tech_flag_id flag);
+int player_get_expected_income(player_t *pplayer);
+int player_get_expected_bulbs(player_t *pplayer);
 
-void player_limit_to_government_rates(struct player *pplayer);
+void player_limit_to_government_rates(player_t *pplayer);
 
-city_t *find_palace(struct player *pplayer);
+city_t *find_palace(player_t *pplayer);
 
-bool ai_handicap(struct player *pplayer, enum handicap_type htype);
-bool ai_fuzzy(struct player *pplayer, bool normal_decision);
+bool ai_handicap(player_t *pplayer, enum handicap_type htype);
+bool ai_fuzzy(player_t *pplayer, bool normal_decision);
 
 const char *reputation_text(const int rep);
 const char *diplstate_text(const enum diplstate_type type);
 const char *love_text(const int love);
 
-const struct player_diplstate *pplayer_get_diplstate(const struct player
-                                                     *pplayer,
-                                                     const struct player
-                                                     *pplayer2);
+const struct player_diplstate *
+pplayer_get_diplstate(const player_t *pplayer,
+                      const player_t *pplayer2);
 bool are_diplstates_equal(const struct player_diplstate *pds1,
                           const struct player_diplstate *pds2);
-bool pplayer_can_ally(struct player *p1, struct player *p2);
-bool pplayers_at_war(const struct player *pplayer,
-                    const struct player *pplayer2);
-bool pplayers_allied(const struct player *pplayer,
-                    const struct player *pplayer2);
-bool pplayers_in_peace(const struct player *pplayer,
-                    const struct player *pplayer2);
-bool pplayers_non_attack(const struct player *pplayer,
-                        const struct player *pplayer2);
-bool players_on_same_team(const struct player *pplayer1,
-                          const struct player *pplayer2);
-bool players_on_different_teams(const struct player *pplayer1,
-                                const struct player *pplayer2);
-bool player_is_on_team(const struct player *pplayer);
-int player_allies_count(const struct player *pplayer);
-int player_in_territory(struct player *pplayer, struct player *pplayer2);
+bool pplayer_can_ally(player_t *p1, player_t *p2);
+bool pplayers_at_war(const player_t *pplayer,
+                     const player_t *pplayer2);
+bool pplayers_allied(const player_t *pplayer,
+                     const player_t *pplayer2);
+bool pplayers_in_peace(const player_t *pplayer,
+                       const player_t *pplayer2);
+bool pplayers_non_attack(const player_t *pplayer,
+                         const player_t *pplayer2);
+bool players_on_same_team(const player_t *pplayer1,
+                          const player_t *pplayer2);
+bool players_on_different_teams(const player_t *pplayer1,
+                                const player_t *pplayer2);
+bool player_is_on_team(const player_t *pplayer);
+int player_allies_count(const player_t *pplayer);
+int player_in_territory(player_t *pplayer, player_t *pplayer2);
 
-bool is_barbarian(const struct player *pplayer);
+bool is_barbarian(const player_t *pplayer);
 
-bool gives_shared_vision(struct player *me, struct player *them);
+bool gives_shared_vision(player_t *me, player_t *them);
 
 #define players_iterate(PI_player)                                            \
 {                                                                             \
-  struct player *PI_player;                                                   \
+  player_t *PI_player;                                                        \
   int PI_p_itr;                                                               \
   for (PI_p_itr = 0; PI_p_itr < game.info.nplayers; PI_p_itr++) {             \
     PI_player = get_player(PI_p_itr);
@@ -377,13 +378,13 @@ bool gives_shared_vision(struct player *me, struct player *them);
 
 /* User functions. */
 bool is_valid_username(const char *name);
-int player_get_username(const struct player *pplayer,
+int player_get_username(const player_t *pplayer,
                         char *outbuf, int maxlen);
 
 const char *name_of_skill_level(int level);
 
-bool player_get_ignore_diplomacy(const struct player *pplayer);
-void player_set_ignore_diplomacy(struct player *pplayer, bool ignore);
+bool player_get_ignore_diplomacy(const player_t *pplayer);
+void player_set_ignore_diplomacy(player_t *pplayer, bool ignore);
 
 
 struct turns_played_info {
@@ -391,10 +392,10 @@ struct turns_played_info {
   int turns;
 };
 
-void player_setup_turns_played(struct player *plr);
-void player_free_turns_played(struct player *plr);
-int player_get_turns_played(const struct player *plr, const char *username);
-void player_set_turns_played(struct player *plr, const char *username,
+void player_setup_turns_played(player_t *plr);
+void player_free_turns_played(player_t *plr);
+int player_get_turns_played(const player_t *plr, const char *username);
+void player_set_turns_played(player_t *plr, const char *username,
                              int turns);
 
 #define player_turns_played_iterate(ARG_plr, NAME_user, NAME_turns)\

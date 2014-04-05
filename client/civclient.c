@@ -38,8 +38,8 @@
 
 #include "capstr.h"
 #include "dataio.h"
-#include "diptreaty.h"
 #include "game.h"
+#include "diptreaty.h"
 #include "idex.h"
 #include "map.h"
 #include "packets.h"
@@ -567,7 +567,7 @@ void set_client_state(enum client_states newstate)
   bool connect_error = (client_state == CLIENT_PRE_GAME_STATE)
                        && newstate == CLIENT_PRE_GAME_STATE;
   enum client_states oldstate = client_state;
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
 
   freelog(LOG_DEBUG, "set_client_state %d", newstate);
 
@@ -732,7 +732,7 @@ void wait_till_request_got_processed(int request_id)
 **************************************************************************/
 void real_timer_callback(void)
 {
-  struct player *cplayer;
+  player_t *cplayer;
   time_t curtime;
 
   voteinfo_queue_check_removed();
@@ -788,7 +788,7 @@ bool can_client_issue_orders(void)
   Returns TRUE iff the client can do diplomatic meetings with another
   given player.
 **************************************************************************/
-bool can_meet_with_player(struct player *pplayer)
+bool can_meet_with_player(player_t *pplayer)
 {
   return (get_player_ptr()
           && could_meet_with_player(get_player_ptr(), pplayer)
@@ -799,7 +799,7 @@ bool can_meet_with_player(struct player *pplayer)
   Returns TRUE iff the client can get intelligence from another
   given player.
 **************************************************************************/
-bool can_intel_with_player(struct player *pplayer)
+bool can_intel_with_player(player_t *pplayer)
 {
   if (get_player_ptr()) {
     return could_intel_with_player(get_player_ptr(), pplayer);
@@ -823,7 +823,7 @@ bool can_client_change_view(void)
 /**************************************************************************
   Return the player that the client is controlling or observing.
 **************************************************************************/
-struct player *get_player_ptr(void)
+player_t *get_player_ptr(void)
 {
   return aconnection.player;
 }

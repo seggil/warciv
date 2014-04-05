@@ -58,13 +58,13 @@ static struct player_refuel_list {
   /* Size of the allocated memory in points */
   unsigned int alloc_size;
   /* It is convenient to hold additional info here */
-  struct player *pplayer;
+  player_t *pplayer;
   struct unit *punit;
   int max_moves;
   int moves_per_turn;
 } refuels;
 
-static void make_list_of_refuel_points(struct player *pplayer,
+static void make_list_of_refuel_points(player_t *pplayer,
                                        bool cities_only,
                                        int moves_per_turn, int max_moves);
 
@@ -148,7 +148,7 @@ as it is now, but as it is only used in the players turn that does not
 matter.
 Can probably do some caching...
 *************************************************************************/
-static void make_list_of_refuel_points(struct player *pplayer,
+static void make_list_of_refuel_points(player_t *pplayer,
                                        bool cities_only,
                                        int moves_per_turn,
                                        int max_moves)
@@ -197,7 +197,7 @@ static int queue_priority_function(const void *value)
  * moves_per_turn -- max moves per turn
  * max_fuel -- max fuel
  ************************************************************************/
-struct pqueue *refuel_iterate_init(struct player *pplayer,
+struct pqueue *refuel_iterate_init(player_t *pplayer,
                                    tile_t *ptile,
                                    tile_t *dest_tile,
                                    bool cities_only, int moves_left,

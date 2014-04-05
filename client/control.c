@@ -897,7 +897,7 @@ static bool is_activity_on_tile(tile_t *ptile,
 **************************************************************************/
 bool can_unit_do_connect(struct unit *punit, enum unit_activity activity)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   Terrain_type_id terrain = map_get_terrain(punit->tile);
   struct tile_type *ttype = get_tile_type(terrain);
 
@@ -1532,7 +1532,7 @@ void request_toggle_city_production_buy_cost(void)
 **************************************************************************/
 void request_toggle_city_traderoutes(void)
 {
-  struct player *me = get_player_ptr();
+  player_t *me = get_player_ptr();
 
   if (!can_client_change_view()) {
     return;

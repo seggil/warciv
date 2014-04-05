@@ -68,8 +68,8 @@ struct Diplomacy_dialog {
 
 static struct dialog_list *dialog_list = NULL;
 
-static struct Diplomacy_dialog *create_diplomacy_dialog(struct player *plr0,
-                                                 struct player *plr1);
+static struct Diplomacy_dialog *
+create_diplomacy_dialog(player_t *plr0, player_t *plr1);
 
 static struct Diplomacy_dialog *find_diplomacy_dialog(int other_player_id);
 static void popup_diplomacy_dialog(int other_player_id);
@@ -110,7 +110,7 @@ void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted,
 *****************************************************************/
 void handle_diplomacy_init_meeting(int counterpart, int initiated_from)
 {
-  struct player *pplayer;
+  player_t *pplayer;
 
   if (!is_valid_player_id(counterpart)) {
     return;
@@ -202,7 +202,7 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
   struct Diplomacy_dialog *pdialog;
 
   gpointer plr;
-  struct player *plr0, *plr1;
+  player_t *plr0, *plr1;
 
   GtkWidget *item, *menu;
 
@@ -451,8 +451,8 @@ static void diplomacy_response(GtkWidget *w, gint response, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-static struct Diplomacy_dialog *create_diplomacy_dialog(struct player *plr0,
-                                                        struct player *plr1)
+static struct Diplomacy_dialog *create_diplomacy_dialog(player_t *plr0,
+                                                        player_t *plr1)
 {
   GtkWidget *shell, *vbox, *bottom, *hbox, *table;
   GtkWidget *label, *sw, *view, *image, *spin;
@@ -741,9 +741,9 @@ static void diplomacy_dialog_city_callback(GtkWidget * w, gpointer data)
 static void diplomacy_dialog_map_callback(GtkWidget *w, gpointer data)
 {
   struct Diplomacy_dialog *pdialog = (struct Diplomacy_dialog *)data;
-  struct player *pgiver;
+  player_t *pgiver;
 
-  pgiver = (struct player *)g_object_get_data(G_OBJECT(w), "plr");
+  pgiver = (player_t *)g_object_get_data(G_OBJECT(w), "plr");
 
   dsend_packet_diplomacy_create_clause_req(&aconnection,
                                            pdialog->treaty->plr1->player_no,
@@ -756,9 +756,9 @@ static void diplomacy_dialog_map_callback(GtkWidget *w, gpointer data)
 static void diplomacy_dialog_seamap_callback(GtkWidget *w, gpointer data)
 {
   struct Diplomacy_dialog *pdialog = (struct Diplomacy_dialog *)data;
-  struct player *pgiver;
+  player_t *pgiver;
 
-  pgiver = (struct player *)g_object_get_data(G_OBJECT(w), "plr");
+  pgiver = (player_t *)g_object_get_data(G_OBJECT(w), "plr");
 
   dsend_packet_diplomacy_create_clause_req(&aconnection,
                                            pdialog->treaty->plr1->player_no,
@@ -810,8 +810,8 @@ static void diplomacy_dialog_alliance_callback(GtkWidget *w, gpointer data)
 static void diplomacy_dialog_vision_callback(GtkWidget *w, gpointer data)
 {
   struct Diplomacy_dialog *pdialog = (struct Diplomacy_dialog *) data;
-  struct player *pgiver =
-      (struct player *) g_object_get_data(G_OBJECT(w), "plr");
+  player_t *pgiver =
+      (player_t *) g_object_get_data(G_OBJECT(w), "plr");
 
   dsend_packet_diplomacy_create_clause_req(&aconnection,
                                            pdialog->treaty->plr1->player_no,
@@ -825,8 +825,8 @@ static void diplomacy_dialog_vision_callback(GtkWidget *w, gpointer data)
 static void diplomacy_dialog_embassy_callback(GtkWidget *w, gpointer data)
 {
   struct Diplomacy_dialog *pdialog = (struct Diplomacy_dialog *) data;
-  struct player *pgiver =
-      (struct player *) g_object_get_data(G_OBJECT(w), "plr");
+  player_t *pgiver =
+      (player_t *) g_object_get_data(G_OBJECT(w), "plr");
 
   dsend_packet_diplomacy_create_clause_req(&aconnection,
                                            pdialog->treaty->plr1->player_no,
@@ -848,7 +848,8 @@ void close_diplomacy_dialog(struct Diplomacy_dialog *pdialog)
 *****************************************************************/
 static struct Diplomacy_dialog *find_diplomacy_dialog(int other_player_id)
 {
-  struct player *plr0 = get_player_ptr(), *plr1 = get_player(other_player_id);
+  player_t *plr0 = get_player_ptr();
+  player_t *plr1 = get_player(other_player_id);
 
   if (!dialog_list) {
     dialog_list = dialog_list_new();
@@ -870,8 +871,8 @@ static struct Diplomacy_dialog *find_diplomacy_dialog(int other_player_id)
 static void diplo_dialog_returnkey(GtkWidget *w, gpointer data)
 {
   struct Diplomacy_dialog *pdialog = (struct Diplomacy_dialog *) data;
-  struct player *pgiver =
-      (struct player *) g_object_get_data(G_OBJECT(w), "plr");
+  player_t *pgiver =
+      (player_t *) g_object_get_data(G_OBJECT(w), "plr");
   int amount = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
 
   if (amount >= 0 && amount <= pgiver->economic.gold) {

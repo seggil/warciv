@@ -1101,7 +1101,7 @@ static void cell_render_func(GtkTreeViewColumn *col, GtkCellRenderer *rend,
 
   if (!on_icon_column) {
     city_t **pcity;
-    struct player *plr;
+    player_t *plr;
     gint column;
     char *row[4];
     char  buf[4][64];

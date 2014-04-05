@@ -27,7 +27,8 @@ typedef int Impr_Type_id;
 
 struct city_s;
 struct government;
-struct player;
+struct player_s;
+typedef struct player_s player_t;
 struct tile;
 typedef struct tile tile_t;
 struct trade_route;

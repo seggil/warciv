@@ -1657,7 +1657,7 @@ static double estimate_fitness(const struct cm_state *cmstate,
                                int (*production)[CM_NUM_STATS])
 {
   const city_t *pcity = cmstate->pcity;
-  const struct player *pplayer = get_player(pcity->common.owner);
+  const player_t *pplayer = get_player(pcity->common.owner);
   enum cm_stat stat;
   double estimates[CM_NUM_STATS];
   double sum = 0;

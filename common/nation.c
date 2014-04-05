@@ -179,7 +179,7 @@ const char *get_nation_name_plural(Nation_Type_id nation)
 /***************************************************************
 Returns pointer to a nation
 ***************************************************************/
-struct nation_type *get_nation_by_plr(struct player *plr)
+struct nation_type *get_nation_by_plr(player_t *plr)
 {
   assert(plr != NULL);
   if (!bounds_check_nation_id(plr->nation, LOG_FATAL, "get_nation_by_plr")) {
@@ -398,7 +398,7 @@ int team_count_members(Team_Type_id id)
 /***************************************************************
   Set a player to a team.
 ***************************************************************/
-void team_id_add_player(struct player *pplayer, Team_Type_id id)
+void team_id_add_player(player_t *pplayer, Team_Type_id id)
 {
   if (TEAM_NONE == id) {
     return;
@@ -420,7 +420,7 @@ void team_id_add_player(struct player *pplayer, Team_Type_id id)
   Set a player to a team. Removes previous team affiliation,
   creates a new team if it does not exist.
 ***************************************************************/
-void team_add_player(struct player *pplayer, const char *team_name)
+void team_add_player(player_t *pplayer, const char *team_name)
 {
   Team_Type_id team_id;
   Team_Type_id i;
@@ -457,7 +457,7 @@ void team_add_player(struct player *pplayer, const char *team_name)
   Removes a player from a team, and removes the team if empty of
   players
 ***************************************************************/
-void team_remove_player(struct player *pplayer)
+void team_remove_player(player_t *pplayer)
 {
   if (pplayer->team == TEAM_NONE) {
     return;

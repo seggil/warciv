@@ -33,13 +33,13 @@ struct cityresult {
   struct citytile citymap[CITY_MAP_SIZE][CITY_MAP_SIZE];
 };
 
-void cityresult_fill(struct player *pplayer,
+void cityresult_fill(player_t *pplayer,
                      struct ai_data *ai,
                      struct cityresult *result);
 void find_best_city_placement(struct unit *punit, struct cityresult *best,
                               bool look_for_boat, bool use_virt_boat);
-void ai_settler_init(struct player *pplayer);
-void print_cityresult(struct player *pplayer, struct cityresult *cr,
+void ai_settler_init(player_t *pplayer);
+void print_cityresult(player_t *pplayer, struct cityresult *cr,
                       struct ai_data *ai);
 
 #endif  /* WC_AI_AISETTLER_H */

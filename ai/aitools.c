@@ -62,7 +62,7 @@
   the unit. If the city has less than average shield output, we
   instead use the average, to encourage long-term thinking.
 **************************************************************************/
-int military_amortize(struct player *pplayer, struct city_s *pcity,
+int military_amortize(player_t *pplayer, struct city_s *pcity,
                       int value, int delay, int build_cost)
 {
   struct ai_data *ai = ai_data_get(pplayer);
@@ -83,7 +83,7 @@ int military_amortize(struct player *pplayer, struct city_s *pcity,
   things to us, he is an ally of one of our enemies (a ticking bomb
   to be sure), or he is our war target.
 ***********************************************************************/
-bool is_player_dangerous(struct player *pplayer, struct player *aplayer)
+bool is_player_dangerous(player_t *pplayer, player_t *aplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
   struct ai_dip_intel *adip
@@ -147,7 +147,7 @@ bool ai_unit_execute_path(struct unit *punit, struct pf_path *path)
 ****************************************************************************/
 static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct ai_data *ai = ai_data_get(pplayer);
   unsigned int danger = 0;
   struct city_s *dcity;
@@ -215,7 +215,7 @@ static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
   You MUST have warmap created before calling this function in order for
   find_beachhead to work here. This requirement should be removed.
 ****************************************************************************/
-bool ai_gothere(struct player *pplayer, struct unit *punit,
+bool ai_gothere(player_t *pplayer, struct unit *punit,
                 struct tile *dest_tile)
 {
   CHECK_UNIT(punit);
@@ -419,7 +419,7 @@ static void ai_unit_bodyguard_move(int unitid, struct tile *ptile)
   struct unit *bodyguard = find_unit_by_id(unitid);
 #ifndef NDEBUG
   struct unit *punit;
-  struct player *pplayer;
+  player_t *pplayer;
 
   assert(bodyguard != NULL);
   pplayer = unit_owner(bodyguard);
@@ -505,7 +505,7 @@ bool ai_unit_move(struct unit *punit, struct tile *ptile)
 {
   struct unit *bodyguard;
   int sanity = punit->id;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
 
   CHECK_UNIT(punit);
   assert(unit_owner(punit)->ai.control);
@@ -563,7 +563,7 @@ unless (everywhere != 0)
 If (enemy != 0) it looks only for enemy cities
 If (pplayer != NULL) it looks for cities known to pplayer
 **************************************************************************/
-struct city_s *dist_nearest_city(struct player *pplayer, struct tile *ptile,
+struct city_s *dist_nearest_city(player_t *pplayer, struct tile *ptile,
                                bool everywhere, bool enemy)
 {
   struct city_s *pc=NULL;
@@ -620,7 +620,7 @@ int stack_cost(struct unit *pdef)
 /**************************************************************************
   Change government, pretty fast...
 **************************************************************************/
-void ai_government_change(struct player *pplayer, int gov)
+void ai_government_change(player_t *pplayer, int gov)
 {
   if (gov == pplayer->government) {
     return;
@@ -639,7 +639,7 @@ void ai_government_change(struct player *pplayer, int gov)
 
   "I still don't trust this function" -- Syela
 **************************************************************************/
-int ai_gold_reserve(struct player *pplayer)
+int ai_gold_reserve(player_t *pplayer)
 {
   int i = total_player_citizens(pplayer)*2;
   return MAX(pplayer->ai.maxbuycost, i);
@@ -690,7 +690,7 @@ void copy_if_better_choice(struct ai_choice *cur, struct ai_choice *best)
 **************************************************************************/
 static bool is_building_other_wonder(struct city_s *pcity)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
 
   city_list_iterate(pplayer->cities, acity) {
     if (pcity != acity
@@ -715,7 +715,7 @@ void ai_advisor_choose_building(struct city_s *pcity, struct ai_choice *choice)
   unsigned int danger = 0;
   int downtown = 0, cities = 0;
   int want=0;
-  struct player *plr;
+  player_t *plr;
 
   plr = city_owner(pcity);
 
@@ -831,7 +831,7 @@ bool ai_assess_military_unhappiness(struct city_s *pcity,
 /**************************************************************************
   AI doesn't want the score for future techs.
 **************************************************************************/
-bool ai_wants_no_science(struct player *pplayer)
+bool ai_wants_no_science(player_t *pplayer)
 {
   return is_future_tech(pplayer->research.researching);
 }

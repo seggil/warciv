@@ -42,9 +42,9 @@ enum winning_strategy {
 
 struct ai_dip_intel {
   /* Remember one example of each for text spam purposes. */
-  struct player *is_allied_with_enemy;
-  struct player *at_war_with_ally;
-  struct player *is_allied_with_ally;
+  player_t *is_allied_with_enemy;
+  player_t *at_war_with_ally;
+  player_t *is_allied_with_ally;
 
   char spam;      /* timer to avoid spamming a player with chat */
   int distance;   /* average distance to that player's cities */
@@ -69,15 +69,15 @@ struct ai_data {
     enum winning_strategy strategy;
     int timer; /* pursue our goals with some stubbornness, in turns */
     int countdown;          /* countdown to we actually declare war */
-    struct player *target;    /* Concentrate on this player */
+    player_t *target;       /* Concentrate on this player */
     char love_coeff;          /* Reduce love with this % each turn */
     char love_incr;           /* Modify love with this fixed amount */
     int req_love_for_peace;
     int req_love_for_alliance;
     int req_love_for_ceasefire;
-    struct player *alliance_leader; /* Who is leading our alliance */
-    struct player *spacerace_leader; /* who is leading the space pack */
-    struct player *production_leader;
+    player_t *alliance_leader;  /* Who is leading our alliance */
+    player_t *spacerace_leader; /* who is leading the space pack */
+    player_t *production_leader;
   } diplomacy;
 
   /* Long-term threats, not to be confused with short-term danger */
@@ -151,13 +151,13 @@ struct ai_data {
   } goal;
 };
 
-void ai_data_init(struct player *pplayer);
-void ai_data_turn_init(struct player *pplayer);
-void ai_data_turn_done(struct player *pplayer);
+void ai_data_init(player_t *pplayer);
+void ai_data_turn_init(player_t *pplayer);
+void ai_data_turn_done(player_t *pplayer);
 
-void ai_data_init(struct player *pplayer);
-void ai_data_analyze_rulesets(struct player *pplayer);
+void ai_data_init(player_t *pplayer);
+void ai_data_analyze_rulesets(player_t *pplayer);
 
-struct ai_data *ai_data_get(struct player *pplayer);
+struct ai_data *ai_data_get(player_t *pplayer);
 
 #endif  /* WC_AI_AIDATA_H */

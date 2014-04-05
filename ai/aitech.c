@@ -44,7 +44,7 @@ struct ai_tech_choice {
   if it makes sense, and wonder is not already built and not obsolete.
   Otherwise returns A_UNSET.
 **************************************************************************/
-static Tech_Type_id get_wonder_tech(struct player *plr)
+static Tech_Type_id get_wonder_tech(player_t *plr)
 {
   Impr_Type_id building = get_nation_by_plr(plr)->goals.wonder;
 
@@ -66,7 +66,7 @@ static Tech_Type_id get_wonder_tech(struct player *plr)
     - national tech goals,
     - requirements for the national wonder goal
 **************************************************************************/
-static Tech_Type_id ai_next_tech_goal_default(struct player *pplayer)
+static Tech_Type_id ai_next_tech_goal_default(player_t *pplayer)
 {
   struct nation_type *prace = get_nation_by_plr(pplayer);
   int bestdist = A_LAST + 1;
@@ -113,7 +113,7 @@ static Tech_Type_id ai_next_tech_goal_default(struct player *pplayer)
   of cities here.
   4. A tech isn't a requirement of itself.
 **************************************************************************/
-static void ai_select_tech(struct player *pplayer,
+static void ai_select_tech(player_t *pplayer,
                            struct ai_tech_choice *choice,
                            struct ai_tech_choice *goal)
 {
@@ -211,7 +211,7 @@ static void ai_select_tech(struct player *pplayer,
 
   TODO: Kill this function.
 **************************************************************************/
-void ai_next_tech_goal(struct player *pplayer)
+void ai_next_tech_goal(player_t *pplayer)
 {
   struct ai_tech_choice goal_choice = {0, 0, 0};
 
@@ -233,7 +233,7 @@ void ai_next_tech_goal(struct player *pplayer)
 
   TODO: The hints structure is too complicated, simplify.
 **************************************************************************/
-static void ai_use_gov_tech_hint(struct player *pplayer)
+static void ai_use_gov_tech_hint(player_t *pplayer)
 {
   int i;
 
@@ -264,7 +264,7 @@ static void ai_use_gov_tech_hint(struct player *pplayer)
   Key AI research function. Disable if we are in a team with human team
   mates in a research pool.
 **************************************************************************/
-void ai_manage_tech(struct player *pplayer)
+void ai_manage_tech(player_t *pplayer)
 {
   struct ai_tech_choice choice, goal;
   /* Penalty for switching research */

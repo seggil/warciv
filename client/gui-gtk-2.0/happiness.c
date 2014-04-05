@@ -214,7 +214,7 @@ static void happiness_dialog_update_cities(struct happiness_dialog
   int nleft = sizeof(buf);
 
   city_t *pcity = pdialog->pcity;
-  struct player *pplayer = &game.players[pcity->common.owner];
+  player_t *pplayer = &game.players[pcity->common.owner];
   struct government *g = get_gov_pcity(pcity);
   int cities = city_list_size(pplayer->cities);
   int content = game.info.unhappysize;

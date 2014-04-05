@@ -62,11 +62,11 @@
 #include "unittools.h"
 
 
-static void unit_restore_hitpoints(struct player *pplayer, struct unit *punit);
-static void unit_restore_movepoints(struct player *pplayer, struct unit *punit);
+static void unit_restore_hitpoints(player_t *pplayer, struct unit *punit);
+static void unit_restore_movepoints(player_t *pplayer, struct unit *punit);
 static void update_unit_activity(struct unit *punit);
 static bool wakeup_neighbor_sentries(struct unit *punit);
-static void do_upgrade_effects(struct player *pplayer);
+static void do_upgrade_effects(player_t *pplayer);
 
 static void sentry_transported_idle_units(struct unit *ptrans);
 
@@ -123,7 +123,7 @@ bool maybe_make_veteran(struct unit *punit)
       || unit_flag(punit, F_NO_VETERAN)) {
     return FALSE;
   } else {
-    struct player *plr;
+    player_t *plr;
     int mod = 100;
 
     plr = get_player(punit->owner);
@@ -207,7 +207,7 @@ void unit_versus_unit(struct unit *attacker, struct unit *defender,
   Do unit auto-upgrades to players with the EFT_UNIT_UPGRADE effect
   (traditionally from Leonardo's Workshop).
 ****************************************************************************/
-static void do_upgrade_effects(struct player *pplayer)
+static void do_upgrade_effects(player_t *pplayer)
 {
   int upgrades = get_player_bonus(pplayer, EFFECT_TYPE_UPGRADE_UNIT);
   struct unit_list *candidates = unit_list_new();
@@ -280,7 +280,7 @@ static int dist_from_home_continent(const struct unit *punit)
 ****************************************************************************/
 static bool trireme_is_too_far(const struct unit *punit)
 {
-  struct player *pplayer;
+  player_t *pplayer;
   const tile_t *ptile;
 
   pplayer = get_player(punit->owner);
@@ -317,7 +317,7 @@ static bool trireme_is_too_far(const struct unit *punit)
 
   8. Kill planes that are out of fuel.
 ****************************************************************************/
-void player_restore_units(struct player *pplayer)
+void player_restore_units(player_t *pplayer)
 {
   /* 1) get Leonardo out of the way first: */
   do_upgrade_effects(pplayer);
@@ -450,7 +450,7 @@ void player_restore_units(struct player *pplayer)
   Units which have moved don't gain hp, except the United Nations and
   helicopter effects still occur.
 *****************************************************************************/
-static void unit_restore_hitpoints(struct player *pplayer, struct unit *punit)
+static void unit_restore_hitpoints(player_t *pplayer, struct unit *punit)
 {
   bool was_lower;
 
@@ -489,7 +489,7 @@ static void unit_restore_hitpoints(struct player *pplayer, struct unit *punit)
   sea units and the player has certain wonders/techs. Then add veteran
   bonus, if any.
 ***************************************************************************/
-static void unit_restore_movepoints(struct player *pplayer, struct unit *punit)
+static void unit_restore_movepoints(player_t *pplayer, struct unit *punit)
 {
   punit->moves_left = unit_move_rate(punit);
   punit->done_moving = FALSE;
@@ -499,7 +499,7 @@ static void unit_restore_movepoints(struct player *pplayer, struct unit *punit)
 /**************************************************************************
   iterate through all units and update them.
 **************************************************************************/
-void update_unit_activities(struct player *pplayer)
+void update_unit_activities(player_t *pplayer)
 {
   unit_list_iterate_safe(pplayer->units, punit) {
     update_unit_activity(punit);
@@ -600,7 +600,7 @@ static bool maybe_settler_become_veteran(struct unit *punit)
 **************************************************************************/
 static void update_unit_activity(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   int id = punit->id;
   bool unit_activity_done = FALSE;
   enum unit_activity activity = punit->activity;
@@ -657,7 +657,7 @@ static void update_unit_activity(struct unit *punit)
         /* If a watchtower has been pillaged, reduce sight to normal */
         if (what == S_FORTRESS) {
           unit_list_iterate(punit->tile->units, punit2) {
-            struct player *owner = unit_owner(punit2);
+            player_t *owner = unit_owner(punit2);
             freelog(LOG_VERBOSE, "Watchtower pillaged!");
             if (player_knows_techs_with_flag(owner, TF_WATCHTOWER)) {
               if (is_ground_unit(punit2)) {
@@ -693,7 +693,7 @@ static void update_unit_activity(struct unit *punit)
       if (what_pillaged == S_FORTRESS) {
         freelog(LOG_VERBOSE, "Watchtower(2) pillaged!");
         unit_list_iterate(punit->tile->units, punit2) {
-          struct player *owner = unit_owner(punit2);
+          player_t *owner = unit_owner(punit2);
           if (player_knows_techs_with_flag(owner, TF_WATCHTOWER)) {
             if (is_ground_unit(punit2)) {
               /* Unfog (increase seen counter) first, fog (decrease counter)
@@ -734,7 +734,7 @@ static void update_unit_activity(struct unit *punit)
       unit_activity_done = TRUE;
       /* watchtower becomes effective */
       unit_list_iterate(ptile->units, punit) {
-        struct player *owner = unit_owner(punit);
+        player_t *owner = unit_owner(punit);
         if (player_knows_techs_with_flag(owner, TF_WATCHTOWER)) {
           if (is_ground_unit(punit)) {
             /* Unfog (increase seen counter) first, fog (decrease counter)
@@ -1029,7 +1029,7 @@ static void update_unit_activity(struct unit *punit)
   not "in" the city (since the attacker never made it in).
   Don't call this function directly; use the wrappers below.
 **************************************************************************/
-static char *get_location_str(struct player *pplayer, tile_t *ptile, bool use_at)
+static char *get_location_str(player_t *pplayer, tile_t *ptile, bool use_at)
 {
   static char buffer[MAX_LEN_NAME+64];
   city_t *incity, *nearcity;
@@ -1061,7 +1061,7 @@ static char *get_location_str(struct player *pplayer, tile_t *ptile, bool use_at
 /**************************************************************************
   See get_location_str() above.
 **************************************************************************/
-char *get_location_str_in(struct player *pplayer, tile_t *ptile)
+char *get_location_str_in(player_t *pplayer, tile_t *ptile)
 {
   return get_location_str(pplayer, ptile, FALSE);
 }
@@ -1069,7 +1069,7 @@ char *get_location_str_in(struct player *pplayer, tile_t *ptile)
 /**************************************************************************
   See get_location_str() above.
 **************************************************************************/
-char *get_location_str_at(struct player *pplayer, tile_t *ptile)
+char *get_location_str_at(player_t *pplayer, tile_t *ptile)
 {
   return get_location_str(pplayer, ptile, TRUE);
 }
@@ -1168,7 +1168,7 @@ static void place_partisans(city_t *pcity, int count)
 **************************************************************************/
 void make_partisans(city_t *pcity)
 {
-  struct player *pplayer;
+  player_t *pplayer;
   int i, partisans;
 
   if (num_role_units(L_PARTISAN)==0)
@@ -1206,7 +1206,7 @@ to the human player.
 bool enemies_at(struct unit *punit, tile_t *ptile)
 {
   int a = 0, d, db;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   city_t *pcity = ptile->city;
 
   if (pcity && pplayers_allied(city_owner(pcity), unit_owner(punit))
@@ -1278,7 +1278,7 @@ bool teleport_unit_to_city(struct unit *punit, city_t *pcity,
 **************************************************************************/
 void bounce_unit(struct unit *punit, bool verbose)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   city_t *pcity = find_closest_owned_city(pplayer, punit->tile,
                                                is_sailing_unit(punit), NULL);
 
@@ -1301,7 +1301,7 @@ void bounce_unit(struct unit *punit, bool verbose)
 
   If verbose is true, pplayer gets messages about where each units goes.
 **************************************************************************/
-static void throw_units_from_illegal_cities(struct player *pplayer,
+static void throw_units_from_illegal_cities(player_t *pplayer,
                                            bool verbose)
 {
   unit_list_iterate_safe(pplayer->units, punit) {
@@ -1321,8 +1321,8 @@ static void throw_units_from_illegal_cities(struct player *pplayer,
   If verbose is true, the unit owner gets messages about where each
   units goes.
 **************************************************************************/
-static void resolve_stack_conflicts(struct player *pplayer,
-                                    struct player *aplayer, bool verbose)
+static void resolve_stack_conflicts(player_t *pplayer,
+                                    player_t *aplayer, bool verbose)
 {
   unit_list_iterate_safe(pplayer->units, punit) {
     tile_t *ptile = punit->tile;
@@ -1350,7 +1350,7 @@ static void resolve_stack_conflicts(struct player *pplayer,
   If verbose is true, the unit owner gets messages about where each
   units goes.
 **************************************************************************/
-void resolve_unit_stacks(struct player *pplayer, struct player *aplayer,
+void resolve_unit_stacks(player_t *pplayer, player_t *aplayer,
                          bool verbose)
 {
   throw_units_from_illegal_cities(pplayer, verbose);
@@ -1367,7 +1367,7 @@ void resolve_unit_stacks(struct player *pplayer, struct player *aplayer,
   visible.  Note that this function should be called _after_
   resolve_unit_stacks().
 ****************************************************************************/
-void remove_allied_visibility(struct player* pplayer, struct player* aplayer)
+void remove_allied_visibility(player_t* pplayer, player_t* aplayer)
 {
   unit_list_iterate(aplayer->units, punit) {
     /* We don't know exactly which units have been hidden.  But only a unit
@@ -1394,7 +1394,7 @@ void remove_allied_visibility(struct player* pplayer, struct player* aplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-bool is_airunit_refuel_point(tile_t *ptile, struct player *pplayer,
+bool is_airunit_refuel_point(tile_t *ptile, player_t *pplayer,
                              Unit_Type_id type, bool unit_is_on_tile)
 {
   struct player_tile *plrtile = map_get_player_tile(ptile, pplayer);
@@ -1431,7 +1431,7 @@ bool is_airunit_refuel_point(tile_t *ptile, struct player *pplayer,
 **************************************************************************/
 void upgrade_unit(struct unit *punit, Unit_Type_id to_unit, bool is_free)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   int range;
   int old_mr = unit_move_rate(punit), old_hp = unit_type(punit)->hp;
 
@@ -1481,7 +1481,7 @@ void upgrade_unit(struct unit *punit, Unit_Type_id to_unit, bool is_free)
 /*************************************************************************
   Wrapper of the below
 *************************************************************************/
-struct unit *create_unit(struct player *pplayer, tile_t *ptile,
+struct unit *create_unit(player_t *pplayer, tile_t *ptile,
                          Unit_Type_id type, int veteran_level,
                          int homecity_id, int moves_left)
 {
@@ -1494,7 +1494,7 @@ struct unit *create_unit(struct player *pplayer, tile_t *ptile,
   lists.
   If moves_left is less than zero, unit will get max moves.
 **************************************************************************/
-struct unit *create_unit_full(struct player *pplayer, tile_t *ptile,
+struct unit *create_unit_full(player_t *pplayer, tile_t *ptile,
                               Unit_Type_id type, int veteran_level,
                               int homecity_id, int moves_left, int hp_left,
                               struct unit *ptrans)
@@ -1581,7 +1581,7 @@ static void server_remove_unit(struct unit *punit, bool ignore_gameloss)
   city_t *pcity = map_get_city(punit->tile);
   city_t *phomecity = find_city_by_id(punit->homecity);
   tile_t *unit_tile = punit->tile;
-  struct player *unitowner = unit_owner(punit);
+  player_t *unitowner = unit_owner(punit);
   struct packet_unit_remove packet = {.unit_id = punit->id};
 
   if (punit->ptr) {
@@ -1666,7 +1666,7 @@ void wipe_unit_spec_safe(struct unit *punit,
                          bool wipe_cargo, bool ignore_gameloss)
 {
   tile_t *ptile = punit->tile;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct unit_type *ptype = unit_type(punit);
 
   /* First pull all units off of the transporter. */
@@ -1783,8 +1783,8 @@ tile dies unless ...
 **************************************************************************/
 void kill_unit(struct unit *pkiller, struct unit *punit)
 {
-  struct player *pplayer   = unit_owner(punit);
-  struct player *destroyer = unit_owner(pkiller);
+  player_t *pplayer   = unit_owner(punit);
+  player_t *destroyer = unit_owner(pkiller);
   char *loc_str = get_location_str_in(pplayer, punit->tile);
   int num_killed[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   int ransom, unitcount = 0;
@@ -1997,7 +1997,7 @@ void package_short_unit(struct unit *punit,
 /**************************************************************************
 ...
 **************************************************************************/
-void unit_goes_out_of_sight(struct player *pplayer, struct unit *punit)
+void unit_goes_out_of_sight(player_t *pplayer, struct unit *punit)
 {
   if (unit_owner(punit) == pplayer) {
     /* Unit is either about to die, or to change owner (civil war, bribe) */
@@ -2035,7 +2035,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
  * where we check if we have to increase timeout, or remove_turn_done */
 
   conn_list_iterate(dest, pconn) {
-    struct player *pplayer = pconn->player;
+    player_t *pplayer = pconn->player;
 
     if (conn_is_global_observer(pconn)
         || (pplayer && pplayer->player_no == punit->owner)) {
@@ -2090,7 +2090,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
   send the unit to the players who need the info
   dest = NULL means all connections (game.game_connections)
 **************************************************************************/
-void send_unit_info(struct player *dest, struct unit *punit)
+void send_unit_info(player_t *dest, struct unit *punit)
 {
   struct conn_list *conn_dest = (dest ? dest->connections
                                  : game.game_connections);
@@ -2105,7 +2105,7 @@ void send_all_known_units(struct conn_list *dest)
 {
   conn_list_do_buffer(dest);
   conn_list_iterate(dest, pconn) {
-    struct player *pplayer = pconn->player;
+    player_t *pplayer = pconn->player;
     if (!pconn->player && !pconn->observer) {
       continue;
     }
@@ -2148,10 +2148,10 @@ static void sentry_transported_idle_units(struct unit *ptrans)
   If it isn't a city square or an ocean square then with 50% chance add
   some fallout, then notify the client about the changes.
 **************************************************************************/
-static void do_nuke_tile(struct player *pplayer, tile_t *ptile)
+static void do_nuke_tile(player_t *pplayer, tile_t *ptile)
 {
   city_t *pcity = map_get_city(ptile);
-  struct player *owner;
+  player_t *owner;
 
   unit_list_iterate(ptile->units, punit) {
     owner = unit_owner(punit);
@@ -2207,7 +2207,7 @@ static void do_nuke_tile(struct player *pplayer, tile_t *ptile)
   pplayer is the player that caused the explosion. You lose reputation
   each time.
 **************************************************************************/
-void do_nuclear_explosion(struct player *pplayer, tile_t *ptile)
+void do_nuclear_explosion(player_t *pplayer, tile_t *ptile)
 {
   square_iterate(ptile, 1, ptile1) {
     do_nuke_tile(pplayer, ptile1);
@@ -2285,7 +2285,7 @@ bool do_airlift(struct unit *punit, city_t *city2)
 **************************************************************************/
 bool do_paradrop(struct unit *punit, tile_t *ptile)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   int move_cost;
 
   if (!unit_flag(punit, F_PARATROOPERS)) {
@@ -2376,7 +2376,7 @@ bool do_paradrop(struct unit *punit, tile_t *ptile)
 **************************************************************************/
 static void hut_get_gold(struct unit *punit, int cred)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   notify_player_ex(pplayer, punit->tile, E_HUT_GOLD,
                    _("Game: You found %d gold."), cred);
   pplayer->economic.gold += cred;
@@ -2387,7 +2387,7 @@ static void hut_get_gold(struct unit *punit, int cred)
 **************************************************************************/
 static void hut_get_tech(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   Tech_Type_id new_tech;
   const char *tech_name;
 
@@ -2408,7 +2408,7 @@ static void hut_get_tech(struct unit *punit)
 **************************************************************************/
 static void hut_get_mercenaries(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
 
   notify_player_ex(pplayer, punit->tile, E_HUT_MERC,
                    _("Game: A band of friendly mercenaries joins your cause."));
@@ -2423,7 +2423,7 @@ static void hut_get_mercenaries(struct unit *punit)
 **************************************************************************/
 static bool hut_get_barbarians(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   bool ok = TRUE;
 
   if (city_exists_within_city_radius(punit->tile, TRUE)
@@ -2454,7 +2454,7 @@ static bool hut_get_barbarians(struct unit *punit)
 **************************************************************************/
 static void hut_get_city(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
 
   if (city_can_be_built_here(punit->tile, NULL)) {
     notify_player_ex(pplayer, punit->tile, E_HUT_CITY,
@@ -2484,7 +2484,7 @@ static void hut_get_city(struct unit *punit)
 **************************************************************************/
 static bool unit_enter_hut(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   bool ok = TRUE;
   int hut_chance = myrand(12);
 
@@ -2654,7 +2654,7 @@ static void handle_unit_move_consequences(struct unit *punit,
   city_t *fromcity = map_get_city(src_tile);
   city_t *tocity = map_get_city(dst_tile);
   city_t *homecity = NULL;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   /*  struct government *g = get_gov_pplayer(pplayer);*/
   bool refresh_homecity = FALSE;
 
@@ -2777,7 +2777,7 @@ bool kills_citizen_after_attack(struct unit *punit)
 **************************************************************************/
 bool move_unit(struct unit *punit, tile_t *pdesttile, int move_cost)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   tile_t *psrctile = punit->tile;
   city_t *pcity;
   struct unit *ptransporter = NULL;
@@ -2965,7 +2965,7 @@ bool move_unit(struct unit *punit, tile_t *pdesttile, int move_cost)
 static bool maybe_cancel_goto_due_to_enemy(struct unit *punit,
                                            tile_t *ptile)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
 
   if (is_non_allied_unit_tile(ptile, pplayer)
       || is_non_allied_city_tile(ptile, pplayer)) {
@@ -2985,7 +2985,7 @@ static bool maybe_cancel_patrol_due_to_enemy(struct unit *punit)
 {
   bool cancel = FALSE;
   int range;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
 
   if (map_has_special(punit->tile, S_FORTRESS)
       && unit_profits_of_watchtower(punit))
@@ -3047,7 +3047,7 @@ bool execute_orders(struct unit *punit)
   tile_t *dst_tile;
   bool res, last_order;
   int unitid = punit->id;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   int moves_made = 0;
   enum unit_activity activity;
 
@@ -3290,7 +3290,7 @@ bool unit_profits_of_watchtower(struct unit *punit)
   Remove all air patrol tiles for a player. It is usually called
   when a user take the player without the "extglobalinfo" capability.
 ****************************************************************************/
-void reset_air_patrol(struct player *pplayer)
+void reset_air_patrol(player_t *pplayer)
 {
   if (!pplayer || server_state == GAME_OVER_STATE) {
     return;

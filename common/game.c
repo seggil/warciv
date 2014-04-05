@@ -90,7 +90,7 @@ struct player_score {
 /**************************************************************************
 Count the # of thousand citizen in a civilisation.
 **************************************************************************/
-int civ_population(struct player *pplayer)
+int civ_population(player_t *pplayer)
 {
   int ppl = 0;
 
@@ -549,7 +549,7 @@ void game_advance_year(void)
 /***************************************************************
 ...
 ***************************************************************/
-void game_remove_player(struct player *pplayer)
+void game_remove_player(player_t *pplayer)
 {
   team_remove_player(pplayer);
 
@@ -626,7 +626,7 @@ void game_renumber_players(int plrno)
 get_player() - Return player struct pointer corresponding to player_id.
                Eg: player_id = punit->owner, or pcity->owner
 **************************************************************************/
-struct player *get_player(int player_id)
+player_t *get_player(int player_id)
 {
   assert(0 <= player_id && player_id < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
     return &game.players[player_id];

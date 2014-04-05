@@ -101,8 +101,8 @@ bool is_wonder(Impr_Type_id id);
 const char *get_improvement_name(Impr_Type_id id);
 const char *get_improvement_name_orig(Impr_Type_id id);
 
-bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id);
-bool improvement_redundant(struct player *pplayer, const city_t *pcity,
+bool improvement_obsolete(const player_t *pplayer, Impr_Type_id id);
+bool improvement_redundant(player_t *pplayer, const city_t *pcity,
                           Impr_Type_id id, bool want_to_build);
 bool wonder_obsolete(Impr_Type_id id);
 Impr_Type_id find_improvement_by_name(const char *s);
@@ -110,16 +110,16 @@ Impr_Type_id find_improvement_by_name_orig(const char *s);
 void improvement_status_init(Impr_Status * improvements, size_t elements);
 
 /* player related improvement and unit functions */
-bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id);
-bool can_player_build_improvement(struct player *p, Impr_Type_id id);
-bool can_player_eventually_build_improvement(struct player *p,
+bool can_player_build_improvement_direct(player_t *p, Impr_Type_id id);
+bool can_player_build_improvement(player_t *p, Impr_Type_id id);
+bool can_player_eventually_build_improvement(player_t *p,
                                              Impr_Type_id id);
 
 /* city related improvement functions */
 void mark_improvement(city_t *pcity,Impr_Type_id id,Impr_Status status);
 void allot_island_improvs(void);
 void improvements_update_obsolete(void);
-void improvements_update_redundant(struct player *pplayer, city_t *pcity,
+void improvements_update_redundant(player_t *pplayer, city_t *pcity,
                                    Continent_id cont, enum impr_range range);
 
 /* Iterates over all improvements. Creates a new variable names m_i

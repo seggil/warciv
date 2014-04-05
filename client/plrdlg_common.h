@@ -42,9 +42,9 @@ struct player_dlg_column {
   enum player_dlg_column_type type;
   enum conn_flag flag;
   const char *title;                            /* already translated */
-  const char *(*string_func)(struct player *);  /* if type = COL_*TEXT */
-  int (*int_func)(struct player *);             /* if type = COL_INT */
-  bool (*bool_func)(struct player *);           /* if type = COL_BOOLEAN */
+  const char *(*string_func)(player_t *);       /* if type = COL_*TEXT */
+  int (*int_func)(player_t *);                  /* if type = COL_INT */
+  bool (*bool_func)(player_t *);                /* if type = COL_BOOLEAN */
   const char *tagname;                          /* for save_options */
 };
 
@@ -54,7 +54,7 @@ extern const int num_player_dlg_columns;
 void init_player_dlg_common(void);
 int player_dlg_default_sort_column(void);
 
-const char *player_addr_hack(struct player *pplayer);
+const char *player_addr_hack(player_t *pplayer);
 bool column_can_be_visible(struct player_dlg_column *pcol);
 
 #endif  /* WC_CLIENT_PLRDLG_COMMON_H */

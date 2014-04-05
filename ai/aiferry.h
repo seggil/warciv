@@ -22,7 +22,7 @@ struct pf_path;
 /*
  * Initialize ferrybaot-related statistics in the ai data.
  */
-void aiferry_init_stats(struct player *pplayer);
+void aiferry_init_stats(player_t *pplayer);
 
 /*
  * Find the nearest boat.  Can be called from inside the continents too
@@ -38,7 +38,7 @@ void aiferry_clear_boat(struct unit *punit);
  * Go to the destination by hitching a ride on a boat.  Will try to find
  * a beachhead but it works better if (dest_x, dest_y) is on the coast.
  */
-bool aiferry_gobyboat(struct player *pplayer, struct unit *punit,
+bool aiferry_gobyboat(player_t *pplayer, struct unit *punit,
                       struct tile *dst_tile);
 
 /*
@@ -46,6 +46,6 @@ bool aiferry_gobyboat(struct player *pplayer, struct unit *punit,
  * go and then looks for new passengers or (if it fails) for a city which
  * will build a passenger soon.
  */
-void ai_manage_ferryboat(struct player *pplayer, struct unit *punit);
+void ai_manage_ferryboat(player_t *pplayer, struct unit *punit);
 
 #endif /* WC_AI_AIFERRY_H */

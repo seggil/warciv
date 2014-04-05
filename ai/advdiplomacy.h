@@ -20,12 +20,12 @@ struct Treaty;
 struct Clause;
 struct ai_data;
 
-void ai_diplomacy_calculate(struct player *pplayer, struct ai_data *ai);
-void ai_diplomacy_actions(struct player *pplayer);
+void ai_diplomacy_calculate(player_t *pplayer, struct ai_data *ai);
+void ai_diplomacy_actions(player_t *pplayer);
 
-void ai_treaty_evaluate(struct player *pplayer, struct player *aplayer,
+void ai_treaty_evaluate(player_t *pplayer, player_t *aplayer,
                         struct Treaty *ptreaty);
-void ai_treaty_accepted(struct player *pplayer, struct player *aplayer,
+void ai_treaty_accepted(player_t *pplayer, player_t *aplayer,
                         struct Treaty *ptreaty);
 
 #endif

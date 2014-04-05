@@ -567,7 +567,7 @@ static void worklist_save(struct section_file *file,
 /***************************************************************
 ...
 ***************************************************************/
-static void player_save(struct player *plr, int plrno,
+static void player_save(player_t *plr, int plrno,
                         struct section_file *file)
 {
   int i;

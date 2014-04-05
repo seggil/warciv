@@ -34,7 +34,7 @@
   2) the tile contains a non-enemy city or
   3) the tile contains a non-enemy unit
 ***********************************************************************/
-bool can_player_attack_tile(struct player *pplayer, const tile_t *ptile)
+bool can_player_attack_tile(player_t *pplayer, const tile_t *ptile)
 {
   city_t *pcity = ptile->city;
 
@@ -323,7 +323,7 @@ bool unit_on_fortress(struct unit *punit)
 /**************************************************************************
   a wrapper function returns 1 if there is a sdi-defense close to the square
 **************************************************************************/
-city_t *sdi_defense_close(struct player *owner,
+city_t *sdi_defense_close(player_t *owner,
                           const tile_t *ptile)
 {
   square_iterate(ptile, 2, ptile1) {

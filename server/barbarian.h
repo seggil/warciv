@@ -29,6 +29,6 @@
 
 bool unleash_barbarians(tile_t *ptile);
 void summon_barbarians(void);
-bool is_land_barbarian(struct player *pplayer);
+bool is_land_barbarian(player_t *pplayer);
 
 #endif  /* WC_SERVER_BARBARIAN_H */

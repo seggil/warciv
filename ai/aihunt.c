@@ -41,7 +41,7 @@
   We don't need a hunter in this city if we already have one. Return
   existing hunter if any.
 **************************************************************************/
-static struct unit *ai_hunter_find(struct player *pplayer,
+static struct unit *ai_hunter_find(player_t *pplayer,
                                    struct city_s *pcity)
 {
   unit_list_iterate(pcity->common.units_supported, punit) {
@@ -117,7 +117,7 @@ static Unit_Type_id ai_hunter_guess_best(struct city_s *pcity,
 /**************************************************************************
   Check if we want to build a missile for our hunter.
 **************************************************************************/
-static void ai_hunter_missile_want(struct player *pplayer,
+static void ai_hunter_missile_want(player_t *pplayer,
                                    struct city_s *pcity,
                                    struct ai_choice *choice)
 {
@@ -182,7 +182,7 @@ static void ai_hunter_missile_want(struct player *pplayer,
 /**************************************************************************
   Support function for ai_hunter_choice()
 **************************************************************************/
-static void eval_hunter_want(struct player *pplayer, struct city_s *pcity,
+static void eval_hunter_want(player_t *pplayer, struct city_s *pcity,
                              struct ai_choice *choice, int best_type,
                              int veteran)
 {
@@ -203,7 +203,7 @@ static void eval_hunter_want(struct player *pplayer, struct city_s *pcity,
 /**************************************************************************
   Check if we want to build a hunter.
 **************************************************************************/
-void ai_hunter_choice(struct player *pplayer, struct city_s *pcity,
+void ai_hunter_choice(player_t *pplayer, struct city_s *pcity,
                       struct ai_choice *choice)
 {
   int best_land_hunter = ai_hunter_guess_best(pcity, LAND_MOVING);
@@ -236,7 +236,7 @@ void ai_hunter_choice(struct player *pplayer, struct city_s *pcity,
   combat damage? Or should repair code preempt this code? Just saying
   FALSE for damaged units does NOT work.
 **************************************************************************/
-bool ai_hunter_qualify(struct player *pplayer, struct unit *punit)
+bool ai_hunter_qualify(player_t *pplayer, struct unit *punit)
 {
   struct unit_type *punittype = get_unit_type(punit->type);
 
@@ -258,7 +258,7 @@ bool ai_hunter_qualify(struct player *pplayer, struct unit *punit)
   Return want for making this (possibly virtual) unit into a hunter. Sets
   punit->ai.target to target's id.
 **************************************************************************/
-int ai_hunter_findjob(struct player *pplayer, struct unit *punit)
+int ai_hunter_findjob(player_t *pplayer, struct unit *punit)
 {
   int best_id = -1, best_val = -1;
 
@@ -358,7 +358,7 @@ int ai_hunter_findjob(struct player *pplayer, struct unit *punit)
   might attempt to intercept _us_. We assign missiles to a hunter in
   ai_unit_new_role().
 **************************************************************************/
-static void ai_hunter_try_launch(struct player *pplayer,
+static void ai_hunter_try_launch(player_t *pplayer,
                                  struct unit *punit,
                                  struct unit *target)
 {
@@ -437,7 +437,7 @@ static void ai_hunter_try_launch(struct player *pplayer,
   Returns FALSE if we could not use unit. If we return TRUE, unit might
   be dead.
 **************************************************************************/
-bool ai_hunter_manage(struct player *pplayer, struct unit *punit)
+bool ai_hunter_manage(player_t *pplayer, struct unit *punit)
 {
   struct unit *target = find_unit_by_id(punit->ai.target);
   int sanity_own = punit->id;

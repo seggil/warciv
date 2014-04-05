@@ -51,7 +51,7 @@ static const char *player_result_strings[PR_NUM_PLAYER_RESULTS] = {
   triad, in which p1 is allied to p2 is allied to p3 is at
   war with p1. These lead to strange situations.
 ***************************************************************/
-bool pplayer_can_ally(struct player *p1, struct player *p2)
+bool pplayer_can_ally(player_t *p1, player_t *p2)
 {
   players_iterate(pplayer) {
     enum diplstate_type ds = pplayer_get_diplstate(p1, pplayer)->type;
@@ -70,7 +70,7 @@ bool pplayer_can_ally(struct player *p1, struct player *p2)
   Check if pplayer has an embassy with pplayer2. We always have
   an embassy with ourselves.
 ***************************************************************/
-bool player_has_embassy(struct player *pplayer, struct player *pplayer2)
+bool player_has_embassy(player_t *pplayer, player_t *pplayer2)
 {
   return (TEST_BIT(pplayer->embassy, pplayer2->player_no)
           || (pplayer == pplayer2)
@@ -81,7 +81,7 @@ bool player_has_embassy(struct player *pplayer, struct player *pplayer2)
 /****************************************************************
 ...
 *****************************************************************/
-bool player_owns_city(struct player *pplayer, city_t *pcity)
+bool player_owns_city(player_t *pplayer, city_t *pcity)
 {
   if (!pcity || !pplayer)
     return FALSE;                       /* better safe than sorry */
@@ -91,7 +91,7 @@ bool player_owns_city(struct player *pplayer, city_t *pcity)
 /***************************************************************
 In the server you must use server_player_init
 ***************************************************************/
-void player_init(struct player *_player)
+void player_init(player_t *_player)
 {
   int i;
 
@@ -188,7 +188,7 @@ void player_init(struct player *_player)
 /***************************************************************
 ...
 ***************************************************************/
-void player_set_unit_focus_status(struct player *pplayer)
+void player_set_unit_focus_status(player_t *pplayer)
 {
   if (!pplayer) {
     return;
@@ -201,7 +201,7 @@ void player_set_unit_focus_status(struct player *pplayer)
 /***************************************************************
 ...
 ***************************************************************/
-struct player *find_player_by_name(const char *name)
+player_t *find_player_by_name(const char *name)
 {
   players_iterate(pplayer) {
     if (mystrcasecmp(name, pplayer->name) == 0) {
@@ -225,7 +225,7 @@ static const char *pname_accessor(int i) {
 /***************************************************************
 Find player by its name prefix
 ***************************************************************/
-struct player *find_player_by_name_prefix(const char *name,
+player_t *find_player_by_name_prefix(const char *name,
                                           enum m_pre_result *result)
 {
   int ind;
@@ -243,7 +243,7 @@ struct player *find_player_by_name_prefix(const char *name,
 /***************************************************************
 Find player by its user name (not player/leader name)
 ***************************************************************/
-struct player *find_player_by_user(const char *name)
+player_t *find_player_by_user(const char *name)
 {
   players_iterate(pplayer) {
     if (mystrcasecmp(name, pplayer->username) == 0) {
@@ -263,7 +263,7 @@ struct player *find_player_by_user(const char *name)
   (d) the unit isn't in a transporter, or we are allied AND
   (e) the unit isn't in a transporter, or we can see the transporter
 ****************************************************************************/
-bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
+bool can_player_see_unit_at(player_t *pplayer, struct unit *punit,
                             tile_t *ptile)
 {
   city_t *pcity;
@@ -316,7 +316,7 @@ bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
 
   See can_player_see_unit_at.
 ****************************************************************************/
-bool can_player_see_unit(struct player *pplayer, struct unit *punit)
+bool can_player_see_unit(player_t *pplayer, struct unit *punit)
 {
   return can_player_see_unit_at(pplayer, punit, punit->tile);
 }
@@ -340,7 +340,7 @@ bool can_player_see_unit(struct player *pplayer, struct unit *punit)
   Otherwise the player would not know anything about the city's units at
   all, since the full city packet has no "occupied" flag.
 ****************************************************************************/
-bool can_player_see_units_in_city(struct player *pplayer,
+bool can_player_see_units_in_city(player_t *pplayer,
                                   city_t *pcity)
 {
   return (can_player_see_city_internals(pplayer, pcity)
@@ -352,7 +352,7 @@ bool can_player_see_units_in_city(struct player *pplayer,
   full city packet is sent to the client, who should then be able to popup
   a dialog for it.
 ****************************************************************************/
-bool can_player_see_city_internals(struct player *pplayer,
+bool can_player_see_city_internals(player_t *pplayer,
                                    city_t *pcity)
 {
   return (pplayer == city_owner(pcity));
@@ -363,7 +363,7 @@ bool can_player_see_city_internals(struct player *pplayer,
  return pointer to the city struct.  Else return NULL.
  Now always uses fast idex_lookup_city.
 ***************************************************************/
-city_t *player_find_city_by_id(const struct player *pplayer,
+city_t *player_find_city_by_id(const player_t *pplayer,
                                     int city_id)
 {
   city_t *pcity = idex_lookup_city(city_id);
@@ -384,7 +384,7 @@ city_t *player_find_city_by_id(const struct player *pplayer,
  return pointer to the unit struct.  Else return NULL.
  Uses fast idex_lookup_city.
 ***************************************************************/
-struct unit *player_find_unit_by_id(const struct player *pplayer,
+struct unit *player_find_unit_by_id(const player_t *pplayer,
                                     int unit_id)
 {
   struct unit *punit = idex_lookup_unit(unit_id);
@@ -399,7 +399,7 @@ struct unit *player_find_unit_by_id(const struct player *pplayer,
 /*************************************************************************
 Return 1 if x,y is inside any of the player's city radii.
 **************************************************************************/
-bool player_in_city_radius(struct player *pplayer, tile_t *ptile)
+bool player_in_city_radius(player_t *pplayer, tile_t *ptile)
 {
   city_t *pcity;
   map_city_radius_iterate(ptile, ptile1) {
@@ -413,9 +413,9 @@ bool player_in_city_radius(struct player *pplayer, tile_t *ptile)
 /**************************************************************************
  Returns the number of techs the player has researched which has this
  flag. Needs to be optimized later (e.g. int tech_flags[TF_LAST] in
- struct player)
+ struct player_s)
 **************************************************************************/
-int num_known_tech_with_flag(struct player *pplayer, enum tech_flag_id flag)
+int num_known_tech_with_flag(player_t *pplayer, enum tech_flag_id flag)
 {
   return pplayer->research.num_known_tech_with_flag[flag];
 }
@@ -427,7 +427,7 @@ int num_known_tech_with_flag(struct player *pplayer, enum tech_flag_id flag)
   This function depends on pcity->tax_total being set for all cities, so
   make sure the player's cities have been refreshed.
 **************************************************************************/
-int player_get_expected_income(struct player *pplayer)
+int player_get_expected_income(player_t *pplayer)
 {
   int income = 0;
 
@@ -451,7 +451,7 @@ int player_get_expected_income(struct player *pplayer)
   This function depends on pcity->science_total being set for all cities, so
   make sure the player's cities have been refreshed.
 **************************************************************************/
-int player_get_expected_bulbs(struct player *pplayer)
+int player_get_expected_bulbs(player_t *pplayer)
 {
   int bulbs = 0;
 
@@ -466,7 +466,7 @@ int player_get_expected_bulbs(struct player *pplayer)
  Returns TRUE iff the player knows at least one tech which has the
  given flag.
 **************************************************************************/
-bool player_knows_techs_with_flag(struct player *pplayer,
+bool player_knows_techs_with_flag(player_t *pplayer,
                                  enum tech_flag_id flag)
 {
   return num_known_tech_with_flag(pplayer, flag) > 0;
@@ -479,7 +479,7 @@ it adjusts rates automatically adding the extra to the 2nd highest rate,
 preferring science to taxes and taxes to luxuries.
 (It assumes that for any government maxrate>=50)
 **************************************************************************/
-void player_limit_to_government_rates(struct player *pplayer)
+void player_limit_to_government_rates(player_t *pplayer)
 {
   int maxrate, surplus;
 
@@ -523,7 +523,7 @@ void player_limit_to_government_rates(struct player *pplayer)
 /**************************************************************************
 Locate the city where the players palace is located, (NULL Otherwise)
 **************************************************************************/
-city_t *find_palace(struct player *pplayer)
+city_t *find_palace(player_t *pplayer)
 {
   city_list_iterate(pplayer->cities, pcity) {
     if (is_capital(pcity)) {
@@ -536,7 +536,7 @@ city_t *find_palace(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-bool player_knows_improvement_tech(struct player *pplayer,
+bool player_knows_improvement_tech(player_t *pplayer,
                                    Impr_Type_id id)
 {
   int t;
@@ -548,7 +548,7 @@ bool player_knows_improvement_tech(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-bool ai_handicap(struct player *pplayer, enum handicap_type htype)
+bool ai_handicap(player_t *pplayer, enum handicap_type htype)
 {
   if (!pplayer->ai.control) {
     return TRUE;
@@ -572,7 +572,7 @@ the "ai_fuzzy(pplayer," part, and read the previous example as:
     if (condition && 1) { action }
 --dwp
 **************************************************************************/
-bool ai_fuzzy(struct player *pplayer, bool normal_decision)
+bool ai_fuzzy(player_t *pplayer, bool normal_decision)
 {
   if (!pplayer->ai.control || pplayer->ai.fuzzy == 0) return normal_decision;
   if (myrand(1000) >= pplayer->ai.fuzzy) return normal_decision;
@@ -666,8 +666,8 @@ const char *diplstate_text(const enum diplstate_type type)
 /***************************************************************
 returns diplomatic state type between two players
 ***************************************************************/
-const struct player_diplstate *pplayer_get_diplstate(const struct player *pplayer,
-                                                     const struct player *pplayer2)
+const struct player_diplstate *pplayer_get_diplstate(const player_t *pplayer,
+                                                     const player_t *pplayer2)
 {
   return &(pplayer->diplstates[pplayer2->player_no]);
 }
@@ -675,8 +675,8 @@ const struct player_diplstate *pplayer_get_diplstate(const struct player *pplaye
 /***************************************************************
   Returns true iff players can attack each other.
 ***************************************************************/
-bool pplayers_at_war(const struct player *pplayer,
-                     const struct player *pplayer2)
+bool pplayers_at_war(const player_t *pplayer,
+                     const player_t *pplayer2)
 {
   enum diplstate_type ds = pplayer_get_diplstate(pplayer, pplayer2)->type;
   if (pplayer == pplayer2) {
@@ -691,8 +691,8 @@ bool pplayers_at_war(const struct player *pplayer,
 /***************************************************************
   Returns true iff players are allied.
 ***************************************************************/
-bool pplayers_allied(const struct player *pplayer,
-                     const struct player *pplayer2)
+bool pplayers_allied(const player_t *pplayer,
+                     const player_t *pplayer2)
 {
   enum diplstate_type ds = pplayer_get_diplstate(pplayer, pplayer2)->type;
   if (pplayer == pplayer2) {
@@ -707,8 +707,8 @@ bool pplayers_allied(const struct player *pplayer,
 /***************************************************************
   Returns true iff players are allied or at peace.
 ***************************************************************/
-bool pplayers_in_peace(const struct player *pplayer,
-                       const struct player *pplayer2)
+bool pplayers_in_peace(const player_t *pplayer,
+                       const player_t *pplayer2)
 {
   enum diplstate_type ds = pplayer_get_diplstate(pplayer, pplayer2)->type;
 
@@ -724,8 +724,8 @@ bool pplayers_in_peace(const struct player *pplayer,
 /***************************************************************
   Returns true iff players have peace or cease-fire.
 ***************************************************************/
-bool pplayers_non_attack(const struct player *pplayer,
-                         const struct player *pplayer2)
+bool pplayers_non_attack(const player_t *pplayer,
+                         const player_t *pplayer2)
 {
   enum diplstate_type ds = pplayer_get_diplstate(pplayer, pplayer2)->type;
   if (pplayer == pplayer2) {
@@ -740,8 +740,8 @@ bool pplayers_non_attack(const struct player *pplayer,
 /**************************************************************************
   Return TRUE if players are in the same team
 **************************************************************************/
-bool players_on_same_team(const struct player *pplayer1,
-                          const struct player *pplayer2)
+bool players_on_same_team(const player_t *pplayer1,
+                          const player_t *pplayer2)
 {
   if (pplayer1->team == TEAM_NONE) {
     return FALSE;
@@ -752,7 +752,7 @@ bool players_on_same_team(const struct player *pplayer1,
 /**************************************************************************
  ...
 **************************************************************************/
-bool is_barbarian(const struct player *pplayer)
+bool is_barbarian(const player_t *pplayer)
 {
   return pplayer && pplayer->ai.barbarian_type != NOT_A_BARBARIAN;
 }
@@ -760,8 +760,8 @@ bool is_barbarian(const struct player *pplayer)
 /**************************************************************************
  ...
 **************************************************************************/
-bool players_on_different_teams(const struct player *p1,
-                                const struct player *p2)
+bool players_on_different_teams(const player_t *p1,
+                                const player_t *p2)
 {
   return p1->team != TEAM_NONE &&
          p2->team != TEAM_NONE &&
@@ -770,14 +770,14 @@ bool players_on_different_teams(const struct player *p1,
 /**************************************************************************
  ...
 **************************************************************************/
-bool player_is_on_team(const struct player *pplayer)
+bool player_is_on_team(const player_t *pplayer)
 {
   return pplayer->team != TEAM_NONE;
 }
 /**************************************************************************
  ...
 **************************************************************************/
-int player_allies_count(const struct player *pplayer)
+int player_allies_count(const player_t *pplayer)
 {
   int count = 0;
   enum diplstate_type ds;
@@ -795,7 +795,7 @@ int player_allies_count(const struct player *pplayer)
 /**************************************************************************
   Return TRUE iff the player me gives shared vision to player them.
 **************************************************************************/
-bool gives_shared_vision(struct player *me, struct player *them)
+bool gives_shared_vision(player_t *me, player_t *them)
 {
   return TEST_BIT(me->gives_shared_vision, them->player_no);
 }
@@ -816,7 +816,7 @@ bool are_diplstates_equal(const struct player_diplstate *pds1,
   from the point of view of pplayer.  Units that cannot be seen by pplayer
   will not be found (this function doesn't cheat).
 ***************************************************************************/
-int player_in_territory(struct player *pplayer, struct player *pplayer2)
+int player_in_territory(player_t *pplayer, player_t *pplayer2)
 {
   int in_territory = 0;
 
@@ -829,7 +829,7 @@ int player_in_territory(struct player *pplayer, struct player *pplayer2)
    * to see if they're owned by the enemy. */
   unit_list_iterate(pplayer2->units, punit) {
     /* Get the owner of the tile/territory. */
-    struct player *owner = map_get_owner(punit->tile);
+    player_t *owner = map_get_owner(punit->tile);
 
     if (owner == pplayer && can_player_see_unit(pplayer, punit)) {
       /* Found one! */
@@ -888,7 +888,7 @@ const char *name_of_skill_level(int level)
 /****************************************************************************
   ...
 ****************************************************************************/
-int player_get_username(const struct player *pplayer,
+int player_get_username(const player_t *pplayer,
                         char *outbuf, int maxlen)
 {
   int len = 0;
@@ -911,7 +911,7 @@ int player_get_username(const struct player *pplayer,
 /****************************************************************************
   ...
 ****************************************************************************/
-bool player_get_ignore_diplomacy(const struct player *pplayer)
+bool player_get_ignore_diplomacy(const player_t *pplayer)
 {
   if (pplayer == NULL) {
     return FALSE;
@@ -922,7 +922,7 @@ bool player_get_ignore_diplomacy(const struct player *pplayer)
 /****************************************************************************
   ...
 ****************************************************************************/
-void player_set_ignore_diplomacy(struct player *pplayer, bool value)
+void player_set_ignore_diplomacy(player_t *pplayer, bool value)
 {
   if (pplayer == NULL) {
     return;
@@ -933,7 +933,7 @@ void player_set_ignore_diplomacy(struct player *pplayer, bool value)
 /****************************************************************************
   ...
 ****************************************************************************/
-void player_set_turns_played(struct player *_player, const char *username,
+void player_set_turns_played(player_t *_player, const char *username,
                              int turns)
 {
   struct hash_table *h;
@@ -960,7 +960,7 @@ void player_set_turns_played(struct player *_player, const char *username,
 /****************************************************************************
   ...
 ****************************************************************************/
-void player_setup_turns_played(struct player *_player)
+void player_setup_turns_played(player_t *_player)
 {
   struct hash_table *h;
 
@@ -973,7 +973,7 @@ void player_setup_turns_played(struct player *_player)
 /****************************************************************************
   ...
 ****************************************************************************/
-int player_get_turns_played(const struct player *_player, const char *username)
+int player_get_turns_played(const player_t *_player, const char *username)
 {
   struct hash_table *h;
   struct turns_played_info *tp;
@@ -994,7 +994,7 @@ int player_get_turns_played(const struct player *_player, const char *username)
 /****************************************************************************
   ...
 ****************************************************************************/
-void player_free_turns_played(struct player *_player)
+void player_free_turns_played(player_t *_player)
 {
   struct hash_table *h;
   if (!_player) {

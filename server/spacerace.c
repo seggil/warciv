@@ -112,7 +112,7 @@ void spaceship_calc_derived(struct player_spaceship *ship)
   if src is NULL) to specified destinations.  If dest is NULL then
   game.game_connections is used.
 **************************************************************************/
-void send_spaceship_info(struct player *src, struct conn_list *dest)
+void send_spaceship_info(player_t *src, struct conn_list *dest)
 {
   int j;
 
@@ -156,7 +156,7 @@ void send_spaceship_info(struct player *src, struct conn_list *dest)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_spaceship_launch(struct player *pplayer)
+void handle_spaceship_launch(player_t *pplayer)
 {
   struct player_spaceship *ship = &pplayer->spaceship;
   int arrival;
@@ -193,7 +193,7 @@ void handle_spaceship_launch(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_spaceship_place(struct player *pplayer,
+void handle_spaceship_place(player_t *pplayer,
                             enum spaceship_place_type type, int num)
 {
   struct player_spaceship *ship = &pplayer->spaceship;
@@ -332,7 +332,7 @@ void handle_spaceship_place(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-void spaceship_lost(struct player *pplayer)
+void spaceship_lost(player_t *pplayer)
 {
   notify_player_ex(NULL, NULL, E_SPACESHIP,
                    _("Game: Without guidance from the capital, the %s "
@@ -348,7 +348,7 @@ Use shuffled order to randomly resolve ties.
 void check_spaceship_arrivals(void)
 {
   double arrival, best_arrival = 0.0;
-  struct player *best_pplayer = NULL;
+  player_t *best_pplayer = NULL;
 
   shuffled_players_iterate(pplayer) {
     struct player_spaceship *ship = &pplayer->spaceship;

@@ -55,13 +55,13 @@ static nearness *territory;
 BV_DEFINE(enemy_mask, MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
 static enemy_mask enemies[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
 
-static bool is_already_assigned(struct unit *myunit, struct player *pplayer,
+static bool is_already_assigned(struct unit *myunit, player_t *pplayer,
                                 tile_t *ptile);
 
 /**************************************************************************
   Build a city and initialize AI infrastructure cache.
 **************************************************************************/
-static bool ai_do_build_city(struct player *pplayer, struct unit *punit)
+static bool ai_do_build_city(player_t *pplayer, struct unit *punit)
 {
   tile_t *ptile = punit->tile;
   city_t *pcity;
@@ -148,7 +148,7 @@ void init_settlers(void)
 /**************************************************************************
   Manages settlers.
 **************************************************************************/
-void ai_manage_settler(struct player *pplayer, struct unit *punit)
+void ai_manage_settler(player_t *pplayer, struct unit *punit)
 {
   punit->ai.control = TRUE;
   /* if BUILD_CITY must remain BUILD_CITY, otherwise turn into autosettler */
@@ -162,7 +162,7 @@ void ai_manage_settler(struct player *pplayer, struct unit *punit)
  return 1 if there is already a unit on this square or one destined for it
  (via goto)
 **************************************************************************/
-static bool is_already_assigned(struct unit *myunit, struct player *pplayer,
+static bool is_already_assigned(struct unit *myunit, player_t *pplayer,
                                 tile_t *ptile)
 {
   if (same_pos(myunit->tile, ptile)
@@ -254,7 +254,7 @@ static int ai_calc_pollution(city_t *pcity, int city_x, int city_y,
   city_tile_value(); note that this depends on the AI's weighting
   values).
 **************************************************************************/
-static int ai_calc_fallout(city_t *pcity, struct player *pplayer,
+static int ai_calc_fallout(city_t *pcity, player_t *pplayer,
                            int city_x, int city_y, int best,
                            tile_t *ptile)
 {
@@ -283,7 +283,7 @@ static int ai_calc_fallout(city_t *pcity, struct player *pplayer,
   This function should probably only be used by
   is_wet_or_is_wet_cardinal_around, below.
 **************************************************************************/
-static bool is_wet(struct player *pplayer, tile_t *ptile)
+static bool is_wet(player_t *pplayer, tile_t *ptile)
 {
   Terrain_type_id terrain;
   enum tile_special_type special;
@@ -316,7 +316,7 @@ static bool is_wet(struct player *pplayer, tile_t *ptile)
   This function exactly mimics is_water_adjacent_to_tile, except that it
   checks vision.
 **************************************************************************/
-static bool is_wet_or_is_wet_cardinal_around(struct player *pplayer,
+static bool is_wet_or_is_wet_cardinal_around(player_t *pplayer,
                                              tile_t *ptile)
 {
   if (is_wet(pplayer, ptile)) {
@@ -344,7 +344,7 @@ static bool is_wet_or_is_wet_cardinal_around(struct player *pplayer,
   city_tile_value(); note that this depends on the AI's weighting
   values).
 **************************************************************************/
-static int ai_calc_irrigate(city_t *pcity, struct player *pplayer,
+static int ai_calc_irrigate(city_t *pcity, player_t *pplayer,
                             int city_x, int city_y,
                             tile_t *ptile)
 {
@@ -646,7 +646,7 @@ static int road_bonus(tile_t *ptile, enum tile_special_type special)
   move units (i.e., of connecting the civilization).  See road_bonus() for
   that calculation.
 **************************************************************************/
-static int ai_calc_road(city_t *pcity, struct player *pplayer,
+static int ai_calc_road(city_t *pcity, player_t *pplayer,
                         int city_x, int city_y,
                         tile_t *ptile)
 {
@@ -688,7 +688,7 @@ static int ai_calc_road(city_t *pcity, struct player *pplayer,
   move units (i.e., of connecting the civilization).  See road_bonus() for
   that calculation.
 **************************************************************************/
-static int ai_calc_railroad(city_t *pcity, struct player *pplayer,
+static int ai_calc_railroad(city_t *pcity, player_t *pplayer,
                             int city_x, int city_y,
                             tile_t *ptile)
 {
@@ -727,7 +727,7 @@ static int ai_calc_railroad(city_t *pcity, struct player *pplayer,
   ground_unit_transporter_capacity will return negative.
   TODO: Kill me.  There is a reliable version of this, find_ferry.
 **************************************************************************/
-Unit_Type_id find_boat(struct player *pplayer, tile_t **ptile, int cap)
+Unit_Type_id find_boat(player_t *pplayer, tile_t **ptile, int cap)
 {
   int best = 22; /* arbitrary maximum distance, I will admit! */
   Unit_Type_id id = 0;
@@ -765,7 +765,7 @@ struct unit *other_passengers(struct unit *punit)
   by discounting the total value by the time it would take to do the work
   and multiplying by some factor.
 ****************************************************************************/
-static void consider_settler_action(struct player *pplayer,
+static void consider_settler_action(player_t *pplayer,
                                     enum unit_activity act, int extra,
                                     int new_tile_value, int old_tile_value,
                                     bool in_use, int delay,
@@ -856,7 +856,7 @@ static int unit_foodbox_cost(struct unit *punit)
 **************************************************************************/
 static int unit_food_upkeep(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   int upkeep = utype_food_cost(unit_type(punit),
                                get_gov_pplayer(pplayer));
   if (punit->id != 0 && punit->homecity == 0)
@@ -878,7 +878,7 @@ static int evaluate_improvements(struct unit *punit,
                                  tile_t **best_tile)
 {
   city_t *mycity = map_get_city(punit->tile);
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   bool in_use;                  /* true if the target square is being used
                                    by one of our cities */
   Continent_id ucont     = map_get_continent(punit->tile);
@@ -1046,7 +1046,7 @@ static int evaluate_improvements(struct unit *punit,
   Find some work for our settlers and/or workers.
 **************************************************************************/
 #define LOG_SETTLER LOG_DEBUG
-static void auto_settler_findwork(struct player *pplayer, struct unit *punit)
+static void auto_settler_findwork(player_t *pplayer, struct unit *punit)
 {
   struct cityresult result;
   int best_impr = 0;            /* best terrain improvement we can do */
@@ -1203,7 +1203,7 @@ static int best_worker_tile_value(city_t *pcity)
   be called before doing that.  Currently this is only done when handling
   auto-settlers or when the AI contemplates building worker units.
 **************************************************************************/
-void initialize_infrastructure_cache(struct player *pplayer)
+void initialize_infrastructure_cache(player_t *pplayer)
 {
   city_list_iterate(pplayer->cities, pcity) {
     int best = best_worker_tile_value(pcity);
@@ -1254,7 +1254,7 @@ void initialize_infrastructure_cache(struct player *pplayer)
   Run through all the players settlers and let those on ai.control work
   automagically.
 **************************************************************************/
-void auto_settlers_player(struct player *pplayer)
+void auto_settlers_player(player_t *pplayer)
 {
   static struct timer *t = NULL;      /* alloc once, never free */
 
@@ -1309,7 +1309,7 @@ void auto_settlers_player(struct player *pplayer)
   players' autosettlers may race us to the spot. If we are on the spot,
   the it is marked as assigned for all players.
 **************************************************************************/
-static void assign_settlers_player(struct player *pplayer)
+static void assign_settlers_player(player_t *pplayer)
 {
   int i = 1 << pplayer->player_no;
 
@@ -1372,7 +1372,7 @@ static void assign_region(tile_t *ptile, int player_no,
   effectively make autosettlers run and hide and never come out again.
   The cowards.
 **************************************************************************/
-static void assign_territory_player(struct player *pplayer)
+static void assign_territory_player(player_t *pplayer)
 {
   int n = pplayer->player_no;
   unit_list_iterate(pplayer->units, punit)
@@ -1447,7 +1447,7 @@ void contemplate_new_city(city_t *pcity)
   int MIN_FOUNDER_WANT_MODIFIER = 40;
   int FOUNDER_WANT_MULTIPLIER = 1;
   int player_cities = 0;
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   struct unit *virtualunit;
   Unit_Type_id unit_type = best_role_unit(pcity, F_CITIES);
 
@@ -1494,7 +1494,7 @@ void contemplate_new_city(city_t *pcity)
 **************************************************************************/
 void contemplate_terrain_improvements(city_t *pcity)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   struct unit *virtualunit;
   int want;
   tile_t *best_tile = NULL; /* May be accessed by freelog() calls. */

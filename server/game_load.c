@@ -560,7 +560,7 @@ static void worklist_load(struct section_file *file,
 /****************************************************************************
   Loads the units for the given player.
 ****************************************************************************/
-static void load_player_units(struct player *plr, int plrno,
+static void load_player_units(player_t *plr, int plrno,
                               struct section_file *file)
 {
   int nunits, i, j;
@@ -1148,7 +1148,7 @@ static Tech_Type_id load_technology(struct section_file *file,
 
   Old global observers will be loaded as dead player.
 ****************************************************************************/
-static void player_load(struct player *plr, int plrno,
+static void player_load(player_t *plr, int plrno,
                         struct section_file *file,
                         char** improvement_order,
                         int improvement_order_size,
@@ -1898,7 +1898,7 @@ static void player_load(struct player *plr, int plrno,
 /***************************************************************
 ...
 ***************************************************************/
-static void savegame_assign_random_nation(struct player *pplayer)
+static void savegame_assign_random_nation(player_t *pplayer)
 {
   Nation_Type_id i, nation = NO_NATION_SELECTED;
   int n = 0;
@@ -1933,7 +1933,7 @@ static void savegame_assign_random_nation(struct player *pplayer)
 /**********************************************************************
 The private map for fog of war
 ***********************************************************************/
-static void player_map_load(struct player *plr, int plrno,
+static void player_map_load(player_t *plr, int plrno,
                             struct section_file *file)
 {
   int i;

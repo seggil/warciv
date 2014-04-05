@@ -938,7 +938,7 @@ bool conn_is_global_observer(const struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-struct player *conn_get_player(const struct connection *pconn)
+player_t *conn_get_player(const struct connection *pconn)
 {
   if (!pconn) {
     return NULL;

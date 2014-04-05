@@ -83,7 +83,7 @@
 /* Used in ranking and rating calculation. */
 struct grouping {
   double score;
-  struct player *players[MAX_NUM_PLAYERS];
+  player_t *players[MAX_NUM_PLAYERS];
   int num_players;
   int num_alive;
   int result;
@@ -95,18 +95,18 @@ struct grouping {
   double new_rating_deviation;
 };
 
-void calc_civ_score(struct player *pplayer);
+void calc_civ_score(player_t *pplayer);
 
-int get_civ_score(const struct player *pplayer);
-int total_player_citizens(const struct player *pplayer);
+int get_civ_score(const player_t *pplayer);
+int total_player_citizens(const player_t *pplayer);
 
 void save_ppm(void);
 
 void score_evaluate_players(void);
 void score_calculate_team_scores(void);
-void score_assign_new_player_rating(struct player *pplayer,
+void score_assign_new_player_rating(player_t *pplayer,
                                     int game_type);
-void score_assign_ai_rating(struct player *pplayer,
+void score_assign_ai_rating(player_t *pplayer,
                             int game_type);
 void score_update_grouping_results(void);
 void score_assign_groupings(void);
@@ -120,7 +120,7 @@ void score_propagate_grouping_ratings(void);
 
 const struct grouping *score_get_groupings(int *num_groupings);
 
-int player_get_rated_username(const struct player *pplayer,
+int player_get_rated_username(const player_t *pplayer,
                               char *outbuf, int maxlen);
 
 #endif /* WC_SERVER_SCORE_H */

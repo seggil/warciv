@@ -47,7 +47,7 @@
 static bool find_nearest_airbase(struct tile *ptile, struct unit *punit,
                                  struct tile **airbase_tile)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   int moves_left = punit->moves_left / SINGLE_MOVE;
 
   iterate_outward(ptile, moves_left, tile1) {
@@ -164,7 +164,7 @@ static int ai_evaluate_tile_for_air_attack(struct unit *punit,
  *********************************************************************/
 static int find_something_to_bomb(struct unit *punit, struct tile *ptile)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   int max_dist = punit->moves_left / SINGLE_MOVE;
   int best = 0;
 
@@ -283,7 +283,7 @@ static bool ai_find_strategic_airbase(struct unit *punit,
  * }
  * TODO: distant target selection, support for fuel > 2
  ***********************************************************************/
-void ai_manage_airunit(struct player *pplayer, struct unit *punit)
+void ai_manage_airunit(player_t *pplayer, struct unit *punit)
 {
   struct tile *dst_tile = punit->tile;
   /* Loop prevention */
@@ -370,7 +370,7 @@ void ai_manage_airunit(struct player *pplayer, struct unit *punit)
  * The interface is somewhat different from other ai_choose, but
  * that's what it should be like, I believe -- GB
  ******************************************************************/
-bool ai_choose_attacker_air(struct player *pplayer, city_t *pcity,
+bool ai_choose_attacker_air(player_t *pplayer, city_t *pcity,
                             struct ai_choice *choice)
 {
   bool want_something = FALSE;

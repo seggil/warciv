@@ -58,7 +58,7 @@
 /**************************************************************************
 FIXME: Calculate the attractiveness of attacking.
 **************************************************************************/
-static struct unit *search_best_target(struct player *pplayer,
+static struct unit *search_best_target(player_t *pplayer,
                                        struct unit *punit)
 {
   struct unit_list *targets;
@@ -184,8 +184,8 @@ static struct unit *search_best_target(struct player *pplayer,
 /**************************************************************************
   Returns TRUE if the unit survived.
 **************************************************************************/
-bool auto_attack_with_unit(struct player *pplayer,
-                                  struct unit *punit)
+bool auto_attack_with_unit(player_t *pplayer,
+                           struct unit *punit)
 {
   int id = punit->id;
   struct unit *enemy;
@@ -232,7 +232,7 @@ bool auto_attack_with_unit(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-static void auto_attack_player(struct player *pplayer)
+static void auto_attack_player(player_t *pplayer)
 {
   freelog(LOG_VERBOSE, "doing auto_attack for: %s",pplayer->name);
 

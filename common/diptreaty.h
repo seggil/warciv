@@ -27,7 +27,7 @@ enum clause_type { CLAUSE_ADVANCE, CLAUSE_GOLD, CLAUSE_MAP,
 /* For when we need to iterate over treaties */
 struct Clause {
   enum clause_type type;
-  struct player *from;
+  player_t *from;
   int value;
 };
 
@@ -40,19 +40,19 @@ struct Clause {
 #define clause_list_iterate_end  LIST_ITERATE_END
 
 struct Treaty {
-  struct player *plr0, *plr1;
+  player_t *plr0, *plr1;
   bool accept0, accept1;
   struct clause_list *clauses;
 };
 
-bool diplomacy_possible(struct player *pplayer, struct player *aplayer);
-bool could_meet_with_player(struct player *pplayer, struct player *aplayer);
-bool could_intel_with_player(struct player *pplayer, struct player *aplayer);
+bool diplomacy_possible(player_t *pplayer, player_t *aplayer);
+bool could_meet_with_player(player_t *pplayer, player_t *aplayer);
+bool could_intel_with_player(player_t *pplayer, player_t *aplayer);
 
-struct Treaty *treaty_new(struct player *plr0, struct player *plr1);
-bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
+struct Treaty *treaty_new(player_t *plr0, player_t *plr1);
+bool add_clause(struct Treaty *ptreaty, player_t *pfrom,
                 enum clause_type type, int val);
-bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
+bool remove_clause(struct Treaty *ptreaty, player_t *pfrom,
                    enum clause_type type, int val);
 void treaty_free(struct Treaty *ptreaty);
 

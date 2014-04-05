@@ -24,7 +24,7 @@
  */
 #define POWER_FACTOR    10
 
-bool can_player_attack_tile(struct player *pplayer,
+bool can_player_attack_tile(player_t *pplayer,
                             const tile_t *ptile);
 bool can_unit_attack_unit_at_tile(struct unit *punit, struct unit *pdefender,
                                   const tile_t *dest_tile);
@@ -40,7 +40,7 @@ double unit_win_chance(struct unit *attacker, struct unit *defender);
 
 bool unit_really_ignores_citywalls(struct unit *punit);
 bool unit_on_fortress(struct unit *punit);
-city_t *sdi_defense_close(struct player *owner,
+city_t *sdi_defense_close(player_t *owner,
                           const tile_t *ptile);
 
 int get_attack_power(struct unit *punit);

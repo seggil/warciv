@@ -190,7 +190,7 @@ static void create_tech_tree(int tech, int levels, GtkTreeIter *parent)
   int           bg;
   int           turns_to_tech;
   bool          original;
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
   GtkTreeIter   l;
   GValue        value = { 0, };
 

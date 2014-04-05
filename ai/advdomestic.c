@@ -48,7 +48,7 @@
 static void ai_choose_help_wonder(city_t *pcity,
                                   struct ai_choice *choice)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   /* Continent where the city is --- we won't be aiding any wonder
    * construction on another continent */
   Continent_id continent = map_get_continent(pcity->common.tile);
@@ -140,7 +140,7 @@ static void ai_choose_help_wonder(city_t *pcity,
 
   If want is 0, this advisor doesn't want anything.
 ***************************************************************************/
-void domestic_advisor_choose_build(struct player *pplayer, city_t *pcity,
+void domestic_advisor_choose_build(player_t *pplayer, city_t *pcity,
                                    struct ai_choice *choice)
 {
   /* Government of the player */

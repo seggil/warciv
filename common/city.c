@@ -305,7 +305,7 @@ int city_buy_cost(const city_t *pcity)
 /**************************************************************************
   Return the owner of the city.
 **************************************************************************/
-struct player *city_owner(const city_t *pcity)
+player_t *city_owner(const city_t *pcity)
 {
   return (&game.players[pcity->common.owner]);
 }
@@ -1379,7 +1379,7 @@ int get_city_style(const city_t *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-int get_player_city_style(struct player *_player)
+int get_player_city_style(player_t *_player)
 {
   return 0;
 #if 0
@@ -1578,7 +1578,7 @@ bool city_can_grow_to(const city_t *pcity, int pop_size)
  is there an enemy city on this tile?
 **************************************************************************/
 city_t *is_enemy_city_tile(const tile_t *ptile,
-                           struct player *pplayer)
+                           player_t *pplayer)
 {
   city_t *pcity = ptile->city;
 
@@ -1593,7 +1593,7 @@ city_t *is_enemy_city_tile(const tile_t *ptile,
  is there an friendly city on this tile?
 **************************************************************************/
 city_t *is_allied_city_tile(const tile_t *ptile,
-                            struct player *pplayer)
+                            player_t *pplayer)
 {
   city_t *pcity = ptile->city;
 
@@ -1608,7 +1608,7 @@ city_t *is_allied_city_tile(const tile_t *ptile,
  is there an enemy city on this tile?
 **************************************************************************/
 city_t *is_non_attack_city_tile(const tile_t *ptile,
-                                struct player *pplayer)
+                                player_t *pplayer)
 {
   city_t *pcity = ptile->city;
 
@@ -1623,7 +1623,7 @@ city_t *is_non_attack_city_tile(const tile_t *ptile,
  is there an non_allied city on this tile?
 **************************************************************************/
 city_t *is_non_allied_city_tile(const tile_t *ptile,
-                                struct player *pplayer)
+                                player_t *pplayer)
 {
   city_t *pcity = ptile->city;
 
@@ -1647,7 +1647,7 @@ bool is_unit_near_a_friendly_city(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-bool is_friendly_city_near(struct player *owner, const tile_t *ptile)
+bool is_friendly_city_near(player_t *owner, const tile_t *ptile)
 {
   square_iterate(ptile, 3, ptile1) {
     city_t * pcity = ptile1->city;
@@ -1701,7 +1701,7 @@ int city_granary_size(int city_size)
 /**************************************************************************
   Give base number of content citizens in any city owner by pplayer.
 **************************************************************************/
-static int content_citizens(struct player *pplayer)
+static int content_citizens(player_t *pplayer)
 {
   int cities = city_list_size(pplayer->cities);
   int content = game.info.unhappysize;
@@ -1788,7 +1788,7 @@ int get_city_science_bonus(const city_t *pcity)
   Get the incomes of a city according to the taxrates (ignore # of
   specialists). trade should usually be pcity->trade_prod.
 **************************************************************************/
-void get_tax_income(struct player *pplayer, int trade, int *sci,
+void get_tax_income(player_t *pplayer, int trade, int *sci,
                     int *lux, int *tax)
 {
   const int SCIENCE = 0, TAX = 1, LUXURY = 2;
@@ -2081,7 +2081,7 @@ static inline void unhappy_city_check(city_t *pcity)
 **************************************************************************/
 int city_pollution(city_t *pcity, int shield_total)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   int mod, pollution;
 
   /* Add one one pollution per shield, multipled by the bonus. */
@@ -2154,7 +2154,7 @@ static inline void set_food_trade_shields(city_t *pcity)
   Calculate upkeep costs.
 **************************************************************************/
 static inline void city_support(city_t *pcity,
-                                void (*send_unit_info) (struct player *pplayer,
+                                void (*send_unit_info) (player_t *pplayer,
                                                         struct unit *punit))
 {
   struct government *g = get_gov_pcity(pcity);
@@ -2289,7 +2289,7 @@ static inline void city_support(city_t *pcity,
 **************************************************************************/
 void generic_city_refresh(city_t *pcity,
                           bool refresh_trade_route_cities,
-                          void (*send_unit_info) (struct player * pplayer,
+                          void (*send_unit_info) (player_t * pplayer,
                                                   struct unit * punit))
 {
   int prev_tile_trade = pcity->common.tile_trade;
@@ -2472,7 +2472,7 @@ const char *specialists_string(const int *specialists)
 **************************************************************************/
 void city_add_improvement(city_t *pcity, Impr_Type_id impr)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
 
   if (improvement_obsolete(pplayer, impr)) {
     mark_improvement(pcity, impr, I_OBSOLETE);
@@ -2492,7 +2492,7 @@ void city_add_improvement(city_t *pcity, Impr_Type_id impr)
 **************************************************************************/
 void city_remove_improvement(city_t *pcity,Impr_Type_id impr)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
 
   freelog(LOG_DEBUG,"Improvement %s removed from city %s",
           improvement_types[impr].name, pcity->common.name);
@@ -2581,8 +2581,8 @@ static size_t struct_city_size(void)
   Create virtual skeleton for a city.  It does not register the city so
   the id is set to 0.  All other values are more or less sane defaults.
 **************************************************************************/
-city_t *create_city_virtual(struct player *pplayer, tile_t *ptile,
-                                 const char *name)
+city_t *create_city_virtual(player_t *pplayer, tile_t *ptile,
+                            const char *name)
 {
   city_t *pcity;
 

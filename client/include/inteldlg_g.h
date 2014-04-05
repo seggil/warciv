@@ -15,7 +15,7 @@
 
 #include "wc_types.h"
 
-void popup_intel_dialog(struct player *p);
-void update_intel_dialog(struct player *p);
+void popup_intel_dialog(player_t *p);
+void update_intel_dialog(player_t *p);
 
 #endif  /* WC_CLIENT_INCLUDE_INTELDLG_G_H */

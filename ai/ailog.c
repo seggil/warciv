@@ -38,7 +38,7 @@
     2: perrin [ti12 co6 lo5 e]  Increased love for a (now 9)
   where ti is timer, co countdown and lo love for target, who is e.
 **************************************************************************/
-void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
+void PLAYER_LOG(int level, player_t *pplayer, struct ai_data *ai,
                 const char *msg, ...)
 {
   char targetbuffer[250];

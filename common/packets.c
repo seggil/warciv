@@ -579,7 +579,7 @@ void check_packet(struct data_in *din, struct connection *pc)
 /**************************************************************************
  Updates pplayer->attribute_block according to the given packet.
 **************************************************************************/
-void generic_handle_player_attribute_chunk(struct player *pplayer,
+void generic_handle_player_attribute_chunk(player_t *pplayer,
                                            const struct
                                            packet_player_attribute_chunk
                                            *chunk,
@@ -653,7 +653,7 @@ void generic_handle_player_attribute_chunk(struct player *pplayer,
 /**************************************************************************
  Split the attribute block into chunks and send them over pconn.
 **************************************************************************/
-void send_attribute_block(const struct player *pplayer,
+void send_attribute_block(const player_t *pplayer,
                           struct connection *pconn)
 {
   struct packet_player_attribute_chunk packet;

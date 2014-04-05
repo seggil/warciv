@@ -44,7 +44,7 @@
 **************************************************************************/
 static void form_chat_name(struct connection *pconn, char *buffer, size_t len)
 {
-  struct player *pplayer = pconn->player;
+  player_t *pplayer = pconn->player;
 
   if (pconn->observer
       || (pplayer && 0 == strcmp(pplayer->name, ANON_PLAYER_NAME))) {
@@ -160,7 +160,7 @@ static void chat_msg_to_conn(struct connection *sender,
   Send private message to multi-connected player.
 **************************************************************************/
 static void chat_msg_to_player_multi(struct connection *sender,
-                                     struct player *pdest,
+                                     player_t *pdest,
                                      const char *msg)
 {
   char sender_name[MAX_LEN_CHAT_NAME], message[MAX_LEN_MSG];
@@ -310,7 +310,8 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   /* Send to allies command */
   if (message[0] == ALLIESCHAT_COMMAND_PREFIX) {
     char sender_name[MAX_LEN_CHAT_NAME];
-    const struct player *pconn_plr, *dest_plr;
+    const player_t *pconn_plr;
+    const player_t *dest_plr;
 
     /* this won't work if we aren't attached to a player */
     if (!pconn->player && !pconn->observer) {
@@ -395,7 +396,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 
   if (cp && (cp != &message[0])) {
     enum m_pre_result match_result_player, match_result_conn;
-    struct player *pdest = NULL;
+    player_t *pdest = NULL;
     struct connection *conn_dest = NULL;
     char name[MAX_LEN_NAME];
     char *cpblank, *quotes = NULL;

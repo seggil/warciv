@@ -56,44 +56,44 @@ void assign_continent_numbers(bool skip_unsafe);
 
 void global_warming(int effect);
 void nuclear_winter(int effect);
-void give_map_from_player_to_player(struct player *pfrom, struct player *pdest);
-void give_seamap_from_player_to_player(struct player *pfrom, struct player *pdest);
+void give_map_from_player_to_player(player_t *pfrom, player_t *pdest);
+void give_seamap_from_player_to_player(player_t *pfrom, player_t *pdest);
 void give_citymap_from_player_to_player(city_t *pcity,
-                                        struct player *pfrom, struct player *pdest);
+                                        player_t *pfrom, player_t *pdest);
 void send_all_known_tiles(struct conn_list *dest);
 void send_tile_info(struct conn_list *dest, tile_t *ptile);
-void reveal_hidden_units(struct player *pplayer, tile_t *ptile);
-void conceal_hidden_units(struct player *pplayer, tile_t *ptile);
-void unfog_area(struct player *pplayer, tile_t *ptile, int len);
-void fog_area(struct player *pplayer, tile_t *ptile, int len);
-void upgrade_city_rails(struct player *pplayer, bool discovery);
+void reveal_hidden_units(player_t *pplayer, tile_t *ptile);
+void conceal_hidden_units(player_t *pplayer, tile_t *ptile);
+void unfog_area(player_t *pplayer, tile_t *ptile, int len);
+void fog_area(player_t *pplayer, tile_t *ptile, int len);
+void upgrade_city_rails(player_t *pplayer, bool discovery);
 void send_map_info(struct conn_list *dest);
 void map_fog_city_area(city_t *pcity);
 void map_unfog_city_area(city_t *pcity);
 void remove_unit_sight_points(struct unit *punit);
-void show_area(struct player *pplayer,tile_t *ptile, int len);
-void map_unfog_pseudo_city_area(struct player *pplayer, tile_t *ptile);
-void map_fog_pseudo_city_area(struct player *pplayer, tile_t *ptile);
+void show_area(player_t *pplayer,tile_t *ptile, int len);
+void map_unfog_pseudo_city_area(player_t *pplayer, tile_t *ptile);
+void map_fog_pseudo_city_area(player_t *pplayer, tile_t *ptile);
 
-bool map_is_known_and_seen(const tile_t *ptile, struct player *pplayer);
-void map_change_seen(tile_t *ptile, struct player *pplayer, int change);
-bool map_is_known(const tile_t *ptile, struct player *pplayer);
-void map_set_known(tile_t *ptile, struct player *pplayer);
-void map_clear_known(tile_t *ptile, struct player *pplayer);
-void map_know_all(struct player *pplayer);
-void map_know_and_see_all(struct player *pplayer);
+bool map_is_known_and_seen(const tile_t *ptile, player_t *pplayer);
+void map_change_seen(tile_t *ptile, player_t *pplayer, int change);
+bool map_is_known(const tile_t *ptile, player_t *pplayer);
+void map_set_known(tile_t *ptile, player_t *pplayer);
+void map_clear_known(tile_t *ptile, player_t *pplayer);
+void map_know_all(player_t *pplayer);
+void map_know_and_see_all(player_t *pplayer);
 void show_map_to_all(void);
 
-void player_map_allocate(struct player *pplayer);
-void player_map_free(struct player *pplayer);
+void player_map_allocate(player_t *pplayer);
+void player_map_free(player_t *pplayer);
 struct player_tile *map_get_player_tile(const tile_t *ptile,
-                                        struct player *pplayer);
-bool update_player_tile_knowledge(struct player *pplayer, tile_t *ptile);
+                                        player_t *pplayer);
+bool update_player_tile_knowledge(player_t *pplayer, tile_t *ptile);
 void update_tile_knowledge(tile_t *ptile);
-void update_player_tile_last_seen(struct player *pplayer, tile_t *ptile);
+void update_player_tile_last_seen(player_t *pplayer, tile_t *ptile);
 
-void give_shared_vision(struct player *pfrom, struct player *pto);
-void remove_shared_vision(struct player *pfrom, struct player *pto);
+void give_shared_vision(player_t *pfrom, player_t *pto);
+void remove_shared_vision(player_t *pfrom, player_t *pto);
 
 void enable_fog_of_war(void);
 void disable_fog_of_war(void);

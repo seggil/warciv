@@ -67,7 +67,7 @@
 /**************************************************************************
   Call to initialize the ferryboat statistics
 **************************************************************************/
-void aiferry_init_stats(struct player *pplayer)
+void aiferry_init_stats(player_t *pplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
 
@@ -93,7 +93,7 @@ void aiferry_init_stats(struct player *pplayer)
   Print the list of boats of pplayer.
 **************************************************************************/
 #if DEBUG_FERRY_STATS
-static void aiferry_print_stats(struct player *pplayer)
+static void aiferry_print_stats(player_t *pplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
   int n = 1;
@@ -185,7 +185,7 @@ static void aiferry_make_available(struct unit *pferry)
   Returns the number of available boats.  A simple accessor made to perform
   debug checks.
 **************************************************************************/
-static int aiferry_avail_boats(struct player *pplayer)
+static int aiferry_avail_boats(player_t *pplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
 
@@ -404,7 +404,7 @@ static int aiferry_find_boat_nearby(struct unit *punit, int cap)
   find_beachhead to work here.  This requirement should be removed.  For
   example, we can require that (dest_x,dest_y) is on a coast.
 ****************************************************************************/
-bool aiferry_gobyboat(struct player *pplayer, struct unit *punit,
+bool aiferry_gobyboat(player_t *pplayer, struct unit *punit,
                       struct tile *dest_tile)
 {
   if (punit->transported_by <= 0) {
@@ -721,7 +721,7 @@ static bool aiferry_find_interested_city(struct unit *pferry)
   If there is no one aboard, look for potential cargo.  If none found,
   explore and then go to the nearest port.
 ****************************************************************************/
-void ai_manage_ferryboat(struct player *pplayer, struct unit *punit)
+void ai_manage_ferryboat(player_t *pplayer, struct unit *punit)
 {
   struct city_s *pcity;
 

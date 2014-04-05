@@ -75,7 +75,7 @@ between 1 and 100.
 If choice is A_UNSET, this advisor doesn't want any particular tech
 researched at the moment.
 ***********************************************************************/
-void military_advisor_choose_tech(struct player *pplayer,
+void military_advisor_choose_tech(player_t *pplayer,
                                   struct ai_choice *choice)
 {
   /* This function hasn't been implemented yet. */
@@ -375,7 +375,7 @@ Call assess_danger() for all cities owned by pplayer.
 
 This is necessary to initialize some ai data before some ai calculations.
 ***********************************************************************/
-void assess_danger_player(struct player *pplayer)
+void assess_danger_player(player_t *pplayer)
 {
   city_list_iterate(pplayer->cities, pcity) {
     assess_danger(pcity);
@@ -443,7 +443,7 @@ static unsigned int assess_danger(city_t *pcity)
 {
   int i;
   int danger[5], defender[4];
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   bool pikemen = FALSE;
   unsigned int urgency = 0;
   int igwall_threat = 0;
@@ -659,7 +659,7 @@ int ai_unit_attack_desirability(Unit_Type_id i)
   type in choice. Also sets the technology want for the units we can't
   build yet.
 **************************************************************************/
-static void process_defender_want(struct player *pplayer, city_t *pcity,
+static void process_defender_want(player_t *pplayer, city_t *pcity,
                                   unsigned int danger, struct ai_choice *choice)
 {
   bool walls = city_got_citywalls(pcity);
@@ -784,7 +784,7 @@ static void process_attacker_want(city_t *pcity,
                                   struct ai_choice *best_choice,
                                   struct unit *boat, Unit_Type_id boattype)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   /* The enemy city.  acity == NULL means stray enemy unit */
   city_t *acity = map_get_city(ptile);
   bool shore = is_ocean_near_tile(pcity->common.tile);
@@ -968,7 +968,7 @@ This function
 4. finds the best attacker for this type of victim (in process_attacker_want)
 5. if we still want to attack, records the best attacker in choice.
 **************************************************************************/
-static void kill_something_with(struct player *pplayer, city_t *pcity,
+static void kill_something_with(player_t *pplayer, city_t *pcity,
                                 struct unit *myunit, struct ai_choice *choice)
 {
   struct ai_data *ai = ai_data_get(pplayer);
@@ -1144,7 +1144,7 @@ static void ai_unit_consider_bodyguard(city_t *pcity,
                                        struct ai_choice *choice)
 {
   struct unit *virtualunit;
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   struct unit *aunit = NULL;
   city_t *acity = NULL;
 
@@ -1174,7 +1174,7 @@ static void adjust_ai_unit_choice(city_t *pcity,
                                   struct ai_choice *choice)
 {
   enum unit_move_type move_type;
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   Impr_Type_id id;
 
   /* Sanity */
@@ -1216,7 +1216,7 @@ static void adjust_ai_unit_choice(city_t *pcity,
     It records its choice into ai_choice struct.
     If coice->want is 0 this advisor doesn't want anything.
 ***********************************************************************/
-void military_advisor_choose_build(struct player *pplayer, city_t *pcity,
+void military_advisor_choose_build(player_t *pplayer, city_t *pcity,
                                    struct ai_choice *choice)
 {
   Unit_Type_id unit_type;

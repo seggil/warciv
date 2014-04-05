@@ -54,7 +54,7 @@
 #define LOG_DIPLOMAT LOG_DEBUG
 #define LOG_DIPLOMAT_BUILD LOG_DEBUG
 
-static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
+static void find_city_to_diplomat(player_t *pplayer, struct unit *punit,
                                   struct city_s **ctarget, int *move_dist,
                                   struct path_finding_map *map);
 
@@ -77,7 +77,7 @@ static int count_sabotagable_improvements(struct city_s *pcity)
 /******************************************************************************
   Number of techs that we don't have and the enemy (tplayer) does.
 ******************************************************************************/
-static int count_stealable_techs(struct player *pplayer, struct player *tplayer)
+static int count_stealable_techs(player_t *pplayer, player_t *tplayer)
 {
   int count = 0;
 
@@ -96,7 +96,7 @@ static int count_stealable_techs(struct player *pplayer, struct player *tplayer)
   values in choice. The values 16000 and 3000 used below are totally
   arbitrary but seem to work.
 ***********************************************************************/
-void ai_choose_diplomat_defensive(struct player *pplayer,
+void ai_choose_diplomat_defensive(player_t *pplayer,
                                   struct city_s *pcity,
                                   struct ai_choice *choice, int def)
 {
@@ -134,7 +134,7 @@ void ai_choose_diplomat_defensive(struct player *pplayer,
   Calculates our need for diplomats as offensive units. May replace
   values in choice.
 ***********************************************************************/
-void ai_choose_diplomat_offensive(struct player *pplayer,
+void ai_choose_diplomat_offensive(player_t *pplayer,
                                   struct city_s *pcity,
                                   struct ai_choice *choice)
 {
@@ -252,8 +252,8 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
 **************************************************************************/
 static void ai_diplomat_city(struct unit *punit, struct city_s *ctarget)
 {
-  struct player *pplayer = unit_owner(punit);
-  struct player *tplayer = city_owner(ctarget);
+  player_t *pplayer = unit_owner(punit);
+  player_t *tplayer = city_owner(ctarget);
   int count_impr = count_sabotagable_improvements(ctarget);
   int count_tech = count_stealable_techs(pplayer, tplayer);
   int gold_avail = pplayer->economic.gold - 2 * pplayer->ai.est_upkeep;
@@ -314,7 +314,7 @@ static void ai_diplomat_city(struct unit *punit, struct city_s *ctarget)
   Returns (in ctarget) the closest city to send diplomats against, or NULL
   if none available on this continent.  punit can be virtual.
 **************************************************************************/
-static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
+static void find_city_to_diplomat(player_t *pplayer, struct unit *punit,
                                   struct city_s **ctarget, int *move_dist,
                                   struct path_finding_map *map)
 {
@@ -328,7 +328,7 @@ static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
 
   pf_iterator(map, pos) {
     struct city_s *acity;
-    struct player *aplayer;
+    player_t *aplayer;
     bool can_incite;
 
     acity = map_get_city(pos.tile);
@@ -369,7 +369,7 @@ static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
 /**************************************************************************
   Go to nearest/most threatened city (can be the current city too).
 **************************************************************************/
-static struct city_s *ai_diplomat_defend(struct player *pplayer,
+static struct city_s *ai_diplomat_defend(player_t *pplayer,
                                        struct unit *punit,
                                        Unit_Type_id utype, struct path_finding_map *map)
 {
@@ -387,7 +387,7 @@ static struct city_s *ai_diplomat_defend(struct player *pplayer,
 
   pf_iterator(map, pos) {
     struct city_s *acity;
-    struct player *aplayer;
+    player_t *aplayer;
     int dipls, urgency;
 
     acity = map_get_city(pos.tile);
@@ -433,7 +433,7 @@ static struct city_s *ai_diplomat_defend(struct player *pplayer,
   the ordeal, FALSE if not or we expended all our movement.
   Will try to bribe a ship on the coast as well as land stuff.
 **************************************************************************/
-static bool ai_diplomat_bribe_nearby(struct player *pplayer, 
+static bool ai_diplomat_bribe_nearby(player_t *pplayer, 
                                      struct unit *punit, struct path_finding_map *map)
 {
   int gold_avail = pplayer->economic.gold - pplayer->ai.est_upkeep;
@@ -539,7 +539,7 @@ static bool ai_diplomat_bribe_nearby(struct player *pplayer,
   we should send diplomats by boat eventually. I just don't know how that
   part of the code works, yet - Per
 **************************************************************************/
-void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
+void ai_manage_diplomat(player_t *pplayer, struct unit *punit)
 {
   struct city_s *pcity, *ctarget = NULL;
   struct pf_parameter parameter;

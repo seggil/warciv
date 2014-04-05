@@ -49,7 +49,7 @@ static const char *flag_names[] = {
 /**************************************************************************
 ...
 **************************************************************************/
-enum tech_state get_invention(const struct player *pplayer,
+enum tech_state get_invention(const player_t *pplayer,
                               Tech_Type_id tech)
 {
   assert(tech >= 0);
@@ -60,7 +60,7 @@ enum tech_state get_invention(const struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-void set_invention(struct player *pplayer, Tech_Type_id tech,
+void set_invention(player_t *pplayer, Tech_Type_id tech,
                    enum tech_state value)
 {
   if (pplayer->research.inventions[tech].state == value) {
@@ -79,7 +79,7 @@ void set_invention(struct player *pplayer, Tech_Type_id tech,
   Returns if the given tech has to be researched to reach the
   goal. The goal itself isn't a requirement of itself.
 **************************************************************************/
-bool is_tech_a_req_for_goal(struct player *pplayer, Tech_Type_id tech,
+bool is_tech_a_req_for_goal(player_t *pplayer, Tech_Type_id tech,
                             Tech_Type_id goal)
 {
   if (tech == goal) {
@@ -93,7 +93,7 @@ bool is_tech_a_req_for_goal(struct player *pplayer, Tech_Type_id tech,
   Marks all techs which are requirements for goal in
   pplayer->research.inventions[goal].required_techs. Works recursive.
 **************************************************************************/
-static void build_required_techs_helper(struct player *pplayer,
+static void build_required_techs_helper(player_t *pplayer,
                                         Tech_Type_id tech,
                                         Tech_Type_id goal)
 {
@@ -125,7 +125,7 @@ static void build_required_techs_helper(struct player *pplayer,
   Updates required_techs, num_required_techs and bulbs_required in
   pplayer->research.inventions[goal].
 **************************************************************************/
-static void build_required_techs(struct player *pplayer, Tech_Type_id goal)
+static void build_required_techs(player_t *pplayer, Tech_Type_id goal)
 {
   int counter;
 
@@ -170,7 +170,7 @@ static void build_required_techs(struct player *pplayer, Tech_Type_id goal)
   Returns TRUE iff the given tech is ever reachable by the given player
   by checking tech tree limitations.
 **************************************************************************/
-bool tech_is_available(struct player *pplayer, Tech_Type_id id)
+bool tech_is_available(player_t *pplayer, Tech_Type_id id)
 {
   if (!tech_exists(id)) {
     return FALSE;
@@ -194,7 +194,7 @@ bool tech_is_available(struct player *pplayer, Tech_Type_id id)
   Should be called always after set_invention()
 
 **************************************************************************/
-void update_research(struct player *pplayer)
+void update_research(player_t *pplayer)
 {
   enum tech_flag_id flag;
   int researchable = 0;
@@ -241,7 +241,7 @@ void update_research(struct player *pplayer)
 /**************************************************************************
 ...don't use this function directly, call get_next_tech instead.
 **************************************************************************/
-static Tech_Type_id get_next_tech_rec(struct player *pplayer,
+static Tech_Type_id get_next_tech_rec(player_t *pplayer,
                                       Tech_Type_id goal)
 {
   Tech_Type_id sub_goal;
@@ -267,7 +267,7 @@ static Tech_Type_id get_next_tech_rec(struct player *pplayer,
     if return value > A_LAST then we have a bug
     caller should do something in that case.
 **************************************************************************/
-Tech_Type_id get_next_tech(struct player *pplayer, Tech_Type_id goal)
+Tech_Type_id get_next_tech(player_t *pplayer, Tech_Type_id goal)
 {
   if (!tech_is_available(pplayer, goal)
       || get_invention(pplayer, goal) == TECH_KNOWN) {
@@ -372,7 +372,7 @@ Tech_Type_id find_tech_by_flag(int index, enum tech_flag_id flag)
   "total_bulbs_required(pplayer) - pplayer->research.bulbs_researched"
   if you want this.
 **************************************************************************/
-int total_bulbs_required(struct player *pplayer)
+int total_bulbs_required(player_t *pplayer)
 {
   return base_total_bulbs_required(pplayer, pplayer->research.researching);
 }
@@ -399,7 +399,7 @@ int total_bulbs_required(struct player *pplayer)
  3 - Technology cost is reduced depending on the number of normal
      players (human and AI) which already know the tech.
 **************************************************************************/
-int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
+int base_total_bulbs_required(player_t *pplayer, Tech_Type_id tech)
 {
   int cost, tech_cost_style = game.ruleset_game.tech_cost_style;
 
@@ -532,7 +532,7 @@ int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
  the goal technology. This includes the goal technology. Technologies
  are only counted once.
 **************************************************************************/
-int num_unknown_techs_for_goal(struct player *pplayer, Tech_Type_id goal)
+int num_unknown_techs_for_goal(player_t *pplayer, Tech_Type_id goal)
 {
   return pplayer->research.inventions[goal].num_required_techs;
 }
@@ -542,7 +542,7 @@ int num_unknown_techs_for_goal(struct player *pplayer, Tech_Type_id goal)
  technology. These costs _include_ the cost for researching the goal
  technology itself.
 **************************************************************************/
-int total_bulbs_required_for_goal(struct player *pplayer,
+int total_bulbs_required_for_goal(player_t *pplayer,
                                   Tech_Type_id goal)
 {
   return pplayer->research.inventions[goal].bulbs_required;
@@ -597,7 +597,7 @@ bool is_future_tech(Tech_Type_id tech)
  Return the name of the given tech. You don't have to free the return
  pointer.
 **************************************************************************/
-const char *get_tech_name(struct player *pplayer, Tech_Type_id tech)
+const char *get_tech_name(player_t *pplayer, Tech_Type_id tech)
 {
   static struct string_vector *future = NULL;
 

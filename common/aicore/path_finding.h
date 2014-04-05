@@ -300,7 +300,7 @@ struct pf_parameter {
   int moves_left_initially;
   int move_rate;                /* Move rate of the virtual unit */
 
-  struct player *owner;
+  player_t *owner;
 
   bv_flags unit_flags;          /* Like F_MARINE and F_TRIREME */
   bool omniscience;             /* Do we care if the tile is visible? */
@@ -336,7 +336,7 @@ struct pf_parameter {
    * ZoC for strategic planning purposes (take into account enemy cities
    * but not units for example).
    * If this callback is NULL, ZoC are ignored.*/
-  bool (*get_zoc) (struct player *pplayer, const tile_t *ptile);
+  bool (*get_zoc) (player_t *pplayer, const tile_t *ptile);
 
   /* If this callback is non-NULL and returns TRUE this position is
    * dangerous. The unit will never end a turn at a dangerous

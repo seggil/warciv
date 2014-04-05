@@ -148,7 +148,7 @@ struct government *get_government(int gov)
 /***************************************************************
 ...
 ***************************************************************/
-struct government *get_gov_pplayer(struct player *pplayer)
+struct government *get_gov_pplayer(player_t *pplayer)
 {
   assert(pplayer != NULL);
   return get_government(pplayer->government);
@@ -236,7 +236,7 @@ const char *get_government_name(int type)
    - player has required tech
    - we have an appropriate wonder
 ***************************************************************/
-bool can_change_to_government(struct player *pplayer, int government)
+bool can_change_to_government(player_t *pplayer, int government)
 {
   int req;
 

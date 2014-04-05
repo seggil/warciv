@@ -2710,7 +2710,7 @@ struct gen8_map *create_map(int xsize, int ysize);
 void free_map(struct gen8_map *pmap);
 void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src,
               int xmin, int xmax, int ymin, int ymax, bool new_startpos,
-              struct player **pplayers, size_t num);
+              player_t **pplayers, size_t num);
 
 int fill_land(struct gen8_map *pmap, int tx, int ty, int *x, int *y);
 bool is_correct_start_pos(struct gen8_map *pmap, int x, int y, int land_tiles);
@@ -2725,7 +2725,7 @@ bool can_place_island_on_map(struct gen8_map *pmap, int x, int y,
 bool place_island_on_map_for_team_player(struct gen8_map *pmap,
                                          struct gen8_map *island,
                                          int sx, int sy,
-                                         struct player **pplayers, size_t num);
+                                         player_t **pplayers, size_t num);
 bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island);
 
 #define swap(type, data1, data2) \
@@ -2898,7 +2898,7 @@ void free_map(struct gen8_map *pmap)
 *************************************************************************/
 void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src,
               int xmin, int xmax, int ymin, int ymax, bool new_startpos,
-              struct player **pplayers, size_t num)
+              player_t **pplayers, size_t num)
 {
   int i, xc, yc, xsize = xmax - xmin, ysize = ymax - ymin, idx = 0;
 
@@ -3355,7 +3355,7 @@ bool can_place_island_on_map(struct gen8_map *pmap, int x, int y,
 bool place_island_on_map_for_team_player(struct gen8_map *pmap,
                                          struct gen8_map *island,
                                          int sx, int sy,
-                                         struct player **pplayers, size_t num)
+                                         player_t **pplayers, size_t num)
 {
   int rsx, rsy, xmax = pmap->xsize, ymax = pmap->ysize;
 
@@ -3683,7 +3683,7 @@ static bool mapgenerator89(bool team_placement)
       for (i = 0; i < teams; i++) {
         while (tpd[i].member_count) {
           /* Do it in a random order */
-          struct player *pplayers[players_per_island];
+          player_t *pplayers[players_per_island];
           int num = 0, ri = myrand(tpd[i].member_count);
 
           players_iterate(pplayer) {

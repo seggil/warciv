@@ -988,7 +988,7 @@ void delayed_goto_copy(int dest, int src)
 /**********************************************************************
   Receive an event. pplayer can be NULL.
 ***********************************************************************/
-void delayed_goto_event(enum automatic_execution event, struct player *pplayer)
+void delayed_goto_event(enum automatic_execution event, player_t *pplayer)
 {
   int i;
 
@@ -1075,7 +1075,7 @@ int delayed_goto_size(int dg)
 /**********************************************************************
   Try to evaluate the target player for the given tile.
 ***********************************************************************/
-struct player *get_tile_player(tile_t *ptile)
+player_t *get_tile_player(tile_t *ptile)
 {
   int count[game.info.nplayers], best = -1;
 
@@ -1241,7 +1241,7 @@ void add_unit_to_delayed_goto(tile_t *ptile)
   Maybe execute a delayed goto queue after a
   player cancel diplomacy event.
 ***********************************************************************/
-void request_player_execute_delayed_goto(struct player *pplayer, int dg)
+void request_player_execute_delayed_goto(player_t *pplayer, int dg)
 {
   dgassert(dg);
 

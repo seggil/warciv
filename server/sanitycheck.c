@@ -157,7 +157,7 @@ static void check_map(void)
 void real_sanity_check_city(city_t *pcity, const char *file, int line)
 {
   int workers = 0;
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
 
   assert(pcity->common.pop_size >= 1);
   assert(!terrain_has_tag(map_get_terrain(pcity->common.tile),
@@ -171,7 +171,7 @@ void real_sanity_check_city(city_t *pcity, const char *file, int line)
   /* Note that cities may be found on land or water. */
 
   tile_t *ptile;
-  struct player *owner;
+  player_t *owner;
   city_map_iterate(x, y) {
     ptile = city_map_to_map(pcity, x, y);
     if (ptile) {
@@ -411,7 +411,7 @@ static void check_players(void)
 
   /* Sanity checks on living and dead players. */
   for (player_no = 0; player_no < ARRAY_SIZE(game.players); player_no++) {
-    struct player *pplayer = &game.players[player_no];
+    player_t *pplayer = &game.players[player_no];
 
     if (!pplayer->is_alive) {
       /* Dead players' units and cities are disbanded in kill_player(). */

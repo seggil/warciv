@@ -47,12 +47,12 @@ struct pf_path;
 
 extern Unit_Type_id simple_ai_types[U_LAST];
 
-void ai_manage_units(struct player *pplayer);
-void ai_manage_unit(struct player *pplayer, struct unit *punit);
-void ai_manage_military(struct player *pplayer,struct unit *punit);
+void ai_manage_units(player_t *pplayer);
+void ai_manage_unit(player_t *pplayer, struct unit *punit);
+void ai_manage_military(player_t *pplayer,struct unit *punit);
 city_t *find_nearest_safe_city(struct unit *punit);
 int could_unit_move_to_tile(struct unit *punit, struct tile *dst_tile);
-int look_for_charge(struct player *pplayer, struct unit *punit,
+int look_for_charge(player_t *pplayer, struct unit *punit,
                     struct unit **aunit, city_t **acity);
 
 int turns_to_enemy_city(Unit_Type_id our_type, city_t *acity,
@@ -60,7 +60,7 @@ int turns_to_enemy_city(Unit_Type_id our_type, city_t *acity,
                         struct unit *boat, Unit_Type_id boattype);
 int turns_to_enemy_unit(Unit_Type_id our_type, int speed, struct tile *ptile,
                         Unit_Type_id enemy_type);
-int find_something_to_kill(struct player *pplayer, struct unit *punit,
+int find_something_to_kill(player_t *pplayer, struct unit *punit,
                            struct tile **ptile);
 bool find_beachhead(struct unit *punit, struct tile *dst_tile,
                     struct tile **ptile);
@@ -77,9 +77,9 @@ int kill_desire(int benefit, int attack, int loss, int vuln, int attack_count);
 
 bool is_on_unit_upgrade_path(Unit_Type_id test, Unit_Type_id base);
 
-Unit_Type_id ai_wants_role_unit(struct player *pplayer, city_t *pcity,
+Unit_Type_id ai_wants_role_unit(player_t *pplayer, city_t *pcity,
                                 int role, int want);
-void ai_choose_role_unit(struct player *pplayer, city_t *pcity,
+void ai_choose_role_unit(player_t *pplayer, city_t *pcity,
                          struct ai_choice *choice, int role, int want);
 void update_simple_ai_types(void);
 

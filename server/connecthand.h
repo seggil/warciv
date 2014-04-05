@@ -77,17 +77,17 @@ void send_conn_info(struct conn_list *src, struct conn_list *dest);
 void send_conn_info_remove(struct conn_list *src, struct conn_list *dest);
 
 bool attach_connection_to_player(struct connection *pconn,
-                                 struct player *pplayer);
+                                 player_t *pplayer);
 bool unattach_connection_from_player(struct connection *pconn);
 void clear_all_on_connect_user_actions(void);
 void restore_access_level(struct connection *pconn);
 
-void server_assign_nation(struct player *pplayer,
+void server_assign_nation(player_t *pplayer,
                           Nation_Type_id nation_no,
                           const char *name,
                           bool is_male,
                           int city_style);
-bool server_assign_random_nation(struct player *pplayer);
+bool server_assign_random_nation(player_t *pplayer);
 
 void conn_reset_idle_time(struct connection *pconn);
 void check_idle_connections(void);

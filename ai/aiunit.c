@@ -62,8 +62,8 @@
 
 #define LOGLEVEL_RECOVERY LOG_DEBUG
 
-static void ai_manage_caravan(struct player *pplayer, struct unit *punit);
-static void ai_manage_barbarian_leader(struct player *pplayer,
+static void ai_manage_caravan(player_t *pplayer, struct unit *punit);
+static void ai_manage_barbarian_leader(player_t *pplayer,
                                        struct unit *leader);
 
 #define RAMPAGE_ANYTHING                 1
@@ -72,9 +72,9 @@ static void ai_manage_barbarian_leader(struct player *pplayer,
 #define BODYGUARD_RAMPAGE_THRESHOLD (SHIELD_WEIGHTING * 4)
 static bool ai_military_rampage(struct unit *punit, int thresh_adj,
                                 int thresh_move);
-static void ai_military_findjob(struct player *pplayer,struct unit *punit);
-static void ai_military_gohome(struct player *pplayer,struct unit *punit);
-static void ai_military_attack(struct player *pplayer,struct unit *punit);
+static void ai_military_findjob(player_t *pplayer,struct unit *punit);
+static void ai_military_gohome(player_t *pplayer,struct unit *punit);
+static void ai_military_attack(player_t *pplayer,struct unit *punit);
 
 static int unit_move_turns(struct unit *punit, struct tile *ptile);
 static bool unit_role_defender(Unit_Type_id type);
@@ -102,7 +102,7 @@ Unit_Type_id simple_ai_types[U_LAST];
   That's because we want to avoid emergency actions to protect the city
   during the turn if that isn't necessary.
 **************************************************************************/
-static void ai_airlift(struct player *pplayer)
+static void ai_airlift(player_t *pplayer)
 {
   struct city_s *most_needed;
   int comparison;
@@ -313,7 +313,7 @@ int build_cost_balanced(Unit_Type_id type)
   Return first city that contains a wonder being built on the given
   continent.
 **************************************************************************/
-static struct city_s *wonder_on_continent(struct player *pplayer,
+static struct city_s *wonder_on_continent(player_t *pplayer,
                                         Continent_id cont)
 {
   city_list_iterate(pplayer->cities, pcity)
@@ -594,7 +594,7 @@ static bool is_my_turn(struct unit *punit, struct unit *pdef)
 **************************************************************************/
 static int ai_rampage_want(struct unit *punit, struct tile *ptile)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct unit *pdef = get_defender(punit, ptile);
 
   CHECK_UNIT(punit);
@@ -672,7 +672,7 @@ static struct pf_path *find_rampage_target(struct unit *punit,
   struct tile *ptile = punit->tile;
   /* Want of the best target */
   int max_want = 0;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
 
   pft_fill_unit_attack_param(&parameter, punit);
 
@@ -769,7 +769,7 @@ static bool ai_military_rampage(struct unit *punit, int thresh_adj,
   If we are not covering our charge's ass, go do it now. Also check if we
   can kick some ass, which is always nice.
 **************************************************************************/
-static void ai_military_bodyguard(struct player *pplayer, struct unit *punit)
+static void ai_military_bodyguard(player_t *pplayer, struct unit *punit)
 {
   struct unit *aunit = player_find_unit_by_id(pplayer, punit->ai.charge);
   struct city_s *acity = find_city_by_id(punit->ai.charge);
@@ -919,7 +919,7 @@ static bool unit_role_defender(Unit_Type_id type)
 
   Requires an initialized warmap!
 **************************************************************************/
-int look_for_charge(struct player *pplayer, struct unit *punit,
+int look_for_charge(player_t *pplayer, struct unit *punit,
                     struct unit **aunit, struct city_s **acity)
 {
   int dist, def, best = 0;
@@ -993,7 +993,7 @@ int look_for_charge(struct player *pplayer, struct unit *punit,
   Find something to do with a unit. Also, check sanity of existing
   missions.
 ***********************************************************************/
-static void ai_military_findjob(struct player *pplayer,struct unit *punit)
+static void ai_military_findjob(player_t *pplayer,struct unit *punit)
 {
   struct city_s *pcity = NULL, *acity = NULL;
   struct unit *aunit;
@@ -1151,7 +1151,7 @@ static void ai_military_findjob(struct player *pplayer,struct unit *punit)
 /**********************************************************************
   Send a unit to its homecity.
 ***********************************************************************/
-static void ai_military_gohome(struct player *pplayer,struct unit *punit)
+static void ai_military_gohome(player_t *pplayer,struct unit *punit)
 {
   struct city_s *pcity = find_city_by_id(punit->homecity);
 
@@ -1283,7 +1283,7 @@ static void invasion_funct(struct unit *punit, bool dest, int radius,
                            int which)
 {
   struct tile *ptile;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct ai_data *ai = ai_data_get(pplayer);
 
   CHECK_UNIT(punit);
@@ -1314,7 +1314,7 @@ static void invasion_funct(struct unit *punit, bool dest, int radius,
 
   punit->id == 0 means that the unit is virtual (considered to be built).
 **************************************************************************/
-int find_something_to_kill(struct player *pplayer, struct unit *punit,
+int find_something_to_kill(player_t *pplayer, struct unit *punit,
                            struct tile **dest_tile)
 {
   struct ai_data *ai = ai_data_get(pplayer);
@@ -1711,7 +1711,7 @@ int find_something_to_kill(struct player *pplayer, struct unit *punit,
 ***********************************************************************/
 struct city_s *find_nearest_safe_city(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct city_s *acity = NULL;
   int best = 6 * THRESHOLD + 1, cur;
   bool ground = is_ground_unit(punit);
@@ -1752,7 +1752,7 @@ struct city_s *find_nearest_safe_city(struct unit *punit)
   looking for trouble elsewhere. If there is nothing to kill, sailing units
   go home, others explore while barbs go berserk.
 **************************************************************************/
-static void ai_military_attack(struct player *pplayer, struct unit *punit)
+static void ai_military_attack(player_t *pplayer, struct unit *punit)
 {
   struct tile *dest_tile;
   int id = punit->id;
@@ -1887,7 +1887,7 @@ static void ai_military_attack(struct player *pplayer, struct unit *punit)
   trade with a city on the same continent, owned by yourself or an
   ally.
 **************************************************************************/
-static void ai_manage_caravan(struct player *pplayer, struct unit *punit)
+static void ai_manage_caravan(player_t *pplayer, struct unit *punit)
 {
   struct city_s *pcity;
   int tradeval, best_city = -1, best=0;
@@ -1958,7 +1958,7 @@ static void ai_manage_caravan(struct player *pplayer, struct unit *punit)
 **************************************************************************/
 static void ai_manage_hitpoint_recovery(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct city_s *pcity = map_get_city(punit->tile);
   struct city_s *safe = NULL;
   struct unit_type *punittype = get_unit_type(punit->type);
@@ -2012,7 +2012,7 @@ static void ai_manage_hitpoint_recovery(struct unit *punit)
   Decide what to do with a military unit. It will be managed once only.
   It is up to the caller to try again if it has moves left.
 **************************************************************************/
-void ai_manage_military(struct player *pplayer, struct unit *punit)
+void ai_manage_military(player_t *pplayer, struct unit *punit)
 {
   int id = punit->id;
 
@@ -2118,7 +2118,7 @@ static bool unit_can_be_retired(struct unit *punit)
  several flags the first one in order of appearance in this function
  will be used.
 **************************************************************************/
-void ai_manage_unit(struct player *pplayer, struct unit *punit)
+void ai_manage_unit(player_t *pplayer, struct unit *punit)
 {
   struct unit *bodyguard = find_unit_by_id(punit->ai.bodyguard);
 
@@ -2201,7 +2201,7 @@ void ai_manage_unit(struct player *pplayer, struct unit *punit)
 /**************************************************************************
   Master manage unit function.
 **************************************************************************/
-void ai_manage_units(struct player *pplayer)
+void ai_manage_units(player_t *pplayer)
 {
   ai_airlift(pplayer);
   unit_list_iterate_safe(pplayer->units, punit) {
@@ -2218,7 +2218,7 @@ void ai_manage_units(struct player *pplayer)
  Assign tech wants for techs to get better units with given role/flag.
  Returns the best we can build so far, or U_LAST if none.  (dwp)
 **************************************************************************/
-Unit_Type_id ai_wants_role_unit(struct player *pplayer, struct city_s *pcity,
+Unit_Type_id ai_wants_role_unit(player_t *pplayer, struct city_s *pcity,
                                 int role, int want)
 {
   Unit_Type_id iunit;
@@ -2244,7 +2244,7 @@ Unit_Type_id ai_wants_role_unit(struct player *pplayer, struct city_s *pcity,
 /**************************************************************************
  As ai_wants_role_unit, but also set choice->choice if we can build something.
 **************************************************************************/
-void ai_choose_role_unit(struct player *pplayer, struct city_s *pcity,
+void ai_choose_role_unit(player_t *pplayer, struct city_s *pcity,
                          struct ai_choice *choice, int role, int want)
 {
   Unit_Type_id iunit = ai_wants_role_unit(pplayer, pcity, role, want);
@@ -2272,7 +2272,7 @@ bool is_on_unit_upgrade_path(Unit_Type_id test, Unit_Type_id base)
 Barbarian leader tries to stack with other barbarian units, and if it's
 not possible it runs away. When on coast, it may disappear with 33% chance.
 **************************************************************************/
-static void ai_manage_barbarian_leader(struct player *pplayer, struct unit *leader)
+static void ai_manage_barbarian_leader(player_t *pplayer, struct unit *leader)
 {
   Continent_id con = map_get_continent(leader->tile);
   int safest = 0;

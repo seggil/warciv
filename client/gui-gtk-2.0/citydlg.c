@@ -2880,7 +2880,7 @@ static void unit_homecity_callback(GtkWidget * w, gpointer data)
 static void unit_upgrade_callback(GtkWidget *w, gpointer data)
 {
   struct unit *punit;
-  struct player *me = get_player_ptr();
+  player_t *me = get_player_ptr();
   int id;
   GtkWidget *shell;
   char buf[512];

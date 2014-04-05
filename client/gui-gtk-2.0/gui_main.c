@@ -2168,7 +2168,7 @@ static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev, gpointer data)
   if (ev->button == 1 && !client_is_global_observer()) {
     GtkWidget *p;
     char buf[512];
-    struct player *pplayer = get_player_ptr();
+    player_t *pplayer = get_player_ptr();
 
     my_snprintf(buf, sizeof(buf),
                 _("%s People\nYear: %s Turn: %d\nGold: %d\nNet Income: %d\n"

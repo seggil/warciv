@@ -17,19 +17,19 @@
 #include "map.h"
 
 void auto_settlers_init(void);
-void auto_settlers_player(struct player *pplayer);
-int find_boat(struct player *pplayer, tile_t **boat_tile, int cap);
+void auto_settlers_player(player_t *pplayer);
+int find_boat(player_t *pplayer, tile_t **boat_tile, int cap);
 
 #define MORT 24
 
 int amortize(int benefit, int delay);
-void ai_manage_settler(struct player *pplayer, struct unit *punit);
+void ai_manage_settler(player_t *pplayer, struct unit *punit);
 
 void init_settlers(void);
 
 int city_tile_value(city_t *pcity, int x, int y,
                     int foodneed, int prodneed);
-void initialize_infrastructure_cache(struct player *pplayer);
+void initialize_infrastructure_cache(player_t *pplayer);
 
 void contemplate_terrain_improvements(city_t *pcity);
 void contemplate_new_city(city_t *pcity);

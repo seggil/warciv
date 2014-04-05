@@ -171,7 +171,7 @@ struct connection {
   int sock;
   bool used;
   bool established;             /* have negotiated initial packets */
-  struct player *player;        /* NULL for connections not yet associated
+  player_t *player;             /* NULL for connections not yet associated
                                    with a specific player */
   /*
    * connection is "observer", not controller; may be observing
@@ -337,7 +337,7 @@ struct connection {
 
       /* Used for postponing observer switch until turn change. */
       bool observe_requested;
-      struct player *observe_target;
+      player_t *observe_target;
     } server;
   } u;
 };
@@ -383,7 +383,7 @@ extern const char blank_addr_str[];
 
 bool conn_controls_player(const struct connection *pconn);
 bool conn_is_global_observer(const struct connection *pconn);
-struct player *conn_get_player(const struct connection *pconn);
+player_t *conn_get_player(const struct connection *pconn);
 enum cmdlevel_id conn_get_access(const struct connection *pconn);
 bool conn_is_valid(const struct connection *pconn);
 

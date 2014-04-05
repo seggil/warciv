@@ -64,7 +64,7 @@
 /**************************************************************************
   Is player a land barbarian?
 **************************************************************************/
-bool is_land_barbarian(struct player *pplayer)
+bool is_land_barbarian(player_t *pplayer)
 {
   return (pplayer->ai.barbarian_type == LAND_BARBARIAN);
 }
@@ -72,7 +72,7 @@ bool is_land_barbarian(struct player *pplayer)
 /**************************************************************************
   Is player a sea barbarian?
 **************************************************************************/
-static bool is_sea_barbarian(struct player *pplayer)
+static bool is_sea_barbarian(player_t *pplayer)
 {
   return (pplayer->ai.barbarian_type == SEA_BARBARIAN);
 }
@@ -84,10 +84,10 @@ static bool is_sea_barbarian(struct player *pplayer)
 
   Dead barbarians forget the map and lose the money.
 **************************************************************************/
-static struct player *create_barbarian_player(bool land)
+static player_t *create_barbarian_player(bool land)
 {
   int newplayer = game.info.nplayers;
-  struct player *barbarians;
+  player_t *barbarians;
 
   players_iterate(barbarians) {
     if ((land && is_land_barbarian(barbarians))
@@ -170,7 +170,7 @@ static struct player *create_barbarian_player(bool land)
 /**************************************************************************
   Check if a tile is land and free of enemy units
 **************************************************************************/
-static bool is_free_land(tile_t *ptile, struct player *who)
+static bool is_free_land(tile_t *ptile, player_t *who)
 {
   return (!is_ocean(map_get_terrain(ptile))
           && !is_non_allied_unit_tile((ptile), who));
@@ -179,7 +179,7 @@ static bool is_free_land(tile_t *ptile, struct player *who)
 /**************************************************************************
   Check if a tile is sea and free of enemy units
 **************************************************************************/
-static bool is_free_sea(tile_t *ptile, struct player *who)
+static bool is_free_sea(tile_t *ptile, player_t *who)
 {
   return (is_ocean(map_get_terrain(ptile))
           && !is_non_allied_unit_tile((ptile), who));
@@ -197,7 +197,7 @@ static bool is_free_sea(tile_t *ptile, struct player *who)
 **************************************************************************/
 bool unleash_barbarians(tile_t *ptile)
 {
-  struct player *barbarians;
+  player_t *barbarians;
   int unit, unit_cnt, land_cnt = 0, sea_cnt = 0;
   int boat;
   int i, me;
@@ -342,7 +342,8 @@ static void try_summon_barbarians(void)
   int uprise = 1;
   int superbarb = 0;
   struct city_s *pc;
-  struct player *barbarians, *victim;
+  player_t *barbarians;
+  player_t *victim;
 
   /* We attempt the summons on a particular, random position.  If this is
    * an invalid position then the summons simply fails this time.  This means

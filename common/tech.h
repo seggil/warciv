@@ -107,14 +107,14 @@ struct advance {
 
 BV_DEFINE(tech_vector, A_LAST);
 
-enum tech_state get_invention(const struct player *pplayer,
+enum tech_state get_invention(const player_t *pplayer,
                               Tech_Type_id tech);
-void set_invention(struct player *pplayer, Tech_Type_id tech,
+void set_invention(player_t *pplayer, Tech_Type_id tech,
                    enum tech_state value);
-void update_research(struct player *pplayer);
-Tech_Type_id get_next_tech(struct player *pplayer, Tech_Type_id goal);
+void update_research(player_t *pplayer);
+Tech_Type_id get_next_tech(player_t *pplayer, Tech_Type_id goal);
 
-bool tech_is_available(struct player *pplayer, Tech_Type_id id);
+bool tech_is_available(player_t *pplayer, Tech_Type_id id);
 bool tech_exists(Tech_Type_id id);
 Tech_Type_id find_tech_by_name(const char *s);
 Tech_Type_id find_tech_by_name_orig(const char *s);
@@ -123,16 +123,16 @@ bool tech_flag(Tech_Type_id tech, enum tech_flag_id flag);
 enum tech_flag_id tech_flag_from_str(const char *s);
 Tech_Type_id find_tech_by_flag(int index, enum tech_flag_id flag);
 
-int total_bulbs_required(struct player *pplayer);
-int base_total_bulbs_required(struct player *pplayer,Tech_Type_id tech);
+int total_bulbs_required(player_t *pplayer);
+int base_total_bulbs_required(player_t *pplayer,Tech_Type_id tech);
 bool techs_have_fixed_costs(void);
 
-int num_unknown_techs_for_goal(struct player *pplayer, Tech_Type_id goal);
-int total_bulbs_required_for_goal(struct player *pplayer, Tech_Type_id goal);
-bool is_tech_a_req_for_goal(struct player *pplayer, Tech_Type_id tech,
+int num_unknown_techs_for_goal(player_t *pplayer, Tech_Type_id goal);
+int total_bulbs_required_for_goal(player_t *pplayer, Tech_Type_id goal);
+bool is_tech_a_req_for_goal(player_t *pplayer, Tech_Type_id tech,
                            Tech_Type_id goal);
 bool is_future_tech(Tech_Type_id tech);
-const char *get_tech_name(struct player *pplayer, Tech_Type_id tech);
+const char *get_tech_name(player_t *pplayer, Tech_Type_id tech);
 
 void precalc_tech_data(void);
 

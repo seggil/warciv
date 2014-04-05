@@ -210,7 +210,7 @@ struct delayed_goto_data {
 struct delayed_goto {
   struct delayed_goto_data_list *dglist; /* The datas of the delayed orders */
   filter automatic_execution;            /* When it will be executed */
-  struct player *pplayer;                /* The supposed target player */
+  player_t *pplayer;                     /* The supposed target player */
 };
 
 /*
@@ -256,15 +256,15 @@ void delayed_goto_cat(int dest, int src);
 void delayed_goto_clear(int dg);
 void delayed_goto_clear_all(void);
 void delayed_goto_copy(int dest, int src);
-void delayed_goto_event(enum automatic_execution event, struct player *pplayer);
+void delayed_goto_event(enum automatic_execution event, player_t *pplayer);
 const char *delayed_goto_get_auto_name(enum automatic_execution value);
 void delayed_goto_init_all(void);
 void delayed_goto_move(int dest, int src);
 int delayed_goto_size(int dg);
-struct player *get_tile_player(tile_t *ptile);
+player_t *get_tile_player(tile_t *ptile);
 
 void add_unit_to_delayed_goto(tile_t *ptile);
-void request_player_execute_delayed_goto(struct player *pplayer, int dg);
+void request_player_execute_delayed_goto(player_t *pplayer, int dg);
 void request_unit_execute_delayed_goto(int dg);
 void request_execute_delayed_goto(tile_t *ptile, int dg);
 void schedule_delayed_airlift(tile_t *ptile);

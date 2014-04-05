@@ -355,7 +355,7 @@ static void free_landarea_map(struct claim_map *pcmap)
   Returns the given player's land and settled areas from a claim map.
 **************************************************************************/
 static void get_player_landarea(struct claim_map *pcmap,
-                                struct player *pplayer,
+                                player_t *pplayer,
                                 int *return_landarea,
                                 int *return_settledarea)
 {
@@ -386,7 +386,7 @@ static void get_player_landarea(struct claim_map *pcmap,
 /**************************************************************************
   Calculates the civilization score for the player.
 **************************************************************************/
-void calc_civ_score(struct player *pplayer)
+void calc_civ_score(player_t *pplayer)
 {
   city_t *pcity;
   int landarea = 0, settledarea = 0;
@@ -485,7 +485,7 @@ void calc_civ_score(struct player *pplayer)
 /**************************************************************************
   Return the civilization score (a numerical value) for the player.
 **************************************************************************/
-int get_civ_score(const struct player *pplayer)
+int get_civ_score(const player_t *pplayer)
 {
   /* We used to count pplayer->score.happy here too, but this is too easily
    * manipulated by players at the endyear. */
@@ -498,7 +498,7 @@ int get_civ_score(const struct player *pplayer)
 /**************************************************************************
   Return the total number of citizens in the player's nation.
 **************************************************************************/
-int total_player_citizens(const struct player *pplayer)
+int total_player_citizens(const player_t *pplayer)
 {
   return (pplayer->score.happy
           + pplayer->score.content
@@ -568,7 +568,7 @@ void save_ppm(void)
 
 
   for (i = 0; i < game.info.nplayers; i++) {
-    struct player *pplayer = get_player(i);
+    player_t *pplayer = get_player(i);
     fprintf(fp, "# playerno:%d:color:#%02x%02x%02x:name:\"%s\"\n",
             pplayer->player_no, col[i][0], col[i][1], col[i][2],
             pplayer->name);
@@ -607,7 +607,7 @@ void save_ppm(void)
 static void dump_grouping_players(const struct grouping *p)
 {
   int j;
-  struct player *pp;
+  player_t *pp;
 
   freelog(LOG_DEBUG, "dump_grouping_players grouping=%p", p);
   for (j = 0; j < p->num_players; j++) {
@@ -736,9 +736,9 @@ static int grouping_compare(const void *va, const void *vb)
 **************************************************************************/
 static int player_compare(const void *va, const void *vb)
 {
-  struct player *a, *b;
-  a = *((struct player **) va);
-  b = *((struct player **) vb);
+  player_t *a, *b;
+  a = *((player_t **) va);
+  b = *((player_t **) vb);
 
   if (a->result == PR_WIN && b->result != PR_WIN)
     return -1;
@@ -1257,7 +1257,7 @@ void score_update_grouping_results(void)
     }
     freelog(LOG_DEBUG, "sorting players in grouping %d", i);
     qsort(groupings[i].players, groupings[i].num_players,
-          sizeof(struct player *), player_compare);
+          sizeof(player_t *), player_compare);
   }
 
 #ifdef DEBUG
@@ -1339,7 +1339,7 @@ void score_propagate_grouping_results(void)
   int i, j;
   float frac_ranks[MAX_NUM_PLAYERS];
   struct team *pteam = NULL;
-  struct player *ranked[MAX_NUM_PLAYERS];
+  player_t *ranked[MAX_NUM_PLAYERS];
   int num_ranked = 0;
 
   /* Copy grouping results/ranks to teams. */
@@ -1368,7 +1368,7 @@ void score_propagate_grouping_results(void)
      * of the grouping). */
     calculate_fractional_ranking(groupings[i].players,
                                  groupings[i].num_players,
-                                 sizeof(struct player *),
+                                 sizeof(player_t *),
                                  frac_ranks,
                                  player_compare);
     for (j = 0; j < groupings[i].num_players; j++) {
@@ -1384,7 +1384,7 @@ void score_propagate_grouping_results(void)
   /* Now calculate the overall fractional player rank. */
   calculate_fractional_ranking(ranked,
                                num_ranked,
-                               sizeof(struct player *),
+                               sizeof(player_t *),
                                frac_ranks,
                                player_compare);
   for (i = 0; i < num_ranked; i++) {
@@ -1456,7 +1456,7 @@ void score_calculate_team_scores(void)
 /**************************************************************************
   ...
 **************************************************************************/
-void score_assign_ai_rating(struct player *pplayer,
+void score_assign_ai_rating(player_t *pplayer,
                             int game_type)
 {
   score_get_ai_rating(pplayer->ai.skill_level, game_type,
@@ -1470,7 +1470,7 @@ void score_assign_ai_rating(struct player *pplayer,
 /**************************************************************************
   ...
 **************************************************************************/
-void score_assign_new_player_rating(struct player *pplayer,
+void score_assign_new_player_rating(player_t *pplayer,
                                     int game_type)
 {
   pplayer->wcdb.rating = RATING_CONSTANT_AVERAGE_PLAYER_RATING;
@@ -1533,7 +1533,7 @@ void score_get_ai_rating(int skill_level, int game_type,
 /**************************************************************************
   ...
 **************************************************************************/
-int player_get_rated_username(const struct player *pplayer,
+int player_get_rated_username(const player_t *pplayer,
                               char *outbuf, int maxlen)
 {
   if (pplayer->wcdb.rated_user_id <= 0

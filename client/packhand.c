@@ -248,7 +248,7 @@ void handle_city_remove(int city_id) /* 20 */
 void handle_unit_remove(int unit_id) /* 48 */
 {
   struct unit *punit = find_unit_by_id(unit_id);
-  struct player *powner;
+  player_t *powner;
 
   if (!punit) {
     return;
@@ -911,7 +911,7 @@ void handle_city_short_info(struct packet_city_short_info *packet) /* 22 */
 **************************************************************************/
 void handle_new_year(int year, int turn) /* 92 */
 {
-  struct player *pplayer;
+  player_t *pplayer;
 
   focus_turn = TRUE;
   game.info.year = year;
@@ -1686,7 +1686,7 @@ void handle_game_info(struct packet_game_info *pinfo) /* 15 */
 /**************************************************************************
 ...
 **************************************************************************/
-static bool read_player_info_techs(struct player *pplayer,
+static bool read_player_info_techs(player_t *pplayer,
                                    char *inventions)
 {
   bool need_effect_update = FALSE;
@@ -1741,7 +1741,7 @@ void handle_player_info(struct packet_player_info *pinfo) /* 39 */
   int i;
   bool poptechup, new_tech = FALSE;
   char msg[MAX_LEN_MSG];
-  struct player *pplayer = &game.players[pinfo->playerno];
+  player_t *pplayer = &game.players[pinfo->playerno];
 
   sz_strlcpy(pplayer->name, pinfo->name);
 
@@ -1919,7 +1919,7 @@ void handle_conn_info(struct packet_conn_info *pinfo) /* 86 */
   } else {
     /* Add or update the connection.  Note the connection may refer to
      * a player we don't know about yet. */
-    struct player *pplayer =
+    player_t *pplayer =
       ((pinfo->player_num >= 0
         && pinfo->player_num < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS)
        ? get_player(pinfo->player_num) : NULL);
@@ -2008,8 +2008,8 @@ Do things one at a time; the server will send us an updated
 spaceship_info packet, and we'll be back here to do anything
 which is left.
 **************************************************************************/
-static bool spaceship_autoplace(struct player *pplayer,
-                               struct player_spaceship *ship)
+static bool spaceship_autoplace(player_t *pplayer,
+                                struct player_spaceship *ship)
 {
   int i, num;
   enum spaceship_place_type type;
@@ -2140,7 +2140,7 @@ static bool spaceship_autoplace(struct player *pplayer,
 void handle_spaceship_info(struct packet_spaceship_info *p) /* 95 */
 {
   int i;
-  struct player *pplayer = &game.players[p->player_num];
+  player_t *pplayer = &game.players[p->player_num];
   struct player_spaceship *ship = &pplayer->spaceship;
 
   ship->state        = p->sship_state;
@@ -2209,7 +2209,7 @@ void handle_tile_info(struct packet_tile_info *packet) /* 14 */
       tile_changed = TRUE;
     }
   } else {
-    struct player *newowner = get_player(packet->owner);
+    player_t *newowner = get_player(packet->owner);
 
     if (ptile->owner != newowner) {
       ptile->owner = newowner;

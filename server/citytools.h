@@ -47,47 +47,47 @@ int city_luxury_bonus(city_t *pcity);
 int city_science_bonus(city_t *pcity);
 int city_tax_bonus(city_t *pcity);
 
-void transfer_city_units(struct player *pplayer, struct player *pvictim,
+void transfer_city_units(player_t *pplayer, player_t *pvictim,
                          struct unit_list *units, city_t *pcity,
                          city_t *exclude_city,
                          int kill_outside, bool verbose);
-void transfer_city(struct player *ptaker, city_t *pcity,
+void transfer_city(player_t *ptaker, city_t *pcity,
                    int kill_outside, bool transfer_unit_verbose,
                    bool resolve_stack, bool raze);
-city_t *find_closest_owned_city(struct player *pplayer,
+city_t *find_closest_owned_city(player_t *pplayer,
                                 tile_t *ptile,
                                 bool sea_required,
                                 city_t *pexclcity);
 void handle_unit_enter_city(struct unit *punit, city_t *pcity);
 
-void send_city_info(struct player *dest, city_t *pcity);
-void send_city_info_at_tile(struct player *pviewer, struct conn_list *dest,
+void send_city_info(player_t *dest, city_t *pcity);
+void send_city_info_at_tile(player_t *pviewer, struct conn_list *dest,
                             city_t *pcity, tile_t *ptile);
 void send_all_known_cities(struct conn_list *dest);
 void send_all_known_trade_routes(struct conn_list *dest);
-void send_player_cities(struct player *pplayer);
+void send_player_cities(player_t *pplayer);
 void package_city(city_t *pcity, struct packet_city_info *packet,
                   bool dipl_invest);
 
-void reality_check_city(struct player *pplayer, tile_t *ptile);
-bool update_dumb_city(struct player *pplayer, city_t *pcity);
+void reality_check_city(player_t *pplayer, tile_t *ptile);
+bool update_dumb_city(player_t *pplayer, city_t *pcity);
 void refresh_dumb_city(city_t *pcity);
 
-void create_city(struct player *pplayer, tile_t *ptile,
+void create_city(player_t *pplayer, tile_t *ptile,
                  const char *name);
 void remove_city(city_t *pcity);
 
 void establish_trade_route(city_t *pc1, city_t *pc2);
 
-void do_sell_building(struct player *pplayer, city_t *pcity,
+void do_sell_building(player_t *pplayer, city_t *pcity,
                       Impr_Type_id id);
 void building_lost(city_t *pcity, Impr_Type_id id);
-void change_build_target(struct player *pplayer, city_t *pcity,
+void change_build_target(player_t *pplayer, city_t *pcity,
                          int target, bool is_unit, enum event_type event);
 
-bool is_allowed_city_name(struct player *pplayer, const char *city_name,
+bool is_allowed_city_name(player_t *pplayer, const char *city_name,
                           char *error_buf, size_t bufsz);
-char *city_name_suggestion(struct player *pplayer, tile_t *ptile);
+char *city_name_suggestion(player_t *pplayer, tile_t *ptile);
 
 
 bool city_can_work_tile(city_t *pcity, int city_x, int city_y);
@@ -96,20 +96,20 @@ void server_set_worker_city(city_t *pcity, int city_x, int city_y);
 bool update_city_tile_status_map(city_t *pcity, tile_t *ptile);
 void sync_cities(void);
 bool can_place_worker_here(city_t *pcity, int city_x, int city_y);
-void check_city_workers(struct player *pplayer);
+void check_city_workers(player_t *pplayer);
 void city_landlocked_sell_coastal_improvements(tile_t *ptile);
 
 void send_city_manager_param(struct conn_list *clist,
                              struct packet_city_manager_param *packet,
-                             struct player *pplayer,
+                             player_t *pplayer,
                              bool include_player);
 void send_city_manager_info(struct conn_list *clist, city_t *pcity,
                             bool include_player);
 void send_all_known_city_manager_infos(struct conn_list *clist);
 void clear_city_manager_param(city_t *pcity);
-void reset_city_manager_params(struct player *pplayer);
+void reset_city_manager_params(player_t *pplayer);
 
 void clear_rally_point(city_t *pcity, bool send_info);
-void reset_rally_points(struct player *pplayer);
+void reset_rally_points(player_t *pplayer);
 
 #endif  /* WC_SERVER_CITYTOOLS_H */

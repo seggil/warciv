@@ -72,7 +72,7 @@ wc__attribute((__format__(__printf__, 3, 4)));
 /****************************************************************************
   AI names are prefixed with "AI, ".
 ****************************************************************************/
-static inline const char *get_name_prefix(struct player *plr)
+static inline const char *get_name_prefix(player_t *plr)
 {
   return plr->ai.control ? "AI, " : "";
 }
@@ -80,7 +80,7 @@ static inline const char *get_name_prefix(struct player *plr)
 /****************************************************************************
 
 ****************************************************************************/
-static inline const char *get_proper_username(struct player *plr)
+static inline const char *get_proper_username(player_t *plr)
 {
   return plr->ai.control ? plr->name : plr->username;
 }
@@ -193,7 +193,7 @@ static const char *map_get_tile_fpt_text(const tile_t *ptile)
 /****************************************************************************
   Build the nation info text. e.g. "Polish, team first).
 ****************************************************************************/
-static const char *get_player_nation_name(struct player *pplayer)
+static const char *get_player_nation_name(player_t *pplayer)
 {
   INIT;
 
@@ -239,7 +239,7 @@ const char *popup_info_text(tile_t *ptile)
     add_line(_("Minor Tribe Village"));
   }
   if (game.ruleset_control.borders > 0 && !pcity) {
-    struct player *owner = map_get_owner(ptile);
+    player_t *owner = map_get_owner(ptile);
 
     if (client_is_global_observer() && owner) {
       /* TRANS: "Territory of Username (Polish)" */
@@ -277,7 +277,7 @@ const char *popup_info_text(tile_t *ptile)
   if (pcity) {
     /* Look at city owner, not tile owner (the two should be the same, if
      * borders are in use). */
-    struct player *owner = city_owner(pcity);
+    player_t *owner = city_owner(pcity);
 
     if (client_is_global_observer()) {
       /* TRANS: "City: Warsaw | Username (Polish)" */
@@ -338,7 +338,7 @@ const char *popup_info_text(tile_t *ptile)
     add_line(_("Activity: %s"), activity_text);
   }
   if (punit && !pcity) {
-    struct player *owner = unit_owner(punit);
+    player_t *owner = unit_owner(punit);
     struct unit_type *ptype = unit_type(punit);
     char vet[1024] = "";
 
@@ -533,7 +533,7 @@ const char *unit_description(struct unit *punit)
 const char *science_dialog_text(void)
 {
   int turns_to_advance;
-  struct player *plr = get_player_ptr();
+  player_t *plr = get_player_ptr();
   int ours = player_get_expected_bulbs(plr), theirs = -1;
   INIT;
 
@@ -575,7 +575,7 @@ const char *get_info_label_text(void)
 {
   INIT;
 
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
 
   if (pplayer) {
     add_line(_("Population: %s"),
@@ -661,7 +661,7 @@ const char *get_bulb_tooltip(void)
 {
   INIT;
 
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
 
   add(_("Shows your progress in researching "
         "the current technology.\n%s: %d/%d."),
@@ -810,7 +810,7 @@ const char *format_duration(int duration)
   Return text giving the ping time for the player.  This is generally used
   used in the playerdlg.  This should only be used in playerdlg_common.c.
 ****************************************************************************/
-const char *get_ping_time_text(struct player *pplayer)
+const char *get_ping_time_text(player_t *pplayer)
 {
   struct connection *pconn = NULL;
   double ping_time_in_ms;
@@ -844,7 +844,7 @@ const char *get_report_title(const char *report_name)
 {
   INIT;
 
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
 
   add_line("%s", report_name);
 
