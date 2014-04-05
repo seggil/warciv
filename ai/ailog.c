@@ -181,7 +181,7 @@ void BODYGUARD_LOG(int level, struct unit *punit, const char *msg)
   struct unit *pcharge;
   struct city_s *pcity;
   int id = -1;
-  struct tile *ptile = NULL;
+  tile_t *ptile = NULL;
   const char *s = "none";
 
   if (punit->debug) {

@@ -76,7 +76,7 @@ static void ai_military_findjob(player_t *pplayer,struct unit *punit);
 static void ai_military_gohome(player_t *pplayer,struct unit *punit);
 static void ai_military_attack(player_t *pplayer,struct unit *punit);
 
-static int unit_move_turns(struct unit *punit, struct tile *ptile);
+static int unit_move_turns(struct unit *punit, tile_t *ptile);
 static bool unit_role_defender(Unit_Type_id type);
 static int unit_def_rating_sq(struct unit *punit, struct unit *pdef);
 
@@ -133,7 +133,7 @@ static void ai_airlift(player_t *pplayer)
     }
     comparison = 0;
     unit_list_iterate(pplayer->units, punit) {
-      struct tile *ptile = (punit->tile);
+      tile_t *ptile = (punit->tile);
 
       if (ptile->city && ptile->city->u.server.ai.urgency == 0
           && ptile->city->u.server.ai.danger - DEFENCE_POWER(punit) < comparison
@@ -164,7 +164,7 @@ static void ai_airlift(player_t *pplayer)
 
   Fix to bizarre did-not-find bug.  Thanks, Katvrr -- Syela
 **************************************************************************/
-static bool could_be_my_zoc(struct unit *myunit, struct tile *ptile)
+static bool could_be_my_zoc(struct unit *myunit, tile_t *ptile)
 {
   assert(is_ground_unit(myunit));
 
@@ -190,7 +190,7 @@ static bool could_be_my_zoc(struct unit *myunit, struct tile *ptile)
     1 if zoc_ok
    -1 if zoc could be ok?
 **************************************************************************/
-int could_unit_move_to_tile(struct unit *punit, struct tile *dest_tile)
+int could_unit_move_to_tile(struct unit *punit, tile_t *dest_tile)
 {
   enum unit_move_result result;
 
@@ -255,7 +255,7 @@ static bool has_defense(struct city_s *pcity)
  Note: even if a unit has only fractional move points left, there is
  still a possibility it could cross the tile.
 **************************************************************************/
-static int unit_move_turns(struct unit *punit, struct tile *ptile)
+static int unit_move_turns(struct unit *punit, tile_t *ptile)
 {
   int move_time;
   int move_rate = unit_move_rate(punit);
@@ -458,7 +458,7 @@ int unit_def_rating_basic_sq(struct unit *punit)
   x, y, fortified and veteran.
 **************************************************************************/
 int unittype_def_rating_sq(Unit_Type_id att_type, Unit_Type_id def_type,
-                           struct tile *ptile, bool fortified, int veteran)
+                           tile_t *ptile, bool fortified, int veteran)
 {
   int v = get_virtual_defense_power(att_type, def_type, ptile,
                                     fortified, veteran) *
@@ -524,7 +524,7 @@ static int avg_benefit(int benefit, int loss, double chance)
   expect any help in our attack. Base function.
 **************************************************************************/
 static void reinforcements_cost_and_value(struct unit *punit,
-                                          struct tile *ptile0,
+                                          tile_t *ptile0,
                                           int *value, int *cost)
 {
   *cost = 0;
@@ -592,7 +592,7 @@ static bool is_my_turn(struct unit *punit, struct unit *pdef)
   Here the minus indicates that you need to enter the target tile (as
   opposed to attacking it, which leaves you where you are).
 **************************************************************************/
-static int ai_rampage_want(struct unit *punit, struct tile *ptile)
+static int ai_rampage_want(struct unit *punit, tile_t *ptile)
 {
   player_t *pplayer = unit_owner(punit);
   struct unit *pdef = get_defender(punit, ptile);
@@ -669,7 +669,7 @@ static struct pf_path *find_rampage_target(struct unit *punit,
   struct pf_path *path = NULL;
   struct pf_parameter parameter;
   /* Coordinates of the best target (initialize to silence compiler) */
-  struct tile *ptile = punit->tile;
+  tile_t *ptile = punit->tile;
   /* Want of the best target */
   int max_want = 0;
   player_t *pplayer = unit_owner(punit);
@@ -773,7 +773,7 @@ static void ai_military_bodyguard(player_t *pplayer, struct unit *punit)
 {
   struct unit *aunit = player_find_unit_by_id(pplayer, punit->ai.charge);
   struct city_s *acity = find_city_by_id(punit->ai.charge);
-  struct tile *ptile;
+  tile_t *ptile;
 
   CHECK_UNIT(punit);
 
@@ -824,8 +824,8 @@ static void ai_military_bodyguard(player_t *pplayer, struct unit *punit)
   where we will have moves left.
   FIXME: It checks if the ocean tile is in our Zone of Control?!
 **************************************************************************/
-bool find_beachhead(struct unit *punit, struct tile *dest_tile,
-                    struct tile **beachhead_tile)
+bool find_beachhead(struct unit *punit, tile_t *dest_tile,
+                    tile_t **beachhead_tile)
 {
   int ok, best = 0;
   Terrain_type_id t;
@@ -876,9 +876,9 @@ the sea. But Sea Raiders might want to attack cities inland.
 So this finds the nearest land tile on the same continent as the city.
 **************************************************************************/
 static void find_city_beach(struct city_s *pc, struct unit *punit,
-                            struct tile **dest_tile)
+                            tile_t **dest_tile)
 {
-  struct tile *best_tile = punit->tile;
+  tile_t *best_tile = punit->tile;
   int dist = 100;
   int search_dist = real_map_distance(pc->common.tile, punit->tile) - 1;
 
@@ -1236,7 +1236,7 @@ int turns_to_enemy_city(Unit_Type_id our_type,  struct city_s *acity,
 
  Requires precomputed warmap.  Assumes punit is ground or sailing.
 ************************************************************************/
-int turns_to_enemy_unit(Unit_Type_id our_type, int speed, struct tile *ptile,
+int turns_to_enemy_unit(Unit_Type_id our_type, int speed, tile_t *ptile,
                         Unit_Type_id enemy_type)
 {
   int dist;
@@ -1282,7 +1282,7 @@ int turns_to_enemy_unit(Unit_Type_id our_type, int speed, struct tile *ptile,
 static void invasion_funct(struct unit *punit, bool dest, int radius,
                            int which)
 {
-  struct tile *ptile;
+  tile_t *ptile;
   player_t *pplayer = unit_owner(punit);
   struct ai_data *ai = ai_data_get(pplayer);
 
@@ -1315,7 +1315,7 @@ static void invasion_funct(struct unit *punit, bool dest, int radius,
   punit->id == 0 means that the unit is virtual (considered to be built).
 **************************************************************************/
 int find_something_to_kill(player_t *pplayer, struct unit *punit,
-                           struct tile **dest_tile)
+                           tile_t **dest_tile)
 {
   struct ai_data *ai = ai_data_get(pplayer);
   /* basic attack */
@@ -1338,7 +1338,7 @@ int find_something_to_kill(player_t *pplayer, struct unit *punit,
   int maxd, needferry;
   /* Do we have access to sea? */
   bool harbor = FALSE;
-  struct tile *best_tile = NULL;
+  tile_t *best_tile = NULL;
   /* Build cost of the attacker (+adjustments) */
   int bcost, bcost_bal;
   bool handicap = ai_handicap(pplayer, H_TARGETS);
@@ -1610,7 +1610,7 @@ int find_something_to_kill(player_t *pplayer, struct unit *punit,
           /* a non-virtual ground unit is trying to attack something on
            * another continent.  Need a beachhead which is adjacent
            * to the city and an available ocean tile */
-          struct tile *btile;
+          tile_t *btile;
 
           if (find_beachhead(punit, acity->common.tile, &btile)) {
             best = want;
@@ -1754,7 +1754,7 @@ struct city_s *find_nearest_safe_city(struct unit *punit)
 **************************************************************************/
 static void ai_military_attack(player_t *pplayer, struct unit *punit)
 {
-  struct tile *dest_tile;
+  tile_t *dest_tile;
   int id = punit->id;
   int ct = 10;
   struct city_s *pcity = NULL;
@@ -1850,7 +1850,7 @@ static void ai_military_attack(player_t *pplayer, struct unit *punit)
     /* You can still have some moves left here, but barbarians should
        not sit helplessly, but advance towards nearest known enemy city */
     struct city_s *pc;
-    struct tile *ftile;
+    tile_t *ftile;
 
     if ((pc = dist_nearest_city(pplayer, punit->tile, FALSE, TRUE))) {
       if (!is_ocean(map_get_terrain(punit->tile))) {
@@ -2276,7 +2276,7 @@ static void ai_manage_barbarian_leader(player_t *pplayer, struct unit *leader)
 {
   Continent_id con = map_get_continent(leader->tile);
   int safest = 0;
-  struct tile *safest_tile = leader->tile;
+  tile_t *safest_tile = leader->tile;
   struct unit *closest_unit = NULL;
   int dist, mindist = 10000;
 
@@ -2353,7 +2353,7 @@ static void ai_manage_barbarian_leader(player_t *pplayer, struct unit *leader)
   generate_warmap(map_get_city(closest_unit->tile), closest_unit);
 
   do {
-    struct tile *last_tile;
+    tile_t *last_tile;
 
     UNIT_LOG(LOG_DEBUG, leader, "Barbarian leader: moves left: %d.",
              leader->moves_left);

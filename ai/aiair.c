@@ -44,8 +44,8 @@
  *       2. Special handicaps for planes running out of fuel
  *       IMO should be less restrictive than general H_MAP, H_FOG
  *************************************************************************/
-static bool find_nearest_airbase(struct tile *ptile, struct unit *punit,
-                                 struct tile **airbase_tile)
+static bool find_nearest_airbase(tile_t *ptile, struct unit *punit,
+                                 tile_t **airbase_tile)
 {
   player_t *pplayer = unit_owner(punit);
   int moves_left = punit->moves_left / SINGLE_MOVE;
@@ -66,7 +66,7 @@ static bool find_nearest_airbase(struct tile *ptile, struct unit *punit,
  * Used by bombers only.
  **********************************************************************/
 static bool ai_should_we_air_attack_tile(struct unit *punit,
-                                         struct tile *ptile)
+                                         tile_t *ptile)
 {
   city_t *acity = map_get_city(ptile);
 
@@ -89,7 +89,7 @@ static bool ai_should_we_air_attack_tile(struct unit *punit,
  * Assumes that the victim is within one day's flight
  **********************************************************************/
 static int ai_evaluate_tile_for_air_attack(struct unit *punit,
-                                           struct tile *dst_tile)
+                                           tile_t *dst_tile)
 {
   struct unit *pdefender = get_defender(punit, dst_tile);
   /* unit costs in shields */
@@ -162,7 +162,7 @@ static int ai_evaluate_tile_for_air_attack(struct unit *punit,
  * TODO: make separate handicaps for air units seeing targets
  *       IMO should be more restrictive than general H_MAP, H_FOG
  *********************************************************************/
-static int find_something_to_bomb(struct unit *punit, struct tile *ptile)
+static int find_something_to_bomb(struct unit *punit, tile_t *ptile)
 {
   player_t *pplayer = unit_owner(punit);
   int max_dist = punit->moves_left / SINGLE_MOVE;
@@ -217,7 +217,7 @@ static int find_something_to_bomb(struct unit *punit, struct tile *ptile)
  * base for air operations by (air)unit punit.
  **********************************************************************/
 static bool ai_find_strategic_airbase(struct unit *punit,
-                                      struct tile **airbase_tile)
+                                      tile_t **airbase_tile)
 {
   struct refuel *airbase;
   struct pqueue *airbase_iterator;
@@ -285,7 +285,7 @@ static bool ai_find_strategic_airbase(struct unit *punit,
  ***********************************************************************/
 void ai_manage_airunit(player_t *pplayer, struct unit *punit)
 {
-  struct tile *dst_tile = punit->tile;
+  tile_t *dst_tile = punit->tile;
   /* Loop prevention */
   int moves = punit->moves_left;
   int id = punit->id;
@@ -296,7 +296,7 @@ void ai_manage_airunit(player_t *pplayer, struct unit *punit)
   if (!is_airunit_refuel_point(punit->tile,
                                pplayer, punit->type, FALSE)) {
     /* We are out in the open, what shall we do? */
-    struct tile *refuel_tile;
+    tile_t *refuel_tile;
 
     if (punit->activity == ACTIVITY_GOTO
       /* We are on a GOTO.  Check if it will get us anywhere */

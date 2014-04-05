@@ -309,7 +309,7 @@ void ai_data_turn_init(player_t *pplayer)
   ai->stats.average_production /= MAX(1, city_list_size(pplayer->cities));
   BV_CLR_ALL(ai->stats.diplomat_reservations);
   unit_list_iterate(pplayer->units, punit) {
-    struct tile *ptile = punit->tile;
+    tile_t *ptile = punit->tile;
 
     if (!is_ocean(ptile->terrain) && unit_flag(punit, F_SETTLERS)) {
       ai->stats.workers[(int)map_get_continent(punit->tile)]++;

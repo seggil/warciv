@@ -440,7 +440,7 @@ static bool ai_diplomat_bribe_nearby(player_t *pplayer,
   struct ai_data *ai = ai_data_get(pplayer);
 
   pf_iterator(map, pos) {
-    struct tile *ptile = pos.tile;
+    tile_t *ptile = pos.tile;
     bool threat = FALSE;
     int newval, bestval = 0, cost;
     struct unit *pvictim = unit_list_get(ptile->units, 0);
@@ -496,7 +496,7 @@ static bool ai_diplomat_bribe_nearby(player_t *pplayer,
 
     /* Found someone! */
     {
-      struct tile *ptile;
+      tile_t *ptile;
       struct pf_path *path;
 
       ptile = mapstep(pos.tile, DIR_REVERSE(pos.dir_to_here));

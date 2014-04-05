@@ -18,14 +18,14 @@ struct citytile {
 };
 
 struct cityresult {
-  struct tile *tile;
+  tile_t *tile;
   int total;              /* total value of position */
   int result;             /* amortized and adjusted total value */
   int corruption, waste;
   bool overseas;          /* have to use boat to get there */
   bool virt_boat;         /* virtual boat was used in search,
                            * so need to build one */
-  struct tile *other_tile;/* coords to best other tile */
+  tile_t *other_tile;     /* coords to best other tile */
   int o_x, o_y;           /* city-relative coords for other tile */
   int city_center;        /* value of city center */
   int best_other;         /* value of best other tile */

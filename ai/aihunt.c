@@ -271,7 +271,7 @@ int ai_hunter_findjob(player_t *pplayer, struct unit *punit)
     }
     /* Note that we need not (yet) be at war with aplayer */
     unit_list_iterate(aplayer->units, target) {
-      struct tile *ptile = target->tile;
+      tile_t *ptile = target->tile;
       int dist1, dist2, stackthreat = 0, stackcost = 0;
       struct unit *defender;
 
