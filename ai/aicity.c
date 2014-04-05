@@ -209,7 +209,7 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
                  - game.server.nbarbarians
                  - team_count_members_alive(pplayer->team);
   struct ai_data *ai = ai_data_get(pplayer);
-  struct tile *ptile = pcity->common.tile;
+  tile_t *ptile = pcity->common.tile;
   bool capital = is_capital(pcity);
   struct government *gov = get_gov_pplayer(pplayer);
 
@@ -813,7 +813,7 @@ static void ai_spend_gold(player_t *pplayer)
    * FIXME: This is a hack, and should be removed once we
    * learn how to ferry explorers to new land. */
   city_list_iterate(pplayer->cities, pcity) {
-    struct tile *ptile = pcity->common.tile;
+    tile_t *ptile = pcity->common.tile;
     unit_list_iterate_safe(ptile->units, punit) {
       if (unit_has_role(punit->type, L_EXPLORER)
           && pcity->common.id == punit->homecity

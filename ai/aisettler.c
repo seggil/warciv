@@ -371,7 +371,7 @@ void print_cityresult(player_t *pplayer, struct cityresult *cr,
   return result->total == 0, then no place was found.
 **************************************************************************/
 static void city_desirability(player_t *pplayer, struct ai_data *ai,
-                              struct unit *punit, struct tile *ptile,
+                              struct unit *punit, tile_t *ptile,
                               struct cityresult *result)
 {
   struct city_s *pcity = map_get_city(ptile);
@@ -471,7 +471,7 @@ static bool settler_map_iterate(struct pf_parameter *parameter,
   map = pf_create_map(parameter);
   pf_iterator(map, pos) {
     int turns;
-    struct tile *ptile = pos.tile;
+    tile_t *ptile = pos.tile;
 
     if (is_ocean(ptile->terrain)) {
       continue; /* This can happen if there is a ferry near shore. */

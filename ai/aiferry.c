@@ -229,9 +229,9 @@ static int aiferry_avail_boats(player_t *pplayer)
   call-back.  Doesn't care for enemy/neutral tiles, these should be
   excluded using a TB call-back.
 **************************************************************************/
-static int combined_land_sea_move(const struct tile *src_tile,
+static int combined_land_sea_move(const tile_t *src_tile,
                                   enum direction8 dir,
-                                  const struct tile *tgt_tile,
+                                  const tile_t *tgt_tile,
                                   struct pf_parameter *param)
 {
   int move_cost;
@@ -254,7 +254,7 @@ static int combined_land_sea_move(const struct tile *src_tile,
   EC callback to account for the cost of sea moves by a ferry hurrying to
   pick our unit up.
 ****************************************************************************/
-static int sea_move(const struct tile *ptile, enum known_type known,
+static int sea_move(const tile_t *ptile, enum known_type known,
                     struct pf_parameter *param)
 {
   if (is_ocean(ptile->terrain)) {
@@ -405,7 +405,7 @@ static int aiferry_find_boat_nearby(struct unit *punit, int cap)
   example, we can require that (dest_x,dest_y) is on a coast.
 ****************************************************************************/
 bool aiferry_gobyboat(player_t *pplayer, struct unit *punit,
-                      struct tile *dest_tile)
+                      tile_t *dest_tile)
 {
   if (punit->transported_by <= 0) {
     /* We are not on a boat and we cannot walk */
@@ -482,7 +482,7 @@ bool aiferry_gobyboat(player_t *pplayer, struct unit *punit,
 
     /* Check if we are the passenger-in-charge */
     if (is_boat_free(ferryboat, punit, 0)) {
-      struct tile *beach_tile;     /* Destination for the boat */
+      tile_t *beach_tile;     /* Destination for the boat */
       struct unit *bodyguard = find_unit_by_id(punit->ai.bodyguard);
 
       UNIT_LOG(LOGLEVEL_GOBYBOAT, punit,
@@ -743,7 +743,7 @@ void ai_manage_ferryboat(player_t *pplayer, struct unit *punit)
 
   do {
     /* Do we have the passenger-in-charge on board? */
-    struct tile *ptile = punit->tile;
+    tile_t *ptile = punit->tile;
 
     if (punit->ai.passenger > 0) {
       struct unit *psngr = find_unit_by_id(punit->ai.passenger);

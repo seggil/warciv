@@ -447,7 +447,7 @@ static unsigned int assess_danger(city_t *pcity)
   bool pikemen = FALSE;
   unsigned int urgency = 0;
   int igwall_threat = 0;
-  struct tile *ptile = pcity->common.tile;
+  tile_t *ptile = pcity->common.tile;
 
   memset(&danger, 0, sizeof(danger));
 
@@ -780,7 +780,7 @@ static void process_defender_want(player_t *pplayer, city_t *pcity,
 **************************************************************************/
 static void process_attacker_want(city_t *pcity,
                                   int value, Unit_Type_id victim_unit_type,
-                                  int veteran, struct tile *ptile,
+                                  int veteran, tile_t *ptile,
                                   struct ai_choice *best_choice,
                                   struct unit *boat, Unit_Type_id boattype)
 {
@@ -979,7 +979,7 @@ static void kill_something_with(player_t *pplayer, city_t *pcity,
   /* Enemy defender type */
   Unit_Type_id def_type;
   /* Target coordinates */
-  struct tile *ptile;
+  tile_t *ptile;
   /* Our transport */
   struct unit *ferryboat = NULL;
   /* Our target */
@@ -987,7 +987,7 @@ static void kill_something_with(player_t *pplayer, city_t *pcity,
   /* Defender of the target city/tile */
   struct unit *pdef;
   /* Coordinates of the boat */
-  struct tile *boat_tile = NULL;
+  tile_t *boat_tile = NULL;
   /* Type of the boat (real or a future one) */
   Unit_Type_id boattype = U_LAST;
   bool go_by_boat;
@@ -1221,7 +1221,7 @@ void military_advisor_choose_build(player_t *pplayer, city_t *pcity,
 {
   Unit_Type_id unit_type;
   unsigned int our_def, danger, urgency;
-  struct tile *ptile = pcity->common.tile;
+  tile_t *ptile = pcity->common.tile;
   struct unit *virtualunit;
 
   init_choice(choice);

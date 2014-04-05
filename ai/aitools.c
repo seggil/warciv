@@ -109,7 +109,7 @@ bool ai_unit_execute_path(struct unit *punit, struct pf_path *path)
 
   /* We start with i = 1 for i = 0 is our present position */
   for (i = 1; i < path->length; i++) {
-    struct tile *ptile = path->positions[i].tile;
+    tile_t *ptile = path->positions[i].tile;
     int id = punit->id;
 
     if (same_pos(punit->tile, ptile)) {
@@ -145,13 +145,13 @@ bool ai_unit_execute_path(struct unit *punit, struct pf_path *path)
   be facing at our destination and tries to find/request a bodyguard if
   needed.
 ****************************************************************************/
-static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
+static void ai_gothere_bodyguard(struct unit *punit, tile_t *dest_tile)
 {
   player_t *pplayer = unit_owner(punit);
   struct ai_data *ai = ai_data_get(pplayer);
   unsigned int danger = 0;
   struct city_s *dcity;
-  struct tile *ptile;
+  tile_t *ptile;
 
   if (is_barbarian(unit_owner(punit))) {
     /* barbarians must have more courage (ie less brains) */
@@ -216,7 +216,7 @@ static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
   find_beachhead to work here. This requirement should be removed.
 ****************************************************************************/
 bool ai_gothere(player_t *pplayer, struct unit *punit,
-                struct tile *dest_tile)
+                tile_t *dest_tile)
 {
   CHECK_UNIT(punit);
 
@@ -271,10 +271,10 @@ bool ai_gothere(player_t *pplayer, struct unit *punit,
 
   FIXME: add some logging functionality to replace GOTO_LOG()
 **************************************************************************/
-bool ai_unit_goto(struct unit *punit, struct tile *ptile)
+bool ai_unit_goto(struct unit *punit, tile_t *ptile)
 {
   enum goto_result result;
-  struct tile *old_tile;
+  tile_t *old_tile;
   enum unit_activity activity = punit->activity;
 
   old_tile = punit->goto_tile; /* May be NULL. */
@@ -300,7 +300,7 @@ bool ai_unit_goto(struct unit *punit, struct tile *ptile)
   to bring along.
 **************************************************************************/
 void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
-                      struct tile *ptile)
+                      tile_t *ptile)
 {
   struct unit *charge = find_unit_by_id(punit->ai.charge);
   struct unit *bodyguard = find_unit_by_id(punit->ai.bodyguard);
@@ -414,7 +414,7 @@ bool ai_unit_make_homecity(struct unit *punit, struct city_s *pcity)
   bodyguard has not. This is an ai_unit_* auxiliary function, do not use
   elsewhere.
 **************************************************************************/
-static void ai_unit_bodyguard_move(int unitid, struct tile *ptile)
+static void ai_unit_bodyguard_move(int unitid, tile_t *ptile)
 {
   struct unit *bodyguard = find_unit_by_id(unitid);
 #ifndef NDEBUG
@@ -471,7 +471,7 @@ static bool has_bodyguard(struct unit *punit)
 /**************************************************************************
   Move and attack with an ai unit. We do not wait for server reply.
 **************************************************************************/
-bool ai_unit_attack(struct unit *punit, struct tile *ptile)
+bool ai_unit_attack(struct unit *punit, tile_t *ptile)
 {
   int sanity = punit->id;
   bool alive;
@@ -501,7 +501,7 @@ bool ai_unit_attack(struct unit *punit, struct tile *ptile)
   we can tell the calling function what happened to the move request.
   (Right now it is not a big problem, since we call the server directly.)
 **************************************************************************/
-bool ai_unit_move(struct unit *punit, struct tile *ptile)
+bool ai_unit_move(struct unit *punit, tile_t *ptile)
 {
   struct unit *bodyguard;
   int sanity = punit->id;
@@ -563,8 +563,10 @@ unless (everywhere != 0)
 If (enemy != 0) it looks only for enemy cities
 If (pplayer != NULL) it looks for cities known to pplayer
 **************************************************************************/
-struct city_s *dist_nearest_city(player_t *pplayer, struct tile *ptile,
-                               bool everywhere, bool enemy)
+struct city_s *dist_nearest_city(player_t *pplayer,
+                                 tile_t *ptile,
+                                 bool everywhere,
+                                 bool enemy)
 {
   struct city_s *pc=NULL;
   int best_dist = -1;

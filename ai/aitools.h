@@ -43,16 +43,16 @@ int stack_cost(struct unit *pdef);
 
 bool ai_unit_execute_path(struct unit *punit, struct pf_path *path);
 bool ai_gothere(player_t *pplayer, struct unit *punit,
-                struct tile *dst_tile);
-bool ai_unit_goto(struct unit *punit, struct tile *ptile);
+                tile_t *dst_tile);
+bool ai_unit_goto(struct unit *punit, tile_t *ptile);
 
 void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
-                      struct tile *ptile);
+                      tile_t *ptile);
 bool ai_unit_make_homecity(struct unit *punit, city_t *pcity);
-bool ai_unit_attack(struct unit *punit, struct tile *ptile);
-bool ai_unit_move(struct unit *punit, struct tile *ptile);
+bool ai_unit_attack(struct unit *punit, tile_t *ptile);
+bool ai_unit_move(struct unit *punit, tile_t *ptile);
 
-city_t *dist_nearest_city(player_t *pplayer, struct tile *ptile,
+city_t *dist_nearest_city(player_t *pplayer, tile_t *ptile,
                           bool everywhere, bool enemy);
 
 void ai_government_change(player_t *pplayer, int gov);

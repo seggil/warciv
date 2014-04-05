@@ -42,7 +42,7 @@ enum tile_hilite {
 #define TILE_XY(ptile) ((ptile) ? (ptile)->x : -1), \
                        ((ptile) ? (ptile)->y : -1)
 
-struct tile {
+struct tile_s {
   const int x, y;               /* Cartesian (map) coordinates of the tile. */
   const int nat_x, nat_y;       /* Native coordinates of the tile. */
   const int index;              /* Index coordinate of the tile. */
@@ -72,11 +72,9 @@ struct tile {
     } server;
   } u;
 };
-#if 0
-typedef struct tile tile_t;
-#endif
+
 /****************************************************************
-  Speclist for struct tile.
+  Speclist for tile_t.
 *****************************************************************/
 #define SPECLIST_TAG tile
 #define SPECLIST_TYPE tile_t
