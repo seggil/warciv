@@ -27,6 +27,6 @@ void unit_establish_trade_route(struct unit *punit, city_t *pcity1,
                                 city_t *pcity2);
 void trade_free_unit(struct unit *punit);
 
-void reset_trade_route_planning(struct player *pplayer);
+void reset_trade_route_planning(player_t *pplayer);
 
 #endif /* WC_SERVER_TRADE_HAND_H */

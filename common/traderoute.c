@@ -43,7 +43,7 @@
   Hack: Create a virtual unit to obtain it. It should support
         if the game changes (no unit_type or player_type kept).
 **************************************************************************/
-static struct pf_parameter *get_caravan_parameter(struct player *pplayer,
+static struct pf_parameter *get_caravan_parameter(player_t *pplayer,
                                                   tile_t *ptile)
 {
   static struct pf_parameter parameter;
@@ -750,7 +750,7 @@ void recursive_calculate_trade_planning(
   data:             A user data passed as second argument of the callbacks.
 ****************************************************************************/
 struct trade_planning_calculation *trade_planning_calculation_new(
-    struct player *pplayer, const struct city_list *pclist,
+    player_t *pplayer, const struct city_list *pclist,
 #ifndef ASYNC_TRADE_PLANNING
     int time_limit,
 #endif

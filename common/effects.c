@@ -753,7 +753,7 @@ void send_ruleset_cache(struct conn_list *dest)
   Note: this function is an inefficient hack to be used by the old AI.  It
   will never find wonders, since that's not what the AI wants.
 **************************************************************************/
-Impr_Type_id ai_find_source_building(struct player *pplayer,
+Impr_Type_id ai_find_source_building(player_t *pplayer,
                                      enum effect_type effect_type)
 {
   /* FIXME: this just returns the first building. it should return the best
@@ -826,7 +826,7 @@ static int num_world_buildings(Impr_Type_id id)
 /**************************************************************************
   Returns the number of buildings of a certain type owned by plr.
 **************************************************************************/
-static int num_player_buildings(const struct player *pplayer,
+static int num_player_buildings(const player_t *pplayer,
                                 Impr_Type_id building)
 {
   if (is_wonder(building)) {
@@ -846,7 +846,7 @@ static int num_player_buildings(const struct player *pplayer,
 /**************************************************************************
   Returns the number of buildings of a certain type on a continent.
 **************************************************************************/
-static int num_continent_buildings(const struct player *pplayer,
+static int num_continent_buildings(const player_t *pplayer,
                                    int continent, Impr_Type_id building)
 {
   if (is_wonder(building)) {
@@ -912,7 +912,7 @@ static bool is_target_possible(enum target_type target,
   the cache doesn't exist then we return 0.
 **************************************************************************/
 static int count_sources_in_range(enum target_type target,
-                                  const struct player *target_player,
+                                  const player_t *target_player,
                                   const city_t *target_city,
                                   Impr_Type_id target_building,
                                   enum effect_range range, bool survives,
@@ -974,7 +974,7 @@ static int count_sources_in_range(enum target_type target,
   peffect is the exact effect
 **************************************************************************/
 static bool is_effect_redundant(enum target_type target,
-                                const struct player *target_player,
+                                const player_t *target_player,
                                 const city_t *target_city,
                                 Impr_Type_id target_building,
                                 Impr_Type_id source,
@@ -1020,7 +1020,7 @@ static bool is_effect_redundant(enum target_type target,
   player as well as the city itself as the target city.
 **************************************************************************/
 static bool are_effect_reqs_active(enum target_type target,
-                                   const struct player *target_player,
+                                   const player_t *target_player,
                                    const city_t *target_city,
                                    Impr_Type_id target_building,
                                    const tile_t *target_tile,
@@ -1086,7 +1086,7 @@ static bool are_effect_reqs_active(enum target_type target,
   peffect gives the exact effect value
 **************************************************************************/
 bool is_effect_useful(enum target_type target,
-                      const struct player *target_player,
+                      const player_t *target_player,
                       const city_t *target_city,
                       Impr_Type_id target_building,
                       const tile_t *target_tile,
@@ -1114,7 +1114,7 @@ bool is_effect_useful(enum target_type target,
   peffect gives the exact effect value
 **************************************************************************/
 static bool is_effect_active(enum target_type target,
-                             const struct player *plr,
+                             const player_t *plr,
                              const city_t *pcity,
                              Impr_Type_id building,
                              const tile_t *ptile,
@@ -1166,7 +1166,7 @@ bool is_building_replaced(const city_t *pcity, Impr_Type_id building)
   effect_type gives the effect type to be considered
 **************************************************************************/
 static int get_effect_value(enum target_type target,
-                            const struct player *target_player,
+                            const player_t *target_player,
                             const city_t *target_city,
                             Impr_Type_id target_building,
                             const tile_t *target_tile,
@@ -1203,7 +1203,7 @@ static int get_effect_value(enum target_type target,
 **************************************************************************/
 static int get_target_bonus_sources(struct effect_source_vector *sources,
                                     enum target_type target,
-                                    const struct player *target_player,
+                                    const player_t *target_player,
                                     const city_t *target_city,
                                     Impr_Type_id target_building,
                                     const tile_t *target_tile,
@@ -1243,7 +1243,7 @@ static int get_target_bonus_sources(struct effect_source_vector *sources,
 /**************************************************************************
   Returns the effect bonus for a player.
 **************************************************************************/
-int get_player_bonus(const struct player *pplayer,
+int get_player_bonus(const player_t *pplayer,
                      enum effect_type effect_type)
 {
   return get_target_bonus_sources(NULL, TARGET_PLAYER,
@@ -1290,7 +1290,7 @@ int get_building_bonus(const city_t *pcity, Impr_Type_id id,
   is done with it.
 **************************************************************************/
 int get_player_bonus_sources(struct effect_source_vector *sources,
-    const struct player *pplayer, enum effect_type effect_type)
+    const player_t *pplayer, enum effect_type effect_type)
 {
   return get_target_bonus_sources(sources, TARGET_PLAYER,
                                   pplayer, NULL, B_LAST, NULL,

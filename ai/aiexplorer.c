@@ -37,7 +37,7 @@
   the player actually has. Return the % certainty that it's water
   (100 = certain, 50 = no idea, 0 = certainly not).
 **************************************************************************/
-static int likely_ocean(struct tile *ptile, struct player *pplayer)
+static int likely_ocean(struct tile *ptile, player_t *pplayer)
 {
   int sum;
 
@@ -79,7 +79,7 @@ static int likely_ocean(struct tile *ptile, struct player *pplayer)
 Is a tile likely to be coastline, given information that the
 player actually has.
 ***************************************************************/
-static bool is_likely_coastline(struct tile *ptile, struct player *pplayer)
+static bool is_likely_coastline(struct tile *ptile, player_t *pplayer)
 {
   int likely = 50;
   int t;
@@ -103,7 +103,7 @@ static bool is_likely_coastline(struct tile *ptile, struct player *pplayer)
 Is there a chance that a trireme would be lost, given information that
 the player actually has.
 ***************************************************************/
-static bool is_likely_trireme_loss(struct player *pplayer,
+static bool is_likely_trireme_loss(player_t *pplayer,
                                    struct tile *ptile)
 {
   /*
@@ -163,7 +163,7 @@ comment below.
 
 #define BEST_POSSIBLE_SCORE    (HUT_SCORE + BEST_NORMAL_TILE)
 
-static int explorer_desirable(struct tile *ptile, struct player *pplayer,
+static int explorer_desirable(struct tile *ptile, player_t *pplayer,
                               struct unit *punit)
 {
   int land_score, ocean_score, known_land_score, known_ocean_score;
@@ -246,7 +246,7 @@ static int explorer_desirable(struct tile *ptile, struct player *pplayer,
 **************************************************************************/
 bool ai_manage_explorer(struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   /* Loop prevention */
   int init_moves = punit->moves_left;
 

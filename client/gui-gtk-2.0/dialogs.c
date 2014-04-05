@@ -436,8 +436,8 @@ static void spy_advances_callback(GtkTreeSelection *select, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-static void create_advances_list(struct player *pplayer,
-                                 struct player *pvictim)
+static void create_advances_list(player_t *pplayer,
+                                 player_t *pvictim)
 {
   GtkWidget *sw, *label, *vbox, *view;
   int i;
@@ -580,7 +580,7 @@ static void spy_improvements_callback(GtkTreeSelection *select, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-static void create_improvements_list(struct player *pplayer,
+static void create_improvements_list(player_t *pplayer,
                                      city_t *pcity)
 {
   GtkWidget *sw, *label, *vbox, *view;
@@ -675,7 +675,7 @@ static void create_improvements_list(struct player *pplayer,
 static void spy_steal_popup(GtkWidget *w, gpointer data)
 {
   city_t *pvcity = find_city_by_id(diplomat_target_id);
-  struct player *pvictim = NULL;
+  player_t *pvictim = NULL;
 
   if(pvcity)
     pvictim = city_owner(pvcity);

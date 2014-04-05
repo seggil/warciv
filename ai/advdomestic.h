@@ -17,9 +17,9 @@
 
 struct ai_choice;
 
-void ai_eval_threat_init(struct player *pplayer);
-void ai_eval_threat_done(struct player *pplayer);
-void domestic_advisor_choose_build(struct player *pplayer, city_t *pcity,
+void ai_eval_threat_init(player_t *pplayer);
+void ai_eval_threat_done(player_t *pplayer);
+void domestic_advisor_choose_build(player_t *pplayer, city_t *pcity,
                                    struct ai_choice *choice);
 
 #endif  /* WC_AI_ADVDOMESTIC_H */

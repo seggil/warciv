@@ -83,7 +83,7 @@ static bool diplomacy_verbose = TRUE;
   because we may want to highligh/present these messages differently
   in the future.
 ***********************************************************************/
-static void notify(struct player *pplayer, const char *text, ...)
+static void notify(player_t *pplayer, const char *text, ...)
 {
   if (diplomacy_verbose) {
     va_list ap;
@@ -115,7 +115,7 @@ static int greed(int missing_love)
 /**********************************************************************
   How much is a tech worth to player measured in gold
 ***********************************************************************/
-static int ai_goldequiv_tech(struct player *pplayer, Tech_Type_id tech)
+static int ai_goldequiv_tech(player_t *pplayer, Tech_Type_id tech)
 {
   int worth;
 
@@ -134,8 +134,8 @@ static int ai_goldequiv_tech(struct player *pplayer, Tech_Type_id tech)
   Avoid giving pplayer's vision to non-allied player through aplayer
   (shared vision is transitive).
 ************************************************************************/
-static bool shared_vision_is_safe(struct player* pplayer,
-                                  struct player* aplayer)
+static bool shared_vision_is_safe(player_t* pplayer,
+                                  player_t* aplayer)
 {
   if (pplayer->team != TEAM_NONE && pplayer->team == aplayer->team) {
     return TRUE;
@@ -159,8 +159,8 @@ static bool shared_vision_is_safe(struct player* pplayer,
   Checks if player1 can agree on ceasefire with player2
   This function should only be used for ai players
 **********************************************************************/
-static bool ai_players_can_agree_on_ceasefire(struct player* player1,
-                                              struct player* player2)
+static bool ai_players_can_agree_on_ceasefire(player_t* player1,
+                                              player_t* player2)
 {
   struct ai_data *ai1;
   ai1 = ai_data_get(player1);
@@ -177,8 +177,8 @@ static bool ai_players_can_agree_on_ceasefire(struct player* player1,
   sometimes matter a great deal who is giving what to whom, and
   sometimes (such as with treaties) it does not matter at all.
 ***********************************************************************/
-static int ai_goldequiv_clause(struct player *pplayer,
-                               struct player *aplayer,
+static int ai_goldequiv_clause(player_t *pplayer,
+                               player_t *aplayer,
                                struct Clause *pclause,
                                struct ai_data *ai,
                                bool verbose)
@@ -470,7 +470,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
   pplayer is AI player, aplayer is the other player involved, treaty
   is the treaty being considered. It is all a question about money :-)
 ***********************************************************************/
-void ai_treaty_evaluate(struct player *pplayer, struct player *aplayer,
+void ai_treaty_evaluate(player_t *pplayer, player_t *aplayer,
                         struct Treaty *ptreaty)
 {
   int total_balance = 0;
@@ -527,8 +527,8 @@ void ai_treaty_evaluate(struct player *pplayer, struct player *aplayer,
   Comments to player from AI on clauses being agreed on. Does not
   alter any state.
 ***********************************************************************/
-static void ai_treaty_react(struct player *pplayer,
-                            struct player *aplayer,
+static void ai_treaty_react(player_t *pplayer,
+                            player_t *aplayer,
                             struct Clause *pclause)
 {
   struct ai_data *ai = ai_data_get(pplayer);
@@ -564,7 +564,7 @@ static void ai_treaty_react(struct player *pplayer,
   pplayer is AI player, aplayer is the other player involved, ptreaty
   is the treaty accepted.
 ***********************************************************************/
-void ai_treaty_accepted(struct player *pplayer, struct player *aplayer,
+void ai_treaty_accepted(player_t *pplayer, player_t *aplayer,
                         struct Treaty *ptreaty)
 {
   int total_balance = 0;
@@ -598,7 +598,7 @@ void ai_treaty_accepted(struct player *pplayer, struct player *aplayer,
 /**********************************************************************
   Calculate our desire to go to war against aplayer.
 ***********************************************************************/
-static int ai_war_desire(struct player *pplayer, struct player *aplayer,
+static int ai_war_desire(player_t *pplayer, player_t *aplayer,
                          struct ai_data *ai)
 {
   int kill_desire;
@@ -685,8 +685,8 @@ static int ai_war_desire(struct player *pplayer, struct player *aplayer,
 /**********************************************************************
   Suggest a treaty from pplayer to aplayer
 ***********************************************************************/
-static void ai_diplomacy_suggest(struct player *pplayer,
-                                 struct player *aplayer,
+static void ai_diplomacy_suggest(player_t *pplayer,
+                                 player_t *aplayer,
                                  enum clause_type what,
                                  int value)
 {
@@ -706,11 +706,11 @@ static void ai_diplomacy_suggest(struct player *pplayer,
 
   Only ever called for AI players and never for barbarians.
 ***********************************************************************/
-void ai_diplomacy_calculate(struct player *pplayer, struct ai_data *ai)
+void ai_diplomacy_calculate(player_t *pplayer, struct ai_data *ai)
 {
   int war_desire[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   int best_desire = 0;
-  struct player *target = NULL;
+  player_t *target = NULL;
 
   memset(war_desire, 0, sizeof(war_desire));
 
@@ -891,7 +891,7 @@ void ai_diplomacy_calculate(struct player *pplayer, struct ai_data *ai)
 /**********************************************************************
   Offer techs and stuff to other player and ask for techs we need.
 ***********************************************************************/
-static void ai_share(struct player *pplayer, struct player *aplayer)
+static void ai_share(player_t *pplayer, player_t *aplayer)
 {
   int index;
 
@@ -927,8 +927,8 @@ static void ai_share(struct player *pplayer, struct player *aplayer)
 /**********************************************************************
   Go to war.
 ***********************************************************************/
-static void ai_go_to_war(struct player *pplayer, struct ai_data *ai,
-                         struct player *target)
+static void ai_go_to_war(player_t *pplayer, struct ai_data *ai,
+                         player_t *target)
 {
   if (gives_shared_vision(pplayer, target)) {
     remove_shared_vision(pplayer, target);
@@ -955,10 +955,10 @@ static void ai_go_to_war(struct player *pplayer, struct ai_data *ai,
 
   Only ever called for AI players and never for barbarians.
 ***********************************************************************/
-void ai_diplomacy_actions(struct player *pplayer)
+void ai_diplomacy_actions(player_t *pplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
-  struct player *target = ai->diplomacy.target;
+  player_t *target = ai->diplomacy.target;
 
   assert(pplayer->ai.control);
   if (!pplayer->is_alive) {

@@ -45,7 +45,7 @@
   suggested name and with same id which was passed in (either unit id
   for city builder or existing city id for rename, we don't care here).
 **************************************************************************/
-void handle_city_name_suggestion_req(struct player *pplayer, int value)
+void handle_city_name_suggestion_req(player_t *pplayer, int value)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, value);
 
@@ -63,7 +63,7 @@ void handle_city_name_suggestion_req(struct player *pplayer, int value)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_change_specialist(struct player *pplayer, int city_id,
+void handle_city_change_specialist(player_t *pplayer, int city_id,
                                    Specialist_type_id from,
                                    Specialist_type_id to)
 {
@@ -92,7 +92,7 @@ void handle_city_change_specialist(struct player *pplayer, int city_id,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_make_specialist(struct player *pplayer, int city_id,
+void handle_city_make_specialist(player_t *pplayer, int city_id,
                                  int worker_x, int worker_y)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
@@ -120,7 +120,7 @@ void handle_city_make_specialist(struct player *pplayer, int city_id,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_make_worker(struct player *pplayer, int city_id,
+void handle_city_make_worker(player_t *pplayer, int city_id,
                              int worker_x, int worker_y)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
@@ -164,7 +164,7 @@ void handle_city_make_worker(struct player *pplayer, int city_id,
 /**************************************************************************
 ...
 **************************************************************************/
-void really_handle_city_sell(struct player *pplayer, city_t *pcity,
+void really_handle_city_sell(player_t *pplayer, city_t *pcity,
                              Impr_Type_id id)
 {
   if (pcity->common.did_sell) {
@@ -193,7 +193,7 @@ void really_handle_city_sell(struct player *pplayer, city_t *pcity,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_sell(struct player *pplayer, int city_id, int build_id)
+void handle_city_sell(player_t *pplayer, int city_id, int build_id)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
 
@@ -206,7 +206,7 @@ void handle_city_sell(struct player *pplayer, int city_id, int build_id)
 /**************************************************************************
 ...
 **************************************************************************/
-void really_handle_city_buy(struct player *pplayer, city_t *pcity)
+void really_handle_city_buy(player_t *pplayer, city_t *pcity)
 {
   const char *name;
   int cost, total;
@@ -283,7 +283,7 @@ void really_handle_city_buy(struct player *pplayer, city_t *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_worklist(struct player *pplayer, int city_id,
+void handle_city_worklist(player_t *pplayer, int city_id,
                           struct worklist *worklist)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
@@ -300,7 +300,7 @@ void handle_city_worklist(struct player *pplayer, int city_id,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_buy(struct player *pplayer, int city_id)
+void handle_city_buy(player_t *pplayer, int city_id)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
 
@@ -314,7 +314,7 @@ void handle_city_buy(struct player *pplayer, int city_id)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_refresh(struct player *pplayer, int city_id)
+void handle_city_refresh(player_t *pplayer, int city_id)
 {
   if (city_id != 0) {
     city_t *pcity = player_find_city_by_id(pplayer, city_id);
@@ -333,7 +333,7 @@ void handle_city_refresh(struct player *pplayer, int city_id)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_change(struct player *pplayer, int city_id, int build_id,
+void handle_city_change(player_t *pplayer, int city_id, int build_id,
                         bool is_build_id_unit_id)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
@@ -369,7 +369,7 @@ void handle_city_change(struct player *pplayer, int city_id, int build_id,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_rename(struct player *pplayer, int city_id, char *name)
+void handle_city_rename(player_t *pplayer, int city_id, char *name)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
   char message[1024];
@@ -392,7 +392,7 @@ void handle_city_rename(struct player *pplayer, int city_id, char *name)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_city_options_req(struct player *pplayer, int city_id, int value)
+void handle_city_options_req(player_t *pplayer, int city_id, int value)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
 
@@ -411,7 +411,7 @@ void handle_city_options_req(struct player *pplayer, int city_id, int value)
 ***************************************************************/
 void handle_city_incite_inq(struct connection *pc, int city_id)
 {
-  struct player *pplayer = pc->observer ? NULL : pc->player;
+  player_t *pplayer = pc->observer ? NULL : pc->player;
   city_t *pcity = find_city_by_id(city_id);
   bool possible = FALSE;
 
@@ -442,7 +442,7 @@ void handle_city_incite_inq(struct connection *pc, int city_id)
 /***************************************************************
   ...
 ***************************************************************/
-void handle_city_set_rally_point(struct player *pplayer, int city_id,
+void handle_city_set_rally_point(player_t *pplayer, int city_id,
                                  int x, int y)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
@@ -459,7 +459,7 @@ void handle_city_set_rally_point(struct player *pplayer, int city_id,
 /***************************************************************
   ...
 ***************************************************************/
-void handle_city_clear_rally_point(struct player *pplayer, int city_id)
+void handle_city_clear_rally_point(player_t *pplayer, int city_id)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
 
@@ -474,7 +474,7 @@ void handle_city_clear_rally_point(struct player *pplayer, int city_id)
 /***************************************************************
   ...
 ***************************************************************/
-void handle_city_manager_param(struct player *pplayer,
+void handle_city_manager_param(player_t *pplayer,
                                struct packet_city_manager_param *packet)
 {
   city_t *pcity = player_find_city_by_id(pplayer, packet->id);
@@ -508,7 +508,7 @@ void handle_city_manager_param(struct player *pplayer,
 /***************************************************************
   ...
 ***************************************************************/
-void handle_city_no_manager_param(struct player *pplayer, int city_id)
+void handle_city_no_manager_param(player_t *pplayer, int city_id)
 {
   city_t *pcity = player_find_city_by_id(pplayer, city_id);
 

@@ -88,13 +88,15 @@ struct unit_order *make_unit_orders(struct trade_route *ptr, int *length);
 #endif /* HAVE_UCONTEXT_H */
 
 struct city_list;
-struct player;
+
 struct trade_planning_calculation;      /* Opaque type */
 
 int trade_planning_precalculation(const struct tile_list *ptlist,
                                   size_t size, int *free_slots);
-struct trade_planning_calculation *trade_planning_calculation_new(
-    struct player *pplayer, const struct city_list *pclist,
+struct trade_planning_calculation *
+trade_planning_calculation_new(
+    player_t *pplayer,
+    const struct city_list *pclist,
 #ifndef ASYNC_TRADE_PLANNING
     int time_limit,
 #endif
@@ -102,9 +104,10 @@ struct trade_planning_calculation *trade_planning_calculation_new(
     void (*apply_callback)(const struct trade_planning_calculation *, void *),
     void *data);
 void trade_planning_calculation_destroy(
-    struct trade_planning_calculation *pcalc, bool apply);
+    struct trade_planning_calculation *pcalc,
+    bool apply);
 bool trade_planning_calculation_resume(
-     struct trade_planning_calculation *pcalc);
+    struct trade_planning_calculation *pcalc);
 
 struct trade_route_list *trade_planning_calculation_get_trade_routes(
     const struct trade_planning_calculation *pcalc,

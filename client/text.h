@@ -36,10 +36,10 @@ const char *get_unit_info_label_text2(struct unit *punit);
 const char *get_spaceship_descr(struct player_spaceship *pship);
 const char *get_timeout_label_text(void);
 const char *format_duration(int duration);
-const char *get_ping_time_text(struct player *pplayer);
+const char *get_ping_time_text(player_t *pplayer);
 const char *get_report_title(const char *report_name);
 const char *get_happiness_buildings(const city_t *pcity);
 const char *get_happiness_wonders(const city_t *pcity);
-const char *get_ping_time_text(struct player *pplayer);
+const char *get_ping_time_text(player_t *pplayer);
 
 #endif /* WC_CLIENT_TEXT_H */

@@ -89,7 +89,7 @@ void player_colors_mode_changed(void);
 void player_colors_mode_option_callback(struct client_option *poption);
 const char *player_colors_mode_get_name(enum player_colors_modes mode);
 
-enum color_std get_player_color(struct player *pplayer);
+enum color_std get_player_color(player_t *pplayer);
 enum color_std overview_tile_color(tile_t *ptile);
 
 void set_focus_unit_hidden_state(bool hide);

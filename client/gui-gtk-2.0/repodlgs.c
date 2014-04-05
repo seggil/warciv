@@ -498,7 +498,7 @@ void science_dialog_update(void)
   gdouble pct;
   int steps, bulbs;
   GtkTreeIter iter;
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
 
   if (is_report_dialogs_frozen()) {
     return;
@@ -1198,7 +1198,7 @@ static void activeunits_command_callback(struct gui_dialog *dlg, int response)
     }
   } else {
     GtkWidget *shell;
-    struct player *pplayer = get_player_ptr();
+    player_t *pplayer = get_player_ptr();
 
     ut2 = can_upgrade_unittype(pplayer, ut1);
 
@@ -1244,7 +1244,7 @@ void activeunits_report_dialog_update(void)
     int    k, can;
     struct repoinfo unitarray[U_LAST];
     struct repoinfo unittotals;
-    struct player *pplayer = get_player_ptr();
+    player_t *pplayer = get_player_ptr();
     GtkTreeIter it;
     GValue value = { 0, };
 

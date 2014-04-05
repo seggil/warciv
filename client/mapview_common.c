@@ -92,7 +92,7 @@ enum color_std get_grid_color(tile_t *tile1, enum direction8 dir)
   bool pos1_is_in_city_radius;
   bool pos2_is_in_city_radius;
   tile_t *tile2;
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
 
   if (!(tile2 = mapstep(tile1, dir))) {
     return COLOR_STD_BLACK;
@@ -1358,7 +1358,7 @@ static void tile_draw_borders(struct canvas *pcanvas,
                               tile_t *ptile,
                               int canvas_x, int canvas_y)
 {
-  struct player *this_owner = map_get_owner(ptile), *adjc_owner;
+  player_t *this_owner = map_get_owner(ptile), *adjc_owner;
   int start_x, start_y, end_x, end_y;
 
   if (!draw_borders || game.ruleset_control.borders == 0) {

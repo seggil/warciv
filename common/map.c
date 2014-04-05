@@ -467,7 +467,7 @@ tile_t *index_to_tile(int index)
 /**************************************************************************
   Return the player who owns this tile (or NULL if none).
 **************************************************************************/
-struct player *map_get_owner(const tile_t *ptile)
+player_t *map_get_owner(const tile_t *ptile)
 {
   return ptile->owner;
 }
@@ -475,7 +475,7 @@ struct player *map_get_owner(const tile_t *ptile)
 /**************************************************************************
   Set the owner of a tile (may be NULL).
 **************************************************************************/
-void map_set_owner(tile_t *ptile, struct player *owner)
+void map_set_owner(tile_t *ptile, player_t *owner)
 {
   ptile->owner = owner;
 }

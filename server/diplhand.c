@@ -18,10 +18,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "diptreaty.h"
 #include "events.h"
 #include "wc_intl.h"
 #include "game.h"
+#include "diptreaty.h"
 #include "log.h"
 #include "map.h"
 #include "mem.h"
@@ -90,7 +90,7 @@ void free_treaties(void)
 /**************************************************************************
 ...
 **************************************************************************/
-struct Treaty *find_treaty(struct player *plr0, struct player *plr1)
+struct Treaty *find_treaty(player_t *plr0, player_t *plr1)
 {
   treaty_list_iterate(treaties, ptreaty) {
     if ((ptreaty->plr0 == plr0 && ptreaty->plr1 == plr1) ||
@@ -107,11 +107,11 @@ pplayer clicked the accept button. If he accepted the treaty we check the
 clauses. If both players have now accepted the treaty we execute the agreed
 clauses.
 **************************************************************************/
-void handle_diplomacy_accept_treaty_req(struct player *pplayer,
+void handle_diplomacy_accept_treaty_req(player_t *pplayer,
                                         int counterpart)
 {
   struct Treaty *ptreaty;
-  struct player *pother;
+  player_t *pother;
   bool *player_accept, *other_accept;
 
   if (!pplayer
@@ -361,8 +361,8 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
     }
 
     clause_list_iterate(ptreaty->clauses, pclause) {
-      struct player *pgiver = pclause->from;
-      struct player *pdest = (pplayer == pgiver) ? pother : pplayer;
+      player_t *pgiver = pclause->from;
+      player_t *pdest = (pplayer == pgiver) ? pother : pplayer;
       enum diplstate_type old_diplstate =
         pgiver->diplstates[pdest->player_no].type;
 
@@ -536,7 +536,7 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 /****************************************************************************
   Create an embassy. pplayer gets an embassy with aplayer.
 ****************************************************************************/
-void establish_embassy(struct player *pplayer, struct player *aplayer)
+void establish_embassy(player_t *pplayer, player_t *aplayer)
 {
   /* Establish the embassy. */
   pplayer->embassy |= (1 << aplayer->player_no);
@@ -548,12 +548,12 @@ void establish_embassy(struct player *pplayer, struct player *aplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_diplomacy_remove_clause_req(struct player *pplayer,
+void handle_diplomacy_remove_clause_req(player_t *pplayer,
                                         int counterpart, int giver,
                                         enum clause_type type, int value)
 {
   struct Treaty *ptreaty;
-  struct player *pgiver, *pother;
+  player_t *pgiver, *pother;
 
   if (!pplayer
       || !is_valid_player_id(counterpart)
@@ -590,12 +590,12 @@ void handle_diplomacy_remove_clause_req(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_diplomacy_create_clause_req(struct player *pplayer,
+void handle_diplomacy_create_clause_req(player_t *pplayer,
                                         int counterpart, int giver,
                                         enum clause_type type, int value)
 {
   struct Treaty *ptreaty;
-  struct player *pgiver, *pother;
+  player_t *pgiver, *pother;
 
   if (!pplayer
       || !is_valid_player_id(counterpart)
@@ -647,8 +647,8 @@ void handle_diplomacy_create_clause_req(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-static void really_diplomacy_cancel_meeting(struct player *pplayer,
-                                            struct player *pother)
+static void really_diplomacy_cancel_meeting(player_t *pplayer,
+                                            player_t *pother)
 {
   struct Treaty *ptreaty = find_treaty(pplayer, pother);
 
@@ -672,7 +672,7 @@ static void really_diplomacy_cancel_meeting(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_diplomacy_cancel_meeting_req(struct player *pplayer,
+void handle_diplomacy_cancel_meeting_req(player_t *pplayer,
                                          int counterpart)
 {
   if (!pplayer
@@ -687,10 +687,10 @@ void handle_diplomacy_cancel_meeting_req(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_diplomacy_init_meeting_req(struct player *pplayer,
+void handle_diplomacy_init_meeting_req(player_t *pplayer,
                                        int counterpart)
 {
-  struct player *pother;
+  player_t *pother;
 
   if (!pplayer
       || !is_valid_player_id(counterpart)
@@ -729,7 +729,7 @@ void handle_diplomacy_init_meeting_req(struct player *pplayer,
 **************************************************************************/
 void send_diplomatic_meetings(struct connection *dest)
 {
-  struct player *pplayer = dest->player;
+  player_t *pplayer = dest->player;
   bool player_accept, other_accept;
 
   if (!pplayer) {
@@ -779,7 +779,7 @@ void send_diplomatic_meetings(struct connection *dest)
 /**************************************************************************
 ...
 **************************************************************************/
-void cancel_all_meetings(struct player *pplayer)
+void cancel_all_meetings(player_t *pplayer)
 {
   players_iterate(pplayer2) {
     if (find_treaty(pplayer, pplayer2)) {
@@ -791,7 +791,7 @@ void cancel_all_meetings(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-void cancel_diplomacy(struct player *pplayer)
+void cancel_diplomacy(player_t *pplayer)
 {
   notify_player(pplayer, _("Game: You have got %d/%d alliances. "
                            "Cancelling all other diplomacy..."),

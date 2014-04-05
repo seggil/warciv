@@ -170,7 +170,7 @@ extern struct ai_gov_tech_hint ai_gov_tech_hints[MAX_NUM_TECH_LIST];
 
 bool government_exists(int gov);
 struct government *get_government(int gov);
-struct government *get_gov_pplayer(struct player *pplayer);
+struct government *get_gov_pplayer(player_t *pplayer);
 #if 0
 typedef struct city_s city_t;
 #endif
@@ -188,7 +188,7 @@ int get_government_civil_war_prob(int type);
 const char *get_government_name(int type);
 const char *get_ruler_title(int gov, bool male, int nation);
 
-bool can_change_to_government(struct player *pplayer, int government);
+bool can_change_to_government(player_t *pplayer, int government);
 
 void set_ruler_title(struct government *gov, int nation,
                      const char *male, const char *female);

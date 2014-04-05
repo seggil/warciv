@@ -108,7 +108,7 @@ static struct {
 
   We always return valid other_x and other_y if total > 0.
 **************************************************************************/
-void cityresult_fill(struct player *pplayer,
+void cityresult_fill(player_t *pplayer,
                      struct ai_data *ai,
                      struct cityresult *result)
 {
@@ -319,7 +319,7 @@ static int naval_bonus(struct cityresult *result, struct ai_data *ai)
 /**************************************************************************
   For debugging, print the city result table.
 **************************************************************************/
-void print_cityresult(struct player *pplayer, struct cityresult *cr,
+void print_cityresult(player_t *pplayer, struct cityresult *cr,
                       struct ai_data *ai)
 {
   freelog(LOG_NORMAL, "Result=(%d, %d)\nReservations:\n"
@@ -370,7 +370,7 @@ void print_cityresult(struct player *pplayer, struct cityresult *cr,
   ensures that we do not build cities too close to each other. If we
   return result->total == 0, then no place was found.
 **************************************************************************/
-static void city_desirability(struct player *pplayer, struct ai_data *ai,
+static void city_desirability(player_t *pplayer, struct ai_data *ai,
                               struct unit *punit, struct tile *ptile,
                               struct cityresult *result)
 {
@@ -439,7 +439,7 @@ static void city_desirability(struct player *pplayer, struct ai_data *ai,
 /**************************************************************************
   Prime settler engine.
 **************************************************************************/
-void ai_settler_init(struct player *pplayer)
+void ai_settler_init(player_t *pplayer)
 {
   cachemap = wc_realloc(cachemap, MAX_MAP_INDEX * sizeof(*cachemap));
   memset(cachemap, -1, MAX_MAP_INDEX * sizeof(*cachemap));
@@ -459,7 +459,7 @@ void ai_settler_init(struct player *pplayer)
 static bool settler_map_iterate(struct pf_parameter *parameter,
                                 struct unit *punit,
                                 struct cityresult *best,
-                                struct player *pplayer,
+                                player_t *pplayer,
                                 int boat_cost)
 {
   struct cityresult result;
@@ -542,7 +542,7 @@ static bool settler_map_iterate(struct pf_parameter *parameter,
 void find_best_city_placement(struct unit *punit, struct cityresult *best,
                               bool look_for_boat, bool use_virt_boat)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct pf_parameter parameter;
   struct unit *ferry = NULL;
 

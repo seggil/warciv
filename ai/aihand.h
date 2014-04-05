@@ -16,11 +16,11 @@
 #include "wc_types.h"
 #include "city.h"               /* enum choice_type */
 
-void ai_do_first_activities(struct player *pplayer);
-void ai_do_last_activities(struct player *pplayer);
+void ai_do_first_activities(player_t *pplayer);
+void ai_do_last_activities(player_t *pplayer);
 
 bool is_unit_choice_type(enum choice_type type);
 
-void ai_best_government(struct player *pplayer);
+void ai_best_government(player_t *pplayer);
 
 #endif  /* WC_AI_AIHAND_H */

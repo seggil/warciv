@@ -57,7 +57,7 @@ static int *citymap;
   Initialize citymap by reserving worked tiles and establishing the
   crowdedness of (virtual) cities.
 **************************************************************************/
-void citymap_turn_init(struct player *pplayer)
+void citymap_turn_init(player_t *pplayer)
 {
   /* The citymap is reinitialized at the start of ever turn.  This includes
    * a call to realloc, which only really matters if this is the first turn

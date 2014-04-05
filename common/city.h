@@ -373,7 +373,7 @@ extern struct citystyle *city_styles;
 
 /* properties */
 
-struct player *city_owner(const city_t *pcity);
+player_t *city_owner(const city_t *pcity);
 int city_population(const city_t *pcity);
 int city_gold_surplus(const city_t *pcity, int tax_total);
 int city_buy_cost(const city_t *pcity);
@@ -482,23 +482,23 @@ int citygov_free_food(const city_t *pcity, struct government *gov);
 
 /* city style functions */
 int get_city_style(const city_t *pcity);
-int get_player_city_style(struct player *plr);
+int get_player_city_style(player_t *plr);
 int get_style_by_name(const char *);
 int get_style_by_name_orig(const char *);
 const char *get_city_style_name(int style);
 char* get_city_style_name_orig(int style);
 
 city_t *is_enemy_city_tile(const tile_t *ptile,
-                           struct player *pplayer);
+                           player_t *pplayer);
 city_t *is_allied_city_tile(const tile_t *ptile,
-                            struct player *pplayer);
+                            player_t *pplayer);
 city_t *is_non_attack_city_tile(const tile_t *ptile,
-                                struct player *pplayer);
+                                player_t *pplayer);
 city_t *is_non_allied_city_tile(const tile_t *ptile,
-                                struct player *pplayer);
+                                player_t *pplayer);
 
 bool is_unit_near_a_friendly_city(struct unit *punit);
-bool is_friendly_city_near(struct player *owner, const tile_t *ptile);
+bool is_friendly_city_near(player_t *owner, const tile_t *ptile);
 bool city_exists_within_city_radius(const tile_t *ptile,
                                     bool may_be_on_center);
 
@@ -511,7 +511,7 @@ void city_remove_improvement(city_t *pcity,Impr_Type_id impr);
 /* city update functions */
 void generic_city_refresh(city_t *pcity,
                           bool refresh_trade_route_cities,
-                          void (*send_unit_info) (struct player * pplayer,
+                          void (*send_unit_info) (player_t * pplayer,
                                                   struct unit * punit));
 void adjust_city_free_cost(int *num_free, int *this_cost);
 int city_corruption(const city_t *pcity, int trade);
@@ -525,7 +525,7 @@ int get_city_science_bonus(const city_t *pcity);
 bool city_built_last_turn(const city_t *pcity);
 
 /* city creation / destruction */
-city_t *create_city_virtual(struct player *pplayer, tile_t *ptile,
+city_t *create_city_virtual(player_t *pplayer, tile_t *ptile,
                             const char *name);
 void remove_city_virtual(city_t *pcity);
 
@@ -536,7 +536,7 @@ void city_styles_free(void);
 
 void get_food_trade_shields(const city_t *pcity, int *food, int *trade,
                             int *shields);
-void get_tax_income(struct player *pplayer, int trade, int *sci,
+void get_tax_income(player_t *pplayer, int trade, int *sci,
                     int *lux, int *tax);
 int get_city_tithes_bonus(const city_t *pcity);
 int city_pollution(city_t *pcity, int shield_total);

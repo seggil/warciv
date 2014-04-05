@@ -2993,7 +2993,7 @@ void tilespec_free_city_tiles(int count)
   A hack added to avoid returning more that COLOR_STD_RACE13.
   But really there should be more colors available -- jk.
 ***********************************************************************/
-enum color_std get_player_color(struct player *pplayer)
+enum color_std get_player_color(player_t *pplayer)
 {
   return pplayer ? player_color[pplayer->player_no] : COLOR_STD_LAST;
 }
@@ -3019,7 +3019,8 @@ static enum color_std classic_overview_tile_color(tile_t *ptile)
 {
   struct unit *punit;
   city_t *pcity;
-  struct player *pplayer, *me = get_player_ptr();
+  player_t *pplayer;
+  player_t *me = get_player_ptr();
 
   if (!ptile || tile_get_known(ptile) == TILE_UNKNOWN) {
     return COLOR_STD_BLACK;
@@ -3125,7 +3126,8 @@ static enum color_std team_overview_tile_color(tile_t *ptile)
 {
   struct unit *punit;
   city_t *pcity;
-  struct player *pplayer, *me;
+  player_t *pplayer;
+  player_t *me;
   bool is_fogged;
 
   if (!ptile || tile_get_known(ptile) == TILE_UNKNOWN) {

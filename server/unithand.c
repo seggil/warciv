@@ -54,25 +54,25 @@
 #include "unithand.h"
 #include "autoattack.h"
 
-static void city_add_or_build_error(struct player *pplayer,
+static void city_add_or_build_error(player_t *pplayer,
                                     struct unit *punit,
                                     enum add_build_city_result res);
-static void city_add_unit(struct player *pplayer, struct unit *punit);
-static void city_build(struct player *pplayer, struct unit *punit,
+static void city_add_unit(player_t *pplayer, struct unit *punit);
+static void city_build(player_t *pplayer, struct unit *punit,
                        char *name);
 static void handle_unit_activity_request_targeted(struct unit *punit,
                                                   enum unit_activity
                                                   new_activity,
                                                   enum tile_special_type
                                                   new_target);
-static bool base_handle_unit_establish_trade(struct player *pplayer, int unit_id, city_t *pcity_dest);
-static void how_to_declare_war(struct player *pplayer);
+static bool base_handle_unit_establish_trade(player_t *pplayer, int unit_id, city_t *pcity_dest);
+static void how_to_declare_war(player_t *pplayer);
 static bool unit_bombard(struct unit *punit, tile_t *ptile);
 
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_goto(struct player *pplayer, int unit_id, int x, int y)
+void handle_unit_goto(player_t *pplayer, int unit_id, int x, int y)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   tile_t *ptile = map_pos_to_tile(x, y);
@@ -97,7 +97,7 @@ void handle_unit_goto(struct player *pplayer, int unit_id, int x, int y)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_airlift(struct player *pplayer, int unit_id, int city_id)
+void handle_unit_airlift(player_t *pplayer, int unit_id, int city_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   city_t *pcity = find_city_by_id(city_id);
@@ -110,7 +110,7 @@ void handle_unit_airlift(struct player *pplayer, int unit_id, int city_id)
 /**************************************************************************
  Upgrade all units of a given type.
 **************************************************************************/
-void handle_unit_type_upgrade(struct player *pplayer, Unit_Type_id type)
+void handle_unit_type_upgrade(player_t *pplayer, Unit_Type_id type)
 {
   const Unit_Type_id from_unittype = type;
   const Unit_Type_id to_unittype = can_upgrade_unittype(pplayer,
@@ -159,7 +159,7 @@ void handle_unit_type_upgrade(struct player *pplayer, Unit_Type_id type)
 /**************************************************************************
  Upgrade a single unit.
 **************************************************************************/
-void handle_unit_upgrade(struct player *pplayer, int unit_id)
+void handle_unit_upgrade(player_t *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   char buf[512];
@@ -189,7 +189,7 @@ void handle_unit_upgrade(struct player *pplayer, int unit_id)
 ***************************************************************/
 void handle_unit_bribe_inq(struct connection *pc, int unit_id)
 {
-  struct player *pplayer = pc->observer ? NULL : pc->player;
+  player_t *pplayer = pc->observer ? NULL : pc->player;
   struct unit *punit = find_unit_by_id(unit_id);
   int bribe_cost = 0;
   bool possible = FALSE;
@@ -226,7 +226,7 @@ void handle_unit_bribe_inq(struct connection *pc, int unit_id)
 /***************************************************************
 ...
 ***************************************************************/
-void handle_unit_diplomat_action(struct player *pplayer, int diplomat_id,
+void handle_unit_diplomat_action(player_t *pplayer, int diplomat_id,
                                  enum diplomat_actions action_type,
                                  int target_id, int value)
 {
@@ -313,7 +313,7 @@ void handle_unit_diplomat_action(struct player *pplayer, int diplomat_id,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_change_homecity(struct player *pplayer, int unit_id,
+void handle_unit_change_homecity(player_t *pplayer, int unit_id,
                                  int city_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
@@ -348,7 +348,7 @@ void handle_unit_change_homecity(struct player *pplayer, int unit_id,
   Disband a unit.  If its in a city, add 1/2 of the worth of the unit
   to the city's shield stock for the current production.
 **************************************************************************/
-void handle_unit_disband(struct player *pplayer, int unit_id)
+void handle_unit_disband(player_t *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   city_t *pcity;
@@ -383,7 +383,7 @@ void handle_unit_disband(struct player *pplayer, int unit_id)
  after a call to unit_add_build_city_result, which does the
  consistency checking.
 **************************************************************************/
-static void city_add_or_build_error(struct player *pplayer,
+static void city_add_or_build_error(player_t *pplayer,
                                     struct unit *punit,
                                     enum add_build_city_result res)
 {
@@ -462,7 +462,7 @@ static void city_add_or_build_error(struct player *pplayer,
  should only be called after a call to a function like
  test_unit_add_or_build_city, which does the checking.
 **************************************************************************/
-static void city_add_unit(struct player *pplayer, struct unit *punit)
+static void city_add_unit(player_t *pplayer, struct unit *punit)
 {
   city_t *pcity = map_get_city(punit->tile);
   const char *unit_name = unit_type(punit)->name;
@@ -485,7 +485,7 @@ static void city_add_unit(struct player *pplayer, struct unit *punit)
  which to build a city. It should only be called after a call to a
  function like test_unit_add_or_build_city, which does the checking.
 **************************************************************************/
-static void city_build(struct player *pplayer, struct unit *punit,
+static void city_build(player_t *pplayer, struct unit *punit,
                        char *name)
 {
   char message[1024];
@@ -503,7 +503,7 @@ static void city_build(struct player *pplayer, struct unit *punit,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_build_city(struct player *pplayer, int unit_id, char *name)
+void handle_unit_build_city(player_t *pplayer, int unit_id, char *name)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   enum add_build_city_result res;
@@ -525,7 +525,7 @@ void handle_unit_build_city(struct player *pplayer, int unit_id, char *name)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_change_activity(struct player *pplayer, int unit_id,
+void handle_unit_change_activity(player_t *pplayer, int unit_id,
                                  enum unit_activity activity,
                                  enum tile_special_type activity_target)
 {
@@ -571,7 +571,7 @@ void handle_unit_change_activity(struct player *pplayer, int unit_id,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_move(struct player *pplayer, int unit_id, int x, int y)
+void handle_unit_move(player_t *pplayer, int unit_id, int x, int y)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   tile_t *ptile = map_pos_to_tile(x, y);
@@ -671,7 +671,7 @@ static void send_combat(struct unit *pattacker, struct unit *pdefender,
 **************************************************************************/
 static bool unit_bombard(struct unit *punit, tile_t *ptile)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   city_t *pcity = map_get_city(ptile);
   int old_unit_vet;
 
@@ -736,7 +736,7 @@ already made all neccesary checks.
 **************************************************************************/
 static void handle_unit_attack_request(struct unit *punit, struct unit *pdefender)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct unit *plooser, *pwinner;
   city_t *pcity;
   int moves_used, def_moves_used;
@@ -930,7 +930,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 /**************************************************************************
 ...
 **************************************************************************/
-static void how_to_declare_war(struct player *pplayer)
+static void how_to_declare_war(player_t *pplayer)
 {
   notify_player_ex(pplayer, NULL, E_NOEVENT,
                    _("Game: Cancel treaty in the players dialog first (F3)."));
@@ -993,7 +993,7 @@ static bool can_unit_move_to_tile_with_notify(struct unit *punit,
 bool handle_unit_move_request(struct unit *punit, tile_t *pdesttile,
                               bool igzoc, bool move_diplomat_city)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   city_t *pcity = pdesttile->city;
 
   /*** Phase 1: Basic checks ***/
@@ -1192,7 +1192,7 @@ bool handle_unit_move_request(struct unit *punit, tile_t *pdesttile,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
+void handle_unit_help_build_wonder(player_t *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   city_t *pcity_dest;
@@ -1234,7 +1234,7 @@ void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool base_handle_unit_establish_trade(struct player *pplayer,
+static bool base_handle_unit_establish_trade(player_t *pplayer,
                                              int unit_id,
                                              city_t *pcity_dest)
 {
@@ -1283,7 +1283,7 @@ static bool base_handle_unit_establish_trade(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_establish_trade(struct player *pplayer, int unit_id)
+void handle_unit_establish_trade(player_t *pplayer, int unit_id)
 {
   (void) base_handle_unit_establish_trade(pplayer, unit_id, NULL);
 }
@@ -1291,7 +1291,7 @@ void handle_unit_establish_trade(struct player *pplayer, int unit_id)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_auto(struct player *pplayer, int unit_id)
+void handle_unit_auto(player_t *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
 
@@ -1395,7 +1395,7 @@ static void handle_unit_activity_request_targeted(struct unit *punit,
 /****************************************************************************
   Handle a client request to load the given unit into the given transporter.
 ****************************************************************************/
-void handle_unit_load(struct player *pplayer, int cargo_id, int trans_id)
+void handle_unit_load(player_t *pplayer, int cargo_id, int trans_id)
 {
   /* A player may only load their units, but they may be loaded into
    * other players transporters (depending on the rules in
@@ -1419,7 +1419,7 @@ void handle_unit_load(struct player *pplayer, int cargo_id, int trans_id)
   Handle a client request to unload the given unit from the given
   transporter.
 ****************************************************************************/
-void handle_unit_unload(struct player *pplayer, int cargo_id, int trans_id)
+void handle_unit_unload(player_t *pplayer, int cargo_id, int trans_id)
 {
   struct unit *pcargo = find_unit_by_id(cargo_id);
   struct unit *ptrans = find_unit_by_id(trans_id);
@@ -1450,7 +1450,7 @@ void handle_unit_unload(struct player *pplayer, int cargo_id, int trans_id)
 /**************************************************************************
 Explode nuclear at a tile without enemy units
 **************************************************************************/
-void handle_unit_nuke(struct player *pplayer, int unit_id)
+void handle_unit_nuke(player_t *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
 
@@ -1463,7 +1463,7 @@ void handle_unit_nuke(struct player *pplayer, int unit_id)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_paradrop_to(struct player *pplayer, int unit_id, int x,
+void handle_unit_paradrop_to(player_t *pplayer, int unit_id, int x,
                              int y)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
@@ -1479,7 +1479,7 @@ void handle_unit_paradrop_to(struct player *pplayer, int unit_id, int x,
 /**************************************************************************
 Receives route packages.
 **************************************************************************/
-void handle_unit_orders(struct player *pplayer,
+void handle_unit_orders(player_t *pplayer,
                         struct packet_unit_orders *packet)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, packet->unit_id);
@@ -1581,7 +1581,7 @@ void handle_unit_orders(struct player *pplayer,
 /**************************************************************************
   ...
 **************************************************************************/
-void handle_unit_air_patrol(struct player *pplayer, int unit_id, int x, int y)
+void handle_unit_air_patrol(player_t *pplayer, int unit_id, int x, int y)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   tile_t *ptile = map_pos_to_tile(x, y);
@@ -1600,7 +1600,7 @@ void handle_unit_air_patrol(struct player *pplayer, int unit_id, int x, int y)
 /**************************************************************************
   ...
 **************************************************************************/
-void handle_unit_air_patrol_stop(struct player *pplayer, int unit_id)
+void handle_unit_air_patrol_stop(player_t *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
 

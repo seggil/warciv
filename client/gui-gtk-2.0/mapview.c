@@ -115,7 +115,7 @@ void update_timeout_label(void)
 **************************************************************************/
 void update_info_label(void)
 {
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
   int d;
   int sol, flake;
   GtkWidget *label;

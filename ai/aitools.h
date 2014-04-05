@@ -37,12 +37,12 @@ enum bodyguard_enum {
   BODYGUARD_NONE
 };
 
-int military_amortize(struct player *pplayer, city_t *pcity,
+int military_amortize(player_t *pplayer, city_t *pcity,
                       int value, int delay, int build_cost);
 int stack_cost(struct unit *pdef);
 
 bool ai_unit_execute_path(struct unit *punit, struct pf_path *path);
-bool ai_gothere(struct player *pplayer, struct unit *punit,
+bool ai_gothere(player_t *pplayer, struct unit *punit,
                 struct tile *dst_tile);
 bool ai_unit_goto(struct unit *punit, struct tile *ptile);
 
@@ -52,11 +52,11 @@ bool ai_unit_make_homecity(struct unit *punit, city_t *pcity);
 bool ai_unit_attack(struct unit *punit, struct tile *ptile);
 bool ai_unit_move(struct unit *punit, struct tile *ptile);
 
-city_t *dist_nearest_city(struct player *pplayer, struct tile *ptile,
+city_t *dist_nearest_city(player_t *pplayer, struct tile *ptile,
                           bool everywhere, bool enemy);
 
-void ai_government_change(struct player *pplayer, int gov);
-int ai_gold_reserve(struct player *pplayer);
+void ai_government_change(player_t *pplayer, int gov);
+int ai_gold_reserve(player_t *pplayer);
 
 void init_choice(struct ai_choice *choice);
 void adjust_choice(int value, struct ai_choice *choice);
@@ -64,8 +64,8 @@ void copy_if_better_choice(struct ai_choice *cur, struct ai_choice *best);
 void ai_advisor_choose_building(city_t *pcity, struct ai_choice *choice);
 bool ai_assess_military_unhappiness(city_t *pcity, struct government *g);
 
-bool ai_wants_no_science(struct player *pplayer);
+bool ai_wants_no_science(player_t *pplayer);
 
-bool is_player_dangerous(struct player *pplayer, struct player *aplayer);
+bool is_player_dangerous(player_t *pplayer, player_t *aplayer);
 
 #endif  /* WC_AI_AITOOLS_H */

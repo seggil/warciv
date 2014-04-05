@@ -253,8 +253,8 @@ int utype_food_cost(struct unit_type *ut, struct government *g);
 int utype_happy_cost(struct unit_type *ut, struct government *g);
 int utype_gold_cost(struct unit_type *ut, struct government *g);
 
-int can_upgrade_unittype(struct player *pplayer, Unit_Type_id id);
-int unit_upgrade_price(const struct player * const pplayer,
+int can_upgrade_unittype(player_t *pplayer, Unit_Type_id id);
+int unit_upgrade_price(const player_t * const pplayer,
                        const Unit_Type_id from, const Unit_Type_id to);
 
 Unit_Type_id find_unit_type_by_name(const char *name);
@@ -265,9 +265,9 @@ Unit_Class_id unit_class_from_str(const char *s);
 enum unit_flag_id unit_flag_from_str(const char *s);
 enum unit_role_id unit_role_from_str(const char *s);
 
-bool can_player_build_unit_direct(struct player *p, Unit_Type_id id);
-bool can_player_build_unit(struct player *p, Unit_Type_id id);
-bool can_player_eventually_build_unit(struct player *p, Unit_Type_id id);
+bool can_player_build_unit_direct(player_t *p, Unit_Type_id id);
+bool can_player_build_unit(player_t *p, Unit_Type_id id);
+bool can_player_eventually_build_unit(player_t *p, Unit_Type_id id);
 
 void role_unit_precalcs(void);
 int num_role_units(int role);
@@ -277,8 +277,8 @@ typedef struct city_s city_t;
 #define CITY_T_DEFINED
 
 Unit_Type_id best_role_unit(city_t *pcity, int role);
-Unit_Type_id best_role_unit_for_player(struct player *pplayer, int role);
-Unit_Type_id first_role_unit_for_player(struct player *pplayer, int role);
+Unit_Type_id best_role_unit_for_player(player_t *pplayer, int role);
+Unit_Type_id first_role_unit_for_player(player_t *pplayer, int role);
 
 void unit_types_free(void);
 

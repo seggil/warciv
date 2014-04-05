@@ -79,7 +79,7 @@ bool is_plrdlg_frozen(void)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_name(struct player *player)
+static const char *col_name(player_t *player)
 {
   return player->name;
 }
@@ -87,7 +87,7 @@ static const char *col_name(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_username(struct player *player)
+static const char *col_username(player_t *player)
 {
   return player->username;
 }
@@ -95,7 +95,7 @@ static const char *col_username(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_nation(struct player *player)
+static const char *col_nation(player_t *player)
 {
   return get_nation_name(player->nation);
 }
@@ -103,7 +103,7 @@ static const char *col_nation(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_government(struct player *player)
+static const char *col_government(player_t *player)
 {
   if (government_exists(player->government)) {
     return get_government_name(player->government);
@@ -114,7 +114,7 @@ static const char *col_government(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_team(struct player *player)
+static const char *col_team(player_t *player)
 {
   if (player->team != TEAM_NONE) {
     return get_team_name(player->team);
@@ -126,7 +126,7 @@ static const char *col_team(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static bool col_ai(struct player *plr)
+static bool col_ai(player_t *plr)
 {
   return plr->ai.control;
 }
@@ -134,7 +134,7 @@ static bool col_ai(struct player *plr)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_embassy(struct player *player)
+static const char *col_embassy(player_t *player)
 {
   return client_is_global_observer()
              ? "-" : get_embassy_status(get_player_ptr(), player);
@@ -143,7 +143,7 @@ static const char *col_embassy(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_diplstate(struct player *player)
+static const char *col_diplstate(player_t *player)
 {
   static char buf[100];
   const struct player_diplstate *pds;
@@ -165,7 +165,7 @@ static const char *col_diplstate(struct player *player)
 /******************************************************************
   Return a string displaying the AI's love (or not) for you...
 *******************************************************************/
-static const char *col_love(struct player *player)
+static const char *col_love(player_t *player)
 {
   if (client_is_global_observer()
       || player == get_player_ptr()
@@ -179,7 +179,7 @@ static const char *col_love(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_vision(struct player *player)
+static const char *col_vision(player_t *player)
 {
   return client_is_global_observer()
              ? "-" : get_vision_status(get_player_ptr(), player);
@@ -188,7 +188,7 @@ static const char *col_vision(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_cities(struct player *player)
+static int col_cities(player_t *player)
 {
   return city_list_size(player->cities);
 }
@@ -196,7 +196,7 @@ static int col_cities(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_units(struct player *player)
+static int col_units(player_t *player)
 {
   return unit_list_size(player->units);
 }
@@ -204,7 +204,7 @@ static int col_units(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_population(struct player *player)
+static int col_population(player_t *player)
 {
   return civ_population(player);
 }
@@ -212,7 +212,7 @@ static int col_population(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_gold(struct player *player)
+static int col_gold(player_t *player)
 {
   return player->economic.gold;
 }
@@ -220,7 +220,7 @@ static int col_gold(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_income(struct player *player)
+static int col_income(player_t *player)
 {
   return player_get_expected_income(player);
 }
@@ -228,7 +228,7 @@ static int col_income(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_research(struct player *player)
+static const char *col_research(player_t *player)
 {
   static char buf[100];
 
@@ -247,7 +247,7 @@ static const char *col_research(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_bulbs(struct player *player)
+static int col_bulbs(player_t *player)
 {
   return player_get_expected_bulbs(player);
 }
@@ -255,7 +255,7 @@ static int col_bulbs(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_science_goal(struct player *player)
+static const char *col_science_goal(player_t *player)
 {
   static char buf[100];
 
@@ -275,7 +275,7 @@ static const char *col_science_goal(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_techs(struct player *player)
+static int col_techs(player_t *player)
 {
   return MAX(player->research.techs_researched - 1, 0);
 }
@@ -283,7 +283,7 @@ static int col_techs(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_production(struct player *player)
+static int col_production(player_t *player)
 {
   int prod = 0;
 
@@ -297,7 +297,7 @@ static int col_production(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_economics(struct player *player)
+static int col_economics(player_t *player)
 {
   int eco = 0;
 
@@ -311,7 +311,7 @@ static int col_economics(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_rates(struct player *player)
+static const char *col_rates(player_t *player)
 {
   static char buf[100];
 
@@ -330,7 +330,7 @@ static const char *col_rates(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_reputation(struct player *player)
+static const char *col_reputation(player_t *player)
 {
   return reputation_text(player->reputation);
 }
@@ -338,7 +338,7 @@ static const char *col_reputation(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_state(struct player *plr)
+static const char *col_state(player_t *plr)
 {
   if (plr->is_alive) {
     if (plr->is_connected) {
@@ -358,7 +358,7 @@ static const char *col_state(struct player *plr)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_host(struct player *player)
+static const char *col_host(player_t *player)
 {
   return player_addr_hack(player);
 }
@@ -366,7 +366,7 @@ static const char *col_host(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static int col_idle(struct player *plr)
+static int col_idle(player_t *plr)
 {
   if (plr->nturns_idle > 3) {
     return plr->nturns_idle - 1;
@@ -441,7 +441,7 @@ void init_player_dlg_common()
   kept as a blank address if no one is controlling a player, but there are
   observers.
 **************************************************************************/
-const char *player_addr_hack(struct player *pplayer)
+const char *player_addr_hack(player_t *pplayer)
 {
   conn_list_iterate(pplayer->connections, pconn) {
     if (!pconn->observer) {

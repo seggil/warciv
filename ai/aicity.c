@@ -72,7 +72,7 @@
   || pcity->common.food_stock + pcity->common.food_surplus < 0)
 #define LOG_BUY LOG_DEBUG
 
-static void resolve_city_emergency(struct player *pplayer, struct city_s *pcity);
+static void resolve_city_emergency(player_t *pplayer, struct city_s *pcity);
 static void ai_sell_obsolete_buildings(struct city_s *pcity);
 
 /**************************************************************************
@@ -103,7 +103,7 @@ int ai_eval_calc_city(struct city_s *pcity, struct ai_data *ai)
 /**************************************************************************
   Calculates city want from some input values.
 **************************************************************************/
-static inline int city_want(struct player *pplayer, struct city_s *acity,
+static inline int city_want(player_t *pplayer, struct city_s *acity,
                             struct ai_data *ai)
 {
   int want = 0, food, trade, shields, lux, sci, tax;
@@ -149,7 +149,7 @@ static inline int city_want(struct player *pplayer, struct city_s *acity,
   Calculates want for some buildings by actually adding the building and
   measuring the effect.
 **************************************************************************/
-static int base_want(struct player *pplayer, struct city_s *pcity,
+static int base_want(player_t *pplayer, struct city_s *pcity,
                      Impr_Type_id id)
 {
   struct ai_data *ai = ai_data_get(pplayer);
@@ -201,7 +201,7 @@ static int base_want(struct player *pplayer, struct city_s *pcity,
 static void adjust_building_want_by_effects(struct city_s *pcity,
                                             Impr_Type_id id)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   struct impr_type *pimpr = get_improvement_type(id);
   int v = 0;
   int cities[EFFECT_RANGE_LAST];
@@ -513,7 +513,7 @@ static void adjust_building_want_by_effects(struct city_s *pcity,
 /**************************************************************************
   Prime pcity->u.server.ai.building_want[]
 **************************************************************************/
-void ai_manage_buildings(struct player *pplayer)
+void ai_manage_buildings(player_t *pplayer)
 /* TODO:  RECALC_SPEED should be configurable to ai difficulty. -kauf  */
 #define RECALC_SPEED 5
 {
@@ -571,7 +571,7 @@ void ai_manage_buildings(struct player *pplayer)
 
   If there are more than one wondercity, things will get a bit random.
 ****************************************************************************/
-static void establish_city_distances(struct player *pplayer,
+static void establish_city_distances(player_t *pplayer,
                                      struct city_s *pcity)
 {
   int distance;
@@ -608,7 +608,7 @@ static void establish_city_distances(struct player *pplayer,
   maybe cache it?  Although barbarians don't normally have many cities,
   so can be a bigger bother to cache it.
 **************************************************************************/
-static void ai_barbarian_choose_build(struct player *pplayer,
+static void ai_barbarian_choose_build(player_t *pplayer,
                                       struct ai_choice *choice)
 {
   Unit_Type_id bestunit = -1;
@@ -654,7 +654,7 @@ static void ai_barbarian_choose_build(struct player *pplayer,
   Note that AI cheats -- it suffers no penalty for switching from unit to
   improvement, etc.
 **************************************************************************/
-static void ai_city_choose_build(struct player *pplayer, struct city_s *pcity)
+static void ai_city_choose_build(player_t *pplayer, struct city_s *pcity)
 {
   struct ai_choice newchoice;
 
@@ -743,7 +743,7 @@ static void ai_city_choose_build(struct player *pplayer, struct city_s *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-static void try_to_sell_stuff(struct player *pplayer, struct city_s *pcity)
+static void try_to_sell_stuff(player_t *pplayer, struct city_s *pcity)
 {
   impr_type_iterate(id) {
     if (can_sell_building(pcity, id)
@@ -759,7 +759,7 @@ static void try_to_sell_stuff(struct player *pplayer, struct city_s *pcity)
   Increase maxbuycost.  This variable indicates (via ai_gold_reserve) to
   the tax selection code how much money do we need for buying stuff.
 **************************************************************************/
-static void increase_maxbuycost(struct player *pplayer, int new_value)
+static void increase_maxbuycost(player_t *pplayer, int new_value)
 {
   pplayer->ai.maxbuycost = MAX(pplayer->ai.maxbuycost, new_value);
 }
@@ -771,7 +771,7 @@ static void increase_maxbuycost(struct player *pplayer, int new_value)
 **************************************************************************/
 static void ai_upgrade_units(struct city_s *pcity, int limit, bool military)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
   unit_list_iterate(pcity->common.tile->units, punit) {
     int id = can_upgrade_unittype(pplayer, punit->type);
     if (military && (!is_military_unit(punit) || !is_ground_unit(punit))) {
@@ -804,7 +804,7 @@ static void ai_upgrade_units(struct city_s *pcity, int limit, bool military)
 /**************************************************************************
   Buy and upgrade stuff!
 **************************************************************************/
-static void ai_spend_gold(struct player *pplayer)
+static void ai_spend_gold(player_t *pplayer)
 {
   struct ai_choice bestchoice;
   int cached_limit = ai_gold_reserve(pplayer);
@@ -953,7 +953,7 @@ static void ai_spend_gold(struct player *pplayer)
   build choices,
   extra gold spending.
 **************************************************************************/
-void ai_manage_cities(struct player *pplayer)
+void ai_manage_cities(player_t *pplayer)
 {
   pplayer->ai.maxbuycost = 0;
 
@@ -1002,7 +1002,7 @@ void ai_manage_cities(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool building_unwanted(struct player *plr, Impr_Type_id i)
+static bool building_unwanted(player_t *plr, Impr_Type_id i)
 {
   return (ai_wants_no_science(plr)
           && building_has_effect(i, EFFECT_TYPE_SCIENCE_BONUS));
@@ -1013,7 +1013,7 @@ static bool building_unwanted(struct player *plr, Impr_Type_id i)
 **************************************************************************/
 static void ai_sell_obsolete_buildings(struct city_s *pcity)
 {
-  struct player *pplayer = city_owner(pcity);
+  player_t *pplayer = city_owner(pcity);
 
   built_impr_iterate(pcity, i) {
     if(!is_wonder(i)
@@ -1050,7 +1050,7 @@ static void ai_sell_obsolete_buildings(struct city_s *pcity)
   Syela is wrong. It happens quite too often, mostly due to unhappiness.
   Also, most of the time we are unable to resolve the situation.
 **************************************************************************/
-static void resolve_city_emergency(struct player *pplayer, struct city_s *pcity)
+static void resolve_city_emergency(player_t *pplayer, struct city_s *pcity)
 #define LOG_EMERGENCY LOG_DEBUG
 {
   struct city_list *minilist = city_list_new();

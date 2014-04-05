@@ -15,8 +15,8 @@
 
 #include "wc_types.h"
 
-void popup_spaceship_dialog(struct player *pplayer);
-void popdown_spaceship_dialog(struct player *pplayer);
-void refresh_spaceship_dialog(struct player *pplayer);
+void popup_spaceship_dialog(player_t *pplayer);
+void popdown_spaceship_dialog(player_t *pplayer);
+void refresh_spaceship_dialog(player_t *pplayer);
 
 #endif  /* WC_CLIENT_INCLUDE_SPACESHIPDLG_G_H */

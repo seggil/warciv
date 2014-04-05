@@ -53,8 +53,8 @@ struct tile {
   Continent_id continent;
   signed char move_cost[DIR8_COUNT];    /* don't know if this helps! */
   city_t *worked;          /* city working tile, or NULL if none */
-  struct player *owner;         /* Player owning this tile, or NULL. */
-  char *spec_sprite;            /* Maybe for scenarios? Not sure... -- Pepeto */
+  player_t *owner;         /* Player owning this tile, or NULL. */
+  char *spec_sprite;       /* Maybe for scenarios? Not sure... -- Pepeto */
 
   union tile_u {
     /* Client specific datas. */
@@ -361,8 +361,8 @@ tile_t *map_pos_to_tile(int x, int y);
 tile_t *native_pos_to_tile(int nat_x, int nat_y);
 tile_t *index_to_tile(int index);
 
-struct player *map_get_owner(const tile_t *ptile);
-void map_set_owner(tile_t *ptile, struct player *pplayer);
+player_t *map_get_owner(const tile_t *ptile);
+void map_set_owner(tile_t *ptile, player_t *pplayer);
 city_t *map_get_city(const tile_t *ptile);
 void map_set_city(tile_t *ptile, city_t *pcity);
 Terrain_type_id map_get_terrain(const tile_t *ptile);
@@ -377,7 +377,7 @@ bool is_normal_map_pos(int x, int y);
 
 /* implemented in server/maphand.c and client/climisc.c */
 enum known_type map_get_known(const tile_t *ptile,
-                              struct player *pplayer);
+                              player_t *pplayer);
 
 /* special testing */
 bool map_has_special(const tile_t *ptile,

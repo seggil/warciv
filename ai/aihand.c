@@ -66,7 +66,7 @@
 /**************************************************************************
  handle spaceship related stuff
 **************************************************************************/
-static void ai_manage_spaceship(struct player *pplayer)
+static void ai_manage_spaceship(player_t *pplayer)
 {
   if (game.info.spacerace) {
     if (pplayer->spaceship.state == SSHIP_STARTED) {
@@ -91,7 +91,7 @@ static void ai_manage_spaceship(struct player *pplayer)
   TODO: Audit the use of pplayer->ai.maxbuycost in the code elsewhere,
   then add support for it here.
 **************************************************************************/
-static void ai_manage_taxes(struct player *pplayer)
+static void ai_manage_taxes(player_t *pplayer)
 {
   int maxrate = (ai_handicap(pplayer, H_RATES)
                  ? get_government_max_rate(pplayer->government) : 100);
@@ -241,7 +241,7 @@ static void ai_manage_taxes(struct player *pplayer)
 
   Note: Call this _before_ doing taxes!
 **************************************************************************/
-void ai_best_government(struct player *pplayer)
+void ai_best_government(player_t *pplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
   int best_val = 0;
@@ -341,7 +341,7 @@ void ai_best_government(struct player *pplayer)
 /**************************************************************************
   Change the government form, if it can and there is a good reason.
 **************************************************************************/
-static void ai_manage_government(struct player *pplayer)
+static void ai_manage_government(player_t *pplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
 
@@ -367,7 +367,7 @@ static void ai_manage_government(struct player *pplayer)
   Activities to be done by AI _before_ human turn.  Here we just move the
   units intelligently.
 **************************************************************************/
-void ai_do_first_activities(struct player *pplayer)
+void ai_do_first_activities(player_t *pplayer)
 {
   assess_danger_player(pplayer);
   /* TODO: Make assess_danger save information on what is threatening
@@ -386,7 +386,7 @@ void ai_do_first_activities(struct player *pplayer)
   We do _not_ move units here, otherwise humans complain that AI moves
   twice.
 **************************************************************************/
-void ai_do_last_activities(struct player *pplayer)
+void ai_do_last_activities(player_t *pplayer)
 {
   ai_manage_government(pplayer);
   ai_manage_taxes(pplayer);

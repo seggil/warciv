@@ -96,7 +96,7 @@ static void init_game_id(void)
 /****************************************************************************
   Place a starting unit for the player.
 ****************************************************************************/
-static void place_starting_unit(tile_t *ptile, struct player *pplayer,
+static void place_starting_unit(tile_t *ptile, player_t *pplayer,
                                 char crole)
 {
   Unit_Type_id utype;
@@ -477,7 +477,7 @@ int get_team_mapping(Team_Type_id team)
 void shuffle_start_positions(int *start_pos)
 {
   int i;
-  struct player *pplayer;
+  player_t *pplayer;
   assert(start_pos != NULL);
 
   calculate_team_mapping();
@@ -648,7 +648,7 @@ void send_year_to_clients(int year)
   int i;
 
   for(i=0; i<game.info.nplayers; i++) {
-    struct player *pplayer = &game.players[i];
+    player_t *pplayer = &game.players[i];
     pplayer->turn_done = FALSE;
     pplayer->nturns_idle++;
   }

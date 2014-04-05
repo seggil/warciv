@@ -122,7 +122,7 @@ static void end_turn(void);
 static void ai_start_turn(void);
 static bool is_game_over(void);
 static void generate_ai_players(void);
-static void announce_ai_player(struct player *pplayer);
+static void announce_ai_player(player_t *pplayer);
 static void srv_loop(void);
 void server_free_final(void);
 
@@ -267,7 +267,7 @@ static bool is_game_over(void)
 {
   int barbs = 0, alive = 0;
   bool all_allied;
-  struct player *victor = NULL;
+  player_t *victor = NULL;
 
   /* quit if we are past the year limit */
   if (game.info.year > game.info.end_year) {
@@ -1015,7 +1015,7 @@ rejected). Returns 1 else.
 **************************************************************************/
 bool handle_packet_input(struct connection *pconn, void *packet, int type)
 {
-  struct player *pplayer;
+  player_t *pplayer;
 
   /* a NULL packet can be returned from receive_packet_goto_route() */
   if (!packet)
@@ -1226,7 +1226,7 @@ static bool is_default_nation_name(const char *name,
   Check if this name is allowed for the player.  Fill out the error message
   (a translated string to be sent to the client) if not.
 **************************************************************************/
-static bool is_allowed_player_name(struct player *pplayer,
+static bool is_allowed_player_name(player_t *pplayer,
                                    Nation_Type_id nation,
                                    const char *name,
                                    char *error_buf, size_t bufsz)
@@ -1295,7 +1295,7 @@ static bool is_allowed_player_name(struct player *pplayer,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_nation_select_req(struct player *pplayer,
+void handle_nation_select_req(player_t *pplayer,
                               Nation_Type_id nation_no, bool is_male,
                               char *name, int city_style)
 {
@@ -1339,7 +1339,7 @@ void handle_nation_select_req(struct player *pplayer,
 /**************************************************************************
  Sends the currently collected selected nations to the given player.
 **************************************************************************/
-void send_select_nation(struct player *pplayer)
+void send_select_nation(player_t *pplayer)
 {
   struct packet_nation_unavailable packet;
   Nation_Type_id nation;
@@ -1443,7 +1443,7 @@ static void generate_ai_players(void)
 {
   Nation_Type_id nation;
   char player_name[MAX_LEN_NAME];
-  struct player *pplayer;
+  player_t *pplayer;
   int i, old_nplayers;
   char* common_class;
 
@@ -1624,7 +1624,7 @@ void mark_nation_as_used (Nation_Type_id nation)
 /*************************************************************************
 ...
 *************************************************************************/
-static void announce_ai_player (struct player *pplayer) {
+static void announce_ai_player (player_t *pplayer) {
    freelog(LOG_NORMAL, _("AI is controlling the %s ruled by %s."),
                     get_nation_name_plural(pplayer->nation),
                     pplayer->name);

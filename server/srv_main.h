@@ -117,7 +117,7 @@ extern bool force_end_of_sniff;
 extern char *welcome_message;
 
 Nation_Type_id select_random_nation(const char* class);
-void send_select_nation(struct player *pplayer);
+void send_select_nation(player_t *pplayer);
 void mark_nation_as_used(Nation_Type_id nation);
 
 typedef bool (*background_func)(void *context);

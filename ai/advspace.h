@@ -19,7 +19,7 @@
 
 struct player_spaceship;
 
-bool ai_spaceship_autoplace(struct player *pplayer,
+bool ai_spaceship_autoplace(player_t *pplayer,
                             struct player_spaceship *ship);
 
 #endif  /* WC_AI_ADVSPACE_H */

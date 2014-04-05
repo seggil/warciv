@@ -265,7 +265,8 @@ bool conn_can_vote(const struct connection *pconn, const struct vote *pvote)
   }
 
   if (vote_is_team_only(pvote)) {
-    const struct player *pplayer, *caller_plr;
+    const player_t *pplayer;
+    const player_t *caller_plr;
 
     pplayer = conn_get_player(pconn);
     caller_plr = conn_get_player(vote_get_caller(pvote));
@@ -293,7 +294,8 @@ bool conn_can_see_vote(const struct connection *pconn, const struct vote *pvote)
   }
 
   if (vote_is_team_only(pvote)) {
-    const struct player *pplayer, *caller_plr;
+    const player_t *pplayer;
+    const player_t *caller_plr;
 
     pplayer = conn_get_player(pconn);
     caller_plr = conn_get_player(vote_get_caller(pvote));
@@ -885,7 +887,7 @@ const struct connection *vote_get_caller(const struct vote *pvote)
 **************************************************************************/
 const struct team *vote_get_team(const struct vote *pvote)
 {
-  const struct player *pplayer;
+  const player_t *pplayer;
   if (!pvote || !vote_is_team_only(pvote)) {
     return NULL;
   }

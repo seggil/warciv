@@ -52,7 +52,7 @@ static struct ai_data aidata[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   Then we find the largest range of calculatable effects in the
   improvement and record it for later use.
 **************************************************************************/
-static void ai_data_city_impr_calc(struct player *pplayer, struct ai_data *ai)
+static void ai_data_city_impr_calc(player_t *pplayer, struct ai_data *ai)
 {
   int count[AI_IMPR_LAST];
 
@@ -113,7 +113,7 @@ static void ai_data_city_impr_calc(struct player *pplayer, struct ai_data *ai)
   _init, which must be run before savegames are loaded, which is usually
   before rulesets.
 **************************************************************************/
-void ai_data_analyze_rulesets(struct player *pplayer)
+void ai_data_analyze_rulesets(player_t *pplayer)
 {
   struct ai_data *ai = &aidata[pplayer->player_no];
 
@@ -123,7 +123,7 @@ void ai_data_analyze_rulesets(struct player *pplayer)
 /**************************************************************************
   This function is called each turn to initialize pplayer->ai.stats.units.
 **************************************************************************/
-static void count_my_units(struct player *pplayer)
+static void count_my_units(player_t *pplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
 
@@ -166,13 +166,13 @@ static void count_my_units(struct player *pplayer)
   defending units, and ignore enemy units that are incapable of harming
   us, instead of just checking attack strength > 1.
 **************************************************************************/
-void ai_data_turn_init(struct player *pplayer)
+void ai_data_turn_init(player_t *pplayer)
 {
   struct ai_data *ai = &aidata[pplayer->player_no];
   int i, nuke_units = num_role_units(F_NUCLEAR);
   bool danger_of_nukes = FALSE;
   int ally_strength = -1;
-  struct player *ally_strongest = NULL;
+  player_t *ally_strongest = NULL;
 
   /*** Threats ***/
 
@@ -344,7 +344,7 @@ void ai_data_turn_init(struct player *pplayer)
    * can be created during a turn, and we don't want those to have
    * invalid values. */
   for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-    struct player *aplayer = get_player(i);
+    player_t *aplayer = get_player(i);
 
     ai->diplomacy.player_intel[i].is_allied_with_enemy = NULL;
     ai->diplomacy.player_intel[i].at_war_with_ally = NULL;
@@ -444,7 +444,7 @@ void ai_data_turn_init(struct player *pplayer)
 /**************************************************************************
   Clean up our mess.
 **************************************************************************/
-void ai_data_turn_done(struct player *pplayer)
+void ai_data_turn_done(player_t *pplayer)
 {
   struct ai_data *ai = &aidata[pplayer->player_no];
 
@@ -463,7 +463,7 @@ void ai_data_turn_done(struct player *pplayer)
 /**************************************************************************
   Return a pointer to our data
 **************************************************************************/
-struct ai_data *ai_data_get(struct player *pplayer)
+struct ai_data *ai_data_get(player_t *pplayer)
 {
   struct ai_data *ai = &aidata[pplayer->player_no];
 
@@ -479,7 +479,7 @@ struct ai_data *ai_data_get(struct player *pplayer)
 /**************************************************************************
   Initialize with sane values.
 **************************************************************************/
-void ai_data_init(struct player *pplayer)
+void ai_data_init(player_t *pplayer)
 {
   struct ai_data *ai = &aidata[pplayer->player_no];
   int i;

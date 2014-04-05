@@ -391,7 +391,7 @@ static enum tile_behavior get_TB_caravan(const tile_t *ptile,
   position.  A negative number means it's impossible.
 ****************************************************************************/
 static int get_activity_time(const tile_t *ptile,
-                             struct player *pplayer)
+                             player_t *pplayer)
 {
   struct tile_type *ttype = get_tile_type(ptile->terrain);
   int activity_mc = 0;
@@ -444,7 +444,7 @@ static int get_activity_time(const tile_t *ptile,
   When building a road or a railroad, we don't want to go next to
   nonallied cities
 ****************************************************************************/
-static bool is_non_allied_city_adjacent(struct player *pplayer,
+static bool is_non_allied_city_adjacent(player_t *pplayer,
                                         const tile_t *ptile)
 {
   adjc_iterate(ptile, tile1) {
@@ -1127,7 +1127,7 @@ bool is_drawn_line(tile_t *ptile, int dir)
 ***************************************************************************/
 struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 {
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
   city_t *pcity = NULL;
   struct pf_parameter parameter;
   struct path_finding_map *map;
@@ -1195,7 +1195,7 @@ int calculate_move_cost(struct unit *punit, tile_t *dest_tile)
 ***************************************************************************/
 tile_t *find_nearest_city(struct unit *punit, bool allies)
 {
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
   city_t *pcity = map_get_city(punit->tile);
   struct pf_parameter parameter;
   struct path_finding_map *map;

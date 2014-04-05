@@ -15,8 +15,8 @@
 
 #include "../wc_types.h"
 
-struct player *player_leading_spacerace(void);
-int player_distance_to_player(struct player *pplayer, struct player *target);
+player_t *player_leading_spacerace(void);
+int player_distance_to_player(player_t *pplayer, player_t *target);
 int city_gold_worth(city_t *pcity);
 
 #endif

@@ -33,8 +33,8 @@ bool handle_stdin_input(struct connection *caller,
                         bool check);
 void report_server_options(struct conn_list *dest, int which);
 void report_settable_server_options(struct connection *dest, int which);
-void set_ai_level_direct(struct player *pplayer, int level);
-void set_ai_level_directer(struct player *pplayer, int level);
+void set_ai_level_direct(player_t *pplayer, int level);
+void set_ai_level_directer(player_t *pplayer, int level);
 bool read_init_script(struct connection *caller, char *script_filename);
 void show_players(struct connection *caller);
 void clearallactions(void);
@@ -45,8 +45,8 @@ bool unloadmap_command(struct connection *caller, bool check);
 bool require_command(struct connection *caller, char *arg, bool check);
 
 void toggle_ai_player_direct(struct connection *caller,
-                             struct player *pplayer);
-bool is_allowed_to_attach(const struct player *pplayer,
+                             player_t *pplayer);
+bool is_allowed_to_attach(const player_t *pplayer,
                           const struct connection *caller, bool will_obs,
                           char *msgbuf, int msgbuf_len);
 

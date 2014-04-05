@@ -23,11 +23,11 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "diptreaty.h"
 #include "wc_intl.h"
 #include "game.h"
 #include "log.h"
 #include "packets.h"
+#include "diptreaty.h"
 #include "nation.h"
 #include "player.h"
 #include "support.h"
@@ -117,7 +117,7 @@ static void update_players_menu(void)
   GtkWidget *item;
 
   if (gtk_tree_selection_get_selected(players_selection, &model, &it)) {
-    struct player *plr;
+    player_t *plr;
     gint plrno;
 
     gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
@@ -187,7 +187,7 @@ static gboolean button_press_callback(GtkTreeView *view, GdkEventButton *ev)
     if (path) {
       GtkTreeIter it;
       gint id;
-      struct player *plr;
+      player_t *plr;
 
       gtk_tree_model_get_iter(GTK_TREE_MODEL(store), &it, path);
       gtk_tree_path_free(path);
@@ -498,9 +498,11 @@ static GdkPixbuf *get_flag(struct nation_type *nation)
 **************************************************************************/
 static void build_row(GtkTreeIter *it, int i)
 {
-  struct player *plr = get_player(i), *me = get_player_ptr();
+  player_t *plr = get_player(i);
+  player_t *me = get_player_ptr();
   GdkPixbuf *pixbuf;
-  gint style, weight;
+  gint style;
+  gint weight;
   int k;
 
   for (k = 0; k < num_player_dlg_columns; k++) {

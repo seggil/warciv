@@ -37,8 +37,8 @@ void client_remove_unit(struct unit *punit);
 
 void client_change_all(cid x, cid y);
 
-const char *get_embassy_status(struct player *me, struct player *them);
-const char *get_vision_status(struct player *me, struct player *them);
+const char *get_embassy_status(player_t *me, player_t *them);
+const char *get_vision_status(player_t *me, player_t *them);
 void client_diplomacy_clause_string(char *buf, int bufsiz,
                                     struct Clause *pclause);
 char *get_tile_info(tile_t *ptile);

@@ -66,7 +66,7 @@ enum table_label {
 };
 /******************************************************************/
 struct intel_dialog {
-  struct player *pplayer;
+  player_t *pplayer;
   GtkWidget *shell;
 
   GtkTreeStore *diplstates;
@@ -86,12 +86,12 @@ static struct dialog_list *dialog_list = NULL;
 
 /******************************************************************/
 
-static struct intel_dialog *create_intel_dialog(struct player *p);
+static struct intel_dialog *create_intel_dialog(player_t *p);
 
 /****************************************************************
 ...
 *****************************************************************/
-static struct intel_dialog *get_intel_dialog(struct player *pplayer)
+static struct intel_dialog *get_intel_dialog(player_t *pplayer)
 {
   if (!dialog_list) {
     dialog_list = dialog_list_new();
@@ -109,7 +109,7 @@ static struct intel_dialog *get_intel_dialog(struct player *pplayer)
 /****************************************************************
 ...
 *****************************************************************/
-void popup_intel_dialog(struct player *p)
+void popup_intel_dialog(player_t *p)
 {
   struct intel_dialog *pdialog;
 
@@ -142,7 +142,7 @@ static void intel_destroy_callback(GtkWidget *w, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-static struct intel_dialog *create_intel_dialog(struct player *p)
+static struct intel_dialog *create_intel_dialog(player_t *p)
 {
   struct intel_dialog *pdialog;
 
@@ -282,7 +282,7 @@ static struct intel_dialog *create_intel_dialog(struct player *p)
   Update the intelligence dialog for the given player.  This is called by
   the core client code when that player's information changes.
 ****************************************************************************/
-void update_intel_dialog(struct player *p)
+void update_intel_dialog(player_t *p)
 {
   struct intel_dialog *pdialog = get_intel_dialog(p);
 

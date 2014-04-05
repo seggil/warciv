@@ -266,7 +266,7 @@ enum tile_special_type get_unit_tile_pillage_set(const tile_t *ptile);
 bool is_attack_unit(struct unit *punit);
 bool is_military_unit(struct unit *punit);           /* !set !dip !cara */
 bool is_diplomat_unit(struct unit *punit);
-bool is_square_threatened(struct player *pplayer, const tile_t *ptile);
+bool is_square_threatened(player_t *pplayer, const tile_t *ptile);
 bool is_field_unit(struct unit *punit);              /* ships+aero */
 bool is_hiding_unit(struct unit *punit);
 bool is_sailing_unit(struct unit *punit);
@@ -282,37 +282,37 @@ enum add_build_city_result test_unit_add_or_build_city(struct unit *punit);
 
 const char *unit_activity_text(struct unit *punit);
 int ground_unit_transporter_capacity(const tile_t *ptile,
-                                     struct player *pplayer);
+                                     player_t *pplayer);
 int get_transporter_capacity(struct unit *punit);
 bool is_ground_units_transport(struct unit *punit);
 bool is_air_units_transport(struct unit *punit);
 int missile_carrier_capacity(const tile_t *ptile,
-                             struct player *pplayer,
+                             player_t *pplayer,
                              bool count_units_with_extra_fuel);
 int airunit_carrier_capacity(const tile_t *ptile,
-                             struct player *pplayer,
+                             player_t *pplayer,
                              bool count_units_with_extra_fuel);
 
-struct player *unit_owner(struct unit *punit);
+player_t *unit_owner(struct unit *punit);
 
 struct unit *is_allied_unit_tile(const tile_t *ptile,
-                                 struct player *pplayer);
+                                 player_t *pplayer);
 struct unit *is_enemy_unit_tile(const tile_t *ptile,
-                                struct player *pplayer);
+                                player_t *pplayer);
 struct unit *is_non_allied_unit_tile(const tile_t *ptile,
-                                     struct player *pplayer);
+                                     player_t *pplayer);
 struct unit *is_non_attack_unit_tile(const tile_t *ptile,
-                                     struct player *pplayer);
+                                     player_t *pplayer);
 
-int unit_loss_pct(struct player *pplayer, const tile_t *ptile,
+int unit_loss_pct(player_t *pplayer, const tile_t *ptile,
                   struct unit *punit);
-int base_trireme_loss_pct(struct player *pplayer, struct unit *punit);
-int base_unsafe_terrain_loss_pct(struct player *pplayer,
+int base_trireme_loss_pct(player_t *pplayer, struct unit *punit);
+int base_unsafe_terrain_loss_pct(player_t *pplayer,
                                  struct unit *punit);
 
-bool is_my_zoc(struct player *unit_owner, const tile_t *ptile);
+bool is_my_zoc(player_t *unit_owner, const tile_t *ptile);
 bool unit_being_aggressive(struct unit *punit);
-bool can_step_taken_wrt_to_zoc(Unit_Type_id type, struct player *unit_owner,
+bool can_step_taken_wrt_to_zoc(Unit_Type_id type, player_t *unit_owner,
                                const tile_t *src_tile,
                                const tile_t *dst_tile);
 bool can_unit_exist_at_tile(struct unit *punit, const tile_t *ptile);
@@ -321,7 +321,7 @@ bool can_unit_move_to_tile(struct unit *punit, const tile_t *ptile,
                            bool igzoc);
 bool can_unit_do_air_patrol(struct unit *punit);
 enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
-                                             struct player *unit_owner,
+                                             player_t *unit_owner,
                                              enum unit_activity activity,
                                              const tile_t *src_tile,
                                              const tile_t *dst_tile,
@@ -331,7 +331,7 @@ bool zoc_ok_move(struct unit *punit, const tile_t *ptile);
 
 bool is_build_or_clean_activity(enum unit_activity activity);
 
-struct unit *create_unit_virtual(struct player *pplayer, city_t *pcity,
+struct unit *create_unit_virtual(player_t *pplayer, city_t *pcity,
                                  Unit_Type_id type, int veteran_level);
 void destroy_unit_virtual(struct unit *punit);
 void free_unit_orders(struct unit *punit);

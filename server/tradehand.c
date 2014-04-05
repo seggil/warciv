@@ -209,7 +209,7 @@ void server_establish_trade_route(city_t *pcity1, city_t *pcity2)
 void unit_establish_trade_route(struct unit *punit, city_t *pcity1,
                                 city_t *pcity2)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   struct trade_route *out_of_home = NULL, *out_of_dest = NULL;
   city_t *pcity_out_of_home = NULL, *pcity_out_of_dest = NULL;
   bool can_establish = !have_cities_trade_route(pcity1, pcity2);
@@ -392,7 +392,7 @@ void trade_free_unit(struct unit *punit)
 /****************************************************************************
   Receive a trade packet from client
 ****************************************************************************/
-void handle_trade_route_plan(struct player *pplayer, int city1, int city2)
+void handle_trade_route_plan(player_t *pplayer, int city1, int city2)
 {
   city_t *pcity1, *pcity2;
   struct trade_route *ptr;
@@ -438,7 +438,7 @@ void handle_trade_route_plan(struct player *pplayer, int city1, int city2)
 /****************************************************************************
   Receive a trade packet from client
 ****************************************************************************/
-void handle_trade_route_remove(struct player *pplayer, int city1, int city2)
+void handle_trade_route_remove(player_t *pplayer, int city1, int city2)
 {
   city_t *pcity1, *pcity2;
   struct trade_route *ptr;
@@ -471,7 +471,7 @@ void handle_trade_route_remove(struct player *pplayer, int city1, int city2)
 /****************************************************************************
   Receive a trade packet from client
 ****************************************************************************/
-void handle_unit_trade_route(struct player *pplayer, int unit_id,
+void handle_unit_trade_route(player_t *pplayer, int unit_id,
                              int city1, int city2)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
@@ -584,7 +584,7 @@ void handle_unit_trade_route(struct player *pplayer, int unit_id,
   Remove all trade routes non-established. It is usually called
   when a user take the player without the "extglobalinfo" capability.
 ****************************************************************************/
-void reset_trade_route_planning(struct player *pplayer)
+void reset_trade_route_planning(player_t *pplayer)
 {
   if (!pplayer || server_state == GAME_OVER_STATE) {
     return;

@@ -30,9 +30,9 @@
 /**********************************************************************
   Find who is leading the space race. Returns NULL if nobody is.
 ***********************************************************************/
-struct player *player_leading_spacerace(void)
+player_t *player_leading_spacerace(void)
 {
-  struct player *best = NULL;
+  player_t *best = NULL;
   int best_arrival = WC_INFINITY;
   enum spaceship_state best_state = SSHIP_NONE;
 
@@ -68,7 +68,7 @@ struct player *player_leading_spacerace(void)
   Calculate average distances to other players. We calculate the
   average distance from all of our cities to the closest enemy city.
 ***********************************************************************/
-int player_distance_to_player(struct player *pplayer, struct player *target)
+int player_distance_to_player(player_t *pplayer, player_t *target)
 {
   int cities = 0;
   int dists = 0;

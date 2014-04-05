@@ -69,7 +69,7 @@ struct civ_game {
   struct packet_ruleset_game ruleset_game;
 
   /* Common part */
-  struct player players[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
+  player_t players[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   struct conn_list *all_connections;  /* including not yet established */
   struct conn_list *est_connections;  /* all established client conns */
   struct conn_list *game_connections; /* involved in game; send map etc */
@@ -230,14 +230,14 @@ void ruleset_data_free(void);
 int game_next_year(int);
 void game_advance_year(void);
 
-int civ_population(struct player *pplayer);
+int civ_population(player_t *pplayer);
 city_t *game_find_city_by_name(const char *name);
 
 struct unit *find_unit_by_id(int id);
 city_t *find_city_by_id(int id);
 city_t *find_city_by_name_fast(const char *name);
 
-void game_remove_player(struct player *pplayer);
+void game_remove_player(player_t *pplayer);
 void game_renumber_players(int plrno);
 
 void game_remove_unit(struct unit *punit);
@@ -246,7 +246,7 @@ void initialize_globals(void);
 
 void translate_data_names(void);
 
-struct player *get_player(int player_id);
+player_t *get_player(int player_id);
 bool is_valid_player_id(int player_id);
 int get_num_human_and_ai_players(void);
 

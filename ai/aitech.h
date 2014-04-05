@@ -15,7 +15,7 @@
 
 #include "wc_types.h"
 
-void ai_manage_tech(struct player *pplayer);
-void ai_next_tech_goal(struct player *pplayer);
+void ai_manage_tech(player_t *pplayer);
+void ai_next_tech_goal(player_t *pplayer);
 
 #endif  /* WC_AI_AITECH_H */

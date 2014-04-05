@@ -26,7 +26,7 @@
   Returns TRUE iff pplayer could do diplomancy in the game at all.
   These values are set by player in stdinhand.c.
 **************************************************************************/
-bool diplomacy_possible(struct player *pplayer, struct player *aplayer)
+bool diplomacy_possible(player_t *pplayer, player_t *aplayer)
 {
   if (game.info.diplomacy == 4
       || (game.ext_info.maxallies
@@ -50,7 +50,7 @@ bool diplomacy_possible(struct player *pplayer, struct player *aplayer)
 /**************************************************************************
   Returns TRUE iff pplayer could do diplomatic meetings with aplayer.
 **************************************************************************/
-bool could_meet_with_player(struct player *pplayer, struct player *aplayer)
+bool could_meet_with_player(player_t *pplayer, player_t *aplayer)
 {
   return (pplayer->is_alive
           && aplayer->is_alive
@@ -66,7 +66,7 @@ bool could_meet_with_player(struct player *pplayer, struct player *aplayer)
 /**************************************************************************
   Returns TRUE iff pplayer could do diplomatic meetings with aplayer.
 **************************************************************************/
-bool could_intel_with_player(struct player *pplayer, struct player *aplayer)
+bool could_intel_with_player(player_t *pplayer, player_t *aplayer)
 {
   return (pplayer->is_alive
           && aplayer->is_alive
@@ -79,7 +79,7 @@ bool could_intel_with_player(struct player *pplayer, struct player *aplayer)
 /****************************************************************
 ...
 *****************************************************************/
-struct Treaty *treaty_new(struct player *plr0, struct player *plr1)
+struct Treaty *treaty_new(player_t *plr0, player_t *plr1)
 {
   struct Treaty *ptreaty = wc_malloc(sizeof(struct Treaty));
 
@@ -107,7 +107,7 @@ void treaty_free(struct Treaty *ptreaty)
 /****************************************************************
 ...
 *****************************************************************/
-bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
+bool remove_clause(struct Treaty *ptreaty, player_t *pfrom,
                   enum clause_type type, int val)
 {
   clause_list_iterate(ptreaty->clauses, pclause) {
@@ -130,7 +130,7 @@ bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
 /****************************************************************
 ...
 *****************************************************************/
-bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
+bool add_clause(struct Treaty *ptreaty, player_t *pfrom,
                 enum clause_type type, int val)
 {
   struct Clause *pclause;

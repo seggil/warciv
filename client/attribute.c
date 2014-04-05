@@ -326,7 +326,7 @@ static enum attribute_serial unserialize_hash( struct hash_table *hash,
 *****************************************************************************/
 void attribute_flush(void)
 {
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
 
   if (!pplayer) {
     return;
@@ -353,7 +353,7 @@ void attribute_flush(void)
 *****************************************************************************/
 void attribute_restore(void)
 {
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
 
   if (!pplayer) {
     return;

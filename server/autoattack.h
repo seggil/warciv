@@ -14,7 +14,7 @@
 #define WC_SERVER_AUTOATTACK_H
 
 void auto_attack(void);
-bool auto_attack_with_unit(struct player *pplayer,
+bool auto_attack_with_unit(player_t *pplayer,
                            struct unit *punit);
 
 #endif  /* WC_SERVER_AUTOATTACK_H */

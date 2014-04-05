@@ -53,7 +53,7 @@ struct move_cost_map warmap;
 #define AIR_ASSUMES_UNKNOWN_SAFE        TRUE
 #define AIR_ASSUMES_FOGGED_SAFE         TRUE
 
-static bool airspace_looks_safe(tile_t *ptile, struct player *pplayer);
+static bool airspace_looks_safe(tile_t *ptile, player_t *pplayer);
 
 
 /* These are used for all GOTO's */
@@ -269,7 +269,7 @@ void really_generate_warmap(city_t *pcity, struct unit *punit,
   bool igter;
   int maxcost = THRESHOLD * 6 + 2; /* should be big enough without being TOO big */
   tile_t *ptile;
-  struct player *pplayer;
+  player_t *pplayer;
 
   if (pcity) {
     orig_tile = pcity->common.tile;
@@ -480,7 +480,7 @@ static bool goto_zoc_ok(struct unit *punit, tile_t *src_tile,
   }
 
   {
-    struct player *owner = unit_owner(punit);
+    player_t *owner = unit_owner(punit);
 
     adjc_dir_iterate(src_tile, ptile, dir) {
       /* if we didn't come from there */
@@ -566,7 +566,7 @@ static bool find_the_shortest_path(struct unit *punit,
                                    tile_t *dest_tile,
                                    enum goto_move_restriction restriction)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   bool igter;
   tile_t *ptile, *orig_tile;
   tile_t *psrctile, *pdesttile;
@@ -855,7 +855,7 @@ static bool find_the_shortest_path(struct unit *punit,
 /****************************************************************************
   Can the player see that the given ocean tile is along the coastline?
 ****************************************************************************/
-static bool is_coast_seen(tile_t *ptile, struct player *pplayer)
+static bool is_coast_seen(tile_t *ptile, player_t *pplayer)
 {
   bool ai_always_see_map = !ai_handicap(pplayer, H_MAP);
 
@@ -916,7 +916,7 @@ static int find_a_direction(struct unit *punit,
 
   int i, fitness[8], best_fitness = DONT_SELECT_ME_FITNESS;
   struct unit *passenger;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   bool afraid_of_sinking = (unit_flag(punit, F_TRIREME)
                             && get_player_bonus(pplayer,
                                                 EFFECT_TYPE_NO_SINK_DEEP) == 0);
@@ -1218,7 +1218,7 @@ static int find_a_direction(struct unit *punit,
 **************************************************************************/
 bool goto_is_sane(struct unit *punit, tile_t *ptile, bool omni)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
 
   if (same_pos(punit->tile, ptile)) {
     return TRUE;
@@ -1288,7 +1288,7 @@ enum goto_result do_unit_goto(struct unit *punit,
                               enum goto_move_restriction restriction,
                               bool trigger_special_ability)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   int unit_id;
   enum goto_result status;
   tile_t *ptile, *dest_tile, *waypoint_tile;
@@ -1450,7 +1450,7 @@ int calculate_move_cost(struct unit *punit, tile_t *dest_tile)
  there is an enemy unit on it. This is tricky, since we have to
  consider what the player knows/doesn't know about the tile.
 **************************************************************************/
-static bool airspace_looks_safe(tile_t *ptile, struct player *pplayer)
+static bool airspace_looks_safe(tile_t *ptile, player_t *pplayer)
 {
   /*
    * We do handicap checks for the player with ai_handicap(). This
@@ -1492,7 +1492,7 @@ Try to quickly verify in O(moves) time                    else
 Do an A* search using the warmap to completely search for the path.
 **************************************************************************/
 int air_can_move_between(int moves, tile_t *src_tile,
-                         tile_t *dest_tile, struct player *pplayer)
+                         tile_t *dest_tile, player_t *pplayer)
 {
   tile_t *ptile;
   int dist, total_distance = real_map_distance(src_tile, dest_tile);

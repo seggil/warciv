@@ -138,7 +138,7 @@ static void wcdb_close(MYSQL *mysql);
 static const char *wcdb_escape(MYSQL *sock, const char *str);
 static bool wcdb_execute(MYSQL *sock, const char *stmt);
 static bool wcdb_commit(MYSQL *sock);
-static bool wcdb_insert_player(MYSQL *sock, struct player *pplayer);
+static bool wcdb_insert_player(MYSQL *sock, player_t *pplayer);
 
 static char *etm_encode_terrain_map(void);
 static char *etm_encode_turn_map(const char *termap,
@@ -909,7 +909,7 @@ static bool wcdb_commit(MYSQL *sock)
 /**************************************************************************
   NB Calls wcdb_close on error.
 **************************************************************************/
-static bool wcdb_insert_player(MYSQL *sock, struct player *pplayer)
+static bool wcdb_insert_player(MYSQL *sock, player_t *pplayer)
 {
   char buf[1024];
 
@@ -1414,7 +1414,7 @@ static char *etm_encode_turn_map(const char *termap,
 **************************************************************************/
 static bool load_old_rating(MYSQL *sock,
                             int user_id,
-                            struct player *pplayer,
+                            player_t *pplayer,
                             int game_type)
 {
   MYSQL_RES *res = NULL;
@@ -1752,7 +1752,7 @@ bool wcdb_end_of_turn_update(void)
   /* Make a status record for each player for this turn. */
   players_iterate(pplayer) {
     int player_status_id, i;
-    struct player *pplayer_ally;
+    player_t *pplayer_ally;
 
     if (is_barbarian(pplayer)) {
       continue;

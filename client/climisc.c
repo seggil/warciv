@@ -319,7 +319,7 @@ void client_change_all(cid x, cid y)
 /***************************************************************************
   Return a string indicating one nation's embassy status with another
 ***************************************************************************/
-const char *get_embassy_status(struct player *me, struct player *them)
+const char *get_embassy_status(player_t *me, player_t *them)
 {
   if (me == them || !them->is_alive || !me->is_alive) {
     return "-";
@@ -343,7 +343,7 @@ const char *get_embassy_status(struct player *me, struct player *them)
 /***************************************************************************
   Return a string indicating one nation's shaed vision status with another
 ***************************************************************************/
-const char *get_vision_status(struct player *me, struct player *them)
+const char *get_vision_status(player_t *me, player_t *them)
 {
   if (gives_shared_vision(me, them)) {
     if (gives_shared_vision(them, me)) {
@@ -492,7 +492,7 @@ intro gfx.
 **************************************************************************/
 void center_on_something(void)
 {
-  struct player *pplayer;
+  player_t *pplayer;
   city_t *pcity;
   struct unit *punit;
 
@@ -878,7 +878,7 @@ int collect_cids3(cid * dest_cids)
 **************************************************************************/
 int collect_cids4(cid * dest_cids, city_t *pcity, bool advanced_tech)
 {
-  struct player *pplayer = get_player_ptr();
+  player_t *pplayer = get_player_ptr();
   int cids_used = 0;
 
   impr_type_iterate(id) {
@@ -1140,7 +1140,7 @@ void reports_force_thaw(void)
   On the client side, 'pplayer' is not used at all.
 *************************************************************************/
 enum known_type map_get_known(const tile_t *ptile,
-                              struct player *pplayer)
+                              player_t *pplayer)
 {
   return tile_get_known(ptile);
 }
@@ -1585,7 +1585,7 @@ void cityrep_buy(city_t *pcity)
 
 void common_taxrates_callback(int i)
 {
-  struct player *pplayer;
+  player_t *pplayer;
   int lux_end, sci_end, tax, lux, sci;
   int delta = 10;
 
@@ -2137,7 +2137,7 @@ void voteinfo_queue_next(void)
 **************************************************************************/
 void toggle_traderoute_drawing_in_selected_cities(void)
 {
-  struct player *me = get_player_ptr();
+  player_t *me = get_player_ptr();
 
   if (!me || !tiles_hilited_cities) {
     return;

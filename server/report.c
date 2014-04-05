@@ -72,7 +72,7 @@ static const char *historian_name[]={
 static const char scorelog_magic[] = "#WARCIV SCORELOG2 ";
 
 struct player_score_entry {
-  struct player *player;
+  player_t *player;
   int value;
 };
 
@@ -81,15 +81,15 @@ struct city_score_entry {
   int value;
 };
 
-static int get_population(struct player *pplayer);
-static int get_landarea(struct player *pplayer);
-static int get_settledarea(struct player *pplayer);
-static int get_research(struct player *pplayer);
-static int get_literacy(struct player *pplayer);
-static int get_production(struct player *pplayer);
-static int get_economics(struct player *pplayer);
-static int get_pollution(struct player *pplayer);
-static int get_mil_service(struct player *pplayer);
+static int get_population(player_t *pplayer);
+static int get_landarea(player_t *pplayer);
+static int get_settledarea(player_t *pplayer);
+static int get_research(player_t *pplayer);
+static int get_literacy(player_t *pplayer);
+static int get_production(player_t *pplayer);
+static int get_economics(player_t *pplayer);
+static int get_pollution(player_t *pplayer);
+static int get_mil_service(player_t *pplayer);
 
 static const char *area_to_text(int value);
 static const char *percent_to_text(int value);
@@ -104,7 +104,7 @@ static const char *pollution_to_text(int value);
 static struct dem_row {
   const char key;
   const char *name;
-  int (*get_value) (struct player *);
+  int (*get_value) (player_t *);
   const char *(*to_text) (int);
   bool greater_values_are_better;
 } rowtable[] = {
@@ -339,32 +339,32 @@ void report_wonders_of_the_world(struct conn_list *dest)
 /**************************************************************************
  Helper functions which return the value for the given player.
 **************************************************************************/
-static int get_population(struct player *pplayer)
+static int get_population(player_t *pplayer)
 {
   return pplayer->score.population;
 }
 
-static int get_pop(struct player *pplayer)
+static int get_pop(player_t *pplayer)
 {
   return total_player_citizens(pplayer);
 }
 
-static int get_landarea(struct player *pplayer)
+static int get_landarea(player_t *pplayer)
 {
     return pplayer->score.landarea;
 }
 
-static int get_settledarea(struct player *pplayer)
+static int get_settledarea(player_t *pplayer)
 {
   return pplayer->score.settledarea;
 }
 
-static int get_research(struct player *pplayer)
+static int get_research(player_t *pplayer)
 {
   return (pplayer->score.techout * 100) / total_bulbs_required(pplayer);
 }
 
-static int get_literacy(struct player *pplayer)
+static int get_literacy(player_t *pplayer)
 {
   int pop = civ_population(pplayer);
 
@@ -377,37 +377,37 @@ static int get_literacy(struct player *pplayer)
   }
 }
 
-static int get_production(struct player *pplayer)
+static int get_production(player_t *pplayer)
 {
   return pplayer->score.mfg;
 }
 
-static int get_economics(struct player *pplayer)
+static int get_economics(player_t *pplayer)
 {
   return pplayer->score.bnp;
 }
 
-static int get_pollution(struct player *pplayer)
+static int get_pollution(player_t *pplayer)
 {
   return pplayer->score.pollution;
 }
 
-static int get_mil_service(struct player *pplayer)
+static int get_mil_service(player_t *pplayer)
 {
   return (pplayer->score.units * 5000) / (10 + civ_population(pplayer));
 }
 
-static int get_cities(struct player *pplayer)
+static int get_cities(player_t *pplayer)
 {
   return pplayer->score.cities;
 }
 
-static int get_techs(struct player *pplayer)
+static int get_techs(player_t *pplayer)
 {
   return pplayer->score.techs;
 }
 
-static int get_munits(struct player *pplayer)
+static int get_munits(player_t *pplayer)
 {
   int result = 0;
 
@@ -421,7 +421,7 @@ static int get_munits(struct player *pplayer)
   return result;
 }
 
-static int get_settlers(struct player *pplayer)
+static int get_settlers(player_t *pplayer)
 {
   int result = 0;
 
@@ -435,47 +435,47 @@ static int get_settlers(struct player *pplayer)
   return result;
 }
 
-static int get_wonders(struct player *pplayer)
+static int get_wonders(player_t *pplayer)
 {
   return pplayer->score.wonders;
 }
 
-static int get_techout(struct player *pplayer)
+static int get_techout(player_t *pplayer)
 {
   return pplayer->score.techout;
 }
 
-static int get_literacy2(struct player *pplayer)
+static int get_literacy2(player_t *pplayer)
 {
   return pplayer->score.literacy;
 }
 
-static int get_spaceship(struct player *pplayer)
+static int get_spaceship(player_t *pplayer)
 {
   return pplayer->score.spaceship;
 }
 
-static int get_gold(struct player *pplayer)
+static int get_gold(player_t *pplayer)
 {
   return pplayer->economic.gold;
 }
 
-static int get_taxrate(struct player *pplayer)
+static int get_taxrate(player_t *pplayer)
 {
   return pplayer->economic.tax;
 }
 
-static int get_scirate(struct player *pplayer)
+static int get_scirate(player_t *pplayer)
 {
   return pplayer->economic.science;
 }
 
-static int get_luxrate(struct player *pplayer)
+static int get_luxrate(player_t *pplayer)
 {
   return pplayer->economic.luxury;
 }
 
-static int get_riots(struct player *pplayer)
+static int get_riots(player_t *pplayer)
 {
   int result = 0;
 
@@ -488,42 +488,42 @@ static int get_riots(struct player *pplayer)
   return result;
 }
 
-static int get_happypop(struct player *pplayer)
+static int get_happypop(player_t *pplayer)
 {
   return pplayer->score.happy;
 }
 
-static int get_contentpop(struct player *pplayer)
+static int get_contentpop(player_t *pplayer)
 {
   return pplayer->score.content;
 }
 
-static int get_unhappypop(struct player *pplayer)
+static int get_unhappypop(player_t *pplayer)
 {
   return pplayer->score.unhappy;
 }
 
-static int get_taxmen(struct player *pplayer)
+static int get_taxmen(player_t *pplayer)
 {
   return pplayer->score.taxmen;
 }
 
-static int get_scientists(struct player *pplayer)
+static int get_scientists(player_t *pplayer)
 {
   return pplayer->score.scientists;
 }
 
-static int get_elvis(struct player *pplayer)
+static int get_elvis(player_t *pplayer)
 {
   return pplayer->score.elvis;
 }
 
-static int get_gov(struct player *pplayer)
+static int get_gov(player_t *pplayer)
 {
   return pplayer->government;
 }
 
-static int get_corruption(struct player *pplayer)
+static int get_corruption(player_t *pplayer)
 {
   int result = 0;
 
@@ -609,7 +609,7 @@ static const char *number_to_ordinal_string(int num)
 ...
 **************************************************************************/
 static void dem_line_item(char *outptr, size_t out_size,
-                          struct player *pplayer, struct dem_row *prow,
+                          player_t *pplayer, struct dem_row *prow,
                           int selcols)
 {
   if (pplayer && TEST_BIT(selcols, DEM_COL_QUANTITY)) {
@@ -638,7 +638,7 @@ static void dem_line_item(char *outptr, size_t out_size,
   }
 
   if (!pplayer || TEST_BIT(selcols, DEM_COL_BEST)) {
-    struct player *best_player = pplayer;
+    player_t *best_player = pplayer;
     int best_value = pplayer ? prow->get_value(pplayer) : 0;
 
     players_iterate(other) {
@@ -720,7 +720,7 @@ bool is_valid_demography(const char *demography, const char **error_string)
 *************************************************************************/
 void report_demographics(struct connection *pconn)
 {
-  struct player *pplayer = pconn->player;
+  player_t *pplayer = pconn->player;
   char civbuf[1024];
   char buffer[4096];
   unsigned int i;
@@ -902,7 +902,7 @@ static void log_civ_score(void)
    */
   static const struct {
     char *name;
-    int (*get_value) (struct player *);
+    int (*get_value) (player_t *);
   } score_tags[] = {
     {"pop",             get_pop},
     {"bnp",             get_economics},
@@ -1226,7 +1226,7 @@ void report_game_rankings(struct conn_list *dest)
   const struct grouping *groupings = NULL;
   int num_groupings = 0, i, j;
   struct team *pteam;
-  struct player *pplayer;
+  player_t *pplayer;
   char buffer[4096], head_line[256], username[256];
 
   groupings = score_get_groupings(&num_groupings);

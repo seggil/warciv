@@ -322,7 +322,7 @@ bool receive_username(struct connection *pconn, const char *username)
 void establish_new_connection(struct connection *pconn)
 {
   struct conn_list *dest = pconn ? pconn->self : NULL;
-  struct player *pplayer;
+  player_t *pplayer;
   struct packet_server_join_reply packet;
   char hostname[512];
 
@@ -643,7 +643,7 @@ bool handle_login_request(struct connection *pconn,
 /**************************************************************************
   ...
 **************************************************************************/
-bool server_assign_random_nation(struct player *pplayer)
+bool server_assign_random_nation(player_t *pplayer)
 {
   Nation_Type_id nation_no = select_random_nation(NULL);
   if (nation_no == NO_NATION_SELECTED) {
@@ -662,7 +662,7 @@ bool server_assign_random_nation(struct player *pplayer)
 /**************************************************************************
   ...
 **************************************************************************/
-void server_assign_nation(struct player *pplayer,
+void server_assign_nation(player_t *pplayer,
                           Nation_Type_id nation_no,
                           const char *name,
                           bool is_male,
@@ -713,7 +713,7 @@ void server_assign_nation(struct player *pplayer,
 **************************************************************************/
 void lost_connection_to_client(struct connection *pconn)
 {
-  struct player *pplayer = pconn->player;
+  player_t *pplayer = pconn->player;
   const char *desc = conn_description(pconn);
   bool maybe_need_pause = (server_state == RUN_GAME_STATE
                            && pplayer && !pconn->observer
@@ -844,7 +844,7 @@ void send_conn_info_remove(struct conn_list *src, struct conn_list *dest)
        pconn->obserber to TRUE before attaching!
 **************************************************************************/
 bool attach_connection_to_player(struct connection *pconn,
-                                 struct player *pplayer)
+                                 player_t *pplayer)
 {
   /* if pplayer is NULL, attach to first non-connected player slot */
   if (!pplayer) {

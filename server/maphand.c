@@ -50,7 +50,7 @@ static int continent_sizes[MAP_NCONT];
 static int ocean_sizes[MAP_NCONT];
 
 struct bg_map_know_and_see_all_context {
-  struct player *player;
+  player_t *player;
   int index;
 };
 
@@ -182,15 +182,15 @@ void assign_continent_numbers(bool skip_unsafe)
           map.num_continents, map.server.num_oceans);
 }
 
-static void player_tile_init(tile_t *ptile, struct player *pplayer);
-static void give_tile_info_from_player_to_player(struct player *pfrom,
-                                                 struct player *pdest,
+static void player_tile_init(tile_t *ptile, player_t *pplayer);
+static void give_tile_info_from_player_to_player(player_t *pfrom,
+                                                 player_t *pdest,
                                                  tile_t *ptile);
-static void send_tile_info_always(struct player *pplayer,
+static void send_tile_info_always(player_t *pplayer,
                                   struct conn_list *dest, tile_t *ptile);
-static void shared_vision_change_seen(tile_t *ptile, struct player *pplayer, int change);
-static int map_get_seen(const tile_t *ptile, struct player *pplayer);
-static void map_change_own_seen(tile_t *ptile, struct player *pplayer,
+static void shared_vision_change_seen(tile_t *ptile, player_t *pplayer, int change);
+static int map_get_seen(const tile_t *ptile, player_t *pplayer);
+static void map_change_own_seen(tile_t *ptile, player_t *pplayer,
                                 int change);
 
 /**************************************************************************
@@ -294,7 +294,7 @@ railroads.  "discovery" just affects the message: set to
    1 if the tech is a "discovery",
    0 if otherwise acquired (conquer/trade/GLib).        --dwp
 ***************************************************************/
-void upgrade_city_rails(struct player *pplayer, bool discovery)
+void upgrade_city_rails(player_t *pplayer, bool discovery)
 {
   if (!(terrain_control.may_road)) {
     return;
@@ -328,7 +328,7 @@ void upgrade_city_rails(struct player *pplayer, bool discovery)
 /**************************************************************************
 Return TRUE iff the player me really gives shared vision to player them.
 **************************************************************************/
-static bool really_gives_vision(struct player *me, struct player *them)
+static bool really_gives_vision(player_t *me, player_t *them)
 {
   return TEST_BIT(me->really_gives_vision, them->player_no);
 }
@@ -336,7 +336,7 @@ static bool really_gives_vision(struct player *me, struct player *them)
 /**************************************************************************
 ...
 **************************************************************************/
-static void buffer_shared_vision(struct player *pplayer)
+static void buffer_shared_vision(player_t *pplayer)
 {
   players_iterate(pplayer2) {
     if (really_gives_vision(pplayer, pplayer2))
@@ -348,7 +348,7 @@ static void buffer_shared_vision(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-static void unbuffer_shared_vision(struct player *pplayer)
+static void unbuffer_shared_vision(player_t *pplayer)
 {
   players_iterate(pplayer2) {
     if (really_gives_vision(pplayer, pplayer2))
@@ -360,7 +360,7 @@ static void unbuffer_shared_vision(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-void give_map_from_player_to_player(struct player *pfrom, struct player *pdest)
+void give_map_from_player_to_player(player_t *pfrom, player_t *pdest)
 {
   buffer_shared_vision(pdest);
   whole_map_iterate(ptile) {
@@ -372,7 +372,7 @@ void give_map_from_player_to_player(struct player *pfrom, struct player *pdest)
 /**************************************************************************
 ...
 **************************************************************************/
-void give_seamap_from_player_to_player(struct player *pfrom, struct player *pdest)
+void give_seamap_from_player_to_player(player_t *pfrom, player_t *pdest)
 {
   buffer_shared_vision(pdest);
   whole_map_iterate(ptile) {
@@ -387,7 +387,7 @@ void give_seamap_from_player_to_player(struct player *pfrom, struct player *pdes
 ...
 **************************************************************************/
 void give_citymap_from_player_to_player(city_t *pcity,
-                                        struct player *pfrom, struct player *pdest)
+                                        player_t *pfrom, player_t *pdest)
 {
   buffer_shared_vision(pdest);
   map_city_radius_iterate(pcity->common.tile, ptile) {
@@ -427,7 +427,7 @@ void send_all_known_tiles(struct conn_list *dest)
     }
 
     conn_list_iterate(dest, pconn) {
-      struct player *pplayer = pconn->player;
+      player_t *pplayer = pconn->player;
 
       if (!pplayer && !pconn->observer) {       /* no map needed */
         continue;
@@ -468,7 +468,7 @@ void send_tile_info(struct conn_list *dest, tile_t *ptile)
     info.spec_sprite[0] = '\0';
   }
 
-  struct player *pplayer;
+  player_t *pplayer;
   conn_list_iterate(dest, pconn) {
     pplayer = pconn->player;
     if (!pplayer && !pconn->observer) {
@@ -502,7 +502,7 @@ void send_tile_info(struct conn_list *dest, tile_t *ptile)
   do that.
   pplayer==NULL means send "real" data, for observers
 **************************************************************************/
-static void send_tile_info_always(struct player *pplayer, struct conn_list *dest,
+static void send_tile_info_always(player_t *pplayer, struct conn_list *dest,
                            tile_t *ptile)
 {
   struct packet_tile_info info;
@@ -548,7 +548,7 @@ static void send_tile_info_always(struct player *pplayer, struct conn_list *dest
 /**************************************************************************
 ...
 **************************************************************************/
-static int map_get_pending_seen(struct player *pplayer, tile_t *ptile)
+static int map_get_pending_seen(player_t *pplayer, tile_t *ptile)
 {
   return map_get_player_tile(ptile, pplayer)->pending_seen;
 }
@@ -556,7 +556,7 @@ static int map_get_pending_seen(struct player *pplayer, tile_t *ptile)
 /**************************************************************************
 ...
 **************************************************************************/
-static void map_set_pending_seen(struct player *pplayer, tile_t *ptile, int newv)
+static void map_set_pending_seen(player_t *pplayer, tile_t *ptile, int newv)
 {
   map_get_player_tile(ptile, pplayer)->pending_seen = newv;
 }
@@ -564,7 +564,7 @@ static void map_set_pending_seen(struct player *pplayer, tile_t *ptile, int newv
 /**************************************************************************
 ...
 **************************************************************************/
-static void increment_pending_seen(struct player *pplayer, tile_t *ptile)
+static void increment_pending_seen(player_t *pplayer, tile_t *ptile)
 {
   map_get_player_tile(ptile, pplayer)->pending_seen += 1;
 }
@@ -572,7 +572,7 @@ static void increment_pending_seen(struct player *pplayer, tile_t *ptile)
 /**************************************************************************
 ...
 **************************************************************************/
-static void decrement_pending_seen(struct player *pplayer, tile_t *ptile)
+static void decrement_pending_seen(player_t *pplayer, tile_t *ptile)
 {
   struct player_tile *plr_tile = map_get_player_tile(ptile, pplayer);
   assert(plr_tile->pending_seen != 0);
@@ -582,7 +582,7 @@ static void decrement_pending_seen(struct player *pplayer, tile_t *ptile)
 /**************************************************************************
 ...
 **************************************************************************/
-static void reveal_pending_seen(struct player *pplayer, tile_t *ptile, int len)
+static void reveal_pending_seen(player_t *pplayer, tile_t *ptile, int len)
 {
   square_iterate(ptile, len, tile1) {
     int pseen = map_get_pending_seen(pplayer, tile1);
@@ -598,7 +598,7 @@ static void reveal_pending_seen(struct player *pplayer, tile_t *ptile, int len)
  * Checks for hidden units around (x,y).  Such units can be invisible even
  * on a KNOWN_AND_SEEN tile, so unfogging might not reveal them.
  ************************************************************************/
-void reveal_hidden_units(struct player *pplayer, tile_t *ptile)
+void reveal_hidden_units(player_t *pplayer, tile_t *ptile)
 {
   adjc_iterate(ptile, tile1) {
     unit_list_iterate(tile1->units, punit) {
@@ -617,7 +617,7 @@ void reveal_hidden_units(struct player *pplayer, tile_t *ptile)
   Note, this must be called after the unit/vision source at ptile has
   been removed, unlike remove_unit_sight_points.
 ************************************************************************/
-void conceal_hidden_units(struct player *pplayer, tile_t *ptile)
+void conceal_hidden_units(player_t *pplayer, tile_t *ptile)
 {
   /* Remove vision of submarines.  This is extremely ugly and inefficient. */
   adjc_iterate(ptile, tile1) {
@@ -638,7 +638,7 @@ void conceal_hidden_units(struct player *pplayer, tile_t *ptile)
 /**************************************************************************
 ...
 **************************************************************************/
-static void really_unfog_area(struct player *pplayer, tile_t *ptile)
+static void really_unfog_area(player_t *pplayer, tile_t *ptile)
 {
   city_t *pcity;
   bool old_known = map_is_known(ptile, pplayer);
@@ -683,7 +683,7 @@ static void really_unfog_area(struct player *pplayer, tile_t *ptile)
   sidelength 1+2*len, ie length 1 is normal sightrange for a unit.
   pplayer may not be NULL.
 **************************************************************************/
-void unfog_area(struct player *pplayer, tile_t *ptile, int len)
+void unfog_area(player_t *pplayer, tile_t *ptile, int len)
 {
   /* Did the tile just become visible?
      - send info about units and cities and the tile itself */
@@ -717,7 +717,7 @@ void unfog_area(struct player *pplayer, tile_t *ptile, int len)
 /**************************************************************************
 ...
 **************************************************************************/
-static void really_fog_area(struct player *pplayer, tile_t *ptile)
+static void really_fog_area(player_t *pplayer, tile_t *ptile)
 {
   freelog(LOG_DEBUG, "Fogging %i,%i. Previous fog: %i.",
           TILE_XY(ptile), map_get_seen(ptile, pplayer));
@@ -736,7 +736,7 @@ static void really_fog_area(struct player *pplayer, tile_t *ptile)
   Remove a point of visibility from a square centered at x,y with
   sidelength 1+2*len, ie length 1 is normal sightrange for a unit.
 **************************************************************************/
-void fog_area(struct player *pplayer, tile_t *ptile, int len)
+void fog_area(player_t *pplayer, tile_t *ptile, int len)
 {
   buffer_shared_vision(pplayer);
   square_iterate(ptile, len, tile1) {
@@ -800,7 +800,7 @@ void map_unfog_city_area(city_t *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-static void shared_vision_change_seen(tile_t *ptile, struct player *pplayer, int change)
+static void shared_vision_change_seen(tile_t *ptile, player_t *pplayer, int change)
 {
   map_change_seen(ptile, pplayer, change);
   map_change_own_seen(ptile, pplayer, change);
@@ -814,7 +814,7 @@ static void shared_vision_change_seen(tile_t *ptile, struct player *pplayer, int
 /**************************************************************************
 There doesn't have to be a city.
 **************************************************************************/
-void map_unfog_pseudo_city_area(struct player *pplayer, tile_t *ptile)
+void map_unfog_pseudo_city_area(player_t *pplayer, tile_t *ptile)
 {
   freelog(LOG_DEBUG, "Unfogging city area at %i,%i", TILE_XY(ptile));
 
@@ -832,7 +832,7 @@ void map_unfog_pseudo_city_area(struct player *pplayer, tile_t *ptile)
 /**************************************************************************
 There doesn't have to be a city.
 **************************************************************************/
-void map_fog_pseudo_city_area(struct player *pplayer, tile_t *ptile)
+void map_fog_pseudo_city_area(player_t *pplayer, tile_t *ptile)
 {
   freelog(LOG_DEBUG, "Fogging city area at %i,%i", TILE_XY(ptile));
 
@@ -853,7 +853,7 @@ For removing a unit. The actual removal is done in server_remove_unit
 void remove_unit_sight_points(struct unit *punit)
 {
   tile_t *ptile = punit->tile;
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
 
   freelog(LOG_DEBUG, "Removing unit sight points at  %i,%i",
           TILE_XY(punit->tile));
@@ -869,7 +869,7 @@ void remove_unit_sight_points(struct unit *punit)
 Shows area even if still fogged. If the tile is not "seen" units are not
 shown
 **************************************************************************/
-static void really_show_area(struct player *pplayer, tile_t *ptile)
+static void really_show_area(player_t *pplayer, tile_t *ptile)
 {
   city_t *pcity;
   bool old_known = map_is_known(ptile, pplayer);
@@ -916,7 +916,7 @@ static void really_show_area(struct player *pplayer, tile_t *ptile)
 /**************************************************************************
 Shows area, ie send terrain etc., even if still fogged, sans units and cities.
 **************************************************************************/
-void show_area(struct player *pplayer, tile_t *ptile, int len)
+void show_area(player_t *pplayer, tile_t *ptile, int len)
 {
   buffer_shared_vision(pplayer);
   square_iterate(ptile, len, tile1) {
@@ -939,7 +939,7 @@ void show_area(struct player *pplayer, tile_t *ptile, int len)
 /***************************************************************
 ...
 ***************************************************************/
-bool map_is_known(const tile_t *ptile, struct player *pplayer)
+bool map_is_known(const tile_t *ptile, player_t *pplayer)
 {
   return TEST_BIT(ptile->u.server.known, pplayer->player_no);
 }
@@ -947,7 +947,7 @@ bool map_is_known(const tile_t *ptile, struct player *pplayer)
 /***************************************************************
 ...
 ***************************************************************/
-bool map_is_known_and_seen(const tile_t *ptile, struct player *pplayer)
+bool map_is_known_and_seen(const tile_t *ptile, player_t *pplayer)
 {
   return TEST_BIT(ptile->u.server.known, pplayer->player_no)
       && ((pplayer->private_map + ptile->index)->seen != 0);
@@ -956,7 +956,7 @@ bool map_is_known_and_seen(const tile_t *ptile, struct player *pplayer)
 /***************************************************************
 Watch out - this can be true even if the tile is not known.
 ***************************************************************/
-static int map_get_seen(const tile_t *ptile, struct player *pplayer)
+static int map_get_seen(const tile_t *ptile, player_t *pplayer)
 {
   return map_get_player_tile(ptile, pplayer)->seen;
 }
@@ -964,7 +964,7 @@ static int map_get_seen(const tile_t *ptile, struct player *pplayer)
 /***************************************************************
 ...
 ***************************************************************/
-void map_change_seen(tile_t *ptile, struct player *pplayer, int change)
+void map_change_seen(tile_t *ptile, player_t *pplayer, int change)
 {
   map_get_player_tile(ptile, pplayer)->seen += change;
   freelog(LOG_DEBUG, "%d,%d, p: %d, change %d, result %d\n", TILE_XY(ptile),
@@ -975,7 +975,7 @@ void map_change_seen(tile_t *ptile, struct player *pplayer, int change)
 /***************************************************************
 ...
 ***************************************************************/
-static int map_get_own_seen(tile_t *ptile, struct player *pplayer)
+static int map_get_own_seen(tile_t *ptile, player_t *pplayer)
 {
   int own_seen = map_get_player_tile(ptile, pplayer)->own_seen;
   if (own_seen != 0) {
@@ -987,7 +987,7 @@ static int map_get_own_seen(tile_t *ptile, struct player *pplayer)
 /***************************************************************
 ...
 ***************************************************************/
-static void map_change_own_seen(tile_t *ptile, struct player *pplayer,
+static void map_change_own_seen(tile_t *ptile, player_t *pplayer,
                                 int change)
 {
   map_get_player_tile(ptile, pplayer)->own_seen += change;
@@ -996,7 +996,7 @@ static void map_change_own_seen(tile_t *ptile, struct player *pplayer,
 /***************************************************************
 ...
 ***************************************************************/
-void map_set_known(tile_t *ptile, struct player *pplayer)
+void map_set_known(tile_t *ptile, player_t *pplayer)
 {
   ptile->u.server.known |= (1u << pplayer->player_no);
 }
@@ -1004,7 +1004,7 @@ void map_set_known(tile_t *ptile, struct player *pplayer)
 /***************************************************************
 ...
 ***************************************************************/
-void map_clear_known(tile_t *ptile, struct player *pplayer)
+void map_clear_known(tile_t *ptile, player_t *pplayer)
 {
   ptile->u.server.known &= ~(1u << pplayer->player_no);
 }
@@ -1012,7 +1012,7 @@ void map_clear_known(tile_t *ptile, struct player *pplayer)
 /***************************************************************
 ...
 ***************************************************************/
-void map_know_all(struct player *pplayer)
+void map_know_all(player_t *pplayer)
 {
   whole_map_iterate(ptile) {
     show_area(pplayer, ptile, 0);
@@ -1022,7 +1022,7 @@ void map_know_all(struct player *pplayer)
 /***************************************************************
 ...
 ***************************************************************/
-void map_know_and_see_all(struct player *pplayer)
+void map_know_and_see_all(player_t *pplayer)
 {
   whole_map_iterate(ptile) {
     unfog_area(pplayer, ptile, 0);
@@ -1033,7 +1033,7 @@ void map_know_and_see_all(struct player *pplayer)
 ...
 **************************************************************************/
 static struct bg_map_know_and_see_all_context *
-new_bg_map_know_and_see_all_context(struct player *pplayer)
+new_bg_map_know_and_see_all_context(player_t *pplayer)
 {
   struct bg_map_know_and_see_all_context *context;
 
@@ -1081,7 +1081,7 @@ static bool can_send_more(struct conn_list *dest)
 static bool bg_map_know_and_see_all_one_iter(void *vc)
 {
   struct bg_map_know_and_see_all_context *context = vc;
-  struct player *pplayer;
+  player_t *pplayer;
   tile_t *ptile;
   bool rv;
   int count;
@@ -1125,7 +1125,7 @@ static bool bg_map_know_and_see_all_one_iter(void *vc)
 /**************************************************************************
 ...
 **************************************************************************/
-static void bg_map_know_and_see_all(struct player *pplayer)
+static void bg_map_know_and_see_all(player_t *pplayer)
 {
   struct bg_map_know_and_see_all_context *context;
 
@@ -1155,7 +1155,7 @@ void show_map_to_all(void)
   Allocate space for map, and initialise the tiles.
   Uses current map.info.xsize and map.info.ysize.
 ****************************************************************/
-void player_map_allocate(struct player *pplayer)
+void player_map_allocate(player_t *pplayer)
 {
   pplayer->private_map =
     wc_malloc(map.info.xsize * map.info.ysize * sizeof(struct player_tile));
@@ -1167,7 +1167,7 @@ void player_map_allocate(struct player *pplayer)
 /***************************************************************
  frees a player's private map.
 ***************************************************************/
-void player_map_free(struct player *pplayer)
+void player_map_free(player_t *pplayer)
 {
   if (!pplayer->private_map) {
     return;
@@ -1189,7 +1189,7 @@ void player_map_free(struct player *pplayer)
 We need to use use fogofwar_old here, so the player's tiles get
 in the same state as the other players' tiles.
 ***************************************************************/
-static void player_tile_init(tile_t *ptile, struct player *pplayer)
+static void player_tile_init(tile_t *ptile, player_t *pplayer)
 {
   struct player_tile *plrtile =
     map_get_player_tile(ptile, pplayer);
@@ -1216,7 +1216,7 @@ static void player_tile_init(tile_t *ptile, struct player *pplayer)
 ...
 ***************************************************************/
 struct player_tile *map_get_player_tile(const tile_t *ptile,
-                                        struct player *pplayer)
+                                        player_t *pplayer)
 {
   return pplayer->private_map + ptile->index;
 }
@@ -1229,7 +1229,7 @@ struct player_tile *map_get_player_tile(const tile_t *ptile,
   packets to the client.  Callers may want to call send_tile_info() if this
   function returns TRUE.
 ****************************************************************************/
-bool update_player_tile_knowledge(struct player *pplayer, tile_t *ptile)
+bool update_player_tile_knowledge(player_t *pplayer, tile_t *ptile)
 {
   struct player_tile *plrtile = map_get_player_tile(ptile, pplayer);
 
@@ -1269,7 +1269,7 @@ void update_tile_knowledge(tile_t *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-void update_player_tile_last_seen(struct player *pplayer, tile_t *ptile)
+void update_player_tile_last_seen(player_t *pplayer, tile_t *ptile)
 {
   map_get_player_tile(ptile, pplayer)->last_updated = game.info.year;
 }
@@ -1277,8 +1277,8 @@ void update_player_tile_last_seen(struct player *pplayer, tile_t *ptile)
 /***************************************************************
 ...
 ***************************************************************/
-static void really_give_tile_info_from_player_to_player(struct player *pfrom,
-                                                        struct player *pdest,
+static void really_give_tile_info_from_player_to_player(player_t *pfrom,
+                                                        player_t *pdest,
                                                         tile_t *ptile)
 {
   struct player_tile *from_tile, *dest_tile;
@@ -1342,8 +1342,8 @@ static void really_give_tile_info_from_player_to_player(struct player *pfrom,
 /***************************************************************
 ...
 ***************************************************************/
-static void give_tile_info_from_player_to_player(struct player *pfrom,
-                                                 struct player *pdest,
+static void give_tile_info_from_player_to_player(player_t *pfrom,
+                                                 player_t *pdest,
                                                  tile_t *ptile)
 {
   really_give_tile_info_from_player_to_player(pfrom, pdest, ptile);
@@ -1394,7 +1394,7 @@ static void create_vision_dependencies(void)
 /***************************************************************
 ...
 ***************************************************************/
-void give_shared_vision(struct player *pfrom, struct player *pto)
+void give_shared_vision(player_t *pfrom, player_t *pto)
 {
   int save_vision[MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS];
   if (pfrom == pto) return;
@@ -1447,7 +1447,7 @@ void give_shared_vision(struct player *pfrom, struct player *pto)
 /***************************************************************
 ...
 ***************************************************************/
-void remove_shared_vision(struct player *pfrom, struct player *pto)
+void remove_shared_vision(player_t *pfrom, player_t *pto)
 {
   int save_vision[MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS];
   assert(pfrom != pto);
@@ -1497,7 +1497,7 @@ void remove_shared_vision(struct player *pfrom, struct player *pto)
 ...
 *************************************************************************/
 enum known_type map_get_known(const tile_t *ptile,
-                              struct player *pplayer)
+                              player_t *pplayer)
 {
   if (map_is_known(ptile, pplayer)) {
     if (map_get_seen(ptile, pplayer) > 0) {
@@ -1513,7 +1513,7 @@ enum known_type map_get_known(const tile_t *ptile,
 /*************************************************************************
 ...
 *************************************************************************/
-static void enable_fog_of_war_player(struct player *pplayer)
+static void enable_fog_of_war_player(player_t *pplayer)
 {
   whole_map_iterate(ptile) {
     if (map_is_known(ptile, pplayer)) {
@@ -1537,7 +1537,7 @@ void enable_fog_of_war(void)
 /*************************************************************************
 ...
 *************************************************************************/
-static void disable_fog_of_war_player(struct player *pplayer)
+static void disable_fog_of_war_player(player_t *pplayer)
 {
   whole_map_iterate(ptile) {
     if (map_is_known(ptile, pplayer)) {
@@ -1758,7 +1758,7 @@ static void map_update_borders_recalculate_position(tile_t *ptile)
   if (game.ruleset_control.borders > 0) {
     iterate_outward(ptile, game.ruleset_control.borders, tile1) {
       city_t *pccity = map_get_closest_city(tile1);
-      struct player *new_owner = pccity ? get_player(pccity->common.owner) : NULL;
+      player_t *new_owner = pccity ? get_player(pccity->common.owner) : NULL;
 
       if (new_owner != map_get_owner(tile1)) {
         map_set_owner(tile1, new_owner);

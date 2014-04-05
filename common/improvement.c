@@ -246,7 +246,7 @@ Impr_Type_id find_improvement_by_name_orig(const char *s)
 /**************************************************************************
  Returns 1 if the improvement is obsolete, now also works for wonders
 **************************************************************************/
-bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id)
+bool improvement_obsolete(const player_t *pplayer, Impr_Type_id id)
 {
   if (!tech_exists(improvement_types[id].obsolete_by)) {
     return FALSE;
@@ -268,7 +268,7 @@ bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id)
 **************************************************************************/
 static void fill_ranges_improv_lists(Impr_Status *equiv_list[IMPR_RANGE_LAST],
                                      const city_t *pcity,
-                                     struct player *pplayer)
+                                     player_t *pplayer)
 {
   Continent_id cont = 0;
   enum impr_range i;
@@ -299,7 +299,7 @@ static void fill_ranges_improv_lists(Impr_Status *equiv_list[IMPR_RANGE_LAST],
  Checks whether the building is within the equiv_range of a building that
  replaces it
 **************************************************************************/
-bool improvement_redundant(struct player *pplayer, const city_t *pcity,
+bool improvement_redundant(player_t *pplayer, const city_t *pcity,
                            Impr_Type_id id, bool want_to_build)
 {
   enum impr_range i;
@@ -365,7 +365,7 @@ void improvement_status_init(Impr_Status * improvements, size_t elements)
    Whether player can build given building somewhere, ignoring whether it
    is obsolete.
 **************************************************************************/
-bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id)
+bool can_player_build_improvement_direct(player_t *p, Impr_Type_id id)
 {
   bool space_part = FALSE;
 
@@ -418,7 +418,7 @@ bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id)
   returns TRUE if building is available with current tech OR will be
   available with future tech.  Returns FALSE if building is obsolete.
 **************************************************************************/
-bool can_player_build_improvement(struct player *p, Impr_Type_id id)
+bool can_player_build_improvement(player_t *p, Impr_Type_id id)
 {
   if (!can_player_build_improvement_direct(p, id)) {
     return FALSE;
@@ -434,7 +434,7 @@ bool can_player_build_improvement(struct player *p, Impr_Type_id id)
   returns TRUE if building is available with current tech OR will be
   available with future tech.  Returns FALSE if building is obsolete.
 **************************************************************************/
-bool can_player_eventually_build_improvement(struct player *p,
+bool can_player_eventually_build_improvement(player_t *p,
                                              Impr_Type_id id)
 {
   if (!improvement_exists(id)) {
@@ -559,7 +559,7 @@ void improvements_update_obsolete(void)
   whether it itself it redundant or not. having been built is all that
   counts.
 **************************************************************************/
-void improvements_update_redundant(struct player *pplayer, city_t *pcity,
+void improvements_update_redundant(player_t *pplayer, city_t *pcity,
                                    Continent_id cont, enum impr_range range)
 {
 #define CHECK_CITY_IMPR(_pcity)                                         \

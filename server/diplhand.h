@@ -23,16 +23,16 @@ struct Treaty;
 struct packet_diplomacy_info;
 struct connection;
 
-void establish_embassy(struct player *pplayer, struct player *aplayer);
+void establish_embassy(player_t *pplayer, player_t *aplayer);
 
 void diplhand_init(void);
 void diplhand_free(void);
 void free_treaties(void);
 
-struct Treaty *find_treaty(struct player *plr0, struct player *plr1);
+struct Treaty *find_treaty(player_t *plr0, player_t *plr1);
 
 void send_diplomatic_meetings(struct connection *dest);
-void cancel_all_meetings(struct player *pplayer);
-void cancel_diplomacy(struct player *pplayer);
+void cancel_all_meetings(player_t *pplayer);
+void cancel_diplomacy(player_t *pplayer);
 
 #endif  /* WC_SERVER_DIPLHAND_H */

@@ -306,7 +306,7 @@ bool unit_can_defend_here(struct unit *punit)
 Returns the number of free spaces for ground units. Can be 0 or negative.
 **************************************************************************/
 int ground_unit_transporter_capacity(const tile_t *ptile,
-                                     struct player *pplayer)
+                                     player_t *pplayer)
 {
   int availability = 0;
 
@@ -415,7 +415,7 @@ bool is_diplomat_unit(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool is_ground_threat(struct player *pplayer, struct unit *punit)
+static bool is_ground_threat(player_t *pplayer, struct unit *punit)
 {
   return (pplayers_at_war(pplayer, unit_owner(punit))
           && (unit_flag(punit, F_DIPLOMAT)
@@ -425,7 +425,7 @@ static bool is_ground_threat(struct player *pplayer, struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-bool is_square_threatened(struct player *pplayer, const tile_t *ptile)
+bool is_square_threatened(player_t *pplayer, const tile_t *ptile)
 {
   square_iterate(ptile, 2, ptile1) {
     unit_list_iterate(ptile1->units, punit) {
@@ -867,7 +867,7 @@ bool can_unit_do_activity_targeted_at(struct unit *punit,
                                       enum tile_special_type target,
                                       const tile_t *ptile)
 {
-  struct player *pplayer;
+  player_t *pplayer;
   struct tile_type *type;
 
   if (!punit || !ptile) {
@@ -1248,7 +1248,7 @@ void unit_list_sort_ord_city(struct unit_list *This)
 /**************************************************************************
 ...
 **************************************************************************/
-struct player *unit_owner(struct unit *punit)
+player_t *unit_owner(struct unit *punit)
 {
   return (&game.players[punit->owner]);
 }
@@ -1263,7 +1263,7 @@ struct player *unit_owner(struct unit *punit)
 ****************************************************************************/
 static void count_carrier_capacity(int *airall, int *misonly,
                                    const tile_t *ptile,
-                                   struct player *pplayer,
+                                   player_t *pplayer,
                                    bool count_units_with_extra_fuel)
 {
   *airall = *misonly = 0;
@@ -1298,7 +1298,7 @@ static void count_carrier_capacity(int *airall, int *misonly,
 Returns the number of free spaces for missiles. Can be 0 or negative.
 **************************************************************************/
 int missile_carrier_capacity(const tile_t *ptile,
-                             struct player *pplayer,
+                             player_t *pplayer,
                              bool count_units_with_extra_fuel)
 {
   int airall, misonly;
@@ -1316,7 +1316,7 @@ Returns the number of free spaces for airunits (includes missiles).
 Can be 0 or negative.
 **************************************************************************/
 int airunit_carrier_capacity(const tile_t *ptile,
-                             struct player *pplayer,
+                             player_t *pplayer,
                              bool count_units_with_extra_fuel)
 {
   int airall, misonly;
@@ -1335,7 +1335,7 @@ Returns true if the tile contains an allied unit and only allied units.
 containing units from B and C will return false)
 **************************************************************************/
 struct unit *is_allied_unit_tile(const tile_t *ptile,
-                                 struct player *pplayer)
+                                 player_t *pplayer)
 {
   struct unit *punit = NULL;
 
@@ -1354,7 +1354,7 @@ struct unit *is_allied_unit_tile(const tile_t *ptile,
  is there an enemy unit on this tile?
 **************************************************************************/
 struct unit *is_enemy_unit_tile(const tile_t *ptile,
-                                struct player *pplayer)
+                                player_t *pplayer)
 {
   unit_list_iterate(ptile->units, punit) {
     if (pplayers_at_war(unit_owner(punit), pplayer))
@@ -1369,7 +1369,7 @@ struct unit *is_enemy_unit_tile(const tile_t *ptile,
  is there an non-allied unit on this tile?
 **************************************************************************/
 struct unit *is_non_allied_unit_tile(const tile_t *ptile,
-                                     struct player *pplayer)
+                                     player_t *pplayer)
 {
   unit_list_iterate(ptile->units, punit) {
     if (!pplayers_allied(unit_owner(punit), pplayer))
@@ -1384,7 +1384,7 @@ struct unit *is_non_allied_unit_tile(const tile_t *ptile,
  is there an unit we have peace or ceasefire with on this tile?
 **************************************************************************/
 struct unit *is_non_attack_unit_tile(const tile_t *ptile,
-                                     struct player *pplayer)
+                                     player_t *pplayer)
 {
   unit_list_iterate(ptile->units, punit) {
     if (pplayers_non_attack(unit_owner(punit), pplayer))
@@ -1407,7 +1407,7 @@ struct unit *is_non_attack_unit_tile(const tile_t *ptile,
   client-specific features, like FoW and the fact that the client cannot
   see units inside enemy cities.
 **************************************************************************/
-bool is_my_zoc(struct player *pplayer, const tile_t *ptile0)
+bool is_my_zoc(player_t *pplayer, const tile_t *ptile0)
 {
   square_iterate(ptile0, 1, ptile) {
     if (is_ocean(ptile->terrain)) {
@@ -1454,7 +1454,7 @@ bool unit_type_really_ignores_zoc(Unit_Type_id type)
   6. The spot you're moving from or to is in your ZOC
 **************************************************************************/
 bool can_step_taken_wrt_to_zoc(Unit_Type_id type,
-                               struct player *unit_owner,
+                               player_t *unit_owner,
                                const tile_t *src_tile,
                                const tile_t *dst_tile)
 {
@@ -1573,7 +1573,7 @@ bool can_unit_move_to_tile(struct unit *punit, const tile_t *dst_tile,
   10) there is no non-allied unit blocking (zoc) [or igzoc is true]
 **************************************************************************/
 enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
-                                             struct player *unit_owner,
+                                             player_t *unit_owner,
                                              enum unit_activity activity,
                                              const tile_t *pfromtile,
                                              const tile_t *ptotile,
@@ -1652,7 +1652,7 @@ enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
   to know more.  The AI code uses base_trireme_loss_pct and
   base_unsafe_terrain_loss_pct directly.
 **************************************************************************/
-int unit_loss_pct(struct player *pplayer, const tile_t *ptile,
+int unit_loss_pct(player_t *pplayer, const tile_t *ptile,
                   struct unit *punit)
 {
   int loss_pct = 0;
@@ -1682,7 +1682,7 @@ int unit_loss_pct(struct player *pplayer, const tile_t *ptile,
   Triremes have a varying loss percentage based on tech and veterancy
   level.
 **************************************************************************/
-int base_trireme_loss_pct(struct player *pplayer, struct unit *punit)
+int base_trireme_loss_pct(player_t *pplayer, struct unit *punit)
 {
   if (get_player_bonus(pplayer, EFFECT_TYPE_NO_SINK_DEEP) > 0) {
     return 0;
@@ -1698,7 +1698,7 @@ int base_trireme_loss_pct(struct player *pplayer, struct unit *punit)
 /**************************************************************************
   All units except air units have a flat 15% chance of being lost.
 **************************************************************************/
-int base_unsafe_terrain_loss_pct(struct player *pplayer, struct unit *punit)
+int base_unsafe_terrain_loss_pct(player_t *pplayer, struct unit *punit)
 {
   return (is_air_unit(punit) || is_heli_unit(punit)) ? 0 : 15;
 }
@@ -1754,7 +1754,7 @@ bool is_build_or_clean_activity(enum unit_activity activity)
   Create a virtual unit skeleton. pcity can be NULL, but then you need
   to set x, y and homecity yourself.
 **************************************************************************/
-struct unit *create_unit_virtual(struct player *pplayer, city_t *pcity,
+struct unit *create_unit_virtual(player_t *pplayer, city_t *pcity,
                                  Unit_Type_id type, int veteran_level)
 {
   struct unit *punit = wc_calloc(1, sizeof(struct unit));
@@ -1892,7 +1892,7 @@ struct unit *find_transporter_for_unit(struct unit *pcargo,
 ***************************************************************************/
 enum unit_upgrade_result test_unit_upgrade(struct unit *punit, bool is_free)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   Unit_Type_id to_unittype = can_upgrade_unittype(pplayer, punit->type);
   city_t *pcity;
   int cost;
@@ -1935,7 +1935,7 @@ enum unit_upgrade_result test_unit_upgrade(struct unit *punit, bool is_free)
 enum unit_upgrade_result get_unit_upgrade_info(char *buf, size_t bufsz,
                                                struct unit *punit)
 {
-  struct player *pplayer = unit_owner(punit);
+  player_t *pplayer = unit_owner(punit);
   enum unit_upgrade_result result = test_unit_upgrade(punit, FALSE);
   int upgrade_cost;
   Unit_Type_id from_unittype = punit->type;

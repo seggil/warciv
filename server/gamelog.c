@@ -121,7 +121,7 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
   GAMELOG_MAP
     none
   GAMELOG_PLAYER
-    struct player *
+    struct player_s *
   GAMELOG_TEAM
     struct team *
   GAMELOG_WONDER
@@ -129,51 +129,51 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
   GAMELOG_FOUNDCITY
     city_t *
   GAMELOG_LOSECITY
-    struct player *
-    struct player *
+    struct player_s *
+    struct player_s *
     city_t *
     char *
   GAMELOG_DISBANDCITY
     city_t *
   GAMELOG_TECH
-    struct player *
-    struct player * (can be NULL)
+    struct player_s *
+    struct player_s * (can be NULL)
     int
     char * (only present if second player is not NULL)
   GAMELOG_EMBASSY
-    struct player *
+    struct player_s *
     city_t *
   GAMELOG_GOVERNMENT
-    struct player *
+    struct player_s *
   GAMELOG_REVOLT
-    struct player *
+    struct player_s *
   GAMELOG_GENO
-    struct player *
+    struct player_s *
   GAMELOG_TREATY
     int
-    struct player *
-    struct player *
+    struct player_s *
+    struct player_s *
     city_t *   (can be NULL, present only if int is GL_CITY)
   GAMELOG_DIPLSTATE
-    struct player *
-    struct player *
+    struct player_s *
+    struct player_s *
     int
   GAMELOG_STATUS
     none
   GAMELOG_FULL
     do not call this.
   GAMELOG_INFO
-    struct player *
+    struct player_s *
   GAMELOG_UNITLOSS
     struct unit *
-    struct player * (can be NULL)
+    struct player_s * (can be NULL)
     char * (only present if player is NULL)
   GAMELOG_UNITGAMELOSS
     struct unit *
   GAMELOG_BUILD
     city_t *
   GAMELOG_RATECHANGE
-    struct player *
+    struct player_s *
   GAMELOG_EVERYTHING
      do not call this
   GAMELOG_DEBUG
@@ -185,7 +185,7 @@ void gamelog(int level, ...)
   va_list args;
   char buf[4096] = "", msg[512] = "";
   char *word = NULL;
-  struct player *pplayer = NULL, *pplayer2 = NULL;
+  player_t *pplayer = NULL, *pplayer2 = NULL;
   city_t *pcity = NULL;
   struct unit *punit = NULL;
   struct team *pteam = NULL;
@@ -210,7 +210,7 @@ void gamelog(int level, ...)
 
   switch (level) {
   case GAMELOG_GOVERNMENT:
-    pplayer = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
 
     my_snprintf(buf, sizeof(buf),
                 "<n>%d</n><name>%s</name><m>%s form a %s</m>",
@@ -220,7 +220,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "gov");
     break;
   case GAMELOG_REVOLT:
-    pplayer = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
 
     my_snprintf(buf, sizeof(buf), "<n>%d</n><m>%s</m>",
                 pplayer->player_no,
@@ -241,8 +241,8 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "cityf");
     break;
   case GAMELOG_LOSECITY:
-    pplayer = va_arg(args, struct player *);
-    pplayer2 = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
+    pplayer2 = va_arg(args, player_t *);
     pcity = va_arg(args, city_t *);
     word = va_arg(args, char *);
 
@@ -271,8 +271,8 @@ void gamelog(int level, ...)
     break;
   case GAMELOG_TREATY:
     num = va_arg(args, int);
-    pplayer = va_arg(args, struct player *);
-    pplayer2 = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
+    pplayer2 = va_arg(args, player_t *);
 
     switch(num) {
     case GL_EMBASSY:
@@ -335,8 +335,8 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "treaty");
     break;
   case GAMELOG_DIPLSTATE:
-    pplayer = va_arg(args, struct player *);
-    pplayer2 = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
+    pplayer2 = va_arg(args, player_t *);
     num = va_arg(args, int);
 
     my_snprintf(buf, sizeof(buf),
@@ -349,8 +349,8 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "dipl");
     break;
   case GAMELOG_TECH:
-    pplayer = va_arg(args, struct player *);
-    pplayer2 = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
+    pplayer2 = va_arg(args, player_t *);
     num = va_arg(args, int);
 
     if (pplayer2) {
@@ -377,7 +377,7 @@ void gamelog(int level, ...)
     break;
   case GAMELOG_UNITLOSS:
     punit = va_arg(args, struct unit *);
-    pplayer = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
 
     if (pplayer) {
       my_snprintf(buf, sizeof(buf),
@@ -409,7 +409,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "gamel");
     break;
   case GAMELOG_EMBASSY:
-    pplayer = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
     pcity = va_arg(args, city_t *);
 
     my_snprintf(buf, sizeof(buf),
@@ -445,7 +445,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "build");
     break;
   case GAMELOG_GENO:
-    pplayer = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
 
     my_snprintf(buf, sizeof(buf),
                 "<n>%d</n><b>%d</b><m>%s civilization destroyed</m>",
@@ -455,7 +455,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "geno");
     break;
   case GAMELOG_RATECHANGE:
-    pplayer = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
 
     my_snprintf(buf, sizeof(buf),
                 "<n>%d</n><tax>%d</tax><lux>%d</lux><sci>%d</sci>",
@@ -464,7 +464,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "rates");
     break;
   case GAMELOG_INFO:
-    pplayer = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
     {
       int food = 0, shields = 0, trade = 0, settlers = 0;
 
@@ -489,7 +489,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "info");
     break;
   case GAMELOG_PLAYER:
-    pplayer = va_arg(args, struct player *);
+    pplayer = va_arg(args, player_t *);
 
     my_snprintf(buf, sizeof(buf), "<n>%d</n><u>%s</u><c>%d</c>"
                 "<ai>%s</ai><nat>%s</nat><l>%s</l>",
@@ -530,7 +530,7 @@ void gamelog(int level, ...)
       msg[0] = '\0';
       break;
     case GL_LONEWIN:
-      pplayer = va_arg(args, struct player *);
+      pplayer = va_arg(args, player_t *);
 
       my_snprintf(buf, sizeof(buf), "<type>%s</type><n>%d</n>",
                   endgame_strings[num], pplayer->player_no);
@@ -623,7 +623,7 @@ static int secompare1(const void *a, const void *b)
 static void gamelog_status(char *buffer, int len) {
 
   int i, count = 0, highest = -1;
-  struct player *highest_plr = NULL;
+  player_t *highest_plr = NULL;
   struct player_score_entry size[game.info.nplayers], rank[game.info.nplayers];
 
   players_iterate(pplayer) {
