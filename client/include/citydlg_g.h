@@ -41,7 +41,7 @@ void popdown_city_dialog(city_t *pcity);
 void popdown_all_city_dialogs(void);
 void refresh_city_dialog(city_t *pcity, enum city_update update);
 void refresh_all_city_dialogs(enum city_update update);
-void refresh_unit_city_dialogs(struct unit *punit);
+void refresh_unit_city_dialogs(unit_t *punit);
 bool city_dialog_is_open(city_t *pcity);
 
 #endif  /* WC_CLIENT_INCLUDE_CITYDLG_G_H */

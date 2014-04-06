@@ -115,7 +115,7 @@ static void popit(GdkEventButton *event, tile_t *ptile)
   tile_t **cross_head = cross_list;
   int i;
   static struct tmousepos mousepos;
-  struct unit *punit;
+  unit_t *punit;
   bool is_orders;
 
   if (tile_get_known(ptile) >= TILE_KNOWN_FOGGED) {
@@ -199,7 +199,7 @@ static void name_new_city_callback(GtkWidget * w, gpointer data)
  punit = (settler) unit which builds the city
  suggestname = suggetion of the new city's name
 **************************************************************************/
-void popup_newcity_dialog(struct unit *punit, char *suggestname)
+void popup_newcity_dialog(unit_t *punit, char *suggestname)
 {
   input_dialog_create(GTK_WINDOW(toplevel), /*"shellnewcityname" */
                      _("Build New City"),
@@ -279,7 +279,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       if(pcity) {
         action_button_pressed(ev->x, ev->y, SELECT_SEA);
       } else {
-        struct unit *punit = find_visible_unit(ptile);
+        unit_t *punit = find_visible_unit(ptile);
         if (punit && punit->owner == get_player_idx()) {
           set_unit_focus(punit);
         }
@@ -290,7 +290,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       if (ev->type == GDK_2BUTTON_PRESS) {
         multi_select_add_units(ptile->units);
       } else {
-        struct unit *punit = find_visible_unit(ptile);
+        unit_t *punit = find_visible_unit(ptile);
 
         if (punit && punit->owner == get_player_idx()) {
           multi_select_add_or_remove_unit(punit);
@@ -317,8 +317,10 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     }
     /* double LMB: select units of the same type. */
     else if (ptile && !pcity && ev->type == GDK_2BUTTON_PRESS
-             && multi_select_double_click) {
-      struct unit *punit = find_visible_unit(ptile), *nfu = NULL;
+             && multi_select_double_click)
+    {
+      unit_t *punit = find_visible_unit(ptile);
+      unit_t *nfu = NULL;
       if (punit && punit->owner == get_player_idx()) {
         multi_select_clear(0);
         set_unit_focus(punit);
@@ -348,7 +350,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     }
     /* Plain LMB click for city triple click for units. */
     else {
-      struct unit *punit;
+      unit_t *punit;
 
       if (hover_state == HOVER_NONE
           && ptile

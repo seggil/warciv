@@ -87,7 +87,7 @@ bool filter_change(filter *pfilter, enum filter_value value)
   Returns TRUE iff the unit satisfy all inclusive conditions and
   doesn't satisfy any of the exclusive ones.
 ***********************************************************************/
-bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
+bool unit_satisfies_filter(unit_t *punit, filter inclusive_filter,
                            filter exclusive_filter)
 {
   if (!punit || inclusive_filter & FILTER_OFF
@@ -168,7 +168,7 @@ bool multi_select_double_click;
 /**********************************************************************
   ...
 ***********************************************************************/
-bool is_unit_in_multi_select(int multi, struct unit *punit)
+bool is_unit_in_multi_select(int multi, unit_t *punit)
 {
   msassert(multi);
 
@@ -199,7 +199,7 @@ void multi_select_active_all(int multi)
 /**********************************************************************
   ...
 ***********************************************************************/
-void multi_select_add_unit(struct unit *punit)
+void multi_select_add_unit(unit_t *punit)
 {
   if (punit->owner != get_player_idx()
       || is_unit_in_multi_select(0, punit)) {
@@ -229,7 +229,7 @@ void multi_select_add_unit(struct unit *punit)
 /**********************************************************************
   Add if the unit is not in focus, else remove.
 ***********************************************************************/
-void multi_select_add_or_remove_unit(struct unit *punit)
+void multi_select_add_or_remove_unit(unit_t *punit)
 {
   if (is_unit_in_multi_select(0, punit)) {
     multi_select_remove_unit(punit);
@@ -406,13 +406,13 @@ void multi_select_init_all(void)
 /**********************************************************************
   ...
 ***********************************************************************/
-void multi_select_remove_unit(struct unit *punit)
+void multi_select_remove_unit(unit_t *punit)
 {
   unit_list_unlink(multi_selection[0].ulist, punit);
   refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
 
   if (punit == get_unit_in_focus()) {
-    struct unit *pnuf = NULL;
+    unit_t *pnuf = NULL;
 
     unit_list_iterate(multi_selection[0].ulist, msunit) {
       if (unit_satisfies_filter(msunit, multi_select_inclusive_filter,
@@ -466,7 +466,7 @@ Unit_Type_id multi_select_unit_type(int multi)
 /**********************************************************************
   Set one unit in a battle group.
 ***********************************************************************/
-void multi_select_set_unit(int multi, struct unit *punit)
+void multi_select_set_unit(int multi, unit_t *punit)
 {
   msassert(multi);
 
@@ -488,7 +488,7 @@ void multi_select_set_unit(int multi, struct unit *punit)
 /**********************************************************************
   ...
 ***********************************************************************/
-void multi_select_set_unit_focus(int multi, struct unit *punit)
+void multi_select_set_unit_focus(int multi, unit_t *punit)
 {
   msassert(multi);
 
@@ -525,7 +525,7 @@ struct scity {
 #define scity_list_iterate_end LIST_ITERATE_END
 
 struct scity *find_weakest_city(struct scity_list *psclist);
-struct unit *find_best_unit(struct unit_list *pulist);
+unit_t *find_best_unit(struct unit_list *pulist);
 
 /**************************************************************************
   ...
@@ -555,9 +555,9 @@ struct scity *find_weakest_city(struct scity_list *psclist)
 /**************************************************************************
   ...
 **************************************************************************/
-struct unit *find_best_unit(struct unit_list *pulist)
+unit_t *find_best_unit(struct unit_list *pulist)
 {
-  struct unit *bunit = NULL;
+  unit_t *bunit = NULL;
 
   unit_list_iterate(pulist, punit) {
     if (!bunit
@@ -642,7 +642,7 @@ void multi_select_spread(void)
 
   /* Execute */
   while ((pscity = find_weakest_city(sclist))) {
-    struct unit *punit = find_best_unit(pscity->ulist);
+    unit_t *punit = find_best_unit(pscity->ulist);
 
     if (punit) {
       struct unit_type *type = unit_type(punit);
@@ -673,7 +673,7 @@ clean_up:
 /**********************************************************************
   Remove all reference to one unit (called in client_remove_unit).
 ***********************************************************************/
-void multi_select_wipe_up_unit(struct unit *punit)
+void multi_select_wipe_up_unit(unit_t *punit)
 {
   bool need_update_menus = FALSE;
   int i;
@@ -700,7 +700,8 @@ void multi_select_wipe_up_unit(struct unit *punit)
 ***********************************************************************/
 void multi_select_select(void)
 {
-  struct unit *punit_focus = get_unit_in_focus(), *punf = NULL;
+  unit_t *punit_focus = get_unit_in_focus();
+  unit_t *punf = NULL;
   struct unit_list *ulist;
 
   if (!punit_focus) {
@@ -1112,7 +1113,7 @@ player_t *get_tile_player(tile_t *ptile)
 /**********************************************************************
   ...
 ***********************************************************************/
-static bool unit_can_do_delayed_action(struct unit *punit,
+static bool unit_can_do_delayed_action(unit_t *punit,
                                        enum delayed_goto_type dgtype)
 {
   switch (dgtype) {
@@ -1142,7 +1143,7 @@ static bool unit_can_do_delayed_action(struct unit *punit,
 ***********************************************************************/
 void add_unit_to_delayed_goto(tile_t *ptile)
 {
-  struct unit *punit_focus = get_unit_in_focus();
+  unit_t *punit_focus = get_unit_in_focus();
   struct unit_list *ulist;
   int count = 0;
   char buf[256];
@@ -1322,7 +1323,7 @@ void request_execute_delayed_goto(tile_t *ptile, int dg)
       airlift_queue_need_city_for = dgd->id;
       do_airlift(dgd->ptile);
     } else {
-      struct unit *punit =
+      unit_t *punit =
           player_find_unit_by_id(get_player_ptr(), dgd->id);
 
       if (!punit) {

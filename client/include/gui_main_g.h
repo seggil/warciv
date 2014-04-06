@@ -39,7 +39,7 @@ typedef bool (*timer_callback_t) (void *data);
 int add_timer_callback (int millisecond_interval, timer_callback_t, void *data);
 void remove_timer_callback (int id);
 
-void set_unit_icon(int idx, struct unit *punit);
+void set_unit_icon(int idx, unit_t *punit);
 void set_unit_icons_more_arrow(bool onoff);
 
 void update_info_table(void);

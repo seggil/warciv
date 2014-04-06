@@ -55,13 +55,13 @@ static nearness *territory;
 BV_DEFINE(enemy_mask, MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
 static enemy_mask enemies[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
 
-static bool is_already_assigned(struct unit *myunit, player_t *pplayer,
+static bool is_already_assigned(unit_t *myunit, player_t *pplayer,
                                 tile_t *ptile);
 
 /**************************************************************************
   Build a city and initialize AI infrastructure cache.
 **************************************************************************/
-static bool ai_do_build_city(player_t *pplayer, struct unit *punit)
+static bool ai_do_build_city(player_t *pplayer, unit_t *punit)
 {
   tile_t *ptile = punit->tile;
   city_t *pcity;
@@ -148,7 +148,7 @@ void init_settlers(void)
 /**************************************************************************
   Manages settlers.
 **************************************************************************/
-void ai_manage_settler(player_t *pplayer, struct unit *punit)
+void ai_manage_settler(player_t *pplayer, unit_t *punit)
 {
   punit->ai.control = TRUE;
   /* if BUILD_CITY must remain BUILD_CITY, otherwise turn into autosettler */
@@ -162,7 +162,7 @@ void ai_manage_settler(player_t *pplayer, struct unit *punit)
  return 1 if there is already a unit on this square or one destined for it
  (via goto)
 **************************************************************************/
-static bool is_already_assigned(struct unit *myunit, player_t *pplayer,
+static bool is_already_assigned(unit_t *myunit, player_t *pplayer,
                                 tile_t *ptile)
 {
   if (same_pos(myunit->tile, ptile)
@@ -751,7 +751,7 @@ Unit_Type_id find_boat(player_t *pplayer, tile_t **ptile, int cap)
   Returns TRUE if there are (other) ground units than punit stacked on
   punit's tile.
 **************************************************************************/
-struct unit *other_passengers(struct unit *punit)
+unit_t *other_passengers(unit_t *punit)
 {
   unit_list_iterate(punit->tile->units, aunit)
     if (is_ground_unit(aunit) && aunit != punit) return aunit;
@@ -831,7 +831,7 @@ static void consider_settler_action(player_t *pplayer,
   FIXME: This function should be generalised and then moved into
   common/unittype.c - Per
 **************************************************************************/
-static int unit_foodbox_cost(struct unit *punit)
+static int unit_foodbox_cost(unit_t *punit)
 {
   int cost = 30;
 
@@ -854,7 +854,7 @@ static int unit_foodbox_cost(struct unit *punit)
 /**************************************************************************
   Calculates a unit's food upkeep (per turn).
 **************************************************************************/
-static int unit_food_upkeep(struct unit *punit)
+static int unit_food_upkeep(unit_t *punit)
 {
   player_t *pplayer = unit_owner(punit);
   int upkeep = utype_food_cost(unit_type(punit),
@@ -873,7 +873,7 @@ static int unit_food_upkeep(struct unit *punit)
   indicates the activity it wants to do.  If 0 is returned then there are no
   worthwhile activities available.
 ****************************************************************************/
-static int evaluate_improvements(struct unit *punit,
+static int evaluate_improvements(unit_t *punit,
                                  enum unit_activity *best_act,
                                  tile_t **best_tile)
 {
@@ -1046,7 +1046,7 @@ static int evaluate_improvements(struct unit *punit,
   Find some work for our settlers and/or workers.
 **************************************************************************/
 #define LOG_SETTLER LOG_DEBUG
-static void auto_settler_findwork(player_t *pplayer, struct unit *punit)
+static void auto_settler_findwork(player_t *pplayer, unit_t *punit)
 {
   struct cityresult result;
   int best_impr = 0;            /* best terrain improvement we can do */
@@ -1448,7 +1448,7 @@ void contemplate_new_city(city_t *pcity)
   int FOUNDER_WANT_MULTIPLIER = 1;
   int player_cities = 0;
   player_t *pplayer = city_owner(pcity);
-  struct unit *virtualunit;
+  unit_t *virtualunit;
   Unit_Type_id unit_type = best_role_unit(pcity, F_CITIES);
 
   if (unit_type == U_LAST) {
@@ -1495,7 +1495,7 @@ void contemplate_new_city(city_t *pcity)
 void contemplate_terrain_improvements(city_t *pcity)
 {
   player_t *pplayer = city_owner(pcity);
-  struct unit *virtualunit;
+  unit_t *virtualunit;
   int want;
   tile_t *best_tile = NULL; /* May be accessed by freelog() calls. */
   enum unit_activity best_act;

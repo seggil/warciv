@@ -1888,7 +1888,7 @@ static struct Sprite *get_city_nation_flag_sprite(city_t *pcity)
 /**********************************************************************
  ...
 ***********************************************************************/
-static struct Sprite *get_unit_nation_flag_sprite(struct unit *punit)
+static struct Sprite *get_unit_nation_flag_sprite(unit_t *punit)
 {
   return get_nation_by_plr(unit_owner(punit))->flag_sprite;
 }
@@ -2001,7 +2001,7 @@ static void build_tile_data(tile_t *ptile,
   Fill in the sprite array for the unit
 ***********************************************************************/
 static int fill_unit_sprite_array(struct drawn_sprite *sprs,
-                                  struct unit *punit,
+                                  unit_t *punit,
                                   bool stack, bool backdrop)
 {
   struct drawn_sprite *save_sprs = sprs;
@@ -2682,13 +2682,13 @@ static int fill_terrain_sprite_array(struct drawn_sprite *sprs,
   is done differently.
 ****************************************************************************/
 int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
-                      struct unit *punit, city_t *pcity,
+                      unit_t *punit, city_t *pcity,
                       bool citymode)
 {
   Terrain_type_id ttype, ttype_near[8];
   enum tile_special_type tspecial = S_NO_SPECIAL, tspecial_near[8];
   int tileno, dir;
-  struct unit *pfocus = get_unit_in_focus();
+  unit_t *pfocus = get_unit_in_focus();
   struct drawn_sprite *save_sprs = sprs;
 
   /* Unit drawing is disabled if the view options is turned off, but only
@@ -3017,7 +3017,7 @@ static void classic_player_colors_init(void)
 ***********************************************************************/
 static enum color_std classic_overview_tile_color(tile_t *ptile)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
   player_t *pplayer;
   player_t *me = get_player_ptr();
@@ -3124,7 +3124,7 @@ static void team_player_colors_init(void)
 ***********************************************************************/
 static enum color_std team_overview_tile_color(tile_t *ptile)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
   player_t *pplayer;
   player_t *me;
@@ -3258,9 +3258,9 @@ void set_focus_unit_hidden_state(bool hide)
 /**********************************************************************
 ...
 ***********************************************************************/
-struct unit *get_drawable_unit(tile_t *ptile, bool citymode)
+unit_t *get_drawable_unit(tile_t *ptile, bool citymode)
 {
-  struct unit *punit = find_visible_unit(ptile);
+  unit_t *punit = find_visible_unit(ptile);
 
   if (!punit) {
     return NULL;

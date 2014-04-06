@@ -23,8 +23,6 @@
 
 #include "graphics.h"
 
-struct unit;
-
 GdkPixmap *get_thumb_pixmap(int onoff);
 
 gboolean overview_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data);
@@ -32,9 +30,9 @@ gboolean map_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data);
 gboolean map_canvas_configure(GtkWidget *w, GdkEventConfigure *ev,
                               gpointer data);
 
-void put_unit_gpixmap(struct unit *punit, GtkPixcomm *p);
+void put_unit_gpixmap(unit_t *punit, GtkPixcomm *p);
 
-void put_unit_gpixmap_city_overlays(struct unit *punit, GtkPixcomm *p);
+void put_unit_gpixmap_city_overlays(unit_t *punit, GtkPixcomm *p);
 
 void scrollbar_jump_callback(GtkAdjustment *adj, gpointer hscrollbar);
 void update_map_canvas_scrollbars_size(void);

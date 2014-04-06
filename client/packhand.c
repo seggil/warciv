@@ -76,17 +76,17 @@
 
 static void handle_city_packet_common(city_t *pcity, bool is_new,
                                       bool popup, bool investigate);
-static bool handle_unit_packet_common(struct unit *packet_unit);
+static bool handle_unit_packet_common(unit_t *packet_unit);
 static int *reports_thaw_requests = NULL;
 static int reports_thaw_requests_size = 0;
 
 /**************************************************************************
   Unpackage the unit information into a newly allocated unit structure.
 **************************************************************************/
-static struct unit * unpackage_unit(struct packet_unit_info *packet)  /* 49 */
+static unit_t * unpackage_unit(struct packet_unit_info *packet)  /* 49 */
 {
-  struct unit *punit = create_unit_virtual(get_player(packet->owner), NULL,
-                                           packet->type, packet->veteran);
+  unit_t *punit = create_unit_virtual(get_player(packet->owner), NULL,
+                                      packet->type, packet->veteran);
 
   /* Owner, veteran, and type fields are already filled in by
    * create_unit_virtual. */
@@ -147,10 +147,10 @@ static struct unit * unpackage_unit(struct packet_unit_info *packet)  /* 49 */
   information about the unit, and is sent for units we shouldn't know
   everything about (like our enemies' units).
 **************************************************************************/
-static struct unit *unpackage_short_unit(struct packet_unit_short_info *packet)
+static unit_t *unpackage_short_unit(struct packet_unit_short_info *packet)
 {
-  struct unit *punit = create_unit_virtual(get_player(packet->owner), NULL,
-                                           packet->type, FALSE);
+  unit_t *punit = create_unit_virtual(get_player(packet->owner), NULL,
+                                      packet->type, FALSE);
 
   /* Owner and type fields are already filled in by create_unit_virtual. */
   punit->id = packet->id;
@@ -247,7 +247,7 @@ void handle_city_remove(int city_id) /* 20 */
 **************************************************************************/
 void handle_unit_remove(int unit_id) /* 48 */
 {
-  struct unit *punit = find_unit_by_id(unit_id);
+  unit_t *punit = find_unit_by_id(unit_id);
   player_t *powner;
 
   if (!punit) {
@@ -282,11 +282,11 @@ void handle_unit_combat_info(int attacker_unit_id, int defender_unit_id, /* 51 *
                              bool make_winner_veteran)
 {
   bool show_combat = FALSE;
-  struct unit *punit0 = find_unit_by_id(attacker_unit_id);
-  struct unit *punit1 = find_unit_by_id(defender_unit_id);
+  unit_t *punit0 = find_unit_by_id(attacker_unit_id);
+  unit_t *punit1 = find_unit_by_id(defender_unit_id);
 
   if (punit0 && punit1) {
-    struct unit *pwinner = (defender_hp == 0 ? punit0 : punit1);
+    unit_t *pwinner = (defender_hp == 0 ? punit0 : punit1);
 
     if (tile_visible_mapcanvas(punit0->tile) &&
         tile_visible_mapcanvas(punit1->tile)) {
@@ -427,7 +427,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 */
   bool name_changed = FALSE;
   enum city_update needs_update =
       UPDATE_TITLE | UPDATE_INFORMATION | UPDATE_CITIZENS | UPDATE_HAPPINESS;
-  struct unit *pfocus_unit = get_unit_in_focus();
+  unit_t *pfocus_unit = get_unit_in_focus();
   tile_t *ptile;
 
   pcity = find_city_by_id(packet->id);
@@ -769,7 +769,7 @@ static void handle_city_packet_common(city_t *pcity, bool is_new,
 
   /* update menus if the focus unit is on the tile. */
   {
-    struct unit *punit = get_unit_in_focus();
+    unit_t *punit = get_unit_in_focus();
     if (punit && same_pos(punit->tile, pcity->common.tile)) {
       update_menus();
     }
@@ -1072,7 +1072,7 @@ void handle_page_msg(char *message, enum event_type event) /* 84 */
 **************************************************************************/
 void handle_unit_info(struct packet_unit_info *packet) /* 49 */
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if (!client_is_global_observer()
       && packet->owner != get_player_idx())
@@ -1108,10 +1108,10 @@ void handle_unit_info(struct packet_unit_info *packet) /* 49 */
   is because the server can never deny a request for idle, and should not
   be concerned about which unit the client is focusing on.
 **************************************************************************/
-static bool handle_unit_packet_common(struct unit *packet_unit)
+static bool handle_unit_packet_common(unit_t *packet_unit)
 {
   city_t *homecity;
-  struct unit *punit;
+  unit_t *punit;
   bool need_update_menus = FALSE;
   bool repaint_unit = FALSE;
   enum city_update homecity_needs_update = UPDATE_NOTHING;
@@ -1121,7 +1121,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
   bool ret = FALSE;
   bool need_execute_trade = FALSE;
   bool need_free_trade = FALSE;
-  struct unit *focus_unit = get_unit_in_focus();
+  unit_t *focus_unit = get_unit_in_focus();
 
   punit = player_find_unit_by_id(get_player(packet_unit->owner),
                                  packet_unit->id);
@@ -1498,7 +1498,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 void handle_unit_short_info(struct packet_unit_short_info *packet) /* 50 */
 {
   city_t *pcity;
-  struct unit *punit;
+  unit_t *punit;
 
   if (packet->goes_out_of_sight) {
     punit = find_unit_by_id(packet->id);
@@ -2314,7 +2314,7 @@ void handle_tile_info(struct packet_tile_info *packet) /* 14 */
 
   /* update menus if the focus unit is on the tile. */
   if (tile_changed) {
-    struct unit *punit = get_unit_in_focus();
+    unit_t *punit = get_unit_in_focus();
     if (punit && same_pos(punit->tile, ptile)) {
       update_menus();
     }
@@ -2898,7 +2898,7 @@ void handle_ruleset_game(struct packet_ruleset_game *packet) /* 97 */
 **************************************************************************/
 void handle_unit_bribe_info(int unit_id, int cost) /* 68 */
 {
-  struct unit *punit = find_unit_by_id(unit_id);
+  unit_t *punit = find_unit_by_id(unit_id);
 
   if (punit) {
     if (get_player_ptr()
@@ -2932,7 +2932,7 @@ void handle_city_name_suggestion_info(int unit_id, char *name) /* 36 */
     return;
   }
 
-  struct unit *punit = player_find_unit_by_id(get_player_ptr(), unit_id);
+  unit_t *punit = player_find_unit_by_id(get_player_ptr(), unit_id);
 
   if (punit) {
     if (ask_city_name) {
@@ -2952,8 +2952,7 @@ void handle_unit_diplomat_popup_dialog(int diplomat_id, int target_id) /* 71 */
     return;
   }
 
-  struct unit *pdiplomat =
-      player_find_unit_by_id(get_player_ptr(), diplomat_id);
+  unit_t *pdiplomat = player_find_unit_by_id(get_player_ptr(), diplomat_id);
 
   if (pdiplomat) {
     process_diplomat_arrival(pdiplomat, target_id);
@@ -2970,7 +2969,7 @@ void handle_city_sabotage_list(int diplomat_id, int city_id, /* 37 */
     return;
   }
 
-  struct unit *punit = player_find_unit_by_id(get_player_ptr(), diplomat_id);
+  unit_t *punit = player_find_unit_by_id(get_player_ptr(), diplomat_id);
   city_t *pcity = find_city_by_id(city_id);
 
   if (punit && pcity) {

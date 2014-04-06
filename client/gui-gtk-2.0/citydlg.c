@@ -508,7 +508,7 @@ void refresh_all_city_dialogs(enum city_update update)
 /****************************************************************
 ...
 *****************************************************************/
-void refresh_unit_city_dialogs(struct unit *punit)
+void refresh_unit_city_dialogs(unit_t *punit)
 {
   city_t *pcity;
 
@@ -1823,8 +1823,8 @@ static void city_dialog_update_supported_units(struct city_dialog *pdialog)
 /****************************************************************
   ...
 *****************************************************************/
-static int unit_list_tile_sort(const struct unit * const *ppa,
-                               const struct unit * const *ppb)
+static int unit_list_tile_sort(const unit_t * const *ppa,
+                               const unit_t * const *ppb)
 {
   return (*ppa)->owner != get_player_idx() && (*ppb)->owner == get_player_idx();
 }
@@ -2202,7 +2202,7 @@ static void open_city_dialog(GtkMenuItem *item, gpointer data)
 *****************************************************************/
 static void center_on_unit(GtkMenuItem *item, gpointer data)
 {
-  struct unit *punit = find_unit_by_id(GPOINTER_TO_INT(data));
+  unit_t *punit = find_unit_by_id(GPOINTER_TO_INT(data));
 
   if (!punit) {
     return;
@@ -2216,7 +2216,7 @@ static void center_on_unit(GtkMenuItem *item, gpointer data)
 *****************************************************************/
 static void stop_unit(GtkMenuItem *item, gpointer data)
 {
-  struct unit *punit = find_unit_by_id(GPOINTER_TO_INT(data));
+  unit_t *punit = find_unit_by_id(GPOINTER_TO_INT(data));
 
   if (!punit) {
     return;
@@ -2464,7 +2464,7 @@ Pop-up menu to change attributes of supported units
 static gboolean supported_unit_callback(GtkWidget * w, GdkEventButton * ev,
                                         gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
   struct city_dialog *pdialog;
   GtkWidget *menu, *item;
@@ -2532,7 +2532,7 @@ Pop-up menu to change attributes of units, ex. change homecity.
 static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
                                       gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
   struct city_dialog *pdialog;
   GtkWidget *menu, *item;
@@ -2666,7 +2666,7 @@ static gboolean present_unit_middle_callback(GtkWidget * w,
                                              GdkEventButton * ev,
                                              gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
   struct city_dialog *pdialog;
 
@@ -2695,7 +2695,7 @@ static gboolean supported_unit_middle_callback(GtkWidget * w,
                                                GdkEventButton * ev,
                                                gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
   struct city_dialog *pdialog;
 
@@ -2722,7 +2722,7 @@ static gboolean supported_unit_middle_callback(GtkWidget * w,
 *****************************************************************/
 static void unit_center_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     center_tile_mapcanvas(punit->tile);
@@ -2734,7 +2734,7 @@ static void unit_center_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_activate_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     set_unit_focus_and_active(punit);
@@ -2747,7 +2747,7 @@ static void unit_activate_callback(GtkWidget * w, gpointer data)
 static void supported_unit_activate_close_callback(GtkWidget * w,
                                                    gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
   struct city_dialog *pdialog;
 
@@ -2764,7 +2764,7 @@ static void supported_unit_activate_close_callback(GtkWidget * w,
 *****************************************************************/
 static void unit_add_in_focus_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     multi_select_add_or_remove_unit(punit);
@@ -2778,7 +2778,7 @@ static void unit_add_in_focus_callback(GtkWidget * w, gpointer data)
 static void present_unit_activate_close_callback(GtkWidget * w,
                                                  gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
   struct city_dialog *pdialog;
 
@@ -2795,7 +2795,7 @@ static void present_unit_activate_close_callback(GtkWidget * w,
 *****************************************************************/
 static void unit_load_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     request_unit_load(punit, NULL);
@@ -2807,7 +2807,7 @@ static void unit_load_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_unload_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     request_unit_unload(punit);
@@ -2819,7 +2819,7 @@ static void unit_unload_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_sentry_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     request_unit_sentry(punit);
@@ -2831,7 +2831,7 @@ static void unit_sentry_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_fortify_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     request_unit_fortify(punit);
@@ -2843,7 +2843,7 @@ static void unit_fortify_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_sleep_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     request_unit_sleep(punit);
@@ -2855,7 +2855,7 @@ static void unit_sleep_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_disband_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     popup_disband_unit(punit);
@@ -2867,7 +2867,7 @@ static void unit_disband_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_homecity_callback(GtkWidget * w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if ((punit = player_find_unit_by_id(get_player_ptr(), (size_t) data))) {
     request_unit_change_homecity(punit);
@@ -2879,7 +2879,7 @@ static void unit_homecity_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_upgrade_callback(GtkWidget *w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
   player_t *me = get_player_ptr();
   int id;
   GtkWidget *shell;

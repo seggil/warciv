@@ -269,7 +269,7 @@ static void goto_selection_callback(GtkTreeSelection *selection, gpointer data)
   city_t *pdestcity;
 
   if((pdestcity = get_selected_city())) {
-    struct unit *punit = get_unit_in_focus();
+    unit_t *punit = get_unit_in_focus();
     center_tile_mapcanvas(pdestcity->common.tile);
     if(punit && unit_can_airlift_to(punit, pdestcity)) {
       gtk_dialog_set_response_sensitive(GTK_DIALOG(dshell), CMD_AIRLIFT, TRUE);

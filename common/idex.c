@@ -115,9 +115,9 @@ void idex_register_city(city_t *pcity)
    Register a unit into idex, with current punit->id.
    Call this when punit created.
 ***************************************************************************/
-void idex_register_unit(struct unit *punit)
+void idex_register_unit(unit_t *punit)
 {
-  struct unit *old = (struct unit *)
+  unit_t *old = (unit_t *)
       hash_replace(idex_unit_hash, &punit->id, punit);
   if (old) {
     /* error */
@@ -161,9 +161,9 @@ void idex_unregister_city(city_t *pcity)
    Remove a unit from idex, with current punit->id.
    Call this when punit deleted.
 ***************************************************************************/
-void idex_unregister_unit(struct unit *punit)
+void idex_unregister_unit(unit_t *punit)
 {
-  struct unit *old = (struct unit *)
+  unit_t *old = (unit_t *)
       hash_delete_entry(idex_unit_hash, &punit->id);
   if (!old) {
     /* error */
@@ -197,9 +197,9 @@ city_t *idex_lookup_city(int id)
    Lookup unit with given id.
    Returns NULL if the unit is not registered (which is not an error).
 ***************************************************************************/
-struct unit *idex_lookup_unit(int id)
+unit_t *idex_lookup_unit(int id)
 {
-  return (struct unit *) hash_lookup_data(idex_unit_hash, &id);
+  return (unit_t *) hash_lookup_data(idex_unit_hash, &id);
 }
 
 /**************************************************************************

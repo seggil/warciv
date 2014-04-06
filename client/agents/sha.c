@@ -53,8 +53,8 @@ static void sha_tile_update(tile_t *ptile)
 **************************************************************************/
 static void sha_unit_change(int id)
 {
-  struct unit *punit = find_unit_by_id(id);
-  struct unit *pold_unit = unit_list_find(previous_units, id);
+  unit_t *punit = find_unit_by_id(id);
+  unit_t *pold_unit = unit_list_find(previous_units, id);
 
   freelog(LOG_DEBUG, "sha got unit: %d", id);
 
@@ -67,9 +67,9 @@ static void sha_unit_change(int id)
 **************************************************************************/
 static void sha_unit_new(int id)
 {
-  struct unit *punit = find_unit_by_id(id);
-  struct unit *pold_unit = create_unit_virtual(get_player(punit->owner),
-                                               NULL, 0, 0);
+  unit_t *punit = find_unit_by_id(id);
+  unit_t *pold_unit = create_unit_virtual(get_player(punit->owner),
+                                          NULL, 0, 0);
 
   freelog(LOG_DEBUG, "sha got unit: %d", id);
 
@@ -82,7 +82,7 @@ static void sha_unit_new(int id)
 **************************************************************************/
 static void sha_unit_remove(int id)
 {
-  struct unit *pold_unit = unit_list_find(previous_units, id);;
+  unit_t *pold_unit = unit_list_find(previous_units, id);;
 
   freelog(LOG_DEBUG, "sha got unit: %d", id);
 
@@ -131,7 +131,7 @@ tile_t *sha_tile_recall(tile_t *ptile)
 /**************************************************************************
 ...
 **************************************************************************/
-struct unit *sha_unit_recall(int id)
+unit_t *sha_unit_recall(int id)
 {
   return unit_list_find(previous_units, id);
 }

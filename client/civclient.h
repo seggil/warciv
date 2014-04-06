@@ -27,7 +27,7 @@
 
 void handle_packet_input(void *packet, int type);
 
-void send_goto_unit(struct unit *punit, tile_t *dest_tile);
+void send_goto_unit(unit_t *punit, tile_t *dest_tile);
 void send_report_request(enum report_type type);
 void send_attribute_block_request(void);
 void send_turn_done(void);

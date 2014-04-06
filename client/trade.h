@@ -45,8 +45,8 @@ void draw_non_built_trade_cities(void);
 
 void request_trade_route(city_t *pcity);
 void request_cancel_trade_route(city_t *pcity1, city_t *pcity2);
-void execute_trade_orders(struct unit *punit);
-bool trade_free_unit(struct unit *punit);
+void execute_trade_orders(unit_t *punit);
+bool trade_free_unit(unit_t *punit);
 
 void delayed_trade_routes_add(int city, int trade[OLD_NUM_TRADEROUTES],
                               int trade_value[OLD_NUM_TRADEROUTES]);

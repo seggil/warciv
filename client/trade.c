@@ -62,7 +62,7 @@ static struct tile_list *trade_cities = NULL;
 static struct trade_planning_calculation *trade_planning_calc = NULL;
 static struct delayed_trade_route_list *delayed_trade_routes = NULL;
 
-void request_unit_trade_route(struct unit *punit, city_t *pcity);
+void request_unit_trade_route(unit_t *punit, city_t *pcity);
 
 struct toggle_worker_list;
 
@@ -121,7 +121,7 @@ void handle_trade_route_info(struct packet_trade_route_info *packet)
 {
   city_t *pcity1, *pcity2;
   struct trade_route *ptr;
-  struct unit *pold_unit;
+  unit_t *pold_unit;
 
   pcity1 = find_city_by_id(packet->city1);
   pcity2 = find_city_by_id(packet->city2);
@@ -713,7 +713,7 @@ void draw_non_built_trade_cities(void)
 /**************************************************************************
   Send the unit to establish trade routes.
 **************************************************************************/
-void request_unit_trade_route(struct unit *punit, city_t *pcity)
+void request_unit_trade_route(unit_t *punit, city_t *pcity)
 {
   if (!can_client_issue_orders()
       || !punit || !unit_flag(punit, F_TRADE_ROUTE)) {
@@ -722,7 +722,7 @@ void request_unit_trade_route(struct unit *punit, city_t *pcity)
 
   struct trade_route *ptr = NULL;
   city_t *phome_city;
-  struct unit *ounit;
+  unit_t *ounit;
   int moves, turns;
   char buf[1024], city1_name[MAX_LEN_NAME], city2_name[MAX_LEN_NAME];
 
@@ -900,7 +900,7 @@ void request_cancel_trade_route(city_t *pcity1, city_t *pcity2)
   Execute auto-caravan orders when we are connected to a server without the
   extglobalinfo capability.
 **************************************************************************/
-void execute_trade_orders(struct unit *punit)
+void execute_trade_orders(unit_t *punit)
 {
   if (!punit || !punit->ptr || punit->ptr->punit != punit) {
     return;
@@ -932,7 +932,7 @@ void execute_trade_orders(struct unit *punit)
   Free the trade orders of this unit.
   Retruns TRUE if the trade route was removed, else, returns FALSE.
 **************************************************************************/
-bool trade_free_unit(struct unit *punit)
+bool trade_free_unit(unit_t *punit)
 {
   if (server_has_extglobalinfo || !punit->ptr) {
     return FALSE;

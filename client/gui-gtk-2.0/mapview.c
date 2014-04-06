@@ -201,7 +201,7 @@ void update_info_label(void)
 **************************************************************************/
 void update_hover_cursor(void)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
   bool cond = (punit ? hover_unit == punit->id : FALSE);
   GdkCursor *cursor = NULL;
 
@@ -277,7 +277,7 @@ void update_hover_cursor(void)
   Also calls update_unit_pix_label() to update the icons for units on this
   square.
 **************************************************************************/
-void update_unit_info_label(struct unit *punit)
+void update_unit_info_label(unit_t *punit)
 {
   GtkWidget *label;
 
@@ -986,7 +986,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 /**************************************************************************
 ...
 **************************************************************************/
-void put_unit_gpixmap(struct unit *punit, GtkPixcomm *p)
+void put_unit_gpixmap(unit_t *punit, GtkPixcomm *p)
 {
   struct canvas canvas_store;
 
@@ -1008,7 +1008,7 @@ void put_unit_gpixmap(struct unit *punit, GtkPixcomm *p)
   unit, the proper way to do this is probably something like what Civ II does.
   (One food/shield/mask drawn N times, possibly one top of itself. -- SKi
 **************************************************************************/
-void put_unit_gpixmap_city_overlays(struct unit *punit, GtkPixcomm *p)
+void put_unit_gpixmap_city_overlays(unit_t *punit, GtkPixcomm *p)
 {
   struct canvas store;
 

@@ -21,8 +21,8 @@ struct ai_choice;
 
 void ai_hunter_choice(player_t *pplayer, city_t *pcity,
                       struct ai_choice *choice);
-bool ai_hunter_qualify(player_t *pplayer, struct unit *punit);
-int ai_hunter_findjob(player_t *pplayer, struct unit *punit);
-bool ai_hunter_manage(player_t *pplayer, struct unit *punit);
+bool ai_hunter_qualify(player_t *pplayer, unit_t *punit);
+int ai_hunter_findjob(player_t *pplayer, unit_t *punit);
+bool ai_hunter_manage(player_t *pplayer, unit_t *punit);
 
 #endif

@@ -59,7 +59,7 @@ static struct player_refuel_list {
   unsigned int alloc_size;
   /* It is convenient to hold additional info here */
   player_t *pplayer;
-  struct unit *punit;
+  unit_t *punit;
   int max_moves;
   int moves_per_turn;
 } refuels;
@@ -358,7 +358,7 @@ void refuel_iterate_end(struct pqueue *rp_list)
  * satisfactory. We should also make sure that bombers given an order to
  * attack a unit will not make the attack on it's last fuel point etc. etc.
  ***********************************************************************/
-bool find_air_first_destination(struct unit *punit, tile_t **dest_tile)
+bool find_air_first_destination(unit_t *punit, tile_t **dest_tile)
 {
   unsigned int fullmoves = unit_move_rate(punit) / SINGLE_MOVE;
   unsigned int fullfuel = unit_type(punit)->fuel;

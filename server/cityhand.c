@@ -47,7 +47,7 @@
 **************************************************************************/
 void handle_city_name_suggestion_req(player_t *pplayer, int value)
 {
-  struct unit *punit = player_find_unit_by_id(pplayer, value);
+  unit_t *punit = player_find_unit_by_id(pplayer, value);
 
   if (!punit) {
     return;

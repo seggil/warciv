@@ -111,7 +111,7 @@ void insert_chat_link(tile_t *ptile, bool unit)
   size_t len = strlen(chars);
 
   if (unit) {
-    struct unit *punit = find_visible_unit(ptile);
+    unit_t *punit = find_visible_unit(ptile);
     if (!punit) {
       append_output_window(_("Warclient: No visible unit on this tile."));
       return;
@@ -214,7 +214,7 @@ follow_if_link(GtkWidget   *text_view,
   char buf[128];
   city_t *pcity;
   tile_t *ptile;
-  struct unit *punit;
+  unit_t *punit;
 
   tags = gtk_text_iter_get_tags(iter);
   for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
@@ -661,7 +661,7 @@ static int parse_unit_link(const char *str, GtkTextBuffer *buf,
   const char *p = str;
   char *q, idbuf[32];
   int id;
-  struct unit *punit;
+  unit_t *punit;
 
   if (strncmp(p, UNIT_LINK_PREFIX, sizeof(UNIT_LINK_PREFIX) - 1) != 0) {
     return 0;

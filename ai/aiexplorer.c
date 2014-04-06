@@ -163,8 +163,9 @@ comment below.
 
 #define BEST_POSSIBLE_SCORE    (HUT_SCORE + BEST_NORMAL_TILE)
 
-static int explorer_desirable(tile_t *ptile, player_t *pplayer,
-                              struct unit *punit)
+static int explorer_desirable(tile_t *ptile,
+                              player_t *pplayer,
+                              unit_t *punit)
 {
   int land_score, ocean_score, known_land_score, known_ocean_score;
   int range = unit_type(punit)->vision_range;
@@ -244,7 +245,7 @@ static int explorer_desirable(tile_t *ptile, player_t *pplayer,
 
   Returns whether there is any more territory to be explored.
 **************************************************************************/
-bool ai_manage_explorer(struct unit *punit)
+bool ai_manage_explorer(unit_t *punit)
 {
   player_t *pplayer = unit_owner(punit);
   /* Loop prevention */

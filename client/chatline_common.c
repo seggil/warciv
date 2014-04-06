@@ -279,7 +279,7 @@ int insert_tile_link(char *buf, size_t buflen, tile_t *ptile)
 /**************************************************************************
   ...
 **************************************************************************/
-int insert_unit_link(char *buf, size_t buflen, struct unit *punit)
+int insert_unit_link(char *buf, size_t buflen, unit_t *punit)
 {
   assert(punit != NULL);
 

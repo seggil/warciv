@@ -1268,7 +1268,7 @@ static const char *load_menu_view(void)
 static void callback_order_build_city(GtkAction *action,
                                       gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if (warn_before_add_to_city && punit != NULL
       && can_unit_add_to_city(punit))
@@ -1431,7 +1431,7 @@ static void callback_order_load(GtkAction *action, gpointer user_data)
 static void callback_order_unload_transporter(GtkAction *action,
                                               gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if (punit && get_transporter_occupancy(punit) > 0) {
     key_unit_unload_all();
@@ -1752,7 +1752,7 @@ static void callback_delayed_goto_delayed_goto(GtkAction *action,
 static void callback_delayed_goto_delayed_nuke(GtkAction *action,
                                                gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if (punit) {
     if (unit_flag(punit, F_NUCLEAR)) {
@@ -1769,7 +1769,7 @@ static void callback_delayed_goto_delayed_nuke(GtkAction *action,
 static void callback_delayed_goto_delayed_city(GtkAction *action,
                                                gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if (punit) {
     if (unit_flag(punit, F_CITIES)) {
@@ -1784,7 +1784,7 @@ static void callback_delayed_goto_delayed_city(GtkAction *action,
 static void callback_delayed_goto_delayed_fort(GtkAction *action,
                                                gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if (punit) {
     if (can_unit_do_activity(punit, ACTIVITY_FORTRESS)) {
@@ -1800,7 +1800,7 @@ static void callback_delayed_goto_delayed_fort(GtkAction *action,
 static void callback_delayed_goto_delayed_pillage(GtkAction *action,
                                                   gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if (punit)
     key_unit_delayed_goto(DGT_PILLAGE);
@@ -1813,7 +1813,7 @@ static void callback_delayed_goto_delayed_pillage(GtkAction *action,
 static void callback_delayed_goto_delayed_road_build ( GtkAction *action,
                                                        gpointer user_data )
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if ( punit ) {
     if ( unit_flag ( punit, F_SETTLERS ) ) {
@@ -1828,7 +1828,7 @@ static void callback_delayed_goto_delayed_road_build ( GtkAction *action,
 static void callback_delayed_goto_delayed_paradrop(GtkAction *action,
                                                    gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if (punit) {
     if (unit_flag(punit, F_PARATROOPERS)) {
@@ -2972,7 +2972,7 @@ static void callback_airlift_airlift_select_airport_cities(GtkAction *action,
 static void callback_airlift_clear_airlift_queue(GtkAction *action,
                                                  gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
+  unit_t *punit = get_unit_in_focus();
 
   if (punit && get_transporter_occupancy(punit) > 0) {
     key_unit_unload_all();
@@ -6205,7 +6205,7 @@ void update_menus(void)
 {
   char buf[256];
   int i;
-  struct unit *punit;
+  unit_t *punit;
   bool cond;
 
   if (!main_menubar || !can_client_change_view()) {

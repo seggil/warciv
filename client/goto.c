@@ -248,7 +248,7 @@ static void add_part(void)
 
   if (goto_map.num_parts == 1) {
     /* first part */
-    struct unit *punit = find_unit_by_id(goto_map.unit_id);
+    unit_t *punit = find_unit_by_id(goto_map.unit_id);
 
     p->start_tile = punit->tile;
     p->start_moves_left = punit->moves_left;
@@ -652,7 +652,7 @@ static enum tile_behavior no_fights_or_unknown_goto(const tile_t *ptile,
 /**********************************************************************
   Fill the PF parameter with the correct client-goto values.
 ***********************************************************************/
-static void fill_client_goto_parameter(struct unit *punit,
+static void fill_client_goto_parameter(unit_t *punit,
                                        struct pf_parameter *parameter)
 {
   static int speed;
@@ -710,7 +710,7 @@ static void fill_client_goto_parameter(struct unit *punit,
   Enter the goto state: activate, prepare PF-template and add the
   initial part.
 ***********************************************************************/
-void enter_goto_state(struct unit *punit)
+void enter_goto_state(unit_t *punit)
 {
   assert(!is_active);
 
@@ -794,7 +794,7 @@ void draw_line(tile_t *dest_tile)
   Send a packet to the server to request that the current orders be
   cleared.
 ****************************************************************************/
-void request_orders_cleared(struct unit *punit)
+void request_orders_cleared(unit_t *punit)
 {
   struct packet_unit_orders p;
 
@@ -815,7 +815,7 @@ void request_orders_cleared(struct unit *punit)
 /**************************************************************************
   Send a path as a goto or patrol route to the server.
 **************************************************************************/
-static void send_path_orders(struct unit *punit, struct pf_path *path,
+static void send_path_orders(unit_t *punit, struct pf_path *path,
                              bool repeat, bool vigilant,
                              enum unit_activity final_activity)
 {
@@ -874,7 +874,7 @@ static void send_path_orders(struct unit *punit, struct pf_path *path,
 /**************************************************************************
   Send an arbitrary goto path for the unit to the server.
 **************************************************************************/
-void send_goto_path(struct unit *punit, struct pf_path *path,
+void send_goto_path(unit_t *punit, struct pf_path *path,
                     enum unit_activity final_activity)
 {
   send_path_orders(punit, path, FALSE, FALSE, final_activity);
@@ -884,7 +884,7 @@ void send_goto_path(struct unit *punit, struct pf_path *path,
   Send the current patrol route (i.e., the one generated via HOVER_STATE)
   to the server.
 **************************************************************************/
-void send_patrol_route(struct unit *punit)
+void send_patrol_route(unit_t *punit)
 {
   int i;
   struct pf_path *path = NULL, *return_path;
@@ -920,7 +920,7 @@ void send_patrol_route(struct unit *punit)
   Send the current connect route (i.e., the one generated via HOVER_STATE)
   to the server.
 **************************************************************************/
-void send_connect_route(struct unit *punit, enum unit_activity activity)
+void send_connect_route(unit_t *punit, enum unit_activity activity)
 {
   struct pf_path *path = NULL;
   int i;
@@ -999,7 +999,7 @@ void send_connect_route(struct unit *punit, enum unit_activity activity)
   HOVER_STATE) to the server.  The route might involve more than one
   part if waypoints were used.  FIXME: danger paths are not supported.
 **************************************************************************/
-void send_goto_route(struct unit *punit)
+void send_goto_route(unit_t *punit)
 {
   struct pf_path *path = NULL;
   int i;
@@ -1018,7 +1018,7 @@ void send_goto_route(struct unit *punit)
 /**************************************************************************
   Send a simple goto order.
 **************************************************************************/
-void unit_goto(struct unit *punit, tile_t *ptile)
+void unit_goto(unit_t *punit, tile_t *ptile)
 {
   if (!punit || !ptile) {
     return;
@@ -1125,7 +1125,7 @@ bool is_drawn_line(tile_t *ptile, int dir)
   Find the path to the nearest (fastest to reach) allied city for the
   unit, or NULL if none is reachable.
 ***************************************************************************/
-struct pf_path *path_to_nearest_allied_city(struct unit *punit)
+struct pf_path *path_to_nearest_allied_city(unit_t *punit)
 {
   player_t *pplayer = get_player_ptr();
   city_t *pcity = NULL;
@@ -1163,7 +1163,7 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 /**************************************************************************
   Calculate the move cost for the unit to reach the destination tile.
 ***************************************************************************/
-int calculate_move_cost(struct unit *punit, tile_t *dest_tile)
+int calculate_move_cost(unit_t *punit, tile_t *dest_tile)
 {
   if (!punit) {
     return WC_INFINITY;
@@ -1193,7 +1193,7 @@ int calculate_move_cost(struct unit *punit, tile_t *dest_tile)
 /**************************************************************************
   Return the nearest tile with a city.
 ***************************************************************************/
-tile_t *find_nearest_city(struct unit *punit, bool allies)
+tile_t *find_nearest_city(unit_t *punit, bool allies)
 {
   player_t *pplayer = get_player_ptr();
   city_t *pcity = map_get_city(punit->tile);

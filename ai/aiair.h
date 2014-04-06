@@ -19,10 +19,10 @@
 
 struct ai_choice;
 
-void ai_manage_airunit(player_t *pplayer, struct unit *punit);
+void ai_manage_airunit(player_t *pplayer, unit_t *punit);
 bool ai_choose_attacker_air(player_t *pplayer, city_t *pcity,
                             struct ai_choice *choice);
 
-int ai_evaluate_tile_for_attack(struct unit *punit, tile_t *dst_tile);
+int ai_evaluate_tile_for_attack(unit_t *punit, tile_t *dst_tile);
 
 #endif /* WC_AI_AIAIR_H */

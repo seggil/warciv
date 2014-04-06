@@ -119,7 +119,7 @@ void CITY_LOG(int level, struct city_s *pcity, const char *msg, ...)
   where [] is unit id, ()->() are coordinates present and goto, and
   {,} contains bodyguard and ferryboat ids.
 **************************************************************************/
-void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
+void UNIT_LOG(int level, unit_t *punit, const char *msg, ...)
 {
   char buffer[500];
   char buffer2[500];
@@ -174,11 +174,11 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
     2: ai4's bodyguard Mech. Inf.[485] (38,22){Riflemen:574@37,23} was ...
   note that these messages are likely to wrap if long.
 **************************************************************************/
-void BODYGUARD_LOG(int level, struct unit *punit, const char *msg)
+void BODYGUARD_LOG(int level, unit_t *punit, const char *msg)
 {
   char buffer[500];
   int minlevel = MIN(LOGLEVEL_BODYGUARD, level);
-  struct unit *pcharge;
+  unit_t *pcharge;
   struct city_s *pcity;
   int id = -1;
   tile_t *ptile = NULL;

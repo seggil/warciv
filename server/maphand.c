@@ -850,7 +850,7 @@ void map_fog_pseudo_city_area(player_t *pplayer, tile_t *ptile)
 /**************************************************************************
 For removing a unit. The actual removal is done in server_remove_unit
 **************************************************************************/
-void remove_unit_sight_points(struct unit *punit)
+void remove_unit_sight_points(unit_t *punit)
 {
   tile_t *ptile = punit->tile;
   player_t *pplayer = unit_owner(punit);

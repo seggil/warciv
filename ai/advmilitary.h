@@ -25,7 +25,7 @@ void  military_advisor_choose_build(player_t *pplayer, city_t *pcity,
                                     struct ai_choice *choice);
 void assess_danger_player(player_t *pplayer);
 int assess_defense_quadratic(city_t *pcity);
-int assess_defense_unit(city_t *pcity, struct unit *punit, bool igwall);
+int assess_defense_unit(city_t *pcity, unit_t *punit, bool igwall);
 int assess_defense(city_t *pcity);
 int ai_unit_defence_desirability(Unit_Type_id i);
 int ai_unit_attack_desirability(Unit_Type_id i);

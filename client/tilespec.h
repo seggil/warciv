@@ -81,7 +81,7 @@ void tilespec_free_city_tiles(int count);
 /* Gfx support */
 
 int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
-                      struct unit *punit, city_t *pcity,
+                      unit_t *punit, city_t *pcity,
                       bool citymode);
 
 void player_colors_init(void);
@@ -93,7 +93,7 @@ enum color_std get_player_color(player_t *pplayer);
 enum color_std overview_tile_color(tile_t *ptile);
 
 void set_focus_unit_hidden_state(bool hide);
-struct unit *get_drawable_unit(tile_t *ptile, bool citymode);
+unit_t *get_drawable_unit(tile_t *ptile, bool citymode);
 
 
 /* This the way directional indices are now encoded: */

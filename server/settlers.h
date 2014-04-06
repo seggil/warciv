@@ -23,7 +23,7 @@ int find_boat(player_t *pplayer, tile_t **boat_tile, int cap);
 #define MORT 24
 
 int amortize(int benefit, int delay);
-void ai_manage_settler(player_t *pplayer, struct unit *punit);
+void ai_manage_settler(player_t *pplayer, unit_t *punit);
 
 void init_settlers(void);
 
@@ -34,7 +34,7 @@ void initialize_infrastructure_cache(player_t *pplayer);
 void contemplate_terrain_improvements(city_t *pcity);
 void contemplate_new_city(city_t *pcity);
 
-struct unit *other_passengers(struct unit *punit);
+unit_t *other_passengers(unit_t *punit);
 
 extern signed int *minimap;
 #define MINIMAP(ptile) minimap[(ptile)->index]

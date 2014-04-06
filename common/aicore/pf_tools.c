@@ -27,7 +27,7 @@
 
 
 static void pft_fill_unit_default_parameter(struct pf_parameter *parameter,
-                                            struct unit *punit);
+                                            unit_t *punit);
 
 /* ===================== Move Cost Callbacks ========================= */
 
@@ -450,7 +450,7 @@ static bool is_pos_dangerous(const tile_t *ptile, enum known_type known,
   Fill unit-dependent parameters
 ***********************************************************************/
 void pft_fill_unit_parameter(struct pf_parameter *parameter,
-                             struct unit *punit)
+                             unit_t *punit)
 {
   pft_fill_unit_default_parameter(parameter, punit);
 
@@ -498,7 +498,7 @@ void pft_fill_unit_parameter(struct pf_parameter *parameter,
   ("sea/land bombardment")
 **********************************************************************/
 void pft_fill_unit_overlap_param(struct pf_parameter *parameter,
-                                 struct unit *punit)
+                                 unit_t *punit)
 {
   pft_fill_unit_default_parameter(parameter, punit);
 
@@ -528,7 +528,7 @@ void pft_fill_unit_overlap_param(struct pf_parameter *parameter,
   Consider attacking and non-attacking possibilities properly
 **********************************************************************/
 void pft_fill_unit_attack_param(struct pf_parameter *parameter,
-                                struct unit *punit)
+                                unit_t *punit)
 {
   pft_fill_unit_default_parameter(parameter, punit);
 
@@ -558,7 +558,7 @@ void pft_fill_unit_attack_param(struct pf_parameter *parameter,
   Fill general use parameters to defaults
 ***********************************************************************/
 static void pft_fill_unit_default_parameter(struct pf_parameter *parameter,
-                                            struct unit *punit)
+                                            unit_t *punit)
 {
   parameter->turn_mode = TM_CAPPED;
   if (is_air_unit(punit) || is_heli_unit(punit)) {

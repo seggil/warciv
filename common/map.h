@@ -405,7 +405,7 @@ bool is_water_adjacent_to_tile(const tile_t *ptile);
 bool is_tiles_adjacent(const tile_t *ptile0, const tile_t *ptile1);
 bool is_move_cardinal(const tile_t *src_tile,
                       const tile_t *dst_tile);
-int map_move_cost(struct unit *punit, const tile_t *ptile);
+int map_move_cost(unit_t *punit, const tile_t *ptile);
 enum tile_special_type get_special_by_name(const char * name);
 const char *get_special_name(enum tile_special_type type);
 bool is_safe_ocean(const tile_t *ptile);

@@ -32,7 +32,8 @@ typedef struct player_s player_t;
 struct tile_s;
 typedef struct tile_s tile_t;
 struct trade_route;
-struct unit;
+struct unit_s;
+typedef struct unit_s unit_t;
 
 /* Changing these will probably break network compatability. */
 #define MAX_LEN_DEMOGRAPHY 16

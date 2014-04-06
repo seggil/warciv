@@ -48,29 +48,29 @@ struct pf_path;
 extern Unit_Type_id simple_ai_types[U_LAST];
 
 void ai_manage_units(player_t *pplayer);
-void ai_manage_unit(player_t *pplayer, struct unit *punit);
-void ai_manage_military(player_t *pplayer,struct unit *punit);
-city_t *find_nearest_safe_city(struct unit *punit);
-int could_unit_move_to_tile(struct unit *punit, tile_t *dst_tile);
-int look_for_charge(player_t *pplayer, struct unit *punit,
-                    struct unit **aunit, city_t **acity);
+void ai_manage_unit(player_t *pplayer, unit_t *punit);
+void ai_manage_military(player_t *pplayer,unit_t *punit);
+city_t *find_nearest_safe_city(unit_t *punit);
+int could_unit_move_to_tile(unit_t *punit, tile_t *dst_tile);
+int look_for_charge(player_t *pplayer, unit_t *punit,
+                    unit_t **aunit, city_t **acity);
 
 int turns_to_enemy_city(Unit_Type_id our_type, city_t *acity,
                         int speed, bool go_by_boat,
-                        struct unit *boat, Unit_Type_id boattype);
+                        unit_t *boat, Unit_Type_id boattype);
 int turns_to_enemy_unit(Unit_Type_id our_type, int speed, tile_t *ptile,
                         Unit_Type_id enemy_type);
-int find_something_to_kill(player_t *pplayer, struct unit *punit,
+int find_something_to_kill(player_t *pplayer, unit_t *punit,
                            tile_t **ptile);
-bool find_beachhead(struct unit *punit, tile_t *dst_tile,
+bool find_beachhead(unit_t *punit, tile_t *dst_tile,
                     tile_t **ptile);
 
 int build_cost_balanced(Unit_Type_id type);
 int unittype_att_rating(Unit_Type_id type, int veteran,
                         int moves_left, int hp);
-int unit_att_rating(struct unit *punit);
-int unit_def_rating_basic(struct unit *punit);
-int unit_def_rating_basic_sq(struct unit *punit);
+int unit_att_rating(unit_t *punit);
+int unit_def_rating_basic(unit_t *punit);
+int unit_def_rating_basic_sq(unit_t *punit);
 int unittype_def_rating_sq(Unit_Type_id att_type, Unit_Type_id def_type,
                            tile_t *ptile, bool fortified, int veteran);
 int kill_desire(int benefit, int attack, int loss, int vuln, int attack_count);

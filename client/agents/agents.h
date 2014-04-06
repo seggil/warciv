@@ -60,9 +60,9 @@ void agents_before_new_turn(void);
 void agents_start_turn(void);
 void agents_new_turn(void);
 
-void agents_unit_changed(struct unit *punit);
-void agents_unit_new(struct unit *punit);
-void agents_unit_remove(struct unit *punit);
+void agents_unit_changed(unit_t *punit);
+void agents_unit_new(unit_t *punit);
+void agents_unit_remove(unit_t *punit);
 
 void agents_city_changed(city_t *pcity);
 void agents_city_new(city_t *pcity);
@@ -76,7 +76,7 @@ void agents_tile_remove(tile_t *ptile);
 void cause_a_city_changed_for_agent(const char *name_of_calling_agent,
                                     city_t *pcity);
 void cause_a_unit_changed_for_agent(const char *name_of_calling_agent,
-                                    struct unit *punit);
+                                    unit_t *punit);
 void wait_for_requests(const char *agent_name, int first_request_id,
                        int last_request_id);
 #endif  /* WC_CLIENT_AGENTS_AGENTS_H */

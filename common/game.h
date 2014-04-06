@@ -233,14 +233,14 @@ void game_advance_year(void);
 int civ_population(player_t *pplayer);
 city_t *game_find_city_by_name(const char *name);
 
-struct unit *find_unit_by_id(int id);
+unit_t *find_unit_by_id(int id);
 city_t *find_city_by_id(int id);
 city_t *find_city_by_name_fast(const char *name);
 
 void game_remove_player(player_t *pplayer);
 void game_renumber_players(int plrno);
 
-void game_remove_unit(struct unit *punit);
+void game_remove_unit(unit_t *punit);
 void game_remove_city(city_t *pcity);
 void initialize_globals(void);
 

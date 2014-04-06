@@ -291,7 +291,7 @@ static void diplomat_bribe_callback(GtkWidget *w, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-void popup_bribe_dialog(struct unit *punit, int cost)
+void popup_bribe_dialog(unit_t *punit, int cost)
 {
   GtkWidget *shell;
 
@@ -784,7 +784,7 @@ void popup_incite_dialog(city_t *pcity, int cost)
 *****************************************************************/
 static void diplomat_keep_moving_callback(GtkWidget *w, gpointer data)
 {
-  struct unit *punit;
+  unit_t *punit;
   city_t *pcity;
 
   punit=find_unit_by_id(diplomat_id);
@@ -819,10 +819,10 @@ static void diplomat_cancel_callback(GtkWidget *w, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-void popup_diplomat_dialog(struct unit *punit, tile_t *dest_tile)
+void popup_diplomat_dialog(unit_t *punit, tile_t *dest_tile)
 {
   city_t *pcity;
-  struct unit *ptunit;
+  unit_t *ptunit;
   GtkWidget *shl;
   char buf[128];
 
@@ -971,7 +971,7 @@ static void caravan_destroy_callback(GtkWidget *w, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-void popup_caravan_dialog(struct unit *punit,
+void popup_caravan_dialog(unit_t *punit,
                           city_t *phomecity, city_t *pdestcity)
 {
   char buf[128];
@@ -1073,7 +1073,7 @@ void popup_revolution_dialog(int government)
 static void pillage_callback(GtkWidget *w, gpointer data)
 {
   if (data) {
-    struct unit *punit = find_unit_by_id(unit_to_use_to_pillage);
+    unit_t *punit = find_unit_by_id(unit_to_use_to_pillage);
     if (punit) {
       request_new_unit_activity_targeted(punit,
                                          ACTIVITY_PILLAGE,
@@ -1093,7 +1093,7 @@ static void pillage_destroy_callback(GtkWidget *w, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-void popup_pillage_dialog(struct unit *punit,
+void popup_pillage_dialog(unit_t *punit,
                           enum tile_special_type may_pillage)
 {
   GtkWidget *shl;
@@ -1276,7 +1276,7 @@ GtkWidget *popup_message_dialog(GtkWindow *parent, const gchar *dialogname,
 static void unit_select_row_activated(GtkTreeView *view, GtkTreePath *path)
 {
   GtkTreeIter it;
-  struct unit *punit;
+  unit_t *punit;
   gint id;
 
   gtk_tree_model_get_iter(GTK_TREE_MODEL(unit_select_store), &it, path);
@@ -1292,8 +1292,8 @@ static void unit_select_row_activated(GtkTreeView *view, GtkTreePath *path)
 /****************************************************************
   ...
 *****************************************************************/
-static int unit_list_tile_sort(const struct unit * const *ppa,
-                               const struct unit * const *ppb)
+static int unit_list_tile_sort(const unit_t * const *ppa,
+                               const unit_t * const *ppb)
 {
   return (*ppa)->owner != get_player_idx() && (*ppb)->owner == get_player_idx();
 }
@@ -1301,7 +1301,7 @@ static int unit_list_tile_sort(const struct unit * const *ppa,
 /**************************************************************************
 ...
 **************************************************************************/
-static void unit_select_append(struct unit *punit, GtkTreeIter *it,
+static void unit_select_append(unit_t *punit, GtkTreeIter *it,
                                GtkTreeIter *parent)
 {
   GdkPixbuf *pix;
@@ -1391,7 +1391,7 @@ static void add_unit_iterate(GtkTreeModel *model, GtkTreePath *path,
                              GtkTreeIter *it, gpointer data)
 {
   gint id;
-  struct unit *punit;
+  unit_t *punit;
   bool *focus_change = (bool *)data;
 
   gtk_tree_model_get(GTK_TREE_MODEL(unit_select_store), it, 0, &id, -1);
@@ -1416,7 +1416,7 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
   switch (rid) {
   case SELECT_UNIT_READY:
   {
-    struct unit *pmyunit = NULL;
+    unit_t *pmyunit = NULL;
 
     unit_list_iterate(ptile->units, punit) {
       if (get_player_idx() == punit->owner) {
@@ -2457,8 +2457,8 @@ void remove_trade_planning_calculation_resume_request(void)
 *************************************************************************/
 static void disband_unit(gpointer data, gpointer dump)
 {
-  struct unit *punit = player_find_unit_by_id(get_player_ptr(),
-                                              GPOINTER_TO_INT(data));
+  unit_t *punit = player_find_unit_by_id(get_player_ptr(),
+                                         GPOINTER_TO_INT(data));
 
   if (punit) {
     request_unit_disband(punit);
@@ -2479,7 +2479,7 @@ static void disband_unit_response(GtkWidget *w, gint response, gpointer data)
 /*************************************************************************
   ...
 *************************************************************************/
-void popup_disband_unit(const struct unit *punit)
+void popup_disband_unit(const unit_t *punit)
 {
   GtkWidget *dialog;
 

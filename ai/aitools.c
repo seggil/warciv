@@ -103,7 +103,7 @@ bool is_player_dangerous(player_t *pplayer, player_t *aplayer)
   Brings our bodyguard along.
   Returns FALSE only if died.
 *************************************************************************/
-bool ai_unit_execute_path(struct unit *punit, struct pf_path *path)
+bool ai_unit_execute_path(unit_t *punit, struct pf_path *path)
 {
   int i;
 
@@ -145,7 +145,7 @@ bool ai_unit_execute_path(struct unit *punit, struct pf_path *path)
   be facing at our destination and tries to find/request a bodyguard if
   needed.
 ****************************************************************************/
-static void ai_gothere_bodyguard(struct unit *punit, tile_t *dest_tile)
+static void ai_gothere_bodyguard(unit_t *punit, tile_t *dest_tile)
 {
   player_t *pplayer = unit_owner(punit);
   struct ai_data *ai = ai_data_get(pplayer);
@@ -215,7 +215,7 @@ static void ai_gothere_bodyguard(struct unit *punit, tile_t *dest_tile)
   You MUST have warmap created before calling this function in order for
   find_beachhead to work here. This requirement should be removed.
 ****************************************************************************/
-bool ai_gothere(player_t *pplayer, struct unit *punit,
+bool ai_gothere(player_t *pplayer, unit_t *punit,
                 tile_t *dest_tile)
 {
   CHECK_UNIT(punit);
@@ -271,7 +271,7 @@ bool ai_gothere(player_t *pplayer, struct unit *punit,
 
   FIXME: add some logging functionality to replace GOTO_LOG()
 **************************************************************************/
-bool ai_unit_goto(struct unit *punit, tile_t *ptile)
+bool ai_unit_goto(unit_t *punit, tile_t *ptile)
 {
   enum goto_result result;
   tile_t *old_tile;
@@ -299,11 +299,11 @@ bool ai_unit_goto(struct unit *punit, tile_t *ptile)
   reserve its target, and try to load it with cruise missiles or nukes
   to bring along.
 **************************************************************************/
-void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
+void ai_unit_new_role(unit_t *punit, enum ai_unit_task task,
                       tile_t *ptile)
 {
-  struct unit *charge = find_unit_by_id(punit->ai.charge);
-  struct unit *bodyguard = find_unit_by_id(punit->ai.bodyguard);
+  unit_t *charge = find_unit_by_id(punit->ai.charge);
+  unit_t *bodyguard = find_unit_by_id(punit->ai.bodyguard);
 
   /* If the unit is under (human) orders we shouldn't control it. */
   assert(!unit_has_orders(punit));
@@ -327,7 +327,7 @@ void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
 
   if (punit->ai.ai_role == AIUNIT_HUNTER) {
     /* Clear victim's hunted bit - we're no longer chasing. */
-    struct unit *target = find_unit_by_id(punit->ai.target);
+    unit_t *target = find_unit_by_id(punit->ai.target);
 
     if (target) {
       target->ai.hunted &= ~(1 << unit_owner(punit)->player_no);
@@ -358,7 +358,7 @@ void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
   }
   if (punit->ai.ai_role == AIUNIT_HUNTER) {
     /* Set victim's hunted bit - the hunt is on! */
-    struct unit *target = find_unit_by_id(punit->ai.target);
+    unit_t *target = find_unit_by_id(punit->ai.target);
 
     assert(target != NULL);
     target->ai.hunted |= (1 << unit_owner(punit)->player_no);
@@ -386,7 +386,7 @@ void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
   Try to make pcity our new homecity. Fails if we can't upkeep it. Assumes
   success from server.
 **************************************************************************/
-bool ai_unit_make_homecity(struct unit *punit, struct city_s *pcity)
+bool ai_unit_make_homecity(unit_t *punit, struct city_s *pcity)
 {
   CHECK_UNIT(punit);
   assert(punit->owner == pcity->common.owner);
@@ -416,9 +416,9 @@ bool ai_unit_make_homecity(struct unit *punit, struct city_s *pcity)
 **************************************************************************/
 static void ai_unit_bodyguard_move(int unitid, tile_t *ptile)
 {
-  struct unit *bodyguard = find_unit_by_id(unitid);
+  unit_t *bodyguard = find_unit_by_id(unitid);
 #ifndef NDEBUG
-  struct unit *punit;
+  unit_t *punit;
   player_t *pplayer;
 
   assert(bodyguard != NULL);
@@ -450,9 +450,9 @@ static void ai_unit_bodyguard_move(int unitid, tile_t *ptile)
   Repair incompletely referenced bodyguards. When the rest of the bodyguard
   mess is cleaned up, this repairing should be replaced with an assert.
 **************************************************************************/
-static bool has_bodyguard(struct unit *punit)
+static bool has_bodyguard(unit_t *punit)
 {
-  struct unit *guard;
+  unit_t *guard;
   if (punit->ai.bodyguard > BODYGUARD_NONE) {
     if ((guard = find_unit_by_id(punit->ai.bodyguard))) {
       if (guard->ai.charge != punit->id) {
@@ -471,7 +471,7 @@ static bool has_bodyguard(struct unit *punit)
 /**************************************************************************
   Move and attack with an ai unit. We do not wait for server reply.
 **************************************************************************/
-bool ai_unit_attack(struct unit *punit, tile_t *ptile)
+bool ai_unit_attack(unit_t *punit, tile_t *ptile)
 {
   int sanity = punit->id;
   bool alive;
@@ -501,9 +501,9 @@ bool ai_unit_attack(struct unit *punit, tile_t *ptile)
   we can tell the calling function what happened to the move request.
   (Right now it is not a big problem, since we call the server directly.)
 **************************************************************************/
-bool ai_unit_move(struct unit *punit, tile_t *ptile)
+bool ai_unit_move(unit_t *punit, tile_t *ptile)
 {
-  struct unit *bodyguard;
+  unit_t *bodyguard;
   int sanity = punit->id;
   player_t *pplayer = unit_owner(punit);
 
@@ -602,7 +602,7 @@ struct city_s *dist_nearest_city(player_t *pplayer,
   Calculate the value of the target unit including the other units which
   will die in a successful attack
 **************************************************************************/
-int stack_cost(struct unit *pdef)
+int stack_cost(unit_t *pdef)
 {
   int victim_cost = 0;
 

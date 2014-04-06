@@ -573,7 +573,7 @@ static void load_player_units(player_t *plr, int plrno,
   }
 
   for (i = 0; i < nunits; i++) {
-    struct unit *punit;
+    unit_t *punit;
     city_t *pcity;
     int nat_x, nat_y;
     const char* type_name;
@@ -2714,7 +2714,7 @@ void game_load(struct section_file *file)
   /* Fix ferrying sanity */
   players_iterate(pplayer) {
     unit_list_iterate_safe(pplayer->units, punit) {
-      struct unit *ferry = find_unit_by_id(punit->transported_by);
+      unit_t *ferry = find_unit_by_id(punit->transported_by);
 
       if (is_ocean(map_get_terrain(punit->tile))
           && is_ground_unit(punit) && !ferry) {

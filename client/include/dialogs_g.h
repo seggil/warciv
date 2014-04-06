@@ -33,15 +33,15 @@ void popup_unit_select_dialog(tile_t *ptile);
 
 void races_toggles_set_sensitive(bool *nations_used);
 
-void popup_caravan_dialog(struct unit *punit,
+void popup_caravan_dialog(unit_t *punit,
                           city_t *phomecity, city_t *pdestcity);
 bool caravan_dialog_is_open(void);
-void popup_diplomat_dialog(struct unit *punit, tile_t *ptile);
+void popup_diplomat_dialog(unit_t *punit, tile_t *ptile);
 bool diplomat_dialog_is_open(void);
 void popup_incite_dialog(city_t *pcity, int cost);
-void popup_bribe_dialog(struct unit *punit, int cost);
+void popup_bribe_dialog(unit_t *punit, int cost);
 void popup_sabotage_dialog(city_t *pcity);
-void popup_pillage_dialog(struct unit *punit,
+void popup_pillage_dialog(unit_t *punit,
                           enum tile_special_type may_pillage);
 
 void popup_trade_planning_calculation_info(void);
@@ -51,7 +51,7 @@ void update_trade_planning_calculation_info(void);
 void request_trade_planning_calculation_resume(void);
 void remove_trade_planning_calculation_resume_request(void);
 
-void popup_disband_unit(const struct unit *punit);
+void popup_disband_unit(const unit_t *punit);
 void popup_disband_units_focus(void);
 
 void popdown_all_game_dialogs(void);

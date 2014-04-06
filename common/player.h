@@ -299,8 +299,8 @@ player_t *find_player_by_user(const char *name);
 void player_set_unit_focus_status(player_t *pplayer);
 bool player_has_embassy(player_t *pplayer, player_t *pplayer2);
 
-bool can_player_see_unit(player_t *pplayer, struct unit *punit);
-bool can_player_see_unit_at(player_t *pplayer, struct unit *punit,
+bool can_player_see_unit(player_t *pplayer, unit_t *punit);
+bool can_player_see_unit_at(player_t *pplayer, unit_t *punit,
                             tile_t *ptile);
 
 bool can_player_see_units_in_city(player_t *pplayer,
@@ -312,8 +312,8 @@ bool player_owns_city(player_t *pplayer, city_t *pcity);
 
 city_t *player_find_city_by_id(const player_t *pplayer,
                                int city_id);
-struct unit *player_find_unit_by_id(const player_t *pplayer,
-                                    int unit_id);
+unit_t *player_find_unit_by_id(const player_t *pplayer,
+                               int unit_id);
 
 bool player_in_city_radius(player_t *pplayer, tile_t *ptile);
 bool player_knows_improvement_tech(player_t *pplayer,

@@ -58,7 +58,7 @@ city_t *find_closest_owned_city(player_t *pplayer,
                                 tile_t *ptile,
                                 bool sea_required,
                                 city_t *pexclcity);
-void handle_unit_enter_city(struct unit *punit, city_t *pcity);
+void handle_unit_enter_city(unit_t *punit, city_t *pcity);
 
 void send_city_info(player_t *dest, city_t *pcity);
 void send_city_info_at_tile(player_t *pviewer, struct conn_list *dest,

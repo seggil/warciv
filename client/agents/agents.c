@@ -513,7 +513,7 @@ void agents_new_turn(void)
  call_handle_methods may be running higher up on the stack) to execute
  all outstanding calls.
 ***********************************************************************/
-void agents_unit_changed(struct unit *punit)
+void agents_unit_changed(unit_t *punit)
 {
   int i;
 
@@ -539,7 +539,7 @@ void agents_unit_changed(struct unit *punit)
  Called from client/packhand.c. See agents_unit_changed for a generic
  documentation.
 ***********************************************************************/
-void agents_unit_new(struct unit *punit)
+void agents_unit_new(unit_t *punit)
 {
   int i;
 
@@ -566,7 +566,7 @@ void agents_unit_new(struct unit *punit)
  Called from client/packhand.c. See agents_unit_changed for a generic
  documentation.
 ***********************************************************************/
-void agents_unit_remove(struct unit *punit)
+void agents_unit_remove(unit_t *punit)
 {
   int i;
 
@@ -783,7 +783,7 @@ void wait_for_requests(const char *agent_name, int first_request_id,
  Adds a specific call for the given agent.
 ***********************************************************************/
 void cause_a_unit_changed_for_agent(const char *name_of_calling_agent,
-                                    struct unit *punit)
+                                    unit_t *punit)
 {
   struct agents_entries_s *agent = find_agent_by_name(name_of_calling_agent);
 

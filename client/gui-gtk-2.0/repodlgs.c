@@ -1128,9 +1128,9 @@ static void activeunits_selection_callback(GtkTreeSelection *selection,
 /****************************************************************
 ...
 *****************************************************************/
-static struct unit *find_nearest_unit(Unit_Type_id type, tile_t *ptile)
+static unit_t *find_nearest_unit(Unit_Type_id type, tile_t *ptile)
 {
-  struct unit *best_candidate;
+  unit_t *best_candidate;
   int best_dist = 99999;
 
   best_candidate = NULL;
@@ -1183,7 +1183,7 @@ static void activeunits_command_callback(struct gui_dialog *dlg, int response)
 
   if (response == ACTIVEUNITS_NEAREST) {
     tile_t *ptile;
-    struct unit *punit;
+    unit_t *punit;
 
     ptile = get_center_tile_mapcanvas();
     if ((punit = find_nearest_unit(ut1, ptile))) {

@@ -41,8 +41,8 @@
   We don't need a hunter in this city if we already have one. Return
   existing hunter if any.
 **************************************************************************/
-static struct unit *ai_hunter_find(player_t *pplayer,
-                                   struct city_s *pcity)
+static unit_t *ai_hunter_find(player_t *pplayer,
+                              struct city_s *pcity)
 {
   unit_list_iterate(pcity->common.units_supported, punit) {
     if (ai_hunter_qualify(pplayer, punit)) {
@@ -186,7 +186,7 @@ static void eval_hunter_want(player_t *pplayer, struct city_s *pcity,
                              struct ai_choice *choice, int best_type,
                              int veteran)
 {
-  struct unit *virtualunit;
+  unit_t *virtualunit;
   int want = 0;
 
   virtualunit = create_unit_virtual(pplayer, pcity, best_type, veteran);
@@ -208,7 +208,7 @@ void ai_hunter_choice(player_t *pplayer, struct city_s *pcity,
 {
   int best_land_hunter = ai_hunter_guess_best(pcity, LAND_MOVING);
   int best_sea_hunter = ai_hunter_guess_best(pcity, SEA_MOVING);
-  struct unit *hunter = ai_hunter_find(pplayer, pcity);
+  unit_t *hunter = ai_hunter_find(pplayer, pcity);
 
   if ((best_land_hunter == -1 && best_sea_hunter == -1)
       || is_barbarian(pplayer) || !pplayer->is_alive
@@ -236,7 +236,7 @@ void ai_hunter_choice(player_t *pplayer, struct city_s *pcity,
   combat damage? Or should repair code preempt this code? Just saying
   FALSE for damaged units does NOT work.
 **************************************************************************/
-bool ai_hunter_qualify(player_t *pplayer, struct unit *punit)
+bool ai_hunter_qualify(player_t *pplayer, unit_t *punit)
 {
   struct unit_type *punittype = get_unit_type(punit->type);
 
@@ -258,7 +258,7 @@ bool ai_hunter_qualify(player_t *pplayer, struct unit *punit)
   Return want for making this (possibly virtual) unit into a hunter. Sets
   punit->ai.target to target's id.
 **************************************************************************/
-int ai_hunter_findjob(player_t *pplayer, struct unit *punit)
+int ai_hunter_findjob(player_t *pplayer, unit_t *punit)
 {
   int best_id = -1, best_val = -1;
 
@@ -273,7 +273,7 @@ int ai_hunter_findjob(player_t *pplayer, struct unit *punit)
     unit_list_iterate(aplayer->units, target) {
       tile_t *ptile = target->tile;
       int dist1, dist2, stackthreat = 0, stackcost = 0;
-      struct unit *defender;
+      unit_t *defender;
 
       if (ptile->city
           || TEST_BIT(target->ai.hunted, pplayer->player_no)
@@ -359,15 +359,15 @@ int ai_hunter_findjob(player_t *pplayer, struct unit *punit)
   ai_unit_new_role().
 **************************************************************************/
 static void ai_hunter_try_launch(player_t *pplayer,
-                                 struct unit *punit,
-                                 struct unit *target)
+                                 unit_t *punit,
+                                 unit_t *target)
 {
   int target_sanity = target->id;
   struct pf_parameter parameter;
   struct path_finding_map *map;
 
   unit_list_iterate(punit->tile->units, missile) {
-    struct unit *sucker = NULL;
+    unit_t *sucker = NULL;
 
     if (missile->owner == pplayer->player_no
         && unit_flag(missile, F_MISSILE)) {
@@ -437,9 +437,9 @@ static void ai_hunter_try_launch(player_t *pplayer,
   Returns FALSE if we could not use unit. If we return TRUE, unit might
   be dead.
 **************************************************************************/
-bool ai_hunter_manage(player_t *pplayer, struct unit *punit)
+bool ai_hunter_manage(player_t *pplayer, unit_t *punit)
 {
-  struct unit *target = find_unit_by_id(punit->ai.target);
+  unit_t *target = find_unit_by_id(punit->ai.target);
   int sanity_own = punit->id;
   int sanity_target;
 
