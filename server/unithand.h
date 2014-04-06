@@ -18,9 +18,9 @@
 
 #include "hand_gen.h"
 
-bool handle_unit_move_request(struct unit *punit, tile_t *ptile,
+bool handle_unit_move_request(unit_t *punit, tile_t *ptile,
                              bool igzoc, bool move_diplomat_city);
-void handle_unit_activity_request(struct unit *punit,
+void handle_unit_activity_request(unit_t *punit,
                                   enum unit_activity new_activity);
 
 #endif  /* WC_SERVER_UNITHAND_H */

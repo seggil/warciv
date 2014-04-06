@@ -155,7 +155,7 @@ static Unit_Type_id ai_choose_bodyguard(city_t *pcity,
 /**********************************************************************
 Helper for assess_defense_quadratic and assess_defense_unit.
 ***********************************************************************/
-static int base_assess_defense_unit(city_t *pcity, struct unit *punit,
+static int base_assess_defense_unit(city_t *pcity, unit_t *punit,
                                     bool igwall, bool quadratic,
                                     int wall_value)
 {
@@ -225,7 +225,7 @@ int assess_defense_quadratic(city_t *pcity)
 /**************************************************************************
 One unit only, mostly for findjob; handling boats correctly. 980803 -- Syela
 **************************************************************************/
-int assess_defense_unit(city_t *pcity, struct unit *punit, bool igwall)
+int assess_defense_unit(city_t *pcity, unit_t *punit, bool igwall)
 {
   return base_assess_defense_unit(pcity, punit, igwall, TRUE,
                                   pcity->u.server.ai.wallvalue);
@@ -311,7 +311,7 @@ static unsigned int dangerfunct(int danger, int move_rate, int distance)
 /**************************************************************************
 How dangerous a unit is for a city?
 **************************************************************************/
-static unsigned int assess_danger_unit(city_t *pcity, struct unit *punit)
+static unsigned int assess_danger_unit(city_t *pcity, unit_t *punit)
 {
   unsigned int danger;
   bool sailing;
@@ -337,11 +337,11 @@ static unsigned int assess_danger_unit(city_t *pcity, struct unit *punit)
 /**************************************************************************
   Assess distance between punit and pcity.
 **************************************************************************/
-static int assess_distance(city_t *pcity, struct unit *punit,
+static int assess_distance(city_t *pcity, unit_t *punit,
                            int move_rate)
 {
   int distance = 0;
-  struct unit *ferry = find_unit_by_id(punit->transported_by);
+  unit_t *ferry = find_unit_by_id(punit->transported_by);
 
   if (same_pos(punit->tile, pcity->common.tile)) {
     return 0;
@@ -782,7 +782,8 @@ static void process_attacker_want(city_t *pcity,
                                   int value, Unit_Type_id victim_unit_type,
                                   int veteran, tile_t *ptile,
                                   struct ai_choice *best_choice,
-                                  struct unit *boat, Unit_Type_id boattype)
+                                  unit_t *boat,
+                                  Unit_Type_id boattype)
 {
   player_t *pplayer = city_owner(pcity);
   /* The enemy city.  acity == NULL means stray enemy unit */
@@ -969,7 +970,8 @@ This function
 5. if we still want to attack, records the best attacker in choice.
 **************************************************************************/
 static void kill_something_with(player_t *pplayer, city_t *pcity,
-                                struct unit *myunit, struct ai_choice *choice)
+                                unit_t *myunit,
+                                struct ai_choice *choice)
 {
   struct ai_data *ai = ai_data_get(pplayer);
   /* Our attack rating (with reinforcements) */
@@ -981,11 +983,11 @@ static void kill_something_with(player_t *pplayer, city_t *pcity,
   /* Target coordinates */
   tile_t *ptile;
   /* Our transport */
-  struct unit *ferryboat = NULL;
+  unit_t *ferryboat = NULL;
   /* Our target */
   city_t *acity;
   /* Defender of the target city/tile */
-  struct unit *pdef;
+  unit_t *pdef;
   /* Coordinates of the boat */
   tile_t *boat_tile = NULL;
   /* Type of the boat (real or a future one) */
@@ -1143,9 +1145,9 @@ static void ai_unit_consider_bodyguard(city_t *pcity,
                                        Unit_Type_id unit_type,
                                        struct ai_choice *choice)
 {
-  struct unit *virtualunit;
+  unit_t *virtualunit;
   player_t *pplayer = city_owner(pcity);
-  struct unit *aunit = NULL;
+  unit_t *aunit = NULL;
   city_t *acity = NULL;
 
   virtualunit = create_unit_virtual(pplayer, pcity, unit_type,
@@ -1222,7 +1224,7 @@ void military_advisor_choose_build(player_t *pplayer, city_t *pcity,
   Unit_Type_id unit_type;
   unsigned int our_def, danger, urgency;
   tile_t *ptile = pcity->common.tile;
-  struct unit *virtualunit;
+  unit_t *virtualunit;
 
   init_choice(choice);
 

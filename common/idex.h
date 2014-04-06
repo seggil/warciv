@@ -24,15 +24,15 @@ void idex_init(void);
 void idex_free(void);
 
 void idex_register_city(city_t *pcity);
-void idex_register_unit(struct unit *punit);
+void idex_register_unit(unit_t *punit);
 void idex_register_city_name(city_t *pcity);
 
 void idex_unregister_city(city_t *pcity);
-void idex_unregister_unit(struct unit *punit);
+void idex_unregister_unit(unit_t *punit);
 void idex_unregister_city_name(city_t *pcity);
 
 city_t *idex_lookup_city(int id);
 city_t *idex_lookup_city_by_name(const char *name);
-struct unit *idex_lookup_unit(int id);
+unit_t *idex_lookup_unit(int id);
 
 #endif  /* WC_COMMON_IDEX_H */

@@ -381,7 +381,7 @@ void key_city_overlay(int canvas_x, int canvas_y)
   tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (can_client_change_view() && ptile) {
-    struct unit *punit;
+    unit_t *punit;
     city_t *pcity = find_city_or_settler_near_tile(ptile, &punit);
 
     if (pcity) {
@@ -461,7 +461,7 @@ void clipboard_copy_production(tile_t *ptile)
     clipboard = pcity->common.currently_building;
     clipboard_is_unit = pcity->common.is_building_unit;
   } else {
-    struct unit *punit = find_visible_unit(ptile);
+    unit_t *punit = find_visible_unit(ptile);
     if (!punit) {
       return;
     }
@@ -784,7 +784,9 @@ void overview_update_line(int overview_x, int overview_y)
 **************************************************************************/
 bool get_chance_to_win(int *att_chance, int *def_chance, tile_t *ptile)
 {
-  struct unit *my_unit, *defender, *attacker;
+  unit_t *my_unit;
+  unit_t *defender;
+  unit_t *attacker;
 
   if (!(my_unit = get_unit_in_focus())
       || !(defender = get_defender(my_unit, ptile))
@@ -810,8 +812,8 @@ bool get_chance_to_win(int *att_chance, int *def_chance, tile_t *ptile)
 ****************************************************************************/
 static int unit_list_compare(const void *a, const void *b)
 {
-  const struct unit *punit1 = *(struct unit **)a;
-  const struct unit *punit2 = *(struct unit **)b;
+  const unit_t *punit1 = *(unit_t **)a;
+  const unit_t *punit2 = *(unit_t **)b;
 
   if (punit1->transported_by == punit2->transported_by) {
     /* For units with the same transporter or no transporter: sort by id. */
@@ -824,8 +826,8 @@ static int unit_list_compare(const void *a, const void *b)
   } else {
     /* If the transporters aren't the same, put in order by the
      * transporters. */
-    const struct unit *ptrans1 = find_unit_by_id(punit1->transported_by);
-    const struct unit *ptrans2 = find_unit_by_id(punit2->transported_by);
+    const unit_t *ptrans1 = find_unit_by_id(punit1->transported_by);
+    const unit_t *ptrans2 = find_unit_by_id(punit2->transported_by);
 
     if (!ptrans1) {
       ptrans1 = punit1;
@@ -841,7 +843,7 @@ static int unit_list_compare(const void *a, const void *b)
 /****************************************************************************
   Fill and sort the list of units on the tile.
 ****************************************************************************/
-void fill_tile_unit_list(tile_t *ptile, struct unit **unit_list)
+void fill_tile_unit_list(tile_t *ptile, unit_t **unit_list)
 {
   int i = 0;
 

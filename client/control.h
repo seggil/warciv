@@ -114,61 +114,61 @@ extern enum new_unit_action default_action_type;
 extern bool default_action_locked;
 extern bool default_action_military_only;
 
-bool can_unit_do_connect(struct unit *punit, enum unit_activity activity);
+bool can_unit_do_connect(unit_t *punit, enum unit_activity activity);
 void request_auto_airlift_source_selection(void);
 void request_auto_airlift_destination_selection(void);
 
 void key_airplane_patrol(void);
 
 void key_select_rally_point(void);
-void check_new_unit_action(struct unit *punit);
+void check_new_unit_action(unit_t *punit);
 void key_unit_delayed_airlift(void);
 void key_add_pause_delayed_goto(void);
 void enable_auto_mode(void);
 
-void do_move_unit(struct unit *punit, struct unit *target_unit);
+void do_move_unit(unit_t *punit, unit_t *target_unit);
 void do_unit_goto(tile_t *ptile);
-void do_unit_nuke(struct unit *punit);
-void do_unit_paradrop_to(struct unit *punit, tile_t *ptile);
-void do_unit_patrol_to(struct unit *punit, tile_t *ptile);
-void do_unit_connect(struct unit *punit, tile_t *ptile,
+void do_unit_nuke(unit_t *punit);
+void do_unit_paradrop_to(unit_t *punit, tile_t *ptile);
+void do_unit_patrol_to(unit_t *punit, tile_t *ptile);
+void do_unit_connect(unit_t *punit, tile_t *ptile,
                      enum unit_activity activity);
 void do_map_click(tile_t *ptile, enum quickselect_type qtype);
-void attack_after_move(struct unit *punit);
+void attack_after_move(unit_t *punit);
 
-void set_hover_state(struct unit *punit, enum cursor_hover_state state,
+void set_hover_state(unit_t *punit, enum cursor_hover_state state,
                      enum unit_activity activity);
-void request_active_unit(struct unit *punit);
+void request_active_unit(unit_t *punit);
 void request_center_focus_unit(void);
-void request_move_unit_direction(struct unit *punit, int dir);
-void request_new_unit_activity(struct unit *punit, enum unit_activity act);
-void request_new_unit_activity_targeted(struct unit *punit,
+void request_move_unit_direction(unit_t *punit, int dir);
+void request_new_unit_activity(unit_t *punit, enum unit_activity act);
+void request_new_unit_activity_targeted(unit_t *punit,
                                         enum unit_activity act,
                                         enum tile_special_type tgt);
-void request_unit_load(struct unit *pcargo, struct unit *ptransporter);
-void request_unit_unload(struct unit *pcargo);
-void request_unit_auto(struct unit *punit);
-void request_unit_build_city(struct unit *punit);
-void request_unit_build_city_random_name(struct unit* punit);
-void request_unit_caravan_action(struct unit *punit, enum packet_type action);
-void request_unit_change_homecity(struct unit *punit);
+void request_unit_load(unit_t *pcargo, unit_t *ptransporter);
+void request_unit_unload(unit_t *pcargo);
+void request_unit_auto(unit_t *punit);
+void request_unit_build_city(unit_t *punit);
+void request_unit_build_city_random_name(unit_t* punit);
+void request_unit_caravan_action(unit_t *punit, enum packet_type action);
+void request_unit_change_homecity(unit_t *punit);
 void request_unit_connect(enum unit_activity activity);
-void request_unit_disband(struct unit *punit);
-void request_unit_fortify(struct unit *punit);
-void request_unit_sleep(struct unit *punit);
+void request_unit_disband(unit_t *punit);
+void request_unit_fortify(unit_t *punit);
+void request_unit_sleep(unit_t *punit);
 void request_unit_goto(void);
-void request_unit_move_done(struct unit *punit);
-void request_unit_nuke(struct unit *punit);
-void request_unit_paradrop(struct unit *punit);
+void request_unit_move_done(unit_t *punit);
+void request_unit_nuke(unit_t *punit);
+void request_unit_paradrop(unit_t *punit);
 void request_unit_patrol(void);
-void request_unit_pillage(struct unit *punit);
-void request_unit_sentry(struct unit *punit);
-void request_unit_unload_all(struct unit *punit);
-void request_unit_airlift(struct unit *punit, city_t *pcity);
-void request_unit_return(struct unit *punit);
-void request_unit_upgrade(struct unit *punit);
-void request_unit_wait(struct unit *punit);
-void request_unit_wakeup(struct unit *punit);
+void request_unit_pillage(unit_t *punit);
+void request_unit_sentry(unit_t *punit);
+void request_unit_unload_all(unit_t *punit);
+void request_unit_airlift(unit_t *punit, city_t *pcity);
+void request_unit_return(unit_t *punit);
+void request_unit_upgrade(unit_t *punit);
+void request_unit_wait(unit_t *punit);
+void request_unit_wakeup(unit_t *punit);
 void request_unit_delayed_goto(void);
 void request_unit_clear_delayed_orders(void);
 void request_diplomat_action(enum diplomat_actions action, int dipl_id,
@@ -198,18 +198,18 @@ void wakeup_sentried_units(tile_t *ptile);
 
 void auto_center_on_focus_unit(void);
 void advance_unit_focus(void);
-struct unit *get_unit_in_focus(void);
-void set_unit_focus(struct unit *punit);
-void set_unit_focus_and_active(struct unit *punit);
-void set_unit_focus_and_select(struct unit *punit);
+unit_t *get_unit_in_focus(void);
+void set_unit_focus(unit_t *punit);
+void set_unit_focus_and_active(unit_t *punit);
+void set_unit_focus_and_select(unit_t *punit);
 void update_unit_focus(void);
-struct unit *find_visible_unit(tile_t *ptile);
-void set_units_in_combat(struct unit *pattacker, struct unit *pdefender);
+unit_t *find_visible_unit(tile_t *ptile);
+void set_units_in_combat(unit_t *pattacker, unit_t *pdefender);
 void blink_active_unit(void);
-void update_unit_pix_label(struct unit *punit);
+void update_unit_pix_label(unit_t *punit);
 
-void process_caravan_arrival(struct unit *punit);
-void process_diplomat_arrival(struct unit *pdiplomat, int victim_id);
+void process_caravan_arrival(unit_t *punit);
+void process_diplomat_arrival(unit_t *pdiplomat, int victim_id);
 
 void key_cancel_action(void);
 void key_center_capital(void);
@@ -290,7 +290,7 @@ extern int num_units_below;
 void control_queues_init(void);
 void control_queues_free(void);
 
-void put_unit_focus(struct unit *punit);
+void put_unit_focus(unit_t *punit);
 void lie_unit_focus_init(void);
 void put_last_unit_focus(void);
 

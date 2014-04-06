@@ -54,7 +54,7 @@
 #define LOG_DIPLOMAT LOG_DEBUG
 #define LOG_DIPLOMAT_BUILD LOG_DEBUG
 
-static void find_city_to_diplomat(player_t *pplayer, struct unit *punit,
+static void find_city_to_diplomat(player_t *pplayer, unit_t *punit,
                                   struct city_s **ctarget, int *move_dist,
                                   struct path_finding_map *map);
 
@@ -160,7 +160,7 @@ void ai_choose_diplomat_offensive(player_t *pplayer,
     int want, loss, p_success, p_failure, time_to_dest;
     int gain_incite = 0, gain_theft = 0, gain = 1;
     int incite_cost;
-    struct unit *punit = create_unit_virtual(pplayer, pcity, u,
+    unit_t *punit = create_unit_virtual(pplayer, pcity, u,
                                              do_make_unit_veteran(pcity, u));
 
     pft_fill_unit_parameter(&parameter, punit);
@@ -250,7 +250,7 @@ void ai_choose_diplomat_offensive(player_t *pplayer,
   is allied. Then we steal, incite, sabotage or poison the city, in that
   order of priority.
 **************************************************************************/
-static void ai_diplomat_city(struct unit *punit, struct city_s *ctarget)
+static void ai_diplomat_city(unit_t *punit, struct city_s *ctarget)
 {
   player_t *pplayer = unit_owner(punit);
   player_t *tplayer = city_owner(ctarget);
@@ -314,7 +314,7 @@ static void ai_diplomat_city(struct unit *punit, struct city_s *ctarget)
   Returns (in ctarget) the closest city to send diplomats against, or NULL
   if none available on this continent.  punit can be virtual.
 **************************************************************************/
-static void find_city_to_diplomat(player_t *pplayer, struct unit *punit,
+static void find_city_to_diplomat(player_t *pplayer, unit_t *punit,
                                   struct city_s **ctarget, int *move_dist,
                                   struct path_finding_map *map)
 {
@@ -370,7 +370,7 @@ static void find_city_to_diplomat(player_t *pplayer, struct unit *punit,
   Go to nearest/most threatened city (can be the current city too).
 **************************************************************************/
 static struct city_s *ai_diplomat_defend(player_t *pplayer,
-                                       struct unit *punit,
+                                       unit_t *punit,
                                        Unit_Type_id utype, struct path_finding_map *map)
 {
   int best_dist = 30; /* any city closer than this is better than none */
@@ -433,8 +433,9 @@ static struct city_s *ai_diplomat_defend(player_t *pplayer,
   the ordeal, FALSE if not or we expended all our movement.
   Will try to bribe a ship on the coast as well as land stuff.
 **************************************************************************/
-static bool ai_diplomat_bribe_nearby(player_t *pplayer, 
-                                     struct unit *punit, struct path_finding_map *map)
+static bool ai_diplomat_bribe_nearby(player_t *pplayer,
+                                     unit_t *punit,
+                                     struct path_finding_map *map)
 {
   int gold_avail = pplayer->economic.gold - pplayer->ai.est_upkeep;
   struct ai_data *ai = ai_data_get(pplayer);
@@ -443,7 +444,7 @@ static bool ai_diplomat_bribe_nearby(player_t *pplayer,
     tile_t *ptile = pos.tile;
     bool threat = FALSE;
     int newval, bestval = 0, cost;
-    struct unit *pvictim = unit_list_get(ptile->units, 0);
+    unit_t *pvictim = unit_list_get(ptile->units, 0);
     int sanity = punit->id;
 
     if (pos.total_MC > punit->moves_left) {
@@ -539,7 +540,7 @@ static bool ai_diplomat_bribe_nearby(player_t *pplayer,
   we should send diplomats by boat eventually. I just don't know how that
   part of the code works, yet - Per
 **************************************************************************/
-void ai_manage_diplomat(player_t *pplayer, struct unit *punit)
+void ai_manage_diplomat(player_t *pplayer, unit_t *punit)
 {
   struct city_s *pcity, *ctarget = NULL;
   struct pf_parameter parameter;

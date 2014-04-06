@@ -213,8 +213,8 @@ const char *popup_info_text(tile_t *ptile)
 {
   const char *activity_text;
   city_t *pcity = ptile->city;
-  struct unit *punit = find_visible_unit(ptile);
-  struct unit *pfocus_unit = get_unit_in_focus();
+  unit_t *punit = find_visible_unit(ptile);
+  unit_t *pfocus_unit = get_unit_in_focus();
   const char *diplo_nation_plural_adjectives[DIPLSTATE_LAST] =
     {Q_("?nation:Neutral"), Q_("?nation:Hostile"),
      "" /* unused, DS_CEASEFIRE*/,
@@ -498,7 +498,7 @@ const char *get_nearest_city_text(city_t *pcity, int sq_dist)
 /****************************************************************************
   Returns the unit description.
 ****************************************************************************/
-const char *unit_description(struct unit *punit)
+const char *unit_description(unit_t *punit)
 {
   int pcity_near_dist;
   city_t *pcity =
@@ -595,7 +595,7 @@ const char *get_info_label_text(void)
 
   FIXME: this should be renamed.
 ****************************************************************************/
-const char *get_unit_info_label_text1(struct unit *punit)
+const char *get_unit_info_label_text1(unit_t *punit)
 {
   INIT;
 
@@ -618,7 +618,7 @@ const char *get_unit_info_label_text1(struct unit *punit)
 
   FIXME: this should be renamed.
 ****************************************************************************/
-const char *get_unit_info_label_text2(struct unit *punit)
+const char *get_unit_info_label_text2(unit_t *punit)
 {
   INIT;
 

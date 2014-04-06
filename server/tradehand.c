@@ -206,7 +206,7 @@ void server_establish_trade_route(city_t *pcity1, city_t *pcity2)
 /****************************************************************************
   Establish a trade route - Must be the only issue
 ****************************************************************************/
-void unit_establish_trade_route(struct unit *punit, city_t *pcity1,
+void unit_establish_trade_route(unit_t *punit, city_t *pcity1,
                                 city_t *pcity2)
 {
   player_t *pplayer = unit_owner(punit);
@@ -375,7 +375,7 @@ void unit_establish_trade_route(struct unit *punit, city_t *pcity1,
 /****************************************************************************
   Free orders
 ****************************************************************************/
-void trade_free_unit(struct unit *punit)
+void trade_free_unit(unit_t *punit)
 {
   if (punit->ptr->status == TR_PL_AND_IR) {
     punit->ptr->status = TR_PLANNED;
@@ -474,7 +474,7 @@ void handle_trade_route_remove(player_t *pplayer, int city1, int city2)
 void handle_unit_trade_route(player_t *pplayer, int unit_id,
                              int city1, int city2)
 {
-  struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
+  unit_t *punit = player_find_unit_by_id(pplayer, unit_id);
   city_t *pcity1, *pcity2;
   struct trade_route *ptr = NULL;
 

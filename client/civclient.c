@@ -512,7 +512,7 @@ void send_turn_done(void)
 /**************************************************************************
   ...
 **************************************************************************/
-void send_goto_unit(struct unit *punit, tile_t *dest_tile)
+void send_goto_unit(unit_t *punit, tile_t *dest_tile)
 {
   dsend_packet_unit_goto(&aconnection, punit->id,
                          dest_tile->x, dest_tile->y);

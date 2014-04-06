@@ -31,6 +31,6 @@ bool is_output_window_frozen(void);
 
 int insert_city_link(char *buf, size_t buflen, city_t *pcity);
 int insert_tile_link(char *buf, size_t buflen, tile_t *ptile);
-int insert_unit_link(char *buf, size_t buflen, struct unit *punit);
+int insert_unit_link(char *buf, size_t buflen, unit_t *punit);
 
 #endif  /* WC_CLIENT_CHATLINE_COMMON_H */

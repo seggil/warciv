@@ -1454,7 +1454,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
   player_t *pplayer1;
   player_t *pplayer2;
   struct unit_list *player2_units, *player1_units;
-  struct unit *aunit;
+  unit_t *aunit;
 
   if (!is_allowed(UAB_SWITCH)) {
     cmd_reply(CMD_SWITCH, caller, C_FAIL,
@@ -3587,7 +3587,7 @@ static bool debug_command(struct connection *caller, char *str, bool check)
     } unit_list_iterate_end;
   } else if (ntokens > 0 && strcmp(arg[0], "unit") == 0) {
     int id;
-    struct unit *punit;
+    unit_t *punit;
     if (ntokens != 2) {
       cmd_reply(CMD_DEBUG, caller, C_SYNTAX, "%s", usage);
       goto cleanup;

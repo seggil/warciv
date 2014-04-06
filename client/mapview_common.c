@@ -932,7 +932,7 @@ static void put_drawn_sprites(struct canvas *pcanvas,
   Draw the given unit onto the canvas store at the given location.  The
   area of drawing is UNIT_TILE_HEIGHT x UNIT_TILE_WIDTH.
 **************************************************************************/
-void put_unit(struct unit *punit,
+void put_unit(unit_t *punit,
               struct canvas *pcanvas, int canvas_x, int canvas_y)
 {
   struct drawn_sprite drawn_sprites[40];
@@ -1016,7 +1016,7 @@ void put_city_tile_output(struct city_s *pcity, int city_x, int city_y,
   (one sprite drawn N times on top of itself), but we just use separate
   sprites (limiting the number of combinations).
 ****************************************************************************/
-void put_unit_city_overlays(struct unit *punit,
+void put_unit_city_overlays(unit_t *punit,
                             struct canvas *pcanvas,
                             int canvas_x, int canvas_y)
 {
@@ -1092,7 +1092,7 @@ void toggle_city_color(struct city_s *pcity)
   citymap as shown on the mapview.  These colors are listed in the
   city_colors array; above.
 ****************************************************************************/
-void toggle_unit_color(struct unit *punit)
+void toggle_unit_color(unit_t *punit)
 {
   int canvas_x, canvas_y;
   int width = get_citydlg_canvas_width();
@@ -1706,7 +1706,7 @@ void draw_map_canvas(int canvas_x, int canvas_y,
     /* Draw citymap overlays on top. */
     gui_rect_iterate(gui_x0, gui_y0, width, height, ptile) {
       if (tile_get_known(ptile) != TILE_UNKNOWN) {
-        struct unit *punit;
+        unit_t *punit;
         struct city_s *pcity;
         int city_x, city_y, canvas_x2, canvas_y2;
 
@@ -1888,7 +1888,7 @@ void show_city_descriptions(int canvas_x, int canvas_y,
 
   This duplicates drawing code that is run during the hover state.
 ****************************************************************************/
-bool show_unit_orders(struct unit *punit)
+bool show_unit_orders(unit_t *punit)
 {
   if (punit && unit_has_orders(punit)) {
     tile_t *ptile = punit->tile;
@@ -1992,11 +1992,11 @@ void undraw_segment(tile_t *src_tile, enum direction8 dir)
   This function is called to decrease a unit's HP smoothly in battle
   when combat_animation is turned on.
 ****************************************************************************/
-void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
-                             struct unit *punit1, int hp1)
+void decrease_unit_hp_smooth(unit_t *punit0, int hp0,
+                             unit_t *punit1, int hp1)
 {
   static struct timer *anim_timer = NULL;
-  struct unit *losing_unit = (hp0 == 0 ? punit0 : punit1);
+  unit_t *losing_unit = (hp0 == 0 ? punit0 : punit1);
   int canvas_x, canvas_y, i;
 
   set_units_in_combat(punit0, punit1);
@@ -2055,7 +2055,7 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
   Animates punit's "smooth" move from (x0, y0) to (x0+dx, y0+dy).
   Note: Works only for adjacent-tile moves.
 **************************************************************************/
-void move_unit_map_canvas(struct unit *punit,
+void move_unit_map_canvas(unit_t *punit,
                           tile_t *src_tile, int dx, int dy)
 {
   static struct timer *anim_timer = NULL;
@@ -2148,10 +2148,11 @@ void move_unit_map_canvas(struct unit *punit,
     g.  If nobody can work it, return NULL.
 **************************************************************************/
 struct city_s *find_city_or_settler_near_tile(tile_t *ptile,
-                                              struct unit **punit)
+                                              unit_t **punit)
 {
   struct city_s *pcity = ptile->worked, *closest_city;
-  struct unit *closest_settler = NULL, *best_settler = NULL;
+  unit_t *closest_settler = NULL;
+  unit_t *best_settler = NULL;
   bool global_observer = client_is_global_observer();
 
   if (punit) {

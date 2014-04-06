@@ -427,7 +427,7 @@ static bool sell_random_improvement(player_t *pplayer)
 **************************************************************************/
 static bool drop_random_unit(player_t *pplayer)
 {
-  struct unit *cunit = NULL;
+  unit_t *cunit = NULL;
   int r = 0;
 
   /* Don't iterate the units, maybe some doesn't have homecity */
@@ -1184,7 +1184,7 @@ static bool city_build_building(player_t *pplayer, city_t *pcity)
 **************************************************************************/
 static bool city_build_unit(player_t *pplayer, city_t *pcity)
 {
-  struct unit *punit = NULL;
+  unit_t *punit = NULL;
 
   if (!upgrade_unit_prod(pcity)) {
     /* Delay this */

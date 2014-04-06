@@ -15,6 +15,6 @@
 
 void auto_attack(void);
 bool auto_attack_with_unit(player_t *pplayer,
-                           struct unit *punit);
+                           unit_t *punit);
 
 #endif  /* WC_SERVER_AUTOATTACK_H */

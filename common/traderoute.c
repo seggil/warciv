@@ -58,7 +58,7 @@ static struct pf_parameter *get_caravan_parameter(player_t *pplayer,
   }
 
   Unit_Type_id utype = -1;
-  struct unit *punit;
+  unit_t *punit;
 
   /* Find a type */
   unit_type_iterate(ttype) {
@@ -110,8 +110,9 @@ static int calculate_default_move_cost(city_t *pcity1, city_t *pcity2)
 /**************************************************************************
   Calculate the move cost for the unit for going from to ptile1 to ptile2.
 **************************************************************************/
-static int base_calculate_move_cost(struct unit *punit, tile_t *ptile1,
-                                                        tile_t *ptile2)
+static int base_calculate_move_cost(unit_t *punit,
+                                    tile_t *ptile1,
+                                    tile_t *ptile2)
 {
   struct pf_parameter parameter;
   struct path_finding_map *pmap;
@@ -133,7 +134,7 @@ static int base_calculate_move_cost(struct unit *punit, tile_t *ptile1,
 /**************************************************************************
   Calculate trade move cost. For a unit between 2 cities.
 **************************************************************************/
-static int base_calculate_trade_move_cost(struct unit *punit,
+static int base_calculate_trade_move_cost(unit_t *punit,
                                           city_t *pcity1,
                                           city_t *pcity2)
 {
@@ -152,7 +153,7 @@ static int base_calculate_trade_move_cost(struct unit *punit,
 ****************************************************************************/
 static struct trade_route *trade_route_new(city_t *pcity1,
                                            city_t *pcity2,
-                                           struct unit *punit,
+                                           unit_t *punit,
                                            enum trade_route_status status)
 {
   struct trade_route *p_tr = wc_malloc(sizeof(struct trade_route));
@@ -280,7 +281,7 @@ int calculate_trade_move_turns(struct trade_route *p_tr)
 /****************************************************************************
   Return TRUE, if a path is found, else FALSE.
 ****************************************************************************/
-static bool add_move_orders(struct unit *punit, struct unit_order *porders,
+static bool add_move_orders(unit_t *punit, struct unit_order *porders,
                             int *length, int max_length,
                             tile_t *otile, tile_t *dtile)
 {
@@ -1084,7 +1085,7 @@ void trade_planning_calculation_get_advancement(
   etr is the best external trade route.
   htr is the best trade route from homecity.
 ****************************************************************************/
-struct trade_route *get_next_trade_route_to_establish(struct unit *punit,
+struct trade_route *get_next_trade_route_to_establish(unit_t *punit,
                                                       bool best_value,
                                                       bool allow_free_other,
                                                       bool internal_first,
@@ -1094,7 +1095,7 @@ struct trade_route *get_next_trade_route_to_establish(struct unit *punit,
   struct trade_route *etr = NULL;
   struct trade_route *htr = NULL;
   struct trade_route **pp_tr;
-  struct unit *ounit;
+  unit_t *ounit;
 
   city_list_iterate(unit_owner(punit)->cities, pcity) {
     trade_route_list_iterate(pcity->common.trade_routes, p_tr) {

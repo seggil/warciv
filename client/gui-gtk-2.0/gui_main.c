@@ -2065,7 +2065,7 @@ void sound_bell(void)
   Index 'idx' is -1 for "active unit", or 0 to (num_units_below-1) for
   units below.  Also updates unit_ids[idx] for idx>=0.
 **************************************************************************/
-void set_unit_icon(int idx, struct unit *punit)
+void set_unit_icon(int idx, unit_t *punit)
 {
   GtkWidget *w;
 
@@ -2116,7 +2116,7 @@ static gboolean select_unit_pixmap_callback(GtkWidget *w, GdkEvent *ev,
                                             gpointer data)
 {
   int i = GPOINTER_TO_INT(data);
-  struct unit *punit;
+  unit_t *punit;
 
   if (i == -1) {
     if ((punit = get_unit_in_focus())) {

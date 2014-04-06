@@ -101,7 +101,7 @@ struct unit_type *get_unit_type(Unit_Type_id id)
 /**************************************************************************
 ...
 **************************************************************************/
-struct unit_type *unit_type(struct unit *punit)
+struct unit_type *unit_type(unit_t *punit)
 {
   return get_unit_type(punit->type);
 }
@@ -186,7 +186,7 @@ bool unit_type_flag(Unit_Type_id id, int flag)
 /**************************************************************************
 ...
 **************************************************************************/
-bool unit_flag(struct unit *punit, enum unit_flag_id flag)
+bool unit_flag(unit_t *punit, enum unit_flag_id flag)
 {
   return unit_type_flag(punit->type, flag);
 }

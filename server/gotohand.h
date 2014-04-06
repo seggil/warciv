@@ -30,13 +30,13 @@ enum goto_result {
 };
 
 bool is_dist_finite(int dist);
-enum goto_result do_unit_goto(struct unit *punit,
+enum goto_result do_unit_goto(unit_t *punit,
                               enum goto_move_restriction restriction,
                               bool trigger_special_ability);
-void generate_warmap(city_t *pcity, struct unit *punit);
-void really_generate_warmap(city_t *pcity, struct unit *punit,
+void generate_warmap(city_t *pcity, unit_t *punit);
+void really_generate_warmap(city_t *pcity, unit_t *punit,
                             enum unit_move_type move_type);
-int calculate_move_cost(struct unit *punit, tile_t *dst_tile);
+int calculate_move_cost(unit_t *punit, tile_t *dst_tile);
 int air_can_move_between(int moves, tile_t *src_tile,
                          tile_t *dst_tile, player_t *pplayer);
 
@@ -45,7 +45,7 @@ int air_can_move_between(int moves, tile_t *src_tile,
 #define THRESHOLD 12
 
 
-bool goto_is_sane(struct unit *punit, tile_t *ptile, bool omni);
+bool goto_is_sane(unit_t *punit, tile_t *ptile, bool omni);
 
 struct move_cost_map {
   unsigned char *cost;
@@ -54,7 +54,7 @@ struct move_cost_map {
   int size;
 
   city_t *warcity; /* so we know what we're dealing with here */
-  struct unit *warunit; /* so we know what we're dealing with here */
+  unit_t *warunit; /* so we know what we're dealing with here */
   tile_t *orig_tile;
 };
 

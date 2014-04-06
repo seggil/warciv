@@ -409,7 +409,7 @@ static void try_summon_barbarians(void)
     (void) create_unit(barbarians, utile,
                        get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0, -1);
   } else {                   /* sea raiders - their units will be veteran */
-    struct unit *ptrans;
+    unit_t *ptrans;
     int n_boats = 1;
     int i_boat;
 

@@ -18,26 +18,26 @@
 
 #include "gotohand.h"           /* enum goto_move_restriction */
 
-void diplomat_embassy(player_t *pplayer, struct unit *pdiplomat,
+void diplomat_embassy(player_t *pplayer, unit_t *pdiplomat,
                           city_t *pcity);
-void diplomat_investigate(player_t *pplayer, struct unit *pdiplomat,
+void diplomat_investigate(player_t *pplayer, unit_t *pdiplomat,
                           city_t *pcity);
-void spy_get_sabotage_list(player_t *pplayer, struct unit *pdiplomat,
+void spy_get_sabotage_list(player_t *pplayer, unit_t *pdiplomat,
                            city_t *pcity);
-void spy_poison(player_t *pplayer, struct unit *pdiplomat,
+void spy_poison(player_t *pplayer, unit_t *pdiplomat,
                 city_t *pcity);
-void spy_sabotage_unit(player_t *pplayer, struct unit *pdiplomat,
-                       struct unit *pvictim);
-void diplomat_bribe(player_t *pplayer, struct unit *pdiplomat,
+void spy_sabotage_unit(player_t *pplayer, unit_t *pdiplomat,
+                       unit_t *pvictim);
+void diplomat_bribe(player_t *pplayer, unit_t *pdiplomat,
                     tile_t *ptile);
-void diplomat_get_tech(player_t *pplayer, struct unit *pdiplomat,
+void diplomat_get_tech(player_t *pplayer, unit_t *pdiplomat,
                        city_t  *pcity, int technology);
-void diplomat_incite(player_t *pplayer, struct unit *pdiplomat,
+void diplomat_incite(player_t *pplayer, unit_t *pdiplomat,
                      city_t *pcity);
-void diplomat_sabotage(player_t *pplayer, struct unit *pdiplomat,
+void diplomat_sabotage(player_t *pplayer, unit_t *pdiplomat,
                        city_t *pcity, Impr_Type_id improvement);
 
 int count_diplomats_on_tile(tile_t *ptile);
-int unit_bribe_cost(struct unit *punit);
+int unit_bribe_cost(unit_t *punit);
 
 #endif  /* WC_SERVER_DIPLOMATS_H */

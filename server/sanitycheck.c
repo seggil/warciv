@@ -294,7 +294,8 @@ static void check_units(void) {
     unit_list_iterate(pplayer->units, punit) {
       tile_t *ptile = punit->tile;
       city_t *pcity;
-      struct unit *transporter = NULL, *transporter2 = NULL;
+      unit_t *transporter = NULL;
+      unit_t *transporter2 = NULL;
 
       assert(unit_owner(punit) == pplayer);
 

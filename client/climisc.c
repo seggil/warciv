@@ -182,12 +182,12 @@ void client_remove_player(int plrno)
 /**************************************************************************
 ...
 **************************************************************************/
-void client_remove_unit(struct unit *punit)
+void client_remove_unit(unit_t *punit)
 {
   city_t *pcity;
   tile_t *ptile = punit->tile;
   int hc = punit->homecity;
-  struct unit *ufocus = get_unit_in_focus();
+  unit_t *ufocus = get_unit_in_focus();
 
   freelog(LOG_DEBUG, "removing unit %d, %s %s (%d %d) hcity %d",
           punit->id, get_nation_name(unit_owner(punit)->nation),
@@ -494,7 +494,7 @@ void center_on_something(void)
 {
   player_t *pplayer;
   city_t *pcity;
-  struct unit *punit;
+  unit_t *punit;
 
   if (!can_client_change_view()) {
     return;
@@ -1512,7 +1512,7 @@ void normalize_names_in_selected_cities(void)
   distance Parameter sq_dist may be NULL. Returns NULL only if no city is
   known. Favors punit owner's cities over other cities if equally distant.
 **************************************************************************/
-city_t *get_nearest_city(struct unit *punit, int *sq_dist)
+city_t *get_nearest_city(unit_t *punit, int *sq_dist)
 {
   city_t *pcity_near;
   int pcity_near_dist;
@@ -1731,7 +1731,7 @@ static tile_t *get_link_mark_tile(struct map_link *pml)
     }
   case LINK_UNIT:
     {
-      struct unit *punit = find_unit_by_id(pml->id);
+      unit_t *punit = find_unit_by_id(pml->id);
       return punit ? punit->tile : NULL;
     }
   }
@@ -2243,7 +2243,7 @@ void execute_air_patrol_orders(void)
 /**********************************************************************
   ...
 ***********************************************************************/
-void do_unit_air_patrol(struct unit *punit, tile_t *ptile)
+void do_unit_air_patrol(unit_t *punit, tile_t *ptile)
 {
   char buf[1024];
 

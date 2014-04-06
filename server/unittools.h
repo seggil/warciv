@@ -21,10 +21,10 @@
 
 /* battle related */
 int find_a_unit_type(int role, int role_tech);
-bool maybe_make_veteran(struct unit *punit);
-void unit_versus_unit(struct unit *attacker, struct unit *defender,
+bool maybe_make_veteran(unit_t *punit);
+void unit_versus_unit(unit_t *attacker, unit_t *defender,
                       bool bombard);
-bool kills_citizen_after_attack(struct unit *punit);
+bool kills_citizen_after_attack(unit_t *punit);
 
 /* move check related */
 bool is_airunit_refuel_point(tile_t *ptile, player_t *pplayer,
@@ -39,50 +39,50 @@ char *get_location_str_in(player_t *pplayer, tile_t *ptile);
 char *get_location_str_at(player_t *pplayer, tile_t *ptile);
 enum goto_move_restriction get_activity_move_restriction(enum unit_activity activity);
 void make_partisans(city_t *pcity);
-bool enemies_at(struct unit *punit, tile_t *ptile);
-bool teleport_unit_to_city(struct unit *punit, city_t *pcity, int move_cost,
+bool enemies_at(unit_t *punit, tile_t *ptile);
+bool teleport_unit_to_city(unit_t *punit, city_t *pcity, int move_cost,
                           bool verbose);
 void resolve_unit_stacks(player_t *pplayer, player_t *aplayer,
                          bool verbose);
 void remove_allied_visibility(player_t* pplayer, player_t* aplayer);
-int get_watchtower_vision(struct unit *punit);
-bool unit_profits_of_watchtower(struct unit *punit);
-void bounce_unit(struct unit *punit, bool verbose);
+int get_watchtower_vision(unit_t *punit);
+bool unit_profits_of_watchtower(unit_t *punit);
+void bounce_unit(unit_t *punit, bool verbose);
 
 /* creation/deletion/upgrading */
-void upgrade_unit(struct unit *punit, Unit_Type_id to_unit, bool has_to_pay);
-struct unit *create_unit(player_t *pplayer, tile_t *ptile, Unit_Type_id type,
-                         int veteran_level, int homecity_id, int moves_left);
-struct unit *create_unit_full(player_t *pplayer, tile_t *ptile,
-                              Unit_Type_id type, int veteran_level,
-                              int homecity_id, int moves_left, int hp_left,
-                              struct unit *ptrans);
-void wipe_unit(struct unit *punit);
-void wipe_unit_spec_safe(struct unit *punit,
+void upgrade_unit(unit_t *punit, Unit_Type_id to_unit, bool has_to_pay);
+unit_t *create_unit(player_t *pplayer, tile_t *ptile, Unit_Type_id type,
+                    int veteran_level, int homecity_id, int moves_left);
+unit_t *create_unit_full(player_t *pplayer, tile_t *ptile,
+                         Unit_Type_id type, int veteran_level,
+                         int homecity_id, int moves_left, int hp_left,
+                         unit_t *ptrans);
+void wipe_unit(unit_t *punit);
+void wipe_unit_spec_safe(unit_t *punit,
                          bool wipe_cargo, bool ignore_gameloss);
-void kill_unit(struct unit *pkiller, struct unit *punit);
+void kill_unit(unit_t *pkiller, unit_t *punit);
 
 /* sending to client */
-void package_unit(struct unit *punit, struct packet_unit_info *packet);
-void package_short_unit(struct unit *punit,
+void package_unit(unit_t *punit, struct packet_unit_info *packet);
+void package_short_unit(unit_t *punit,
                         struct packet_unit_short_info *packet,
                         enum unit_info_use packet_use, int info_city_id,
                         bool new_serial_num);
-void send_unit_info(player_t *dest, struct unit *punit);
-void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
+void send_unit_info(player_t *dest, unit_t *punit);
+void send_unit_info_to_onlookers(struct conn_list *dest, unit_t *punit,
                                  tile_t *ptile, bool remove_unseen);
 void send_all_known_units(struct conn_list *dest);
-void unit_goes_out_of_sight(player_t *pplayer, struct unit *punit);
+void unit_goes_out_of_sight(player_t *pplayer, unit_t *punit);
 
 /* doing a unit activity */
 void do_nuclear_explosion(player_t *pplayer, tile_t *ptile);
-bool try_move_unit(struct unit *punit, tile_t *ptile);
-bool do_airlift(struct unit *punit, city_t *city2);
-bool do_paradrop(struct unit *punit, tile_t *ptile);
-void load_unit_onto_transporter(struct unit *punit, struct unit *ptrans);
-void unload_unit_from_transporter(struct unit *punit);
-bool move_unit(struct unit *punit, tile_t *ptile, int move_cost);
-bool execute_orders(struct unit *punit);
+bool try_move_unit(unit_t *punit, tile_t *ptile);
+bool do_airlift(unit_t *punit, city_t *city2);
+bool do_paradrop(unit_t *punit, tile_t *ptile);
+void load_unit_onto_transporter(unit_t *punit, unit_t *ptrans);
+void unload_unit_from_transporter(unit_t *punit);
+bool move_unit(unit_t *punit, tile_t *ptile, int move_cost);
+bool execute_orders(unit_t *punit);
 
 void reset_air_patrol(player_t *pplayer);
 

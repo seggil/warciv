@@ -371,7 +371,7 @@ void print_cityresult(player_t *pplayer, struct cityresult *cr,
   return result->total == 0, then no place was found.
 **************************************************************************/
 static void city_desirability(player_t *pplayer, struct ai_data *ai,
-                              struct unit *punit, tile_t *ptile,
+                              unit_t *punit, tile_t *ptile,
                               struct cityresult *result)
 {
   struct city_s *pcity = map_get_city(ptile);
@@ -457,7 +457,7 @@ void ai_settler_init(player_t *pplayer)
   TODO: Transparently check if we should add ourselves to an existing city.
 **************************************************************************/
 static bool settler_map_iterate(struct pf_parameter *parameter,
-                                struct unit *punit,
+                                unit_t *punit,
                                 struct cityresult *best,
                                 player_t *pplayer,
                                 int boat_cost)
@@ -539,12 +539,12 @@ static bool settler_map_iterate(struct pf_parameter *parameter,
   virtual units).  I guess it won't hurt to remove this condition, PF
   will just give no positions.
 **************************************************************************/
-void find_best_city_placement(struct unit *punit, struct cityresult *best,
+void find_best_city_placement(unit_t *punit, struct cityresult *best,
                               bool look_for_boat, bool use_virt_boat)
 {
   player_t *pplayer = unit_owner(punit);
   struct pf_parameter parameter;
-  struct unit *ferry = NULL;
+  unit_t *ferry = NULL;
 
   assert(pplayer->ai.control);
 

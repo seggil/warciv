@@ -70,7 +70,7 @@ void upgrade_city_rails(player_t *pplayer, bool discovery);
 void send_map_info(struct conn_list *dest);
 void map_fog_city_area(city_t *pcity);
 void map_unfog_city_area(city_t *pcity);
-void remove_unit_sight_points(struct unit *punit);
+void remove_unit_sight_points(unit_t *punit);
 void show_area(player_t *pplayer,tile_t *ptile, int len);
 void map_unfog_pseudo_city_area(player_t *pplayer, tile_t *ptile);
 void map_fog_pseudo_city_area(player_t *pplayer, tile_t *ptile);

@@ -582,7 +582,7 @@ int city_science_bonus(city_t *pcity)
 /*********************************************************************
   Note: the old unit is not wiped here.
 ***********************************************************************/
-static void transfer_unit(struct unit *punit, city_t *tocity,
+static void transfer_unit(unit_t *punit, city_t *tocity,
                           bool verbose)
 {
   player_t *from_player = unit_owner(punit);
@@ -1183,7 +1183,7 @@ void remove_city(city_t *pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_enter_city(struct unit *punit, city_t *pcity)
+void handle_unit_enter_city(unit_t *punit, city_t *pcity)
 {
   bool do_civil_war = FALSE;
   int coins;

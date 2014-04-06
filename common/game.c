@@ -140,7 +140,7 @@ city_t *find_city_by_name_fast(const char *name)
   Find unit out of all units in game: now uses fast idex method,
   instead of looking through all units of all players.
 **************************************************************************/
-struct unit *find_unit_by_id(int id)
+unit_t *find_unit_by_id(int id)
 {
   return idex_lookup_unit(id);
 }
@@ -148,7 +148,7 @@ struct unit *find_unit_by_id(int id)
 /**************************************************************************
   In the server call wipe_unit(), and never this function directly.
 **************************************************************************/
-void game_remove_unit(struct unit *punit)
+void game_remove_unit(unit_t *punit)
 {
   city_t *pcity;
 

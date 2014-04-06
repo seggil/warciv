@@ -154,7 +154,7 @@ void center_tile_mapcanvas(tile_t *ptile);
 bool tile_visible_mapcanvas(tile_t *ptile);
 bool tile_visible_and_not_on_border_mapcanvas(tile_t *ptile);
 
-void put_unit(struct unit *punit,
+void put_unit(unit_t *punit,
               struct canvas *pcanvas, int canvas_x, int canvas_y);
 void put_city(city_t *pcity,
               struct canvas *pcanvas, int canvas_x, int canvas_y);
@@ -164,11 +164,11 @@ void put_terrain(tile_t *ptile,
 void put_city_tile_output(city_t *pcity, int city_x, int city_y,
                           struct canvas *pcanvas,
                           int canvas_x, int canvas_y);
-void put_unit_city_overlays(struct unit *punit,
+void put_unit_city_overlays(unit_t *punit,
                             struct canvas *pcanvas,
                             int canvas_x, int canvas_y);
 void toggle_city_color(city_t *pcity);
-void toggle_unit_color(struct unit *punit);
+void toggle_unit_color(unit_t *punit);
 void put_red_frame_tile(struct canvas *pcanvas,
                         int canvas_x, int canvas_y);
 
@@ -193,18 +193,18 @@ void flush_dirty_overview(void);
 
 void show_city_descriptions(int canvas_x, int canvas_y,
                             int width, int height);
-bool show_unit_orders(struct unit *punit);
+bool show_unit_orders(unit_t *punit);
 
 void draw_segment(tile_t *ptile, enum direction8 dir);
 void undraw_segment(tile_t *ptile, enum direction8 dir);
 
-void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
-                             struct unit *punit1, int hp1);
-void move_unit_map_canvas(struct unit *punit,
+void decrease_unit_hp_smooth(unit_t *punit0, int hp0,
+                             unit_t *punit1, int hp1);
+void move_unit_map_canvas(unit_t *punit,
                           tile_t *ptile, int dx, int dy);
 
 city_t *find_city_or_settler_near_tile(tile_t *ptile,
-                                       struct unit **punit);
+                                       unit_t **punit);
 city_t *find_city_near_tile(tile_t *ptile);
 
 void get_city_mapview_production(city_t *pcity,

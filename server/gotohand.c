@@ -261,7 +261,7 @@ possible cost the first time.
 This would be done by inserting the tiles in a list after their move_cost
 as they were found.
 **************************************************************************/
-void really_generate_warmap(city_t *pcity, struct unit *punit,
+void really_generate_warmap(city_t *pcity, unit_t *punit,
                             enum unit_move_type move_type)
 {
   int move_cost;
@@ -366,7 +366,7 @@ pcity and/or punit is nun-NULL.
 FIXME: Why is the movetype not used initialized on the warmap? Leaving it
 for now.
 **************************************************************************/
-void generate_warmap(city_t *pcity, struct unit *punit)
+void generate_warmap(city_t *pcity, unit_t *punit)
 {
   freelog(LOG_DEBUG, "Generating warmap, pcity = %s, punit = %s",
           (pcity ? pcity->common.name : "NULL"),
@@ -449,7 +449,7 @@ Can we move between for ZOC? (only for land units). Includes a special
 case only relevant for GOTOs (see below). came_from is a bit-vector
 containing the directions we could have come from.
 **************************************************************************/
-static bool goto_zoc_ok(struct unit *punit, tile_t *src_tile,
+static bool goto_zoc_ok(unit_t *punit, tile_t *src_tile,
                         tile_t *dest_tile, dir_vector came_from)
 {
   if (can_step_taken_wrt_to_zoc
@@ -562,7 +562,7 @@ be _very_ expensive in CPU).
 FIXME: this is a bit of a mess in not respecting FoW, and only sometimes
 respecting if a square is known. (not introduced by me though) -Thue
 **************************************************************************/
-static bool find_the_shortest_path(struct unit *punit,
+static bool find_the_shortest_path(unit_t *punit,
                                    tile_t *dest_tile,
                                    enum goto_move_restriction restriction)
 {
@@ -576,7 +576,7 @@ static bool find_the_shortest_path(struct unit *punit,
   int straight_dir = 0; /* init to silence compiler warning */
   dir_vector local_vector[MAX_MAP_INDEX];
 #define LOCAL_VECTOR(ptile) local_vector[(ptile)->index]
-  struct unit *pcargo;
+  unit_t *pcargo;
   /*
    * Land/air units use warmap.cost while sea units use
    * warmap.seacost.  Some code will use both.
@@ -891,7 +891,7 @@ Notes on the implementation:
   find_the_shortest_path (which is called every turn).
 
 **************************************************************************/
-static int find_a_direction(struct unit *punit,
+static int find_a_direction(unit_t *punit,
                             enum goto_move_restriction restriction,
                             tile_t *dest_tile)
 {
@@ -915,7 +915,7 @@ static int find_a_direction(struct unit *punit,
 #define DONT_SELECT_ME_FITNESS          (-1)
 
   int i, fitness[8], best_fitness = DONT_SELECT_ME_FITNESS;
-  struct unit *passenger;
+  unit_t *passenger;
   player_t *pplayer = unit_owner(punit);
   bool afraid_of_sinking = (unit_flag(punit, F_TRIREME)
                             && get_player_bonus(pplayer,
@@ -964,7 +964,7 @@ static int find_a_direction(struct unit *punit,
     int defence_multiplier, num_of_allied_units, best_friendly_defence,
         base_move_cost;
     city_t *pcity = map_get_city(ptile);
-    struct unit *best_ally;
+    unit_t *best_ally;
 
     /*
      * Is it an allowed direction?  is it marked on the warmap?
@@ -1216,7 +1216,7 @@ static int find_a_direction(struct unit *punit,
   Basic checks as to whether a GOTO is possible. The target (x,y) should
   be on the same continent as punit is, up to embarkation/disembarkation.
 **************************************************************************/
-bool goto_is_sane(struct unit *punit, tile_t *ptile, bool omni)
+bool goto_is_sane(unit_t *punit, tile_t *ptile, bool omni)
 {
   player_t *pplayer = unit_owner(punit);
 
@@ -1284,7 +1284,7 @@ find_air_first_destination(punit, &waypoint_x, &waypoint_y)
 to get a waypoint to goto. The actual goto is still done with
 find_the_shortest_path(pplayer, punit, waypoint_x, waypoint_y, restriction)
 **************************************************************************/
-enum goto_result do_unit_goto(struct unit *punit,
+enum goto_result do_unit_goto(unit_t *punit,
                               enum goto_move_restriction restriction,
                               bool trigger_special_ability)
 {
@@ -1337,7 +1337,7 @@ enum goto_result do_unit_goto(struct unit *punit,
   if (find_the_shortest_path(punit, waypoint_tile, restriction)) {
     do { /* move the unit along the path chosen by find_the_shortest_path() while we can */
       bool last_tile, success;
-      struct unit *penemy = NULL;
+      unit_t *penemy = NULL;
       int dir;
 
       if (punit->moves_left == 0) {
@@ -1422,7 +1422,7 @@ Calculate and return cost (in terms of move points) for unit to move
 to specified destination.
 Currently only used in autoattack.c
 **************************************************************************/
-int calculate_move_cost(struct unit *punit, tile_t *dest_tile)
+int calculate_move_cost(unit_t *punit, tile_t *dest_tile)
 {
   /* perhaps we should do some caching -- fisch */
 

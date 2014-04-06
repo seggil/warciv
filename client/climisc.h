@@ -33,7 +33,7 @@ enum tag_link_types {
 
 void client_remove_player(int plrno);
 void client_remove_city(city_t *pcity);
-void client_remove_unit(struct unit *punit);
+void client_remove_unit(unit_t *punit);
 
 void client_change_all(cid x, cid y);
 
@@ -122,7 +122,7 @@ void reports_freeze_till(int request_id);
 void reports_thaw(void);
 void reports_force_thaw(void);
 
-city_t *get_nearest_city(struct unit *punit, int *sq_dist);
+city_t *get_nearest_city(unit_t *punit, int *sq_dist);
 
 void cityrep_buy(city_t *pcity);
 void common_taxrates_callback(int i);
@@ -153,7 +153,7 @@ void set_default_user_tech_goal(void);
 void force_tech_goal(Tech_Type_id goal);
 
 void execute_air_patrol_orders(void);
-void do_unit_air_patrol(struct unit *punit, tile_t *ptile);
+void do_unit_air_patrol(unit_t *punit, tile_t *ptile);
 
 enum client_vote_type {
   CVT_NONE = 0,

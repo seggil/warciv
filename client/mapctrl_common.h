@@ -67,7 +67,7 @@ void overview_update_line(int overview_x, int overview_y);
 bool get_chance_to_win(int *att_chance, int *def_chance,
                        tile_t *ptile);
 
-void fill_tile_unit_list(tile_t *ptile, struct unit **unit_list);
+void fill_tile_unit_list(tile_t *ptile, unit_t **unit_list);
 
 extern city_t *city_workers_display;
 

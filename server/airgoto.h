@@ -30,6 +30,6 @@ struct refuel *refuel_iterate_next(struct pqueue *rp_list);
 void refuel_iterate_end(struct pqueue *rp_list);
 void refuel_iterate_process(struct pqueue *rp_list, struct refuel *pfrom);
 
-bool find_air_first_destination(struct unit *punit, tile_t **dst_tile);
+bool find_air_first_destination(unit_t *punit, tile_t **dst_tile);
 
 #endif  /* WC_SERVER_AIRGOTO_H */

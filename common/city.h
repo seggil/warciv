@@ -456,7 +456,7 @@ void get_worker_on_map_position(const tile_t *ptile,
                                 city_t **result_pcity);
 bool is_worker_here(const city_t *pcity, int city_x, int city_y);
 
-bool city_can_be_built_here(const tile_t *ptile, struct unit *punit);
+bool city_can_be_built_here(const tile_t *ptile, unit_t *punit);
 
 /* trade functions */
 bool can_cities_trade(const city_t *pc1, const city_t *pc2);
@@ -497,7 +497,7 @@ city_t *is_non_attack_city_tile(const tile_t *ptile,
 city_t *is_non_allied_city_tile(const tile_t *ptile,
                                 player_t *pplayer);
 
-bool is_unit_near_a_friendly_city(struct unit *punit);
+bool is_unit_near_a_friendly_city(unit_t *punit);
 bool is_friendly_city_near(player_t *owner, const tile_t *ptile);
 bool city_exists_within_city_radius(const tile_t *ptile,
                                     bool may_be_on_center);
@@ -512,7 +512,7 @@ void city_remove_improvement(city_t *pcity,Impr_Type_id impr);
 void generic_city_refresh(city_t *pcity,
                           bool refresh_trade_route_cities,
                           void (*send_unit_info) (player_t * pplayer,
-                                                  struct unit * punit));
+                                                  unit_t * punit));
 void adjust_city_free_cost(int *num_free, int *this_cost);
 int city_corruption(const city_t *pcity, int trade);
 int city_waste(const city_t *pcity, int shields);

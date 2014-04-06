@@ -21,12 +21,14 @@ struct cityresult {
   tile_t *tile;
   int total;              /* total value of position */
   int result;             /* amortized and adjusted total value */
-  int corruption, waste;
+  int corruption;
+  int waste;
   bool overseas;          /* have to use boat to get there */
   bool virt_boat;         /* virtual boat was used in search,
                            * so need to build one */
   tile_t *other_tile;     /* coords to best other tile */
-  int o_x, o_y;           /* city-relative coords for other tile */
+  int o_x;
+  int o_y;                /* city-relative coords for other tile */
   int city_center;        /* value of city center */
   int best_other;         /* value of best other tile */
   int remaining;          /* value of all other tiles */
@@ -36,7 +38,7 @@ struct cityresult {
 void cityresult_fill(player_t *pplayer,
                      struct ai_data *ai,
                      struct cityresult *result);
-void find_best_city_placement(struct unit *punit, struct cityresult *best,
+void find_best_city_placement(unit_t *punit, struct cityresult *best,
                               bool look_for_boat, bool use_virt_boat);
 void ai_settler_init(player_t *pplayer);
 void print_cityresult(player_t *pplayer, struct cityresult *cr,

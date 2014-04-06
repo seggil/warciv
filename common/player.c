@@ -263,7 +263,7 @@ player_t *find_player_by_user(const char *name)
   (d) the unit isn't in a transporter, or we are allied AND
   (e) the unit isn't in a transporter, or we can see the transporter
 ****************************************************************************/
-bool can_player_see_unit_at(player_t *pplayer, struct unit *punit,
+bool can_player_see_unit_at(player_t *pplayer, unit_t *punit,
                             tile_t *ptile)
 {
   city_t *pcity;
@@ -316,7 +316,7 @@ bool can_player_see_unit_at(player_t *pplayer, struct unit *punit,
 
   See can_player_see_unit_at.
 ****************************************************************************/
-bool can_player_see_unit(player_t *pplayer, struct unit *punit)
+bool can_player_see_unit(player_t *pplayer, unit_t *punit)
 {
   return can_player_see_unit_at(pplayer, punit, punit->tile);
 }
@@ -384,10 +384,10 @@ city_t *player_find_city_by_id(const player_t *pplayer,
  return pointer to the unit struct.  Else return NULL.
  Uses fast idex_lookup_city.
 ***************************************************************/
-struct unit *player_find_unit_by_id(const player_t *pplayer,
-                                    int unit_id)
+unit_t *player_find_unit_by_id(const player_t *pplayer,
+                               int unit_id)
 {
-  struct unit *punit = idex_lookup_unit(unit_id);
+  unit_t *punit = idex_lookup_unit(unit_id);
 
   if (punit != NULL && pplayer != NULL
       && unit_owner(punit) == pplayer) {

@@ -453,7 +453,7 @@ void city_rotate_specialist(city_t *pcity, int citizen_index)
 void activate_all_units(tile_t *ptile)
 {
   struct unit_list *punit_list = ptile->units;
-  struct unit *pmyunit = NULL;
+  unit_t *pmyunit = NULL;
 
   unit_list_iterate(punit_list, punit) {
     if (get_player_idx() == punit->owner) {

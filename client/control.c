@@ -59,13 +59,13 @@ bool default_action_locked;
 bool default_action_military_only;
 
 bool focus_turn = TRUE;
-static struct unit *plast = NULL;
+static unit_t *plast = NULL;
 
 /* gui-dep code may adjust depending on tile size etc: */
 int num_units_below = MAX_NUM_UNITS_BELOW;
 
 /* unit_focus points to the current unit in focus */
-static struct unit *punit_focus = NULL;
+static unit_t *punit_focus = NULL;
 
 /* The previously focused unit.  Focus can generally be recalled on this
  * unit with keypad 5.  FIXME: this is not reset when the client
@@ -81,8 +81,8 @@ enum unit_activity connect_activity;
 bool draw_goto_line = TRUE;
 
 /* units involved in current combat */
-static struct unit *punit_attacking = NULL;
-static struct unit *punit_defending = NULL;
+static unit_t *punit_attacking = NULL;
+static unit_t *punit_defending = NULL;
 
 /*
  * This variable is TRUE iff a NON-AI controlled unit was focused this
@@ -92,10 +92,10 @@ bool non_ai_unit_focus;
 
 /*************************************************************************/
 
-static struct unit *find_best_focus_candidate(bool accept_current);
+static unit_t *find_best_focus_candidate(bool accept_current);
 static void store_focus(void);
-static struct unit *quickselect(tile_t *ptile,
-                        enum quickselect_type qtype);
+static unit_t *quickselect(tile_t *ptile,
+                           enum quickselect_type qtype);
 static void do_mass_order(enum unit_activity activity);
 /**************************************************************************
 ...
@@ -123,7 +123,7 @@ void control_queues_init(void)
 /**************************************************************************
 ...
 **************************************************************************/
-void set_hover_state(struct unit *punit, enum cursor_hover_state state,
+void set_hover_state(unit_t *punit, enum cursor_hover_state state,
                      enum unit_activity activity)
 {
   assert(punit != NULL || state == HOVER_NONE);
@@ -157,9 +157,9 @@ in a city, the refresh code draws the previous unit instead of the city).
  This function can be called directly from packhand.c as a result of
  Wakeup Focus (when a unit goes from Sentried to Idle in the server).
 **************************************************************************/
-void set_unit_focus(struct unit *punit)
+void set_unit_focus(unit_t *punit)
 {
-  struct unit *punit_old_focus = punit_focus;
+  unit_t *punit_old_focus = punit_focus;
   bool ms_clear = FALSE;
 
   if (punit && punit->owner != get_player_idx()) {
@@ -214,7 +214,7 @@ void set_unit_focus(struct unit *punit)
 /**************************************************************************
   with activation
 **************************************************************************/
-void set_unit_focus_and_active(struct unit *punit)
+void set_unit_focus_and_active(unit_t *punit)
 {
   request_active_unit(punit);
   set_unit_focus(punit);
@@ -223,7 +223,7 @@ void set_unit_focus_and_active(struct unit *punit)
 /**************************************************************************
  The only difference is that here we draw the "cross".
 **************************************************************************/
-void set_unit_focus_and_select(struct unit *punit)
+void set_unit_focus_and_select(unit_t *punit)
 {
   set_unit_focus_and_active(punit);
   if (punit) {
@@ -272,7 +272,7 @@ void update_unit_focus(void)
 /**************************************************************************
 ...
 **************************************************************************/
-struct unit *get_unit_in_focus(void)
+unit_t *get_unit_in_focus(void)
 {
   return punit_focus;
 }
@@ -290,8 +290,8 @@ void advance_unit_focus(void)
     return;
   }
 
-  struct unit *punit_old_focus = punit_focus;
-  struct unit *candidate = find_best_focus_candidate(FALSE);
+  unit_t *punit_old_focus = punit_focus;
+  unit_t *candidate = find_best_focus_candidate(FALSE);
 
   if (punit_focus && punit_focus->id == hover_unit) {
     set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
@@ -347,13 +347,13 @@ void advance_unit_focus(void)
  in focus unless "accept_current" is TRUE.  If the current focus unit
  is the only possible unit, or if there is no possible unit, returns NULL.
 **************************************************************************/
-static struct unit *find_best_focus_candidate(bool accept_current)
+static unit_t *find_best_focus_candidate(bool accept_current)
 {
   if (client_is_global_observer()) {
     return NULL;
   }
 
-  struct unit *best_candidate;
+  unit_t *best_candidate;
   int best_dist = 99999;
   tile_t *ptile;
 
@@ -387,9 +387,11 @@ static struct unit *find_best_focus_candidate(bool accept_current)
 /**************************************************************************
 Return a pointer to a visible unit, if there is one.
 **************************************************************************/
-struct unit *find_visible_unit(tile_t *ptile)
+unit_t *find_visible_unit(tile_t *ptile)
 {
-  struct unit *panyowned = NULL, *panyother = NULL, *ptptother = NULL;
+  unit_t *panyowned = NULL;
+  unit_t *panyother = NULL;
+  unit_t *ptptother = NULL;
 
   /* If no units here, return nothing. */
   if (unit_list_size(ptile->units) == 0) {
@@ -513,7 +515,7 @@ void blink_active_unit(void)
   be enough information to know whether to redraw -- instead redraw every
   time.  (Could store enough info to know, but is it worth it?)
 **************************************************************************/
-void update_unit_pix_label(struct unit *punit)
+void update_unit_pix_label(unit_t *punit)
 {
   int i;
 
@@ -556,7 +558,7 @@ void update_unit_pix_label(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-void set_units_in_combat(struct unit *pattacker, struct unit *pdefender)
+void set_units_in_combat(unit_t *pattacker, unit_t *pdefender)
 {
   punit_attacking = pattacker;
   punit_defending = pdefender;
@@ -576,7 +578,7 @@ void set_units_in_combat(struct unit *pattacker, struct unit *pdefender)
   re-checking that a popup is appropriate.
   If punit is NULL, just do for the next arrival in the queue.
 **************************************************************************/
-void process_caravan_arrival(struct unit *punit)
+void process_caravan_arrival(unit_t *punit)
 {
   static genlist *arrival_queue = NULL;
   int *p_id;
@@ -643,7 +645,7 @@ void process_caravan_arrival(struct unit *punit)
   re-checking that a popup is appropriate.
   If punit is NULL, just do for the next arrival in the queue.
 **************************************************************************/
-void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
+void process_diplomat_arrival(unit_t *pdiplomat, int victim_id)
 {
   static genlist *arrival_queue = NULL;
   int *p_ids;
@@ -675,7 +677,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
   while (genlist_size(arrival_queue) > 0) {
     int diplomat_id, victim_id;
     city_t *pcity;
-    struct unit *punit;
+    unit_t *punit;
     bool dipl_unit_ok, dipl_city_ok;
 
     p_ids = genlist_get(arrival_queue, 0);
@@ -780,7 +782,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 **************************************************************************/
 void request_unit_goto(void)
 {
-  struct unit *punit = punit_focus;
+  unit_t *punit = punit_focus;
 
   if (!punit) {
     return;
@@ -895,7 +897,7 @@ static bool is_activity_on_tile(tile_t *ptile,
 
   This function is client-specific.
 **************************************************************************/
-bool can_unit_do_connect(struct unit *punit, enum unit_activity activity)
+bool can_unit_do_connect(unit_t *punit, enum unit_activity activity)
 {
   player_t *pplayer = unit_owner(punit);
   Terrain_type_id terrain = map_get_terrain(punit->tile);
@@ -942,7 +944,7 @@ bool can_unit_do_connect(struct unit *punit, enum unit_activity activity)
 /**************************************************************************
   Active an unit
 **************************************************************************/
-void request_active_unit(struct unit *punit)
+void request_active_unit(unit_t *punit)
 {
   if (!punit) {
     return;
@@ -987,7 +989,7 @@ void request_unit_connect(enum unit_activity activity)
 /**************************************************************************
   ...
 **************************************************************************/
-void request_unit_unload_all(struct unit *punit)
+void request_unit_unload_all(unit_t *punit)
 {
   tile_t *ptile = punit->tile;
 
@@ -1018,7 +1020,7 @@ void request_unit_unload_all(struct unit *punit)
 /**************************************************************************
   ...
 **************************************************************************/
-void request_unit_airlift(struct unit *punit, city_t *pcity)
+void request_unit_airlift(unit_t *punit, city_t *pcity)
 {
   punit->is_new = FALSE;
   dsend_packet_unit_airlift(&aconnection, punit->id, pcity->common.id);
@@ -1028,7 +1030,7 @@ void request_unit_airlift(struct unit *punit, city_t *pcity)
   Return-and-recover for a particular unit.  This sets the unit to GOTO
   the nearest city.
 **************************************************************************/
-void request_unit_return(struct unit *punit)
+void request_unit_return(unit_t *punit)
 {
   struct pf_path *path;
 
@@ -1056,7 +1058,7 @@ void request_unit_return(struct unit *punit)
 /**************************************************************************
 (RP:) un-sentry all my own sentried units on punit's tile
 **************************************************************************/
-void request_unit_wakeup(struct unit *punit)
+void request_unit_wakeup(unit_t *punit)
 {
   wakeup_sentried_units(punit->tile);
 }
@@ -1097,7 +1099,7 @@ If this action is not appropriate, the server will respond
 with an appropriate message.  (This is to avoid duplicating
 all the server checks and messages here.)
 **************************************************************************/
-void request_unit_build_city(struct unit *punit)
+void request_unit_build_city(unit_t *punit)
 {
   if (can_unit_build_city(punit)) {
     dsend_packet_city_name_suggestion_req(&aconnection, punit->id);
@@ -1112,7 +1114,7 @@ void request_unit_build_city(struct unit *punit)
 +The same as above except if there is no name sugestion from server
 +then is picked up some random name for city
 +**************************************************************************/
-void request_unit_build_city_random_name (struct unit* punit )
+void request_unit_build_city_random_name (unit_t* punit )
 {
   int random_nmb;
   char *name;
@@ -1138,7 +1140,7 @@ void request_unit_build_city_random_name (struct unit* punit )
   a dialog. (the server code has to be there anyway as goto's are entirely
   in the server)
 **************************************************************************/
-void request_move_unit_direction(struct unit *punit, int dir)
+void request_move_unit_direction(unit_t *punit, int dir)
 {
   tile_t *dest_tile;
 
@@ -1162,7 +1164,7 @@ void request_move_unit_direction(struct unit *punit, int dir)
 /**************************************************************************
 ...
 **************************************************************************/
-void request_new_unit_activity(struct unit *punit, enum unit_activity act)
+void request_new_unit_activity(unit_t *punit, enum unit_activity act)
 {
   if (!can_client_issue_orders()) {
     return;
@@ -1179,7 +1181,7 @@ void request_new_unit_activity(struct unit *punit, enum unit_activity act)
 /**************************************************************************
 ...
 **************************************************************************/
-void request_new_unit_activity_targeted(struct unit *punit,
+void request_new_unit_activity_targeted(unit_t *punit,
                                         enum unit_activity act,
                                         enum tile_special_type tgt)
 {
@@ -1189,7 +1191,7 @@ void request_new_unit_activity_targeted(struct unit *punit,
 /**************************************************************************
 ...
 **************************************************************************/
-void request_unit_disband(struct unit *punit)
+void request_unit_disband(unit_t *punit)
 {
   dsend_packet_unit_disband(&aconnection, punit->id);
 }
@@ -1197,7 +1199,7 @@ void request_unit_disband(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-void request_unit_change_homecity(struct unit *punit)
+void request_unit_change_homecity(unit_t *punit)
 {
   city_t *pcity = map_get_city(punit->tile);
 
@@ -1209,7 +1211,7 @@ void request_unit_change_homecity(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-void request_unit_upgrade(struct unit *punit)
+void request_unit_upgrade(unit_t *punit)
 {
   city_t *pcity;
 
@@ -1229,7 +1231,7 @@ void request_unit_upgrade(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-void request_unit_auto(struct unit *punit)
+void request_unit_auto(unit_t *punit)
 {
   if (can_unit_do_auto(punit)) {
     punit->is_new = FALSE;
@@ -1245,7 +1247,7 @@ void request_unit_auto(struct unit *punit)
 
   If ptransporter is NULL a transporter will be picked at random.
 ****************************************************************************/
-void request_unit_load(struct unit *pcargo, struct unit *ptrans)
+void request_unit_load(unit_t *pcargo, unit_t *ptrans)
 {
   if (!ptrans) {
     ptrans = find_transporter_for_unit(pcargo, pcargo->tile);
@@ -1267,9 +1269,9 @@ void request_unit_load(struct unit *pcargo, struct unit *ptrans)
   Send a request to the server that the cargo be unloaded from its current
   transporter.
 ****************************************************************************/
-void request_unit_unload(struct unit *pcargo)
+void request_unit_unload(unit_t *pcargo)
 {
-  struct unit *ptrans = find_unit_by_id(pcargo->transported_by);
+  unit_t *ptrans = find_unit_by_id(pcargo->transported_by);
 
   if (can_client_issue_orders()
       && ptrans
@@ -1287,7 +1289,7 @@ void request_unit_unload(struct unit *pcargo)
 /**************************************************************************
   ...
 **************************************************************************/
-void request_unit_caravan_action(struct unit *punit, enum packet_type action)
+void request_unit_caravan_action(unit_t *punit, enum packet_type action)
 {
   if (!map_get_city(punit->tile)) {
     return;
@@ -1306,7 +1308,7 @@ void request_unit_caravan_action(struct unit *punit, enum packet_type action)
 /**************************************************************************
   Explode nuclear at a tile without enemy units
 **************************************************************************/
-void request_unit_nuke(struct unit *punit)
+void request_unit_nuke(unit_t *punit)
 {
   if(!unit_flag(punit, F_NUCLEAR)) {
     append_output_window(_("Game: Only nuclear units can do this."));
@@ -1323,7 +1325,7 @@ void request_unit_nuke(struct unit *punit)
 /**************************************************************************
   ...
 **************************************************************************/
-void request_unit_paradrop(struct unit *punit)
+void request_unit_paradrop(unit_t *punit)
 {
   if (!unit_flag(punit, F_PARATROOPERS)) {
     append_output_window(_("Game: Only paratrooper units can do this."));
@@ -1342,7 +1344,7 @@ void request_unit_paradrop(struct unit *punit)
 **************************************************************************/
 void request_unit_patrol(void)
 {
-  struct unit *punit = punit_focus;
+  unit_t *punit = punit_focus;
 
   if (!punit) {
     return;
@@ -1374,7 +1376,7 @@ void request_unit_patrol(void)
 /****************************************************************
   ...
 *****************************************************************/
-void request_unit_sentry(struct unit *punit)
+void request_unit_sentry(unit_t *punit)
 {
   if (punit->is_sleeping) {
     punit->is_sleeping = FALSE;
@@ -1391,7 +1393,7 @@ void request_unit_sentry(struct unit *punit)
 /****************************************************************
   ...
 *****************************************************************/
-void request_unit_fortify(struct unit *punit)
+void request_unit_fortify(unit_t *punit)
 {
   if (punit->activity == ACTIVITY_FORTIFYING) {
     return;
@@ -1405,7 +1407,7 @@ void request_unit_fortify(struct unit *punit)
 /****************************************************************
   ...
 *****************************************************************/
-void request_unit_sleep(struct unit *punit)
+void request_unit_sleep(unit_t *punit)
 {
   if (!can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
     punit->is_sleeping = TRUE;
@@ -1425,7 +1427,7 @@ void request_unit_sleep(struct unit *punit)
 /**************************************************************************
   ...
 **************************************************************************/
-void request_unit_pillage(struct unit *punit)
+void request_unit_pillage(unit_t *punit)
 {
   tile_t *ptile = punit->tile;
   enum tile_special_type pspresent = get_tile_infrastructure_set(ptile);
@@ -1719,7 +1721,7 @@ void request_center_focus_unit(void)
 /**************************************************************************
 ...
 **************************************************************************/
-void request_unit_wait(struct unit *punit)
+void request_unit_wait(unit_t *punit)
 {
   punit->focus_status = FOCUS_WAIT;
 }
@@ -1727,7 +1729,7 @@ void request_unit_wait(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-void request_unit_move_done(struct unit *punit)
+void request_unit_move_done(unit_t *punit)
 {
   if (punit) {
     punit->focus_status = FOCUS_DONE;
@@ -1740,7 +1742,7 @@ void request_unit_move_done(struct unit *punit)
   updating the graphics if necessary.  The caller must redraw the target
   location after the move.
 **************************************************************************/
-void do_move_unit(struct unit *punit, struct unit *target_unit)
+void do_move_unit(unit_t *punit, unit_t *target_unit)
 {
   tile_t *ptile;
   bool was_teleported, do_animation;
@@ -1810,7 +1812,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 /**************************************************************************
   ...
 **************************************************************************/
-void check_new_unit_action(struct unit *punit)
+void check_new_unit_action(unit_t *punit)
 {
   if (!punit || (default_action_military_only && !is_military_unit(punit))) {
     return;
@@ -1845,7 +1847,7 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
 {
   enum unit_activity ca=connect_activity;
   city_t *pcity = map_get_city(ptile);
-  struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
+  unit_t *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
   bool maybe_goto = FALSE;
 
   if (ptile && hover_state == HOVER_TRADE_CITY) {
@@ -1968,7 +1970,7 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
 
   /* Bypass stack or city popup if quickselect is specified. */
   else if (qtype) {
-    struct unit *qunit = quickselect(ptile, qtype);
+    unit_t *qunit = quickselect(ptile, qtype);
     if (qunit) {
       set_unit_focus_and_select(qunit);
       maybe_goto = keyboardless_goto;
@@ -1984,7 +1986,7 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
     maybe_goto = keyboardless_goto;
   } else if (unit_list_size(ptile->units) == 1
              && !unit_list_get(ptile->units, 0)->occupy) {
-    struct unit *punit = unit_list_get(ptile->units, 0);
+    unit_t *punit = unit_list_get(ptile->units, 0);
     if (get_player_idx() == punit->owner) {
       if (can_unit_do_activity(punit, ACTIVITY_IDLE)) {
         maybe_goto = keyboardless_goto;
@@ -2015,21 +2017,21 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
  or keypad / * for the current tile. Bypassing the stack popup is quite
  convenient, and can be tactically important in furious multiplayer games.
 **************************************************************************/
-static struct unit *quickselect(tile_t *ptile,
-                          enum quickselect_type qtype)
+static unit_t *quickselect(tile_t *ptile,
+                           enum quickselect_type qtype)
 {
   int listsize = unit_list_size(ptile->units);
-  struct unit *panytransporter = NULL,
-              *panymovesea  = NULL, *panysea  = NULL,
-              *panymoveland = NULL, *panyland = NULL,
-              *panymoveunit = NULL, *panyunit = NULL;
+  unit_t *panytransporter = NULL,
+         *panymovesea  = NULL, *panysea  = NULL,
+         *panymoveland = NULL, *panyland = NULL,
+         *panymoveunit = NULL, *panyunit = NULL;
 
   assert(qtype > SELECT_POPUP);
 
   if (listsize == 0) {
     return NULL;
   } else if (listsize == 1) {
-    struct unit *punit = unit_list_get(ptile->units, 0);
+    unit_t *punit = unit_list_get(ptile->units, 0);
     return (get_player_idx() == punit->owner) ? punit : NULL;
   }
 
@@ -2130,7 +2132,7 @@ static struct unit *quickselect(tile_t *ptile,
 /**************************************************************************
 
 **************************************************************************/
-void attack_after_move(struct unit *punit)
+void attack_after_move(unit_t *punit)
 {
   if (moveandattack_state
       && can_unit_do_auto(punit)
@@ -2146,7 +2148,7 @@ void attack_after_move(struct unit *punit)
 **************************************************************************/
 void do_unit_goto(tile_t *ptile)
 {
-  struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
+  unit_t *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
 
   if (hover_unit == 0 || (hover_state != HOVER_GOTO)) {
     return;
@@ -2178,7 +2180,7 @@ void do_unit_goto(tile_t *ptile)
 /**************************************************************************
 Explode nuclear at a tile without enemy units
 **************************************************************************/
-void do_unit_nuke(struct unit *punit)
+void do_unit_nuke(unit_t *punit)
 {
   dsend_packet_unit_nuke(&aconnection, punit->id);
 }
@@ -2186,7 +2188,7 @@ void do_unit_nuke(struct unit *punit)
 /**************************************************************************
   Paradrop to a location.
 **************************************************************************/
-void do_unit_paradrop_to(struct unit *punit, tile_t *ptile)
+void do_unit_paradrop_to(unit_t *punit, tile_t *ptile)
 {
   dsend_packet_unit_paradrop_to(&aconnection, punit->id, ptile->x, ptile->y);
 }
@@ -2194,7 +2196,7 @@ void do_unit_paradrop_to(struct unit *punit, tile_t *ptile)
 /**************************************************************************
   Patrol to a location.
 **************************************************************************/
-void do_unit_patrol_to(struct unit *punit, tile_t *ptile)
+void do_unit_patrol_to(unit_t *punit, tile_t *ptile)
 {
   if (is_air_unit(punit) || is_heli_unit(punit)) {
     append_output_window(_("Game: Sorry, airunit patrol not yet implemented."));
@@ -2219,7 +2221,7 @@ void do_unit_patrol_to(struct unit *punit, tile_t *ptile)
 /**************************************************************************
   "Connect" to the given location.
 **************************************************************************/
-void do_unit_connect(struct unit *punit, tile_t *ptile,
+void do_unit_connect(unit_t *punit, tile_t *ptile,
                      enum unit_activity activity)
 {
   if (is_air_unit(punit) || is_heli_unit(punit)) {
@@ -2257,7 +2259,7 @@ void key_cancel_action(void)
   }
 
   if (hover_state != HOVER_NONE && !popped) {
-    struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
+    unit_t *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
 
     set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
     update_unit_info_label(punit);
@@ -2310,8 +2312,7 @@ void key_end_turn(void)
 **************************************************************************/
 void key_recall_previous_focus_unit(void)
 {
-  struct unit *punit = player_find_unit_by_id(get_player_ptr(),
-                                              previous_focus_id);
+  unit_t *punit = player_find_unit_by_id(get_player_ptr(), previous_focus_id);
   if (punit) {
     set_unit_focus_and_select(punit);
   }
@@ -2938,7 +2939,7 @@ void key_fog_of_war_toggle(void)
 **************************************************************************/
 void key_quickselect(enum quickselect_type qtype)
 {
-  struct unit *punit;
+  unit_t *punit;
 
   if(punit_focus) {
     punit = quickselect(punit_focus->tile, qtype);
@@ -3052,7 +3053,7 @@ void key_unit_air_patrol_dest(void)
 /**************************************************************************
   For connect and patrol
 **************************************************************************/
-void put_unit_focus(struct unit *punit)
+void put_unit_focus(unit_t *punit)
 {
   punit_focus = punit;
   update_unit_info_label(punit);

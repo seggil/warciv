@@ -28,7 +28,7 @@ enum trade_route_status {
 struct trade_route {
   city_t                  *pcity1;
   city_t                  *pcity2;
-  struct unit             *punit;
+  unit_t             *punit;
   enum trade_route_status status;
   int                     value;
   /* Are not usually updated */
@@ -116,7 +116,7 @@ void trade_planning_calculation_get_advancement(
     const struct trade_planning_calculation *pcalc,
     int *trade_routes_num, int *max_trade_routes_num, int *total_moves);
 
-struct trade_route *get_next_trade_route_to_establish(struct unit *punit,
+struct trade_route *get_next_trade_route_to_establish(unit_t *punit,
                                                       bool best_value,
                                                       bool allow_free_other,
                                                       bool internal_first,

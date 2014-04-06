@@ -29,7 +29,7 @@
 /* Selected units iterator macro. */
 #define multi_select_iterate(clear_selection, punit) {                     \
   bool _clear_selection = clear_selection;                                 \
-  struct unit *_punit, *_punit_next_focus = NULL;                          \
+  unit_t *_punit, *_punit_next_focus = NULL;                               \
   bool _cond = (multi_select_size(0) > 1);                                 \
   connection_do_buffer(&aconnection);                                      \
   unit_list_iterate(multi_select_get_units_focus(), punit) {               \
@@ -127,7 +127,7 @@ enum utype_value {
 };
 
 bool filter_change(filter *pfilter, enum filter_value value);
-bool unit_satisfies_filter(struct unit *punit,
+bool unit_satisfies_filter(unit_t *punit,
                            filter inclusive_filter,
                            filter exclusive_filter);
 
@@ -138,7 +138,7 @@ bool unit_satisfies_filter(struct unit *punit,
 
 struct multi_select {
   struct unit_list *ulist;      /* The list of units */
-  struct unit *punit_focus;     /* The units which is/was in focus */
+  unit_t *punit_focus;          /* The units which is/was in focus */
 };
 
 extern filter multi_select_inclusive_filter;
@@ -154,10 +154,10 @@ extern bool multi_select_spread_airport_cities;
 extern bool multi_select_spread_allied_cities;
 extern bool multi_select_double_click;
 
-bool is_unit_in_multi_select(int multi, struct unit *punit);
+bool is_unit_in_multi_select(int multi, unit_t *punit);
 void multi_select_active_all(int multi);
-void multi_select_add_unit(struct unit *punit);
-void multi_select_add_or_remove_unit(struct unit *punit);
+void multi_select_add_unit(unit_t *punit);
+void multi_select_add_or_remove_unit(unit_t *punit);
 void multi_select_add_units(struct unit_list *ulist);
 void multi_select_blink_update(void);
 void multi_select_cat(int dest, int src);
@@ -166,13 +166,13 @@ void multi_select_clear_all(void);
 void multi_select_copy(int dest, int src);
 const struct unit_list *multi_select_get_units_focus(void);
 void multi_select_init_all(void);
-void multi_select_remove_unit(struct unit *punit);
+void multi_select_remove_unit(unit_t *punit);
 int multi_select_satisfies_filter(int multi);
-void multi_select_set_unit(int multi, struct unit *punit);
-void multi_select_set_unit_focus(int multi, struct unit *punit);
+void multi_select_set_unit(int multi, unit_t *punit);
+void multi_select_set_unit_focus(int multi, unit_t *punit);
 int multi_select_size(int multi);
 void multi_select_spread(void);
-void multi_select_wipe_up_unit(struct unit *punit);
+void multi_select_wipe_up_unit(unit_t *punit);
 Unit_Type_id multi_select_unit_type(int multi);
 
 void multi_select_select(void);

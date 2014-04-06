@@ -865,7 +865,7 @@ int base_city_get_food_tile(int city_x, int city_y, const city_t *pcity,
   coordinates.  punit is the founding unit, which may be NULL in some
   cases (e.g., cities from huts).
 **************************************************************************/
-bool city_can_be_built_here(const tile_t *ptile, struct unit *punit)
+bool city_can_be_built_here(const tile_t *ptile, unit_t *punit)
 {
   if (terrain_has_tag(ptile->terrain, TER_NO_CITIES)) {
     /* No cities on this terrain. */
@@ -1639,7 +1639,7 @@ city_t *is_non_allied_city_tile(const tile_t *ptile,
 /**************************************************************************
 ...
 **************************************************************************/
-bool is_unit_near_a_friendly_city(struct unit *punit)
+bool is_unit_near_a_friendly_city(unit_t *punit)
 {
   return is_friendly_city_near(unit_owner(punit), punit->tile);
 }
@@ -2155,7 +2155,7 @@ static inline void set_food_trade_shields(city_t *pcity)
 **************************************************************************/
 static inline void city_support(city_t *pcity,
                                 void (*send_unit_info) (player_t *pplayer,
-                                                        struct unit *punit))
+                                                        unit_t *punit))
 {
   struct government *g = get_gov_pcity(pcity);
 
@@ -2290,7 +2290,7 @@ static inline void city_support(city_t *pcity,
 void generic_city_refresh(city_t *pcity,
                           bool refresh_trade_route_cities,
                           void (*send_unit_info) (player_t * pplayer,
-                                                  struct unit * punit))
+                                                  unit_t * punit))
 {
   int prev_tile_trade = pcity->common.tile_trade;
 

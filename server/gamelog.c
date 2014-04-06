@@ -165,11 +165,11 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
   GAMELOG_INFO
     struct player_s *
   GAMELOG_UNITLOSS
-    struct unit *
+    unit_t *
     struct player_s * (can be NULL)
     char * (only present if player is NULL)
   GAMELOG_UNITGAMELOSS
-    struct unit *
+    unit_t *
   GAMELOG_BUILD
     city_t *
   GAMELOG_RATECHANGE
@@ -187,7 +187,7 @@ void gamelog(int level, ...)
   char *word = NULL;
   player_t *pplayer = NULL, *pplayer2 = NULL;
   city_t *pcity = NULL;
-  struct unit *punit = NULL;
+  unit_t *punit = NULL;
   struct team *pteam = NULL;
   int num;
   FILE *fs;
@@ -376,7 +376,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "tech");
     break;
   case GAMELOG_UNITLOSS:
-    punit = va_arg(args, struct unit *);
+    punit = va_arg(args, unit_t *);
     pplayer = va_arg(args, player_t *);
 
     if (pplayer) {
@@ -399,7 +399,7 @@ void gamelog(int level, ...)
     gamelog_put_prefix(buf, sizeof(buf), "unitl");
     break;
   case GAMELOG_UNITGAMELOSS:
-    punit = va_arg(args, struct unit *);
+    punit = va_arg(args, unit_t *);
 
     my_snprintf(buf, sizeof(buf),
                 "<n>%d</n><name>%s</name>"

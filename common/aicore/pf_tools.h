@@ -18,11 +18,11 @@
 struct pf_path *pft_concat(struct pf_path *dest_path,
                            const struct pf_path *src_path);
 void pft_fill_unit_parameter(struct pf_parameter *parameter,
-                             struct unit *punit);
+                             unit_t *punit);
 void pft_fill_unit_overlap_param(struct pf_parameter *parameter,
-                                 struct unit *punit);
+                                 unit_t *punit);
 void pft_fill_unit_attack_param(struct pf_parameter *parameter,
-                                struct unit *punit);
+                                unit_t *punit);
 enum tile_behavior no_fights_or_unknown(const tile_t *ptile,
                                         enum known_type known,
                                         struct pf_parameter *param);

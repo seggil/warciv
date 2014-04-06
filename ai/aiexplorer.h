@@ -23,7 +23,7 @@
  *
  * Returns whether there is any more territory to be explored.
  */
-bool ai_manage_explorer(struct unit *punit);
+bool ai_manage_explorer(unit_t *punit);
 
 /*
  * TODO: Enable AI build new explorers.  Either (the old way) write a

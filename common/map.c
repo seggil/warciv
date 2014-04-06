@@ -1119,7 +1119,7 @@ bool can_channel_land(const tile_t *ptile)
   May also be used with punit==NULL, in which case punit
   tests are not done (for unit-independent results).
 ***************************************************************/
-static int tile_move_cost_ptrs(struct unit *punit,
+static int tile_move_cost_ptrs(unit_t *punit,
                                const tile_t *t1, const tile_t *t2)
 {
   bool cardinal_move;
@@ -1276,7 +1276,7 @@ void initialize_move_costs(void)
   The cost to move punit from where it is to tile x,y.
   It is assumed the move is a valid one, e.g. the tiles are adjacent.
 ***************************************************************/
-int map_move_cost(struct unit *punit, const tile_t *ptile)
+int map_move_cost(unit_t *punit, const tile_t *ptile)
 {
   return tile_move_cost_ptrs(punit, punit->tile, ptile);
 }

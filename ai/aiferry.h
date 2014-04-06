@@ -27,18 +27,18 @@ void aiferry_init_stats(player_t *pplayer);
 /*
  * Find the nearest boat.  Can be called from inside the continents too
  */
-int aiferry_find_boat(struct unit *punit, int cap, struct pf_path **path);
+int aiferry_find_boat(unit_t *punit, int cap, struct pf_path **path);
 
 /*
  * Release the boat reserved in punit's ai.ferryboat field.
  */
-void aiferry_clear_boat(struct unit *punit);
+void aiferry_clear_boat(unit_t *punit);
 
 /*
  * Go to the destination by hitching a ride on a boat.  Will try to find
  * a beachhead but it works better if (dest_x, dest_y) is on the coast.
  */
-bool aiferry_gobyboat(player_t *pplayer, struct unit *punit,
+bool aiferry_gobyboat(player_t *pplayer, unit_t *punit,
                       tile_t *dst_tile);
 
 /*
@@ -46,6 +46,6 @@ bool aiferry_gobyboat(player_t *pplayer, struct unit *punit,
  * go and then looks for new passengers or (if it fails) for a city which
  * will build a passenger soon.
  */
-void ai_manage_ferryboat(player_t *pplayer, struct unit *punit);
+void ai_manage_ferryboat(player_t *pplayer, unit_t *punit);
 
 #endif /* WC_AI_AIFERRY_H */

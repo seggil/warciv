@@ -58,13 +58,16 @@
 /**************************************************************************
 FIXME: Calculate the attractiveness of attacking.
 **************************************************************************/
-static struct unit *search_best_target(player_t *pplayer,
-                                       struct unit *punit)
+static unit_t *search_best_target(player_t *pplayer,
+                                  unit_t *punit)
 {
   struct unit_list *targets;
-  struct unit *enemy, *best_enemy = NULL;
-  int score, best_score = 0;
-  int mv_cost, range;
+  unit_t *enemy;
+  unit_t *best_enemy = NULL;
+  int score;
+  int best_score = 0;
+  int mv_cost;
+  int range;
 
   /* if a 'F_ONEATTACK' unit,
      range is larger, because they are not going to return this turn anyways
@@ -185,10 +188,10 @@ static struct unit *search_best_target(player_t *pplayer,
   Returns TRUE if the unit survived.
 **************************************************************************/
 bool auto_attack_with_unit(player_t *pplayer,
-                           struct unit *punit)
+                           unit_t *punit)
 {
   int id = punit->id;
-  struct unit *enemy;
+  unit_t *enemy;
   tile_t *stile = punit->tile;
 
   enemy = search_best_target(pplayer, punit);
