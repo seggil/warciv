@@ -8,6 +8,10 @@ if CLIENT_GUI_GTK_2_0
 GUI_SUBDIR = gui-gtk-2.0
 endif
 
+if CLIENT_GUI_GTK_3_0
+GUI_SUBDIRS = gui-gtk-3.0
+endif
+
 ALL_ESD_FILES=audio_esd.c audio_esd.h
 ALL_SDL_FILES=audio_sdl.c audio_sdl.h
 ALL_ALSA_FILES=audio_alsa.c audio_alsa.h
@@ -42,7 +46,14 @@ endif
 
 SUBDIRS = $(GUI_SUBDIR) $(CLI_INCLUDE) agents
 
+if CLIENT_GUI_GTK_2_0
 bin_PROGRAMS = civclient
+endif
+
+if CLIENT_GUI_GTK_3_0
+bin_PROGRAMS = civclient-gtk3
+endif
+
 
 #    -I$(top_srcdir)/common/aicore \
 #    -I$(srcdir)/agents -I$(srcdir)/include
