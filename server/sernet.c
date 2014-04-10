@@ -388,7 +388,7 @@ void force_flush_packets(void)
         freelog(LOG_NORMAL, _("Cutting connection %s due to "
                               "network exception."),
                 conn_description(pconn));
-        server_break_connection(pconn, ES_NETWORK_EXCEPTION);
+        server_break_connection(pconn, EXIT_STATUS_NETWORK_EXCEPTION);
         continue;
       }
 
@@ -404,7 +404,7 @@ void force_flush_packets(void)
         freelog(LOG_NORMAL, _("Cutting connection %s due to write lag "
                               "(waited too long for write)."),
                 conn_description(pconn));
-        server_break_connection(pconn, ES_LAGGING_CONN);
+        server_break_connection(pconn, EXIT_STATUS_LAGGING_CONN);
       }
     }
   }
@@ -474,10 +474,10 @@ static bool check_read_data(struct connection *pconn, fd_set *preadfs)
     int nb = read_socket_data(pconn, pconn->buffer);
     if (nb < 0) {
       if (nb == -2) {
-        server_break_connection(pconn, ES_REMOTE_CLOSE);
+        server_break_connection(pconn, EXIT_STATUS_REMOTE_CLOSE);
       } else {
         /* Assume read error. */
-        server_break_connection(pconn, ES_READ_ERROR);
+        server_break_connection(pconn, EXIT_STATUS_READ_ERROR);
       }
       return FALSE;
     }
@@ -538,7 +538,7 @@ static bool decode_packet_data(struct connection *pconn)
   finish_processing_request(pconn);
   connection_do_unbuffer(pconn);
   if (!accepted) {
-    server_break_connection(pconn, ES_REJECTED);
+    server_break_connection(pconn, EXIT_STATUS_REJECTED);
   }
 
 #if PROCESSING_TIME_STATISTICS
@@ -713,7 +713,7 @@ int sniff_packets(void)
             freelog(LOG_NORMAL, "Disconnecting %s due to ping timeout.",
                     conn_description(pconn));
 
-            server_break_connection(pconn, ES_PING_TIMEOUT);
+            server_break_connection(pconn, EXIT_STATUS_PING_TIMEOUT);
           }
         } else {
           ping_connection(pconn);
@@ -882,7 +882,7 @@ int sniff_packets(void)
       freelog(LOG_ERROR, "Disconnecting %s due to network "
               "data exception.",
               conn_description(pconn));
-      server_break_connection(pconn, ES_NETWORK_EXCEPTION);
+      server_break_connection(pconn, EXIT_STATUS_NETWORK_EXCEPTION);
     }
 
     /* Check for adns responses */
@@ -1000,7 +1000,7 @@ int sniff_packets(void)
           freelog(LOG_NORMAL, _("Cutting connection %s due to write lag "
                                 "(waited too long for write)."),
                   conn_description(pconn));
-          server_break_connection(pconn, ES_LAGGING_CONN);
+          server_break_connection(pconn, EXIT_STATUS_LAGGING_CONN);
         }
       }
     }

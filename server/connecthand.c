@@ -264,7 +264,7 @@ bool receive_ip(struct connection *pconn, const char *ipaddr)
 
   if (is_banned(pconn, CPT_ADDRESS)) {
     freelog(LOG_NORMAL, _("The address %s is banned from this server"), ipaddr);
-    server_break_connection(pconn, ES_BANNED);
+    server_break_connection(pconn, EXIT_STATUS_BANNED);
     return FALSE;
   }
 
@@ -284,7 +284,7 @@ bool receive_hostname(struct connection *pconn, const char *addr)
   if (is_banned(pconn, CPT_HOSTNAME)) {
     freelog(LOG_NORMAL,
             _("The hostname %s is banned from this server"), pconn->addr);
-    server_break_connection(pconn, ES_BANNED);
+    server_break_connection(pconn, EXIT_STATUS_BANNED);
     return FALSE;
   }
 
@@ -1061,7 +1061,7 @@ void check_idle_connections(void)
       continue;
     }
     if (now >= pconn->u.server.idle_time + game.server.idlecut) {
-      server_break_connection(pconn, ES_IDLECUT);
+      server_break_connection(pconn, EXIT_STATUS_IDLECUT);
     }
   } conn_list_iterate_end;
 }

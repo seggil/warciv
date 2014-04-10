@@ -81,22 +81,22 @@ enum auth_status {
 /* NB: If you change these values, be sure to
  * update exit_state_name in conn_description. */
 enum exit_state {
-  ES_NONE = 0,
-  ES_UNKNOWN,        /* Should not be used, unless unavoidable. */
-  ES_DECODING_ERROR, /* Failed decompressing or parsing packets. */
-  ES_PING_TIMEOUT,
-  ES_NETWORK_EXCEPTION,
-  ES_BUFFER_OVERFLOW,
-  ES_LAGGING_CONN,   /* Waited too long to write. */
-  ES_BANNED,
-  ES_AUTH_FAILED,
-  ES_CUT_COMMAND,
-  ES_WRITE_ERROR,
-  ES_READ_ERROR,
-  ES_REMOTE_CLOSE,
-  ES_REJECTED,       /* handle_packet_input returned FALSE. */
-  ES_KICKED,
-  ES_IDLECUT
+  EXIT_STATUS_NONE = 0,
+  EXIT_STATUS_UNKNOWN,        /* Should not be used, unless unavoidable. */
+  EXIT_STATUS_DECODING_ERROR, /* Failed decompressing or parsing packets. */
+  EXIT_STATUS_PING_TIMEOUT,
+  EXIT_STATUS_NETWORK_EXCEPTION,
+  EXIT_STATUS_BUFFER_OVERFLOW,
+  EXIT_STATUS_LAGGING_CONN,   /* Waited too long to write. */
+  EXIT_STATUS_BANNED,
+  EXIT_STATUS_AUTH_FAILED,
+  EXIT_STATUS_CUT_COMMAND,
+  EXIT_STATUS_WRITE_ERROR,
+  EXIT_STATUS_READ_ERROR,
+  EXIT_STATUS_REMOTE_CLOSE,
+  EXIT_STATUS_REJECTED,       /* handle_packet_input returned FALSE. */
+  EXIT_STATUS_KICKED,
+  EXIT_STATUS_IDLECUT
 };
 
 /* get 'struct conn_list' and related functions: */

@@ -285,7 +285,7 @@ static int write_socket_data(struct connection *pconn,
 
   if (ret == -1) {
     /* I guess we have to close it here. */
-    call_close_socket_callback(pconn, ES_WRITE_ERROR);
+    call_close_socket_callback(pconn, EXIT_STATUS_WRITE_ERROR);
   }
 
   return ret;
@@ -339,7 +339,7 @@ static bool add_connection_data(struct connection *pconn,
   buf = pconn->send_buffer;
 
   if (!buffer_ensure_free_extra_space(buf, len)) {
-    call_close_socket_callback(pconn, ES_BUFFER_OVERFLOW);
+    call_close_socket_callback(pconn, EXIT_STATUS_BUFFER_OVERFLOW);
     return FALSE;
   }
 
@@ -589,8 +589,8 @@ const char *conn_description(const struct connection *pconn)
     sz_strlcpy(buffer, "server");
   }
   if (exit_state_name[pconn->exit_state] != NULL) {
-    if (pconn->exit_state == ES_READ_ERROR
-        || pconn->exit_state == ES_WRITE_ERROR) {
+    if (pconn->exit_state == EXIT_STATUS_READ_ERROR
+        || pconn->exit_state == EXIT_STATUS_WRITE_ERROR) {
       cat_snprintf(buffer, sizeof(buffer), " (%s: %s)",
                    _(exit_state_name[pconn->exit_state]),
                    mystrsocketerror(pconn->error_code));
@@ -710,7 +710,7 @@ void connection_common_init(struct connection *pconn)
   pconn->buffer = new_socket_packet_buffer();
   pconn->send_buffer = new_socket_packet_buffer();
   pconn->statistics.bytes_send = 0;
-  pconn->exit_state = ES_NONE;
+  pconn->exit_state = EXIT_STATUS_NONE;
   if (is_server) {
     pconn->u.server.access_level = ALLOW_NONE;
     pconn->u.server.granted_access_level = ALLOW_NONE;
