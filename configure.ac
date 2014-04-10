@@ -69,7 +69,7 @@ AC_ARG_WITH(readline,
 AC_HEADER_ASSERT
 dnl  no=do not compile client,  yes=compile client,  *=use this client or error
 AC_ARG_ENABLE(client,
-  AS_HELP_STRING([--enable-client[=no/yes/gtk2]],
+  AS_HELP_STRING([--enable-client[=no/yes/gtk2/gtk3]],
                  [compile a client [default=yes] (if yes, guess type)]),
 [case "${enableval}" in
   yes)	  client=yes ;;
@@ -77,12 +77,15 @@ AC_ARG_ENABLE(client,
   gtk2)   client=gtk-2.0 ;;
   gtk2.0) client=gtk-2.0 ;;
   gtk20)  client=gtk-2.0 ;;
+  gtk3)   client=gtk-3.0 ;;
   *)	  client="${enableval}"
 	  if test ! -d "${srcdir}/client/gui-$client" ; then
 	    AC_MSG_ERROR(bad value ${enableval} for --enable-client)
 	  fi ;;
-esac], [client=yes])
+esac], [client=gtk-2.0])
 AM_CONDITIONAL(CLIENT, test x$client != xno)
+AM_CONDITIONAL(CLIENT_GUI_GTK_2_0, [test "$client" = "gtk-2.0"])
+AM_CONDITIONAL(CLIENT_GUI_GTK_3_0, [test "$client" = "gtk-3.0"])
 
 AC_ARG_ENABLE([svnrev],
   AS_HELP_STRING([--enable-svnrev],
