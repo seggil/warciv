@@ -325,10 +325,6 @@ struct city_s {
   /* Nothing behind the union please! */
 };
 
-#ifndef CITY_T_DEFINED
-typedef struct city_s city_t;
-#endif
-
 /* city drawing styles */
 
 #define MAX_CITY_TILES 8

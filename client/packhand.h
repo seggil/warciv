@@ -17,9 +17,9 @@
 
 #include "packhand_gen.h"
 
-void notify_about_incoming_packet(struct connection *pc,
+void notify_about_incoming_packet(connection_t *pconn,
                                    int packet_type, int size);
-void notify_about_outgoing_packet(struct connection *pc,
+void notify_about_outgoing_packet(connection_t *pconn,
                                   int packet_type, int size,
                                   int request_id);
 void set_reports_thaw_request(int request_id);

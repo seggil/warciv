@@ -16,8 +16,7 @@
 #include "wc_types.h"
 #include "game.h"
 #include "packets.h"
-
-struct connection;
+#include "connection.h"
 
 BV_DEFINE(bv_draw, MAX_NUM_PLAYERS);
 
@@ -89,11 +88,11 @@ void server_quit(void);
 
 void save_game_auto(void);
 
-bool handle_packet_input(struct connection *pconn, void *packet, int type);
+bool handle_packet_input(connection_t *pconn, void *packet, int type);
 void start_game(void);
 void save_game(char *orig_filename);
 void pick_ai_player_name(Nation_Type_id nation, char *newname);
-void send_all_info(struct conn_list *dest);
+void send_all_info(struct connection_list *dest);
 void check_for_full_turn_done(void);
 
 void dealloc_id(int id);

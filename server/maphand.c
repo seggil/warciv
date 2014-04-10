@@ -187,7 +187,7 @@ static void give_tile_info_from_player_to_player(player_t *pfrom,
                                                  player_t *pdest,
                                                  tile_t *ptile);
 static void send_tile_info_always(player_t *pplayer,
-                                  struct conn_list *dest, tile_t *ptile);
+                                  struct connection_list *dest, tile_t *ptile);
 static void shared_vision_change_seen(tile_t *ptile, player_t *pplayer, int change);
 static int map_get_seen(const tile_t *ptile, player_t *pplayer);
 static void map_change_own_seen(tile_t *ptile, player_t *pplayer,
@@ -300,7 +300,7 @@ void upgrade_city_rails(player_t *pplayer, bool discovery)
     return;
   }
 
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
 
   if (discovery) {
     notify_player(pplayer,
@@ -322,7 +322,7 @@ void upgrade_city_rails(player_t *pplayer, bool discovery)
   }
   city_list_iterate_end;
 
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -340,9 +340,9 @@ static void buffer_shared_vision(player_t *pplayer)
 {
   players_iterate(pplayer2) {
     if (really_gives_vision(pplayer, pplayer2))
-      conn_list_do_buffer(pplayer2->connections);
+      connection_list_do_buffer(pplayer2->connections);
   } players_iterate_end;
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -352,9 +352,9 @@ static void unbuffer_shared_vision(player_t *pplayer)
 {
   players_iterate(pplayer2) {
     if (really_gives_vision(pplayer, pplayer2))
-      conn_list_do_unbuffer(pplayer2->connections);
+      connection_list_do_unbuffer(pplayer2->connections);
   } players_iterate_end;
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -405,7 +405,7 @@ void give_citymap_from_player_to_player(city_t *pcity,
   calculations, so it will be correct before this, for each connection
   during this, and at end.
 **************************************************************************/
-void send_all_known_tiles(struct conn_list *dest)
+void send_all_known_tiles(struct connection_list *dest)
 {
   int tiles_sent;
 
@@ -416,17 +416,17 @@ void send_all_known_tiles(struct conn_list *dest)
   /* send whole map piece by piece to each player to balance the load
      of the send buffers better */
   tiles_sent = 0;
-  conn_list_do_buffer(dest);
+  connection_list_do_buffer(dest);
 
   whole_map_iterate(ptile) {
     tiles_sent++;
     if ((tiles_sent % map.info.xsize) == 0) {
-      conn_list_do_unbuffer(dest);
+      connection_list_do_unbuffer(dest);
       force_flush_packets();
-      conn_list_do_buffer(dest);
+      connection_list_do_buffer(dest);
     }
 
-    conn_list_iterate(dest, pconn) {
+    connection_list_iterate(dest, pconn) {
       player_t *pplayer = pconn->player;
 
       if (!pplayer && !pconn->observer) {       /* no map needed */
@@ -436,10 +436,10 @@ void send_all_known_tiles(struct conn_list *dest)
       if (!pplayer || map_is_known(ptile, pplayer)) {
         send_tile_info_always(pplayer, pconn->self, ptile);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   } whole_map_iterate_end;
 
-  conn_list_do_unbuffer(dest);
+  connection_list_do_unbuffer(dest);
   force_flush_packets();
 }
 
@@ -451,7 +451,7 @@ void send_all_known_tiles(struct conn_list *dest)
   Note that this function does not update the playermap.  For that call
   update_tile_knowledge().
 **************************************************************************/
-void send_tile_info(struct conn_list *dest, tile_t *ptile)
+void send_tile_info(struct connection_list *dest, tile_t *ptile)
 {
   struct packet_tile_info info;
 
@@ -469,7 +469,7 @@ void send_tile_info(struct conn_list *dest, tile_t *ptile)
   }
 
   player_t *pplayer;
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     pplayer = pconn->player;
     if (!pplayer && !pconn->observer) {
       continue;
@@ -490,7 +490,7 @@ void send_tile_info(struct conn_list *dest, tile_t *ptile)
       info.continent = ptile->continent;
       send_packet_tile_info(pconn, &info);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
@@ -502,7 +502,7 @@ void send_tile_info(struct conn_list *dest, tile_t *ptile)
   do that.
   pplayer==NULL means send "real" data, for observers
 **************************************************************************/
-static void send_tile_info_always(player_t *pplayer, struct conn_list *dest,
+static void send_tile_info_always(player_t *pplayer, struct connection_list *dest,
                            tile_t *ptile)
 {
   struct packet_tile_info info;
@@ -766,7 +766,7 @@ void fog_area(player_t *pplayer, tile_t *ptile, int len)
 /**************************************************************************
   Send basic map information: map size, topology, and is_earth.
 **************************************************************************/
-void send_map_info(struct conn_list *dest)
+void send_map_info(struct connection_list *dest)
 {
   lsend_packet_map_info(dest, &map.info);
 }
@@ -1056,7 +1056,7 @@ static void free_bg_map_know_and_see_all_context(void *vc)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool can_send_more(struct conn_list *dest)
+static bool can_send_more(struct connection_list *dest)
 {
   const int MAXSIZE = 4096;
   int min = MAXSIZE;
@@ -1065,12 +1065,12 @@ static bool can_send_more(struct conn_list *dest)
     return TRUE;
   }
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     if (!pconn || pconn->u.server.is_closing || !pconn->send_buffer) {
       continue;
     }
     min = MIN(min, pconn->send_buffer->ndata);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   return min < MAXSIZE;
 }
@@ -1099,7 +1099,7 @@ static bool bg_map_know_and_see_all_one_iter(void *vc)
   rv = FALSE;
   count = 0;
 
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
   while (context->index < MAX_MAP_INDEX) {
     ptile = index_to_tile(context->index);
     if (ptile == NULL) {
@@ -1117,7 +1117,7 @@ static bool bg_map_know_and_see_all_one_iter(void *vc)
       count++;
     }
   }
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 
   return rv;
 }

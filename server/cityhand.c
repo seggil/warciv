@@ -270,14 +270,14 @@ void really_handle_city_buy(player_t *pplayer, city_t *pcity)
   }
   city_refresh(pcity);
 
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
   notify_player_ex(pplayer, pcity->common.tile,
                    pcity->common.is_building_unit?E_UNIT_BUY:E_IMP_BUY,
                    _("Game: %s bought in %s for %d gold."),
                    name, pcity->common.name, cost);
   send_city_info(pplayer, pcity);
   send_player_info(pplayer,pplayer);
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -409,9 +409,9 @@ void handle_city_options_req(player_t *pplayer, int city_id, int value)
   Only send result back to the requesting connection, not all
   connections for that player.
 ***************************************************************/
-void handle_city_incite_inq(struct connection *pc, int city_id)
+void handle_city_incite_inq(connection_t *pconn, int city_id)
 {
-  player_t *pplayer = pc->observer ? NULL : pc->player;
+  player_t *pplayer = pconn->observer ? NULL : pconn->player;
   city_t *pcity = find_city_by_id(city_id);
   bool possible = FALSE;
 
@@ -434,7 +434,7 @@ void handle_city_incite_inq(struct connection *pc, int city_id)
       return;
     }
 
-    dsend_packet_city_incite_info(pc, city_id,
+    dsend_packet_city_incite_info(pconn, city_id,
                                   city_incite_cost(pplayer, pcity));
   }
 }

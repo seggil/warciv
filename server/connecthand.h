@@ -53,34 +53,32 @@ int user_action_as_str(struct user_action *pua,
 extern struct user_action_list *on_connect_user_actions;
 extern char *user_action_type_strs[NUM_ACTION_TYPES];
 
-struct connection;
-struct conn_list;
 struct packet_authentication_reply;
 struct packet_login_request;
 struct packet_server_join_req;
 
-bool can_control_a_player(struct connection *pconn, bool message);
+bool can_control_a_player(connection_t *pconn, bool message);
 
-bool receive_ip(struct connection *pconn, const char *ipaddr);
-bool receive_hostname(struct connection *pcon, const char *addr);
-bool receive_username(struct connection *pconn, const char *username);
+bool receive_ip(connection_t *pconn, const char *ipaddr);
+bool receive_hostname(connection_t *pcon, const char *addr);
+bool receive_username(connection_t *pconn, const char *username);
 
-void establish_new_connection(struct connection *pconn);
-void reject_new_connection(const char *msg, struct connection *pconn);
+void establish_new_connection(connection_t *pconn);
+void reject_new_connection(const char *msg, connection_t *pconn);
 
-bool handle_login_request(struct connection *pconn,
+bool handle_login_request(connection_t *pconn,
                           struct packet_server_join_req *req);
 
-void lost_connection_to_client(struct connection *pconn);
+void lost_connection_to_client(connection_t *pconn);
 
-void send_conn_info(struct conn_list *src, struct conn_list *dest);
-void send_conn_info_remove(struct conn_list *src, struct conn_list *dest);
+void send_conn_info(struct connection_list *src, struct connection_list *dest);
+void send_conn_info_remove(struct connection_list *src, struct connection_list *dest);
 
-bool attach_connection_to_player(struct connection *pconn,
+bool attach_connection_to_player(connection_t *pconn,
                                  player_t *pplayer);
-bool unattach_connection_from_player(struct connection *pconn);
+bool unattach_connection_from_player(connection_t *pconn);
 void clear_all_on_connect_user_actions(void);
-void restore_access_level(struct connection *pconn);
+void restore_access_level(connection_t *pconn);
 
 void server_assign_nation(player_t *pplayer,
                           Nation_Type_id nation_no,
@@ -89,7 +87,7 @@ void server_assign_nation(player_t *pplayer,
                           int city_style);
 bool server_assign_random_nation(player_t *pplayer);
 
-void conn_reset_idle_time(struct connection *pconn);
+void conn_reset_idle_time(connection_t *pconn);
 void check_idle_connections(void);
 
 #endif  /* WC_SERVER_CONNECTHAND_H */

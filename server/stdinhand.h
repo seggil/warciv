@@ -13,8 +13,8 @@
 #ifndef WC_SERVER_STDINHAND_H
 #define WC_SERVER_STDINHAND_H
 
-#include "connection.h"         /* enum cmdlevel_id */
 #include "wc_types.h"
+#include "connection.h"         /* enum cmdlevel_id */
 
 #define SERVER_COMMAND_PREFIX '/'
   /* the character to mark chatlines as server commands */
@@ -25,29 +25,29 @@ void stdinhand_init(void);
 void stdinhand_turn(void);
 void stdinhand_free(void);
 
-bool conn_is_muted(const struct connection *pconn);
-bool conn_is_kicked(const struct connection *pconn, int *time_remaining);
+bool conn_is_muted(const connection_t *pconn);
+bool conn_is_kicked(const connection_t *pconn, int *time_remaining);
 
-bool handle_stdin_input(struct connection *caller,
+bool handle_stdin_input(connection_t *caller,
                         const char *str,
                         bool check);
-void report_server_options(struct conn_list *dest, int which);
-void report_settable_server_options(struct connection *dest, int which);
+void report_server_options(struct connection_list *dest, int which);
+void report_settable_server_options(connection_t *dest, int which);
 void set_ai_level_direct(player_t *pplayer, int level);
 void set_ai_level_directer(player_t *pplayer, int level);
-bool read_init_script(struct connection *caller, char *script_filename);
-void show_players(struct connection *caller);
+bool read_init_script(connection_t *caller, char *script_filename);
+void show_players(connection_t *caller);
 void clearallactions(void);
 
-bool load_command(struct connection *caller, char *arg, bool check);
-bool unloadmap_command(struct connection *caller, bool check);
+bool load_command(connection_t *caller, char *arg, bool check);
+bool unloadmap_command(connection_t *caller, bool check);
 
-bool require_command(struct connection *caller, char *arg, bool check);
+bool require_command(connection_t *caller, char *arg, bool check);
 
-void toggle_ai_player_direct(struct connection *caller,
+void toggle_ai_player_direct(connection_t *caller,
                              player_t *pplayer);
 bool is_allowed_to_attach(const player_t *pplayer,
-                          const struct connection *caller, bool will_obs,
+                          const connection_t *caller, bool will_obs,
                           char *msgbuf, int msgbuf_len);
 
 enum user_allow_behavior {

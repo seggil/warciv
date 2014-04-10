@@ -277,7 +277,7 @@ static bool is_white_space_str(const char *s)
 bool is_allowed_city_name(player_t *pplayer, const char *city_name,
                           char *error_buf, size_t bufsz)
 {
-  struct connection *pconn = find_conn_by_user(pplayer->username);
+  connection_t *pconn = find_conn_by_user(pplayer->username);
 
   if (is_white_space_str(city_name)) {
     if (error_buf) {
@@ -1390,11 +1390,11 @@ static void broadcast_city_info(city_t *pcity)
   Send to each client information about the cities it knows about.
   dest may not be NULL
 **************************************************************************/
-void send_all_known_cities(struct conn_list *dest)
+void send_all_known_cities(struct connection_list *dest)
 {
-  conn_list_do_buffer(dest);
+  connection_list_do_buffer(dest);
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     player_t *pplayer = pconn->player;
 
     if (!pplayer && !pconn->observer) {
@@ -1405,8 +1405,8 @@ void send_all_known_cities(struct conn_list *dest)
         send_city_info_at_tile(pplayer, pconn->self, NULL, ptile);
       }
     } whole_map_iterate_end;
-  } conn_list_iterate_end;
-  conn_list_do_unbuffer(dest);
+  } connection_list_iterate_end;
+  connection_list_do_unbuffer(dest);
   force_flush_packets();
 }
 
@@ -1414,11 +1414,11 @@ void send_all_known_cities(struct conn_list *dest)
   Send to each client information about the trade routes it knows about.
   dest may not be NULL.
 **************************************************************************/
-void send_all_known_trade_routes(struct conn_list *dest)
+void send_all_known_trade_routes(struct connection_list *dest)
 {
-  conn_list_do_buffer(dest);
+  connection_list_do_buffer(dest);
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     if (connection_supports_server_trade(pconn)) {
       if (pconn->player) {
         city_list_iterate(pconn->player->cities, pcity) {
@@ -1446,8 +1446,8 @@ void send_all_known_trade_routes(struct conn_list *dest)
         } cities_iterate_end;
       }
     }
-  } conn_list_iterate_end;
-  conn_list_do_unbuffer(dest);
+  } connection_list_iterate_end;
+  connection_list_do_unbuffer(dest);
   force_flush_packets();
 }
 
@@ -1513,7 +1513,7 @@ want to update the clients info of the tile you must use
 reality_check_city(pplayer, ptile) first. This is generally taken care of
 automatically when a tile becomes visible.
 **************************************************************************/
-void send_city_info_at_tile(player_t *pviewer, struct conn_list *dest,
+void send_city_info_at_tile(player_t *pviewer, struct connection_list *dest,
                             city_t *pcity, tile_t *ptile)
 {
   player_t *powner = NULL;
@@ -2120,7 +2120,7 @@ void city_landlocked_sell_coastal_improvements(tile_t *ptile)
   include_player: if not set, this will be sent to observers
                   and global observers only.
 **************************************************************************/
-void send_city_manager_param(struct conn_list *clist,
+void send_city_manager_param(struct connection_list *clist,
                              struct packet_city_manager_param *packet,
                              player_t *pplayer,
                              bool include_player)
@@ -2129,13 +2129,13 @@ void send_city_manager_param(struct conn_list *clist,
     clist = game.est_connections;
   }
 
-  conn_list_iterate(clist, pconn) {
+  connection_list_iterate(clist, pconn) {
     if ((include_player || pconn->observer)
         && (pconn->player == pplayer || !pconn->player)
         && has_capability("extglobalinfo", pconn->capability)) {
       send_packet_city_manager_param(pconn, packet);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
@@ -2143,7 +2143,7 @@ void send_city_manager_param(struct conn_list *clist,
   include_player: if not set, this will be sent to observers
                   and global observers only.
 **************************************************************************/
-void send_city_manager_info(struct conn_list *clist, city_t *pcity,
+void send_city_manager_info(struct connection_list *clist, city_t *pcity,
                             bool include_player)
 {
   if (!clist) {
@@ -2170,26 +2170,26 @@ void send_city_manager_info(struct conn_list *clist, city_t *pcity,
     struct packet_city_no_manager_param packet = {.id = pcity->common.id};
     player_t *pplayer = city_owner(pcity);
 
-    conn_list_iterate(clist, pconn) {
+    connection_list_iterate(clist, pconn) {
       if ((include_player || pconn->observer)
           && (pconn->player == pplayer || !pconn->player)
           && has_capability("extglobalinfo", pconn->capability)) {
         send_packet_city_no_manager_param(pconn, &packet);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   }
 }
 
 /**************************************************************************
   Send all the city manager parameter infos to a list of connection.
 **************************************************************************/
-void send_all_known_city_manager_infos(struct conn_list *clist)
+void send_all_known_city_manager_infos(struct connection_list *clist)
 {
   if (!clist) {
     clist = game.est_connections;
   }
 
-  conn_list_iterate(clist, pconn) {
+  connection_list_iterate(clist, pconn) {
     if (!has_capability("extglobalinfo", pconn->capability)) {
       continue;
     } else if (pconn->player) {
@@ -2203,7 +2203,7 @@ void send_all_known_city_manager_infos(struct conn_list *clist)
         send_city_manager_info(pconn->self, pcity, TRUE);
       } cities_iterate_end
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
@@ -2255,14 +2255,14 @@ void clear_rally_point(city_t *pcity, bool send_info)
     struct packet_city_info packet;
 
     package_city(pcity, &packet, FALSE);
-    conn_list_iterate(game.est_connections, pconn) {
+    connection_list_iterate(game.est_connections, pconn) {
       if ((pconn->player == city_owner(pcity)
            /* Else, unable to read rally points. */
            && has_capability("extglobalinfo", pconn->capability))
           || conn_is_global_observer(pconn)) {
         send_packet_city_info(pconn, &packet);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   }
 }
 

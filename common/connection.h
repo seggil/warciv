@@ -99,22 +99,22 @@ enum exit_state {
   EXIT_STATUS_IDLECUT
 };
 
-/* get 'struct conn_list' and related functions: */
-/* do this with forward definition of struct connection, so that
- * connection struct can contain a struct conn_list */
-struct connection;
-#define SPECLIST_TAG conn
-#define SPECLIST_TYPE struct connection
+/* get 'struct connection_list' and related functions: */
+/* do this with forward definition of struct connection_s, so that
+ * connection struct can contain a struct connection_list */
+struct connection_s;
+#define SPECLIST_TAG connection
+#define SPECLIST_TYPE struct connection_s
 #include "speclist.h"
 
-#define conn_list_iterate(connlist, pconn) \
-    TYPED_LIST_ITERATE(struct connection, connlist, pconn)
-#define conn_list_iterate_end  LIST_ITERATE_END
+#define connection_list_iterate(connlist, pconn) \
+    TYPED_LIST_ITERATE(struct connection_s, connlist, pconn)
+#define connection_list_iterate_end  LIST_ITERATE_END
 
 #define global_observers_iterate(pconn)            \
-    conn_list_iterate(game.est_connections, pconn) \
+    connection_list_iterate(game.est_connections, pconn) \
       if (conn_is_global_observer(pconn)) {
-#define global_observers_iterate_end } conn_list_iterate_end
+#define global_observers_iterate_end } connection_list_iterate_end
 
 /***********************************************************
   This is a buffer where the data is first collected,
@@ -146,27 +146,11 @@ struct conn_pattern {
 
 extern char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES];
 
-bool parse_conn_pattern(const char *str, char *patbuf,
-                        int patbuflen, int *type,
-                        char *errbuf, int errbuflen);
-struct conn_pattern *conn_pattern_new(const char *pattern,
-                                      int type);
-void conn_pattern_free(struct conn_pattern *cp);
-int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen);
-bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn);
-
-#define SPECLIST_TAG ignore
-#define SPECLIST_TYPE struct conn_pattern
-#include "speclist.h"
-#define ignore_list_iterate(alist, ap) \
-    TYPED_LIST_ITERATE(struct conn_pattern, alist, ap)
-#define ignore_list_iterate_end  LIST_ITERATE_END
-
 /***********************************************************
   The connection struct represents a single client or server
   at the other end of a network connection.
 ***********************************************************/
-struct connection {
+struct connection_s {
   int id;                       /* used for server/client communication */
   int sock;
   bool used;
@@ -191,7 +175,7 @@ struct connection {
 
   double ping_time;
 
-  struct conn_list *self;     /* list with this connection as single element */
+  struct connection_list *self;     /* list with this connection as single element */
   char username[MAX_LEN_NAME];
   char addr[MAX_LEN_ADDR];
 
@@ -214,7 +198,7 @@ struct connection {
    * argument should really be a "enum packet_type". However due
    * circular dependency this is impossible.
    */
-  void (*incoming_packet_notify) (struct connection * pc,
+  void (*incoming_packet_notify) (struct connection_s *pcon,
                                   int packet_type, int size);
 
   /*
@@ -222,7 +206,7 @@ struct connection {
    * really be a "enum packet_type". However due circular dependency
    * this is impossible.
    */
-  void (*outgoing_packet_notify) (struct connection * pc,
+  void (*outgoing_packet_notify) (struct connection_s *pcon,
                                   int packet_type, int size,
                                   int request_id);
   struct connection_phs {
@@ -245,7 +229,7 @@ struct connection {
   union connection_u {
     /* Specific client datas. */
     struct connection_client {
-      void (*notify_of_writable_data) (struct connection *pc,
+      void (*notify_of_writable_data) (struct connection_s *pcon,
                                        bool data_available_and_socket_full);
 
       /*
@@ -342,50 +326,67 @@ struct connection {
   } u;
 };
 
+typedef struct connection_s connection_t;
+
+bool parse_conn_pattern(const char *str, char *patbuf,
+                        int patbuflen, int *type,
+                        char *errbuf, int errbuflen);
+struct conn_pattern *conn_pattern_new(const char *pattern,
+                                      int type);
+void conn_pattern_free(struct conn_pattern *cp);
+int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen);
+bool conn_pattern_match(struct conn_pattern *cp, struct connection_s *pconn);
+
+#define SPECLIST_TAG ignore
+#define SPECLIST_TYPE struct conn_pattern
+#include "speclist.h"
+#define ignore_list_iterate(alist, ap) \
+    TYPED_LIST_ITERATE(struct conn_pattern, alist, ap)
+#define ignore_list_iterate_end  LIST_ITERATE_END
 
 const char *cmdlevel_name(enum cmdlevel_id lvl);
 enum cmdlevel_id cmdlevel_named(const char *token);
 
 
-typedef void (*CLOSE_FUN) (struct connection *pc);
+typedef void (*CLOSE_FUN) (connection_t *pcon);
 void close_socket_set_callback(CLOSE_FUN fun);
-void call_close_socket_callback(struct connection *pc,
+void call_close_socket_callback(connection_t *pcon,
                                 enum exit_state state);
 
-int read_socket_data(struct connection *pc,
+int read_socket_data(connection_t *pcon,
                      struct socket_packet_buffer *buffer);
-int flush_connection_send_buffer_all(struct connection *pc);
-int send_connection_data(struct connection *pc, const unsigned char *data,
+int flush_connection_send_buffer_all(connection_t *pcon);
+int send_connection_data(connection_t *pcon, const unsigned char *data,
                          int len);
 
-void connection_do_buffer(struct connection *pc);
-void connection_do_unbuffer(struct connection *pc);
+void connection_do_buffer(connection_t *pcon);
+void connection_do_unbuffer(connection_t *pcon);
 
-void conn_list_do_buffer(struct conn_list *dest);
-void conn_list_do_unbuffer(struct conn_list *dest);
+void connection_list_do_buffer(struct connection_list *dest);
+void connection_list_do_unbuffer(struct connection_list *dest);
 
-struct connection *find_conn_by_user(const char *user_name);
-struct connection *find_conn_by_user_prefix(const char *user_name,
-                                             enum m_pre_result *result);
-struct connection *find_conn_by_id(int id);
+connection_t *find_conn_by_user(const char *user_name);
+connection_t *find_conn_by_user_prefix(const char *user_name,
+                                       enum m_pre_result *result);
+connection_t *find_conn_by_id(int id);
 
 struct socket_packet_buffer *new_socket_packet_buffer(void);
-void connection_common_init(struct connection *pconn);
-void connection_common_close(struct connection *pconn);
-void free_compression_queue(struct connection *pconn);
-void conn_clear_packet_cache(struct connection *pconn);
+void connection_common_init(connection_t *pconn);
+void connection_common_close(connection_t *pconn);
+void free_compression_queue(connection_t *pconn);
+void conn_clear_packet_cache(connection_t *pconn);
 
-const char *conn_description(const struct connection *pconn);
+const char *conn_description(const connection_t *pconn);
 
 int get_next_request_id(int old_request_id);
 
 extern const char blank_addr_str[];
 
-bool conn_controls_player(const struct connection *pconn);
-bool conn_is_global_observer(const struct connection *pconn);
-player_t *conn_get_player(const struct connection *pconn);
-enum cmdlevel_id conn_get_access(const struct connection *pconn);
-bool conn_is_valid(const struct connection *pconn);
+bool conn_controls_player(const connection_t *pconn);
+bool conn_is_global_observer(const connection_t *pconn);
+player_t *conn_get_player(const connection_t *pconn);
+enum cmdlevel_id conn_get_access(const connection_t *pconn);
+bool conn_is_valid(const connection_t *pconn);
 
 
 #endif  /* WC_COMMON_CONNECTION_H */

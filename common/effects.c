@@ -658,7 +658,7 @@ void ruleset_cache_add(Impr_Type_id source, enum effect_type effect_type,
 /**************************************************************************
   Send the ruleset cache groups data.
 **************************************************************************/
-static void send_ruleset_cache_groups(struct conn_list *dest)
+static void send_ruleset_cache_groups(struct connection_list *dest)
 {
   struct packet_ruleset_cache_group packet;
   int i;
@@ -683,7 +683,7 @@ static void send_ruleset_cache_groups(struct conn_list *dest)
 /**************************************************************************
   Send the ruleset cache effects data.
 **************************************************************************/
-static void send_ruleset_cache_effects(struct conn_list *dest)
+static void send_ruleset_cache_effects(struct connection_list *dest)
 {
   struct packet_ruleset_cache_effect packet;
   enum effect_type effect_type;
@@ -741,7 +741,7 @@ static void send_ruleset_cache_effects(struct conn_list *dest)
 /**************************************************************************
   Send the ruleset cache data over the network.
 **************************************************************************/
-void send_ruleset_cache(struct conn_list *dest)
+void send_ruleset_cache(struct connection_list *dest)
 {
   send_ruleset_cache_groups(dest);
   send_ruleset_cache_effects(dest);

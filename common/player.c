@@ -109,7 +109,7 @@ void player_init(player_t *_player)
   _player->capital = FALSE;
   _player->units = unit_list_new();
   _player->cities = city_list_new();
-  _player->connections = conn_list_new();
+  _player->connections = connection_list_new();
   _player->current_conn = NULL;
   _player->is_connected = FALSE;
   _player->was_created = FALSE;

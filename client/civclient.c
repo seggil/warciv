@@ -368,9 +368,9 @@ int main(int argc, char *argv[])
 
   /* initialization */
 
-  game.all_connections = conn_list_new();
-  game.est_connections = conn_list_new();
-  game.game_connections = conn_list_new();
+  game.all_connections = connection_list_new();
+  game.est_connections = connection_list_new();
+  game.game_connections = connection_list_new();
 
   connection_init();
   charsets_init();
@@ -667,7 +667,7 @@ void set_client_state(enum client_states newstate)
   }
 
   update_turn_done_button_state();
-  update_conn_list_dialog();
+  update_connection_list_dialog();
 }
 
 
@@ -682,14 +682,14 @@ enum client_states get_client_state(void)
 /**************************************************************************
   Remove pconn from all connection lists in client, then free it.
 **************************************************************************/
-void client_remove_cli_conn(struct connection *pconn)
+void client_remove_cli_conn(connection_t *pconn)
 {
   if (pconn->player) {
-    conn_list_unlink(pconn->player->connections, pconn);
+    connection_list_unlink(pconn->player->connections, pconn);
   }
-  conn_list_unlink(game.all_connections, pconn);
-  conn_list_unlink(game.est_connections, pconn);
-  conn_list_unlink(game.game_connections, pconn);
+  connection_list_unlink(game.all_connections, pconn);
+  connection_list_unlink(game.est_connections, pconn);
+  connection_list_unlink(game.game_connections, pconn);
   assert(pconn != &aconnection);
   free(pconn);
 }
@@ -700,8 +700,8 @@ void client_remove_cli_conn(struct connection *pconn)
 **************************************************************************/
 void client_remove_all_cli_conn(void)
 {
-  while (conn_list_size(game.all_connections) > 0) {
-    struct connection *pconn = conn_list_get(game.all_connections, 0);
+  while (connection_list_size(game.all_connections) > 0) {
+    connection_t *pconn = connection_list_get(game.all_connections, 0);
     client_remove_cli_conn(pconn);
   }
 }

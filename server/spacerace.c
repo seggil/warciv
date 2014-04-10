@@ -112,7 +112,7 @@ void spaceship_calc_derived(struct player_spaceship *ship)
   if src is NULL) to specified destinations.  If dest is NULL then
   game.game_connections is used.
 **************************************************************************/
-void send_spaceship_info(player_t *src, struct conn_list *dest)
+void send_spaceship_info(player_t *src, struct connection_list *dest)
 {
   int j;
 

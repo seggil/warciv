@@ -103,7 +103,7 @@
 
 #include "clinet.h"
 
-struct connection aconnection;
+connection_t aconnection;
 static int socklan;
 static struct server_list *lan_servers;
 static union my_sockaddr server_addr;
@@ -148,12 +148,12 @@ static void check_init_async_tables(void)
   Close socket and cleanup.  This one doesn't print a message, so should
   do so before-hand if necessary.
 **************************************************************************/
-static void close_socket_nomessage(struct connection *pc)
+static void close_socket_nomessage(connection_t *pconn)
 {
   if (save_options_on_exit) {
     save_options();
   }
-  connection_common_close(pc);
+  connection_common_close(pconn);
   remove_net_input();
   popdown_races_dialog();
   close_connection_dialog();
@@ -177,9 +177,9 @@ static void close_socket_nomessage(struct connection *pc)
 /**************************************************************************
 ...
 **************************************************************************/
-static void client_close_socket_callback(struct connection *pc)
+static void client_close_socket_callback(connection_t *pconn)
 {
-  close_socket_nomessage(pc);
+  close_socket_nomessage(pconn);
   /* If we lost connection to the internal server - kill him */
   client_kill_server(TRUE);
   append_network_statusbar(_("Lost connection to server!"));
@@ -320,7 +320,7 @@ Returns:
     >0  :  number of bytes read
     =0  :  no data read, would block
 **************************************************************************/
-static int read_from_connection(struct connection *pconn, bool block)
+static int read_from_connection(connection_t *pconn, bool block)
 {
   freelog(LOG_DEBUG, "client read_from_connection");
   fd_set readfs, writefs, exceptfs;

@@ -23,7 +23,6 @@
 enum ocean_land_change { OLC_NONE, OLC_OCEAN_TO_LAND, OLC_LAND_TO_OCEAN };
 
 struct section_file;
-struct conn_list;
 
 struct dumb_city{
   int id;
@@ -60,14 +59,14 @@ void give_map_from_player_to_player(player_t *pfrom, player_t *pdest);
 void give_seamap_from_player_to_player(player_t *pfrom, player_t *pdest);
 void give_citymap_from_player_to_player(city_t *pcity,
                                         player_t *pfrom, player_t *pdest);
-void send_all_known_tiles(struct conn_list *dest);
-void send_tile_info(struct conn_list *dest, tile_t *ptile);
+void send_all_known_tiles(struct connection_list *dest);
+void send_tile_info(struct connection_list *dest, tile_t *ptile);
 void reveal_hidden_units(player_t *pplayer, tile_t *ptile);
 void conceal_hidden_units(player_t *pplayer, tile_t *ptile);
 void unfog_area(player_t *pplayer, tile_t *ptile, int len);
 void fog_area(player_t *pplayer, tile_t *ptile, int len);
 void upgrade_city_rails(player_t *pplayer, bool discovery);
-void send_map_info(struct conn_list *dest);
+void send_map_info(struct connection_list *dest);
 void map_fog_city_area(city_t *pcity);
 void map_unfog_city_area(city_t *pcity);
 void remove_unit_sight_points(unit_t *punit);

@@ -21,7 +21,7 @@
 
 #include "shared.h"
 
-#include "connection.h"         /* struct conn_list */
+#include "connection.h"         /* struct connection_list */
 #include "wc_types.h"
 #include "improvement.h"        /* Impr_Status */
 #include "packets.h"
@@ -70,9 +70,9 @@ struct civ_game {
 
   /* Common part */
   player_t players[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
-  struct conn_list *all_connections;  /* including not yet established */
-  struct conn_list *est_connections;  /* all established client conns */
-  struct conn_list *game_connections; /* involved in game; send map etc */
+  struct connection_list *all_connections;  /* including not yet established */
+  struct connection_list *est_connections;  /* all established client conns */
+  struct connection_list *game_connections; /* involved in game; send map etc */
 
   /* global_wonders[] may also be (-1), or the id of a city
    * which no longer exists, if the wonder has been destroyed */

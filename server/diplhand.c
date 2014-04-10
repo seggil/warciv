@@ -727,7 +727,7 @@ void handle_diplomacy_init_meeting_req(player_t *pplayer,
   Send information on any on-going diplomatic meetings for connection's
   player.  (For re-connection in multi-connect case.)
 **************************************************************************/
-void send_diplomatic_meetings(struct connection *dest)
+void send_diplomatic_meetings(connection_t *dest)
 {
   player_t *pplayer = dest->player;
   bool player_accept, other_accept;
@@ -736,7 +736,7 @@ void send_diplomatic_meetings(struct connection *dest)
     return;
   }
 
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
   players_iterate(pother) {
     struct Treaty *ptreaty;
 
@@ -773,7 +773,7 @@ void send_diplomatic_meetings(struct connection *dest)
                                           player_accept,
                                           other_accept);
   } players_iterate_end;
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************

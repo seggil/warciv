@@ -26,8 +26,8 @@ int server_open_socket(void);
 void force_flush_packets(void);
 int sniff_packets(void);
 void close_connections_and_socket(void);
-void server_break_connection(struct connection *pconn, enum exit_state state);
+void server_break_connection(connection_t *pconn, enum exit_state state);
 void init_connections(void);
-void handle_conn_pong(struct connection *pconn);
+void handle_conn_pong(connection_t *pconn);
 
 #endif  /* WC_SERVER_SERNET_H */

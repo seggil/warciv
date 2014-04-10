@@ -18,10 +18,10 @@
 #include "wc_types.h"
 
 #include "hand_gen.h"
+#include "connection.h"
 
 struct Treaty;
 struct packet_diplomacy_info;
-struct connection;
 
 void establish_embassy(player_t *pplayer, player_t *aplayer);
 
@@ -31,7 +31,7 @@ void free_treaties(void);
 
 struct Treaty *find_treaty(player_t *plr0, player_t *plr1);
 
-void send_diplomatic_meetings(struct connection *dest);
+void send_diplomatic_meetings(connection_t *dest);
 void cancel_all_meetings(player_t *pplayer);
 void cancel_diplomacy(player_t *pplayer);
 

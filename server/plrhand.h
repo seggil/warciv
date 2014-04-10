@@ -24,8 +24,6 @@
 #include "hand_gen.h"
 
 struct section_file;
-struct connection;
-struct conn_list;
 
 enum plr_info_level { INFO_MINIMUM, INFO_MEETING, INFO_EMBASSY, INFO_FULL };
 
@@ -41,15 +39,15 @@ void make_contact(player_t *pplayer1, player_t *pplayer2,
 void maybe_make_contact(tile_t *ptile, player_t *pplayer);
 
 void send_player_info(player_t *src, player_t *dest);
-void send_player_info_c(player_t *src, struct conn_list *dest);
+void send_player_info_c(player_t *src, struct connection_list *dest);
 
-void notify_conn_ex(struct conn_list *dest, tile_t *ptile,
+void notify_conn_ex(struct connection_list *dest, tile_t *ptile,
                     enum event_type event, const char *format, ...)
                     wc__attribute((__format__ (__printf__, 4, 5)));
-void vnotify_conn_ex(struct conn_list *dest, tile_t *ptile,
+void vnotify_conn_ex(struct connection_list *dest, tile_t *ptile,
                      enum event_type event, const char *format,
                      va_list vargs);
-void notify_conn(struct conn_list *dest, const char *format, ...)
+void notify_conn(struct connection_list *dest, const char *format, ...)
                  wc__attribute((__format__ (__printf__, 2, 3)));
 void notify_player_ex(const player_t *pplayer, tile_t *ptile,
                       enum event_type event, const char *format, ...)
@@ -63,7 +61,7 @@ void notify_team(const struct team *pteam, const char *format, ...)
                  wc__attribute((__format__ (__printf__, 2, 3)));
 void notify_enabled(bool yes);
 
-struct conn_list *player_reply_dest(player_t *pplayer);
+struct connection_list *player_reply_dest(player_t *pplayer);
 
 void found_new_tech(player_t *plr, int tech_found, bool was_discovery,
                     bool saving_bulbs, int next_tech);
@@ -79,7 +77,7 @@ void give_initial_techs(player_t* plr);
 Tech_Type_id give_random_initial_tech(player_t* pplayer);
 Tech_Type_id give_random_free_tech(player_t* pplayer);
 
-void send_player_turn_notifications(struct conn_list *dest);
+void send_player_turn_notifications(struct connection_list *dest);
 
 void do_dipl_cost(player_t *pplayer, Tech_Type_id new_tech);
 void do_free_cost(player_t *pplayer);

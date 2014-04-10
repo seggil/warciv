@@ -30,7 +30,7 @@
 
 #define W_CONN_CLASS "warciv wrapped connection"
 struct w_conn {
-  struct connection *pconn;
+  connection_t *pconn;
 };
 
 
@@ -203,7 +203,7 @@ int luaopen_warciv(lua_State *L)
 /**************************************************************************
   ...
 **************************************************************************/
-static int push_w_conn(lua_State *L, struct connection *pconn)
+static int push_w_conn(lua_State *L, connection_t *pconn)
 {
   struct w_conn *wc;
 
@@ -229,7 +229,7 @@ static int push_w_conn(lua_State *L, struct connection *pconn)
     'i' - int
     'd' - double
     's' - char *
-    'C' - struct connection *
+    'C' - struct connection_s *
 
   Return types are assigned by dereferncing va_list elements. Valid return
   types are:
@@ -273,7 +273,7 @@ bool script_call(lua_State *L, const char *func, const char *sig, ...)
       break;
 
     case 'C':
-      push_w_conn(L, va_arg(ap, struct connection *));
+      push_w_conn(L, va_arg(ap, connection_t *));
       break;
 
     case '>':

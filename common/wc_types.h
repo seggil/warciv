@@ -26,6 +26,7 @@ typedef enum specialist_type Specialist_type_id;
 typedef int Impr_Type_id;
 
 struct city_s;
+typedef struct city_s city_t;
 struct government;
 struct player_s;
 typedef struct player_s player_t;

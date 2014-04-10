@@ -26,7 +26,7 @@
 /* In autoconnect mode, try to connect 100 times */
 #define MAX_AUTOCONNECT_ATTEMPTS        100
 
-struct connection;
+struct connection_s;
 
 int connect_to_server(const char *username, const char *hostname, int port,
                       char *errbuf, int errbufsize);
@@ -38,7 +38,7 @@ void input_from_server_till_request_got_processed(int fd,
                                                   int expected_request_id);
 void disconnect_from_server(void);
 
-extern struct connection aconnection;
+extern struct connection_s aconnection;
 extern bool server_has_extglobalinfo;
 
 /* this is the client's connection to the server */

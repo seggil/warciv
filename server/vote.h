@@ -31,9 +31,7 @@ enum vote_type {
 };
 
 /* Forward declarations. */
-struct connection;
 struct setting_value;
-struct conn_list;
 
 struct vote_cast {
   enum vote_type vote_cast;     /* see enum above */
@@ -76,28 +74,28 @@ void voting_free(void);
 void voting_turn(void);
 
 void clear_all_votes(void);
-void cancel_connection_votes(struct connection *pconn);
-bool conn_can_vote(const struct connection *pconn,
+void cancel_connection_votes(connection_t *pconn);
+bool conn_can_vote(const connection_t *pconn,
                    const struct vote *pvote);
-bool conn_can_see_vote(const struct connection *pconn,
+bool conn_can_see_vote(const connection_t *pconn,
                        const struct vote *pvote);
 struct vote *get_vote_by_no(int vote_no);
-void connection_vote(struct connection *pconn,
+void connection_vote(connection_t *pconn,
                      struct vote *pvote,
                      enum vote_type type);
-struct vote *get_vote_by_caller(const struct connection *caller);
+struct vote *get_vote_by_caller(const connection_t *caller);
 void remove_vote(struct vote *pvote);
-struct vote *vote_new(struct connection *caller,
+struct vote *vote_new(connection_t *caller,
                       const char *allargs,
                       int command_id,
                       struct setting_value *sv);
-const struct connection *vote_get_caller(const struct vote *pvote);
+const connection_t *vote_get_caller(const struct vote *pvote);
 bool vote_is_team_only(const struct vote *pvote);
 const struct team *vote_get_team(const struct vote *pvote);
 int describe_vote(struct vote *pvote, char *buf, int buflen);
-void send_running_votes(struct connection *pconn);
-void send_updated_vote_totals(struct conn_list *dest);
+void send_running_votes(connection_t *pconn);
+void send_updated_vote_totals(struct connection_list *dest);
 
-void server_request_pause_vote(struct connection *pconn);
+void server_request_pause_vote(connection_t *pconn);
 
 #endif  /* WC_SERVER_VOTE_H */

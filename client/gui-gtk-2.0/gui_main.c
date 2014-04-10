@@ -178,7 +178,7 @@ static gboolean player_colors_mode_label_click(GtkWidget *w,
 static void end_turn_callback(GtkWidget *w, gpointer data);
 static gboolean get_net_input(GIOChannel *source, GIOCondition cond,
                               gpointer data);
-static void set_wait_for_writable_socket(struct connection *pconn,
+static void set_wait_for_writable_socket(connection_t *pconn,
                                          bool socket_writable);
 
 static void print_usage(const char *argv0);
@@ -1972,14 +1972,14 @@ void ui_main(int argc, char **argv)
 /**************************************************************************
  Update the connected users list at pregame state.
 **************************************************************************/
-void update_conn_list_dialog(void)
+void update_connection_list_dialog(void)
 {
   char buf[256];
   GtkTreeIter it;
 
   if (get_client_state() != CLIENT_GAME_RUNNING_STATE) {
     gtk_list_store_clear(conn_model);
-    conn_list_iterate(game.est_connections, pconn) {
+    connection_list_iterate(game.est_connections, pconn) {
       gtk_list_store_append(conn_model, &it);
       if (pconn->observer) {
         my_snprintf(buf, sizeof(buf), "(%s)", pconn->username);
@@ -1989,7 +1989,7 @@ void update_conn_list_dialog(void)
         my_snprintf(buf, sizeof(buf), "[%s]", pconn->username);
       }
       gtk_list_store_set(conn_model, &it, 0, buf, 1, pconn, -1);
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   }
 }
 
@@ -2002,7 +2002,7 @@ gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data)
   GtkTreeIter it;
   GtkWidget *popup, *table, *label;
   gpointer p;
-  struct connection *pconn;
+  connection_t *pconn;
 
   /* Get the current selection in the Connected Users list */
   if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(view),
@@ -2014,7 +2014,7 @@ gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data)
   gtk_tree_path_free(path);
 
   gtk_tree_model_get(GTK_TREE_MODEL(conn_model), &it, 1, &p, -1);
-  pconn = (struct connection *)p;
+  pconn = (connection_t *)p;
 
   /* Show popup. */
   popup = gtk_window_new(GTK_WINDOW_POPUP);
@@ -2230,7 +2230,7 @@ static gboolean get_net_input(GIOChannel *source,
 /**************************************************************************
 ...
 **************************************************************************/
-static void set_wait_for_writable_socket(struct connection *pconn,
+static void set_wait_for_writable_socket(connection_t *pconn,
                                          bool socket_writable)
 {
   static bool previous_state = FALSE;

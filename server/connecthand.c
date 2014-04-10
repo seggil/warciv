@@ -67,17 +67,17 @@ char *user_action_type_strs[NUM_ACTION_TYPES] = {
   "hack"
 };
 
-static void grant_access_level(struct connection *pconn);
+static void grant_access_level(connection_t *pconn);
 static int generate_welcome_message(char *buf, int buf_len,
                                     char *welcome_msg);
-static bool is_banned(struct connection *pconn, enum conn_pattern_type type);
-static bool conn_can_be_established(struct connection *pconn);
-static void check_connection(struct connection *pconn);
+static bool is_banned(connection_t *pconn, enum conn_pattern_type type);
+static bool conn_can_be_established(connection_t *pconn);
+static void check_connection(connection_t *pconn);
 
 /**************************************************************************
   ...
 **************************************************************************/
-bool can_control_a_player(struct connection *pconn, bool message)
+bool can_control_a_player(connection_t *pconn, bool message)
 {
   char *cap[256];
   int ntokens = 0, i;
@@ -130,7 +130,7 @@ int user_action_as_str(struct user_action *pua, char *buf, int buflen)
 /**************************************************************************
   ...
 **************************************************************************/
-static enum action_type find_action_for_connection(struct connection *pconn)
+static enum action_type find_action_for_connection(connection_t *pconn)
 {
   user_action_list_iterate(on_connect_user_actions, pua) {
 #ifdef DEBUG
@@ -152,7 +152,7 @@ static enum action_type find_action_for_connection(struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-static void grant_access_level(struct connection *pconn)
+static void grant_access_level(connection_t *pconn)
 {
   switch (find_action_for_connection(pconn)) {
     case ACTION_BAN:
@@ -213,7 +213,7 @@ static void grant_access_level(struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool is_banned(struct connection *pconn, enum conn_pattern_type type)
+static bool is_banned(connection_t *pconn, enum conn_pattern_type type)
 {
   user_action_list_iterate(on_connect_user_actions, pua) {
     if (pua->action == ACTION_BAN && pua->conpat->type == type
@@ -228,7 +228,7 @@ static bool is_banned(struct connection *pconn, enum conn_pattern_type type)
 /**************************************************************************
   Returns FALSE if some clues are missing for the action list.
 **************************************************************************/
-static bool conn_can_be_established(struct connection *pconn)
+static bool conn_can_be_established(connection_t *pconn)
 {
   return pconn != NULL
          && pconn->u.server.ipaddr != '\0'
@@ -240,7 +240,7 @@ static bool conn_can_be_established(struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-static void check_connection(struct connection *pconn)
+static void check_connection(connection_t *pconn)
 {
   if (user_action_list_size(on_connect_user_actions) > 0
       && conn_can_be_established(pconn)) {
@@ -255,7 +255,7 @@ static void check_connection(struct connection *pconn)
 /**************************************************************************
   Returns FALSE if the connection must be/has been closed.
 **************************************************************************/
-bool receive_ip(struct connection *pconn, const char *ipaddr)
+bool receive_ip(connection_t *pconn, const char *ipaddr)
 {
   assert(ipaddr != NULL);
 
@@ -275,7 +275,7 @@ bool receive_ip(struct connection *pconn, const char *ipaddr)
 /**************************************************************************
   Returns FALSE if the connection must be/has been closed.
 **************************************************************************/
-bool receive_hostname(struct connection *pconn, const char *addr)
+bool receive_hostname(connection_t *pconn, const char *addr)
 {
   if (addr) {
     sz_strlcpy(pconn->addr, addr);
@@ -295,7 +295,7 @@ bool receive_hostname(struct connection *pconn, const char *addr)
 /**************************************************************************
   Returns FALSE if the connection must be/has been closed.
 **************************************************************************/
-bool receive_username(struct connection *pconn, const char *username)
+bool receive_username(connection_t *pconn, const char *username)
 {
   assert(username != NULL);
 
@@ -319,9 +319,9 @@ bool receive_username(struct connection *pconn, const char *username)
   N.B. this only attachs a connection to a player if
        pconn->name == player->username
 **************************************************************************/
-void establish_new_connection(struct connection *pconn)
+void establish_new_connection(connection_t *pconn)
 {
-  struct conn_list *dest = pconn ? pconn->self : NULL;
+  struct connection_list *dest = pconn ? pconn->self : NULL;
   player_t *pplayer;
   struct packet_server_join_reply packet;
   char hostname[512];
@@ -399,12 +399,12 @@ void establish_new_connection(struct connection *pconn)
   /* notify the console and other established connections that you're here */
   freelog(LOG_NORMAL, _("%s has connected from %s."),
           pconn->username, pconn->addr);
-  conn_list_iterate(game.est_connections, aconn) {
+  connection_list_iterate(game.est_connections, aconn) {
     if (aconn != pconn && !conn_is_ignored(pconn, aconn)) {
       notify_conn(aconn->self, _("Server: %s has connected from %s."),
                   pconn->username, pconn->addr);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   /* a player has already been created for this user, reconnect him */
   if ((pplayer = find_player_by_user(pconn->username))) {
@@ -502,7 +502,7 @@ void establish_new_connection(struct connection *pconn)
   }
 
   send_conn_info(dest, game.est_connections);
-  conn_list_append(game.est_connections, pconn);
+  connection_list_append(game.est_connections, pconn);
 
   send_running_votes(pconn);
   send_updated_vote_totals(NULL);
@@ -511,7 +511,7 @@ void establish_new_connection(struct connection *pconn)
     send_diplomatic_meetings(pconn);
   }
 
-  if (conn_list_size(game.est_connections) == 1) {
+  if (connection_list_size(game.est_connections) == 1) {
     /* First connection: replace "restarting in x seconds". */
     maybe_automatic_meta_message(default_meta_message_string());
   }
@@ -522,7 +522,7 @@ void establish_new_connection(struct connection *pconn)
 /**************************************************************************
   send the rejection packet to the client.
 **************************************************************************/
-void reject_new_connection(const char *msg, struct connection *pconn)
+void reject_new_connection(const char *msg, connection_t *pconn)
 {
   struct packet_server_join_reply packet;
 
@@ -545,7 +545,7 @@ void reject_new_connection(const char *msg, struct connection *pconn)
  Returns FALSE if the clients gets rejected and the connection should be
  closed. Returns TRUE if the client get accepted.
 **************************************************************************/
-bool handle_login_request(struct connection *pconn,
+bool handle_login_request(connection_t *pconn,
                           struct packet_server_join_req *req)
 {
   char msg[MAX_LEN_MSG];
@@ -617,7 +617,7 @@ bool handle_login_request(struct connection *pconn,
   }
 
   /* don't allow duplicate logins */
-  conn_list_iterate(game.all_connections, aconn) {
+  connection_list_iterate(game.all_connections, aconn) {
     if (aconn == pconn) {
       continue;
     }
@@ -629,7 +629,7 @@ bool handle_login_request(struct connection *pconn,
               req->username, pconn->addr);
       return FALSE;
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   if (srvarg.auth.enabled) {
     return authenticate_user(pconn, req->username);
@@ -711,7 +711,7 @@ void server_assign_nation(player_t *pplayer,
   Note caller should also call close_connection() after this, to do
   lower-level close stuff.
 **************************************************************************/
-void lost_connection_to_client(struct connection *pconn)
+void lost_connection_to_client(connection_t *pconn)
 {
   player_t *pplayer = pconn->player;
   const char *desc = conn_description(pconn);
@@ -729,13 +729,13 @@ void lost_connection_to_client(struct connection *pconn)
    * really lost (as opposed to server shutting it down) which would
    * trigger an error on send and recurse back to here.
    * Safe to unlink even if not in list: */
-  conn_list_unlink(game.est_connections, pconn);
+  connection_list_unlink(game.est_connections, pconn);
   pconn->u.server.is_closing = TRUE;
-  conn_list_iterate(game.est_connections, aconn) {
+  connection_list_iterate(game.est_connections, aconn) {
     if (!conn_is_ignored(pconn, aconn)) {
       notify_conn(aconn->self, _("Server: Lost connection: %s."), desc);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   if (!pplayer) {
     return;
@@ -778,7 +778,7 @@ void lost_connection_to_client(struct connection *pconn)
 /**************************************************************************
   Fill in packet_conn_info from full connection struct.
 **************************************************************************/
-static void package_conn_info(struct connection *pconn,
+static void package_conn_info(connection_t *pconn,
                               struct packet_conn_info *packet)
 {
   packet->id           = pconn->id;
@@ -798,8 +798,8 @@ static void package_conn_info(struct connection *pconn,
   on 'remove' arg.  Sends conn_info packets for 'src' to 'dest', setting
   FALSE 'packet.used' if 'remove' is specified.
 **************************************************************************/
-static void send_conn_info_arg(struct conn_list *src,
-                               struct conn_list *dest, bool remove)
+static void send_conn_info_arg(struct connection_list *src,
+                               struct connection_list *dest, bool remove)
 {
   struct packet_conn_info packet;
 
@@ -807,20 +807,20 @@ static void send_conn_info_arg(struct conn_list *src,
     return;
   }
 
-  conn_list_iterate(src, psrc) {
+  connection_list_iterate(src, psrc) {
     package_conn_info(psrc, &packet);
     if (remove) {
       packet.used = FALSE;
     }
     lsend_packet_conn_info(dest, &packet);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
   Send conn_info packets to tell 'dest' connections all about
   'src' connections.
 **************************************************************************/
-void send_conn_info(struct conn_list *src, struct conn_list *dest)
+void send_conn_info(struct connection_list *src, struct connection_list *dest)
 {
   send_conn_info_arg(src, dest, FALSE);
 }
@@ -829,7 +829,7 @@ void send_conn_info(struct conn_list *src, struct conn_list *dest)
   Like send_conn_info(), but turn off the 'used' bits to tell clients
   to remove info about these connections instead of adding it.
 **************************************************************************/
-void send_conn_info_remove(struct conn_list *src, struct conn_list *dest)
+void send_conn_info_remove(struct connection_list *src, struct connection_list *dest)
 {
   send_conn_info_arg(src, dest, TRUE);
 }
@@ -843,7 +843,7 @@ void send_conn_info_remove(struct conn_list *src, struct conn_list *dest)
   Note "observer" connections do not count for is_connected. You must set
        pconn->obserber to TRUE before attaching!
 **************************************************************************/
-bool attach_connection_to_player(struct connection *pconn,
+bool attach_connection_to_player(connection_t *pconn,
                                  player_t *pplayer)
 {
   /* if pplayer is NULL, attach to first non-connected player slot */
@@ -874,8 +874,8 @@ bool attach_connection_to_player(struct connection *pconn,
   }
 
   pconn->player = pplayer;
-  conn_list_append(pplayer->connections, pconn);
-  conn_list_append(game.game_connections, pconn);
+  connection_list_append(pplayer->connections, pconn);
+  connection_list_append(game.game_connections, pconn);
 
   restore_access_level(pconn);
 
@@ -888,26 +888,26 @@ bool attach_connection_to_player(struct connection *pconn,
 
   pconn remains a member of game.est_connections.
 **************************************************************************/
-bool unattach_connection_from_player(struct connection *pconn)
+bool unattach_connection_from_player(connection_t *pconn)
 {
   if (!pconn->player) {
     return FALSE; /* no player is attached to this conn */
   }
 
-  conn_list_unlink(pconn->player->connections, pconn);
-  conn_list_unlink(game.game_connections, pconn);
+  connection_list_unlink(pconn->player->connections, pconn);
+  connection_list_unlink(game.game_connections, pconn);
 
   pconn->player->is_connected = FALSE;
   pconn->observer = FALSE;
 
   /* If any other (non-observing) conn is attached to
    * this player, the player is still connected. */
-  conn_list_iterate(pconn->player->connections, aconn) {
+  connection_list_iterate(pconn->player->connections, aconn) {
     if (!aconn->observer) {
       pconn->player->is_connected = TRUE;
       break;
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
   /*if is_connected is FALSE, nobody is controlling the player so we have to reset
      the player data structure during pre-game */
 
@@ -1005,7 +1005,7 @@ struct user_action *user_action_new(const char *pattern, int type,
   Restore access level for the given connection (user). Used when taking
   a player, observing, or detaching.
 **************************************************************************/
-void restore_access_level(struct connection *pconn)
+void restore_access_level(connection_t *pconn)
 {
   /* Restore previous privileges. */
   pconn->u.server.access_level = pconn->u.server.granted_access_level;
@@ -1023,7 +1023,7 @@ void restore_access_level(struct connection *pconn)
   Called when a connection does something to indicate that it is not
   idle.
 **************************************************************************/
-void conn_reset_idle_time(struct connection *pconn)
+void conn_reset_idle_time(connection_t *pconn)
 {
   if (!pconn || !pconn->used || pconn->u.server.is_closing) {
     return;
@@ -1044,14 +1044,14 @@ void check_idle_connections(void)
   }
 
   now = time(NULL);
-  num_connections = conn_list_size(game.est_connections);
+  num_connections = connection_list_size(game.est_connections);
 
   if (server_state == PRE_GAME_STATE
       && num_connections > 1) {
     return;
   }
 
-  conn_list_iterate(game.all_connections, pconn) {
+  connection_list_iterate(game.all_connections, pconn) {
     if (!pconn->used || pconn->u.server.is_closing
         || pconn->u.server.idle_time <= 0
         || pconn->u.server.access_level >= ALLOW_ADMIN
@@ -1063,5 +1063,5 @@ void check_idle_connections(void)
     if (now >= pconn->u.server.idle_time + game.server.idlecut) {
       server_break_connection(pconn, EXIT_STATUS_IDLECUT);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }

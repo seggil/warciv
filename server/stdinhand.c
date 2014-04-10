@@ -82,66 +82,66 @@
 /* Import */
 #include "stdinhand_info.h"
 
-static bool cut_client_connection(struct connection *caller, char *name,
+static bool cut_client_connection(connection_t *caller, char *name,
                                   bool check);
-static bool show_help(struct connection *caller, char *arg);
-static bool show_list(struct connection *caller, char *arg);
-static void show_connections(struct connection *caller);
-static void show_capabilities(struct connection *caller);
-static void show_actionlist(struct connection *caller);
-static void show_allow(struct connection *caller);
-static void show_votes(struct connection *caller);
-static void show_teams(struct connection *caller, bool send_to_all);
-static void show_rulesets(struct connection *caller);
-static bool show_scenarios(struct connection *caller);
-static bool show_mutes(struct connection *caller);
-static bool set_ai_level(struct connection *caller, char *name, int level,
+static bool show_help(connection_t *caller, char *arg);
+static bool show_list(connection_t *caller, char *arg);
+static void show_connections(connection_t *caller);
+static void show_capabilities(connection_t *caller);
+static void show_actionlist(connection_t *caller);
+static void show_allow(connection_t *caller);
+static void show_votes(connection_t *caller);
+static void show_teams(connection_t *caller, bool send_to_all);
+static void show_rulesets(connection_t *caller);
+static bool show_scenarios(connection_t *caller);
+static bool show_mutes(connection_t *caller);
+static bool set_ai_level(connection_t *caller, char *name, int level,
                          bool check);
-static bool set_away(struct connection *caller, char *name, bool check);
-static void setup_observer(struct connection *pconn,
+static bool set_away(connection_t *caller, char *name, bool check);
+static void setup_observer(connection_t *pconn,
                            player_t *pplayer);
 static void process_observe_requests(void);
-static bool observe_command(struct connection *caller, char *name,
+static bool observe_command(connection_t *caller, char *name,
                             bool check);
-static bool take_command(struct connection *caller, char *name, bool check);
-static bool detach_command(struct connection *caller, char *name, bool check);
-static bool attach_command(struct connection *caller, char *name, bool check);
-static bool start_command(struct connection *caller, char *name,
+static bool take_command(connection_t *caller, char *name, bool check);
+static bool detach_command(connection_t *caller, char *name, bool check);
+static bool attach_command(connection_t *caller, char *name, bool check);
+static bool start_command(connection_t *caller, char *name,
                           bool check);
-static bool unstart_command(struct connection *caller, char *name,
+static bool unstart_command(connection_t *caller, char *name,
                             bool check);
-static bool end_command(struct connection *caller, char *str, bool check);
-static bool draw_command(struct connection *caller, char *str, bool check);
-static bool ban_command(struct connection *caller, char *pattern,
+static bool end_command(connection_t *caller, char *str, bool check);
+static bool draw_command(connection_t *caller, char *str, bool check);
+static bool ban_command(connection_t *caller, char *pattern,
                         bool check);
-static bool unban_command(struct connection *caller, char *pattern,
+static bool unban_command(connection_t *caller, char *pattern,
                           bool check);
-static bool allow_command(struct connection *caller, const char *arg,
+static bool allow_command(connection_t *caller, const char *arg,
                           bool check);
-static bool disallow_command(struct connection *caller,
+static bool disallow_command(connection_t *caller,
                              const char *arg, bool check);
-static bool pause_command(struct connection *caller, const char *arg,
+static bool pause_command(connection_t *caller, const char *arg,
                           bool check);
-static bool unpause_command(struct connection *caller, const char *arg,
+static bool unpause_command(connection_t *caller, const char *arg,
                             bool check);
-static bool addaction_command(struct connection *caller, char *pattern,
+static bool addaction_command(connection_t *caller, char *pattern,
                               bool check);
-static bool delaction_command(struct connection *caller, char *pattern,
+static bool delaction_command(connection_t *caller, char *pattern,
                               bool check);
-static bool reset_command(struct connection *caller, bool check);
+static bool reset_command(connection_t *caller, bool check);
 
 #define ACTION_LIST_FILE_VERSION 1
 static struct user_action_list *load_action_list_v0(const char *filename);
 static struct user_action_list *load_action_list_v1(const char *filename);
 static struct user_action_list *load_action_list(const char *filename);
 static int save_action_list(const char *filename);
-bool loadactionlist_command(struct connection *caller,
+bool loadactionlist_command(connection_t *caller,
                             char *filename, bool check);
-bool saveactionlist_command(struct connection *caller,
+bool saveactionlist_command(connection_t *caller,
                             char *filename, bool check);
-bool clearactionlist_command(struct connection *caller,
+bool clearactionlist_command(connection_t *caller,
                              char *filename, bool check);
-static bool loadscenario_command(struct connection *caller, char *str,
+static bool loadscenario_command(connection_t *caller, char *str,
                                  bool check);
 
 struct muteinfo {
@@ -158,7 +158,7 @@ struct kickinfo {
   char user[MAX_LEN_NAME];
 };
 
-static struct kickinfo *kickinfo_new(struct connection *pconn);
+static struct kickinfo *kickinfo_new(connection_t *pconn);
 static void kickinfo_free(struct kickinfo *ki);
 
 static struct hash_table *kick_table_by_addr;
@@ -284,7 +284,7 @@ void stdinhand_init(void)
 **************************************************************************/
 static void unmute_conn_by_mi(struct muteinfo *mi)
 {
-  struct connection *pconn;
+  connection_t *pconn;
 
   if (mi == NULL) {
     return;
@@ -320,7 +320,7 @@ void stdinhand_turn(void)
     }
   } hash_values_iterate_end;
 
-  conn_list_iterate(game.est_connections, pconn) {
+  connection_list_iterate(game.est_connections, pconn) {
     if (pconn->u.server.observe_requested
         && !conn_get_player(pconn)
         && !conn_is_global_observer(pconn)) {
@@ -329,7 +329,7 @@ void stdinhand_turn(void)
       send_packet_freeze_client(pconn);
       connection_do_buffer(pconn);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   process_observe_requests();
 }
@@ -378,7 +378,7 @@ void stdinhand_free(void)
   Whether the caller can use the specified command. caller == NULL means
   console.
 **************************************************************************/
-static bool may_use(struct connection *caller, enum command_id cmd)
+static bool may_use(connection_t *caller, enum command_id cmd)
 {
   if (!caller) {
     return command_access_level(cmd) < ALLOW_NEVER;
@@ -390,7 +390,7 @@ static bool may_use(struct connection *caller, enum command_id cmd)
   Whether the caller cannot use any commands at all.
   caller == NULL means console.
 **************************************************************************/
-static bool may_use_nothing(struct connection *caller)
+static bool may_use_nothing(connection_t *caller)
 {
   if (!caller) {
     return FALSE; /* on the console, everything is allowed */
@@ -403,7 +403,7 @@ static bool may_use_nothing(struct connection *caller)
   the state of the game would allow changing the option at all).
   caller == NULL means console.
 **************************************************************************/
-static bool may_set_option(struct connection *caller, int option_idx)
+static bool may_set_option(connection_t *caller, int option_idx)
 {
   if (!caller) {
     return TRUE; /* on the console, everything is allowed */
@@ -419,7 +419,7 @@ static bool may_set_option(struct connection *caller, int option_idx)
   Whether the caller can set the specified option, taking into account
   access, and the game state.  caller == NULL means console.
 **************************************************************************/
-static bool may_set_option_now(struct connection *caller, int option_idx)
+static bool may_set_option_now(connection_t *caller, int option_idx)
 {
   return (may_set_option(caller, option_idx)
           && sset_is_changeable(option_idx));
@@ -431,7 +431,7 @@ static bool may_set_option_now(struct connection *caller, int option_idx)
   client players can see "to client" options, or if player
   has command access level to change option.
 **************************************************************************/
-static bool may_view_option(struct connection *caller, int option_idx)
+static bool may_view_option(connection_t *caller, int option_idx)
 {
   if (!caller) {
     return TRUE; /* on the console, everything is allowed */
@@ -449,7 +449,7 @@ static bool may_view_option(struct connection *caller, int option_idx)
   This lowlevel function takes a single line; prefix is prepended to line.
 **************************************************************************/
 static void cmd_reply_line(enum command_id cmd,
-                           struct connection *caller,
+                           connection_t *caller,
                            enum rfc_status rfc_status,
                            const char *prefix,
                            const char *line)
@@ -468,12 +468,12 @@ static void cmd_reply_line(enum command_id cmd,
     con_write(rfc_status, "%s%s", prefix, line);
   }
   if (rfc_status == C_OK) {
-    conn_list_iterate(game.est_connections, pconn) {
+    connection_list_iterate(game.est_connections, pconn) {
       /* Do not tell caller, since he was told above! */
       if (pconn != caller) {
         notify_conn(pconn->self, _("Server: %s"), line);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   }
 }
 
@@ -482,7 +482,7 @@ static void cmd_reply_line(enum command_id cmd,
   separately. 'prefix' is prepended to every line _after_ the first line.
 **************************************************************************/
 static void vcmd_reply_prefix(enum command_id cmd,
-                              struct connection *caller,
+                              connection_t *caller,
                               enum rfc_status rfc_status,
                               const char *prefix, const char *format,
                               va_list ap)
@@ -503,11 +503,11 @@ static void vcmd_reply_prefix(enum command_id cmd,
   var-args version of above
   duplicate declaration required for attribute to work...
 **************************************************************************/
-static void cmd_reply_prefix(enum command_id cmd, struct connection *caller,
+static void cmd_reply_prefix(enum command_id cmd, connection_t *caller,
                              enum rfc_status rfc_status, const char *prefix,
                              const char *format, ...)
 wc__attribute((__format__(__printf__, 5, 6)));
-static void cmd_reply_prefix(enum command_id cmd, struct connection *caller,
+static void cmd_reply_prefix(enum command_id cmd, connection_t *caller,
                              enum rfc_status rfc_status, const char *prefix,
                              const char *format, ...)
 {
@@ -520,10 +520,10 @@ static void cmd_reply_prefix(enum command_id cmd, struct connection *caller,
 /**************************************************************************
   var-args version as above, no prefix
 **************************************************************************/
-static void cmd_reply(enum command_id cmd, struct connection *caller,
+static void cmd_reply(enum command_id cmd, connection_t *caller,
                       enum rfc_status rfc_status, const char *format, ...)
 wc__attribute((__format__(__printf__, 4, 5)));
-static void cmd_reply(enum command_id cmd, struct connection *caller,
+static void cmd_reply(enum command_id cmd, connection_t *caller,
                       enum rfc_status rfc_status, const char *format, ...)
 {
   va_list ap;
@@ -536,7 +536,7 @@ static void cmd_reply(enum command_id cmd, struct connection *caller,
 ...
 **************************************************************************/
 static void cmd_reply_no_such_player(enum command_id cmd,
-                                     struct connection *caller,
+                                     connection_t *caller,
                                      char *name,
                                      enum m_pre_result match_result)
 {
@@ -571,7 +571,7 @@ static void cmd_reply_no_such_player(enum command_id cmd,
 ...
 **************************************************************************/
 static void cmd_reply_no_such_conn(enum command_id cmd,
-                                   struct connection *caller,
+                                   connection_t *caller,
                                    const char *name,
                                    enum m_pre_result match_result)
 {
@@ -605,7 +605,7 @@ static void cmd_reply_no_such_conn(enum command_id cmd,
 /**************************************************************************
 ...
 **************************************************************************/
-static void open_metaserver_connection(struct connection *caller)
+static void open_metaserver_connection(connection_t *caller)
 {
   server_open_meta();
   if (send_server_info_to_metaserver(META_INFO)) {
@@ -617,7 +617,7 @@ static void open_metaserver_connection(struct connection *caller)
 /**************************************************************************
 ...
 **************************************************************************/
-static void close_metaserver_connection(struct connection *caller)
+static void close_metaserver_connection(connection_t *caller)
 {
   if (send_server_info_to_metaserver(META_GOODBYE)) {
     server_close_meta();
@@ -629,7 +629,7 @@ static void close_metaserver_connection(struct connection *caller)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool metaconnection_command(struct connection *caller, char *arg,
+static bool metaconnection_command(connection_t *caller, char *arg,
                                    bool check)
 {
   if ((*arg == '\0') || (0 == strcmp(arg, "?"))) {
@@ -673,7 +673,7 @@ static bool metaconnection_command(struct connection *caller, char *arg,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool welcome_message_command(struct connection *caller,
+static bool welcome_message_command(connection_t *caller,
                                     char *arg, bool check)
 {
   if (check) {
@@ -709,7 +709,7 @@ static bool welcome_message_command(struct connection *caller,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool dnslookup_command(struct connection *caller, char *arg,
+static bool dnslookup_command(connection_t *caller, char *arg,
                               bool check)
 {
   if (check) {
@@ -750,7 +750,7 @@ static void reload_settings(void)
 /**************************************************************************
   ...
 **************************************************************************/
-static void show_required_capabilities(struct connection *pconn)
+static void show_required_capabilities(connection_t *pconn)
 {
   if (srvarg.required_cap[0] != '\0') {
     cmd_reply(CMD_REQUIRE, pconn, C_COMMENT,
@@ -765,7 +765,7 @@ static void show_required_capabilities(struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-bool require_command(struct connection *caller, char *arg, bool check)
+bool require_command(connection_t *caller, char *arg, bool check)
 {
   char *cap[256], buf[MAX_LEN_CONSOLE_LINE];
   int ntokens = 0, i;
@@ -811,11 +811,11 @@ bool require_command(struct connection *caller, char *arg, bool check)
   }
 
   /* detach all bad connections without this capability */
-  conn_list_iterate(game.game_connections, pconn) {
+  connection_list_iterate(game.game_connections, pconn) {
     if (!pconn->observer && !can_control_a_player(pconn, TRUE)) {
       detach_command(pconn, "", FALSE);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   return TRUE;
 }
@@ -823,7 +823,7 @@ bool require_command(struct connection *caller, char *arg, bool check)
 /**************************************************************************
 ...
 **************************************************************************/
-static struct kickinfo *kickinfo_new(struct connection *pconn)
+static struct kickinfo *kickinfo_new(connection_t *pconn)
 {
   struct kickinfo *ki;
 
@@ -849,7 +849,7 @@ static void kickinfo_free(struct kickinfo *ki)
 /**************************************************************************
 ...
 **************************************************************************/
-static void kick_table_add(struct connection *pconn)
+static void kick_table_add(connection_t *pconn)
 {
   struct kickinfo *ki = NULL;
 
@@ -869,7 +869,7 @@ static void kick_table_add(struct connection *pconn)
 /**************************************************************************
 ...
 **************************************************************************/
-static void kick_table_remove(const struct connection *pconn)
+static void kick_table_remove(const connection_t *pconn)
 {
   struct kickinfo *ki;
 
@@ -890,7 +890,7 @@ static void kick_table_remove(const struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-bool conn_is_kicked(const struct connection *pconn, int *time_remaining)
+bool conn_is_kicked(const connection_t *pconn, int *time_remaining)
 {
   struct kickinfo *ki_addr, *ki_user;
   time_t now, time_of_kick;
@@ -933,12 +933,12 @@ bool conn_is_kicked(const struct connection *pconn, int *time_remaining)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool kick_command(struct connection *caller, char *name, bool check)
+static bool kick_command(connection_t *caller, char *name, bool check)
 {
-  struct connection *pconn;
+  connection_t *pconn;
   enum m_pre_result match_result;
   char ipaddr[MAX_LEN_ADDR];
-  struct conn_list *kick_list;
+  struct connection_list *kick_list;
   struct hash_table *unique_ipaddr_table;
   int num_unique_connections;
   const int MIN_UNIQUE_CONNS = 3;
@@ -957,9 +957,9 @@ static bool kick_command(struct connection *caller, char *name, bool check)
     }
 
     unique_ipaddr_table = hash_new(hash_fval_string2, hash_fcmp_string);
-    conn_list_iterate(game.est_connections, pc) {
+    connection_list_iterate(game.est_connections, pc) {
       hash_insert(unique_ipaddr_table, pc->u.server.ipaddr, NULL);
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
 
     num_unique_connections = hash_num_entries(unique_ipaddr_table);
     hash_free(unique_ipaddr_table);
@@ -978,15 +978,15 @@ static bool kick_command(struct connection *caller, char *name, bool check)
   }
 
   sz_strlcpy(ipaddr, pconn->u.server.ipaddr);
-  kick_list = conn_list_new();
+  kick_list = connection_list_new();
 
-  conn_list_iterate(game.all_connections, pc) {
+  connection_list_iterate(game.all_connections, pc) {
     if (0 == mystrncasecmp(ipaddr, pc->u.server.ipaddr, MAX_LEN_ADDR)) {
-      conn_list_append(kick_list, pc);
+      connection_list_append(kick_list, pc);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
-  conn_list_iterate(kick_list, pc) {
+  connection_list_iterate(kick_list, pc) {
     if (conn_controls_player(pc)) {
       /* Unassign the username. */
       sz_strlcpy(pc->player->username, ANON_USER_NAME);
@@ -994,9 +994,9 @@ static bool kick_command(struct connection *caller, char *name, bool check)
 
     kick_table_add(pc);
     server_break_connection(pc, EXIT_STATUS_KICKED);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
-  conn_list_free(kick_list);
+  connection_list_free(kick_list);
 
   return TRUE;
 }
@@ -1004,7 +1004,7 @@ static bool kick_command(struct connection *caller, char *name, bool check)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool welcome_file_command(struct connection *caller,
+static bool welcome_file_command(connection_t *caller,
                                  char *arg, bool check)
 {
   FILE *f = NULL;
@@ -1073,7 +1073,7 @@ static bool welcome_file_command(struct connection *caller,
   Common code for meta* related commands to reduce code duplication.
   Argument cmd_id gives the command we are running as.
 **************************************************************************/
-static bool do_meta_set_command(struct connection *caller,
+static bool do_meta_set_command(connection_t *caller,
                                 const char *arg, bool check, int cmd_id)
 {
   char buf[1024];
@@ -1152,7 +1152,7 @@ static bool do_meta_set_command(struct connection *caller,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool metaserver_command(struct connection *caller, char *arg,
+static bool metaserver_command(connection_t *caller, char *arg,
                                bool check)
 {
   if (check) {
@@ -1167,7 +1167,7 @@ static bool metaserver_command(struct connection *caller, char *arg,
 /**************************************************************************
  Returns the serverid
 **************************************************************************/
-static bool show_serverid(struct connection *caller, char *arg)
+static bool show_serverid(connection_t *caller, char *arg)
 {
   cmd_reply(CMD_SRVID, caller, C_COMMENT, _("Server id: %s"),
             srvarg.serverid);
@@ -1246,7 +1246,7 @@ static int expansionism_of_skill_level(int level)
 For command "save foo";
 Save the game, with filename=arg, provided server state is ok.
 **************************************************************************/
-static bool save_command(struct connection *caller, char *arg, bool check)
+static bool save_command(connection_t *caller, char *arg, bool check)
 {
   if (server_state == SELECT_RACES_STATE) {
     cmd_reply(CMD_SAVE, caller, C_SYNTAX,
@@ -1261,7 +1261,7 @@ static bool save_command(struct connection *caller, char *arg, bool check)
 /**************************************************************************
 ...
 **************************************************************************/
-void toggle_ai_player_direct(struct connection *caller,
+void toggle_ai_player_direct(connection_t *caller,
                              player_t *pplayer)
 {
   assert(pplayer != NULL);
@@ -1312,7 +1312,7 @@ void toggle_ai_player_direct(struct connection *caller,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool toggle_ai_player(struct connection *caller, char *arg,
+static bool toggle_ai_player(connection_t *caller, char *arg,
                              bool check)
 {
   enum m_pre_result match_result;
@@ -1330,7 +1330,7 @@ static bool toggle_ai_player(struct connection *caller, char *arg,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool create_ai_player(struct connection *caller, char *arg,
+static bool create_ai_player(connection_t *caller, char *arg,
                              bool check)
 {
   player_t *pplayer;
@@ -1406,7 +1406,7 @@ static bool create_ai_player(struct connection *caller, char *arg,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool remove_player(struct connection *caller, char *arg, bool check)
+static bool remove_player(connection_t *caller, char *arg, bool check)
 {
   enum m_pre_result match_result;
   player_t *pplayer;
@@ -1445,7 +1445,7 @@ static bool remove_player(struct connection *caller, char *arg, bool check)
 /***************************************************************************
 ...
 ***************************************************************************/
-static bool switch_command(struct connection *caller, char *str, bool check)
+static bool switch_command(connection_t *caller, char *str, bool check)
 {
   char *arg[2];
   int ntokens;
@@ -1541,7 +1541,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
     return TRUE;
   }
 
-  conn_list_do_buffer(game.est_connections);
+  connection_list_do_buffer(game.est_connections);
 
   player2_units = unit_list_new();
   unit_list_iterate(pplayer2->units, punit) {
@@ -1582,7 +1582,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
   unit_list_free(player1_units);
   unit_list_free(player2_units);
 
-  conn_list_do_unbuffer(game.est_connections);
+  connection_list_do_unbuffer(game.est_connections);
 
   pteam = team_get_by_id(pplayer1->team);
   notify_team(pteam, _("Server: %s and %s have switched positions."),
@@ -1594,7 +1594,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
 /**************************************************************************
   Returns FALSE iff there was an error.
 **************************************************************************/
-bool read_init_script(struct connection * caller, char *script_filename)
+bool read_init_script(connection_t * caller, char *script_filename)
 {
   FILE *script_file;
   char real_filename[1024];
@@ -1608,7 +1608,7 @@ bool read_init_script(struct connection * caller, char *script_filename)
     char buffer[MAX_LEN_CONSOLE_LINE];
     /* the size is set as to not overflow buffer in handle_stdin_input */
     while (fgets(buffer, MAX_LEN_CONSOLE_LINE - 1, script_file)) {
-      handle_stdin_input((struct connection *) NULL, buffer, FALSE);
+      handle_stdin_input((connection_t *) NULL, buffer, FALSE);
     }
     fclose(script_file);
     return TRUE;
@@ -1626,7 +1626,7 @@ bool read_init_script(struct connection * caller, char *script_filename)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool read_command(struct connection *caller, char *arg, bool check)
+static bool read_command(connection_t *caller, char *arg, bool check)
 {
   if (check) {
     return TRUE;                /* FIXME: no actual checks done */
@@ -1704,7 +1704,7 @@ static void write_init_script(char *script_filename)
 ...
 ('caller' argument is unused)
 **************************************************************************/
-static bool write_command(struct connection *caller, char *arg, bool check)
+static bool write_command(connection_t *caller, char *arg, bool check)
 {
   if (!check) {
     write_init_script(arg);
@@ -1715,8 +1715,8 @@ static bool write_command(struct connection *caller, char *arg, bool check)
 /**************************************************************************
   Set ptarget's cmdlevel to level if caller is allowed to do so
 **************************************************************************/
-static bool set_cmdlevel(struct connection *caller,
-                         struct connection *ptarget, enum cmdlevel_id level)
+static bool set_cmdlevel(connection_t *caller,
+                         connection_t *ptarget, enum cmdlevel_id level)
 {
   assert(ptarget != NULL);      /* Only ever call me for specific connection */
 
@@ -1746,7 +1746,7 @@ static bool set_cmdlevel(struct connection *caller,
 /**************************************************************************
  Change command access level for individual player, or all, or new.
 **************************************************************************/
-static bool cmdlevel_command(struct connection *caller, char *str,
+static bool cmdlevel_command(connection_t *caller, char *str,
                              bool check)
 {
   char *arg[2];
@@ -1754,7 +1754,7 @@ static bool cmdlevel_command(struct connection *caller, char *str,
   bool ret = FALSE;
   enum m_pre_result match_result;
   enum cmdlevel_id level;
-  struct connection *ptarget;
+  connection_t *ptarget;
 
   ntokens = get_tokens(str, arg, 2, TOKEN_DELIMITERS);
 
@@ -1764,10 +1764,10 @@ static bool cmdlevel_command(struct connection *caller, char *str,
     cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT,
               _("Command access levels in effect:"));
     cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT, horiz_line);
-    conn_list_iterate(game.est_connections, pconn) {
+    connection_list_iterate(game.est_connections, pconn) {
       cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT, "cmdlevel %s %s",
                 cmdlevel_name(pconn->u.server.access_level), pconn->username);
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
     cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT, horiz_line);
     return TRUE;
   }
@@ -1799,7 +1799,7 @@ static bool cmdlevel_command(struct connection *caller, char *str,
 
   if (ntokens == 1) {
     /* No playername supplied: set for all connections */
-    conn_list_iterate(game.est_connections, pconn) {
+    connection_list_iterate(game.est_connections, pconn) {
       if (set_cmdlevel(caller, pconn, level)) {
         cmd_reply(CMD_CMDLEVEL, caller, C_OK,
                   _("Command access level set to '%s' for connection %s."),
@@ -1811,7 +1811,7 @@ static bool cmdlevel_command(struct connection *caller, char *str,
                     "connection %s."),
                   cmdlevel_name(level), pconn->username);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   } else if ((ptarget = find_conn_by_user_prefix(arg[1], &match_result))) {
     if (set_cmdlevel(caller, ptarget, level)) {
       cmd_reply(CMD_CMDLEVEL, caller, C_OK,
@@ -1862,7 +1862,7 @@ static const char *olvlname_accessor(int i)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool ignore_command(struct connection *caller, char *str, bool check)
+static bool ignore_command(connection_t *caller, char *str, bool check)
 {
   char buf[128], pat[128], err[64];
   int type, n;
@@ -1957,7 +1957,7 @@ static bool parse_range(const char *s, int *first, int *last, char *err,
 /**************************************************************************
   ...
 **************************************************************************/
-static bool unignore_command(struct connection *caller,
+static bool unignore_command(connection_t *caller,
                              char *str, bool check)
 {
   char arg[128], err[64];
@@ -2087,7 +2087,7 @@ default_team_names:
 /**************************************************************************
   ...
 **************************************************************************/
-static bool autoteam_command(struct connection *caller, char *str,
+static bool autoteam_command(connection_t *caller, char *str,
                              bool check)
 {
   const int maxp = MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS;
@@ -2156,7 +2156,7 @@ static bool autoteam_command(struct connection *caller, char *str,
 /**************************************************************************
  ...
 **************************************************************************/
-bool conn_is_muted(const struct connection *pconn)
+bool conn_is_muted(const connection_t *pconn)
 {
   if (!pconn) {
     return FALSE;
@@ -2167,11 +2167,11 @@ bool conn_is_muted(const struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool unmute_command(struct connection *caller, char *str, bool check)
+static bool unmute_command(connection_t *caller, char *str, bool check)
 {
   enum m_pre_result res;
   struct muteinfo *mi;
-  struct connection *pconn;
+  connection_t *pconn;
 
   pconn = find_conn_by_user_prefix(str, &res);
   if (!pconn) {
@@ -2206,12 +2206,12 @@ static bool unmute_command(struct connection *caller, char *str, bool check)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool mute_command(struct connection *caller, char *str, bool check)
+static bool mute_command(connection_t *caller, char *str, bool check)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
   char *arg[2], *p;
   int ntokens = 0, nturns = 3;
-  struct connection *pconn = NULL;
+  connection_t *pconn = NULL;
   enum m_pre_result res;
   struct muteinfo *mi;
 
@@ -2269,7 +2269,7 @@ static bool mute_command(struct connection *caller, char *str, bool check)
 
   hash_insert(mute_table, mi->addr, mi);
 
-  conn_list_iterate(game.est_connections, pc) {
+  connection_list_iterate(game.est_connections, pc) {
     if (pc == pconn) {
       if (nturns == 0) {
         notify_conn(pc->self, _("Server: You have been muted."));
@@ -2298,7 +2298,7 @@ static bool mute_command(struct connection *caller, char *str, bool check)
                     pconn->username, nturns);
       }
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   send_updated_vote_totals(NULL);
 
@@ -2320,7 +2320,7 @@ static void mkstatdate(time_t t, char *buf, int len)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool stats_command(struct connection *caller,
+static bool stats_command(connection_t *caller,
                           char *allargs, bool check)
 {
   char username[MAX_LEN_NAME + 64], buf[256];
@@ -2427,7 +2427,7 @@ static bool stats_command(struct connection *caller,
 /**************************************************************************
   Set timeout options.
 **************************************************************************/
-static bool incremental_timeout_command(struct connection *caller,
+static bool incremental_timeout_command(connection_t *caller,
                                         char *str,
                                         bool check)
 {
@@ -2508,7 +2508,7 @@ static int lookup_option(const char *name)
  help_cmd is the command the player used.
  Only show option values for options which the caller can SEE.
 **************************************************************************/
-static void show_help_option(struct connection *caller,
+static void show_help_option(connection_t *caller,
                              enum command_id help_cmd, int id)
 {
   struct settings_s *op = &settings[id];
@@ -2568,7 +2568,7 @@ static void show_help_option(struct connection *caller,
  help_cmd is the command the player used.
  Only show options which the caller can SEE.
 **************************************************************************/
-static void show_help_option_list(struct connection *caller,
+static void show_help_option_list(connection_t *caller,
                                   enum command_id help_cmd)
 {
   int i, j;
@@ -2602,7 +2602,7 @@ static void show_help_option_list(struct connection *caller,
 /**************************************************************************
  ...
 **************************************************************************/
-static bool explain_option(struct connection *caller, char *str, bool check)
+static bool explain_option(connection_t *caller, char *str, bool check)
 {
   char command[MAX_LEN_CONSOLE_LINE], *cptr_s, *cptr_d;
   int cmd;
@@ -2654,7 +2654,7 @@ Send a report with server options to specified connections.
 2: ongoing options only
 (which=0 means all options; this is now obsolete and no longer used.)
 ******************************************************************/
-void report_server_options(struct conn_list *dest, int which)
+void report_server_options(struct connection_list *dest, int which)
 {
   int i, c;
   char buffer[4096];
@@ -2715,7 +2715,7 @@ void report_server_options(struct conn_list *dest, int which)
   which == 1 : REPORT_SERVER_OPTIONS1
   which == 2 : REPORT_SERVER_OPTIONS2
 ******************************************************************/
-void report_settable_server_options(struct connection *dest, int which)
+void report_settable_server_options(connection_t *dest, int which)
 {
   struct packet_options_settable_control control;
   struct packet_options_settable packet;
@@ -2828,7 +2828,7 @@ void set_ai_level_direct(player_t *pplayer, int level)
 /******************************************************************
   Handle a user command to set an AI level.
 ******************************************************************/
-static bool set_ai_level(struct connection *caller, char *name,
+static bool set_ai_level(connection_t *caller, char *name,
                          int level, bool check)
 {
   enum m_pre_result match_result;
@@ -2877,7 +2877,7 @@ static bool set_ai_level(struct connection *caller, char *name,
 /******************************************************************
   Set user to away mode.
 ******************************************************************/
-static bool set_away(struct connection *caller, char *name, bool check)
+static bool set_away(connection_t *caller, char *name, bool check)
 {
   if (caller == NULL) {
     cmd_reply(CMD_AWAY, caller, C_FAIL, _("This command is client only."));
@@ -2933,7 +2933,7 @@ Note that most values are at most 4 digits, except seeds,
 which we let overflow their columns, plus a sign character.
 Only show options which the caller can SEE.
 ******************************************************************/
-static bool show_command(struct connection *caller, char *str, bool check)
+static bool show_command(connection_t *caller, char *str, bool check)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
   char command[MAX_LEN_CONSOLE_LINE], *cptr_s, *cptr_d;
@@ -3119,7 +3119,7 @@ static bool is_ok_opt_name_value_sep_char(char c)
 /******************************************************************
 ...
 ******************************************************************/
-static bool team_command(struct connection *caller, char *str, bool check)
+static bool team_command(connection_t *caller, char *str, bool check)
 {
   player_t *pplayer;
   enum m_pre_result match_result;
@@ -3206,7 +3206,7 @@ static const char *vote_arg_accessor(int i)
 /******************************************************************
   Make or participate in a vote.
 ******************************************************************/
-static bool vote_command(struct connection *caller,
+static bool vote_command(connection_t *caller,
                          char *str,
                          bool check)
 {
@@ -3309,7 +3309,7 @@ CLEANUP:
 /**************************************************************************
   ...
 **************************************************************************/
-static bool poll_command(struct connection *caller,
+static bool poll_command(connection_t *caller,
                          const char *str,
                          bool check)
 {
@@ -3339,7 +3339,7 @@ static bool poll_command(struct connection *caller,
 /**************************************************************************
   ...
 **************************************************************************/
-static bool emote_command(struct connection *caller,
+static bool emote_command(connection_t *caller,
                           const char *str,
                           bool check)
 {
@@ -3375,7 +3375,7 @@ static bool emote_command(struct connection *caller,
   my_snprintf(chat, sizeof(chat), "%c %s %s",
               caller ? '^' : '+', name, buf);
 
-  conn_list_iterate(game.est_connections, dest) {
+  connection_list_iterate(game.est_connections, dest) {
     if (conn_is_ignored(caller, dest)) {
       continue;
     }
@@ -3388,7 +3388,7 @@ static bool emote_command(struct connection *caller,
     }
     dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT,
                           caller ? caller->id : -1);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   return TRUE;
 }
@@ -3396,7 +3396,7 @@ static bool emote_command(struct connection *caller,
 /**************************************************************************
   Cancel a vote... /cancelvote <vote number>|all.
 **************************************************************************/
-static bool cancel_vote_command(struct connection *caller, char *arg,
+static bool cancel_vote_command(connection_t *caller, char *arg,
                                 bool check)
 {
   struct vote *pvote = NULL;
@@ -3483,7 +3483,7 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
 /******************************************************************
   ...
 ******************************************************************/
-static bool debug_command(struct connection *caller, char *str, bool check)
+static bool debug_command(connection_t *caller, char *str, bool check)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
   char *arg[3];
@@ -3623,12 +3623,12 @@ cleanup:
 /******************************************************************
   NB Currently used for int options only.
 ******************************************************************/
-static void check_option_capability(struct connection *caller,
+static void check_option_capability(connection_t *caller,
                                     struct settings_s *op)
 {
   char buf[1024];
   int n = 0;
-  struct connection *pconn;
+  connection_t *pconn;
 
   if (!op->required_capability || !op->required_capability[0])
     return;
@@ -3709,7 +3709,7 @@ static bool parse_set_arguments(const char *str, struct setting_value *sv)
 /******************************************************************
   ...
 ******************************************************************/
-static bool set_command(struct connection *caller,
+static bool set_command(connection_t *caller,
                         struct setting_value *sv, bool check)
 {
   int val, cmd;
@@ -3889,7 +3889,7 @@ bool is_allowed(enum user_allow_behavior uab)
   player originally controlled by another user.
 **************************************************************************/
 bool is_allowed_to_attach(const player_t *pplayer,
-                          const struct connection *caller,
+                          const connection_t *caller,
                           bool will_obs, char *msgbuf, int msgbuf_len)
 {
   const char *msg = NULL;
@@ -3984,7 +3984,7 @@ FAILED:
  (see detach_command()). The console and those with ALLOW_HACK can
  use the two-argument command and force others to observe.
 **************************************************************************/
-static bool observe_command(struct connection *caller, char *str, bool check)
+static bool observe_command(connection_t *caller, char *str, bool check)
 {
   int ntokens = 0;
   char buf[MAX_LEN_CONSOLE_LINE], *arg[2], msg[MAX_LEN_MSG];
@@ -3992,7 +3992,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
                      server_state == SELECT_RACES_STATE)
       && game.server.is_new_game;
   enum m_pre_result result;
-  struct connection *pconn = NULL;
+  connection_t *pconn = NULL;
   player_t *pplayer = NULL;
   bool res = FALSE;
 
@@ -4117,7 +4117,7 @@ CLEANUP:
   Actually do the changes necessary to make an observer. Assumes that all
   relevant checks have already been made.
 **************************************************************************/
-static void setup_observer(struct connection *pconn,
+static void setup_observer(connection_t *pconn,
                            player_t *pplayer)
 {
   struct hash_table *affected_players = NULL;
@@ -4160,11 +4160,11 @@ static void setup_observer(struct connection *pconn,
     hash_insert(affected_players, pplayer, pplayer);
   } else {
     /* case global observer */
-    conn_list_append(game.game_connections, pconn);
+    connection_list_append(game.game_connections, pconn);
     restore_access_level(pconn);
   }
 
-  conn_list_do_buffer(game.est_connections);
+  connection_list_do_buffer(game.est_connections);
   send_conn_info(pconn->self, game.est_connections);
 
   if (server_state >= RUN_GAME_STATE) {
@@ -4203,7 +4203,7 @@ static void setup_observer(struct connection *pconn,
             pconn->username, pplayer ? pplayer->name : "the game globally");
 
   send_updated_vote_totals(NULL);
-  conn_list_do_unbuffer(game.est_connections);
+  connection_list_do_unbuffer(game.est_connections);
 
   send_server_info_to_metaserver(META_INFO);
 
@@ -4215,7 +4215,7 @@ static void setup_observer(struct connection *pconn,
 **************************************************************************/
 static void process_observe_requests(void)
 {
-  conn_list_iterate(game.est_connections, pconn) {
+  connection_list_iterate(game.est_connections, pconn) {
     if (pconn->u.server.observe_requested) {
       player_t *target = pconn->u.server.observe_target;
       if (target) {
@@ -4228,7 +4228,7 @@ static void process_observe_requests(void)
       }
       setup_observer(pconn, target);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
@@ -4240,7 +4240,7 @@ static void process_observe_requests(void)
   Otherwise, there should be one argument, that being the player that the
   caller wants to take.
 **************************************************************************/
-static bool take_command(struct connection *caller, char *str, bool check)
+static bool take_command(connection_t *caller, char *str, bool check)
 {
   int i = 0, ntokens = 0;
   char buf[MAX_LEN_CONSOLE_LINE], *arg[2], msg[MAX_LEN_MSG];
@@ -4248,7 +4248,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
                      server_state == SELECT_RACES_STATE)
       && game.server.is_new_game;
   enum m_pre_result match_result;
-  struct connection *pconn = NULL;
+  connection_t *pconn = NULL;
   player_t *pplayer = NULL;
   bool res = FALSE;
 
@@ -4312,7 +4312,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
 
   /* if we're taking another player with a user attached,
    * forcibly detach the user from the player. */
-  conn_list_iterate(pplayer->connections, aconn) {
+  connection_list_iterate(pplayer->connections, aconn) {
     if (!aconn->observer) {
       if (server_state == RUN_GAME_STATE) {
         send_game_state(aconn->self, CLIENT_PRE_GAME_STATE);
@@ -4321,7 +4321,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
       unattach_connection_from_player(aconn);
       send_conn_info(aconn->self, game.est_connections);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   /* if the connection is already attached to a player,
    * unattach and cleanup old player (rename, remove, etc) */
@@ -4393,13 +4393,13 @@ CLEANUP:
   Detach from a player. if that player wasn't /created and you were
   controlling the player, remove it (and then detach any observers as well).
 **************************************************************************/
-static bool detach_command(struct connection *caller, char *str, bool check)
+static bool detach_command(connection_t *caller, char *str, bool check)
 {
   int ntokens = 0;
   char buf[MAX_LEN_CONSOLE_LINE], *arg[1];
 
   enum m_pre_result match_result;
-  struct connection *pconn = NULL;
+  connection_t *pconn = NULL;
   player_t *pplayer = NULL;
   bool is_newgame = (server_state == PRE_GAME_STATE ||
                      server_state == SELECT_RACES_STATE)
@@ -4464,7 +4464,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   } else {
     /* was global observer */
     pconn->observer = FALSE;
-    conn_list_unlink(game.game_connections, pconn);
+    connection_list_unlink(game.game_connections, pconn);
     restore_access_level(pconn);
     cmd_reply(CMD_DETACH, caller, C_COMMENT,
               _("%s detaching from global observer."), pconn->username);
@@ -4488,7 +4488,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     if (!pplayer->is_connected && !pplayer->was_created
         && is_newgame && !one_obs_among_many) {
       /* detach any observers */
-      conn_list_iterate(pplayer->connections, aconn) {
+      connection_list_iterate(pplayer->connections, aconn) {
         if (aconn->observer) {
           unattach_connection_from_player(aconn);
           send_conn_info(aconn->self, game.est_connections);
@@ -4496,7 +4496,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
                                      "observing player %s."),
                       pplayer->name);
         }
-      } conn_list_iterate_end;
+      } connection_list_iterate_end;
       /* actually do the removal */
       game_remove_player(pplayer);
       game_renumber_players(pplayer->player_no);
@@ -4530,11 +4530,11 @@ CLEANUP:
 /**************************************************************************
   Attempt to attach a connection to a new player.
 **************************************************************************/
-static bool attach_command(struct connection *caller, char *name, bool check)
+static bool attach_command(connection_t *caller, char *name, bool check)
 {
   int ntokens = 0;
   char buf[MAX_LEN_CONSOLE_LINE], *arg[1];
-  struct connection *pconn = NULL;
+  connection_t *pconn = NULL;
   enum m_pre_result match_result;
   bool res = FALSE;
 
@@ -4712,7 +4712,7 @@ static void format_time_duration(time_t t, char *buf, int maxlen)
   'cmd_id'.
 **************************************************************************/
 static int parse_game_type(int cmd_id,
-                           struct connection *caller, const char *arg)
+                           connection_t *caller, const char *arg)
 {
   char buf[128];
   enum game_types type = GT_NUM_TYPES;
@@ -4776,7 +4776,7 @@ static int rate_compare(const void *a, const void *b)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool ratings_command(struct connection *caller,
+static bool ratings_command(connection_t *caller,
                             char *arg, bool check)
 {
   char buf[128], fmt[128], fmt2[128];
@@ -4888,7 +4888,7 @@ static bool ratings_command(struct connection *caller,
 /**************************************************************************
   ...
 **************************************************************************/
-static bool examine_command(struct connection *caller,
+static bool examine_command(connection_t *caller,
                             char *arg, bool check)
 {
   int id, i, num_rating_changes;
@@ -5073,7 +5073,7 @@ static bool examine_command(struct connection *caller,
 /**************************************************************************
   ...
 **************************************************************************/
-static bool topten_command(struct connection *caller, char *arg, bool check)
+static bool topten_command(connection_t *caller, char *arg, bool check)
 {
   int type = GT_NUM_TYPES;
   struct wcdb_topten_info *ftti = NULL;
@@ -5152,7 +5152,7 @@ static bool topten_command(struct connection *caller, char *arg, bool check)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool gamelist_command(struct connection *caller,
+static bool gamelist_command(connection_t *caller,
                              char *arg, bool check)
 {
   struct wcdb_gamelist *fgl = NULL;
@@ -5240,7 +5240,7 @@ static bool gamelist_command(struct connection *caller,
 /**************************************************************************
   ...
 **************************************************************************/
-static bool aka_command(struct connection *caller,
+static bool aka_command(connection_t *caller,
                         const char *arg, bool check)
 {
   struct wcdb_aliaslist *fal = NULL;
@@ -5330,7 +5330,7 @@ static const char *wcdbarg_accessor(int i)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool wcdb_command(struct connection *caller, char *arg, bool check)
+static bool wcdb_command(connection_t *caller, char *arg, bool check)
 {
   int ind, n, ntokens;
   enum m_pre_result match_result;
@@ -5476,7 +5476,7 @@ static const char *authdbarg_accessor(int i)
 /**************************************************************************
   Control password database parameters.
 **************************************************************************/
-static bool authdb_command(struct connection *caller, char *arg, bool check)
+static bool authdb_command(connection_t *caller, char *arg, bool check)
 {
   int ind;
   enum m_pre_result match_result;
@@ -5587,7 +5587,7 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
 /**************************************************************************
   ...
 **************************************************************************/
-bool load_command(struct connection * caller, char *filename, bool check)
+bool load_command(connection_t * caller, char *filename, bool check)
 {
   struct timer *loadtimer, *uloadtimer;
   struct section_file file;
@@ -5645,7 +5645,7 @@ bool load_command(struct connection * caller, char *filename, bool check)
 
   /* attach connections to players. currently, this applies only
    * to connections that have the correct username. */
-  conn_list_iterate(game.est_connections, pconn) {
+  connection_list_iterate(game.est_connections, pconn) {
     if (pconn->player) {
       unattach_connection_from_player(pconn);
     }
@@ -5656,14 +5656,14 @@ bool load_command(struct connection * caller, char *filename, bool check)
         break;
       }
     } players_iterate_end;
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
   return TRUE;
 }
 
 /**************************************************************************
   used to load maps in pregamestate
 **************************************************************************/
-static bool loadmap_command(struct connection *caller, char *str,
+static bool loadmap_command(connection_t *caller, char *str,
                             bool check)
 {
   struct section_file secfile;
@@ -5788,7 +5788,7 @@ static bool loadmap_command(struct connection *caller, char *str,
 /**************************************************************************
   ...
 **************************************************************************/
-bool unloadmap_command(struct connection *caller, bool check)
+bool unloadmap_command(connection_t *caller, bool check)
 {
   if (server_state != PRE_GAME_STATE) {
     cmd_reply(CMD_UNLOADMAP, caller, C_FAIL,
@@ -5827,7 +5827,7 @@ bool unloadmap_command(struct connection *caller, bool check)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool reset_command(struct connection *caller, bool check)
+static bool reset_command(connection_t *caller, bool check)
 {
   if (check) {
     return TRUE;
@@ -5842,7 +5842,7 @@ static bool reset_command(struct connection *caller, bool check)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool showmaplist_command(struct connection *caller)
+static bool showmaplist_command(connection_t *caller)
 {
   struct datafile_list *files;
   struct section_file mapfile;
@@ -5940,7 +5940,7 @@ static struct datafile_list *get_scenario_list(void)
 /**************************************************************************
   used to load scenarios in pregamestate
 **************************************************************************/
-static bool loadscenario_command(struct connection *caller, char *str,
+static bool loadscenario_command(connection_t *caller, char *str,
                                  bool check)
 {
   struct timer *loadtimer, *uloadtimer;
@@ -6092,7 +6092,7 @@ static bool loadscenario_command(struct connection *caller, char *str,
 /**************************************************************************
   ...
 **************************************************************************/
-static bool set_rulesetdir(struct connection *caller, char *str, bool check)
+static bool set_rulesetdir(connection_t *caller, char *str, bool check)
 {
   char filename[512], *pfilename, verror[256];
 
@@ -6176,7 +6176,7 @@ static void cut_comment(char *str)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool quit_game(struct connection *caller, bool check)
+static bool quit_game(connection_t *caller, bool check)
 {
   if (!check) {
     cmd_reply(CMD_QUIT, caller, C_OK, _("Goodbye."));
@@ -6195,7 +6195,7 @@ static bool quit_game(struct connection *caller, bool check)
 
   If check is TRUE, then do nothing, just check syntax.
 **************************************************************************/
-bool handle_stdin_input(struct connection * caller,
+bool handle_stdin_input(connection_t * caller,
                         const char *str, bool check)
 {
   char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE];
@@ -6336,7 +6336,7 @@ bool handle_stdin_input(struct connection * caller,
 
 
   if (!check) {
-    struct conn_list *echolist = NULL;
+    struct connection_list *echolist = NULL;
 
     switch (commands[cmd].echo_mode) {
     case ECHO_NONE:
@@ -6347,13 +6347,13 @@ bool handle_stdin_input(struct connection * caller,
       }
       break;
     case ECHO_ADMINS:
-      echolist = conn_list_new();
+      echolist = connection_list_new();
 
-      conn_list_iterate(game.est_connections, pconn) {
+      connection_list_iterate(game.est_connections, pconn) {
         if (pconn->u.server.access_level >= ALLOW_ADMIN) {
-          conn_list_append(echolist, pconn);
+          connection_list_append(echolist, pconn);
         }
-      } conn_list_iterate_end;
+      } connection_list_iterate_end;
       break;
     case ECHO_ALL:
       echolist = game.est_connections;
@@ -6368,7 +6368,7 @@ bool handle_stdin_input(struct connection * caller,
                   : _("(server prompt)"), command, arg);
     }
     if (commands[cmd].echo_mode == ECHO_ADMINS) {
-      conn_list_free(echolist);
+      connection_list_free(echolist);
     }
   }
 
@@ -6562,7 +6562,7 @@ bool handle_stdin_input(struct connection * caller,
 /**************************************************************************
   End the game and accord victory to the listed players, if any.
 **************************************************************************/
-static bool end_command(struct connection *caller, char *str, bool check)
+static bool end_command(connection_t *caller, char *str, bool check)
 {
   char *arg[MAX_NUM_PLAYERS];
   int ntokens = 0, i;
@@ -6646,7 +6646,7 @@ cleanup:
 /**************************************************************************
   End the game and make the result a tie.
 **************************************************************************/
-static bool draw_command(struct connection *caller, char *str, bool check)
+static bool draw_command(connection_t *caller, char *str, bool check)
 {
   if (server_state != RUN_GAME_STATE) {
     cmd_reply(CMD_DRAW, caller, C_FAIL,
@@ -6862,7 +6862,7 @@ static bool check_settings_for_rated_game(void)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool start_command(struct connection *caller, char *name, bool check)
+static bool start_command(connection_t *caller, char *name, bool check)
 {
   int started = 0, notstarted = 0;
   static int failed_rated_start = 0;
@@ -7043,7 +7043,7 @@ static bool start_command(struct connection *caller, char *name, bool check)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool unstart_command(struct connection *caller, char *name,
+static bool unstart_command(connection_t *caller, char *name,
                             bool check)
 {
   if (server_state != PRE_GAME_STATE) {
@@ -7079,7 +7079,7 @@ static bool unstart_command(struct connection *caller, char *name,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool addaction_command(struct connection *caller,
+static bool addaction_command(connection_t *caller,
                               char *pattern, bool check)
 {
   struct user_action *pua;
@@ -7147,7 +7147,7 @@ void user_action_free(struct user_action *pua)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool delaction_command(struct connection *caller,
+static bool delaction_command(connection_t *caller,
                               char *pattern, bool check)
 {
   char buf[1024];
@@ -7183,7 +7183,7 @@ static bool delaction_command(struct connection *caller,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool ban_command(struct connection *caller, char *pattern,
+static bool ban_command(connection_t *caller, char *pattern,
                         bool check)
 {
   struct user_action *pua;
@@ -7217,7 +7217,7 @@ static bool ban_command(struct connection *caller, char *pattern,
   conn_pattern_as_str(pua->conpat, buf, sizeof(buf));
   cmd_reply(CMD_BAN, caller, C_COMMENT, _("%s has been banned."), buf);
 
-  conn_list_iterate(game.all_connections, pconn) {
+  connection_list_iterate(game.all_connections, pconn) {
     if (conn_pattern_match(pua->conpat, pconn)) {
       if (conn_controls_player(pconn)) {
         /* Unassign the username. */
@@ -7226,7 +7226,7 @@ static bool ban_command(struct connection *caller, char *pattern,
 
       server_break_connection(pconn, EXIT_STATUS_BANNED);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   return TRUE;
 }
@@ -7234,7 +7234,7 @@ static bool ban_command(struct connection *caller, char *pattern,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool unban_command(struct connection *caller,
+static bool unban_command(connection_t *caller,
                           char *pattern, bool check)
 {
   char buf[1024], err[256];
@@ -7286,7 +7286,7 @@ static const char *allow_accessor(int i)
 /*********************************************************************
   See the help text for the /allow command.
 *********************************************************************/
-static bool allow_command(struct connection *caller, const char *arg,
+static bool allow_command(connection_t *caller, const char *arg,
                           bool check)
 {
   enum m_pre_result result;
@@ -7326,7 +7326,7 @@ static bool allow_command(struct connection *caller, const char *arg,
 /*********************************************************************
   See the help text for the /disallow command.
 *********************************************************************/
-static bool disallow_command(struct connection *caller,
+static bool disallow_command(connection_t *caller,
                              const char *arg, bool check)
 {
   enum m_pre_result result;
@@ -7366,7 +7366,7 @@ static bool disallow_command(struct connection *caller,
 /*********************************************************************
   Implementation of the pause command.
 *********************************************************************/
-static bool pause_command(struct connection *caller, const char *arg,
+static bool pause_command(connection_t *caller, const char *arg,
                           bool check)
 {
   if (game_is_paused()) {
@@ -7411,7 +7411,7 @@ static bool pause_command(struct connection *caller, const char *arg,
 /*********************************************************************
   Implementation of the unpause command.
 *********************************************************************/
-static bool unpause_command(struct connection *caller, const char *s,
+static bool unpause_command(connection_t *caller, const char *s,
                             bool check)
 {
   char arg[256], timestr[256];
@@ -7465,7 +7465,7 @@ static bool unpause_command(struct connection *caller, const char *s,
 /********************************************************************
   Simple command wrapper for load_ban_list.
 *********************************************************************/
-bool loadactionlist_command(struct connection * caller,
+bool loadactionlist_command(connection_t * caller,
                             char *arg, bool check)
 {
   struct user_action_list *action_list;
@@ -7504,7 +7504,7 @@ bool loadactionlist_command(struct connection * caller,
 /********************************************************************
   Simple command wrapper for save_ban_list.
 *********************************************************************/
-bool saveactionlist_command(struct connection * caller,
+bool saveactionlist_command(connection_t * caller,
                             char *filename, bool check)
 {
   int ret;
@@ -7526,7 +7526,7 @@ bool saveactionlist_command(struct connection * caller,
 /********************************************************************
   ...
 *********************************************************************/
-bool clearactionlist_command(struct connection * caller,
+bool clearactionlist_command(connection_t * caller,
                              char *filename, bool check)
 {
   if (check) {
@@ -7765,11 +7765,11 @@ static int save_action_list(const char *filename)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool cut_client_connection(struct connection *caller, char *name,
+static bool cut_client_connection(connection_t *caller, char *name,
                                   bool check)
 {
   enum m_pre_result match_result;
-  struct connection *ptarget;
+  connection_t *ptarget;
 
   ptarget = find_conn_by_user_prefix(name, &match_result);
   if (!ptarget) {
@@ -7795,7 +7795,7 @@ static bool cut_client_connection(struct connection *caller, char *name,
  Show caller introductory help about the server.
  help_cmd is the command the player used.
 **************************************************************************/
-static void show_help_intro(struct connection *caller,
+static void show_help_intro(connection_t *caller,
                             enum command_id help_cmd)
 {
   /* This is formated like extra_help entries for settings and commands: */
@@ -7827,7 +7827,7 @@ static void show_help_intro(struct connection *caller,
  Show the caller detailed help for the single COMMAND given by id.
  help_cmd is the command the player used.
 **************************************************************************/
-static void show_help_command(struct connection *caller,
+static void show_help_command(connection_t *caller,
                               enum command_id help_cmd, enum command_id id)
 {
   const struct command *cmd = &commands[id];
@@ -7925,7 +7925,7 @@ static void show_help_command(struct connection *caller,
  Show the caller list of COMMANDS.
  help_cmd is the command the player used.
 **************************************************************************/
-static void show_help_command_list(struct connection *caller,
+static void show_help_command_list(connection_t *caller,
                                    enum command_id help_cmd)
 {
   enum command_id i;
@@ -7979,7 +7979,7 @@ static void show_help_command_list(struct connection *caller,
   prefix.
 **************************************************************************/
 static void cmd_reply_matches(enum command_id cmd,
-                              struct connection *caller,
+                              connection_t *caller,
                               m_pre_accessor_fn_t accessor_fn,
                               int *matches, int num_matches)
 {
@@ -8048,7 +8048,7 @@ static const char *helparg_accessor(int i)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool show_help(struct connection *caller, char *arg)
+static bool show_help(connection_t *caller, char *arg)
 {
   int matches[64], num_matches = 0;
   enum m_pre_result match_result;
@@ -8107,17 +8107,17 @@ static bool show_help(struct connection *caller, char *arg)
 **************************************************************************/
 static int idle_compare(const void *a, const void *b)
 {
-  return (*(struct connection **)a)->u.server.idle_time
-    < (*(struct connection **)b)->u.server.idle_time;
+  return (*(connection_t **)a)->u.server.idle_time
+    < (*(connection_t **)b)->u.server.idle_time;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static void show_idle(struct connection *caller)
+static void show_idle(connection_t *caller)
 {
-  size_t size = conn_list_size(game.est_connections);
-  struct connection *connections[size], *pconn;
+  size_t size = connection_list_size(game.est_connections);
+  connection_t *connections[size], *pconn;
   char timebuf[128];
   time_t idle, now = time(NULL);
   bool first = TRUE;
@@ -8129,11 +8129,11 @@ static void show_idle(struct connection *caller)
   }
 
   i = 0;
-  conn_list_iterate(game.est_connections, pconn) {
+  connection_list_iterate(game.est_connections, pconn) {
     connections[i++] = pconn;
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
-  qsort(connections, size, sizeof(struct connection *), idle_compare);
+  qsort(connections, size, sizeof(connection_t *), idle_compare);
 
   for (i = 0; i < size; i++) {
     pconn = connections[i];
@@ -8163,7 +8163,7 @@ static void show_idle(struct connection *caller)
 /****************************************************************************
   Show the current ignored pattern of caller to itself.
 ****************************************************************************/
-static bool show_ignore(struct connection *caller)
+static bool show_ignore(connection_t *caller)
 {
   int n = 1;
   char buf[128];
@@ -8191,7 +8191,7 @@ static bool show_ignore(struct connection *caller)
 /**************************************************************************
   ...
 **************************************************************************/
-static void show_teams(struct connection *caller, bool send_to_all)
+static void show_teams(connection_t *caller, bool send_to_all)
 {
   bool listed[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   int i, teamid = -1, count = 0, tc = 0;
@@ -8245,7 +8245,7 @@ static void show_teams(struct connection *caller, bool send_to_all)
 /**************************************************************************
   ...
 **************************************************************************/
-static void show_rulesets(struct connection *caller)
+static void show_rulesets(connection_t *caller)
 {
   char **rulesets = get_rulesets_list(), *description, *p;
   int i;
@@ -8278,7 +8278,7 @@ static void show_rulesets(struct connection *caller)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool show_scenarios(struct connection *caller)
+static bool show_scenarios(connection_t *caller)
 {
   struct datafile_list *files;
   int i;
@@ -8316,9 +8316,9 @@ static bool show_scenarios(struct connection *caller)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool show_mutes(struct connection *caller)
+static bool show_mutes(connection_t *caller)
 {
-  struct connection *pconn;
+  connection_t *pconn;
   if (hash_num_entries(mute_table) < 1) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, _("There are no muted users."));
     return TRUE;
@@ -8388,7 +8388,7 @@ static const char *listarg_accessor(int i)
 /**************************************************************************
   Show list of players or connections, or connection statistics.
 **************************************************************************/
-static bool show_list(struct connection *caller, char *arg)
+static bool show_list(connection_t *caller, char *arg)
 {
   enum m_pre_result match_result;
   int ind;
@@ -8452,7 +8452,7 @@ static bool show_list(struct connection *caller, char *arg)
 /**************************************************************************
   ...
 **************************************************************************/
-void show_players(struct connection *caller)
+void show_players(connection_t *caller)
 {
   char buf[MAX_LEN_CONSOLE_LINE], buf2[MAX_LEN_CONSOLE_LINE];
   int n;
@@ -8512,14 +8512,14 @@ void show_players(struct connection *caller)
         }
       }
       my_snprintf(buf, sizeof(buf), "%s (%s)", pplayer->name, buf2);
-      n = conn_list_size(pplayer->connections);
+      n = connection_list_size(pplayer->connections);
 
       if (n > 0) {
         cat_snprintf(buf, sizeof(buf),
                      PL_(" %d connection:", " %d connections:", n), n);
       }
       cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
-      conn_list_iterate(pplayer->connections, pconn) {
+      connection_list_iterate(pplayer->connections, pconn) {
         if (!pconn->used) {
           /* A bug that we haven't been able to trace leaves unused
            * connections on the lists.  We skip them. */
@@ -8534,7 +8534,7 @@ void show_players(struct connection *caller)
           sz_strlcat(buf, _(" (observer mode)"));
         }
         cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
-      } conn_list_iterate_end;
+      } connection_list_iterate_end;
     } players_iterate_end;
   }
 
@@ -8562,13 +8562,13 @@ void show_players(struct connection *caller)
 /**************************************************************************
   List connections; initially mainly for debugging
 **************************************************************************/
-static void show_connections(struct connection *caller)
+static void show_connections(connection_t *caller)
 {
   char buf[MAX_LEN_CONSOLE_LINE], timebuf[128];
   time_t now, idle;
   int n;
 
-  n = conn_list_size(game.all_connections);
+  n = connection_list_size(game.all_connections);
 
   cmd_reply(CMD_LIST, caller, C_COMMENT,
             _("List of connections to server (%d):"), n);
@@ -8581,7 +8581,7 @@ static void show_connections(struct connection *caller)
 
   now = time(NULL);
 
-  conn_list_iterate(game.all_connections, pconn) {
+  connection_list_iterate(game.all_connections, pconn) {
     my_snprintf(buf, sizeof(buf), "%d ", pconn->id);
     sz_strlcat(buf, conn_description(pconn));
     if (pconn->established) {
@@ -8601,7 +8601,7 @@ static void show_connections(struct connection *caller)
     }
 
     cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
@@ -8609,11 +8609,11 @@ static void show_connections(struct connection *caller)
 /**************************************************************************
   List all connections' capabilities.
 **************************************************************************/
-static void show_capabilities(struct connection *caller)
+static void show_capabilities(connection_t *caller)
 {
   int n;
 
-  n = conn_list_size(game.all_connections);
+  n = connection_list_size(game.all_connections);
 
   if (n == 0) {
     cmd_reply(CMD_LIST, caller, C_WARNING, _("No connections."));
@@ -8624,10 +8624,10 @@ static void show_capabilities(struct connection *caller)
             _("List of connection capabilities:"));
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 
-  conn_list_iterate(game.all_connections, pconn) {
+  connection_list_iterate(game.all_connections, pconn) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, _("%d %s: %s"),
               pconn->id, pconn->username, pconn->capability);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
@@ -8635,7 +8635,7 @@ static void show_capabilities(struct connection *caller)
 /**************************************************************************
   List bans; show all hostnames in the ban list
 **************************************************************************/
-static void show_actionlist(struct connection *caller)
+static void show_actionlist(connection_t *caller)
 {
   int n, i = 1;
   char buf[256];
@@ -8666,7 +8666,7 @@ static void show_actionlist(struct connection *caller)
 /**************************************************************************
   List what user behaviours are allowed (see /allow, /disallow).
 **************************************************************************/
-static void show_allow(struct connection *caller)
+static void show_allow(connection_t *caller)
 {
   int i;
 
@@ -8682,7 +8682,7 @@ static void show_allow(struct connection *caller)
 /**************************************************************************
   List all running votes. Moved from /vote command.
 **************************************************************************/
-static void show_votes(struct connection *caller)
+static void show_votes(connection_t *caller)
 {
   int count = 0;
   const char *title;
@@ -8803,12 +8803,12 @@ The connection user names, from game.all_connections.
 **************************************************************************/
 static const char *connection_name_accessor(int idx)
 {
-  return conn_list_get(game.all_connections, idx)->username;
+  return connection_list_get(game.all_connections, idx)->username;
 }
 static char *connection_generator(const char *text, int state)
 {
   return generic_generator(text, state,
-                           conn_list_size(game.all_connections),
+                           connection_list_size(game.all_connections),
                            connection_name_accessor);
 }
 
@@ -8837,7 +8837,7 @@ static const char *cmdlevel_arg2_accessor(int idx)
 static char *cmdlevel_arg2_generator(const char *text, int state)
 {
   return generic_generator(text, state,
-                           2 + conn_list_size(game.all_connections),
+                           2 + connection_list_size(game.all_connections),
                            cmdlevel_arg2_accessor);
 }
 

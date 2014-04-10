@@ -37,7 +37,7 @@ void user_ended_turn(void);
 void set_client_state(enum client_states newstate);
 enum client_states get_client_state(void);
 
-void client_remove_cli_conn(struct connection *pconn);
+void client_remove_cli_conn(connection_t *pconn);
 void client_remove_all_cli_conn(void);
 
 extern char server_host[512];

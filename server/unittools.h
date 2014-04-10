@@ -69,9 +69,9 @@ void package_short_unit(unit_t *punit,
                         enum unit_info_use packet_use, int info_city_id,
                         bool new_serial_num);
 void send_unit_info(player_t *dest, unit_t *punit);
-void send_unit_info_to_onlookers(struct conn_list *dest, unit_t *punit,
+void send_unit_info_to_onlookers(struct connection_list *dest, unit_t *punit,
                                  tile_t *ptile, bool remove_unseen);
-void send_all_known_units(struct conn_list *dest);
+void send_all_known_units(struct connection_list *dest);
 void unit_goes_out_of_sight(player_t *pplayer, unit_t *punit);
 
 /* doing a unit activity */

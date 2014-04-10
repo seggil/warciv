@@ -17,10 +17,9 @@
 #include "packets.h"
 
 struct player_spaceship;
-struct conn_list;
 
 void spaceship_calc_derived(struct player_spaceship *ship);
-void send_spaceship_info(player_t *src, struct conn_list *dest);
+void send_spaceship_info(player_t *src, struct connection_list *dest);
 void spaceship_lost(player_t *pplayer);
 void check_spaceship_arrivals(void);
 

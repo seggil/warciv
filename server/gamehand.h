@@ -13,24 +13,24 @@
 #ifndef WC_SERVER_GAMEHAND_H
 #define WC_SERVER_GAMEHAND_H
 
+#include "connection.h"
+
 struct section_file;
-struct connection;
-struct conn_list;
 
 void init_new_game(void);
 void send_year_to_clients(int year);
-void send_game_info(struct conn_list *dest);
-void send_game_state(struct conn_list *dest, int state);
+void send_game_info(struct connection_list *dest);
+void send_game_state(struct connection_list *dest, int state);
 void send_start_turn_to_clients(void);
 
 int update_timeout(void);
 void increase_timeout_because_unit_moved(void);
 
-const char *new_challenge_filename(struct connection *pc);
+const char *new_challenge_filename(connection_t *pconn);
 
 struct packet_single_want_hack_req;
 
-void handle_single_want_hack_req(struct connection *pc,
+void handle_single_want_hack_req(connection_t *pconn,
                                  const struct packet_single_want_hack_req *packet);
 
 bool game_is_paused(void);
