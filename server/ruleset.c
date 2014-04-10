@@ -111,14 +111,14 @@ static void load_ruleset_nations(struct section_file *file);
 
 static void load_ruleset_game(void);
 
-static void send_ruleset_techs(struct conn_list *dest);
-static void send_ruleset_units(struct conn_list *dest);
-static void send_ruleset_buildings(struct conn_list *dest);
-static void send_ruleset_terrain(struct conn_list *dest);
-static void send_ruleset_governments(struct conn_list *dest);
-static void send_ruleset_nations(struct conn_list *dest);
-static void send_ruleset_cities(struct conn_list *dest);
-static void send_ruleset_game(struct conn_list *dest);
+static void send_ruleset_techs(struct connection_list *dest);
+static void send_ruleset_units(struct connection_list *dest);
+static void send_ruleset_buildings(struct connection_list *dest);
+static void send_ruleset_terrain(struct connection_list *dest);
+static void send_ruleset_governments(struct connection_list *dest);
+static void send_ruleset_nations(struct connection_list *dest);
+static void send_ruleset_cities(struct connection_list *dest);
+static void send_ruleset_game(struct connection_list *dest);
 
 /**************************************************************************
   datafilename() wrapper: tries to match in two ways.
@@ -2039,7 +2039,7 @@ static void load_ruleset_governments(struct section_file *file)
   Send information in packet_ruleset_control (numbers of units etc, and
   other miscellany) to specified connections.
 **************************************************************************/
-static void send_ruleset_control(struct conn_list *dest)
+static void send_ruleset_control(struct connection_list *dest)
 {
   lsend_packet_ruleset_control(dest, &game.ruleset_control);
 }
@@ -2830,7 +2830,7 @@ static void load_ruleset_game()
   Send the units ruleset information (all individual units) to the
   specified connections.
 **************************************************************************/
-static void send_ruleset_units(struct conn_list *dest)
+static void send_ruleset_units(struct connection_list *dest)
 {
   struct packet_ruleset_unit packet;
   int i;
@@ -2889,7 +2889,7 @@ static void send_ruleset_units(struct conn_list *dest)
   Send the techs ruleset information (all individual advances) to the
   specified connections.
 **************************************************************************/
-static void send_ruleset_techs(struct conn_list *dest)
+static void send_ruleset_techs(struct connection_list *dest)
 {
   struct packet_ruleset_tech packet;
 
@@ -2920,7 +2920,7 @@ static void send_ruleset_techs(struct conn_list *dest)
   Send the buildings ruleset information (all individual improvements and
   wonders) to the specified connections.
 **************************************************************************/
-static void send_ruleset_buildings(struct conn_list *dest)
+static void send_ruleset_buildings(struct connection_list *dest)
 {
   impr_type_iterate(i) {
     struct impr_type *b = &improvement_types[i];
@@ -2967,7 +2967,7 @@ static void send_ruleset_buildings(struct conn_list *dest)
   Send the terrain ruleset information (terrain_control, and the individual
   terrain types) to the specified connections.
 **************************************************************************/
-static void send_ruleset_terrain(struct conn_list *dest)
+static void send_ruleset_terrain(struct connection_list *dest)
 {
   struct packet_ruleset_terrain packet;
 
@@ -3040,7 +3040,7 @@ static void send_ruleset_terrain(struct conn_list *dest)
   Send the government ruleset information to the specified connections.
   One packet per government type, and for each type one per ruler title.
 **************************************************************************/
-static void send_ruleset_governments(struct conn_list *dest)
+static void send_ruleset_governments(struct connection_list *dest)
 {
   struct packet_ruleset_government gov;
   struct packet_ruleset_government_ruler_title title;
@@ -3132,7 +3132,7 @@ static void send_ruleset_governments(struct conn_list *dest)
   Send the nations ruleset information (info on each nation) to the
   specified connections.
 **************************************************************************/
-static void send_ruleset_nations(struct conn_list *dest)
+static void send_ruleset_nations(struct connection_list *dest)
 {
   struct packet_ruleset_nation packet;
   struct nation_type *n;
@@ -3166,7 +3166,7 @@ static void send_ruleset_nations(struct conn_list *dest)
   Send the city-style ruleset information (each style) to the specified
   connections.
 **************************************************************************/
-static void send_ruleset_cities(struct conn_list *dest)
+static void send_ruleset_cities(struct connection_list *dest)
 {
   struct packet_ruleset_city city_p;
   int k;
@@ -3191,7 +3191,7 @@ static void send_ruleset_cities(struct conn_list *dest)
   Send information in packet_ruleset_game (miscellaneous rules) to the
   specified connections.
 **************************************************************************/
-static void send_ruleset_game(struct conn_list *dest)
+static void send_ruleset_game(struct connection_list *dest)
 {
   lsend_packet_ruleset_game(dest, &game.ruleset_game);
 }
@@ -3246,11 +3246,11 @@ void load_rulesets(void)
 /**************************************************************************
   Send all ruleset information to the specified connections.
 **************************************************************************/
-void send_rulesets(struct conn_list *dest)
+void send_rulesets(struct connection_list *dest)
 {
-  freelog(LOG_VERBOSE,"Sending rulesets to %i connections", conn_list_size(dest));
+  freelog(LOG_VERBOSE,"Sending rulesets to %i connections", connection_list_size(dest));
 
-  conn_list_do_buffer(dest);
+  connection_list_do_buffer(dest);
   lsend_packet_freeze_hint(dest);
 
   send_ruleset_control(dest);
@@ -3265,7 +3265,7 @@ void send_rulesets(struct conn_list *dest)
   send_ruleset_cache(dest);
 
   lsend_packet_thaw_hint(dest);
-  conn_list_do_unbuffer(dest);
+  connection_list_do_unbuffer(dest);
 }
 
 /**************************************************************************

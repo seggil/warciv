@@ -667,7 +667,7 @@ void send_year_to_clients(int year)
   Send specified state; should be a CLIENT_GAME_*_STATE ?
   (But note client also changes state from other events.)
 **************************************************************************/
-void send_game_state(struct conn_list *dest, int state)
+void send_game_state(struct connection_list *dest, int state)
 {
   dlsend_packet_game_state(dest, state);
 }
@@ -677,7 +677,7 @@ void send_game_state(struct conn_list *dest, int state)
   Send game_info packet; some server options and various stuff...
   dest==NULL means game.game_connections
 **************************************************************************/
-void send_game_info(struct conn_list *dest)
+void send_game_info(struct connection_list *dest)
 {
   if (!dest) {
     dest = game.game_connections;
@@ -693,7 +693,7 @@ void send_game_info(struct conn_list *dest)
     game.info.seconds_to_turndone = -1;
   }
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     game.info.player_idx = (pconn->player ? pconn->player->player_no : -1);
     send_packet_game_info(pconn, &game.info);
     if (has_capability("extroutes", pconn->capability)) {
@@ -702,7 +702,7 @@ void send_game_info(struct conn_list *dest)
     if (has_capability("extgameinfo", pconn->capability)) {
       send_packet_extgame_info(pconn, &game.ext_info);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
@@ -779,19 +779,19 @@ void increase_timeout_because_unit_moved(void)
 /**************************************************************************
   generate challenge filename for this connection, cannot fail.
 **************************************************************************/
-static void gen_challenge_filename(struct connection *pc)
+static void gen_challenge_filename(connection_t *pconn)
 {
 }
 
 /**************************************************************************
   get challenge filename for this connection.
 **************************************************************************/
-static const char *get_challenge_filename(struct connection *pc)
+static const char *get_challenge_filename(connection_t *pconn)
 {
   static char filename[MAX_LEN_PATH];
 
   my_snprintf(filename, sizeof(filename), "%s_%d_%d",
-      CHALLENGE_ROOT, srvarg.port, pc->id);
+      CHALLENGE_ROOT, srvarg.port, pconn->id);
 
   return filename;
 }
@@ -799,12 +799,12 @@ static const char *get_challenge_filename(struct connection *pc)
 /**************************************************************************
   get challenge full filename for this connection.
 **************************************************************************/
-static const char *get_challenge_fullname(struct connection *pc)
+static const char *get_challenge_fullname(connection_t *pconn)
 {
   static char fullname[MAX_LEN_PATH];
 
   interpret_tilde(fullname, sizeof(fullname), "~/.warciv/");
-  sz_strlcat(fullname, get_challenge_filename(pc));
+  sz_strlcat(fullname, get_challenge_filename(pconn));
 
   return fullname;
 }
@@ -812,14 +812,14 @@ static const char *get_challenge_fullname(struct connection *pc)
 /**************************************************************************
   find a file that we can write too, and return it's name.
 **************************************************************************/
-const char *new_challenge_filename(struct connection *pc)
+const char *new_challenge_filename(connection_t *pconn)
 {
-  if (!has_capability("new_hack", pc->capability)) {
+  if (!has_capability("new_hack", pconn->capability)) {
     return "";
   }
 
-  gen_challenge_filename(pc);
-  return get_challenge_filename(pc);
+  gen_challenge_filename(pconn);
+  return get_challenge_filename(pconn);
 }
 
 
@@ -827,20 +827,20 @@ const char *new_challenge_filename(struct connection *pc)
 opens a file specified by the packet and compares the packet values with
 the file values. Sends an answer to the client once it's done.
 **************************************************************************/
-void handle_single_want_hack_req(struct connection *pc,
+void handle_single_want_hack_req(connection_t *pconn,
                                  const struct packet_single_want_hack_req *packet)
 {
   struct section_file file;
   char *token = NULL;
   bool you_have_hack = FALSE;
 
-  if (!has_capability("new_hack", pc->capability)
+  if (!has_capability("new_hack", pconn->capability)
       || user_action_list_size(on_connect_user_actions) > 0) {
-    dsend_packet_single_want_hack_reply(pc, FALSE);
+    dsend_packet_single_want_hack_reply(pconn, FALSE);
     return ;
   }
 
-  if (section_file_load_nodup(&file, get_challenge_fullname(pc))) {
+  if (section_file_load_nodup(&file, get_challenge_fullname(pconn))) {
     token = secfile_lookup_str_default(&file, NULL, "challenge.token");
     you_have_hack = (token && strcmp(token, packet->token) == 0);
     section_file_free(&file);
@@ -851,10 +851,10 @@ void handle_single_want_hack_req(struct connection *pc,
   }
 
   if (you_have_hack) {
-    pc->u.server.granted_access_level = pc->u.server.access_level = ALLOW_HACK;
+    pconn->u.server.granted_access_level = pconn->u.server.access_level = ALLOW_HACK;
   }
 
-  dsend_packet_single_want_hack_reply(pc, you_have_hack);
+  dsend_packet_single_want_hack_reply(pconn, you_have_hack);
 }
 
 /**************************************************************************

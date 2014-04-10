@@ -42,7 +42,7 @@
   available and unambiguous (since this is the "standard" case), else
   use the username.
 **************************************************************************/
-static void form_chat_name(struct connection *pconn, char *buffer, size_t len)
+static void form_chat_name(connection_t *pconn, char *buffer, size_t len)
 {
   player_t *pplayer = pconn->player;
 
@@ -61,7 +61,7 @@ static void form_chat_name(struct connection *pconn, char *buffer, size_t len)
   'player_conn' is 0 for player names, 1 for connection names,
   2 for attempt to send to an anonymous player.
 **************************************************************************/
-static void complain_ambiguous(struct connection *pconn, const char *name,
+static void complain_ambiguous(connection_t *pconn, const char *name,
                                int player_conn)
 {
   char message[MAX_LEN_MSG];
@@ -88,7 +88,7 @@ static void complain_ambiguous(struct connection *pconn, const char *name,
 /**************************************************************************
   ...
 **************************************************************************/
-bool conn_is_ignored(struct connection *pconn, struct connection *dest)
+bool conn_is_ignored(connection_t *pconn, connection_t *dest)
 {
   if (pconn == dest || pconn == NULL || dest == NULL
       || dest->u.server.access_level >= ALLOW_ADMIN)
@@ -107,7 +107,7 @@ bool conn_is_ignored(struct connection *pconn, struct connection *dest)
 /**************************************************************************
   Returns TRUE if spectatorchat=2 condition should be applied to pconn.
 **************************************************************************/
-static bool chat_is_restricted(const struct connection *pconn)
+static bool chat_is_restricted(const connection_t *pconn)
 {
   return (game.server.spectatorchat == 2
           && server_state == RUN_GAME_STATE
@@ -117,8 +117,8 @@ static bool chat_is_restricted(const struct connection *pconn)
 /**************************************************************************
   Send private message to single connection.
 **************************************************************************/
-static void chat_msg_to_conn(struct connection *sender,
-                             struct connection *dest,
+static void chat_msg_to_conn(connection_t *sender,
+                             connection_t *dest,
                              const char *msg)
 {
   char sender_name[MAX_LEN_CHAT_NAME], dest_name[MAX_LEN_CHAT_NAME];
@@ -159,12 +159,12 @@ static void chat_msg_to_conn(struct connection *sender,
 /**************************************************************************
   Send private message to multi-connected player.
 **************************************************************************/
-static void chat_msg_to_player_multi(struct connection *sender,
+static void chat_msg_to_player_multi(connection_t *sender,
                                      player_t *pdest,
                                      const char *msg)
 {
   char sender_name[MAX_LEN_CHAT_NAME], message[MAX_LEN_MSG];
-  struct connection *dest;
+  connection_t *dest;
 
   msg = skip_leading_spaces(msg);
 
@@ -197,13 +197,13 @@ static void chat_msg_to_player_multi(struct connection *sender,
   dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
 
   my_snprintf(message, sizeof(message), "[%s] %s", sender_name, msg);
-  conn_list_iterate(pdest->connections, dest_conn) {
+  connection_list_iterate(pdest->connections, dest_conn) {
     if (dest_conn->observer || dest_conn == sender) {
       continue;
     }
     dsend_packet_chat_msg(dest_conn, message,
                           -1, -1, E_NOEVENT, sender->id);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   con_write (C_COMMENT, "[%s -> %s] %s", sender_name, pdest->name, msg);
 }
@@ -231,7 +231,7 @@ static void chat_msg_to_player_multi(struct connection *sender,
   avoiding sending both original and echo if sender is in destination
   set.
 **************************************************************************/
-void handle_chat_msg_req(struct connection *pconn, char *message)
+void handle_chat_msg_req(connection_t *pconn, char *message)
 {
   char sender_name[MAX_LEN_CHAT_NAME], chat[MAX_LEN_MSG];
   char *cp;
@@ -341,7 +341,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 
     /* FIXME: there should be a special case for the sender, like in
      * chat_msg_to_player_multi(). */
-    conn_list_iterate(game.est_connections, dest) {
+    connection_list_iterate(game.est_connections, dest) {
       if (conn_is_ignored(pconn, dest)) {
         continue;
       }
@@ -364,7 +364,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
           || (!pconn_plr && conn_is_global_observer(dest))) {
         dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
 
     return;
   }
@@ -397,7 +397,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   if (cp && (cp != &message[0])) {
     enum m_pre_result match_result_player, match_result_conn;
     player_t *pdest = NULL;
-    struct connection *conn_dest = NULL;
+    connection_t *conn_dest = NULL;
     char name[MAX_LEN_NAME];
     char *cpblank, *quotes = NULL;
 
@@ -440,9 +440,9 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
         return;
       }
       if (pdest && match_result_player < M_PRE_AMBIGUOUS) {
-        int nconn = conn_list_size(pdest->connections);
+        int nconn = connection_list_size(pdest->connections);
         if (nconn==1) {
-          chat_msg_to_conn(pconn, conn_list_get(pdest->connections, 0), cp+1);
+          chat_msg_to_conn(pconn, connection_list_get(pdest->connections, 0), cp+1);
           return;
         } else if (nconn>1) {
           chat_msg_to_player_multi(pconn, pdest, cp+1);
@@ -535,7 +535,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   my_snprintf(chat, sizeof(chat),
               "<%s> %s", sender_name, message);
   con_puts(C_COMMENT, chat);
-  conn_list_iterate(game.est_connections, dest) {
+  connection_list_iterate(game.est_connections, dest) {
     if (conn_is_ignored(pconn, dest)) {
       continue;
     }
@@ -546,5 +546,5 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
       continue;
     }
     dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }

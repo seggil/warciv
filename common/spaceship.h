@@ -106,7 +106,7 @@ struct player_spaceship {
 
 struct sship_part_info {
   int x, y;                     /* position of tile centre */
-  int required;                 /* required for struct connection */
+  int required;                 /* required for struct connection_s */
 };
 
 extern const struct sship_part_info structurals_info[NUM_SS_STRUCTURALS];

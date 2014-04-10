@@ -15,10 +15,8 @@
 
 #define MAX_NUM_RULESETS 32
 
-struct conn_list;
-
 void load_rulesets(void);
-void send_rulesets(struct conn_list *dest);
+void send_rulesets(struct connection_list *dest);
 
 bool is_valid_ruleset(const char *path, char *verror, size_t verror_size,
                       bool check_capstr);

@@ -220,7 +220,7 @@ void ruleset_cache_add(Impr_Type_id source, enum effect_type effect_type,
                        enum effect_range range, bool survives, int eff_value,
                        enum effect_req_type req_type, int req_value,
                        int group_id);
-void send_ruleset_cache(struct conn_list *dest);
+void send_ruleset_cache(struct connection_list *dest);
 
 /* equivalent effect group */
 struct effect_group *effect_group_new(const char *name);

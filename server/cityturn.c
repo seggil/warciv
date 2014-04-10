@@ -100,12 +100,12 @@ called on government change or wonder completion or stuff like that -- Syela
 **************************************************************************/
 void global_city_refresh(player_t *pplayer)
 {
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
   city_list_iterate(pplayer->cities, pcity) {
     city_refresh(pcity);
     send_city_info(pplayer, pcity);
   } city_list_iterate_end;
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -306,7 +306,7 @@ void auto_arrange_workers(city_t *pcity)
 /**************************************************************************
 Notices about cities that should be sent to all players.
 **************************************************************************/
-void send_global_city_turn_notifications(struct conn_list *dest)
+void send_global_city_turn_notifications(struct connection_list *dest)
 {
   if (!dest) {
     dest = game.all_connections;
@@ -335,7 +335,7 @@ void send_global_city_turn_notifications(struct conn_list *dest)
   Send turn notifications for specified city to specified connections.
   Neither dest nor pcity may be NULL.
 **************************************************************************/
-void send_city_turn_notifications(struct conn_list *dest, city_t *pcity)
+void send_city_turn_notifications(struct connection_list *dest, city_t *pcity)
 {
   int turns_growth, turns_granary;
   bool can_grow;

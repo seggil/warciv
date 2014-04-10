@@ -61,10 +61,10 @@ city_t *find_closest_owned_city(player_t *pplayer,
 void handle_unit_enter_city(unit_t *punit, city_t *pcity);
 
 void send_city_info(player_t *dest, city_t *pcity);
-void send_city_info_at_tile(player_t *pviewer, struct conn_list *dest,
+void send_city_info_at_tile(player_t *pviewer, struct connection_list *dest,
                             city_t *pcity, tile_t *ptile);
-void send_all_known_cities(struct conn_list *dest);
-void send_all_known_trade_routes(struct conn_list *dest);
+void send_all_known_cities(struct connection_list *dest);
+void send_all_known_trade_routes(struct connection_list *dest);
 void send_player_cities(player_t *pplayer);
 void package_city(city_t *pcity, struct packet_city_info *packet,
                   bool dipl_invest);
@@ -99,13 +99,13 @@ bool can_place_worker_here(city_t *pcity, int city_x, int city_y);
 void check_city_workers(player_t *pplayer);
 void city_landlocked_sell_coastal_improvements(tile_t *ptile);
 
-void send_city_manager_param(struct conn_list *clist,
+void send_city_manager_param(struct connection_list *clist,
                              struct packet_city_manager_param *packet,
                              player_t *pplayer,
                              bool include_player);
-void send_city_manager_info(struct conn_list *clist, city_t *pcity,
+void send_city_manager_info(struct connection_list *clist, city_t *pcity,
                             bool include_player);
-void send_all_known_city_manager_infos(struct conn_list *clist);
+void send_all_known_city_manager_infos(struct connection_list *clist);
 void clear_city_manager_param(city_t *pcity);
 void reset_city_manager_params(player_t *pplayer);
 

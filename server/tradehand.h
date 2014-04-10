@@ -16,10 +16,10 @@
 
 #include "traderoute.h"
 
-bool connection_supports_server_trade(struct connection *pconn);
+bool connection_supports_server_trade(connection_t *pconn);
 
-void send_trade_route_info(struct conn_list *dest, struct trade_route *ptr);
-void send_trade_route_remove(struct conn_list *dest, struct trade_route *ptr);
+void send_trade_route_info(struct connection_list *dest, struct trade_route *ptr);
+void send_trade_route_remove(struct connection_list *dest, struct trade_route *ptr);
 void server_remove_trade_route(struct trade_route *ptr);
 
 void server_establish_trade_route(city_t *pcity1, city_t *pcity2);

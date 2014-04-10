@@ -37,7 +37,7 @@
 #include "report.h"
 #include "score.h"
 
-static void page_conn_etype(struct conn_list *dest, const char *caption,
+static void page_conn_etype(struct connection_list *dest, const char *caption,
                             const char *headline, const char *lines,
                             enum event_type event);
 enum historian_type {
@@ -236,7 +236,7 @@ static int nr_wonders(city_t *pcity)
 /**************************************************************************
   Send report listing the "best" 5 cities in the world.
 **************************************************************************/
-void report_top_five_cities(struct conn_list *dest)
+void report_top_five_cities(struct connection_list *dest)
 {
   const int NUM_BEST_CITIES = 5;
   /* a wonder equals WONDER_FACTOR citizen */
@@ -296,7 +296,7 @@ void report_top_five_cities(struct conn_list *dest)
   Send report listing all built and destroyed wonders, and wonders
   currently being built.
 **************************************************************************/
-void report_wonders_of_the_world(struct conn_list *dest)
+void report_wonders_of_the_world(struct connection_list *dest)
 {
   char buffer[4096];
 
@@ -718,7 +718,7 @@ bool is_valid_demography(const char *demography, const char **error_string)
   Send demographics report; what gets reported depends on value of
   demographics server option.
 *************************************************************************/
-void report_demographics(struct connection *pconn)
+void report_demographics(connection_t *pconn)
 {
   player_t *pplayer = pconn->player;
   char civbuf[1024];
@@ -1158,7 +1158,7 @@ void report_progress_scores(void)
 /**************************************************************************
   Inform clients about player scores and statistics when the game ends.
 **************************************************************************/
-void report_final_scores(struct conn_list *dest)
+void report_final_scores(struct connection_list *dest)
 {
   int i, j = 0;
   struct player_score_entry size[game.info.nplayers];
@@ -1221,7 +1221,7 @@ void report_final_scores(struct conn_list *dest)
   Assumes groupings have been assigned, filled and results propagated.
   If game.server.rated is TRUE, reports rating changes as well.
 **************************************************************************/
-void report_game_rankings(struct conn_list *dest)
+void report_game_rankings(struct connection_list *dest)
 {
   const struct grouping *groupings = NULL;
   int num_groupings = 0, i, j;
@@ -1335,7 +1335,7 @@ void report_game_rankings(struct conn_list *dest)
 /**************************************************************************
 This function pops up a non-modal message dialog on the player's desktop
 **************************************************************************/
-void page_conn(struct conn_list *dest, const char *caption,
+void page_conn(struct connection_list *dest, const char *caption,
                const char *headline, const char *lines)
 {
   page_conn_etype(dest, caption, headline, lines, E_REPORT);
@@ -1353,7 +1353,7 @@ event == E_BROADCAST_REPORT: message can safely be ignored by clients
                    watching AI players with ai_popup_windows off.  For
                    example: Herodot's report... and similar messages.
 **************************************************************************/
-static void page_conn_etype(struct conn_list *dest, const char *caption,
+static void page_conn_etype(struct connection_list *dest, const char *caption,
                             const char *headline, const char *lines,
                             enum event_type event)
 {

@@ -397,13 +397,13 @@ static bool is_game_over(void)
   Send all information for when game starts or client reconnects.
   Ruleset information should have been sent before this.
 **************************************************************************/
-void send_all_info(struct conn_list *dest)
+void send_all_info(struct connection_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     if (pconn->player) {
       send_attribute_block(pconn->player, pconn);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   send_game_info(dest);
   send_map_info(dest);
@@ -560,9 +560,9 @@ static void ai_start_turn(void)
       continue;
     }
 
-    conn_list_do_buffer(game.est_connections);
+    connection_list_do_buffer(game.est_connections);
     ai_do_first_activities(pplayer);
-    conn_list_do_unbuffer(game.est_connections);
+    connection_list_do_unbuffer(game.est_connections);
     force_flush_packets();
 
   } shuffled_players_iterate_end;
@@ -613,7 +613,7 @@ static void begin_phase(bool is_new_phase)
 {
   freelog(LOG_DEBUG, "Begin phase");
 
-  conn_list_do_buffer(game.game_connections);
+  connection_list_do_buffer(game.game_connections);
 
   players_iterate(pplayer) {
     freelog(LOG_DEBUG, "beginning player turn for #%d (%s)",
@@ -627,7 +627,7 @@ static void begin_phase(bool is_new_phase)
     send_player_cities(pplayer);
   } players_iterate_end;
 
-  conn_list_do_unbuffer(game.game_connections);
+  connection_list_do_unbuffer(game.game_connections);
   force_flush_packets();
 
   shuffled_players_iterate(pplayer) {
@@ -668,7 +668,7 @@ static void end_phase(void)
   before_end_year();
   force_flush_packets();
 
-  conn_list_do_buffer(game.est_connections);
+  connection_list_do_buffer(game.est_connections);
 
   players_iterate(pplayer) {
     if (pplayer->research.researching == A_UNSET) {
@@ -695,10 +695,10 @@ static void end_phase(void)
     }
   } players_iterate_end;
 
-  conn_list_do_unbuffer(game.est_connections);
+  connection_list_do_unbuffer(game.est_connections);
   force_flush_packets();
 
-  conn_list_do_buffer(game.est_connections);
+  connection_list_do_buffer(game.est_connections);
 
   /* Refresh cities */
   shuffled_players_iterate(pplayer) {
@@ -717,7 +717,7 @@ static void end_phase(void)
     ai_data_turn_done(pplayer);
   } players_iterate_end;
 
-  conn_list_do_unbuffer(game.est_connections);
+  connection_list_do_unbuffer(game.est_connections);
   force_flush_packets();
 
   do_reveal_effects();
@@ -795,7 +795,7 @@ static void end_turn(void)
 **************************************************************************/
 static void after_game_advance_year(void)
 {
-  conn_list_do_buffer(game.est_connections);
+  connection_list_do_buffer(game.est_connections);
 
   /* Unit end of turn activities */
   shuffled_players_iterate(pplayer) {
@@ -803,7 +803,7 @@ static void after_game_advance_year(void)
     pplayer->turn_done = FALSE;
   } shuffled_players_iterate_end;
 
-  conn_list_do_unbuffer(game.est_connections);
+  connection_list_do_unbuffer(game.est_connections);
   force_flush_packets();
 }
 
@@ -926,9 +926,9 @@ void server_quit(void)
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_report_req(struct connection *pconn, enum report_type type)
+void handle_report_req(connection_t *pconn, enum report_type type)
 {
-  struct conn_list *dest = pconn->self;
+  struct connection_list *dest = pconn->self;
 
   if (server_state != RUN_GAME_STATE && server_state != GAME_OVER_STATE
       && type != REPORT_SERVER_OPTIONS1 && type != REPORT_SERVER_OPTIONS2) {
@@ -1013,7 +1013,7 @@ static bool packet_is_allowed_during_pause(int type)
 Returns 0 if connection should be closed (because the clients was
 rejected). Returns 1 else.
 **************************************************************************/
-bool handle_packet_input(struct connection *pconn, void *packet, int type)
+bool handle_packet_input(connection_t *pconn, void *packet, int type)
 {
   player_t *pplayer;
 
@@ -1231,7 +1231,7 @@ static bool is_allowed_player_name(player_t *pplayer,
                                    const char *name,
                                    char *error_buf, size_t bufsz)
 {
-  struct connection *pconn = find_conn_by_user(pplayer->username);
+  connection_t *pconn = find_conn_by_user(pplayer->username);
 
   /* An empty name is surely not allowed. */
   if (strlen(name) == 0) {
@@ -1641,11 +1641,11 @@ static void announce_ai_player (player_t *pplayer) {
 **************************************************************************/
 static void freeze_clients(void)
 {
-  conn_list_iterate(game.game_connections, pconn) {
+  connection_list_iterate(game.game_connections, pconn) {
     if (has_capability("ReportFreezeFix", pconn->capability)) {
       send_packet_freeze_client(pconn);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
@@ -1653,7 +1653,7 @@ static void freeze_clients(void)
 **************************************************************************/
 static void thaw_clients(void)
 {
-  conn_list_iterate(game.game_connections, pconn) {
+  connection_list_iterate(game.game_connections, pconn) {
     if (has_capability("ReportFreezeFix", pconn->capability)) {
       send_packet_thaw_client(pconn);
     } else {
@@ -1661,7 +1661,7 @@ static void thaw_clients(void)
       send_packet_freeze_hint(pconn);
       send_packet_thaw_hint(pconn);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
@@ -1726,7 +1726,7 @@ static void main_loop(void)
     /* After sniff, re-zero the timer: (read-out above on next loop) */
     clear_timer_start(eot_timer);
 
-    conn_list_do_buffer(game.game_connections);
+    connection_list_do_buffer(game.game_connections);
 
     sanity_check();
 
@@ -1740,7 +1740,7 @@ static void main_loop(void)
     freelog(LOG_DEBUG, "Sendinfotometaserver");
     (void) send_server_info_to_metaserver(META_REFRESH);
 
-    conn_list_do_unbuffer(game.game_connections);
+    connection_list_do_unbuffer(game.game_connections);
 
     if (is_game_over()) {
       server_state = GAME_OVER_STATE;
@@ -1842,7 +1842,7 @@ void srv_main(void)
     gamelog(GAMELOG_END);
 
     /* Remain in GAME_OVER_STATE until players log out */
-    while (conn_list_size(game.est_connections) > 0) {
+    while (connection_list_size(game.est_connections) > 0) {
       (void) sniff_packets();
     }
 

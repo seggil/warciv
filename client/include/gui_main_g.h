@@ -19,7 +19,7 @@
 
 void connection_init(void);
 void ui_main(int argc, char *argv[]);
-void update_conn_list_dialog(void);
+void update_connection_list_dialog(void);
 void sound_bell(void);
 void add_net_input(int);
 void remove_net_input(void);

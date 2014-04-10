@@ -127,7 +127,7 @@ void close_socket_set_callback(CLOSE_FUN fun)
 /**************************************************************************
   Call the callback to close the socket.
 **************************************************************************/
-void call_close_socket_callback(struct connection *pconn,
+void call_close_socket_callback(connection_t *pconn,
                                 enum exit_state state)
 {
   assert(pconn != NULL);
@@ -172,7 +172,7 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
     >0  :  number of bytes read
     =0  :  non-blocking sockets only; no data read, would block
 **************************************************************************/
-int read_socket_data(struct connection *pconn,
+int read_socket_data(connection_t *pconn,
                      struct socket_packet_buffer *buffer)
 {
   int nb;
@@ -228,7 +228,7 @@ int read_socket_data(struct connection *pconn,
   Returns -1 on error and >= 0 otherwise.
   NB: May call call_close_socket_callback on write error.
 **************************************************************************/
-static int write_socket_data(struct connection *pconn,
+static int write_socket_data(connection_t *pconn,
                              struct socket_packet_buffer *buf)
 {
   int count = 0, nput = 0, nblock = 0, ret = 0;
@@ -296,7 +296,7 @@ static int write_socket_data(struct connection *pconn,
   NB: May call call_close_socket_callback if write fails.
   Returns -1 on error, or the number of bytes flushed.
 **************************************************************************/
-int flush_connection_send_buffer_all(struct connection *pconn)
+int flush_connection_send_buffer_all(connection_t *pconn)
 {
   int ret = 0;
 
@@ -325,7 +325,7 @@ int flush_connection_send_buffer_all(struct connection *pconn)
   NB: May call call_close_socket_callback if buffer space allocation
   fails. In that case FALSE will be returned.
 **************************************************************************/
-static bool add_connection_data(struct connection *pconn,
+static bool add_connection_data(connection_t *pconn,
                                 const unsigned char *data, int len)
 {
   struct socket_packet_buffer *buf;
@@ -355,7 +355,7 @@ static bool add_connection_data(struct connection *pconn,
 /**************************************************************************
   NB: May call call_close_socket_callback if an error occurs.
 **************************************************************************/
-int send_connection_data(struct connection *pconn,
+int send_connection_data(connection_t *pconn,
                          const unsigned char *data,
                          int len)
 {
@@ -382,7 +382,7 @@ int send_connection_data(struct connection *pconn,
 /**************************************************************************
   Turn on buffering, using a counter so that calls may be nested.
 **************************************************************************/
-void connection_do_buffer(struct connection *pconn)
+void connection_do_buffer(connection_t *pconn)
 {
   if (pconn == NULL || !pconn->used
       || (is_server && pconn->u.server.is_closing)
@@ -402,7 +402,7 @@ void connection_do_buffer(struct connection *pconn)
   was turned on falls to zero, to handle nested buffer/unbuffer pairs.
   When counter is zero, flush any pending data.
 **************************************************************************/
-void connection_do_unbuffer(struct connection *pconn)
+void connection_do_unbuffer(connection_t *pconn)
 {
   if (pconn == NULL || !pconn->used
       || (is_server && pconn->u.server.is_closing)
@@ -430,42 +430,42 @@ void connection_do_unbuffer(struct connection *pconn)
 /**************************************************************************
   Convenience functions to buffer/unbuffer a list of connections:
 **************************************************************************/
-void conn_list_do_buffer(struct conn_list *dest)
+void connection_list_do_buffer(struct connection_list *dest)
 {
   if (dest == NULL) {
     return;
   }
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     connection_do_buffer(pconn);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-void conn_list_do_unbuffer(struct conn_list *dest)
+void connection_list_do_unbuffer(struct connection_list *dest)
 {
   if (dest == NULL) {
     return;
   }
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     connection_do_unbuffer(pconn);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /***************************************************************
   Find connection by exact user name, from game.all_connections,
   case-insensitve.  Returns NULL if not found.
 ***************************************************************/
-struct connection *find_conn_by_user(const char *user_name)
+connection_t *find_conn_by_user(const char *user_name)
 {
-  conn_list_iterate(game.all_connections, pconn) {
+  connection_list_iterate(game.all_connections, pconn) {
     if (mystrcasecmp(user_name, pconn->username)==0) {
       return pconn;
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
   return NULL;
 }
 
@@ -477,20 +477,20 @@ struct connection *find_conn_by_user(const char *user_name)
   match/non-match (see shared.[ch])
 ***************************************************************/
 static const char *connection_accessor(int i) {
-  return conn_list_get(game.all_connections, i)->username;
+  return connection_list_get(game.all_connections, i)->username;
 }
 
-struct connection *find_conn_by_user_prefix(const char *user_name,
-                                            enum m_pre_result *result)
+connection_t *find_conn_by_user_prefix(const char *user_name,
+                                       enum m_pre_result *result)
 {
   int ind;
 
   *result = match_prefix(connection_accessor,
-                         conn_list_size(game.all_connections),
+                         connection_list_size(game.all_connections),
                          MAX_LEN_NAME-1, mystrncasecmp, user_name, &ind);
 
   if (*result < M_PRE_AMBIGUOUS) {
-    return conn_list_get(game.all_connections, ind);
+    return connection_list_get(game.all_connections, ind);
   } else {
     return NULL;
   }
@@ -502,13 +502,13 @@ struct connection *find_conn_by_user_prefix(const char *user_name,
   Number of connections will always be relatively small given
   current implementation, so linear search should be fine.
 ***************************************************************/
-struct connection *find_conn_by_id(int id)
+connection_t *find_conn_by_id(int id)
 {
-  conn_list_iterate(game.all_connections, pconn) {
+  connection_list_iterate(game.all_connections, pconn) {
     if (pconn->id == id) {
       return pconn;
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
   return NULL;
 }
 
@@ -549,7 +549,7 @@ static void free_socket_packet_buffer(struct socket_packet_buffer *buf)
   pconn->name and pconn->addr contain empty string, and pconn->player
   is NULL: in this case return string "server".
 **************************************************************************/
-const char *conn_description(const struct connection *pconn)
+const char *conn_description(const connection_t *pconn)
 {
   static char buffer[MAX_LEN_NAME * 2 + MAX_LEN_ADDR + 128];
   static const char *exit_state_name[] = {
@@ -637,7 +637,7 @@ int get_next_request_id(int old_request_id)
 /**************************************************************************
  ...
 **************************************************************************/
-void free_compression_queue(struct connection *pconn)
+void free_compression_queue(connection_t *pconn)
 {
 #ifdef USE_COMPRESSION
   byte_vector_free(&pconn->compression.queue);
@@ -647,7 +647,7 @@ void free_compression_queue(struct connection *pconn)
 /**************************************************************************
  ...
 **************************************************************************/
-static void init_packet_hashs(struct connection *pconn)
+static void init_packet_hashs(connection_t *pconn)
 {
   enum packet_type i;
 
@@ -665,7 +665,7 @@ static void init_packet_hashs(struct connection *pconn)
 /**************************************************************************
  ...
 **************************************************************************/
-static void free_packet_hashes(struct connection *pconn)
+static void free_packet_hashes(connection_t *pconn)
 {
   int i;
 
@@ -702,7 +702,7 @@ static void free_packet_hashes(struct connection *pconn)
 /**************************************************************************
  ...
 **************************************************************************/
-void connection_common_init(struct connection *pconn)
+void connection_common_init(connection_t *pconn)
 {
   pconn->established = FALSE;
   pconn->used = TRUE;
@@ -733,7 +733,7 @@ void connection_common_init(struct connection *pconn)
 /**************************************************************************
  ...
 **************************************************************************/
-void connection_common_close(struct connection *pconn)
+void connection_common_close(connection_t *pconn)
 {
   if (!pconn->used) {
     freelog(LOG_ERROR, "WARNING: Trying to close already closed connection");
@@ -777,7 +777,7 @@ void connection_common_close(struct connection *pconn)
  Remove all cached packets from the connection. This resets the
  delta-state.
 **************************************************************************/
-void conn_clear_packet_cache(struct connection *pconn)
+void conn_clear_packet_cache(connection_t *pconn)
 {
   int i;
 
@@ -900,7 +900,7 @@ int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen)
 /**************************************************************************
   ...
 **************************************************************************/
-bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
+bool conn_pattern_match(struct conn_pattern *cp, connection_t *pconn)
 {
   switch (cp->type) {
     case CPT_ADDRESS:
@@ -922,7 +922,7 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-bool conn_controls_player(const struct connection *pconn)
+bool conn_controls_player(const connection_t *pconn)
 {
   return pconn && pconn->player && !pconn->observer;
 }
@@ -930,7 +930,7 @@ bool conn_controls_player(const struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-bool conn_is_global_observer(const struct connection *pconn)
+bool conn_is_global_observer(const connection_t *pconn)
 {
   return pconn && !pconn->player && pconn->observer;
 }
@@ -938,7 +938,7 @@ bool conn_is_global_observer(const struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-player_t *conn_get_player(const struct connection *pconn)
+player_t *conn_get_player(const connection_t *pconn)
 {
   if (!pconn) {
     return NULL;
@@ -949,7 +949,7 @@ player_t *conn_get_player(const struct connection *pconn)
 /**************************************************************************
   NB: If 'pconn' is NULL, this function will return ALLOW_NONE.
 **************************************************************************/
-enum cmdlevel_id conn_get_access(const struct connection *pconn)
+enum cmdlevel_id conn_get_access(const connection_t *pconn)
 {
   if (!pconn || !is_server) {
     return ALLOW_NONE; /* Would not want to give hack on error... */
@@ -961,7 +961,7 @@ enum cmdlevel_id conn_get_access(const struct connection *pconn)
   Returns TRUE if the connection is valid, i.e. not NULL, not closed, not
   closing, etc.
 **************************************************************************/
-bool conn_is_valid(const struct connection *pconn)
+bool conn_is_valid(const connection_t *pconn)
 {
   return pconn && pconn->used
          && !(is_server && pconn->u.server.is_closing);

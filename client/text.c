@@ -812,18 +812,18 @@ const char *format_duration(int duration)
 ****************************************************************************/
 const char *get_ping_time_text(player_t *pplayer)
 {
-  struct connection *pconn = NULL;
+  connection_t *pconn = NULL;
   double ping_time_in_ms;
   INIT;
 
-  conn_list_iterate(game.est_connections, oconn) {
+  connection_list_iterate(game.est_connections, oconn) {
     if (oconn->player == pplayer
         && !oconn->observer
         /* Certainly not needed, but safer */
         && 0 == strcmp(oconn->username, pplayer->username)) {
       pconn = oconn;
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   if (pconn && pconn->ping_time != -1) {
     ping_time_in_ms = 1000 * pconn->ping_time;

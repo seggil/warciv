@@ -1457,7 +1457,7 @@ void upgrade_unit(unit_t *punit, Unit_Type_id to_unit, bool is_free)
   punit->hp = MAX(punit->hp * unit_type(punit)->hp / old_hp, 1);
   punit->moves_left = punit->moves_left * unit_move_rate(punit) / old_mr;
 
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
 
   /* Apply new vision range
    *
@@ -1475,7 +1475,7 @@ void upgrade_unit(unit_t *punit, Unit_Type_id to_unit, bool is_free)
   fog_area(pplayer, punit->tile, range);
 
   send_unit_info(NULL, punit);
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 }
 
 /*************************************************************************
@@ -2019,7 +2019,7 @@ void unit_goes_out_of_sight(player_t *pplayer, unit_t *punit)
   sent if the other players can see either the target or destination tile.
   dest = NULL means all connections (game.game_connections)
 **************************************************************************/
-void send_unit_info_to_onlookers(struct conn_list *dest, unit_t *punit,
+void send_unit_info_to_onlookers(struct connection_list *dest, unit_t *punit,
                                  tile_t *ptile, bool remove_unseen)
 {
   struct packet_unit_info info;
@@ -2034,7 +2034,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, unit_t *punit,
 /* maybe the wrong position for that, but this is the lowlevel function
  * where we check if we have to increase timeout, or remove_turn_done */
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     player_t *pplayer = pconn->player;
 
     if (conn_is_global_observer(pconn)
@@ -2078,7 +2078,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, unit_t *punit,
         }
       }
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   if (game.info.timeout != 0 && new_information_for_enemy){
     increase_timeout_because_unit_moved();
@@ -2092,7 +2092,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, unit_t *punit,
 **************************************************************************/
 void send_unit_info(player_t *dest, unit_t *punit)
 {
-  struct conn_list *conn_dest = (dest ? dest->connections
+  struct connection_list *conn_dest = (dest ? dest->connections
                                  : game.game_connections);
   send_unit_info_to_onlookers(conn_dest, punit, punit->tile, FALSE);
 }
@@ -2101,10 +2101,10 @@ void send_unit_info(player_t *dest, unit_t *punit)
   For each specified connections, send information about all the units
   known to that player/conn.
 **************************************************************************/
-void send_all_known_units(struct conn_list *dest)
+void send_all_known_units(struct connection_list *dest)
 {
-  conn_list_do_buffer(dest);
-  conn_list_iterate(dest, pconn) {
+  connection_list_do_buffer(dest);
+  connection_list_iterate(dest, pconn) {
     player_t *pplayer = pconn->player;
     if (!pconn->player && !pconn->observer) {
       continue;
@@ -2117,8 +2117,8 @@ void send_all_known_units(struct conn_list *dest)
         }
       } unit_list_iterate_end;
     } players_iterate_end;
-  } conn_list_iterate_end;
-  conn_list_do_unbuffer(dest);
+  } connection_list_iterate_end;
+  connection_list_do_unbuffer(dest);
   force_flush_packets();
 }
 
@@ -2784,7 +2784,7 @@ bool move_unit(unit_t *punit, tile_t *pdesttile, int move_cost)
   /* This is to check whether unit survived auto attack. */
   bool bunitsurvived = TRUE;
 
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
 
   /* Transporting units. We first make a list of the units to be moved and
      then insert them again. The way this is done makes sure that the
@@ -2938,7 +2938,7 @@ bool move_unit(unit_t *punit, tile_t *pdesttile, int move_cost)
   /* This can kill punit if auto attack is on. */
   bunitsurvived = wakeup_neighbor_sentries(punit);
 
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 
   if (bunitsurvived) {
     /* Unit survived auto attack. */
@@ -3304,14 +3304,14 @@ void reset_air_patrol(player_t *pplayer)
         struct packet_unit_info packet;
 
         package_unit(punit, &packet);
-        conn_list_iterate(game.est_connections, pconn) {
+        connection_list_iterate(game.est_connections, pconn) {
           if ((pconn->player == pplayer
                /* Else, unable to read air patrol tiles. */
                && has_capability("extglobalinfo", pconn->capability))
               || conn_is_global_observer(pconn)) {
             send_packet_unit_info(pconn, &packet);
           }
-        } conn_list_iterate_end;
+        } connection_list_iterate_end;
       }
     }
   } unit_list_iterate_end;

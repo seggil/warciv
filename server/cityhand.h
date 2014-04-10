@@ -17,9 +17,6 @@
 
 #include "hand_gen.h"
 
-struct connection;
-struct conn_list;
-
 void really_handle_city_sell(player_t *pplayer, city_t *pcity,
                              Impr_Type_id id);
 void really_handle_city_buy(player_t *pplayer, city_t *pcity);

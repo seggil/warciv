@@ -107,10 +107,10 @@ enum authdb_status {
 
 static bool is_good_password(const char *password, char *msg);
 
-static bool check_password(struct connection *pconn,
+static bool check_password(connection_t *pconn,
                            const char *password, int len);
-static enum authdb_status load_user(struct connection *pconn);
-static bool save_user(struct connection *pconn);
+static enum authdb_status load_user(connection_t *pconn);
+static bool save_user(connection_t *pconn);
 
 
 #ifdef HAVE_MYSQL
@@ -175,7 +175,7 @@ static lua_State *database_lua_state;
 
   if the connection is rejected right away, return FALSE, otherwise return TRUE
 **************************************************************************/
-bool authenticate_user(struct connection *pconn, char *username)
+bool authenticate_user(connection_t *pconn, char *username)
 {
   char tmpname[MAX_LEN_NAME] = "\0";
 
@@ -273,7 +273,7 @@ bool authenticate_user(struct connection *pconn, char *username)
 /**************************************************************************
   Create the random salt for a new password.
 **************************************************************************/
-static void create_salt(struct connection *pconn)
+static void create_salt(connection_t *pconn)
 {
   RANDOM_STATE old_state;
 
@@ -317,7 +317,7 @@ static void create_salted_md5sum(const char *password, int passlen,
 /**************************************************************************
   Receives a password from a client and verifies it.
 **************************************************************************/
-bool handle_authentication_reply(struct connection *pconn, char *password)
+bool handle_authentication_reply(connection_t *pconn, char *password)
 {
   char msg[MAX_LEN_MSG];
 
@@ -371,7 +371,7 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
 /**************************************************************************
  checks on where in the authentication process we are.
 **************************************************************************/
-void process_authentication_status(struct connection *pconn)
+void process_authentication_status(connection_t *pconn)
 {
   switch(pconn->u.server.status) {
   case AS_NOT_ESTABLISHED:
@@ -514,7 +514,7 @@ static bool is_good_password(const char *password, char *msg)
 /**************************************************************************
   Returns TRUE if the connection's password salt is not empty.
 ***************************************************************************/
-static bool has_salt(const struct connection *pconn)
+static bool has_salt(const connection_t *pconn)
 {
   if (!pconn) {
     return FALSE;
@@ -527,7 +527,7 @@ static bool has_salt(const struct connection *pconn)
   Check if the password with length len matches that given in
   pconn->server.password.
 ***************************************************************************/
-static bool check_password(struct connection *pconn,
+static bool check_password(connection_t *pconn,
                            const char *password, int passlen)
 {
 #ifdef HAVE_MYSQL
@@ -615,7 +615,7 @@ static bool check_password(struct connection *pconn,
 /**************************************************************************
  Loads a user from the database.
 **************************************************************************/
-static enum authdb_status load_user(struct connection *pconn)
+static enum authdb_status load_user(connection_t *pconn)
 {
 #ifdef HAVE_MYSQL
   char buffer[512] = "";
@@ -703,7 +703,7 @@ static enum authdb_status load_user(struct connection *pconn)
  Saves pconn fields to the database. If the username already exists,
  replace the data.
 **************************************************************************/
-static bool save_user(struct connection *pconn)
+static bool save_user(connection_t *pconn)
 {
 #ifdef HAVE_MYSQL
   char buffer[1024] = "";
@@ -3235,13 +3235,13 @@ void database_free(void)
 void database_reload(void)
 {
   freelog(LOG_VERBOSE, _("Reinitializing database interface."));
-  conn_list_iterate(game.all_connections, pconn) {
+  connection_list_iterate(game.all_connections, pconn) {
     if (!pconn->established) {
       freelog(LOG_NORMAL, _("Closing non-established connection due "
               "to database shutdown: %s"), conn_description(pconn));
       server_break_connection(pconn, EXIT_STATUS_AUTH_FAILED);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
   database_free();
   database_init();
   freelog(LOG_NORMAL, _("Database interface reinitialized."));

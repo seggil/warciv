@@ -22,11 +22,9 @@ void database_reload(void);
 bool is_guest_name(const char *name);
 void get_unique_guest_name(char *name);
 
-struct connection;
-
-bool authenticate_user(struct connection *pconn, char *username);
-void process_authentication_status(struct connection *pconn);
-bool handle_authentication_reply(struct connection *pc, char *password);
+bool authenticate_user(connection_t *pconn, char *username);
+void process_authentication_status(connection_t *pconn);
+bool handle_authentication_reply(connection_t *pc, char *password);
 bool wcdb_check_salted_passwords(void);
 
 struct wcdb_params {

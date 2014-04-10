@@ -100,7 +100,7 @@
 It returns the request id of the outgoing packet or 0 if the packet
 was no request (i.e. server sends packet).
 **************************************************************************/
-int send_packet_data(struct connection *pc, unsigned char *data, int len)
+int send_packet_data(connection_t *pconn, unsigned char *data, int len)
 {
   /* default for the server */
   int result = 0;
@@ -109,14 +109,14 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
           get_packet_name(data[2]), data[2], len);
 
   if (!is_server) {
-    pc->u.client.last_request_id_used =
-        get_next_request_id(pc->u.client.last_request_id_used);
-    result = pc->u.client.last_request_id_used;
+    pconn->u.client.last_request_id_used =
+        get_next_request_id(pconn->u.client.last_request_id_used);
+    result = pconn->u.client.last_request_id_used;
     freelog(BASIC_PACKET_LOG_LEVEL, "sending request %d", result);
   }
 
-  if (pc->outgoing_packet_notify) {
-    pc->outgoing_packet_notify(pc, data[2], len, result);
+  if (pconn->outgoing_packet_notify) {
+    pconn->outgoing_packet_notify(pconn, data[2], len, result);
   }
 
 #ifdef USE_COMPRESSION
@@ -145,31 +145,31 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
      * changed in stable branch. */
     if (packet_type == PACKET_PROCESSING_STARTED
         || packet_type == PACKET_FREEZE_HINT) {
-      if (pc->compression.frozen_level == 0) {
-        byte_vector_reserve(&pc->compression.queue, 0);
+      if (pconn->compression.frozen_level == 0) {
+        byte_vector_reserve(&pconn->compression.queue, 0);
       }
-      pc->compression.frozen_level++;
+      pconn->compression.frozen_level++;
     }
 
-    if (pc->compression.frozen_level > 0) {
-      size_t old_size = pc->compression.queue.size;
+    if (pconn->compression.frozen_level > 0) {
+      size_t old_size = pconn->compression.queue.size;
 
-      byte_vector_reserve(&pc->compression.queue, old_size + len);
-      memcpy(pc->compression.queue.p + old_size, data, len);
+      byte_vector_reserve(&pconn->compression.queue, old_size + len);
+      memcpy(pconn->compression.queue.p + old_size, data, len);
       freelog(COMPRESS2_LOG_LEVEL, "COMPRESS: putting %s into the queue",
               get_packet_name(packet_type));
     } else {
       stat_size_alone += size;
       freelog(COMPRESS_LOG_LEVEL, "COMPRESS: sending %s alone (%d bytes total)",
               get_packet_name(packet_type), stat_size_alone);
-      send_connection_data(pc, data, len);
+      send_connection_data(pconn, data, len);
     }
 
     if (packet_type ==
         PACKET_PROCESSING_FINISHED || packet_type == PACKET_THAW_HINT) {
-      pc->compression.frozen_level--;
-      if (pc->compression.frozen_level == 0) {
-        uLongf compressed_size = 12 + pc->compression.queue.size * 1.001;
+      pconn->compression.frozen_level--;
+      if (pconn->compression.frozen_level == 0) {
+        uLongf compressed_size = 12 + pconn->compression.queue.size * 1.001;
 #ifndef NDEBUG
         int error;
 #endif
@@ -179,17 +179,17 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
         error =
 #endif
             compress2(compressed, &compressed_size,
-                      pc->compression.queue.p, pc->compression.queue.size,
+                      pconn->compression.queue.p, pconn->compression.queue.size,
                       compression_level);
         assert(error == Z_OK);
-        if (compressed_size + 2 < pc->compression.queue.size) {
+        if (compressed_size + 2 < pconn->compression.queue.size) {
             struct data_out dout;
 
           freelog(COMPRESS_LOG_LEVEL,
                   "COMPRESS: compressed %lu bytes to %ld (level %d)",
-                  (unsigned long)pc->compression.queue.size, compressed_size,
+                  (unsigned long)pconn->compression.queue.size, compressed_size,
                   compression_level);
-          stat_size_uncompressed += pc->compression.queue.size;
+          stat_size_uncompressed += pconn->compression.queue.size;
           stat_size_compressed += compressed_size;
 
           if (compressed_size <= JUMBO_BORDER) {
@@ -200,8 +200,8 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
 
             dio_output_init(&dout, header, sizeof(header));
             dio_put_uint16(&dout, 2 + compressed_size + COMPRESSION_BORDER);
-            send_connection_data(pc, header, sizeof(header));
-            send_connection_data(pc, compressed, compressed_size);
+            send_connection_data(pconn, header, sizeof(header));
+            send_connection_data(pconn, compressed, compressed_size);
           } else {
             unsigned char header[6];
 
@@ -210,16 +210,16 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
             dio_output_init(&dout, header, sizeof(header));
             dio_put_uint16(&dout, JUMBO_SIZE);
             dio_put_uint32(&dout, 6 + compressed_size);
-            send_connection_data(pc, header, sizeof(header));
-            send_connection_data(pc, compressed, compressed_size);
+            send_connection_data(pconn, header, sizeof(header));
+            send_connection_data(pconn, compressed, compressed_size);
           }
         } else {
           freelog(COMPRESS_LOG_LEVEL,
                   "COMPRESS: would enlarging %lu bytes to %ld; sending uncompressed",
-                  (unsigned long)pc->compression.queue.size, compressed_size);
-          send_connection_data(pc, pc->compression.queue.p,
-                               pc->compression.queue.size);
-          stat_size_no_compression += pc->compression.queue.size;
+                  (unsigned long)pconn->compression.queue.size, compressed_size);
+          send_connection_data(pconn, pconn->compression.queue.p,
+                               pconn->compression.queue.size);
+          stat_size_no_compression += pconn->compression.queue.size;
         }
       }
     }
@@ -229,7 +229,7 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
             stat_size_uncompressed, stat_size_compressed);
   }
 #else
-  send_connection_data(pc, data, len);
+  send_connection_data(pconn, data, len);
 #endif
 
 #if PACKET_SIZE_STATISTICS
@@ -300,7 +300,7 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
               "per packet %d bytes", game.info.turn, sum, packet_counter,
               sum / packet_counter);
       freelog(LOG_NORMAL, "turn=%d; transmitted %d bytes", game.info.turn,
-              pc->statistics.bytes_send);
+              pconn->statistics.bytes_send);
     }
     if (clear) {
       int i;
@@ -310,7 +310,7 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
         packets_stats[i].size = 0;
       }
       packet_counter = 0;
-      pc->statistics.bytes_send = 0;
+      pconn->statistics.bytes_send = 0;
       delta_stats_reset();
     }
   }
@@ -324,7 +324,7 @@ presult indicates if there is more packets in the cache. We return result
 instead of just testing if the returning package is NULL as we sometimes
 return a NULL packet even if everything is OK (receive_packet_goto_route).
 **************************************************************************/
-void *get_packet_from_connection(struct connection *pc,
+void *get_packet_from_connection(connection_t *pconn,
                                  enum packet_type *ptype,
                                  bool *presult)
 {
@@ -344,15 +344,15 @@ void *get_packet_from_connection(struct connection *pc,
 
   *presult = FALSE;
 
-  if (!pc->used) {
+  if (!pconn->used) {
     return NULL;                /* connection was closed, stop reading */
   }
 
-  if (pc->buffer->ndata < 3) {
+  if (pconn->buffer->ndata < 3) {
     return NULL;           /* length and type not read */
   }
 
-  dio_input_init(&din, pc->buffer->data, pc->buffer->ndata);
+  dio_input_init(&din, pconn->buffer->data, pconn->buffer->ndata);
   dio_get_uint16(&din, &len_read);
 
   /* The non-compressed case */
@@ -377,7 +377,7 @@ void *get_packet_from_connection(struct connection *pc,
   }
 #endif
 
-  if ((unsigned)whole_packet_len > pc->buffer->ndata) {
+  if ((unsigned)whole_packet_len > pconn->buffer->ndata) {
     return NULL;                /* not all data has been read */
   }
 
@@ -391,7 +391,7 @@ void *get_packet_from_connection(struct connection *pc,
     uLongf decompressed_size = 100 * compressed_size;
     void *decompressed = wc_malloc(decompressed_size);
     int error;
-    struct socket_packet_buffer *buffer = pc->buffer;
+    struct socket_packet_buffer *buffer = pconn->buffer;
 
     error =
         uncompress(decompressed, &decompressed_size,
@@ -400,7 +400,7 @@ void *get_packet_from_connection(struct connection *pc,
     if (error != Z_OK) {
       freelog(LOG_ERROR, "Uncompressing of the packet stream failed. "
               "The connection will be closed now.");
-      call_close_socket_callback(pc, EXIT_STATUS_DECODING_ERROR);
+      call_close_socket_callback(pconn, EXIT_STATUS_DECODING_ERROR);
 
       return NULL;
     }
@@ -435,7 +435,7 @@ void *get_packet_from_connection(struct connection *pc,
     freelog(COMPRESS_LOG_LEVEL, "COMPRESS: decompressed %ld into %ld",
             compressed_size, decompressed_size);
 
-    return get_packet_from_connection(pc, ptype, presult);
+    return get_packet_from_connection(pconn, ptype, presult);
   }
 #endif
 
@@ -446,7 +446,7 @@ void *get_packet_from_connection(struct connection *pc,
   if (whole_packet_len < 3) {
     freelog(LOG_ERROR, "The packet stream is corrupt. The connection "
             "will be closed now.");
-    call_close_socket_callback(pc, EXIT_STATUS_DECODING_ERROR);
+    call_close_socket_callback(pconn, EXIT_STATUS_DECODING_ERROR);
 
     return NULL;
   }
@@ -459,8 +459,8 @@ void *get_packet_from_connection(struct connection *pc,
   *ptype = utype.type;
   *presult = TRUE;
 
-  if (pc->incoming_packet_notify) {
-    pc->incoming_packet_notify(pc, utype.type, whole_packet_len);
+  if (pconn->incoming_packet_notify) {
+    pconn->incoming_packet_notify(pconn, utype.type, whole_packet_len);
   }
 
 #if PACKET_SIZE_STATISTICS
@@ -512,7 +512,7 @@ void *get_packet_from_connection(struct connection *pc,
   }
 #endif /* PACKET_SIZE_STATISTICS */
 
-  return get_packet_from_connection_helper(pc, utype.type);
+  return get_packet_from_connection_helper(pconn, utype.type);
 }
 
 /**************************************************************************
@@ -534,7 +534,7 @@ void remove_packet_from_buffer(struct socket_packet_buffer *buffer)
 /**************************************************************************
   ...
 **************************************************************************/
-void check_packet(struct data_in *din, struct connection *pc)
+void check_packet(struct data_in *din, connection_t *pconn)
 {
   size_t rem = dio_input_remaining(din);
 
@@ -542,8 +542,8 @@ void check_packet(struct data_in *din, struct connection *pc)
     char from[MAX_LEN_ADDR + MAX_LEN_NAME + 128];
     int type, len;
 
-    assert(pc != NULL);
-    my_snprintf(from, sizeof(from), " from %s", conn_description(pc));
+    assert(pconn != NULL);
+    my_snprintf(from, sizeof(from), " from %s", conn_description(pconn));
 
     dio_input_rewind(din);
     dio_get_uint16(din, &len);
@@ -583,7 +583,7 @@ void generic_handle_player_attribute_chunk(player_t *pplayer,
                                            const struct
                                            packet_player_attribute_chunk
                                            *chunk,
-                                           struct connection *pconn)
+                                           connection_t *pconn)
 {
   assert(chunk != NULL);
 
@@ -654,7 +654,7 @@ void generic_handle_player_attribute_chunk(player_t *pplayer,
  Split the attribute block into chunks and send them over pconn.
 **************************************************************************/
 void send_attribute_block(const player_t *pplayer,
-                          struct connection *pconn)
+                          connection_t *pconn)
 {
   struct packet_player_attribute_chunk packet;
   int current_chunk, chunks, bytes_left;
@@ -716,7 +716,7 @@ void send_attribute_block(const player_t *pplayer,
   connection IDs and map positions into the network form.  It's called
   directly on a packet before it's written to the network.
 **************************************************************************/
-void pre_send_packet_chat_msg(struct connection *pc,
+void pre_send_packet_chat_msg(connection_t *pconn,
                               struct packet_chat_msg *packet)
 {
   if (packet->conn_id == -1) {
@@ -737,7 +737,7 @@ void pre_send_packet_chat_msg(struct connection *pc,
   connection IDs and map positions into the internal form.  It's
   called directly on a packet after it's been received from the network.
 **************************************************************************/
-void post_receive_packet_chat_msg(struct connection *pc,
+void post_receive_packet_chat_msg(connection_t *pconn,
                                   struct packet_chat_msg *packet)
 {
   if (packet->x == 255 && packet->y == 255) {
@@ -753,7 +753,7 @@ void post_receive_packet_chat_msg(struct connection *pc,
 /**************************************************************************
   Test and log for sending player attribute_block
 **************************************************************************/
-void pre_send_packet_player_attribute_chunk(struct connection *pc,
+void pre_send_packet_player_attribute_chunk(connection_t *pconn,
                                             struct packet_player_attribute_chunk
                                             *packet)
 {
@@ -773,17 +773,17 @@ void pre_send_packet_player_attribute_chunk(struct connection *pc,
 /**************************************************************************
   ...
 **************************************************************************/
-void post_receive_packet_game_state(struct connection *pc,
+void post_receive_packet_game_state(connection_t *pconn,
                                     struct packet_game_state *packet)
 {
-  conn_clear_packet_cache(pc);
+  conn_clear_packet_cache(pconn);
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-void post_send_packet_game_state(struct connection *pc,
+void post_send_packet_game_state(connection_t *pconn,
                                  const struct packet_game_state *packet)
 {
-  conn_clear_packet_cache(pc);
+  conn_clear_packet_cache(pconn);
 }

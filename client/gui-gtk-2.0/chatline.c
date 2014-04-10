@@ -2760,10 +2760,10 @@ bool chatline_is_scrolled_to_bottom(void)
 **************************************************************************/
 static const char *get_player_or_user_name(int id)
 {
-  size_t size = conn_list_size(game.all_connections);
+  size_t size = connection_list_size(game.all_connections);
 
   return id >= size ? get_player(id - size)->name
-                    : conn_list_get(game.all_connections, id)->username;
+                    : connection_list_get(game.all_connections, id)->username;
 }
 
 /**************************************************************************
@@ -2783,7 +2783,7 @@ static int check_player_or_user_name(const char *prefix, const char **matches,
 
   switch (match_prefix_full(get_player_or_user_name,
                             game.info.nplayers
-                            + conn_list_size(game.all_connections),
+                            + connection_list_size(game.all_connections),
                             MAX_LEN_NAME, mystrncasecmp, prefix, &ind,
                             matches_id, max_matches * 2, &num)) {
   case M_PRE_EXACT:

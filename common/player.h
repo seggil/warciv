@@ -222,8 +222,8 @@ struct player_s {
   bool was_created;                    /* if the player was /created */
   bool is_connected;                   /* observers don't count */
   bool is_civil_war_split;             /* if player was created by a civil war */
-  struct connection *current_conn;     /* non-null while handling packet */
-  struct conn_list *connections;       /* will replace conn */
+  connection_t *current_conn;          /* non-null while handling packet */
+  struct connection_list *connections; /* will replace conn */
   struct player_tile *private_map;
   unsigned int gives_shared_vision; /* bitvector those that give you shared vision */
   unsigned int really_gives_vision; /* takes into account that p3 may see what p1 has via p2 */

@@ -306,14 +306,14 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
                        my_url_encode(get_meta_message_string()));
 
     if (get_num_human_and_ai_players() < 1
-        && conn_list_size(game.est_connections) < 1) {
+        && connection_list_size(game.est_connections) < 1) {
       astr_append(&content, "&dropplrs=1");
     } else {
       available_players = 0;
       human_players = 0;
 
       players_iterate(plr) {
-        struct connection *pconn;
+        connection_t *pconn;
         pconn = find_conn_by_user(plr->username);
 
         if (!plr->is_alive) {
@@ -352,7 +352,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
         }
       } players_iterate_end;
 
-      conn_list_iterate(game.est_connections, pconn) {
+      connection_list_iterate(game.est_connections, pconn) {
         if (pconn->player && !pconn->observer) {
           continue;
         }
@@ -379,7 +379,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
         astr_append(&content, "&pln[]=none");
         astr_append_printf(&content, "&plh[]=%s",
                            my_url_encode(pconn->addr));
-      } conn_list_iterate_end;
+      } connection_list_iterate_end;
 
       astr_append_printf(&content, "&available=%d", available_players);
       astr_append_printf(&content, "&humans=%d", human_players);

@@ -443,11 +443,11 @@ void init_player_dlg_common()
 **************************************************************************/
 const char *player_addr_hack(player_t *pplayer)
 {
-  conn_list_iterate(pplayer->connections, pconn) {
+  connection_list_iterate(pplayer->connections, pconn) {
     if (!pconn->observer) {
       return pconn->addr;
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   return blank_addr_str;
 }

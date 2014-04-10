@@ -128,7 +128,7 @@ void handle_unit_type_upgrade(player_t *pplayer, Unit_Type_id type)
    * Try to upgrade units. The order we upgrade in is arbitrary (if
    * the player really cared they should have done it manually).
    */
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
   unit_list_iterate(pplayer->units, punit) {
     if (punit->type == from_unittype) {
       enum unit_upgrade_result result = test_unit_upgrade(punit, FALSE);
@@ -141,7 +141,7 @@ void handle_unit_type_upgrade(player_t *pplayer, Unit_Type_id type)
       }
     }
   } unit_list_iterate_end;
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 
   /* Alert the player about what happened. */
   if (number_of_upgraded_units > 0) {
@@ -187,9 +187,9 @@ void handle_unit_upgrade(player_t *pplayer, int unit_id)
   Only send result back to the requesting connection, not all
   connections for that player.
 ***************************************************************/
-void handle_unit_bribe_inq(struct connection *pc, int unit_id)
+void handle_unit_bribe_inq(connection_t *pconn, int unit_id)
 {
-  player_t *pplayer = pc->observer ? NULL : pc->player;
+  player_t *pplayer = pconn->observer ? NULL : pconn->player;
   unit_t *punit = find_unit_by_id(unit_id);
   int bribe_cost = 0;
   bool possible = FALSE;
@@ -219,7 +219,7 @@ void handle_unit_bribe_inq(struct connection *pc, int unit_id)
       /* We have to lie here for compatibility. */
       bribe_cost += unit_bribe_cost(pvictim);
     } unit_list_iterate_end;
-    dsend_packet_unit_bribe_info(pc, unit_id, bribe_cost);
+    dsend_packet_unit_bribe_info(pconn, unit_id, bribe_cost);
   }
 }
 
@@ -1211,7 +1211,7 @@ void handle_unit_help_build_wonder(player_t *pplayer, int unit_id)
   pcity_dest->common.shield_stock += unit_build_shield_cost(punit->type);
   pcity_dest->common.caravan_shields += unit_build_shield_cost(punit->type);
 
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
 
   if (build_points_left(pcity_dest) >= 0) {
     text = _("Game: Your %s helps build the %s in %s (%d remaining).");
@@ -1229,7 +1229,7 @@ void handle_unit_help_build_wonder(player_t *pplayer, int unit_id)
   wipe_unit(punit);
   send_player_info(pplayer, pplayer);
   send_city_info(pplayer, pcity_dest);
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************

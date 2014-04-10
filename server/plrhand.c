@@ -111,10 +111,10 @@ void do_conquer_cost(player_t *pplayer)
   Send end-of-turn notifications relevant to specified dests.
   If dest is NULL, do all players, sending to pplayer->connections.
 **************************************************************************/
-void send_player_turn_notifications(struct conn_list *dest)
+void send_player_turn_notifications(struct connection_list *dest)
 {
   if (dest) {
-    conn_list_iterate(dest, pconn) {
+    connection_list_iterate(dest, pconn) {
       player_t *pplayer = pconn->player;
       if (pplayer) {
         city_list_iterate(pplayer->cities, pcity) {
@@ -122,7 +122,7 @@ void send_player_turn_notifications(struct conn_list *dest)
         } city_list_iterate_end;
       }
     }
-    conn_list_iterate_end;
+    connection_list_iterate_end;
   } else {
     players_iterate(pplayer) {
       city_list_iterate(pplayer->cities, pcity) {
@@ -881,10 +881,10 @@ void handle_player_rates(player_t *pplayer,
     pplayer->economic.luxury = luxury;
     pplayer->economic.science = science;
     gamelog(GAMELOG_RATECHANGE, pplayer);
-    conn_list_do_buffer(pplayer->connections);
+    connection_list_do_buffer(pplayer->connections);
     global_city_refresh(pplayer);
     send_player_info(pplayer, pplayer);
-    conn_list_do_unbuffer(pplayer->connections);
+    connection_list_do_unbuffer(pplayer->connections);
   }
 }
 
@@ -1386,7 +1386,7 @@ repeat_break_treaty:
   coordinates have been normalized.  For generic event use E_NOEVENT.
   (But current clients do not use (x,y) data for E_NOEVENT events.)
 **************************************************************************/
-void vnotify_conn_ex(struct conn_list *dest, tile_t *ptile,
+void vnotify_conn_ex(struct connection_list *dest, tile_t *ptile,
                      enum event_type event, const char *format,
                      va_list vargs)
 {
@@ -1401,7 +1401,7 @@ void vnotify_conn_ex(struct conn_list *dest, tile_t *ptile,
   genmsg.event = event;
   genmsg.conn_id = -1;
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     if (server_state >= RUN_GAME_STATE
         && ptile /* special case, see above */
         && (conn_is_global_observer(pconn)
@@ -1415,13 +1415,13 @@ void vnotify_conn_ex(struct conn_list *dest, tile_t *ptile,
     }
     send_packet_chat_msg(pconn, &genmsg);
   }
-  conn_list_iterate_end;
+  connection_list_iterate_end;
 }
 
 /**************************************************************************
   See vnotify_conn_ex - this is just the "non-v" version, with varargs.
 **************************************************************************/
-void notify_conn_ex(struct conn_list *dest, tile_t *ptile,
+void notify_conn_ex(struct connection_list *dest, tile_t *ptile,
                     enum event_type event, const char *format, ...)
 {
   va_list args;
@@ -1433,7 +1433,7 @@ void notify_conn_ex(struct conn_list *dest, tile_t *ptile,
 /**************************************************************************
   See vnotify_conn_ex - this is varargs, and cannot specify (x,y), event.
 **************************************************************************/
-void notify_conn(struct conn_list *dest, const char *format, ...)
+void notify_conn(struct connection_list *dest, const char *format, ...)
 {
   va_list args;
 
@@ -1455,7 +1455,7 @@ void notify_conn(struct conn_list *dest, const char *format, ...)
 void notify_player_ex(const player_t *pplayer, tile_t *ptile,
                       enum event_type event, const char *format, ...)
 {
-  struct conn_list *dest;
+  struct connection_list *dest;
   va_list args;
 
   if (pplayer) {
@@ -1474,7 +1474,7 @@ void notify_player_ex(const player_t *pplayer, tile_t *ptile,
 **************************************************************************/
 void notify_player(const player_t *pplayer, const char *format, ...)
 {
-  struct conn_list *dest;
+  struct connection_list *dest;
   va_list args;
 
   if (pplayer) {
@@ -1522,18 +1522,18 @@ void notify_embassies(player_t *pplayer, player_t *exclude,
 **************************************************************************/
 void notify_team(const struct team *pteam, const char *format, ...)
 {
-  struct conn_list *dest = game.est_connections;
+  struct connection_list *dest = game.est_connections;
   va_list args;
 
   if (pteam) {
-    dest = conn_list_new();
+    dest = connection_list_new();
     players_iterate(pplayer) {
       if (pplayer->team != pteam->id) {
         continue;
       }
-      conn_list_iterate(pplayer->connections, pconn) {
-        conn_list_append(dest, pconn);
-      } conn_list_iterate_end;
+      connection_list_iterate(pplayer->connections, pconn) {
+        connection_list_append(dest, pconn);
+      } connection_list_iterate_end;
     } players_iterate_end;
   }
 
@@ -1542,7 +1542,7 @@ void notify_team(const struct team *pteam, const char *format, ...)
   va_end(args);
 
   if (pteam) {
-    conn_list_free(dest);
+    connection_list_free(dest);
   }
 }
 
@@ -1553,7 +1553,7 @@ void notify_team(const struct team *pteam, const char *format, ...)
   Note: package_player_info contains incomplete info if it has NULL as a
         dest arg and and info is < INFO_EMBASSY.
 **************************************************************************/
-void send_player_info_c(player_t *src, struct conn_list *dest)
+void send_player_info_c(player_t *src, struct connection_list *dest)
 {
   players_iterate(pplayer) {
     if (!src || pplayer == src) {
@@ -1561,7 +1561,7 @@ void send_player_info_c(player_t *src, struct conn_list *dest)
 
       package_player_common(pplayer, &info);
 
-      conn_list_iterate(dest, pconn) {
+      connection_list_iterate(dest, pconn) {
         if (pconn->player) {
           /* Players (including regular observers) */
           package_player_info(pplayer, &info, pconn->player, INFO_MINIMUM);
@@ -1573,7 +1573,7 @@ void send_player_info_c(player_t *src, struct conn_list *dest)
         }
 
         send_packet_player_info(pconn, &info);
-      } conn_list_iterate_end;
+      } connection_list_iterate_end;
     }
   } players_iterate_end;
 }
@@ -1788,7 +1788,7 @@ static enum plr_info_level player_info_level(player_t *plr,
   Convenience function to return "reply" destination connection list
   for player: pplayer->current_conn if set, else pplayer->connections.
 **************************************************************************/
-struct conn_list *player_reply_dest(player_t *pplayer)
+struct connection_list *player_reply_dest(player_t *pplayer)
 {
   return (pplayer->current_conn ?
           pplayer->current_conn->self :
@@ -1829,12 +1829,12 @@ void server_remove_player(player_t *pplayer)
   dlsend_packet_player_remove(game.game_connections, pplayer->player_no);
 
   /* Note it is ok to remove the _current_ item in a list_iterate. */
-  conn_list_iterate(pplayer->connections, pconn) {
+  connection_list_iterate(pplayer->connections, pconn) {
     if (!unattach_connection_from_player(pconn)) {
       die("player had a connection attached that didn't belong to it!");
     }
     send_conn_info(pconn->self, game.est_connections);
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 
   game_remove_player(pplayer);
   game_renumber_players(pplayer->player_no);
@@ -2372,7 +2372,7 @@ void handle_player_turn_done(player_t *pplayer)
   Send a player_info packet every time we get this packet. The client
   wish to have updated info to display to the user (pconn).
 **************************************************************************/
-void handle_player_info_req(struct connection *pconn, int player_id)
+void handle_player_info_req(connection_t *pconn, int player_id)
 {
   player_t *pplayer = get_player(player_id);
 

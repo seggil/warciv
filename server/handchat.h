@@ -15,9 +15,9 @@
 
 #define ALLIESCHAT_COMMAND_PREFIX '.'
 
-struct connection;
+#include "connection.h"
 
-void handle_chat_msg_req(struct connection *pc, char *message);
-bool conn_is_ignored(struct connection *pconn, struct connection *dest);
+void handle_chat_msg_req(connection_t *pconn, char *message);
+bool conn_is_ignored(connection_t *pconn, connection_t *dest);
 
 #endif  /* WC_SERVER_HANDCHAT_H */

@@ -570,7 +570,7 @@ void game_remove_player(player_t *pplayer)
     pplayer->island_improv = NULL;
   }
 
-  conn_list_free(pplayer->connections);
+  connection_list_free(pplayer->connections);
   pplayer->connections = NULL;
 
   unit_list_iterate(pplayer->units, punit) {
@@ -610,9 +610,9 @@ void game_renumber_players(int plrno)
   for (i = plrno; i < game.info.nplayers - 1; i++) {
     game.players[i] = game.players[i + 1];
     game.players[i].player_no = i;
-    conn_list_iterate(game.players[i].connections, pconn) {
+    connection_list_iterate(game.players[i].connections, pconn) {
       pconn->player = &game.players[i];
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   }
 
   game.info.nplayers--;

@@ -1864,27 +1864,27 @@ void handle_player_info(struct packet_player_info *pinfo) /* 39 */
   /* if the server requests that the client reset, then information about
    * connections to this player are lost. If this is the case, insert the
    * correct conn back into the player->connections list */
-  if (conn_list_size(pplayer->connections) == 0) {
-    conn_list_iterate(game.est_connections, pconn) {
+  if (connection_list_size(pplayer->connections) == 0) {
+    connection_list_iterate(game.est_connections, pconn) {
       if (pconn->player == pplayer) {
         /* insert the controller into first position */
         if (pconn->observer) {
-          conn_list_append(pplayer->connections, pconn);
+          connection_list_append(pplayer->connections, pconn);
         } else {
-          conn_list_prepend(pplayer->connections, pconn);
+          connection_list_prepend(pplayer->connections, pconn);
         }
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   }
 
   if (has_capability("username_info", aconnection.capability)) {
     sz_strlcpy(pplayer->username, pinfo->username);
   } else {
-    conn_list_iterate(game.est_connections, pconn) {
+    connection_list_iterate(game.est_connections, pconn) {
       if (pconn->player == pplayer && !pconn->observer) {
         sz_strlcpy(pplayer->username, pconn->username);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   }
 
   /* Just about any changes above require an update to the intelligence
@@ -1900,7 +1900,7 @@ void handle_player_info(struct packet_player_info *pinfo) /* 39 */
 **************************************************************************/
 void handle_conn_info(struct packet_conn_info *pinfo) /* 86 */
 {
-  struct connection *pconn = find_conn_by_id(pinfo->id);
+  connection_t *pconn = find_conn_by_id(pinfo->id);
 
   freelog(LOG_DEBUG, "conn_info id%d used%d est%d plr%d obs%d acc%d",
           pinfo->id, pinfo->used, pinfo->established, pinfo->player_num,
@@ -1928,25 +1928,25 @@ void handle_conn_info(struct packet_conn_info *pinfo) /* 86 */
       freelog(LOG_VERBOSE, "Server reports new connection %d %s",
               pinfo->id, pinfo->username);
 
-      pconn = wc_calloc(1, sizeof(struct connection));
+      pconn = wc_calloc(1, sizeof(connection_t));
       pconn->buffer = NULL;
       pconn->send_buffer = NULL;
       pconn->ping_time = -1.0;
       if (pplayer) {
-        conn_list_append(pplayer->connections, pconn);
+        connection_list_append(pplayer->connections, pconn);
       }
-      conn_list_append(game.all_connections, pconn);
-      conn_list_append(game.est_connections, pconn);
-      conn_list_append(game.game_connections, pconn);
+      connection_list_append(game.all_connections, pconn);
+      connection_list_append(game.est_connections, pconn);
+      connection_list_append(game.game_connections, pconn);
     } else {
       freelog(LOG_VERBOSE, "Server reports updated connection %d %s",
               pinfo->id, pinfo->username);
       if (pplayer != pconn->player) {
         if (pconn->player) {
-          conn_list_unlink(pconn->player->connections, pconn);
+          connection_list_unlink(pconn->player->connections, pconn);
         }
         if (pplayer) {
-          conn_list_append(pplayer->connections, pconn);
+          connection_list_append(pplayer->connections, pconn);
         }
       }
     }
@@ -1967,7 +1967,7 @@ void handle_conn_info(struct packet_conn_info *pinfo) /* 86 */
     }
   }
   update_players_dialog();
-  update_conn_list_dialog();
+  update_connection_list_dialog();
 }
 
 /*************************************************************************
@@ -1978,7 +1978,7 @@ void handle_conn_ping_info(struct packet_conn_ping_info *packet) /* 87 */
   int i;
 
   for (i = 0; i < packet->connections; i++) {
-    struct connection *pconn = find_conn_by_id(packet->conn_id[i]);
+    connection_t *pconn = find_conn_by_id(packet->conn_id[i]);
 
     if (!pconn) {
       continue;
@@ -3054,10 +3054,10 @@ void handle_processing_finished(void) /* 1 */
 /**************************************************************************
 ...
 **************************************************************************/
-void notify_about_incoming_packet(struct connection *pc,
+void notify_about_incoming_packet(connection_t *pconn,
                                   int packet_type, int size)
 {
-  assert(pc == &aconnection);
+  assert(pconn == &aconnection);
   freelog(LOG_DEBUG, "incoming packet={type=%d, size=%d}", packet_type,
           size);
 }
@@ -3065,11 +3065,11 @@ void notify_about_incoming_packet(struct connection *pc,
 /**************************************************************************
 ...
 **************************************************************************/
-void notify_about_outgoing_packet(struct connection *pc,
+void notify_about_outgoing_packet(connection_t *pconn,
                                   int packet_type, int size,
                                   int request_id)
 {
-  assert(pc == &aconnection);
+  assert(pconn == &aconnection);
   freelog(LOG_DEBUG, "outgoing packet={type=%d, size=%d, request_id=%d}",
           packet_type, size, request_id);
 

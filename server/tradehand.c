@@ -37,7 +37,7 @@
 /****************************************************************************
   Returns TRUE iff this connection is able to handle the server trade packets.
 ****************************************************************************/
-bool connection_supports_server_trade(struct connection *pconn)
+bool connection_supports_server_trade(connection_t *pconn)
 {
   return pconn && has_capability("extglobalinfo", pconn->capability);
 }
@@ -45,7 +45,7 @@ bool connection_supports_server_trade(struct connection *pconn)
 /****************************************************************************
   Send infos for the trade route.
 ****************************************************************************/
-void send_trade_route_info(struct conn_list *dest, struct trade_route *ptr)
+void send_trade_route_info(struct connection_list *dest, struct trade_route *ptr)
 {
   struct packet_trade_route_info packet;
 
@@ -56,26 +56,26 @@ void send_trade_route_info(struct conn_list *dest, struct trade_route *ptr)
   packet.status = ptr->status;
 
   if (dest) {
-    conn_list_iterate(dest, pconn) {
+    connection_list_iterate(dest, pconn) {
       if (connection_supports_server_trade(pconn)) {
         send_packet_trade_route_info(pconn, &packet);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   } else {
     /* Send to the city1 owner */
-    conn_list_iterate(city_owner(ptr->pcity1)->connections, pconn) {
+    connection_list_iterate(city_owner(ptr->pcity1)->connections, pconn) {
       if (connection_supports_server_trade(pconn)) {
         send_packet_trade_route_info(pconn, &packet);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
     /* Maybe send to the city2 owner */
     if (ptr->pcity1->common.owner != ptr->pcity2->common.owner
         && ptr->status == TR_ESTABLISHED) {
-      conn_list_iterate(city_owner(ptr->pcity2)->connections, pconn) {
+      connection_list_iterate(city_owner(ptr->pcity2)->connections, pconn) {
         if (connection_supports_server_trade(pconn)) {
           send_packet_trade_route_info(pconn, &packet);
         }
-      } conn_list_iterate_end;
+      } connection_list_iterate_end;
     }
     /* Send info to global observers */
     global_observers_iterate(pconn) {
@@ -88,7 +88,7 @@ void send_trade_route_info(struct conn_list *dest, struct trade_route *ptr)
 /****************************************************************************
   Send a remove trade route packet.
 ****************************************************************************/
-void send_trade_route_remove(struct conn_list *dest, struct trade_route *ptr)
+void send_trade_route_remove(struct connection_list *dest, struct trade_route *ptr)
 {
   if (!dest || !ptr) {
     return;
@@ -99,11 +99,11 @@ void send_trade_route_remove(struct conn_list *dest, struct trade_route *ptr)
   packet.city1 = ptr->pcity1->common.id;
   packet.city2 = ptr->pcity2->common.id;
 
-  conn_list_iterate(dest, pconn) {
+  connection_list_iterate(dest, pconn) {
     if (connection_supports_server_trade(pconn)) {
       send_packet_trade_route_remove(pconn, &packet);
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
 }
 
 /****************************************************************************
@@ -130,7 +130,7 @@ void server_remove_trade_route(struct trade_route *ptr)
   game_trade_route_remove(ptr); /* ptr becomes an invalid pointer! */
 
   /* Send to the city1 owner */
-  conn_list_iterate(city_owner(pcity1)->connections, pconn) {
+  connection_list_iterate(city_owner(pcity1)->connections, pconn) {
     if (connection_supports_server_trade(pconn)) {
       send_packet_trade_route_remove(pconn, &packet);
     } else if (status == TR_ESTABLISHED) {
@@ -148,12 +148,12 @@ void server_remove_trade_route(struct trade_route *ptr)
         send_packet_city_info(pconn, &pci2);
       }
     }
-  } conn_list_iterate_end;
+  } connection_list_iterate_end;
   /* Maybe send to the city2 owner */
   if (pcity1->common.owner != pcity2->common.owner
       && status == TR_ESTABLISHED)
   {
-    conn_list_iterate(city_owner(pcity2)->connections, pconn) {
+    connection_list_iterate(city_owner(pcity2)->connections, pconn) {
       if (connection_supports_server_trade(pconn)) {
         send_packet_trade_route_remove(pconn, &packet);
       } else {
@@ -164,7 +164,7 @@ void server_remove_trade_route(struct trade_route *ptr)
         }
         send_packet_city_info(pconn, &pci2);
       }
-    } conn_list_iterate_end;
+    } connection_list_iterate_end;
   }
   /* Send info to global observers */
   global_observers_iterate(pconn) {
@@ -293,7 +293,7 @@ void unit_establish_trade_route(unit_t *punit, city_t *pcity1,
     revenue = (revenue + 2) / 3;
   }
 
-  conn_list_do_buffer(pplayer->connections);
+  connection_list_do_buffer(pplayer->connections);
   notify_player_ex(pplayer,
                    pcity2->common.tile, E_NOEVENT,
                    _("Game: Your %s from %s has arrived in %s,"
@@ -369,7 +369,7 @@ void unit_establish_trade_route(unit_t *punit, city_t *pcity1,
     }
   }
 
-  conn_list_do_unbuffer(pplayer->connections);
+  connection_list_do_unbuffer(pplayer->connections);
 }
 
 /****************************************************************************

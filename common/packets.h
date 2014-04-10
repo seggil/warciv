@@ -13,10 +13,10 @@
 #ifndef WC_COMMON_PACKETS_H
 #define WC_COMMON_PACKETS_H
 
-struct connection;
+struct connection_s;
 struct data_in;
 
-#include "connection.h"         /* struct connection, MAX_LEN_* */
+#include "connection.h"         /* struct connection_s, MAX_LEN_* */
 #include "diptreaty.h"
 #include "events.h"
 #include "improvement.h"
@@ -73,25 +73,25 @@ enum authentication_type {
 
 #include "packets_gen.h"
 
-void *get_packet_from_connection(struct connection *pconn, enum packet_type *ptype, bool *presult);
+void *get_packet_from_connection(connection_t *pconn, enum packet_type *ptype, bool *presult);
 void remove_packet_from_buffer(struct socket_packet_buffer *buffer);
 
 void send_attribute_block(const player_t *pplayer,
-                          struct connection *pconn);
+                          connection_t *pconn);
 void generic_handle_player_attribute_chunk(player_t *pplayer,
                           const struct packet_player_attribute_chunk *chunk,
-                          struct connection *pconn);
+                          connection_t *pconn);
 const char *get_packet_name(enum packet_type type);
 
-void pre_send_packet_chat_msg(struct connection *pc,
+void pre_send_packet_chat_msg(connection_t *pconn,
                               struct packet_chat_msg *packet);
-void post_receive_packet_chat_msg(struct connection *pc,
+void post_receive_packet_chat_msg(connection_t *pconn,
                                   struct packet_chat_msg *packet);
-void pre_send_packet_player_attribute_chunk(struct connection *pc,
+void pre_send_packet_player_attribute_chunk(connection_t *pconn,
                                   struct packet_player_attribute_chunk *packet);
-void post_receive_packet_game_state(struct connection *pc,
+void post_receive_packet_game_state(connection_t *pconn,
                                     struct packet_game_state *packet);
-void post_send_packet_game_state(struct connection *pc,
+void post_send_packet_game_state(connection_t *pconn,
                                  const struct packet_game_state *packet);
 
 #define SEND_PACKET_START(type) \
@@ -128,7 +128,7 @@ void post_send_packet_game_state(struct connection *pc,
   remove_packet_from_buffer(pconn->buffer); \
   return result;
 
-int send_packet_data(struct connection *pconn, unsigned char *data, int len);
-void check_packet(struct data_in *din, struct connection *pconn);
+int send_packet_data(connection_t *pconn, unsigned char *data, int len);
+void check_packet(struct data_in *din, connection_t *pconn);
 
 #endif  /* WC_COMMON_PACKETS_H */
