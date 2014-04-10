@@ -993,7 +993,7 @@ static bool kick_command(struct connection *caller, char *name, bool check)
     }
 
     kick_table_add(pc);
-    server_break_connection(pc, ES_KICKED);
+    server_break_connection(pc, EXIT_STATUS_KICKED);
   } conn_list_iterate_end;
 
   conn_list_free(kick_list);
@@ -7224,7 +7224,7 @@ static bool ban_command(struct connection *caller, char *pattern,
         sz_strlcpy(pconn->player->username, ANON_USER_NAME);
       }
 
-      server_break_connection(pconn, ES_BANNED);
+      server_break_connection(pconn, EXIT_STATUS_BANNED);
     }
   } conn_list_iterate_end;
 
@@ -7786,7 +7786,7 @@ static bool cut_client_connection(struct connection *caller, char *name,
 
   cmd_reply(CMD_CUT, caller, C_DISCONNECTED,
             _("Cutting connection %s."), ptarget->username);
-  server_break_connection(ptarget, ES_CUT_COMMAND);
+  server_break_connection(ptarget, EXIT_STATUS_CUT_COMMAND);
 
   return TRUE;
 }
