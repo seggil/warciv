@@ -688,8 +688,9 @@ static void set_connection_state(enum connection_state state)
 /**************************************************************************
  configure the dialog depending on what type of authentication request the
  server is making.
+ from client/packhand_gen.c
 **************************************************************************/
-void handle_authentication_req(enum authentication_type type, char *message)
+void handle_authentication_req(enum authentication_type type, char *message) /* 6 */
 {
   append_network_statusbar(message);
 
@@ -1608,7 +1609,7 @@ GtkWidget *create_start_page(void)
 /**************************************************************************
   this regenerates the player information from a loaded game on the server.
 **************************************************************************/
-void handle_game_load(struct packet_game_load *packet)
+void handle_game_load(struct packet_game_load *packet) /* 111 */
 {
   /* NB Only put up the nation page for local game/scenario loads.
    * This is to avoid the terrible confusion this page causes for

@@ -90,11 +90,12 @@ static void diplo_dialog_returnkey(GtkWidget *w, gpointer data);
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted,
+void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted, /* 82 */
                                     bool other_accepted)
 {
-  struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(counterpart);
+  struct Diplomacy_dialog *pdialog;
 
+  pdialog = find_diplomacy_dialog(counterpart);
   if (!pdialog) {
     return;
   }
@@ -108,7 +109,7 @@ void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted,
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_init_meeting(int counterpart, int initiated_from)
+void handle_diplomacy_init_meeting(int counterpart, int initiated_from) /* 74 */
 {
   player_t *pplayer;
 
@@ -131,9 +132,10 @@ void handle_diplomacy_init_meeting(int counterpart, int initiated_from)
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_cancel_meeting(int counterpart, int initiated_from)
+void handle_diplomacy_cancel_meeting(int counterpart, int initiated_from) /* 76 */
 {
-  struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(counterpart);
+  struct Diplomacy_dialog *pdialog;
+  pdialog = find_diplomacy_dialog(counterpart);
 
   if (!pdialog) {
     return;
@@ -145,11 +147,12 @@ void handle_diplomacy_cancel_meeting(int counterpart, int initiated_from)
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_create_clause(int counterpart, int giver,
+void handle_diplomacy_create_clause(int counterpart, int giver, /* 78 */
                                     enum clause_type type, int value)
 {
-  struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(counterpart);
+  struct Diplomacy_dialog *pdialog;
 
+  pdialog = find_diplomacy_dialog(counterpart);
   if (!pdialog) {
     return;
   }
@@ -161,11 +164,12 @@ void handle_diplomacy_create_clause(int counterpart, int giver,
 /****************************************************************
 ...
 *****************************************************************/
-void handle_diplomacy_remove_clause(int counterpart, int giver,
+void handle_diplomacy_remove_clause(int counterpart, int giver, /* 80 */
                                     enum clause_type type, int value)
 {
-  struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(counterpart);
+  struct Diplomacy_dialog *pdialog;
 
+  pdialog = find_diplomacy_dialog(counterpart);
   if (!pdialog) {
     return;
   }

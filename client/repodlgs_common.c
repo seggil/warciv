@@ -228,7 +228,7 @@ void settable_options_free(void)
  reinitialize the options_settable struct: allocate enough
  space for all the options that the server is going to send us.
 *******************************************************************/
-void handle_options_settable_control(
+void handle_options_settable_control( /* 112 */
                                struct packet_options_settable_control *packet)
 {
   int i;
@@ -263,7 +263,7 @@ void handle_options_settable_control(
  Fill the settable_options array with an option.
  If we've filled the last option, popup the dialog.
 *******************************************************************/
-void handle_options_settable(struct packet_options_settable *packet)
+void handle_options_settable(struct packet_options_settable *packet) /* 113 */
 {
   int i = packet->id;
 

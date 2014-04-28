@@ -117,9 +117,10 @@ void update_trade_route_infos(struct trade_route *ptr)
 /**************************************************************************
   Receive trade packet from the server
 **************************************************************************/
-void handle_trade_route_info(struct packet_trade_route_info *packet)
+void handle_trade_route_info(struct packet_trade_route_info *packet) /* 133 */
 {
-  city_t *pcity1, *pcity2;
+  city_t *pcity1;
+  city_t *pcity2;
   struct trade_route *ptr;
   unit_t *pold_unit;
 
@@ -160,10 +161,11 @@ void handle_trade_route_info(struct packet_trade_route_info *packet)
 /**************************************************************************
   Receive trade packet from the server
 **************************************************************************/
-void handle_trade_route_remove(int city1, int city2)
+void handle_trade_route_remove(int city1, int city2) /* 131 */
 {
   city_t *pcity1, *pcity2;
   struct trade_route *ptr;
+
 
   pcity1 = find_city_by_id(city1);
   pcity2 = find_city_by_id(city2);

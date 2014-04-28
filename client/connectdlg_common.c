@@ -480,7 +480,7 @@ void send_client_wants_hack(const char *filename)
 /****************************************************************
 handle response (by the server) if the client has got hack or not.
 *****************************************************************/
-void handle_single_want_hack_reply(bool you_have_hack)
+void handle_single_want_hack_reply(bool you_have_hack) /* 109 */
 {
   if (has_capability("new_hack", aconnection.capability)) {
     /* remove challenge file */
