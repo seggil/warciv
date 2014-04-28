@@ -688,9 +688,13 @@ static void set_connection_state(enum connection_state state)
 /**************************************************************************
  configure the dialog depending on what type of authentication request the
  server is making.
+ from client/packhand_gen.c
 **************************************************************************/
-void handle_authentication_req(enum authentication_type type, char *message)
+void handle_authentication_req(enum authentication_type type, char *message) /* 6 */
 {
+# if REPLAY
+  printf("PACKET_AUTHENTICATION_REQ\n");
+# endif
   append_network_statusbar(message);
 
   switch (type) {
@@ -1608,8 +1612,46 @@ GtkWidget *create_start_page(void)
 /**************************************************************************
   this regenerates the player information from a loaded game on the server.
 **************************************************************************/
-void handle_game_load(struct packet_game_load *packet)
+void handle_game_load(struct packet_game_load *packet) /* 111 */
 {
+# if REPLAY
+  int i;
+  printf("PACKET_GAME_LOAD\n");
+  printf("load_successful=%d ", packet->load_successful);
+  printf("nplayers=%d ", packet->nplayers);
+  printf("load_filename=%s ", packet->load_filename);
+  printf("name[%d]={", MAX_NUM_PLAYERS);
+  for (i = 0; i < MAX_NUM_PLAYERS; i++) {
+    printf("%s ", packet->name[i]);
+  }
+  printf("}\n");
+  printf("username[%d]={", MAX_NUM_PLAYERS);
+  for (i = 0; i < MAX_NUM_PLAYERS; i++) {
+    printf("%s ", packet->username[i]);
+  }
+  printf("}\n");
+  printf("nation_name[%d]={", MAX_NUM_PLAYERS);
+  for (i = 0; i < MAX_NUM_PLAYERS; i++) {
+    printf("%s ", packet->nation_name[i]);
+  }
+  printf("}\n");
+  printf("nation_flag[%d]={", MAX_NUM_PLAYERS);
+  for (i = 0; i < MAX_NUM_PLAYERS; i++) {
+    printf("%s ", packet->nation_flag[i]);
+  }
+  printf("}\n");
+  printf("is_alive[%d]={", MAX_NUM_PLAYERS);
+  for (i = 0; i < MAX_NUM_PLAYERS; i++) {
+    printf("%d ", packet->is_alive[i]);
+  }
+  printf("}\n");
+  printf("is_ai[%d]={", MAX_NUM_PLAYERS);
+  for (i = 0; i < MAX_NUM_PLAYERS; i++) {
+    printf("%d ", packet->is_ai[i]);
+  }
+  printf("}\n");
+# endif
+
   /* NB Only put up the nation page for local game/scenario loads.
    * This is to avoid the terrible confusion this page causes for
    * reloaded network games. */

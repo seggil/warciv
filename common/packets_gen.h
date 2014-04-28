@@ -1033,6 +1033,13 @@ struct packet_options_settable { /* 113 */
   int category;
 };
 
+/* 114 PACKET_SELECT_RACES */
+/* 115 */
+/* 116 */
+/* 117 */
+/* 118 */
+/* 119 */
+
 struct packet_ruleset_cache_group { /* 120 */
   char name[MAX_LEN_NAME];
   int num_elements;
@@ -1107,6 +1114,8 @@ struct packet_vote_submit { /* 128 */
   int vote_no;
   int value;
 };
+
+/* 129 */
 
 struct packet_trade_route_plan { /* 130 */
   int city1;
@@ -1212,6 +1221,7 @@ enum packet_type {
   PACKET_PLAYER_INFO,
   PACKET_PLAYER_TURN_DONE,               /* 40 */
   PACKET_PLAYER_RATES,
+  /* 42 */
   PACKET_PLAYER_CHANGE_GOVERNMENT = 43,
   PACKET_PLAYER_RESEARCH,
   PACKET_PLAYER_TECH_GOAL,
@@ -1235,6 +1245,7 @@ enum packet_type {
   PACKET_UNIT_NUKE,
   PACKET_UNIT_PARADROP_TO,
   PACKET_UNIT_AIRLIFT,
+  /* 66 */
   PACKET_UNIT_BRIBE_INQ = 67,
   PACKET_UNIT_BRIBE_INFO,
   PACKET_UNIT_TYPE_UPGRADE,
@@ -1278,10 +1289,16 @@ enum packet_type {
   PACKET_UNIT_LOAD,
   PACKET_SINGLE_WANT_HACK_REQ,
   PACKET_SINGLE_WANT_HACK_REPLY,
+  /* 110 */
   PACKET_GAME_LOAD = 111,
   PACKET_OPTIONS_SETTABLE_CONTROL,
   PACKET_OPTIONS_SETTABLE,
   PACKET_SELECT_RACES,
+  /* 115 */
+  /* 116 */
+  /* 117 */
+  /* 118 */
+  /* 119 */
   PACKET_RULESET_CACHE_GROUP = 120,      /* 120 */
   PACKET_RULESET_CACHE_EFFECT,
   PACKET_TRADEROUTE_INFO,
@@ -1291,18 +1308,27 @@ enum packet_type {
   PACKET_VOTE_REMOVE,
   PACKET_VOTE_RESOLVE,
   PACKET_VOTE_SUBMIT,
+  /* 129 */
   PACKET_TRADE_ROUTE_PLAN = 130,         /* 130 */
   PACKET_TRADE_ROUTE_REMOVE,
   PACKET_UNIT_TRADE_ROUTE,
   PACKET_TRADE_ROUTE_INFO,
+  /* 134 */
   PACKET_FREEZE_CLIENT = 135,
   PACKET_THAW_CLIENT,
+  /* 137 */
   PACKET_CITY_SET_RALLY_POINT = 138,
   PACKET_CITY_CLEAR_RALLY_POINT,
+  /* 140 */
   PACKET_UNIT_AIR_PATROL = 141,
   PACKET_UNIT_AIR_PATROL_STOP,
+  /* 143 */
+  /* 144 */
   PACKET_CITY_MANAGER_PARAM = 145,
   PACKET_CITY_NO_MANAGER_PARAM,
+  /* 147 */
+  /* 148 */
+  /* 149 */
   PACKET_PLAYER_INFO_REQ = 150,          /* 150 */
 
   PACKET_LAST  /* leave this last */
