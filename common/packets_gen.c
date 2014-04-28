@@ -349,6 +349,7 @@ void *get_packet_from_connection_helper(struct connection *pconn,
   case PACKET_RULESET_GOVERNMENT: /* 100 */
     return receive_packet_ruleset_government(pconn, type);
 
+<<<<<<< HEAD
   case PACKET_RULESET_TERRAIN_CONTROL: /* 101 */
     return receive_packet_ruleset_terrain_control(pconn, type);
 
@@ -394,6 +395,49 @@ void *get_packet_from_connection_helper(struct connection *pconn,
   /* 118 */
   /* 119 */
 
+=======
+  case PACKET_RULESET_TERRAIN_CONTROL: /* 100 */
+    return receive_packet_ruleset_terrain_control(pconn, type);
+
+  case PACKET_RULESET_NATION: /* 101 */
+    return receive_packet_ruleset_nation(pconn, type);
+
+  case PACKET_RULESET_CITY: /* 102 */
+    return receive_packet_ruleset_city(pconn, type);
+
+  case PACKET_RULESET_BUILDING: /* 103 */
+    return receive_packet_ruleset_building(pconn, type);
+
+  case PACKET_RULESET_TERRAIN: /* 104 */
+    return receive_packet_ruleset_terrain(pconn, type);
+
+  case PACKET_RULESET_CONTROL: /* 105 */
+    return receive_packet_ruleset_control(pconn, type);
+
+  case PACKET_SINGLE_WANT_HACK_REQ: /* 106 */
+    return receive_packet_single_want_hack_req(pconn, type);
+
+  case PACKET_UNIT_LOAD: /* 107 */
+    return receive_packet_unit_load(pconn, type);
+
+  case PACKET_SINGLE_WANT_HACK_REPLY: /* 108 */
+    return receive_packet_single_want_hack_reply(pconn, type);
+
+  case PACKET_GAME_LOAD: /* 109 */
+    return receive_packet_game_load(pconn, type);
+
+  case PACKET_OPTIONS_SETTABLE_CONTROL: /* 111 */
+    return receive_packet_options_settable_control(pconn, type);
+
+  case PACKET_OPTIONS_SETTABLE: /* 112 */
+    return receive_packet_options_settable(pconn, type);
+
+  /* 113 */
+
+  case PACKET_SELECT_RACES: /* 114 */
+    return receive_packet_select_races(pconn, type);
+
+>>>>>>> c0f88a654d82a1b21f0a3d2d99b860b8437049bb
   case PACKET_RULESET_CACHE_GROUP: /* 120 */
     return receive_packet_ruleset_cache_group(pconn, type);
 
