@@ -1242,9 +1242,9 @@ void handle_page_msg(char *message, enum event_type event) /* 84 */
 void handle_unit_info(struct packet_unit_info *packet) /* 49 */
 {
   unit_t *punit;
+# if REPLAY
   int i;
 
-# if REPLAY
   printf("PACKET_UNIT_INFO\n");
   printf("id=%d ", packet->id);
   printf("owner=%d ", packet->owner);
@@ -3397,9 +3397,9 @@ void handle_ruleset_government_ruler_title( /* 98 */
 void handle_ruleset_terrain(struct packet_ruleset_terrain *p) /* 105 */
 {
   struct tile_type *t;
+# if REPLAY
   int i;
 
-# if REPLAY
   printf("PACKET_RULESET_TERRAIN\n");
   printf("id=%d ", p->id);
   printf("tags[8]={");
@@ -3896,8 +3896,8 @@ void handle_endgame_report(struct packet_endgame_report *packet) /* 13 */
     printf("settledarea=%d ", packet->settledarea[i]);
     printf("literacy=%d ", packet->literacy[i]);
     printf("spaceship=%d\n", packet->spaceship[i]);
-# endif
   }
+# endif
   popup_endgame_report_dialog(packet);
 }
 
@@ -3906,9 +3906,9 @@ void handle_endgame_report(struct packet_endgame_report *packet) /* 13 */
 **************************************************************************/
 void handle_player_attribute_chunk(struct packet_player_attribute_chunk *packet) /* 47 */
 {
+# if REPLAY
   int i;
 
-# if REPLAY
   printf("PACKET_PLAYER_ATTRIBUTE_CHUNK\n");
   printf("offset=%d total_length=%d chunk_length=%d data[]=[\n",
          packet->offset, packet->total_length, packet->chunk_length);
@@ -4117,9 +4117,9 @@ void handle_thaw_client(void) /* 136 */
 void handle_ruleset_cache_group(struct packet_ruleset_cache_group *packet) /* 120 */
 {
   struct effect_group *pgroup;
-# if REPLAY
   int i;
 
+# if REPLAY
   printf("PACKET_RULESET_CACHE_GROUP\n");
   printf("name=%s ", packet->name);
   printf("num_elements=%d ", packet->num_elements);
@@ -4295,9 +4295,9 @@ void handle_city_manager_param(struct packet_city_manager_param *packet)/* 145 *
 {
   city_t *pcity = find_city_by_id(packet->id);
   struct cm_parameter parameter;
-# if REPLAY
   int i;
 
+# if REPLAY
   printf("PACKET_CITY_MANAGER_PARAM\n");
   printf("id=%d ", packet->id);
   printf("minimal_surplus[%d]={\n", CM_NUM_STATS);

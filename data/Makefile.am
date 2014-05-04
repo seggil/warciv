@@ -73,7 +73,7 @@ EXTRA_DIST =          \
   stdsounds.soundspec
 
 if CLIENT
-CLIENTDATADIRS = misc\
+CLIENTDATADIRS = misc \
     flags isotrident trident seggil gil-26 isophex stdsounds
 else
 CLIENTDATADIRS =
