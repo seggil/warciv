@@ -233,6 +233,7 @@ void handle_options_settable_control( /* 112 */
 {
   int i;
 
+# if REPLAY
   printf("PACKET_OPTIONS_SETTABLE_CONTROL\n");
   printf("nids=%d ", packet->nids);
   printf("ncategories=%d ", packet->ncategories);
@@ -241,6 +242,7 @@ void handle_options_settable_control( /* 112 */
     printf("\"%s\" ", packet->category_names[i]);
   }
   printf("}\n");
+# endif
   settable_options_free();
 
   options_categories = wc_malloc(packet->ncategories * sizeof(char *));
@@ -275,6 +277,7 @@ void handle_options_settable(struct packet_options_settable *packet) /* 113 */
 {
   int i = packet->id;
 
+# if REPLAY
   printf("PACKET_OPTIONS_SETTABLE\n");
   printf("id=%d ", packet->id);
   printf("name=%s ", packet->name);
@@ -288,6 +291,7 @@ void handle_options_settable(struct packet_options_settable *packet) /* 113 */
   printf("strval=%s ", packet->strval);
   printf("default_strval=%s ", packet->default_strval);
   printf("category=%d ", packet->category);
+# endif
 
   assert(i >= 0);
 
