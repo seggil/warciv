@@ -692,7 +692,9 @@ static void set_connection_state(enum connection_state state)
 **************************************************************************/
 void handle_authentication_req(enum authentication_type type, char *message) /* 6 */
 {
+# if REPLAY
   printf("PACKET_AUTHENTICATION_REQ\n");
+# endif
   append_network_statusbar(message);
 
   switch (type) {
@@ -1612,6 +1614,7 @@ GtkWidget *create_start_page(void)
 **************************************************************************/
 void handle_game_load(struct packet_game_load *packet) /* 111 */
 {
+# if REPLAY
   int i;
   printf("PACKET_GAME_LOAD\n");
   printf("load_successful=%d ", packet->load_successful);
@@ -1647,6 +1650,7 @@ void handle_game_load(struct packet_game_load *packet) /* 111 */
     printf("%d ", packet->is_ai[i]);
   }
   printf("}\n");
+# endif
 
   /* NB Only put up the nation page for local game/scenario loads.
    * This is to avoid the terrible confusion this page causes for
