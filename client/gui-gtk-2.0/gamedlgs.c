@@ -602,19 +602,22 @@ static void extra_option_destroy(struct extra_option *op)
 *****************************************************************/
 static void cell_edited(GtkCellRendererText *cell,
                         const gchar *spath,
-                        const gchar *text, gpointer data)
+                        const gchar *text,
+                        gpointer data)
 {
   struct client_option *op = (struct client_option *) data;
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(op->gui_data));
   GtkTreePath *path;
   GtkTreeIter it;
-  gint pos;
+  gchar *edited;
 
   path = gtk_tree_path_new_from_string(spath);
   gtk_tree_model_get_iter(model, &it, path);
-  gtk_tree_model_get(model, &it, 0, &pos, -1);
-  gtk_list_store_set(GTK_LIST_STORE(model), &it, 0, text, -1);
   gtk_tree_path_free(path);
+
+  gtk_tree_model_get(model, &it, 0, &edited, -1);
+  gtk_list_store_set(GTK_LIST_STORE(model), &it, 0, text, -1);
+  g_free(edited);
 }
 
 /*************************************************************************
@@ -635,9 +638,10 @@ static void append_callback(GtkMenuItem *menuitem, gpointer data)
 
   gtk_list_store_append(store, &iter);
   path = gtk_tree_model_get_path(model, &iter);
-  gtk_tree_view_set_cursor(GTK_TREE_VIEW(op->gui_data), path,
-                           gtk_tree_view_get_column(GTK_TREE_VIEW(op->gui_data),
-                                                    0), TRUE);
+  gtk_tree_view_set_cursor(GTK_TREE_VIEW(op->gui_data),
+                           path,
+                           gtk_tree_view_get_column(GTK_TREE_VIEW(op->gui_data), 0),
+                           TRUE);
   gtk_tree_path_free(path);
 }
 
@@ -660,9 +664,10 @@ static void insert_callback(GtkMenuItem *menuitem, gpointer data)
   gtk_tree_path_free(path);
   gtk_list_store_insert_before(store, &niter, &iter);
   path = gtk_tree_model_get_path(model, &niter);
-  gtk_tree_view_set_cursor(GTK_TREE_VIEW(op->gui_data), path,
-                           gtk_tree_view_get_column(GTK_TREE_VIEW(op->gui_data),
-                                                    0), TRUE);
+  gtk_tree_view_set_cursor(GTK_TREE_VIEW(op->gui_data),
+                           path,
+                           gtk_tree_view_get_column(GTK_TREE_VIEW(op->gui_data), 0),
+                           TRUE);
   gtk_tree_path_free(path);
 }
 
@@ -698,9 +703,10 @@ static void edit_callback(GtkMenuItem *menuitem, gpointer data)
     return;
   }
 
-  gtk_tree_view_set_cursor(GTK_TREE_VIEW(op->gui_data), path,
-                           gtk_tree_view_get_column(GTK_TREE_VIEW(op->gui_data),
-                                                    0), TRUE);
+  gtk_tree_view_set_cursor(GTK_TREE_VIEW(op->gui_data),
+                           path,
+                           gtk_tree_view_get_column(GTK_TREE_VIEW(op->gui_data), 0),
+                           TRUE);
   gtk_tree_path_free(path);
 }
 
@@ -779,19 +785,22 @@ static gboolean tree_view_callback(GtkWidget *view, GdkEventButton *event,
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
       gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  g_signal_connect(item, "activate", G_CALLBACK(append_callback), data);
+  g_signal_connect(item,"activate",
+                   G_CALLBACK(append_callback), data);
 
   item = gtk_image_menu_item_new_with_label(_("Insert"));
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
       gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  g_signal_connect(item, "activate", G_CALLBACK(insert_callback), data);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(insert_callback), data);
 
   item = gtk_image_menu_item_new_with_label(_("Remove"));
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
       gtk_image_new_from_stock(GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  g_signal_connect(item, "activate", G_CALLBACK(remove_callback), data);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(remove_callback), data);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
@@ -799,19 +808,22 @@ static gboolean tree_view_callback(GtkWidget *view, GdkEventButton *event,
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
       gtk_image_new_from_stock(GTK_STOCK_EDIT, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  g_signal_connect(item, "activate", G_CALLBACK(edit_callback), data);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(edit_callback), data);
 
   item = gtk_image_menu_item_new_with_label(_("Move up"));
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
       gtk_image_new_from_stock(GTK_STOCK_GO_UP, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  g_signal_connect(item, "activate", G_CALLBACK(move_up_callback), data);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(move_up_callback), data);
 
   item = gtk_image_menu_item_new_with_label(_("Move down"));
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
       gtk_image_new_from_stock(GTK_STOCK_GO_DOWN, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  g_signal_connect(item, "activate", G_CALLBACK(move_down_callback), data);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(move_down_callback), data);
 
   gtk_widget_show_all(menu);
   gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, 0);
@@ -1513,7 +1525,8 @@ static void create_option_dialog(void)
     ebox = gtk_event_box_new();
     gtk_box_pack_start(GTK_BOX(vbox[op->category]), ebox, FALSE, FALSE, 0);
     g_signal_connect(ebox, "button_press_event",
-                     G_CALLBACK(option_callback), op);
+                     G_CALLBACK(option_callback),
+                     op);
     if (even[op->category]) {
       gtk_widget_set_style(ebox, style);
     }
