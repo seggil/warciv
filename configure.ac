@@ -575,6 +575,8 @@ AC_CONFIG_FILES([Makefile
 	  data/flags/Makefile
 	  data/misc/Makefile
 	  data/trident/Makefile
+	  data/seggil/Makefile
+	  data/gil-26/Makefile
 	  data/isophex/Makefile
 	  data/isotrident/Makefile
 	  data/default/Makefile

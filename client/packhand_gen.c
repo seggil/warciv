@@ -21,6 +21,9 @@
 bool client_handle_packet(enum packet_type type, void *packet)
 {
   freelog(LOG_VERBOSE, "sc opcode=%d", type);
+# if REPLAY
+  printf("sc opcode=%d ", type);
+# endif
   switch(type) {
   case PACKET_PROCESSING_STARTED: /* 0 */
     handle_processing_started();
