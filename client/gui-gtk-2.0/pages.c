@@ -690,10 +690,11 @@ static void set_connection_state(enum connection_state state)
  server is making.
  from client/packhand_gen.c
 **************************************************************************/
-void handle_authentication_req(enum authentication_type type, char *message) /* 6 */
+void handle_authentication_req(enum authentication_type type, char *message) /* 6 sc */
 {
 # if REPLAY
-  printf("PACKET_AUTHENTICATION_REQ\n");
+  printf("PACKET_AUTHENTICATION_REQ\n"); /* done */
+  printf("type=%d message=%s\n", type, message);
 # endif
   append_network_statusbar(message);
 
@@ -1612,11 +1613,11 @@ GtkWidget *create_start_page(void)
 /**************************************************************************
   this regenerates the player information from a loaded game on the server.
 **************************************************************************/
-void handle_game_load(struct packet_game_load *packet) /* 111 */
+void handle_game_load(struct packet_game_load *packet) /* 111 sc */
 {
 # if REPLAY
   int i;
-  printf("PACKET_GAME_LOAD\n");
+  printf("PACKET_GAME_LOAD\n"); /* done */
   printf("load_successful=%d ", packet->load_successful);
   printf("nplayers=%d ", packet->nplayers);
   printf("load_filename=%s ", packet->load_filename);

@@ -228,13 +228,13 @@ void settable_options_free(void)
  reinitialize the options_settable struct: allocate enough
  space for all the options that the server is going to send us.
 *******************************************************************/
-void handle_options_settable_control( /* 112 */
+void handle_options_settable_control( /* 112 sc */
                                struct packet_options_settable_control *packet)
 {
   int i;
 
 # if REPLAY
-  printf("PACKET_OPTIONS_SETTABLE_CONTROL\n");
+  printf("PACKET_OPTIONS_SETTABLE_CONTROL\n"); /* done */
   printf("nids=%d ", packet->nids);
   printf("ncategories=%d ", packet->ncategories);
   printf("category_names[256]={");
@@ -273,12 +273,12 @@ void handle_options_settable_control( /* 112 */
  Fill the settable_options array with an option.
  If we've filled the last option, popup the dialog.
 *******************************************************************/
-void handle_options_settable(struct packet_options_settable *packet) /* 113 */
+void handle_options_settable(struct packet_options_settable *packet) /* 113 sc */
 {
   int i = packet->id;
 
 # if REPLAY
-  printf("PACKET_OPTIONS_SETTABLE\n");
+  printf("PACKET_OPTIONS_SETTABLE\n"); /* done */
   printf("id=%d ", packet->id);
   printf("name=%s ", packet->name);
   printf("short_help=%s ", packet->short_help);

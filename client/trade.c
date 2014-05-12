@@ -117,7 +117,7 @@ void update_trade_route_infos(struct trade_route *ptr)
 /**************************************************************************
   Receive trade packet from the server
 **************************************************************************/
-void handle_trade_route_info(struct packet_trade_route_info *packet) /* 133 */
+void handle_trade_route_info(struct packet_trade_route_info *packet) /* 133 sc */
 {
   city_t *pcity1;
   city_t *pcity2;
@@ -125,7 +125,7 @@ void handle_trade_route_info(struct packet_trade_route_info *packet) /* 133 */
   unit_t *pold_unit;
 
 # if REPLAY
-  printf("PACKET_TRADE_ROUTE_INFO\n");
+  printf("PACKET_TRADE_ROUTE_INFO\n"); /* done */
   printf("city1=%d ", packet->city1);
   printf("city2=%d ", packet->city2);
   printf("unit_id=%d ", packet->unit_id);
@@ -168,13 +168,13 @@ void handle_trade_route_info(struct packet_trade_route_info *packet) /* 133 */
 /**************************************************************************
   Receive trade packet from the server
 **************************************************************************/
-void handle_trade_route_remove(int city1, int city2) /* 131 */
+void handle_trade_route_remove(int city1, int city2) /* 131 cs sc */
 {
   city_t *pcity1, *pcity2;
   struct trade_route *ptr;
 
 # if REPLAY
-  printf("PACKET_TRADE_ROUTE_REMOVE city1=%d city2=%d\n", city1, city2);
+  printf("PACKET_TRADE_ROUTE_REMOVE city1=%d city2=%d\n", city1, city2); /* done */
 # endif
   pcity1 = find_city_by_id(city1);
   pcity2 = find_city_by_id(city2);
