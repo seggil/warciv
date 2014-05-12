@@ -4072,10 +4072,10 @@ void handle_server_shutdown(void) /* 8 */
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_conn_ping(void) /* 89 */
+void handle_conn_ping(void) /* 88 sc */
 {
 # if REPLAY
-  printf("PACKET_CONN_PING\n");
+  printf("PACKET_CONN_PING\n"); /* done */
 # endif
   send_packet_conn_pong(&aconnection);
 }
