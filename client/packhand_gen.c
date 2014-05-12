@@ -25,26 +25,26 @@ bool client_handle_packet(enum packet_type type, void *packet)
   printf("sc opcode=%d ", type);
 # endif
   switch(type) {
-  case PACKET_PROCESSING_STARTED: /* 0 */
-    handle_processing_started();
+  case PACKET_PROCESSING_STARTED: /* 0 sc */
+    handle_processing_started();  /* packhand */
     return TRUE;
 
-  case PACKET_PROCESSING_FINISHED: /* 1 */
-    handle_processing_finished();
+  case PACKET_PROCESSING_FINISHED: /* 1 sc */
+    handle_processing_finished();  /* packhand */
     return TRUE;
 
-  case PACKET_FREEZE_HINT: /* 2 */
-    handle_freeze_hint();
+  case PACKET_FREEZE_HINT: /* 2 sc */
+    handle_freeze_hint();  /* packhand */
     return TRUE;
 
-  case PACKET_THAW_HINT: /* 3 */
-    handle_thaw_hint();
+  case PACKET_THAW_HINT: /* 3 sc */
+    handle_thaw_hint();  /* packhand */
     return TRUE;
 
-  /* PACKET_SERVER_JOIN_REQ 4 */
+  /* PACKET_SERVER_JOIN_REQ 4 cs */
 
-  case PACKET_SERVER_JOIN_REPLY: /* 5 */
-    handle_server_join_reply(
+  case PACKET_SERVER_JOIN_REPLY: /* 5 sc */
+    handle_server_join_reply(    /* packhand */
       ((struct packet_server_join_reply *)packet)->you_can_join,
       ((struct packet_server_join_reply *)packet)->message,
       ((struct packet_server_join_reply *)packet)->capability,
@@ -52,58 +52,58 @@ bool client_handle_packet(enum packet_type type, void *packet)
       ((struct packet_server_join_reply *)packet)->conn_id);
     return TRUE;
 
-  case PACKET_AUTHENTICATION_REQ: /* 6 */
-    handle_authentication_req( /* in client/gtk-gui-2.0/pages.c */
+  case PACKET_AUTHENTICATION_REQ: /* 6 sc */
+    handle_authentication_req(    /* in client/gtk-gui-2.0/pages.c */
       ((struct packet_authentication_req *)packet)->type,
       ((struct packet_authentication_req *)packet)->message);
     return TRUE;
 
-  /* PACKET_AUTHENTICATION_REPLY 7 */
+  /* PACKET_AUTHENTICATION_REPLY 7 cs */
 
-  case PACKET_SERVER_SHUTDOWN: /* 8 */
-    handle_server_shutdown();
+  case PACKET_SERVER_SHUTDOWN: /* 8 sc */
+    handle_server_shutdown();  /* packhand */
     return TRUE;
 
-  case PACKET_NATION_UNAVAILABLE: /* 9 */
-    handle_nation_unavailable(
+  case PACKET_NATION_UNAVAILABLE: /* 9 sc */
+    handle_nation_unavailable(    /* packhand */
       ((struct packet_nation_unavailable *)packet)->nation);
     return TRUE;
 
-  /* PACKET_NATION_SELECT_REQ 10;cs */
+  /* PACKET_NATION_SELECT_REQ 10;cs common/packets_gen.c */
 
-  case PACKET_NATION_SELECT_OK: /* 11 */
-    handle_nation_select_ok();
+  case PACKET_NATION_SELECT_OK: /* 11 sc */
+    handle_nation_select_ok();  /* packhand */
     return TRUE;
 
-  case PACKET_GAME_STATE: /* 12 */
-    handle_game_state(
+  case PACKET_GAME_STATE: /* 12 sc */
+    handle_game_state(    /* packhand */
       ((struct packet_game_state *)packet)->value);
     return TRUE;
 
-  case PACKET_ENDGAME_REPORT: /* 13 */
-    handle_endgame_report(packet);
+  case PACKET_ENDGAME_REPORT:      /* 13 sc */
+    handle_endgame_report(packet); /* packhand */
     return TRUE;
 
-  case PACKET_TILE_INFO: /* 14 */
-    handle_tile_info(packet);
+  case PACKET_TILE_INFO:      /* 14 sc */
+    handle_tile_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_GAME_INFO: /* 15 */
-    handle_game_info(packet);
+  case PACKET_GAME_INFO:      /* 15 sc */
+    handle_game_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_MAP_INFO: /* 16 */
-    handle_map_info(packet);
+  case PACKET_MAP_INFO:      /* 16 sc */
+    handle_map_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_NUKE_TILE_INFO: /* 17 */
-    handle_nuke_tile_info(
+  case PACKET_NUKE_TILE_INFO: /* 17 sc */
+    handle_nuke_tile_info(    /* packhand */
       ((struct packet_nuke_tile_info *)packet)->x,
       ((struct packet_nuke_tile_info *)packet)->y);
     return TRUE;
 
-  case PACKET_CHAT_MSG: /* 18 */
-    handle_chat_msg(
+  case PACKET_CHAT_MSG: /* 18 sc */
+    handle_chat_msg(    /* packhand */
       ((struct packet_chat_msg *)packet)->message,
       ((struct packet_chat_msg *)packet)->x,
       ((struct packet_chat_msg *)packet)->y,
@@ -113,17 +113,17 @@ bool client_handle_packet(enum packet_type type, void *packet)
 
   /* PACKET_CHAT_MSG_REQ 19;cs */
 
-  case PACKET_CITY_REMOVE: /* 20 */
-    handle_city_remove(
+  case PACKET_CITY_REMOVE: /* 20 sc */
+    handle_city_remove(    /* packhand */
       ((struct packet_city_remove *)packet)->city_id);
     return TRUE;
 
-  case PACKET_CITY_INFO: /* 21 */
-    handle_city_info(packet);
+  case PACKET_CITY_INFO:      /* 21 sc */
+    handle_city_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_CITY_SHORT_INFO: /* 22 */
-    handle_city_short_info(packet);
+  case PACKET_CITY_SHORT_INFO:      /* 22 sc */
+    handle_city_short_info(packet); /* packhand */
     return TRUE;
 
   /* PACKET_CITY_SELL 23;cs */
@@ -138,34 +138,34 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_CITY_REFRESH 32;cs */
   /* PACKET_CITY_INCITE_INQ 33;cs */
 
-  case PACKET_CITY_INCITE_INFO: /* 34 */
-    handle_city_incite_info(
+  case PACKET_CITY_INCITE_INFO: /* 34 sc */
+    handle_city_incite_info(    /* packhand */
       ((struct packet_city_incite_info *)packet)->city_id,
       ((struct packet_city_incite_info *)packet)->cost);
     return TRUE;
 
   /* PACKET_CITY_NAME_SUGGESTION_REQ 35;cs */
 
-  case PACKET_CITY_NAME_SUGGESTION_INFO: /* 36 */
-    handle_city_name_suggestion_info(
+  case PACKET_CITY_NAME_SUGGESTION_INFO: /* 36 sc */
+    handle_city_name_suggestion_info(    /* packhand */
       ((struct packet_city_name_suggestion_info *)packet)->unit_id,
       ((struct packet_city_name_suggestion_info *)packet)->name);
     return TRUE;
 
-  case PACKET_CITY_SABOTAGE_LIST: /* 37 */
-    handle_city_sabotage_list(
+  case PACKET_CITY_SABOTAGE_LIST: /* 37 sc */
+    handle_city_sabotage_list(    /* packhand */
       ((struct packet_city_sabotage_list *)packet)->diplomat_id,
       ((struct packet_city_sabotage_list *)packet)->city_id,
       ((struct packet_city_sabotage_list *)packet)->improvements);
     return TRUE;
 
-  case PACKET_PLAYER_REMOVE: /* 38 */
-    handle_player_remove(
+  case PACKET_PLAYER_REMOVE: /* 38 sc */
+    handle_player_remove(    /* packhand */
       ((struct packet_player_remove *)packet)->player_id);
     return TRUE;
 
-  case PACKET_PLAYER_INFO: /* 39 */
-    handle_player_info(packet);
+  case PACKET_PLAYER_INFO:      /* 39 sc */
+    handle_player_info(packet); /* packhand */
     return TRUE;
 
   /* PACKET_PLAYER_TURN_DONE 40;cs */
@@ -176,25 +176,25 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_PLAYER_TECH_GOAL=45;cs */
   /* PACKET_PLAYER_ATTRIBUTE_BLOCK=46;cs */
 
-  case PACKET_PLAYER_ATTRIBUTE_CHUNK: /* 47 */
-    handle_player_attribute_chunk(packet);
+  case PACKET_PLAYER_ATTRIBUTE_CHUNK:      /* 47 cs, sc */
+    handle_player_attribute_chunk(packet); /* packhand */
     return TRUE;
 
-  case PACKET_UNIT_REMOVE: /* 48 */
-    handle_unit_remove(
+  case PACKET_UNIT_REMOVE: /* 48 sc */
+    handle_unit_remove(    /* packhand */
       ((struct packet_unit_remove *)packet)->unit_id);
     return TRUE;
 
-  case PACKET_UNIT_INFO: /* 49 */
-    handle_unit_info(packet);
+  case PACKET_UNIT_INFO:      /* 49 sc */
+    handle_unit_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_UNIT_SHORT_INFO: /* 50 */
-    handle_unit_short_info(packet);
+  case PACKET_UNIT_SHORT_INFO:      /* 50 sc */
+    handle_unit_short_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_UNIT_COMBAT_INFO: /* 51 */
-    handle_unit_combat_info(
+  case PACKET_UNIT_COMBAT_INFO: /* 51 sc */
+    handle_unit_combat_info(    /* packhand */
       ((struct packet_unit_combat_info *)packet)->attacker_unit_id,
       ((struct packet_unit_combat_info *)packet)->defender_unit_id,
       ((struct packet_unit_combat_info *)packet)->attacker_hp,
@@ -219,8 +219,8 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* 66 */
   /* PACKET_UNIT_BRIBE_INQ=67;cs */
 
-  case PACKET_UNIT_BRIBE_INFO: /* 68 */
-    handle_unit_bribe_info(
+  case PACKET_UNIT_BRIBE_INFO: /* 68 sc */
+    handle_unit_bribe_info(    /* packhand */
       ((struct packet_unit_bribe_info *)packet)->unit_id,
       ((struct packet_unit_bribe_info *)packet)->cost);
     return TRUE;
@@ -228,8 +228,8 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_UNIT_TYPE_UPGRADE=69;cs */
   /* PACKET_UNIT_DIPLOMAT_ACTION=70;cs */
 
-  case PACKET_UNIT_DIPLOMAT_POPUP_DIALOG: /* 71 */
-    handle_unit_diplomat_popup_dialog(
+  case PACKET_UNIT_DIPLOMAT_POPUP_DIALOG: /* 71 sc */
+    handle_unit_diplomat_popup_dialog(    /* packhand */
       ((struct packet_unit_diplomat_popup_dialog *)packet)->diplomat_id,
       ((struct packet_unit_diplomat_popup_dialog *)packet)->target_id);
     return TRUE;
@@ -237,24 +237,24 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_UNIT_CHANGE_ACTIVITY=72; cs */
   /* PACKET_DIPLOMACY_INIT_MEETING_REQ=73;cs */
 
-  case PACKET_DIPLOMACY_INIT_MEETING: /* 74 */
-    handle_diplomacy_init_meeting(
+  case PACKET_DIPLOMACY_INIT_MEETING: /* 74 sc */
+    handle_diplomacy_init_meeting(    /* client/gui-gtk-2.0/diplodlg.c */
       ((struct packet_diplomacy_init_meeting *)packet)->counterpart,
       ((struct packet_diplomacy_init_meeting *)packet)->initiated_from);
     return TRUE;
 
   /* PACKET_DIPLOMACY_CANCEL_MEETING_REQ=75;cs */
 
-  case PACKET_DIPLOMACY_CANCEL_MEETING: /* 76 */
-    handle_diplomacy_cancel_meeting(
+  case PACKET_DIPLOMACY_CANCEL_MEETING: /* 76 sc */
+    handle_diplomacy_cancel_meeting(    /* client/gui-gtk-2.0/diplodlg.c */
       ((struct packet_diplomacy_cancel_meeting *)packet)->counterpart,
       ((struct packet_diplomacy_cancel_meeting *)packet)->initiated_from);
     return TRUE;
 
   /* PACKET_DIPLOMACY_CREATE_CLAUSE_REQ=77;cs */
 
-  case PACKET_DIPLOMACY_CREATE_CLAUSE: /* 78 */
-    handle_diplomacy_create_clause(
+  case PACKET_DIPLOMACY_CREATE_CLAUSE: /* 78 sc */
+    handle_diplomacy_create_clause(    /* client/gui-gtk-2.0/diplodlg.c */
       ((struct packet_diplomacy_create_clause *)packet)->counterpart,
       ((struct packet_diplomacy_create_clause *)packet)->giver,
       ((struct packet_diplomacy_create_clause *)packet)->type,
@@ -263,8 +263,8 @@ bool client_handle_packet(enum packet_type type, void *packet)
 
   /* PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ=79;cs */
 
-  case PACKET_DIPLOMACY_REMOVE_CLAUSE: /* 80 */
-    handle_diplomacy_remove_clause(
+  case PACKET_DIPLOMACY_REMOVE_CLAUSE: /* 80 sc */
+    handle_diplomacy_remove_clause(    /* client/gui-gtk-2.0/diplodlg.c */
       ((struct packet_diplomacy_remove_clause *)packet)->counterpart,
       ((struct packet_diplomacy_remove_clause *)packet)->giver,
       ((struct packet_diplomacy_remove_clause *)packet)->type,
@@ -273,8 +273,8 @@ bool client_handle_packet(enum packet_type type, void *packet)
 
   /* PACKET_DIPLOMACY_ACCEPT_TREATY_REQ=81;cs */
 
-  case PACKET_DIPLOMACY_ACCEPT_TREATY: /* 82 */
-    handle_diplomacy_accept_treaty(
+  case PACKET_DIPLOMACY_ACCEPT_TREATY: /* 82 sc */
+    handle_diplomacy_accept_treaty(    /* client/gui-gtk-2.0/diplodlg.c */
       ((struct packet_diplomacy_accept_treaty *)packet)->counterpart,
       ((struct packet_diplomacy_accept_treaty *)packet)->I_accepted,
       ((struct packet_diplomacy_accept_treaty *)packet)->other_accepted);
@@ -282,38 +282,38 @@ bool client_handle_packet(enum packet_type type, void *packet)
 
   /* PACKET_DIPLOMACY_CANCEL_PACT=83;cs */
 
-  case PACKET_PAGE_MSG: /* 84 */
-    handle_page_msg(
+  case PACKET_PAGE_MSG: /* 84 sc */
+    handle_page_msg(    /* packhand */
       ((struct packet_page_msg *)packet)->message,
       ((struct packet_page_msg *)packet)->event);
     return TRUE;
 
   /* PACKET_REPORT_REQ=85;cs */
 
-  case PACKET_CONN_INFO: /* 86 */
-    handle_conn_info(packet);
+  case PACKET_CONN_INFO:      /* 86 sc */
+    handle_conn_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_CONN_PING_INFO: /* 87 */
-    handle_conn_ping_info(packet);
+  case PACKET_CONN_PING_INFO:      /* 87 sc */
+    handle_conn_ping_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_CONN_PING: /* 88 */
-    handle_conn_ping();
+  case PACKET_CONN_PING: /* 88 sc */
+    handle_conn_ping();  /* packhand */
     return TRUE;
 
   /* PACKET_CONN_PONG=89;cs */
 
-  case PACKET_BEFORE_NEW_YEAR: /* 90 */
-    handle_before_new_year();
+  case PACKET_BEFORE_NEW_YEAR: /* 90 sc */
+    handle_before_new_year();  /* packhand */
     return TRUE;
 
-  case PACKET_START_TURN: /* 91 */
-    handle_start_turn();
+  case PACKET_START_TURN: /* 91 sc */
+    handle_start_turn();  /* packhand */
     return TRUE;
 
-  case PACKET_NEW_YEAR: /* 92 */
-    handle_new_year(
+  case PACKET_NEW_YEAR: /* 92 sc */
+    handle_new_year(    /* packhand */
       ((struct packet_new_year *)packet)->year,
       ((struct packet_new_year *)packet)->turn);
     return TRUE;
@@ -321,77 +321,77 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_SPACESHIP_LAUNCH=93;cs */
   /* PACKET_SPACESHIP_PLACE=94;cs */
 
-  case PACKET_SPACESHIP_INFO: /* 95 */
-    handle_spaceship_info(packet);
+  case PACKET_SPACESHIP_INFO:      /* 95 sc */
+    handle_spaceship_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_UNIT: /* 96 */
-    handle_ruleset_unit(packet);
+  case PACKET_RULESET_UNIT:      /* 96 sc */
+    handle_ruleset_unit(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_GAME: /* 97 */
-    handle_ruleset_game(packet);
+  case PACKET_RULESET_GAME:      /* 97 sc */
+    handle_ruleset_game(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_GOVERNMENT_RULER_TITLE: /* 98 */
-    handle_ruleset_government_ruler_title(packet);
+  case PACKET_RULESET_GOVERNMENT_RULER_TITLE:      /* 98 sc */
+    handle_ruleset_government_ruler_title(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_TECH: /* 99 */
-    handle_ruleset_tech(packet);
+  case PACKET_RULESET_TECH:      /* 99 sc */
+    handle_ruleset_tech(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_GOVERNMENT: /* 100 */
-    handle_ruleset_government(packet);
+  case PACKET_RULESET_GOVERNMENT:      /* 100 sc */
+    handle_ruleset_government(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_TERRAIN_CONTROL: /* 101 */
-    handle_ruleset_terrain_control(packet);
+  case PACKET_RULESET_TERRAIN_CONTROL:      /* 101 sc */
+    handle_ruleset_terrain_control(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_NATION: /* 102 */
-    handle_ruleset_nation(packet);
+  case PACKET_RULESET_NATION:      /* 102 sc */
+    handle_ruleset_nation(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_CITY: /* 103 */
-    handle_ruleset_city(packet);
+  case PACKET_RULESET_CITY:      /* 103 sc */
+    handle_ruleset_city(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_BUILDING: /* 104 */
-    handle_ruleset_building(packet);
+  case PACKET_RULESET_BUILDING:      /* 104 sc */
+    handle_ruleset_building(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_TERRAIN: /* 105 */
-    handle_ruleset_terrain(packet);
+  case PACKET_RULESET_TERRAIN:      /* 105 sc */
+    handle_ruleset_terrain(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_CONTROL: /* 106 */
-    handle_ruleset_control(packet);
+  case PACKET_RULESET_CONTROL:      /* 106 sc */
+    handle_ruleset_control(packet); /* packhand */
     return TRUE;
 
   /* PACKET_UNIT_LOAD=107;cs */
   /* PACKET_SINGLE_WANT_HACK_REQ=108;cs */
 
-  case PACKET_SINGLE_WANT_HACK_REPLY: /* 109 */
-    handle_single_want_hack_reply(
+  case PACKET_SINGLE_WANT_HACK_REPLY: /* 109 sc */
+    handle_single_want_hack_reply(    /* client/connectdlg_common.c */
       ((struct packet_single_want_hack_reply *)packet)->you_have_hack);
     return TRUE;
 
   /* 110 */
 
-  case PACKET_GAME_LOAD: /* 111 */
-    handle_game_load(packet);
+  case PACKET_GAME_LOAD:      /* 111 sc */
+    handle_game_load(packet); /* packhand */
     return TRUE;
 
-  case PACKET_OPTIONS_SETTABLE_CONTROL: /* 112 */
-    handle_options_settable_control(packet);
+  case PACKET_OPTIONS_SETTABLE_CONTROL:      /* 112 sc */
+    handle_options_settable_control(packet); /* client/repodlgs_common.c */
     return TRUE;
 
-  case PACKET_OPTIONS_SETTABLE: /* 113 */
-    handle_options_settable(packet);
+  case PACKET_OPTIONS_SETTABLE:      /* 113 sc */
+    handle_options_settable(packet); /* client/repodlgs_common.c */
     return TRUE;
 
-  case PACKET_SELECT_RACES: /* 114 */
+  case PACKET_SELECT_RACES: /* 114 sc */
     handle_select_races();
     return TRUE;
 
@@ -401,28 +401,28 @@ bool client_handle_packet(enum packet_type type, void *packet)
 /* 118 */
 /* 119 */
 
-  case PACKET_RULESET_CACHE_GROUP: /* 120 */
-    handle_ruleset_cache_group(packet);
+  case PACKET_RULESET_CACHE_GROUP:      /* 120 sc */
+    handle_ruleset_cache_group(packet); /* packhand */
     return TRUE;
 
-  case PACKET_RULESET_CACHE_EFFECT: /* 121 */
-    handle_ruleset_cache_effect(packet);
+  case PACKET_RULESET_CACHE_EFFECT:      /* 121 sc */
+    handle_ruleset_cache_effect(packet); /* packhand */
     return TRUE;
 
-  case PACKET_TRADEROUTE_INFO: /* 122 */
-    handle_traderoute_info(packet);
+  case PACKET_TRADEROUTE_INFO:      /* 122 sc */
+    handle_traderoute_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_EXTGAME_INFO: /* 123 */
-    handle_extgame_info(packet);
+  case PACKET_EXTGAME_INFO:      /* 123 sc */
+    handle_extgame_info(packet); /* packhand */
     return TRUE;
 
-  case PACKET_VOTE_NEW: /* 124 */
-    handle_vote_new(packet);
+  case PACKET_VOTE_NEW:      /* 124 sc */
+    handle_vote_new(packet); /* packhand */
     return TRUE;
 
-  case PACKET_VOTE_UPDATE: /* 125 */
-    handle_vote_update(
+  case PACKET_VOTE_UPDATE: /* 125 sc */
+    handle_vote_update(    /* packhand */
       ((struct packet_vote_update *)packet)->vote_no,
       ((struct packet_vote_update *)packet)->yes,
       ((struct packet_vote_update *)packet)->no,
@@ -430,13 +430,13 @@ bool client_handle_packet(enum packet_type type, void *packet)
       ((struct packet_vote_update *)packet)->num_voters);
     return TRUE;
 
-  case PACKET_VOTE_REMOVE: /* 126 */
-    handle_vote_remove(
+  case PACKET_VOTE_REMOVE: /* 126 sc */
+    handle_vote_remove(    /* packhand */
       ((struct packet_vote_remove *)packet)->vote_no);
     return TRUE;
 
-  case PACKET_VOTE_RESOLVE: /* 127 */
-    handle_vote_resolve(
+  case PACKET_VOTE_RESOLVE: /* 127 sc */
+    handle_vote_resolve(    /* packhand */
       ((struct packet_vote_resolve *)packet)->vote_no,
       ((struct packet_vote_resolve *)packet)->passed);
     return TRUE;
@@ -445,24 +445,26 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* 129 */
   /* PACKET_TRADE_ROUTE_PLAN=130;cs */
 
-  case PACKET_TRADE_ROUTE_REMOVE: /* 131 */
-    handle_trade_route_remove(
+  case PACKET_TRADE_ROUTE_REMOVE: /* 131 cs sc */
+    handle_trade_route_remove(    /* client/trade.c */
       ((struct packet_trade_route_remove *)packet)->city1,
       ((struct packet_trade_route_remove *)packet)->city2);
     return TRUE;
 
   /* PACKET_UNIT_TRADE_ROUTE=132 */
 
-  case PACKET_TRADE_ROUTE_INFO: /* 133 */
-    handle_trade_route_info(packet);
+  case PACKET_TRADE_ROUTE_INFO:      /* 133 sc */
+    handle_trade_route_info(packet); /* client/trade.c */
     return TRUE;
 
-  case PACKET_FREEZE_CLIENT: /* 135 */
-    handle_freeze_client();
+  /* 134 */
+
+  case PACKET_FREEZE_CLIENT: /* 135 sc */
+    handle_freeze_client();  /* packhand */
     return TRUE;
 
-  case PACKET_THAW_CLIENT: /* 136 */
-    handle_thaw_client();
+  case PACKET_THAW_CLIENT: /* 136 sc */
+    handle_thaw_client();  /* packhand */
     return TRUE;
 
   /* 137 */
@@ -474,15 +476,18 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* 143 */
   /* 144 */
 
-  case PACKET_CITY_MANAGER_PARAM: /* 145 */
-    handle_city_manager_param(packet);
+  case PACKET_CITY_MANAGER_PARAM:      /* 145 cs sc */
+    handle_city_manager_param(packet); /* packhand */
     return TRUE;
 
-  case PACKET_CITY_NO_MANAGER_PARAM: /* 146 */
-    handle_city_no_manager_param(
+  case PACKET_CITY_NO_MANAGER_PARAM: /* 146 cs sc */
+    handle_city_no_manager_param(    /* packhand */
       ((struct packet_city_no_manager_param *)packet)->id);
     return TRUE;
 
+  /* 147 */
+  /* 148 */
+  /* 149 */
   /* PACKET_PLAYER_INFO_REQ=150;cs */
 
   default:
