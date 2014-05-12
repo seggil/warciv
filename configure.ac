@@ -142,6 +142,19 @@ AC_ARG_WITH(efence,
   WITH_EFENCE=1
 )
 
+AC_ARG_ENABLE([replay],
+  AS_HELP_STRING([--enable-replay],
+                 [print packet to stdout]),
+  [case "${enableval}" in
+    yes) enable_replay=true ;;
+    no)  enable_replay=false;;
+    *)   AC_MSG_ERROR([bad value ${enableval} for --enable-replay]) ;;
+  esac],
+  [enable_replay="false"])
+if test x$enable_replay = xtrue; then
+  AC_DEFINE(REPLAY, 1, [Define to print packet to stdout.])
+fi
+
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
