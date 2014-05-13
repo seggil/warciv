@@ -46,37 +46,37 @@ void *get_packet_from_connection_helper(connection_t *pconn,
 {
   switch(type) {
 
-  case PACKET_PROCESSING_STARTED: /* 0 */
+  case PACKET_PROCESSING_STARTED: /* 0 sc */
     return receive_packet_processing_started(pconn, type);
 
-  case PACKET_PROCESSING_FINISHED: /* 1 */
+  case PACKET_PROCESSING_FINISHED: /* 1 sc */
     return receive_packet_processing_finished(pconn, type);
 
-  case PACKET_FREEZE_HINT: /* 2 */
+  case PACKET_FREEZE_HINT: /* 2 sc */
     return receive_packet_freeze_hint(pconn, type);
 
-  case PACKET_THAW_HINT: /* 3 */
+  case PACKET_THAW_HINT: /* 3 sc */
     return receive_packet_thaw_hint(pconn, type);
 
   case PACKET_SERVER_JOIN_REQ: /* 4 cs */
     return receive_packet_server_join_req(pconn, type);
 
-  case PACKET_SERVER_JOIN_REPLY: /* 5 */
+  case PACKET_SERVER_JOIN_REPLY: /* 5 sc */
     return receive_packet_server_join_reply(pconn, type);
 
-  case PACKET_AUTHENTICATION_REQ: /* 6 */
+  case PACKET_AUTHENTICATION_REQ: /* 6 sc */
     return receive_packet_authentication_req(pconn, type);
 
-  case PACKET_AUTHENTICATION_REPLY: /* 7 */
+  case PACKET_AUTHENTICATION_REPLY: /* 7 cs */
     return receive_packet_authentication_reply(pconn, type);
 
-  case PACKET_SERVER_SHUTDOWN: /* 8 */
+  case PACKET_SERVER_SHUTDOWN: /* 8 sc */
     return receive_packet_server_shutdown(pconn, type);
 
-  case PACKET_NATION_UNAVAILABLE: /* 9 */
+  case PACKET_NATION_UNAVAILABLE: /* 9 sc */
     return receive_packet_nation_unavailable(pconn, type);
 
-  case PACKET_NATION_SELECT_REQ: /* 10 */
+  case PACKET_NATION_SELECT_REQ: /* 10 cs */
     return receive_packet_nation_select_req(pconn, type);
 
   case PACKET_NATION_SELECT_OK: /* 11 */
@@ -922,6 +922,7 @@ static void ensure_valid_variant_packet_processing_started(connection_t *pconn)
   pconn->phs.variant[PACKET_PROCESSING_STARTED] = variant;
 }
 
+/* 0 sc */
 struct packet_processing_started *
 receive_packet_processing_started(connection_t *pconn, enum packet_type type)
 {
@@ -968,7 +969,8 @@ int send_packet_processing_started(connection_t *pconn)
   }
 }
 
-static struct packet_processing_finished *receive_packet_processing_finished_100(connection_t *pconn, enum packet_type type)
+static struct packet_processing_finished *
+receive_packet_processing_finished_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_processing_finished, real_packet);
 
@@ -993,7 +995,9 @@ static void ensure_valid_variant_packet_processing_finished(connection_t *pconn)
   pconn->phs.variant[PACKET_PROCESSING_FINISHED] = variant;
 }
 
-struct packet_processing_finished *receive_packet_processing_finished(connection_t *pconn, enum packet_type type)
+/* 1 sc */
+struct packet_processing_finished *
+receive_packet_processing_finished(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1058,7 +1062,9 @@ static void ensure_valid_variant_packet_freeze_hint(connection_t *pconn)
   pconn->phs.variant[PACKET_FREEZE_HINT] = variant;
 }
 
-struct packet_freeze_hint *receive_packet_freeze_hint(connection_t *pconn, enum packet_type type)
+/* 2 sc */
+struct packet_freeze_hint *
+receive_packet_freeze_hint(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1105,7 +1111,8 @@ void lsend_packet_freeze_hint(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
-static struct packet_thaw_hint *receive_packet_thaw_hint_100(connection_t *pconn, enum packet_type type)
+static struct packet_thaw_hint *
+receive_packet_thaw_hint_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_thaw_hint, real_packet);
 
@@ -1130,7 +1137,9 @@ static void ensure_valid_variant_packet_thaw_hint(connection_t *pconn)
   pconn->phs.variant[PACKET_THAW_HINT] = variant;
 }
 
-struct packet_thaw_hint *receive_packet_thaw_hint(connection_t *pconn, enum packet_type type)
+/* 3 sc */
+struct packet_thaw_hint *
+receive_packet_thaw_hint(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1233,7 +1242,9 @@ static void ensure_valid_variant_packet_server_join_req(connection_t *pconn)
   pconn->phs.variant[PACKET_SERVER_JOIN_REQ] = variant;
 }
 
-struct packet_server_join_req *receive_packet_server_join_req(connection_t *pconn, enum packet_type type)
+/* 4 cs */
+struct packet_server_join_req *
+receive_packet_server_join_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1287,7 +1298,8 @@ int dsend_packet_server_join_req(connection_t *pconn, const char *username, cons
   return send_packet_server_join_req(pconn, real_packet);
 }
 
-static struct packet_server_join_reply *receive_packet_server_join_reply_100(connection_t *pconn, enum packet_type type)
+static struct packet_server_join_reply *
+receive_packet_server_join_reply_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_server_join_reply, real_packet);
   dio_get_bool8(&din, &real_packet->you_can_join);
@@ -1330,7 +1342,9 @@ static void ensure_valid_variant_packet_server_join_reply(connection_t *pconn)
   pconn->phs.variant[PACKET_SERVER_JOIN_REPLY] = variant;
 }
 
-struct packet_server_join_reply *receive_packet_server_join_reply(connection_t *pconn, enum packet_type type)
+/* 5 sc */
+struct packet_server_join_reply *
+receive_packet_server_join_reply(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1376,7 +1390,8 @@ int send_packet_server_join_reply(connection_t *pconn, const struct packet_serve
 
 BV_DEFINE(packet_authentication_req_100_fields, 2);
 
-static struct packet_authentication_req *receive_packet_authentication_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_authentication_req *
+receive_packet_authentication_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_authentication_req_100_fields fields;
   struct packet_authentication_req *old;
@@ -1488,7 +1503,9 @@ static void ensure_valid_variant_packet_authentication_req(connection_t *pconn)
   pconn->phs.variant[PACKET_AUTHENTICATION_REQ] = variant;
 }
 
-struct packet_authentication_req *receive_packet_authentication_req(connection_t *pconn, enum packet_type type)
+/* 6 sc */
+struct packet_authentication_req *
+receive_packet_authentication_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1544,7 +1561,8 @@ int dsend_packet_authentication_req(connection_t *pconn, enum authentication_typ
 
 BV_DEFINE(packet_authentication_reply_100_fields, 1);
 
-static struct packet_authentication_reply *receive_packet_authentication_reply_100(connection_t *pconn, enum packet_type type)
+static struct packet_authentication_reply *
+receive_packet_authentication_reply_100(connection_t *pconn, enum packet_type type)
 {
   packet_authentication_reply_100_fields fields;
   struct packet_authentication_reply *old;
@@ -1641,7 +1659,9 @@ static void ensure_valid_variant_packet_authentication_reply(connection_t *pconn
   pconn->phs.variant[PACKET_AUTHENTICATION_REPLY] = variant;
 }
 
-struct packet_authentication_reply *receive_packet_authentication_reply(connection_t *pconn, enum packet_type type)
+/* 7 cs */
+struct packet_authentication_reply *
+receive_packet_authentication_reply(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1681,7 +1701,8 @@ int send_packet_authentication_reply(connection_t *pconn, const struct packet_au
   }
 }
 
-static struct packet_server_shutdown *receive_packet_server_shutdown_100(connection_t *pconn, enum packet_type type)
+static struct packet_server_shutdown *
+receive_packet_server_shutdown_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_server_shutdown, real_packet);
 
@@ -1706,7 +1727,9 @@ static void ensure_valid_variant_packet_server_shutdown(connection_t *pconn)
   pconn->phs.variant[PACKET_SERVER_SHUTDOWN] = variant;
 }
 
-struct packet_server_shutdown *receive_packet_server_shutdown(connection_t *pconn, enum packet_type type)
+/* 8 sc */
+struct packet_server_shutdown *
+receive_packet_server_shutdown(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1759,7 +1782,8 @@ void lsend_packet_server_shutdown(struct connection_list *dest)
 
 BV_DEFINE(packet_nation_unavailable_100_fields, 1);
 
-static struct packet_nation_unavailable *receive_packet_nation_unavailable_100(connection_t *pconn, enum packet_type type)
+static struct packet_nation_unavailable *
+receive_packet_nation_unavailable_100(connection_t *pconn, enum packet_type type)
 {
   packet_nation_unavailable_100_fields fields;
   struct packet_nation_unavailable *old;
@@ -1861,7 +1885,9 @@ static void ensure_valid_variant_packet_nation_unavailable(connection_t *pconn)
   pconn->phs.variant[PACKET_NATION_UNAVAILABLE] = variant;
 }
 
-struct packet_nation_unavailable *receive_packet_nation_unavailable(connection_t *pconn, enum packet_type type)
+/* 9 sc */
+struct packet_nation_unavailable *
+receive_packet_nation_unavailable(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1908,7 +1934,8 @@ void lsend_packet_nation_unavailable(struct connection_list *dest, const struct 
   } connection_list_iterate_end;
 }
 
-static struct packet_select_races *receive_packet_select_races_100(connection_t *pconn, enum packet_type type)
+static struct packet_select_races *
+receive_packet_select_races_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_select_races, real_packet);
 
@@ -1933,7 +1960,8 @@ static void ensure_valid_variant_packet_select_races(connection_t *pconn)
   pconn->phs.variant[PACKET_SELECT_RACES] = variant;
 }
 
-struct packet_select_races *receive_packet_select_races(connection_t *pconn, enum packet_type type)
+struct packet_select_races *
+receive_packet_select_races(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1986,7 +2014,8 @@ void lsend_packet_select_races(struct connection_list *dest)
 
 BV_DEFINE(packet_nation_select_req_100_fields, 4);
 
-static struct packet_nation_select_req *receive_packet_nation_select_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_nation_select_req *
+receive_packet_nation_select_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_nation_select_req_100_fields fields;
   struct packet_nation_select_req *old;
@@ -2039,7 +2068,8 @@ static struct packet_nation_select_req *receive_packet_nation_select_req_100(con
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nation_select_req_100(connection_t *pconn, const struct packet_nation_select_req *packet)
+static int send_packet_nation_select_req_100(connection_t *pconn,
+                                             const struct packet_nation_select_req *packet)
 {
   const struct packet_nation_select_req *real_packet = packet;
   packet_nation_select_req_100_fields fields;
@@ -2119,7 +2149,8 @@ static void ensure_valid_variant_packet_nation_select_req(connection_t *pconn)
   pconn->phs.variant[PACKET_NATION_SELECT_REQ] = variant;
 }
 
-struct packet_nation_select_req *receive_packet_nation_select_req(connection_t *pconn, enum packet_type type)
+struct packet_nation_select_req *
+receive_packet_nation_select_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2139,7 +2170,9 @@ struct packet_nation_select_req *receive_packet_nation_select_req(connection_t *
   }
 }
 
-int send_packet_nation_select_req(connection_t *pconn, const struct packet_nation_select_req *packet)
+/* 10 cs */
+int send_packet_nation_select_req(connection_t *pconn,
+                                  const struct packet_nation_select_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2154,8 +2187,11 @@ int send_packet_nation_select_req(connection_t *pconn, const struct packet_natio
   ensure_valid_variant_packet_nation_select_req(pconn);
 
   switch(pconn->phs.variant[PACKET_NATION_SELECT_REQ]) {
-    case 100: return send_packet_nation_select_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100:
+      return send_packet_nation_select_req_100(pconn, packet);
+    default:
+      die("unknown variant");
+      return -1;
   }
 }
 

@@ -356,6 +356,8 @@ struct packet_player_rates { /* 41 */
   int science;
 };
 
+/* 42 */
+
 struct packet_player_change_government { /* 43 */
   int government;
 };
