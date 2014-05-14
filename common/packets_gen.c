@@ -1189,28 +1189,21 @@ void lsend_packet_thaw_hint(struct connection_list *dest)
 static struct packet_server_join_req *
 receive_packet_server_join_req_100(connection_t *pconn, enum packet_type type)
 {
+  int readin;
+
   RECEIVE_PACKET_START(packet_server_join_req, real_packet);
   dio_get_string(&din, real_packet->username, sizeof(real_packet->username));
   dio_get_string(&din, real_packet->capability, sizeof(real_packet->capability));
   dio_get_string(&din, real_packet->version_label, sizeof(real_packet->version_label));
-  {
-    int readin;
 
-    dio_get_uint32(&din, &readin);
-    real_packet->major_version = readin;
-  }
-  {
-    int readin;
+  dio_get_uint32(&din, &readin);
+  real_packet->major_version = readin;
 
-    dio_get_uint32(&din, &readin);
-    real_packet->minor_version = readin;
-  }
-  {
-    int readin;
+  dio_get_uint32(&din, &readin);
+  real_packet->minor_version = readin;
 
-    dio_get_uint32(&din, &readin);
-    real_packet->patch_version = readin;
-  }
+  dio_get_uint32(&din, &readin);
+  real_packet->patch_version = readin;
 
   RECEIVE_PACKET_END(real_packet);
 }
@@ -1301,17 +1294,16 @@ int dsend_packet_server_join_req(connection_t *pconn, const char *username, cons
 static struct packet_server_join_reply *
 receive_packet_server_join_reply_100(connection_t *pconn, enum packet_type type)
 {
+  int readin;
+
   RECEIVE_PACKET_START(packet_server_join_reply, real_packet);
   dio_get_bool8(&din, &real_packet->you_can_join);
   dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
   dio_get_string(&din, real_packet->capability, sizeof(real_packet->capability));
   dio_get_string(&din, real_packet->challenge_file, sizeof(real_packet->challenge_file));
-  {
-    int readin;
 
-    dio_get_uint8(&din, &readin);
-    real_packet->conn_id = readin;
-  }
+  dio_get_uint8(&din, &readin);
+  real_packet->conn_id = readin;
 
   RECEIVE_PACKET_END(real_packet);
 }
@@ -1414,12 +1406,10 @@ receive_packet_authentication_req_100(connection_t *pconn, enum packet_type type
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
@@ -1576,7 +1566,6 @@ receive_packet_authentication_reply_100(connection_t *pconn, enum packet_type ty
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_authentication_reply_100, cmp_packet_authentication_reply_100);
   }
@@ -1641,7 +1630,6 @@ static int send_packet_authentication_reply_100(connection_t *pconn, const struc
   if (BV_ISSET(fields, 0)) {
     dio_put_string(&dout, real_packet->password);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -1800,7 +1788,6 @@ receive_packet_nation_unavailable_100(connection_t *pconn, enum packet_type type
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_nation_unavailable_100, cmp_packet_nation_unavailable_100);
   }
@@ -1813,12 +1800,10 @@ receive_packet_nation_unavailable_100(connection_t *pconn, enum packet_type type
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->nation = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->nation = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -2047,24 +2032,20 @@ receive_packet_nation_select_req_100(connection_t *pconn, enum packet_type type)
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->nation_no = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->nation_no = readin;
   }
   real_packet->is_male = BV_ISSET(fields, 1);
   if (BV_ISSET(fields, 2)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->city_style = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->city_style = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -2210,7 +2191,11 @@ int send_packet_nation_select_req(connection_t *pconn,
   }
 }
 
-int dsend_packet_nation_select_req(connection_t *pconn, Nation_Type_id nation_no, bool is_male, const char *name, int city_style)
+int dsend_packet_nation_select_req(connection_t *pconn,
+                                   Nation_Type_id nation_no,
+                                   bool is_male,
+                                   const char *name,
+                                   int city_style)
 {
   struct packet_nation_select_req packet, *real_packet = &packet;
 
@@ -2222,7 +2207,8 @@ int dsend_packet_nation_select_req(connection_t *pconn, Nation_Type_id nation_no
   return send_packet_nation_select_req(pconn, real_packet);
 }
 
-static struct packet_nation_select_ok *receive_packet_nation_select_ok_100(connection_t *pconn, enum packet_type type)
+static struct packet_nation_select_ok *
+receive_packet_nation_select_ok_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_nation_select_ok, real_packet);
 
@@ -2247,7 +2233,8 @@ static void ensure_valid_variant_packet_nation_select_ok(connection_t *pconn)
   pconn->phs.variant[PACKET_NATION_SELECT_OK] = variant;
 }
 
-struct packet_nation_select_ok *receive_packet_nation_select_ok(connection_t *pconn, enum packet_type type)
+struct packet_nation_select_ok *
+receive_packet_nation_select_ok(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2306,6 +2293,8 @@ static struct packet_game_state *receive_packet_game_state_100(connection_t *pco
   struct packet_game_state *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_game_state *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_game_state, real_packet);
 
   DIO_BV_GET(&din, fields);
@@ -2323,12 +2312,8 @@ static struct packet_game_state *receive_packet_game_state_100(connection_t *pco
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
-
-      dio_get_uint32(&din, &readin);
-      real_packet->value = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->value = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -2477,12 +2462,15 @@ void dlsend_packet_game_state(struct connection_list *dest, int value)
 
 BV_DEFINE(packet_endgame_report_100_fields, 15);
 
-static struct packet_endgame_report *receive_packet_endgame_report_100(connection_t *pconn, enum packet_type type)
+static struct packet_endgame_report *
+receive_packet_endgame_report_100(connection_t *pconn, enum packet_type type)
 {
   packet_endgame_report_100_fields fields;
   struct packet_endgame_report *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_endgame_report *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_endgame_report, real_packet);
 
   DIO_BV_GET(&din, fields);
@@ -2500,277 +2488,204 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(connectio
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
-
-      dio_get_uint8(&din, &readin);
-      real_packet->nscores = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->nscores = readin;
   }
+
   if (BV_ISSET(fields, 1)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->id[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 2)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->score[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 3)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint32(&din, &readin);
       real_packet->pop[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 4)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->bnp[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 5)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->mfg[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 6)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->cities[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 7)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->techs[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 8)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->mil_service[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 9)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->wonders[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 10)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->research[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 11)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint32(&din, &readin);
       real_packet->landarea[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 12)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint32(&din, &readin);
       real_packet->settledarea[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 13)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->literacy[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 14)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->nscores > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->nscores = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->nscores; i++) {
-        {
+    if(real_packet->nscores > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->nscores = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->nscores; i++) {
       int readin;
 
       dio_get_uint32(&din, &readin);
       real_packet->spaceship[i] = readin;
-    }
-      }
     }
   }
 
@@ -2815,252 +2730,252 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->id[i] != real_packet->id[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->id[i] != real_packet->id[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 1);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->score[i] != real_packet->score[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->score[i] != real_packet->score[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 2);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->pop[i] != real_packet->pop[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->pop[i] != real_packet->pop[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 3);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->bnp[i] != real_packet->bnp[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->bnp[i] != real_packet->bnp[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 4);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->mfg[i] != real_packet->mfg[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->mfg[i] != real_packet->mfg[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 5);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->cities[i] != real_packet->cities[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->cities[i] != real_packet->cities[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 6);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->techs[i] != real_packet->techs[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->techs[i] != real_packet->techs[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 7);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->mil_service[i] != real_packet->mil_service[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->mil_service[i] != real_packet->mil_service[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 8);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->wonders[i] != real_packet->wonders[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->wonders[i] != real_packet->wonders[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 9);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->research[i] != real_packet->research[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->research[i] != real_packet->research[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 10);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->landarea[i] != real_packet->landarea[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->landarea[i] != real_packet->landarea[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 11);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->settledarea[i] != real_packet->settledarea[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->settledarea[i] != real_packet->settledarea[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 12);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->literacy[i] != real_packet->literacy[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->literacy[i] != real_packet->literacy[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 13);
   }
 
 
-    {
-      differ = (old->nscores != real_packet->nscores);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->nscores; i++) {
-          if (old->spaceship[i] != real_packet->spaceship[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->nscores != real_packet->nscores);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->nscores; i++) {
+        if (old->spaceship[i] != real_packet->spaceship[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 14);
@@ -3076,146 +2991,103 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     dio_put_uint8(&dout, real_packet->nscores);
   }
   if (BV_ISSET(fields, 1)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint8(&dout, real_packet->id[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint8(&dout, real_packet->id[i]);
     }
   }
   if (BV_ISSET(fields, 2)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint16(&dout, real_packet->score[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint16(&dout, real_packet->score[i]);
     }
   }
   if (BV_ISSET(fields, 3)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint32(&dout, real_packet->pop[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint32(&dout, real_packet->pop[i]);
     }
   }
   if (BV_ISSET(fields, 4)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint16(&dout, real_packet->bnp[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint16(&dout, real_packet->bnp[i]);
     }
   }
   if (BV_ISSET(fields, 5)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint16(&dout, real_packet->mfg[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint16(&dout, real_packet->mfg[i]);
     }
   }
   if (BV_ISSET(fields, 6)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint16(&dout, real_packet->cities[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint16(&dout, real_packet->cities[i]);
     }
   }
   if (BV_ISSET(fields, 7)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint16(&dout, real_packet->techs[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint16(&dout, real_packet->techs[i]);
     }
   }
   if (BV_ISSET(fields, 8)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint16(&dout, real_packet->mil_service[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint16(&dout, real_packet->mil_service[i]);
     }
   }
   if (BV_ISSET(fields, 9)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint8(&dout, real_packet->wonders[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint8(&dout, real_packet->wonders[i]);
     }
   }
   if (BV_ISSET(fields, 10)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint16(&dout, real_packet->research[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint16(&dout, real_packet->research[i]);
     }
   }
   if (BV_ISSET(fields, 11)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint32(&dout, real_packet->landarea[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint32(&dout, real_packet->landarea[i]);
     }
   }
   if (BV_ISSET(fields, 12)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint32(&dout, real_packet->settledarea[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint32(&dout, real_packet->settledarea[i]);
     }
   }
   if (BV_ISSET(fields, 13)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint16(&dout, real_packet->literacy[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint16(&dout, real_packet->literacy[i]);
     }
   }
   if (BV_ISSET(fields, 14)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < real_packet->nscores; i++) {
-        dio_put_uint32(&dout, real_packet->spaceship[i]);
-      }
+    for (i = 0; i < real_packet->nscores; i++) {
+      dio_put_uint32(&dout, real_packet->spaceship[i]);
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -3321,22 +3193,17 @@ static struct packet_tile_info *receive_packet_tile_info_100(connection_t *pconn
   struct packet_tile_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_tile_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_tile_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
     dio_get_uint8(&din, &readin);
     real_packet->x = readin;
-  }
-  {
-    int readin;
 
     dio_get_uint8(&din, &readin);
     real_packet->y = readin;
-  }
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_tile_info_100, cmp_packet_tile_info_100);
@@ -3356,44 +3223,34 @@ static struct packet_tile_info *receive_packet_tile_info_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->known = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->known = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->special = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->special = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->owner = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->owner = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->continent = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->continent = readin;
   }
   if (BV_ISSET(fields, 5)) {
     dio_get_string(&din, real_packet->spec_sprite, sizeof(real_packet->spec_sprite));
@@ -3595,221 +3452,168 @@ static struct packet_game_info *receive_packet_game_info_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gold = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gold = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->tech = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->tech = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->researchcost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->researchcost = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->skill_level = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->skill_level = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->seconds_to_turndone = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->seconds_to_turndone = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->timeout = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->timeout = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->turn = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->turn = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->year = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->year = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->end_year = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->end_year = readin;
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->min_players = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->min_players = readin;
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->max_players = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->max_players = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->nplayers = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->nplayers = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->player_idx = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->player_idx = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->globalwarming = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->globalwarming = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->heating = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->heating = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->nuclearwinter = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->nuclearwinter = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->cooling = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->cooling = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->cityfactor = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->cityfactor = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->diplcost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->diplcost = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->freecost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->freecost = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->conquercost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->conquercost = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->unhappysize = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->unhappysize = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->angrycitizen = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->angrycitizen = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->techpenalty = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->techpenalty = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->foodbox = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->foodbox = readin;
   }
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->civstyle = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->civstyle = readin;
   }
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->diplomacy = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->diplomacy = readin;
   }
+
   real_packet->spacerace = BV_ISSET(fields, 27);
   if (BV_ISSET(fields, 28)) {
 
@@ -3823,12 +3627,10 @@ static struct packet_game_info *receive_packet_game_info_100(connection_t *pconn
       if(i > A_LAST) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: ignoring intra array diff");
       } else {
-        {
-      int readin;
+        int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->global_advances[i] = readin;
-    }
+        dio_get_uint8(&din, &readin);
+        real_packet->global_advances[i] = readin;
       }
     }
   }
@@ -3844,12 +3646,10 @@ static struct packet_game_info *receive_packet_game_info_100(connection_t *pconn
       if(i > B_LAST) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: ignoring intra array diff");
       } else {
-        {
-      int readin;
+        int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->global_wonders[i] = readin;
-    }
+        dio_get_uint16(&din, &readin);
+        real_packet->global_wonders[i] = readin;
       }
     }
   }
@@ -3872,6 +3672,7 @@ static int send_packet_game_info_100(connection_t *pconn, const struct packet_ga
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
   struct hash_table **hash = &pconn->phs.sent[PACKET_GAME_INFO];
   int different = 0;
+
   SEND_PACKET_START(PACKET_GAME_INFO);
 
   if (!*hash) {
@@ -4051,39 +3852,36 @@ static int send_packet_game_info_100(connection_t *pconn, const struct packet_ga
 
   differ = (old->spacerace != real_packet->spacerace);
   if (differ) {different++;}
+
   if(packet->spacerace) {BV_SET(fields, 27);}
 
-
-    {
-      differ = (A_LAST != A_LAST);
-      if(!differ) {
-        int i;
-        for (i = 0; i < A_LAST; i++) {
-          if (old->global_advances[i] != real_packet->global_advances[i]) {
-            differ = TRUE;
-            break;
-          }
-        }
+  differ = (A_LAST != A_LAST);
+  if(!differ) {
+    int i;
+    for (i = 0; i < A_LAST; i++) {
+      if (old->global_advances[i] != real_packet->global_advances[i]) {
+        differ = TRUE;
+        break;
       }
     }
+  }
+
   if (differ) {
     different++;
     BV_SET(fields, 28);
   }
 
 
-    {
-      differ = (B_LAST != B_LAST);
-      if(!differ) {
-        int i;
-        for (i = 0; i < B_LAST; i++) {
-          if (old->global_wonders[i] != real_packet->global_wonders[i]) {
-            differ = TRUE;
-            break;
-          }
-        }
+  differ = (B_LAST != B_LAST);
+  if(!differ) {
+    int i;
+    for (i = 0; i < B_LAST; i++) {
+      if (old->global_wonders[i] != real_packet->global_wonders[i]) {
+        differ = TRUE;
+        break;
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 29);
@@ -4178,36 +3976,30 @@ static int send_packet_game_info_100(connection_t *pconn, const struct packet_ga
   }
   /* field 27 is folded into the header */
   if (BV_ISSET(fields, 28)) {
+    int i;
 
-    {
-      int i;
+    assert(A_LAST < 255);
 
-      assert(A_LAST < 255);
-
-      for (i = 0; i < A_LAST; i++) {
-        if(old->global_advances[i] != real_packet->global_advances[i]) {
-          dio_put_uint8(&dout, i);
-          dio_put_uint8(&dout, real_packet->global_advances[i]);
-        }
+    for (i = 0; i < A_LAST; i++) {
+      if(old->global_advances[i] != real_packet->global_advances[i]) {
+        dio_put_uint8(&dout, i);
+        dio_put_uint8(&dout, real_packet->global_advances[i]);
       }
-      dio_put_uint8(&dout, 255);
     }
+    dio_put_uint8(&dout, 255);
   }
   if (BV_ISSET(fields, 29)) {
+    int i;
 
-    {
-      int i;
+    assert(B_LAST < 255);
 
-      assert(B_LAST < 255);
-
-      for (i = 0; i < B_LAST; i++) {
-        if(old->global_wonders[i] != real_packet->global_wonders[i]) {
-          dio_put_uint8(&dout, i);
-          dio_put_uint16(&dout, real_packet->global_wonders[i]);
-        }
+    for (i = 0; i < B_LAST; i++) {
+      if(old->global_wonders[i] != real_packet->global_wonders[i]) {
+        dio_put_uint8(&dout, i);
+        dio_put_uint16(&dout, real_packet->global_wonders[i]);
       }
-      dio_put_uint8(&dout, 255);
     }
+    dio_put_uint8(&dout, 255);
   }
 
 
@@ -4219,6 +4011,7 @@ static int send_packet_game_info_100(connection_t *pconn, const struct packet_ga
 
   *clone = *real_packet;
   hash_insert(*hash, clone, clone);
+
   SEND_PACKET_END;
 }
 
@@ -4303,28 +4096,22 @@ static struct packet_map_info *receive_packet_map_info_100(connection_t *pconn, 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->xsize = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->xsize = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->ysize = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->ysize = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->topology_id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->topology_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -4393,7 +4180,6 @@ static int send_packet_map_info_100(connection_t *pconn, const struct packet_map
   if (BV_ISSET(fields, 2)) {
     dio_put_uint8(&dout, real_packet->topology_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -4471,7 +4257,8 @@ void lsend_packet_map_info(struct connection_list *dest, const struct packet_map
 
 BV_DEFINE(packet_nuke_tile_info_100_fields, 2);
 
-static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_nuke_tile_info *
+receive_packet_nuke_tile_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_nuke_tile_info_100_fields fields;
   struct packet_nuke_tile_info *old;
@@ -4494,20 +4281,16 @@ static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(connectio
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -4520,7 +4303,8 @@ static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(connectio
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nuke_tile_info_100(connection_t *pconn, const struct packet_nuke_tile_info *packet)
+static int send_packet_nuke_tile_info_100(connection_t *pconn,
+                                          const struct packet_nuke_tile_info *packet)
 {
   const struct packet_nuke_tile_info *real_packet = packet;
   packet_nuke_tile_info_100_fields fields;
@@ -4691,36 +4475,28 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(connection_t *pconn, 
     dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+     int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+     dio_get_uint8(&din, &readin);
+     real_packet->y = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->event = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->event = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->conn_id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->conn_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -4896,7 +4672,11 @@ void lsend_packet_chat_msg(struct connection_list *dest, const struct packet_cha
   } connection_list_iterate_end;
 }
 
-int dsend_packet_chat_msg(connection_t *pconn, const char *message, int x, int y, enum event_type event, int conn_id)
+int dsend_packet_chat_msg(connection_t *pconn,
+                          const char *message,
+                          int x, int y,
+                          enum event_type event,
+                          int conn_id)
 {
   struct packet_chat_msg packet, *real_packet = &packet;
 
@@ -4909,7 +4689,11 @@ int dsend_packet_chat_msg(connection_t *pconn, const char *message, int x, int y
   return send_packet_chat_msg(pconn, real_packet);
 }
 
-void dlsend_packet_chat_msg(struct connection_list *dest, const char *message, int x, int y, enum event_type event, int conn_id)
+void dlsend_packet_chat_msg(struct connection_list *dest,
+                            const char *message,
+                            int x, int y,
+                            enum event_type event,
+                            int conn_id)
 {
   struct packet_chat_msg packet, *real_packet = &packet;
 
@@ -4928,7 +4712,8 @@ void dlsend_packet_chat_msg(struct connection_list *dest, const char *message, i
 
 BV_DEFINE(packet_chat_msg_req_100_fields, 1);
 
-static struct packet_chat_msg_req *receive_packet_chat_msg_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_chat_msg_req *
+receive_packet_chat_msg_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_chat_msg_req_100_fields fields;
   struct packet_chat_msg_req *old;
@@ -5082,7 +4867,8 @@ int dsend_packet_chat_msg_req(connection_t *pconn, const char *message)
 
 BV_DEFINE(packet_city_remove_100_fields, 1);
 
-static struct packet_city_remove *receive_packet_city_remove_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_remove *
+receive_packet_city_remove_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_remove_100_fields fields;
   struct packet_city_remove *old;
@@ -5105,12 +4891,10 @@ static struct packet_city_remove *receive_packet_city_remove_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -5283,12 +5067,10 @@ static struct packet_city_info *receive_packet_city_info_100(connection_t *pconn
   RECEIVE_PACKET_START(packet_city_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
+  int readin;
 
-    dio_get_uint16(&din, &readin);
-    real_packet->id = readin;
-  }
+  dio_get_uint16(&din, &readin);
+  real_packet->id = readin;
 
 
   if (!*hash) {
@@ -5307,314 +5089,229 @@ static struct packet_city_info *receive_packet_city_info_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->owner = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->owner = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
   if (BV_ISSET(fields, 3)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->size = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->size = readin;
   }
   if (BV_ISSET(fields, 5)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        {
+    for (i = 0; i < 5; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->people_happy[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 6)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        {
+    for (i = 0; i < 5; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->people_content[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 7)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        {
+    for (i = 0; i < 5; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->people_unhappy[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 8)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        {
+    for (i = 0; i < 5; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->people_angry[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 9)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < SP_COUNT; i++) {
-        {
+    for (i = 0; i < SP_COUNT; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->specialists[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->food_prod = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->food_prod = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->shield_prod = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->shield_prod = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->trade_prod = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->trade_prod = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->food_surplus = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->food_surplus = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->shield_surplus = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->shield_surplus = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->tile_trade = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->tile_trade = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->food_stock = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->food_stock = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->shield_stock = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->shield_stock = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->corruption = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->corruption = readin;
   }
   if (BV_ISSET(fields, 19)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        {
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->trade[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 20)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        {
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->trade_value[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->luxury_total = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->luxury_total = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->tax_total = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->tax_total = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->science_total = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->science_total = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->pollution = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->pollution = readin;
   }
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->shield_waste = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->shield_waste = readin;
   }
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->currently_building = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->currently_building = readin;
   }
   real_packet->is_building_unit = BV_ISSET(fields, 27);
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->turn_last_built = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->turn_last_built = readin;
   }
   if (BV_ISSET(fields, 29)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->changed_from_id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->changed_from_id = readin;
   }
   real_packet->changed_from_is_unit = BV_ISSET(fields, 30);
   if (BV_ISSET(fields, 31)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->before_change_shields = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->before_change_shields = readin;
   }
   if (BV_ISSET(fields, 32)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->disbanded_shields = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->disbanded_shields = readin;
   }
   if (BV_ISSET(fields, 33)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->caravan_shields = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->caravan_shields = readin;
   }
   if (BV_ISSET(fields, 34)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->last_turns_shield_surplus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->last_turns_shield_surplus = readin;
   }
   if (BV_ISSET(fields, 35)) {
     dio_get_worklist(&din, &real_packet->worklist);
@@ -5623,18 +5320,13 @@ static struct packet_city_info *receive_packet_city_info_100(connection_t *pconn
     dio_get_bit_string(&din, real_packet->improvements, sizeof(real_packet->improvements));
   }
   if (BV_ISSET(fields, 37)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
-        {
+    for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->city_map[i] = readin;
-    }
-      }
     }
   }
   real_packet->did_buy = BV_ISSET(fields, 38);
@@ -5643,36 +5335,28 @@ static struct packet_city_info *receive_packet_city_info_100(connection_t *pconn
   real_packet->airlift = BV_ISSET(fields, 41);
   real_packet->diplomat_investigate = BV_ISSET(fields, 42);
   if (BV_ISSET(fields, 43)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->rally_point_x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->rally_point_x = readin;
   }
   if (BV_ISSET(fields, 44)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->rally_point_y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->rally_point_y = readin;
   }
   if (BV_ISSET(fields, 45)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->city_options = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->city_options = readin;
   }
   if (BV_ISSET(fields, 46)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->turn_founded = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->turn_founded = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -5739,90 +5423,90 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
   }
 
 
-    {
-      differ = (5 != 5);
-      if(!differ) {
-        int i;
-        for (i = 0; i < 5; i++) {
-          if (old->people_happy[i] != real_packet->people_happy[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (5 != 5);
+    if(!differ) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        if (old->people_happy[i] != real_packet->people_happy[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 5);
   }
 
 
-    {
-      differ = (5 != 5);
-      if(!differ) {
-        int i;
-        for (i = 0; i < 5; i++) {
-          if (old->people_content[i] != real_packet->people_content[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (5 != 5);
+    if(!differ) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        if (old->people_content[i] != real_packet->people_content[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 6);
   }
 
 
-    {
-      differ = (5 != 5);
-      if(!differ) {
-        int i;
-        for (i = 0; i < 5; i++) {
-          if (old->people_unhappy[i] != real_packet->people_unhappy[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (5 != 5);
+    if(!differ) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        if (old->people_unhappy[i] != real_packet->people_unhappy[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 7);
   }
 
 
-    {
-      differ = (5 != 5);
-      if(!differ) {
-        int i;
-        for (i = 0; i < 5; i++) {
-          if (old->people_angry[i] != real_packet->people_angry[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (5 != 5);
+    if(!differ) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        if (old->people_angry[i] != real_packet->people_angry[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 8);
   }
 
 
-    {
-      differ = FALSE;
-      if(!differ) {
-        int i;
-        for (i = 0; i < SP_COUNT; i++) {
-          if (old->specialists[i] != real_packet->specialists[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = FALSE;
+    if(!differ) {
+      int i;
+      for (i = 0; i < SP_COUNT; i++) {
+        if (old->specialists[i] != real_packet->specialists[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 9);
@@ -5883,36 +5567,36 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
   }
 
 
-    {
-      differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
-      if(!differ) {
-        int i;
-        for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-          if (old->trade[i] != real_packet->trade[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
+    if(!differ) {
+      int i;
+      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+        if (old->trade[i] != real_packet->trade[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 19);
   }
 
 
-    {
-      differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
-      if(!differ) {
-        int i;
-        for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-          if (old->trade_value[i] != real_packet->trade_value[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
+    if(!differ) {
+      int i;
+      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+        if (old->trade_value[i] != real_packet->trade_value[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 20);
@@ -6011,18 +5695,18 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
   }
 
 
-    {
-      differ = (CITY_MAP_SIZE * CITY_MAP_SIZE != CITY_MAP_SIZE * CITY_MAP_SIZE);
-      if(!differ) {
-        int i;
-        for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
-          if (old->city_map[i] != real_packet->city_map[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (CITY_MAP_SIZE * CITY_MAP_SIZE != CITY_MAP_SIZE * CITY_MAP_SIZE);
+    if(!differ) {
+      int i;
+      for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
+        if (old->city_map[i] != real_packet->city_map[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 37);
@@ -6095,53 +5779,38 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     dio_put_uint8(&dout, real_packet->size);
   }
   if (BV_ISSET(fields, 5)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->people_happy[i]);
-      }
+    for (i = 0; i < 5; i++) {
+      dio_put_uint8(&dout, real_packet->people_happy[i]);
     }
   }
   if (BV_ISSET(fields, 6)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->people_content[i]);
-      }
+    for (i = 0; i < 5; i++) {
+      dio_put_uint8(&dout, real_packet->people_content[i]);
     }
   }
   if (BV_ISSET(fields, 7)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->people_unhappy[i]);
-      }
+    for (i = 0; i < 5; i++) {
+      dio_put_uint8(&dout, real_packet->people_unhappy[i]);
     }
   }
   if (BV_ISSET(fields, 8)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->people_angry[i]);
-      }
+    for (i = 0; i < 5; i++) {
+      dio_put_uint8(&dout, real_packet->people_angry[i]);
     }
   }
   if (BV_ISSET(fields, 9)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < SP_COUNT; i++) {
-        dio_put_uint8(&dout, real_packet->specialists[i]);
-      }
+    for (i = 0; i < SP_COUNT; i++) {
+      dio_put_uint8(&dout, real_packet->specialists[i]);
     }
   }
   if (BV_ISSET(fields, 10)) {
@@ -6172,23 +5841,17 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     dio_put_uint16(&dout, real_packet->corruption);
   }
   if (BV_ISSET(fields, 19)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        dio_put_uint16(&dout, real_packet->trade[i]);
-      }
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+      dio_put_uint16(&dout, real_packet->trade[i]);
     }
   }
   if (BV_ISSET(fields, 20)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        dio_put_uint8(&dout, real_packet->trade_value[i]);
-      }
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+      dio_put_uint8(&dout, real_packet->trade_value[i]);
     }
   }
   if (BV_ISSET(fields, 21)) {
@@ -6236,13 +5899,10 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     dio_put_bit_string(&dout, real_packet->improvements);
   }
   if (BV_ISSET(fields, 37)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
-        dio_put_uint8(&dout, real_packet->city_map[i]);
-      }
+    for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
+      dio_put_uint8(&dout, real_packet->city_map[i]);
     }
   }
   /* field 38 is folded into the header */
@@ -6331,314 +5991,229 @@ static struct packet_city_info *receive_packet_city_info_101(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->owner = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->owner = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
   if (BV_ISSET(fields, 3)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->size = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->size = readin;
   }
   if (BV_ISSET(fields, 5)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        {
+    for (i = 0; i < 5; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->people_happy[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 6)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        {
+    for (i = 0; i < 5; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->people_content[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 7)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        {
+    for (i = 0; i < 5; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->people_unhappy[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 8)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        {
+    for (i = 0; i < 5; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->people_angry[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 9)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < SP_COUNT; i++) {
-        {
+    for (i = 0; i < SP_COUNT; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->specialists[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->food_prod = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->food_prod = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->shield_prod = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->shield_prod = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->trade_prod = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->trade_prod = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->food_surplus = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->food_surplus = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->shield_surplus = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->shield_surplus = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->tile_trade = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->tile_trade = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->food_stock = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->food_stock = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->shield_stock = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->shield_stock = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->corruption = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->corruption = readin;
   }
   if (BV_ISSET(fields, 19)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        {
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->trade[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 20)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        {
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->trade_value[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->luxury_total = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->luxury_total = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->tax_total = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->tax_total = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->science_total = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->science_total = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->pollution = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->pollution = readin;
   }
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->shield_waste = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->shield_waste = readin;
   }
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->currently_building = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->currently_building = readin;
   }
   real_packet->is_building_unit = BV_ISSET(fields, 27);
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->turn_last_built = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->turn_last_built = readin;
   }
   if (BV_ISSET(fields, 29)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->changed_from_id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->changed_from_id = readin;
   }
   real_packet->changed_from_is_unit = BV_ISSET(fields, 30);
   if (BV_ISSET(fields, 31)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->before_change_shields = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->before_change_shields = readin;
   }
   if (BV_ISSET(fields, 32)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->disbanded_shields = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->disbanded_shields = readin;
   }
   if (BV_ISSET(fields, 33)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->caravan_shields = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->caravan_shields = readin;
   }
   if (BV_ISSET(fields, 34)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->last_turns_shield_surplus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->last_turns_shield_surplus = readin;
   }
   if (BV_ISSET(fields, 35)) {
     dio_get_worklist(&din, &real_packet->worklist);
@@ -6647,18 +6222,13 @@ static struct packet_city_info *receive_packet_city_info_101(connection_t *pconn
     dio_get_bit_string(&din, real_packet->improvements, sizeof(real_packet->improvements));
   }
   if (BV_ISSET(fields, 37)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
-        {
+    for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->city_map[i] = readin;
-    }
-      }
     }
   }
   real_packet->did_buy = BV_ISSET(fields, 38);
@@ -6667,20 +6237,16 @@ static struct packet_city_info *receive_packet_city_info_101(connection_t *pconn
   real_packet->airlift = BV_ISSET(fields, 41);
   real_packet->diplomat_investigate = BV_ISSET(fields, 42);
   if (BV_ISSET(fields, 43)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->city_options = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->city_options = readin;
   }
   if (BV_ISSET(fields, 44)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->turn_founded = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->turn_founded = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -6746,91 +6312,87 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
     BV_SET(fields, 4);
   }
 
-
-    {
-      differ = (5 != 5);
-      if(!differ) {
-        int i;
-        for (i = 0; i < 5; i++) {
-          if (old->people_happy[i] != real_packet->people_happy[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (5 != 5);
+    if(!differ) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        if (old->people_happy[i] != real_packet->people_happy[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 5);
   }
 
-
-    {
-      differ = (5 != 5);
-      if(!differ) {
-        int i;
-        for (i = 0; i < 5; i++) {
-          if (old->people_content[i] != real_packet->people_content[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (5 != 5);
+    if(!differ) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        if (old->people_content[i] != real_packet->people_content[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 6);
   }
 
 
-    {
-      differ = (5 != 5);
-      if(!differ) {
-        int i;
-        for (i = 0; i < 5; i++) {
-          if (old->people_unhappy[i] != real_packet->people_unhappy[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (5 != 5);
+    if(!differ) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        if (old->people_unhappy[i] != real_packet->people_unhappy[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 7);
   }
 
-
-    {
-      differ = (5 != 5);
-      if(!differ) {
-        int i;
-        for (i = 0; i < 5; i++) {
-          if (old->people_angry[i] != real_packet->people_angry[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (5 != 5);
+    if(!differ) {
+      int i;
+      for (i = 0; i < 5; i++) {
+        if (old->people_angry[i] != real_packet->people_angry[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 8);
   }
 
-
-    {
-      differ = FALSE;
-      if(!differ) {
-        int i;
-        for (i = 0; i < SP_COUNT; i++) {
-          if (old->specialists[i] != real_packet->specialists[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = FALSE;
+    if(!differ) {
+      int i;
+      for (i = 0; i < SP_COUNT; i++) {
+        if (old->specialists[i] != real_packet->specialists[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 9);
@@ -6890,37 +6452,35 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
     BV_SET(fields, 18);
   }
 
-
-    {
-      differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
-      if(!differ) {
-        int i;
-        for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-          if (old->trade[i] != real_packet->trade[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
+    if(!differ) {
+      int i;
+      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+        if (old->trade[i] != real_packet->trade[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 19);
   }
 
-
-    {
-      differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
-      if(!differ) {
-        int i;
-        for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-          if (old->trade_value[i] != real_packet->trade_value[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
+    if(!differ) {
+      int i;
+      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+        if (old->trade_value[i] != real_packet->trade_value[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 20);
@@ -7018,19 +6578,18 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
     BV_SET(fields, 36);
   }
 
-
-    {
-      differ = (CITY_MAP_SIZE * CITY_MAP_SIZE != CITY_MAP_SIZE * CITY_MAP_SIZE);
-      if(!differ) {
-        int i;
-        for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
-          if (old->city_map[i] != real_packet->city_map[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (CITY_MAP_SIZE * CITY_MAP_SIZE != CITY_MAP_SIZE * CITY_MAP_SIZE);
+    if(!differ) {
+      int i;
+      for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
+        if (old->city_map[i] != real_packet->city_map[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 37);
@@ -7091,53 +6650,38 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
     dio_put_uint8(&dout, real_packet->size);
   }
   if (BV_ISSET(fields, 5)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->people_happy[i]);
-      }
+    for (i = 0; i < 5; i++) {
+      dio_put_uint8(&dout, real_packet->people_happy[i]);
     }
   }
   if (BV_ISSET(fields, 6)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->people_content[i]);
-      }
+    for (i = 0; i < 5; i++) {
+      dio_put_uint8(&dout, real_packet->people_content[i]);
     }
   }
   if (BV_ISSET(fields, 7)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->people_unhappy[i]);
-      }
+    for (i = 0; i < 5; i++) {
+      dio_put_uint8(&dout, real_packet->people_unhappy[i]);
     }
   }
   if (BV_ISSET(fields, 8)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->people_angry[i]);
-      }
+    for (i = 0; i < 5; i++) {
+      dio_put_uint8(&dout, real_packet->people_angry[i]);
     }
   }
   if (BV_ISSET(fields, 9)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < SP_COUNT; i++) {
-        dio_put_uint8(&dout, real_packet->specialists[i]);
-      }
+    for (i = 0; i < SP_COUNT; i++) {
+      dio_put_uint8(&dout, real_packet->specialists[i]);
     }
   }
   if (BV_ISSET(fields, 10)) {
@@ -7168,23 +6712,17 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
     dio_put_uint16(&dout, real_packet->corruption);
   }
   if (BV_ISSET(fields, 19)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        dio_put_uint16(&dout, real_packet->trade[i]);
-      }
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+      dio_put_uint16(&dout, real_packet->trade[i]);
     }
   }
   if (BV_ISSET(fields, 20)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-        dio_put_uint8(&dout, real_packet->trade_value[i]);
-      }
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+      dio_put_uint8(&dout, real_packet->trade_value[i]);
     }
   }
   if (BV_ISSET(fields, 21)) {
@@ -7232,13 +6770,10 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
     dio_put_bit_string(&dout, real_packet->improvements);
   }
   if (BV_ISSET(fields, 37)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
-        dio_put_uint8(&dout, real_packet->city_map[i]);
-      }
+    for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
+      dio_put_uint8(&dout, real_packet->city_map[i]);
     }
   }
   /* field 38 is folded into the header */
@@ -7252,7 +6787,6 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
   if (BV_ISSET(fields, 44)) {
     dio_put_sint16(&dout, real_packet->turn_founded);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -7360,22 +6894,21 @@ static int cmp_packet_city_short_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_city_short_info_100_fields, 11);
 
-static struct packet_city_short_info *receive_packet_city_short_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_short_info *
+receive_packet_city_short_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_short_info_100_fields fields;
   struct packet_city_short_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_short_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_city_short_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint16(&din, &readin);
-    real_packet->id = readin;
-  }
-
+  dio_get_uint16(&din, &readin);
+  real_packet->id = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_short_info_100, cmp_packet_city_short_info_100);
@@ -7393,39 +6926,31 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->owner = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->owner = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
   if (BV_ISSET(fields, 3)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->size = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->size = readin;
   }
   real_packet->happy = BV_ISSET(fields, 5);
   real_packet->unhappy = BV_ISSET(fields, 6);
@@ -7433,12 +6958,10 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(connect
   real_packet->walls = BV_ISSET(fields, 8);
   real_packet->occupied = BV_ISSET(fields, 9);
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->tile_trade = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->tile_trade = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -7451,7 +6974,8 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_short_info_100(connection_t *pconn, const struct packet_city_short_info *packet)
+static int send_packet_city_short_info_100(connection_t *pconn,
+                                           const struct packet_city_short_info *packet)
 {
   const struct packet_city_short_info *real_packet = packet;
   packet_city_short_info_100_fields fields;
@@ -7625,7 +7149,8 @@ int send_packet_city_short_info(connection_t *pconn, const struct packet_city_sh
   }
 }
 
-void lsend_packet_city_short_info(struct connection_list *dest, const struct packet_city_short_info *packet)
+void lsend_packet_city_short_info(struct connection_list *dest,
+                                  const struct packet_city_short_info *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_city_short_info(p_conn, packet);
@@ -7661,20 +7186,16 @@ static struct packet_city_sell *receive_packet_city_sell_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->build_id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->build_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -7838,12 +7359,10 @@ static struct packet_city_buy *receive_packet_city_buy_100(connection_t *pconn, 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -7974,7 +7493,8 @@ int dsend_packet_city_buy(connection_t *pconn, int city_id)
 
 BV_DEFINE(packet_city_change_100_fields, 3);
 
-static struct packet_city_change *receive_packet_city_change_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_change *
+receive_packet_city_change_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_change_100_fields fields;
   struct packet_city_change *old;
@@ -7997,20 +7517,16 @@ static struct packet_city_change *receive_packet_city_change_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+     int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->build_id = readin;
-    }
+     dio_get_uint8(&din, &readin);
+     real_packet->build_id = readin;
   }
   real_packet->is_build_id_unit_id = BV_ISSET(fields, 2);
 
@@ -8158,7 +7674,8 @@ int dsend_packet_city_change(connection_t *pconn, int city_id, int build_id, boo
 
 BV_DEFINE(packet_city_worklist_100_fields, 2);
 
-static struct packet_city_worklist *receive_packet_city_worklist_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_worklist *
+receive_packet_city_worklist_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_worklist_100_fields fields;
   struct packet_city_worklist *old;
@@ -8181,12 +7698,10 @@ static struct packet_city_worklist *receive_packet_city_worklist_100(connection_
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_worklist(&din, &real_packet->worklist);
@@ -8249,7 +7764,6 @@ static int send_packet_city_worklist_100(connection_t *pconn, const struct packe
   if (BV_ISSET(fields, 1)) {
     dio_put_worklist(&dout, &real_packet->worklist);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -8330,7 +7844,8 @@ int dsend_packet_city_worklist(connection_t *pconn, int city_id, struct worklist
 
 BV_DEFINE(packet_city_make_specialist_100_fields, 3);
 
-static struct packet_city_make_specialist *receive_packet_city_make_specialist_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_make_specialist *
+receive_packet_city_make_specialist_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_make_specialist_100_fields fields;
   struct packet_city_make_specialist *old;
@@ -8353,28 +7868,22 @@ static struct packet_city_make_specialist *receive_packet_city_make_specialist_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->worker_x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->worker_x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->worker_y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->worker_y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -8387,7 +7896,8 @@ static struct packet_city_make_specialist *receive_packet_city_make_specialist_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_make_specialist_100(connection_t *pconn, const struct packet_city_make_specialist *packet)
+static int send_packet_city_make_specialist_100(connection_t *pconn,
+                                                const struct packet_city_make_specialist *packet)
 {
   const struct packet_city_make_specialist *real_packet = packet;
   packet_city_make_specialist_100_fields fields;
@@ -8468,7 +7978,8 @@ static void ensure_valid_variant_packet_city_make_specialist(connection_t *pconn
   pconn->phs.variant[PACKET_CITY_MAKE_SPECIALIST] = variant;
 }
 
-struct packet_city_make_specialist *receive_packet_city_make_specialist(connection_t *pconn, enum packet_type type)
+struct packet_city_make_specialist *
+receive_packet_city_make_specialist(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8488,7 +7999,8 @@ struct packet_city_make_specialist *receive_packet_city_make_specialist(connecti
   }
 }
 
-int send_packet_city_make_specialist(connection_t *pconn, const struct packet_city_make_specialist *packet)
+int send_packet_city_make_specialist(connection_t *pconn,
+                                     const struct packet_city_make_specialist *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8525,7 +8037,8 @@ int dsend_packet_city_make_specialist(connection_t *pconn, int city_id, int work
 
 BV_DEFINE(packet_city_make_worker_100_fields, 3);
 
-static struct packet_city_make_worker *receive_packet_city_make_worker_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_make_worker *
+receive_packet_city_make_worker_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_make_worker_100_fields fields;
   struct packet_city_make_worker *old;
@@ -8548,28 +8061,22 @@ static struct packet_city_make_worker *receive_packet_city_make_worker_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->worker_x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->worker_x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->worker_y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->worker_y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -8582,7 +8089,8 @@ static struct packet_city_make_worker *receive_packet_city_make_worker_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_make_worker_100(connection_t *pconn, const struct packet_city_make_worker *packet)
+static int send_packet_city_make_worker_100(connection_t *pconn,
+                                            const struct packet_city_make_worker *packet)
 {
   const struct packet_city_make_worker *real_packet = packet;
   packet_city_make_worker_100_fields fields;
@@ -8639,7 +8147,6 @@ static int send_packet_city_make_worker_100(connection_t *pconn, const struct pa
     dio_put_uint8(&dout, real_packet->worker_y);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -8663,7 +8170,8 @@ static void ensure_valid_variant_packet_city_make_worker(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_MAKE_WORKER] = variant;
 }
 
-struct packet_city_make_worker *receive_packet_city_make_worker(connection_t *pconn, enum packet_type type)
+struct packet_city_make_worker *
+receive_packet_city_make_worker(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8720,7 +8228,8 @@ int dsend_packet_city_make_worker(connection_t *pconn, int city_id, int worker_x
 
 BV_DEFINE(packet_city_change_specialist_100_fields, 3);
 
-static struct packet_city_change_specialist *receive_packet_city_change_specialist_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_change_specialist *
+receive_packet_city_change_specialist_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_change_specialist_100_fields fields;
   struct packet_city_change_specialist *old;
@@ -8729,7 +8238,6 @@ static struct packet_city_change_specialist *receive_packet_city_change_speciali
   RECEIVE_PACKET_START(packet_city_change_specialist, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_change_specialist_100, cmp_packet_city_change_specialist_100);
@@ -8743,28 +8251,22 @@ static struct packet_city_change_specialist *receive_packet_city_change_speciali
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->from = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->from = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->to = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->to = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -8777,7 +8279,8 @@ static struct packet_city_change_specialist *receive_packet_city_change_speciali
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_change_specialist_100(connection_t *pconn, const struct packet_city_change_specialist *packet)
+static int send_packet_city_change_specialist_100(connection_t *pconn,
+                                                  const struct packet_city_change_specialist *packet)
 {
   const struct packet_city_change_specialist *real_packet = packet;
   packet_city_change_specialist_100_fields fields;
@@ -8858,7 +8361,8 @@ static void ensure_valid_variant_packet_city_change_specialist(connection_t *pco
   pconn->phs.variant[PACKET_CITY_CHANGE_SPECIALIST] = variant;
 }
 
-struct packet_city_change_specialist *receive_packet_city_change_specialist(connection_t *pconn, enum packet_type type)
+struct packet_city_change_specialist *
+receive_packet_city_change_specialist(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8878,7 +8382,8 @@ struct packet_city_change_specialist *receive_packet_city_change_specialist(conn
   }
 }
 
-int send_packet_city_change_specialist(connection_t *pconn, const struct packet_city_change_specialist *packet)
+int send_packet_city_change_specialist(connection_t *pconn,
+                                       const struct packet_city_change_specialist *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8898,7 +8403,10 @@ int send_packet_city_change_specialist(connection_t *pconn, const struct packet_
   }
 }
 
-int dsend_packet_city_change_specialist(connection_t *pconn, int city_id, Specialist_type_id from, Specialist_type_id to)
+int dsend_packet_city_change_specialist(connection_t *pconn,
+                                        int city_id,
+                                        Specialist_type_id from,
+                                        Specialist_type_id to)
 {
   struct packet_city_change_specialist packet, *real_packet = &packet;
 
@@ -8915,7 +8423,8 @@ int dsend_packet_city_change_specialist(connection_t *pconn, int city_id, Specia
 
 BV_DEFINE(packet_city_rename_100_fields, 2);
 
-static struct packet_city_rename *receive_packet_city_rename_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_rename *
+receive_packet_city_rename_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_rename_100_fields fields;
   struct packet_city_rename *old;
@@ -8938,12 +8447,10 @@ static struct packet_city_rename *receive_packet_city_rename_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -9006,7 +8513,6 @@ static int send_packet_city_rename_100(connection_t *pconn, const struct packet_
   if (BV_ISSET(fields, 1)) {
     dio_put_string(&dout, real_packet->name);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -9087,7 +8593,8 @@ int dsend_packet_city_rename(connection_t *pconn, int city_id, const char *name)
 
 BV_DEFINE(packet_city_options_req_100_fields, 2);
 
-static struct packet_city_options_req *receive_packet_city_options_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_options_req *
+receive_packet_city_options_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_options_req_100_fields fields;
   struct packet_city_options_req *old;
@@ -9110,20 +8617,16 @@ static struct packet_city_options_req *receive_packet_city_options_req_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->value = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->value = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -9136,7 +8639,8 @@ static struct packet_city_options_req *receive_packet_city_options_req_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_options_req_100(connection_t *pconn, const struct packet_city_options_req *packet)
+static int send_packet_city_options_req_100(connection_t *pconn,
+                                            const struct packet_city_options_req *packet)
 {
   const struct packet_city_options_req *real_packet = packet;
   packet_city_options_req_100_fields fields;
@@ -9183,7 +8687,6 @@ static int send_packet_city_options_req_100(connection_t *pconn, const struct pa
   if (BV_ISSET(fields, 1)) {
     dio_put_uint8(&dout, real_packet->value);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -9264,7 +8767,8 @@ int dsend_packet_city_options_req(connection_t *pconn, int city_id, int value)
 
 BV_DEFINE(packet_city_refresh_100_fields, 1);
 
-static struct packet_city_refresh *receive_packet_city_refresh_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_refresh *
+receive_packet_city_refresh_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_refresh_100_fields fields;
   struct packet_city_refresh *old;
@@ -9273,7 +8777,6 @@ static struct packet_city_refresh *receive_packet_city_refresh_100(connection_t 
   RECEIVE_PACKET_START(packet_city_refresh, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_refresh_100, cmp_packet_city_refresh_100);
@@ -9287,12 +8790,10 @@ static struct packet_city_refresh *receive_packet_city_refresh_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -9343,7 +8844,6 @@ static int send_packet_city_refresh_100(connection_t *pconn, const struct packet
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->city_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -9423,7 +8923,8 @@ int dsend_packet_city_refresh(connection_t *pconn, int city_id)
 
 BV_DEFINE(packet_city_incite_inq_100_fields, 1);
 
-static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_incite_inq *
+receive_packet_city_incite_inq_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_incite_inq_100_fields fields;
   struct packet_city_incite_inq *old;
@@ -9432,7 +8933,6 @@ static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(connect
   RECEIVE_PACKET_START(packet_city_incite_inq, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_incite_inq_100, cmp_packet_city_incite_inq_100);
@@ -9446,12 +8946,10 @@ static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -9464,7 +8962,8 @@ static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_incite_inq_100(connection_t *pconn, const struct packet_city_incite_inq *packet)
+static int send_packet_city_incite_inq_100(connection_t *pconn,
+                                           const struct packet_city_incite_inq *packet)
 {
   const struct packet_city_incite_inq *real_packet = packet;
   packet_city_incite_inq_100_fields fields;
@@ -9527,7 +9026,8 @@ static void ensure_valid_variant_packet_city_incite_inq(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_INCITE_INQ] = variant;
 }
 
-struct packet_city_incite_inq *receive_packet_city_incite_inq(connection_t *pconn, enum packet_type type)
+struct packet_city_incite_inq *
+receive_packet_city_incite_inq(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9582,7 +9082,8 @@ int dsend_packet_city_incite_inq(connection_t *pconn, int city_id)
 
 BV_DEFINE(packet_city_incite_info_100_fields, 2);
 
-static struct packet_city_incite_info *receive_packet_city_incite_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_incite_info *
+receive_packet_city_incite_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_incite_info_100_fields fields;
   struct packet_city_incite_info *old;
@@ -9605,20 +9106,16 @@ static struct packet_city_incite_info *receive_packet_city_incite_info_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->cost = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->cost = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -9631,7 +9128,8 @@ static struct packet_city_incite_info *receive_packet_city_incite_info_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_incite_info_100(connection_t *pconn, const struct packet_city_incite_info *packet)
+static int send_packet_city_incite_info_100(connection_t *pconn,
+                                            const struct packet_city_incite_info *packet)
 {
   const struct packet_city_incite_info *real_packet = packet;
   packet_city_incite_info_100_fields fields;
@@ -9679,7 +9177,6 @@ static int send_packet_city_incite_info_100(connection_t *pconn, const struct pa
     dio_put_uint32(&dout, real_packet->cost);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -9703,7 +9200,8 @@ static void ensure_valid_variant_packet_city_incite_info(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_INCITE_INFO] = variant;
 }
 
-struct packet_city_incite_info *receive_packet_city_incite_info(connection_t *pconn, enum packet_type type)
+struct packet_city_incite_info *
+receive_packet_city_incite_info(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9759,7 +9257,8 @@ int dsend_packet_city_incite_info(connection_t *pconn, int city_id, int cost)
 
 BV_DEFINE(packet_city_name_suggestion_req_100_fields, 1);
 
-static struct packet_city_name_suggestion_req *receive_packet_city_name_suggestion_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_name_suggestion_req *
+receive_packet_city_name_suggestion_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_name_suggestion_req_100_fields fields;
   struct packet_city_name_suggestion_req *old;
@@ -9768,7 +9267,6 @@ static struct packet_city_name_suggestion_req *receive_packet_city_name_suggesti
   RECEIVE_PACKET_START(packet_city_name_suggestion_req, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_name_suggestion_req_100, cmp_packet_city_name_suggestion_req_100);
@@ -9782,12 +9280,10 @@ static struct packet_city_name_suggestion_req *receive_packet_city_name_suggesti
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -9800,7 +9296,8 @@ static struct packet_city_name_suggestion_req *receive_packet_city_name_suggesti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_name_suggestion_req_100(connection_t *pconn, const struct packet_city_name_suggestion_req *packet)
+static int send_packet_city_name_suggestion_req_100(connection_t *pconn,
+                                                    const struct packet_city_name_suggestion_req *packet)
 {
   const struct packet_city_name_suggestion_req *real_packet = packet;
   packet_city_name_suggestion_req_100_fields fields;
@@ -9839,7 +9336,6 @@ static int send_packet_city_name_suggestion_req_100(connection_t *pconn, const s
     dio_put_uint16(&dout, real_packet->unit_id);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -9863,7 +9359,8 @@ static void ensure_valid_variant_packet_city_name_suggestion_req(connection_t *p
   pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ] = variant;
 }
 
-struct packet_city_name_suggestion_req *receive_packet_city_name_suggestion_req(connection_t *pconn, enum packet_type type)
+struct packet_city_name_suggestion_req *
+receive_packet_city_name_suggestion_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9883,7 +9380,8 @@ struct packet_city_name_suggestion_req *receive_packet_city_name_suggestion_req(
   }
 }
 
-int send_packet_city_name_suggestion_req(connection_t *pconn, const struct packet_city_name_suggestion_req *packet)
+int send_packet_city_name_suggestion_req(connection_t *pconn,
+                                         const struct packet_city_name_suggestion_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9918,7 +9416,8 @@ int dsend_packet_city_name_suggestion_req(connection_t *pconn, int unit_id)
 
 BV_DEFINE(packet_city_name_suggestion_info_100_fields, 2);
 
-static struct packet_city_name_suggestion_info *receive_packet_city_name_suggestion_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_name_suggestion_info *
+receive_packet_city_name_suggestion_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_name_suggestion_info_100_fields fields;
   struct packet_city_name_suggestion_info *old;
@@ -9941,12 +9440,10 @@ static struct packet_city_name_suggestion_info *receive_packet_city_name_suggest
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -9962,7 +9459,8 @@ static struct packet_city_name_suggestion_info *receive_packet_city_name_suggest
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_name_suggestion_info_100(connection_t *pconn, const struct packet_city_name_suggestion_info *packet)
+static int send_packet_city_name_suggestion_info_100(connection_t *pconn,
+                                                     const struct packet_city_name_suggestion_info *packet)
 {
   const struct packet_city_name_suggestion_info *real_packet = packet;
   packet_city_name_suggestion_info_100_fields fields;
@@ -10010,7 +9508,6 @@ static int send_packet_city_name_suggestion_info_100(connection_t *pconn, const 
     dio_put_string(&dout, real_packet->name);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -10034,7 +9531,8 @@ static void ensure_valid_variant_packet_city_name_suggestion_info(connection_t *
   pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO] = variant;
 }
 
-struct packet_city_name_suggestion_info *receive_packet_city_name_suggestion_info(connection_t *pconn, enum packet_type type)
+struct packet_city_name_suggestion_info *
+receive_packet_city_name_suggestion_info(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10074,7 +9572,8 @@ int send_packet_city_name_suggestion_info(connection_t *pconn, const struct pack
   }
 }
 
-void lsend_packet_city_name_suggestion_info(struct connection_list *dest, const struct packet_city_name_suggestion_info *packet)
+void lsend_packet_city_name_suggestion_info(struct connection_list *dest,
+                                            const struct packet_city_name_suggestion_info *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_city_name_suggestion_info(p_conn, packet);
@@ -10107,7 +9606,8 @@ void dlsend_packet_city_name_suggestion_info(struct connection_list *dest, int u
 
 BV_DEFINE(packet_city_sabotage_list_100_fields, 3);
 
-static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_sabotage_list *
+receive_packet_city_sabotage_list_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_sabotage_list_100_fields fields;
   struct packet_city_sabotage_list *old;
@@ -10116,7 +9616,6 @@ static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(c
   RECEIVE_PACKET_START(packet_city_sabotage_list, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_sabotage_list_100, cmp_packet_city_sabotage_list_100);
@@ -10130,20 +9629,16 @@ static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(c
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->diplomat_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->diplomat_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
   if (BV_ISSET(fields, 2)) {
     dio_get_bit_string(&din, real_packet->improvements, sizeof(real_packet->improvements));
@@ -10159,7 +9654,8 @@ static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(c
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_sabotage_list_100(connection_t *pconn, const struct packet_city_sabotage_list *packet)
+static int send_packet_city_sabotage_list_100(connection_t *pconn,
+                                              const struct packet_city_sabotage_list *packet)
 {
   const struct packet_city_sabotage_list *real_packet = packet;
   packet_city_sabotage_list_100_fields fields;
@@ -10216,7 +9712,6 @@ static int send_packet_city_sabotage_list_100(connection_t *pconn, const struct 
     dio_put_bit_string(&dout, real_packet->improvements);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -10240,7 +9735,8 @@ static void ensure_valid_variant_packet_city_sabotage_list(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_SABOTAGE_LIST] = variant;
 }
 
-struct packet_city_sabotage_list *receive_packet_city_sabotage_list(connection_t *pconn, enum packet_type type)
+struct packet_city_sabotage_list *
+receive_packet_city_sabotage_list(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10280,7 +9776,8 @@ int send_packet_city_sabotage_list(connection_t *pconn, const struct packet_city
   }
 }
 
-void lsend_packet_city_sabotage_list(struct connection_list *dest, const struct packet_city_sabotage_list *packet)
+void lsend_packet_city_sabotage_list(struct connection_list *dest,
+                                     const struct packet_city_sabotage_list *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_city_sabotage_list(p_conn, packet);
@@ -10293,7 +9790,8 @@ void lsend_packet_city_sabotage_list(struct connection_list *dest, const struct 
 
 BV_DEFINE(packet_player_remove_100_fields, 1);
 
-static struct packet_player_remove *receive_packet_player_remove_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_remove *
+receive_packet_player_remove_100(connection_t *pconn, enum packet_type type)
 {
   packet_player_remove_100_fields fields;
   struct packet_player_remove *old;
@@ -10316,12 +9814,10 @@ static struct packet_player_remove *receive_packet_player_remove_100(connection_
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->player_id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->player_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -10372,7 +9868,6 @@ static int send_packet_player_remove_100(connection_t *pconn, const struct packe
   if (BV_ISSET(fields, 0)) {
     dio_put_uint8(&dout, real_packet->player_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -10485,7 +9980,8 @@ static int cmp_packet_player_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_player_info_100_fields, 32);
 
-static struct packet_player_info *receive_packet_player_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_info *
+receive_packet_player_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_player_info_100_fields fields;
   struct packet_player_info *old;
@@ -10500,7 +9996,6 @@ static struct packet_player_info *receive_packet_player_info_100(connection_t *p
     dio_get_uint8(&din, &readin);
     real_packet->playerno = readin;
   }
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_info_100, cmp_packet_player_info_100);
@@ -10525,211 +10020,159 @@ static struct packet_player_info *receive_packet_player_info_100(connection_t *p
   }
   real_packet->is_male = BV_ISSET(fields, 2);
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+     int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->government = readin;
-    }
+     dio_get_uint8(&din, &readin);
+     real_packet->government = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->target_government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->target_government = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->embassy = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->embassy = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->city_style = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->city_style = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->nation = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->nation = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->team = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->team = readin;
   }
   real_packet->turn_done = BV_ISSET(fields, 9);
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->nturns_idle = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->nturns_idle = readin;
   }
   real_packet->is_alive = BV_ISSET(fields, 11);
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->reputation = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->reputation = readin;
   }
   if (BV_ISSET(fields, 13)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_get_diplstate(&din, &real_packet->diplstates[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_get_diplstate(&din, &real_packet->diplstates[i]);
     }
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gold = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gold = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tax = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tax = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->science = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->science = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->luxury = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->luxury = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->bulbs_last_turn = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->bulbs_last_turn = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->bulbs_researched = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->bulbs_researched = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->techs_researched = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->techs_researched = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->researching = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->researching = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->researching_cost = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->researching_cost = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->future_tech = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->future_tech = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech_goal = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech_goal = readin;
   }
   real_packet->is_connected = BV_ISSET(fields, 25);
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->revolution_finishes = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->revolution_finishes = readin;
   }
   real_packet->ai = BV_ISSET(fields, 27);
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->barbarian_type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->barbarian_type = readin;
   }
   if (BV_ISSET(fields, 29)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gives_shared_vision = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gives_shared_vision = readin;
   }
   if (BV_ISSET(fields, 30)) {
     dio_get_bit_string(&din, real_packet->inventions, sizeof(real_packet->inventions));
   }
   if (BV_ISSET(fields, 31)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        {
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
       int readin;
 
       dio_get_sint16(&din, &readin);
       real_packet->love[i] = readin;
-    }
-      }
     }
   }
 
@@ -10839,18 +10282,18 @@ static int send_packet_player_info_100(connection_t *pconn, const struct packet_
   }
 
 
-    {
-      differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-      if(!differ) {
-        int i;
-        for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-          if (!are_diplstates_equal(&old->diplstates[i], &real_packet->diplstates[i])) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
+    if(!differ) {
+      int i;
+      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+        if (!are_diplstates_equal(&old->diplstates[i], &real_packet->diplstates[i])) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 13);
@@ -10954,19 +10397,18 @@ static int send_packet_player_info_100(connection_t *pconn, const struct packet_
     BV_SET(fields, 30);
   }
 
-
-    {
-      differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-      if(!differ) {
-        int i;
-        for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-          if (old->love[i] != real_packet->love[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
+    if(!differ) {
+      int i;
+      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+        if (old->love[i] != real_packet->love[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 31);
@@ -11013,13 +10455,10 @@ static int send_packet_player_info_100(connection_t *pconn, const struct packet_
     dio_put_uint32(&dout, real_packet->reputation);
   }
   if (BV_ISSET(fields, 13)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_put_diplstate(&dout, &real_packet->diplstates[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_put_diplstate(&dout, &real_packet->diplstates[i]);
     }
   }
   if (BV_ISSET(fields, 14)) {
@@ -11070,16 +10509,12 @@ static int send_packet_player_info_100(connection_t *pconn, const struct packet_
     dio_put_bit_string(&dout, real_packet->inventions);
   }
   if (BV_ISSET(fields, 31)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_put_sint16(&dout, real_packet->love[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_put_sint16(&dout, real_packet->love[i]);
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -11115,22 +10550,21 @@ static int cmp_packet_player_info_101(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_player_info_101_fields, 31);
 
-static struct packet_player_info *receive_packet_player_info_101(connection_t *pconn, enum packet_type type)
+static struct packet_player_info *
+receive_packet_player_info_101(connection_t *pconn, enum packet_type type)
 {
   packet_player_info_101_fields fields;
   struct packet_player_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_player_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint8(&din, &readin);
-    real_packet->playerno = readin;
-  }
-
+  dio_get_uint8(&din, &readin);
+  real_packet->playerno = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_info_101, cmp_packet_player_info_101);
@@ -11155,203 +10589,153 @@ static struct packet_player_info *receive_packet_player_info_101(connection_t *p
   }
   real_packet->is_male = BV_ISSET(fields, 2);
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->government = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->target_government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->target_government = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->embassy = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->embassy = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->city_style = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->city_style = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->nation = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->nation = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->team = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->team = readin;
   }
   real_packet->turn_done = BV_ISSET(fields, 9);
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->nturns_idle = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->nturns_idle = readin;
   }
   real_packet->is_alive = BV_ISSET(fields, 11);
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->reputation = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->reputation = readin;
   }
   if (BV_ISSET(fields, 13)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_get_diplstate(&din, &real_packet->diplstates[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_get_diplstate(&din, &real_packet->diplstates[i]);
     }
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gold = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gold = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tax = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tax = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->science = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->science = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->luxury = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->luxury = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->bulbs_last_turn = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->bulbs_last_turn = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->bulbs_researched = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->bulbs_researched = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->techs_researched = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->techs_researched = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->researching = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->researching = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->future_tech = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->future_tech = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech_goal = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech_goal = readin;
   }
   real_packet->is_connected = BV_ISSET(fields, 24);
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->revolution_finishes = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->revolution_finishes = readin;
   }
   real_packet->ai = BV_ISSET(fields, 26);
   if (BV_ISSET(fields, 27)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->barbarian_type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->barbarian_type = readin;
   }
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gives_shared_vision = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gives_shared_vision = readin;
   }
   if (BV_ISSET(fields, 29)) {
     dio_get_bit_string(&din, real_packet->inventions, sizeof(real_packet->inventions));
   }
   if (BV_ISSET(fields, 30)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        {
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
       int readin;
 
       dio_get_sint16(&din, &readin);
       real_packet->love[i] = readin;
-    }
-      }
     }
   }
 
@@ -11461,18 +10845,18 @@ static int send_packet_player_info_101(connection_t *pconn, const struct packet_
   }
 
 
-    {
-      differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-      if(!differ) {
-        int i;
-        for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-          if (!are_diplstates_equal(&old->diplstates[i], &real_packet->diplstates[i])) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
+    if(!differ) {
+      int i;
+      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+        if (!are_diplstates_equal(&old->diplstates[i], &real_packet->diplstates[i])) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 13);
@@ -11570,19 +10954,18 @@ static int send_packet_player_info_101(connection_t *pconn, const struct packet_
     BV_SET(fields, 29);
   }
 
-
-    {
-      differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-      if(!differ) {
-        int i;
-        for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-          if (old->love[i] != real_packet->love[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
+    if(!differ) {
+      int i;
+      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+        if (old->love[i] != real_packet->love[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 30);
@@ -11629,13 +11012,10 @@ static int send_packet_player_info_101(connection_t *pconn, const struct packet_
     dio_put_uint32(&dout, real_packet->reputation);
   }
   if (BV_ISSET(fields, 13)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_put_diplstate(&dout, &real_packet->diplstates[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_put_diplstate(&dout, &real_packet->diplstates[i]);
     }
   }
   if (BV_ISSET(fields, 14)) {
@@ -11683,16 +11063,12 @@ static int send_packet_player_info_101(connection_t *pconn, const struct packet_
     dio_put_bit_string(&dout, real_packet->inventions);
   }
   if (BV_ISSET(fields, 30)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_put_sint16(&dout, real_packet->love[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_put_sint16(&dout, real_packet->love[i]);
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -11728,22 +11104,21 @@ static int cmp_packet_player_info_102(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_player_info_102_fields, 31);
 
-static struct packet_player_info *receive_packet_player_info_102(connection_t *pconn, enum packet_type type)
+static struct packet_player_info *
+receive_packet_player_info_102(connection_t *pconn, enum packet_type type)
 {
   packet_player_info_102_fields fields;
   struct packet_player_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_player_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint8(&din, &readin);
-    real_packet->playerno = readin;
-  }
-
+  dio_get_uint8(&din, &readin);
+  real_packet->playerno = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_info_102, cmp_packet_player_info_102);
@@ -11765,211 +11140,159 @@ static struct packet_player_info *receive_packet_player_info_102(connection_t *p
   }
   real_packet->is_male = BV_ISSET(fields, 1);
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->government = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->target_government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->target_government = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->embassy = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->embassy = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->city_style = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->city_style = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->nation = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->nation = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->team = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->team = readin;
   }
   real_packet->turn_done = BV_ISSET(fields, 8);
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->nturns_idle = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->nturns_idle = readin;
   }
   real_packet->is_alive = BV_ISSET(fields, 10);
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->reputation = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->reputation = readin;
   }
   if (BV_ISSET(fields, 12)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_get_diplstate(&din, &real_packet->diplstates[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_get_diplstate(&din, &real_packet->diplstates[i]);
     }
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gold = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gold = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tax = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tax = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->science = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->science = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->luxury = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->luxury = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->bulbs_last_turn = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->bulbs_last_turn = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->bulbs_researched = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->bulbs_researched = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->techs_researched = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->techs_researched = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->researching = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->researching = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->researching_cost = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->researching_cost = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->future_tech = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->future_tech = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech_goal = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech_goal = readin;
   }
   real_packet->is_connected = BV_ISSET(fields, 24);
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->revolution_finishes = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->revolution_finishes = readin;
   }
   real_packet->ai = BV_ISSET(fields, 26);
   if (BV_ISSET(fields, 27)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->barbarian_type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->barbarian_type = readin;
   }
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gives_shared_vision = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gives_shared_vision = readin;
   }
   if (BV_ISSET(fields, 29)) {
     dio_get_bit_string(&din, real_packet->inventions, sizeof(real_packet->inventions));
   }
   if (BV_ISSET(fields, 30)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        {
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
       int readin;
 
       dio_get_sint16(&din, &readin);
       real_packet->love[i] = readin;
-    }
-      }
     }
   }
 
@@ -12072,19 +11395,16 @@ static int send_packet_player_info_102(connection_t *pconn, const struct packet_
     BV_SET(fields, 11);
   }
 
-
-    {
-      differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-      if(!differ) {
-        int i;
-        for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-          if (!are_diplstates_equal(&old->diplstates[i], &real_packet->diplstates[i])) {
-            differ = TRUE;
-            break;
-          }
-        }
+  differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
+  if(!differ) {
+    int i;
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      if (!are_diplstates_equal(&old->diplstates[i], &real_packet->diplstates[i])) {
+        differ = TRUE;
+        break;
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 12);
@@ -12188,19 +11508,16 @@ static int send_packet_player_info_102(connection_t *pconn, const struct packet_
     BV_SET(fields, 29);
   }
 
-
-    {
-      differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-      if(!differ) {
-        int i;
-        for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-          if (old->love[i] != real_packet->love[i]) {
-            differ = TRUE;
-            break;
-          }
-        }
+  differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
+  if(!differ) {
+    int i;
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      if (old->love[i] != real_packet->love[i]) {
+        differ = TRUE;
+        break;
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 30);
@@ -12244,13 +11561,10 @@ static int send_packet_player_info_102(connection_t *pconn, const struct packet_
     dio_put_uint32(&dout, real_packet->reputation);
   }
   if (BV_ISSET(fields, 12)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_put_diplstate(&dout, &real_packet->diplstates[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_put_diplstate(&dout, &real_packet->diplstates[i]);
     }
   }
   if (BV_ISSET(fields, 13)) {
@@ -12301,16 +11615,12 @@ static int send_packet_player_info_102(connection_t *pconn, const struct packet_
     dio_put_bit_string(&dout, real_packet->inventions);
   }
   if (BV_ISSET(fields, 30)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_put_sint16(&dout, real_packet->love[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_put_sint16(&dout, real_packet->love[i]);
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -12346,22 +11656,21 @@ static int cmp_packet_player_info_103(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_player_info_103_fields, 30);
 
-static struct packet_player_info *receive_packet_player_info_103(connection_t *pconn, enum packet_type type)
+static struct packet_player_info *
+receive_packet_player_info_103(connection_t *pconn, enum packet_type type)
 {
   packet_player_info_103_fields fields;
   struct packet_player_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_player_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint8(&din, &readin);
-    real_packet->playerno = readin;
-  }
-
+  dio_get_uint8(&din, &readin);
+  real_packet->playerno = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_info_103, cmp_packet_player_info_103);
@@ -12383,203 +11692,153 @@ static struct packet_player_info *receive_packet_player_info_103(connection_t *p
   }
   real_packet->is_male = BV_ISSET(fields, 1);
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->government = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->target_government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->target_government = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->embassy = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->embassy = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->city_style = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->city_style = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->nation = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->nation = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->team = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->team = readin;
   }
   real_packet->turn_done = BV_ISSET(fields, 8);
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->nturns_idle = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->nturns_idle = readin;
   }
   real_packet->is_alive = BV_ISSET(fields, 10);
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->reputation = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->reputation = readin;
   }
   if (BV_ISSET(fields, 12)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_get_diplstate(&din, &real_packet->diplstates[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_get_diplstate(&din, &real_packet->diplstates[i]);
     }
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gold = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gold = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tax = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tax = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->science = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->science = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->luxury = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->luxury = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->bulbs_last_turn = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->bulbs_last_turn = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->bulbs_researched = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->bulbs_researched = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->techs_researched = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->techs_researched = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->researching = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->researching = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->future_tech = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->future_tech = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech_goal = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech_goal = readin;
   }
   real_packet->is_connected = BV_ISSET(fields, 23);
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->revolution_finishes = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->revolution_finishes = readin;
   }
   real_packet->ai = BV_ISSET(fields, 25);
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->barbarian_type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->barbarian_type = readin;
   }
   if (BV_ISSET(fields, 27)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->gives_shared_vision = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->gives_shared_vision = readin;
   }
   if (BV_ISSET(fields, 28)) {
     dio_get_bit_string(&din, real_packet->inventions, sizeof(real_packet->inventions));
   }
   if (BV_ISSET(fields, 29)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        {
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
       int readin;
 
       dio_get_sint16(&din, &readin);
       real_packet->love[i] = readin;
-    }
-      }
     }
   }
 
@@ -12682,19 +11941,17 @@ static int send_packet_player_info_103(connection_t *pconn, const struct packet_
     BV_SET(fields, 11);
   }
 
-
-    {
-      differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-      if(!differ) {
-        int i;
-        for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-          if (!are_diplstates_equal(&old->diplstates[i], &real_packet->diplstates[i])) {
-            differ = TRUE;
-            break;
-          }
-        }
+  differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
+  if(!differ) {
+    int i;
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      if (!are_diplstates_equal(&old->diplstates[i], &real_packet->diplstates[i])) {
+        differ = TRUE;
+        break;
       }
     }
+  }
+
   if (differ) {
     different++;
     BV_SET(fields, 12);
@@ -12792,19 +12049,17 @@ static int send_packet_player_info_103(connection_t *pconn, const struct packet_
     BV_SET(fields, 28);
   }
 
-
-    {
-      differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-      if(!differ) {
-        int i;
-        for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-          if (old->love[i] != real_packet->love[i]) {
-            differ = TRUE;
-            break;
-          }
-        }
+  differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
+  if(!differ) {
+    int i;
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      if (old->love[i] != real_packet->love[i]) {
+        differ = TRUE;
+        break;
       }
     }
+  }
+
   if (differ) {
     different++;
     BV_SET(fields, 29);
@@ -12848,13 +12103,10 @@ static int send_packet_player_info_103(connection_t *pconn, const struct packet_
     dio_put_uint32(&dout, real_packet->reputation);
   }
   if (BV_ISSET(fields, 12)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_put_diplstate(&dout, &real_packet->diplstates[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_put_diplstate(&dout, &real_packet->diplstates[i]);
     }
   }
   if (BV_ISSET(fields, 13)) {
@@ -12902,16 +12154,12 @@ static int send_packet_player_info_103(connection_t *pconn, const struct packet_
     dio_put_bit_string(&dout, real_packet->inventions);
   }
   if (BV_ISSET(fields, 29)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-        dio_put_sint16(&dout, real_packet->love[i]);
-      }
+    for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+      dio_put_sint16(&dout, real_packet->love[i]);
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -13016,7 +12264,8 @@ int send_packet_player_info(connection_t *pconn, const struct packet_player_info
   }
 }
 
-static struct packet_player_turn_done *receive_packet_player_turn_done_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_turn_done *
+receive_packet_player_turn_done_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_player_turn_done, real_packet);
 
@@ -13041,7 +12290,8 @@ static void ensure_valid_variant_packet_player_turn_done(connection_t *pconn)
   pconn->phs.variant[PACKET_PLAYER_TURN_DONE] = variant;
 }
 
-struct packet_player_turn_done *receive_packet_player_turn_done(connection_t *pconn, enum packet_type type)
+struct packet_player_turn_done *
+receive_packet_player_turn_done(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13087,7 +12337,8 @@ int send_packet_player_turn_done(connection_t *pconn)
 
 BV_DEFINE(packet_player_rates_100_fields, 3);
 
-static struct packet_player_rates *receive_packet_player_rates_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_rates *
+receive_packet_player_rates_100(connection_t *pconn, enum packet_type type)
 {
   packet_player_rates_100_fields fields;
   struct packet_player_rates *old;
@@ -13096,7 +12347,6 @@ static struct packet_player_rates *receive_packet_player_rates_100(connection_t 
   RECEIVE_PACKET_START(packet_player_rates, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_rates_100, cmp_packet_player_rates_100);
@@ -13110,28 +12360,22 @@ static struct packet_player_rates *receive_packet_player_rates_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tax = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tax = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->luxury = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->luxury = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->science = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->science = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -13200,7 +12444,6 @@ static int send_packet_player_rates_100(connection_t *pconn, const struct packet
   if (BV_ISSET(fields, 2)) {
     dio_put_uint8(&dout, real_packet->science);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -13282,7 +12525,8 @@ int dsend_packet_player_rates(connection_t *pconn, int tax, int luxury, int scie
 
 BV_DEFINE(packet_player_change_government_100_fields, 1);
 
-static struct packet_player_change_government *receive_packet_player_change_government_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_change_government *
+receive_packet_player_change_government_100(connection_t *pconn, enum packet_type type)
 {
   packet_player_change_government_100_fields fields;
   struct packet_player_change_government *old;
@@ -13291,7 +12535,6 @@ static struct packet_player_change_government *receive_packet_player_change_gove
   RECEIVE_PACKET_START(packet_player_change_government, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_change_government_100, cmp_packet_player_change_government_100);
@@ -13305,12 +12548,10 @@ static struct packet_player_change_government *receive_packet_player_change_gove
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->government = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -13323,7 +12564,8 @@ static struct packet_player_change_government *receive_packet_player_change_gove
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_change_government_100(connection_t *pconn, const struct packet_player_change_government *packet)
+static int send_packet_player_change_government_100(connection_t *pconn,
+                                                    const struct packet_player_change_government *packet)
 {
   const struct packet_player_change_government *real_packet = packet;
   packet_player_change_government_100_fields fields;
@@ -13362,7 +12604,6 @@ static int send_packet_player_change_government_100(connection_t *pconn, const s
     dio_put_uint8(&dout, real_packet->government);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -13386,7 +12627,8 @@ static void ensure_valid_variant_packet_player_change_government(connection_t *p
   pconn->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT] = variant;
 }
 
-struct packet_player_change_government *receive_packet_player_change_government(connection_t *pconn, enum packet_type type)
+struct packet_player_change_government *
+receive_packet_player_change_government(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13406,7 +12648,8 @@ struct packet_player_change_government *receive_packet_player_change_government(
   }
 }
 
-int send_packet_player_change_government(connection_t *pconn, const struct packet_player_change_government *packet)
+int send_packet_player_change_government(connection_t *pconn,
+                                         const struct packet_player_change_government *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13441,7 +12684,8 @@ int dsend_packet_player_change_government(connection_t *pconn, int government)
 
 BV_DEFINE(packet_player_research_100_fields, 1);
 
-static struct packet_player_research *receive_packet_player_research_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_research *
+receive_packet_player_research_100(connection_t *pconn, enum packet_type type)
 {
   packet_player_research_100_fields fields;
   struct packet_player_research *old;
@@ -13450,7 +12694,6 @@ static struct packet_player_research *receive_packet_player_research_100(connect
   RECEIVE_PACKET_START(packet_player_research, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_research_100, cmp_packet_player_research_100);
@@ -13464,12 +12707,10 @@ static struct packet_player_research *receive_packet_player_research_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -13482,7 +12723,8 @@ static struct packet_player_research *receive_packet_player_research_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_research_100(connection_t *pconn, const struct packet_player_research *packet)
+static int send_packet_player_research_100(connection_t *pconn,
+                                           const struct packet_player_research *packet)
 {
   const struct packet_player_research *real_packet = packet;
   packet_player_research_100_fields fields;
@@ -13520,7 +12762,6 @@ static int send_packet_player_research_100(connection_t *pconn, const struct pac
   if (BV_ISSET(fields, 0)) {
     dio_put_uint8(&dout, real_packet->tech);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -13600,7 +12841,8 @@ int dsend_packet_player_research(connection_t *pconn, int tech)
 
 BV_DEFINE(packet_player_tech_goal_100_fields, 1);
 
-static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_tech_goal *
+receive_packet_player_tech_goal_100(connection_t *pconn, enum packet_type type)
 {
   packet_player_tech_goal_100_fields fields;
   struct packet_player_tech_goal *old;
@@ -13609,7 +12851,6 @@ static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(conne
   RECEIVE_PACKET_START(packet_player_tech_goal, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_tech_goal_100, cmp_packet_player_tech_goal_100);
@@ -13623,12 +12864,10 @@ static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -13641,7 +12880,8 @@ static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_tech_goal_100(connection_t *pconn, const struct packet_player_tech_goal *packet)
+static int send_packet_player_tech_goal_100(connection_t *pconn,
+                                            const struct packet_player_tech_goal *packet)
 {
   const struct packet_player_tech_goal *real_packet = packet;
   packet_player_tech_goal_100_fields fields;
@@ -13679,7 +12919,6 @@ static int send_packet_player_tech_goal_100(connection_t *pconn, const struct pa
   if (BV_ISSET(fields, 0)) {
     dio_put_uint8(&dout, real_packet->tech);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -13753,7 +12992,8 @@ int dsend_packet_player_tech_goal(connection_t *pconn, int tech)
   return send_packet_player_tech_goal(pconn, real_packet);
 }
 
-static struct packet_player_attribute_block *receive_packet_player_attribute_block_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_attribute_block *
+receive_packet_player_attribute_block_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_player_attribute_block, real_packet);
 
@@ -13778,7 +13018,8 @@ static void ensure_valid_variant_packet_player_attribute_block(connection_t *pco
   pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK] = variant;
 }
 
-struct packet_player_attribute_block *receive_packet_player_attribute_block(connection_t *pconn, enum packet_type type)
+struct packet_player_attribute_block *
+receive_packet_player_attribute_block(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13824,7 +13065,8 @@ int send_packet_player_attribute_block(connection_t *pconn)
 
 BV_DEFINE(packet_player_attribute_chunk_100_fields, 4);
 
-static struct packet_player_attribute_chunk *receive_packet_player_attribute_chunk_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_attribute_chunk *
+receive_packet_player_attribute_chunk_100(connection_t *pconn, enum packet_type type)
 {
   packet_player_attribute_chunk_100_fields fields;
   struct packet_player_attribute_chunk *old;
@@ -13833,7 +13075,6 @@ static struct packet_player_attribute_chunk *receive_packet_player_attribute_chu
   RECEIVE_PACKET_START(packet_player_attribute_chunk, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_attribute_chunk_100, cmp_packet_player_attribute_chunk_100);
@@ -13847,36 +13088,29 @@ static struct packet_player_attribute_chunk *receive_packet_player_attribute_chu
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->offset = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->offset = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->total_length = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->total_length = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->chunk_length = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->chunk_length = readin;
   }
   if (BV_ISSET(fields, 3)) {
-
-      if(real_packet->chunk_length > ATTRIBUTE_CHUNK_SIZE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->chunk_length = ATTRIBUTE_CHUNK_SIZE;
-      }
-      dio_get_memory(&din, real_packet->data, real_packet->chunk_length);
+    if(real_packet->chunk_length > ATTRIBUTE_CHUNK_SIZE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->chunk_length = ATTRIBUTE_CHUNK_SIZE;
+    }
+    dio_get_memory(&din, real_packet->data, real_packet->chunk_length);
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -13889,7 +13123,8 @@ static struct packet_player_attribute_chunk *receive_packet_player_attribute_chu
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_attribute_chunk_100(connection_t *pconn, const struct packet_player_attribute_chunk *packet)
+static int send_packet_player_attribute_chunk_100(connection_t *pconn,
+                                                  const struct packet_player_attribute_chunk *packet)
 {
   const struct packet_player_attribute_chunk *real_packet = packet;
   packet_player_attribute_chunk_100_fields fields;
@@ -13967,7 +13202,6 @@ static int send_packet_player_attribute_chunk_100(connection_t *pconn, const str
     dio_put_memory(&dout, &real_packet->data, real_packet->chunk_length);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -13995,7 +13229,8 @@ static void ensure_valid_variant_packet_player_attribute_chunk(connection_t *pco
   pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK] = variant;
 }
 
-struct packet_player_attribute_chunk *receive_packet_player_attribute_chunk(connection_t *pconn, enum packet_type type)
+struct packet_player_attribute_chunk *
+receive_packet_player_attribute_chunk(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -14012,7 +13247,8 @@ struct packet_player_attribute_chunk *receive_packet_player_attribute_chunk(conn
   }
 }
 
-int send_packet_player_attribute_chunk(connection_t *pconn, const struct packet_player_attribute_chunk *packet)
+int send_packet_player_attribute_chunk(connection_t *pconn,
+                                       const struct packet_player_attribute_chunk *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -14035,7 +13271,8 @@ int send_packet_player_attribute_chunk(connection_t *pconn, const struct packet_
 
 BV_DEFINE(packet_unit_remove_100_fields, 1);
 
-static struct packet_unit_remove *receive_packet_unit_remove_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_remove *
+receive_packet_unit_remove_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_remove_100_fields fields;
   struct packet_unit_remove *old;
@@ -14044,7 +13281,6 @@ static struct packet_unit_remove *receive_packet_unit_remove_100(connection_t *p
   RECEIVE_PACKET_START(packet_unit_remove, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_remove_100, cmp_packet_unit_remove_100);
@@ -14058,12 +13294,10 @@ static struct packet_unit_remove *receive_packet_unit_remove_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -14114,7 +13348,6 @@ static int send_packet_unit_remove_100(connection_t *pconn, const struct packet_
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->unit_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -14233,16 +13466,14 @@ static struct packet_unit_info *receive_packet_unit_info_100(connection_t *pconn
   struct packet_unit_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_unit_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint16(&din, &readin);
-    real_packet->id = readin;
-  }
-
+  dio_get_uint16(&din, &readin);
+  real_packet->id = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_info_100, cmp_packet_unit_info_100);
@@ -14260,44 +13491,34 @@ static struct packet_unit_info *receive_packet_unit_info_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->owner = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->owner = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->homecity = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->homecity = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->veteran = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->veteran = readin;
   }
   real_packet->ai = BV_ISSET(fields, 5);
   real_packet->paradropped = BV_ISSET(fields, 6);
@@ -14305,215 +13526,162 @@ static struct packet_unit_info *receive_packet_unit_info_100(connection_t *pconn
   real_packet->transported = BV_ISSET(fields, 8);
   real_packet->done_moving = BV_ISSET(fields, 9);
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->transported_by = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->transported_by = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->movesleft = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->movesleft = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->hp = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->hp = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->fuel = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->fuel = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->activity_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->activity_count = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->unhappiness = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->unhappiness = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->upkeep = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->upkeep = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->upkeep_food = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->upkeep_food = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->upkeep_gold = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->upkeep_gold = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->occupy = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->occupy = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->goto_dest_x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->goto_dest_x = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->goto_dest_y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->goto_dest_y = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->air_patrol_x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->air_patrol_x = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->air_patrol_y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->air_patrol_y = readin;
   }
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->activity = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->activity = readin;
   }
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->activity_target = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->activity_target = readin;
   }
   real_packet->has_orders = BV_ISSET(fields, 27);
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->orders_length = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->orders_length = readin;
   }
   if (BV_ISSET(fields, 29)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->orders_index = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->orders_index = readin;
   }
   real_packet->orders_repeat = BV_ISSET(fields, 30);
   real_packet->orders_vigilant = BV_ISSET(fields, 31);
   if (BV_ISSET(fields, 32)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->orders_length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->orders_length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->orders_length; i++) {
-        {
+    if(real_packet->orders_length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->orders_length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->orders_length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->orders[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 33)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->orders_length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->orders_length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->orders_length; i++) {
-        {
+    if(real_packet->orders_length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->orders_length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->orders_length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->orders_dirs[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 34)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->orders_length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->orders_length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->orders_length; i++) {
-        {
+    if(real_packet->orders_length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->orders_length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->orders_length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->orders_activities[i] = readin;
-    }
-      }
     }
   }
 
@@ -14939,16 +14107,14 @@ static struct packet_unit_info *receive_packet_unit_info_101(connection_t *pconn
   struct packet_unit_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_unit_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint16(&din, &readin);
-    real_packet->id = readin;
-  }
-
+  dio_get_uint16(&din, &readin);
+  real_packet->id = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_info_101, cmp_packet_unit_info_101);
@@ -14966,44 +14132,34 @@ static struct packet_unit_info *receive_packet_unit_info_101(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->owner = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->owner = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->homecity = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->homecity = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->veteran = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->veteran = readin;
   }
   real_packet->ai = BV_ISSET(fields, 5);
   real_packet->paradropped = BV_ISSET(fields, 6);
@@ -15011,199 +14167,150 @@ static struct packet_unit_info *receive_packet_unit_info_101(connection_t *pconn
   real_packet->transported = BV_ISSET(fields, 8);
   real_packet->done_moving = BV_ISSET(fields, 9);
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->transported_by = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->transported_by = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->movesleft = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->movesleft = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->hp = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->hp = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->fuel = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->fuel = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->activity_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->activity_count = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->unhappiness = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->unhappiness = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->upkeep = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->upkeep = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->upkeep_food = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->upkeep_food = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->upkeep_gold = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->upkeep_gold = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->occupy = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->occupy = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->goto_dest_x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->goto_dest_x = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->goto_dest_y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->goto_dest_y = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->activity = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->activity = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->activity_target = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->activity_target = readin;
   }
   real_packet->has_orders = BV_ISSET(fields, 25);
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->orders_length = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->orders_length = readin;
   }
   if (BV_ISSET(fields, 27)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->orders_index = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->orders_index = readin;
   }
   real_packet->orders_repeat = BV_ISSET(fields, 28);
   real_packet->orders_vigilant = BV_ISSET(fields, 29);
   if (BV_ISSET(fields, 30)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->orders_length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->orders_length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->orders_length; i++) {
-        {
+    if(real_packet->orders_length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->orders_length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->orders_length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->orders[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 31)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->orders_length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->orders_length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->orders_length; i++) {
-        {
+    if(real_packet->orders_length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->orders_length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->orders_length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->orders_dirs[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 32)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->orders_length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->orders_length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->orders_length; i++) {
-        {
+    if(real_packet->orders_length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->orders_length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->orders_length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->orders_activities[i] = readin;
-    }
-      }
     }
   }
 
@@ -15676,22 +14783,21 @@ static int cmp_packet_unit_short_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_unit_short_info_100_fields, 14);
 
-static struct packet_unit_short_info *receive_packet_unit_short_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_short_info *
+receive_packet_unit_short_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_short_info_100_fields fields;
   struct packet_unit_short_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_short_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_unit_short_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint16(&din, &readin);
-    real_packet->id = readin;
-  }
-
+  dio_get_uint16(&din, &readin);
+  real_packet->id = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_short_info_100, cmp_packet_unit_short_info_100);
@@ -15709,95 +14815,73 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->owner = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->owner = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->veteran = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->veteran = readin;
   }
   real_packet->occupied = BV_ISSET(fields, 5);
   real_packet->goes_out_of_sight = BV_ISSET(fields, 6);
   real_packet->transported = BV_ISSET(fields, 7);
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->hp = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->hp = readin;
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->activity = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->activity = readin;
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->transported_by = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->transported_by = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->packet_use = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->packet_use = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->info_city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->info_city_id = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->serial_num = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->serial_num = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -15810,7 +14894,8 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_short_info_100(connection_t *pconn, const struct packet_unit_short_info *packet)
+static int send_packet_unit_short_info_100(connection_t *pconn,
+                                           const struct packet_unit_short_info *packet)
 {
   const struct packet_unit_short_info *real_packet = packet;
   packet_unit_short_info_100_fields fields;
@@ -16019,7 +15104,8 @@ int send_packet_unit_short_info(connection_t *pconn, const struct packet_unit_sh
   }
 }
 
-void lsend_packet_unit_short_info(struct connection_list *dest, const struct packet_unit_short_info *packet)
+void lsend_packet_unit_short_info(struct connection_list *dest,
+                                  const struct packet_unit_short_info *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_unit_short_info(p_conn, packet);
@@ -16032,7 +15118,8 @@ void lsend_packet_unit_short_info(struct connection_list *dest, const struct pac
 
 BV_DEFINE(packet_unit_combat_info_100_fields, 5);
 
-static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_combat_info *
+receive_packet_unit_combat_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_combat_info_100_fields fields;
   struct packet_unit_combat_info *old;
@@ -16055,36 +15142,28 @@ static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->attacker_unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->attacker_unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->defender_unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->defender_unit_id = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->attacker_hp = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->attacker_hp = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->defender_hp = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->defender_hp = readin;
   }
   real_packet->make_winner_veteran = BV_ISSET(fields, 4);
 
@@ -16098,7 +15177,8 @@ static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_combat_info_100(connection_t *pconn, const struct packet_unit_combat_info *packet)
+static int send_packet_unit_combat_info_100(connection_t *pconn,
+                                            const struct packet_unit_combat_info *packet)
 {
   const struct packet_unit_combat_info *real_packet = packet;
   packet_unit_combat_info_100_fields fields;
@@ -16233,7 +15313,8 @@ int send_packet_unit_combat_info(connection_t *pconn, const struct packet_unit_c
   }
 }
 
-void lsend_packet_unit_combat_info(struct connection_list *dest, const struct packet_unit_combat_info *packet)
+void lsend_packet_unit_combat_info(struct connection_list *dest,
+                                   const struct packet_unit_combat_info *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_unit_combat_info(p_conn, packet);
@@ -16269,28 +15350,22 @@ static struct packet_unit_move *receive_packet_unit_move_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -16441,7 +15516,8 @@ int dsend_packet_unit_move(connection_t *pconn, int unit_id, int x, int y)
 
 BV_DEFINE(packet_unit_build_city_100_fields, 2);
 
-static struct packet_unit_build_city *receive_packet_unit_build_city_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_build_city *
+receive_packet_unit_build_city_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_build_city_100_fields fields;
   struct packet_unit_build_city *old;
@@ -16464,12 +15540,10 @@ static struct packet_unit_build_city *receive_packet_unit_build_city_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -16485,7 +15559,8 @@ static struct packet_unit_build_city *receive_packet_unit_build_city_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_build_city_100(connection_t *pconn, const struct packet_unit_build_city *packet)
+static int send_packet_unit_build_city_100(connection_t *pconn,
+                                           const struct packet_unit_build_city *packet)
 {
   const struct packet_unit_build_city *real_packet = packet;
   packet_unit_build_city_100_fields fields;
@@ -16613,7 +15688,8 @@ int dsend_packet_unit_build_city(connection_t *pconn, int unit_id, const char *n
 
 BV_DEFINE(packet_unit_disband_100_fields, 1);
 
-static struct packet_unit_disband *receive_packet_unit_disband_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_disband *
+receive_packet_unit_disband_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_disband_100_fields fields;
   struct packet_unit_disband *old;
@@ -16636,12 +15712,10 @@ static struct packet_unit_disband *receive_packet_unit_disband_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -16772,7 +15846,8 @@ int dsend_packet_unit_disband(connection_t *pconn, int unit_id)
 
 BV_DEFINE(packet_unit_change_homecity_100_fields, 2);
 
-static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_change_homecity *
+receive_packet_unit_change_homecity_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_change_homecity_100_fields fields;
   struct packet_unit_change_homecity *old;
@@ -16795,20 +15870,16 @@ static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -16821,7 +15892,8 @@ static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_change_homecity_100(connection_t *pconn, const struct packet_unit_change_homecity *packet)
+static int send_packet_unit_change_homecity_100(connection_t *pconn,
+                                                const struct packet_unit_change_homecity *packet)
 {
   const struct packet_unit_change_homecity *real_packet = packet;
   packet_unit_change_homecity_100_fields fields;
@@ -16893,7 +15965,8 @@ static void ensure_valid_variant_packet_unit_change_homecity(connection_t *pconn
   pconn->phs.variant[PACKET_UNIT_CHANGE_HOMECITY] = variant;
 }
 
-struct packet_unit_change_homecity *receive_packet_unit_change_homecity(connection_t *pconn, enum packet_type type)
+struct packet_unit_change_homecity *
+receive_packet_unit_change_homecity(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16913,7 +15986,8 @@ struct packet_unit_change_homecity *receive_packet_unit_change_homecity(connecti
   }
 }
 
-int send_packet_unit_change_homecity(connection_t *pconn, const struct packet_unit_change_homecity *packet)
+int send_packet_unit_change_homecity(connection_t *pconn,
+                                     const struct packet_unit_change_homecity *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16949,7 +16023,8 @@ int dsend_packet_unit_change_homecity(connection_t *pconn, int unit_id, int city
 
 BV_DEFINE(packet_unit_establish_trade_100_fields, 1);
 
-static struct packet_unit_establish_trade *receive_packet_unit_establish_trade_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_establish_trade *
+receive_packet_unit_establish_trade_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_establish_trade_100_fields fields;
   struct packet_unit_establish_trade *old;
@@ -16972,12 +16047,10 @@ static struct packet_unit_establish_trade *receive_packet_unit_establish_trade_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -16990,7 +16063,8 @@ static struct packet_unit_establish_trade *receive_packet_unit_establish_trade_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_establish_trade_100(connection_t *pconn, const struct packet_unit_establish_trade *packet)
+static int send_packet_unit_establish_trade_100(connection_t *pconn,
+                                                const struct packet_unit_establish_trade *packet)
 {
   const struct packet_unit_establish_trade *real_packet = packet;
   packet_unit_establish_trade_100_fields fields;
@@ -17053,7 +16127,8 @@ static void ensure_valid_variant_packet_unit_establish_trade(connection_t *pconn
   pconn->phs.variant[PACKET_UNIT_ESTABLISH_TRADE] = variant;
 }
 
-struct packet_unit_establish_trade *receive_packet_unit_establish_trade(connection_t *pconn, enum packet_type type)
+struct packet_unit_establish_trade *
+receive_packet_unit_establish_trade(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17073,7 +16148,8 @@ struct packet_unit_establish_trade *receive_packet_unit_establish_trade(connecti
   }
 }
 
-int send_packet_unit_establish_trade(connection_t *pconn, const struct packet_unit_establish_trade *packet)
+int send_packet_unit_establish_trade(connection_t *pconn,
+                                     const struct packet_unit_establish_trade *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17108,7 +16184,8 @@ int dsend_packet_unit_establish_trade(connection_t *pconn, int unit_id)
 
 BV_DEFINE(packet_unit_help_build_wonder_100_fields, 1);
 
-static struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wonder_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_help_build_wonder *
+receive_packet_unit_help_build_wonder_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_help_build_wonder_100_fields fields;
   struct packet_unit_help_build_wonder *old;
@@ -17131,12 +16208,10 @@ static struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wond
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -17149,7 +16224,8 @@ static struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wond
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_help_build_wonder_100(connection_t *pconn, const struct packet_unit_help_build_wonder *packet)
+static int send_packet_unit_help_build_wonder_100(connection_t *pconn,
+                                                  const struct packet_unit_help_build_wonder *packet)
 {
   const struct packet_unit_help_build_wonder *real_packet = packet;
   packet_unit_help_build_wonder_100_fields fields;
@@ -17212,7 +16288,8 @@ static void ensure_valid_variant_packet_unit_help_build_wonder(connection_t *pco
   pconn->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER] = variant;
 }
 
-struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wonder(connection_t *pconn, enum packet_type type)
+struct packet_unit_help_build_wonder *
+receive_packet_unit_help_build_wonder(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17232,7 +16309,8 @@ struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wonder(conn
   }
 }
 
-int send_packet_unit_help_build_wonder(connection_t *pconn, const struct packet_unit_help_build_wonder *packet)
+int send_packet_unit_help_build_wonder(connection_t *pconn,
+                                       const struct packet_unit_help_build_wonder *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17290,28 +16368,22 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -17462,7 +16534,8 @@ int dsend_packet_unit_goto(connection_t *pconn, int unit_id, int x, int y)
 
 BV_DEFINE(packet_unit_orders_100_fields, 9);
 
-static struct packet_unit_orders *receive_packet_unit_orders_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_orders *
+receive_packet_unit_orders_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_orders_100_fields fields;
   struct packet_unit_orders *old;
@@ -17471,7 +16544,6 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(connection_t *p
   RECEIVE_PACKET_START(packet_unit_orders, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_orders_100, cmp_packet_unit_orders_100);
@@ -17485,95 +16557,72 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->length = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->length = readin;
   }
   real_packet->repeat = BV_ISSET(fields, 2);
   real_packet->vigilant = BV_ISSET(fields, 3);
   if (BV_ISSET(fields, 4)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->length; i++) {
-        {
+    if(real_packet->length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->orders[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 5)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->length; i++) {
-        {
+    if(real_packet->length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->dir[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 6)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->length > MAX_LEN_ROUTE) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->length = MAX_LEN_ROUTE;
-      }
-      for (i = 0; i < real_packet->length; i++) {
-        {
+    if(real_packet->length > MAX_LEN_ROUTE) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->length = MAX_LEN_ROUTE;
+    }
+    for (i = 0; i < real_packet->length; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->activity[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->dest_x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->dest_x = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->dest_y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->dest_y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -17839,12 +16888,10 @@ static struct packet_unit_auto *receive_packet_unit_auto_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -17998,20 +17045,16 @@ static struct packet_unit_load *receive_packet_unit_load_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->cargo_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->cargo_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->transporter_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->transporter_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -18152,7 +17195,8 @@ int dsend_packet_unit_load(connection_t *pconn, int cargo_id, int transporter_id
 
 BV_DEFINE(packet_unit_unload_100_fields, 2);
 
-static struct packet_unit_unload *receive_packet_unit_unload_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_unload *
+receive_packet_unit_unload_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_unload_100_fields fields;
   struct packet_unit_unload *old;
@@ -18175,20 +17219,16 @@ static struct packet_unit_unload *receive_packet_unit_unload_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->cargo_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->cargo_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->transporter_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->transporter_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -18329,7 +17369,8 @@ int dsend_packet_unit_unload(connection_t *pconn, int cargo_id, int transporter_
 
 BV_DEFINE(packet_unit_upgrade_100_fields, 1);
 
-static struct packet_unit_upgrade *receive_packet_unit_upgrade_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_upgrade *
+receive_packet_unit_upgrade_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_upgrade_100_fields fields;
   struct packet_unit_upgrade *old;
@@ -18352,12 +17393,10 @@ static struct packet_unit_upgrade *receive_packet_unit_upgrade_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -18511,12 +17550,10 @@ static struct packet_unit_nuke *receive_packet_unit_nuke_100(connection_t *pconn
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -18647,7 +17684,8 @@ int dsend_packet_unit_nuke(connection_t *pconn, int unit_id)
 
 BV_DEFINE(packet_unit_paradrop_to_100_fields, 3);
 
-static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_paradrop_to *
+receive_packet_unit_paradrop_to_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_paradrop_to_100_fields fields;
   struct packet_unit_paradrop_to *old;
@@ -18656,7 +17694,6 @@ static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(conne
   RECEIVE_PACKET_START(packet_unit_paradrop_to, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_paradrop_to_100, cmp_packet_unit_paradrop_to_100);
@@ -18670,28 +17707,22 @@ static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -18704,7 +17735,8 @@ static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_paradrop_to_100(connection_t *pconn, const struct packet_unit_paradrop_to *packet)
+static int send_packet_unit_paradrop_to_100(connection_t *pconn,
+                                            const struct packet_unit_paradrop_to *packet)
 {
   const struct packet_unit_paradrop_to *real_packet = packet;
   packet_unit_paradrop_to_100_fields fields;
@@ -18842,7 +17874,8 @@ int dsend_packet_unit_paradrop_to(connection_t *pconn, int unit_id, int x, int y
 
 BV_DEFINE(packet_unit_airlift_100_fields, 2);
 
-static struct packet_unit_airlift *receive_packet_unit_airlift_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_airlift *
+receive_packet_unit_airlift_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_airlift_100_fields fields;
   struct packet_unit_airlift *old;
@@ -18851,7 +17884,6 @@ static struct packet_unit_airlift *receive_packet_unit_airlift_100(connection_t 
   RECEIVE_PACKET_START(packet_unit_airlift, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_airlift_100, cmp_packet_unit_airlift_100);
@@ -18865,20 +17897,16 @@ static struct packet_unit_airlift *receive_packet_unit_airlift_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -19019,7 +18047,8 @@ int dsend_packet_unit_airlift(connection_t *pconn, int unit_id, int city_id)
 
 BV_DEFINE(packet_unit_bribe_inq_100_fields, 1);
 
-static struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_bribe_inq *
+receive_packet_unit_bribe_inq_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_bribe_inq_100_fields fields;
   struct packet_unit_bribe_inq *old;
@@ -19028,7 +18057,6 @@ static struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq_100(connectio
   RECEIVE_PACKET_START(packet_unit_bribe_inq, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_bribe_inq_100, cmp_packet_unit_bribe_inq_100);
@@ -19042,12 +18070,10 @@ static struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq_100(connectio
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -19178,7 +18204,8 @@ int dsend_packet_unit_bribe_inq(connection_t *pconn, int unit_id)
 
 BV_DEFINE(packet_unit_bribe_info_100_fields, 2);
 
-static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_bribe_info *
+receive_packet_unit_bribe_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_bribe_info_100_fields fields;
   struct packet_unit_bribe_info *old;
@@ -19187,7 +18214,6 @@ static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(connect
   RECEIVE_PACKET_START(packet_unit_bribe_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_bribe_info_100, cmp_packet_unit_bribe_info_100);
@@ -19201,20 +18227,16 @@ static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->cost = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->cost = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -19227,7 +18249,8 @@ static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_bribe_info_100(connection_t *pconn, const struct packet_unit_bribe_info *packet)
+static int send_packet_unit_bribe_info_100(connection_t *pconn,
+                                           const struct packet_unit_bribe_info *packet)
 {
   const struct packet_unit_bribe_info *real_packet = packet;
   packet_unit_bribe_info_100_fields fields;
@@ -19355,7 +18378,8 @@ int dsend_packet_unit_bribe_info(connection_t *pconn, int unit_id, int cost)
 
 BV_DEFINE(packet_unit_type_upgrade_100_fields, 1);
 
-static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_type_upgrade *
+receive_packet_unit_type_upgrade_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_type_upgrade_100_fields fields;
   struct packet_unit_type_upgrade *old;
@@ -19364,7 +18388,6 @@ static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(con
   RECEIVE_PACKET_START(packet_unit_type_upgrade, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_type_upgrade_100, cmp_packet_unit_type_upgrade_100);
@@ -19378,12 +18401,10 @@ static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(con
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -19396,7 +18417,8 @@ static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(con
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_type_upgrade_100(connection_t *pconn, const struct packet_unit_type_upgrade *packet)
+static int send_packet_unit_type_upgrade_100(connection_t *pconn,
+                                             const struct packet_unit_type_upgrade *packet)
 {
   const struct packet_unit_type_upgrade *real_packet = packet;
   packet_unit_type_upgrade_100_fields fields;
@@ -19459,7 +18481,8 @@ static void ensure_valid_variant_packet_unit_type_upgrade(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_TYPE_UPGRADE] = variant;
 }
 
-struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade(connection_t *pconn, enum packet_type type)
+struct packet_unit_type_upgrade *
+receive_packet_unit_type_upgrade(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19514,7 +18537,8 @@ int dsend_packet_unit_type_upgrade(connection_t *pconn, Unit_Type_id type)
 
 BV_DEFINE(packet_unit_diplomat_action_100_fields, 4);
 
-static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_diplomat_action *
+receive_packet_unit_diplomat_action_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_diplomat_action_100_fields fields;
   struct packet_unit_diplomat_action *old;
@@ -19523,7 +18547,6 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
   RECEIVE_PACKET_START(packet_unit_diplomat_action, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_diplomat_action_100, cmp_packet_unit_diplomat_action_100);
@@ -19537,36 +18560,28 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->diplomat_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->diplomat_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->action_type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->action_type = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->target_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->target_id = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->value = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->value = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -19579,7 +18594,8 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_diplomat_action_100(connection_t *pconn, const struct packet_unit_diplomat_action *packet)
+static int send_packet_unit_diplomat_action_100(connection_t *pconn,
+                                                const struct packet_unit_diplomat_action *packet)
 {
   const struct packet_unit_diplomat_action *real_packet = packet;
   packet_unit_diplomat_action_100_fields fields;
@@ -19669,7 +18685,8 @@ static void ensure_valid_variant_packet_unit_diplomat_action(connection_t *pconn
   pconn->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION] = variant;
 }
 
-struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action(connection_t *pconn, enum packet_type type)
+struct packet_unit_diplomat_action *
+receive_packet_unit_diplomat_action(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19689,7 +18706,8 @@ struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action(connecti
   }
 }
 
-int send_packet_unit_diplomat_action(connection_t *pconn, const struct packet_unit_diplomat_action *packet)
+int send_packet_unit_diplomat_action(connection_t *pconn,
+                                     const struct packet_unit_diplomat_action *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19709,7 +18727,11 @@ int send_packet_unit_diplomat_action(connection_t *pconn, const struct packet_un
   }
 }
 
-int dsend_packet_unit_diplomat_action(connection_t *pconn, int diplomat_id, enum diplomat_actions action_type, int target_id, int value)
+int dsend_packet_unit_diplomat_action(connection_t *pconn,
+                                      int diplomat_id,
+                                      enum diplomat_actions action_type,
+                                      int target_id,
+                                      int value)
 {
   struct packet_unit_diplomat_action packet, *real_packet = &packet;
 
@@ -19727,7 +18749,8 @@ int dsend_packet_unit_diplomat_action(connection_t *pconn, int diplomat_id, enum
 
 BV_DEFINE(packet_unit_diplomat_popup_dialog_100_fields, 2);
 
-static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_popup_dialog_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_diplomat_popup_dialog *
+receive_packet_unit_diplomat_popup_dialog_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_diplomat_popup_dialog_100_fields fields;
   struct packet_unit_diplomat_popup_dialog *old;
@@ -19737,9 +18760,9 @@ static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_po
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_diplomat_popup_dialog_100, cmp_packet_unit_diplomat_popup_dialog_100);
+    *hash = hash_new(hash_packet_unit_diplomat_popup_dialog_100,
+                     cmp_packet_unit_diplomat_popup_dialog_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -19750,20 +18773,16 @@ static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_po
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->diplomat_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->diplomat_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->target_id = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->target_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -19776,7 +18795,8 @@ static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_po
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_diplomat_popup_dialog_100(connection_t *pconn, const struct packet_unit_diplomat_popup_dialog *packet)
+static int send_packet_unit_diplomat_popup_dialog_100(connection_t *pconn,
+                                                      const struct packet_unit_diplomat_popup_dialog *packet)
 {
   const struct packet_unit_diplomat_popup_dialog *real_packet = packet;
   packet_unit_diplomat_popup_dialog_100_fields fields;
@@ -19787,7 +18807,8 @@ static int send_packet_unit_diplomat_popup_dialog_100(connection_t *pconn, const
   SEND_PACKET_START(PACKET_UNIT_DIPLOMAT_POPUP_DIALOG);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_diplomat_popup_dialog_100, cmp_packet_unit_diplomat_popup_dialog_100);
+    *hash = hash_new(hash_packet_unit_diplomat_popup_dialog_100,
+                     cmp_packet_unit_diplomat_popup_dialog_100);
   }
   BV_CLR_ALL(fields);
 
@@ -19848,7 +18869,8 @@ static void ensure_valid_variant_packet_unit_diplomat_popup_dialog(connection_t 
   pconn->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG] = variant;
 }
 
-struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_popup_dialog(connection_t *pconn, enum packet_type type)
+struct packet_unit_diplomat_popup_dialog *
+receive_packet_unit_diplomat_popup_dialog(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19868,7 +18890,8 @@ struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_popup_dia
   }
 }
 
-int send_packet_unit_diplomat_popup_dialog(connection_t *pconn, const struct packet_unit_diplomat_popup_dialog *packet)
+int send_packet_unit_diplomat_popup_dialog(connection_t *pconn,
+                                           const struct packet_unit_diplomat_popup_dialog *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19888,7 +18911,8 @@ int send_packet_unit_diplomat_popup_dialog(connection_t *pconn, const struct pac
   }
 }
 
-void lsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest, const struct packet_unit_diplomat_popup_dialog *packet)
+void lsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest,
+                                             const struct packet_unit_diplomat_popup_dialog *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_unit_diplomat_popup_dialog(p_conn, packet);
@@ -19905,7 +18929,9 @@ int dsend_packet_unit_diplomat_popup_dialog(connection_t *pconn, int diplomat_id
   return send_packet_unit_diplomat_popup_dialog(pconn, real_packet);
 }
 
-void dlsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest, int diplomat_id, int target_id)
+void dlsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest,
+                                              int diplomat_id,
+                                              int target_id)
 {
   struct packet_unit_diplomat_popup_dialog packet, *real_packet = &packet;
 
@@ -19921,7 +18947,8 @@ void dlsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest, int 
 
 BV_DEFINE(packet_unit_change_activity_100_fields, 3);
 
-static struct packet_unit_change_activity *receive_packet_unit_change_activity_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_change_activity *
+receive_packet_unit_change_activity_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_change_activity_100_fields fields;
   struct packet_unit_change_activity *old;
@@ -19930,7 +18957,6 @@ static struct packet_unit_change_activity *receive_packet_unit_change_activity_1
   RECEIVE_PACKET_START(packet_unit_change_activity, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_change_activity_100, cmp_packet_unit_change_activity_100);
@@ -19944,28 +18970,22 @@ static struct packet_unit_change_activity *receive_packet_unit_change_activity_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->activity = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->activity = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->activity_target = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->activity_target = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -19978,7 +18998,8 @@ static struct packet_unit_change_activity *receive_packet_unit_change_activity_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_change_activity_100(connection_t *pconn, const struct packet_unit_change_activity *packet)
+static int send_packet_unit_change_activity_100(connection_t *pconn,
+                                                const struct packet_unit_change_activity *packet)
 {
   const struct packet_unit_change_activity *real_packet = packet;
   packet_unit_change_activity_100_fields fields;
@@ -20059,7 +19080,8 @@ static void ensure_valid_variant_packet_unit_change_activity(connection_t *pconn
   pconn->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY] = variant;
 }
 
-struct packet_unit_change_activity *receive_packet_unit_change_activity(connection_t *pconn, enum packet_type type)
+struct packet_unit_change_activity *
+receive_packet_unit_change_activity(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20079,7 +19101,8 @@ struct packet_unit_change_activity *receive_packet_unit_change_activity(connecti
   }
 }
 
-int send_packet_unit_change_activity(connection_t *pconn, const struct packet_unit_change_activity *packet)
+int send_packet_unit_change_activity(connection_t *pconn,
+                                     const struct packet_unit_change_activity *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20099,7 +19122,10 @@ int send_packet_unit_change_activity(connection_t *pconn, const struct packet_un
   }
 }
 
-int dsend_packet_unit_change_activity(connection_t *pconn, int unit_id, enum unit_activity activity, enum tile_special_type activity_target)
+int dsend_packet_unit_change_activity(connection_t *pconn,
+                                      int unit_id,
+                                      enum unit_activity activity,
+                                      enum tile_special_type activity_target)
 {
   struct packet_unit_change_activity packet, *real_packet = &packet;
 
@@ -20116,7 +19142,8 @@ int dsend_packet_unit_change_activity(connection_t *pconn, int unit_id, enum uni
 
 BV_DEFINE(packet_diplomacy_init_meeting_req_100_fields, 1);
 
-static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_init_meeting_req *
+receive_packet_diplomacy_init_meeting_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_init_meeting_req_100_fields fields;
   struct packet_diplomacy_init_meeting_req *old;
@@ -20126,9 +19153,9 @@ static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_m
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_init_meeting_req_100, cmp_packet_diplomacy_init_meeting_req_100);
+    *hash = hash_new(hash_packet_diplomacy_init_meeting_req_100,
+                     cmp_packet_diplomacy_init_meeting_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -20139,12 +19166,10 @@ static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_m
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -20157,7 +19182,8 @@ static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_m
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_init_meeting_req_100(connection_t *pconn, const struct packet_diplomacy_init_meeting_req *packet)
+static int send_packet_diplomacy_init_meeting_req_100(connection_t *pconn,
+                                                      const struct packet_diplomacy_init_meeting_req *packet)
 {
   const struct packet_diplomacy_init_meeting_req *real_packet = packet;
   packet_diplomacy_init_meeting_req_100_fields fields;
@@ -20168,7 +19194,8 @@ static int send_packet_diplomacy_init_meeting_req_100(connection_t *pconn, const
   SEND_PACKET_START(PACKET_DIPLOMACY_INIT_MEETING_REQ);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_init_meeting_req_100, cmp_packet_diplomacy_init_meeting_req_100);
+    *hash = hash_new(hash_packet_diplomacy_init_meeting_req_100,
+                     cmp_packet_diplomacy_init_meeting_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -20220,7 +19247,8 @@ static void ensure_valid_variant_packet_diplomacy_init_meeting_req(connection_t 
   pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ] = variant;
 }
 
-struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_req(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_init_meeting_req *
+receive_packet_diplomacy_init_meeting_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20240,7 +19268,8 @@ struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_
   }
 }
 
-int send_packet_diplomacy_init_meeting_req(connection_t *pconn, const struct packet_diplomacy_init_meeting_req *packet)
+int send_packet_diplomacy_init_meeting_req(connection_t *pconn,
+                                           const struct packet_diplomacy_init_meeting_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20275,7 +19304,8 @@ int dsend_packet_diplomacy_init_meeting_req(connection_t *pconn, int counterpart
 
 BV_DEFINE(packet_diplomacy_init_meeting_100_fields, 2);
 
-static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeting_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_init_meeting *
+receive_packet_diplomacy_init_meeting_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_init_meeting_100_fields fields;
   struct packet_diplomacy_init_meeting *old;
@@ -20284,7 +19314,6 @@ static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeti
   RECEIVE_PACKET_START(packet_diplomacy_init_meeting, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_diplomacy_init_meeting_100, cmp_packet_diplomacy_init_meeting_100);
@@ -20298,20 +19327,16 @@ static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeti
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->initiated_from = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->initiated_from = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -20324,7 +19349,8 @@ static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_init_meeting_100(connection_t *pconn, const struct packet_diplomacy_init_meeting *packet)
+static int send_packet_diplomacy_init_meeting_100(connection_t *pconn,
+                                                  const struct packet_diplomacy_init_meeting *packet)
 {
   const struct packet_diplomacy_init_meeting *real_packet = packet;
   packet_diplomacy_init_meeting_100_fields fields;
@@ -20396,7 +19422,8 @@ static void ensure_valid_variant_packet_diplomacy_init_meeting(connection_t *pco
   pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING] = variant;
 }
 
-struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeting(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_init_meeting *
+receive_packet_diplomacy_init_meeting(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20416,7 +19443,8 @@ struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeting(conn
   }
 }
 
-int send_packet_diplomacy_init_meeting(connection_t *pconn, const struct packet_diplomacy_init_meeting *packet)
+int send_packet_diplomacy_init_meeting(connection_t *pconn,
+                                       const struct packet_diplomacy_init_meeting *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20436,7 +19464,8 @@ int send_packet_diplomacy_init_meeting(connection_t *pconn, const struct packet_
   }
 }
 
-void lsend_packet_diplomacy_init_meeting(struct connection_list *dest, const struct packet_diplomacy_init_meeting *packet)
+void lsend_packet_diplomacy_init_meeting(struct connection_list *dest,
+                                         const struct packet_diplomacy_init_meeting *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_diplomacy_init_meeting(p_conn, packet);
@@ -20453,7 +19482,9 @@ int dsend_packet_diplomacy_init_meeting(connection_t *pconn, int counterpart, in
   return send_packet_diplomacy_init_meeting(pconn, real_packet);
 }
 
-void dlsend_packet_diplomacy_init_meeting(struct connection_list *dest, int counterpart, int initiated_from)
+void dlsend_packet_diplomacy_init_meeting(struct connection_list *dest,
+                                          int counterpart,
+                                          int initiated_from)
 {
   struct packet_diplomacy_init_meeting packet, *real_packet = &packet;
 
@@ -20469,7 +19500,8 @@ void dlsend_packet_diplomacy_init_meeting(struct connection_list *dest, int coun
 
 BV_DEFINE(packet_diplomacy_cancel_meeting_req_100_fields, 1);
 
-static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_cancel_meeting_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_cancel_meeting_req *
+receive_packet_diplomacy_cancel_meeting_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_cancel_meeting_req_100_fields fields;
   struct packet_diplomacy_cancel_meeting_req *old;
@@ -20479,9 +19511,9 @@ static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_canc
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_req_100, cmp_packet_diplomacy_cancel_meeting_req_100);
+    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_req_100,
+                     cmp_packet_diplomacy_cancel_meeting_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -20492,12 +19524,10 @@ static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_canc
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -20510,7 +19540,9 @@ static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_canc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_cancel_meeting_req_100(connection_t *pconn, const struct packet_diplomacy_cancel_meeting_req *packet)
+static int send_packet_diplomacy_cancel_meeting_req_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_cancel_meeting_req *packet)
 {
   const struct packet_diplomacy_cancel_meeting_req *real_packet = packet;
   packet_diplomacy_cancel_meeting_req_100_fields fields;
@@ -20521,7 +19553,8 @@ static int send_packet_diplomacy_cancel_meeting_req_100(connection_t *pconn, con
   SEND_PACKET_START(PACKET_DIPLOMACY_CANCEL_MEETING_REQ);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_req_100, cmp_packet_diplomacy_cancel_meeting_req_100);
+    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_req_100,
+                     cmp_packet_diplomacy_cancel_meeting_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -20573,7 +19606,8 @@ static void ensure_valid_variant_packet_diplomacy_cancel_meeting_req(connection_
   pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ] = variant;
 }
 
-struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_cancel_meeting_req(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_cancel_meeting_req *
+receive_packet_diplomacy_cancel_meeting_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20593,7 +19627,8 @@ struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_cancel_meet
   }
 }
 
-int send_packet_diplomacy_cancel_meeting_req(connection_t *pconn, const struct packet_diplomacy_cancel_meeting_req *packet)
+int send_packet_diplomacy_cancel_meeting_req(connection_t *pconn,
+                                             const struct packet_diplomacy_cancel_meeting_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20628,7 +19663,8 @@ int dsend_packet_diplomacy_cancel_meeting_req(connection_t *pconn, int counterpa
 
 BV_DEFINE(packet_diplomacy_cancel_meeting_100_fields, 2);
 
-static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_meeting_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_cancel_meeting *
+receive_packet_diplomacy_cancel_meeting_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_cancel_meeting_100_fields fields;
   struct packet_diplomacy_cancel_meeting *old;
@@ -20638,9 +19674,9 @@ static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_m
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_100, cmp_packet_diplomacy_cancel_meeting_100);
+    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_100,
+                     cmp_packet_diplomacy_cancel_meeting_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -20651,20 +19687,16 @@ static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_m
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->initiated_from = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->initiated_from = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -20677,7 +19709,9 @@ static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_m
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_cancel_meeting_100(connection_t *pconn, const struct packet_diplomacy_cancel_meeting *packet)
+static int send_packet_diplomacy_cancel_meeting_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_cancel_meeting *packet)
 {
   const struct packet_diplomacy_cancel_meeting *real_packet = packet;
   packet_diplomacy_cancel_meeting_100_fields fields;
@@ -20749,7 +19783,8 @@ static void ensure_valid_variant_packet_diplomacy_cancel_meeting(connection_t *p
   pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING] = variant;
 }
 
-struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_meeting(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_cancel_meeting *
+receive_packet_diplomacy_cancel_meeting(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20769,7 +19804,8 @@ struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_meeting(
   }
 }
 
-int send_packet_diplomacy_cancel_meeting(connection_t *pconn, const struct packet_diplomacy_cancel_meeting *packet)
+int send_packet_diplomacy_cancel_meeting(connection_t *pconn,
+                                         const struct packet_diplomacy_cancel_meeting *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20789,7 +19825,8 @@ int send_packet_diplomacy_cancel_meeting(connection_t *pconn, const struct packe
   }
 }
 
-void lsend_packet_diplomacy_cancel_meeting(struct connection_list *dest, const struct packet_diplomacy_cancel_meeting *packet)
+void lsend_packet_diplomacy_cancel_meeting(struct connection_list *dest,
+                                           const struct packet_diplomacy_cancel_meeting *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_diplomacy_cancel_meeting(p_conn, packet);
@@ -20806,7 +19843,9 @@ int dsend_packet_diplomacy_cancel_meeting(connection_t *pconn, int counterpart, 
   return send_packet_diplomacy_cancel_meeting(pconn, real_packet);
 }
 
-void dlsend_packet_diplomacy_cancel_meeting(struct connection_list *dest, int counterpart, int initiated_from)
+void dlsend_packet_diplomacy_cancel_meeting(struct connection_list *dest,
+                                            int counterpart,
+                                            int initiated_from)
 {
   struct packet_diplomacy_cancel_meeting packet, *real_packet = &packet;
 
@@ -20822,7 +19861,8 @@ void dlsend_packet_diplomacy_cancel_meeting(struct connection_list *dest, int co
 
 BV_DEFINE(packet_diplomacy_create_clause_req_100_fields, 4);
 
-static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_create_clause_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_create_clause_req *
+receive_packet_diplomacy_create_clause_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_create_clause_req_100_fields fields;
   struct packet_diplomacy_create_clause_req *old;
@@ -20832,9 +19872,9 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_create_clause_req_100, cmp_packet_diplomacy_create_clause_req_100);
+    *hash = hash_new(hash_packet_diplomacy_create_clause_req_100,
+                     cmp_packet_diplomacy_create_clause_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -20845,36 +19885,28 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->giver = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->giver = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->value = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->value = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -20887,7 +19919,9 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_create_clause_req_100(connection_t *pconn, const struct packet_diplomacy_create_clause_req *packet)
+static int send_packet_diplomacy_create_clause_req_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_create_clause_req *packet)
 {
   const struct packet_diplomacy_create_clause_req *real_packet = packet;
   packet_diplomacy_create_clause_req_100_fields fields;
@@ -20898,7 +19932,8 @@ static int send_packet_diplomacy_create_clause_req_100(connection_t *pconn, cons
   SEND_PACKET_START(PACKET_DIPLOMACY_CREATE_CLAUSE_REQ);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_create_clause_req_100, cmp_packet_diplomacy_create_clause_req_100);
+    *hash = hash_new(hash_packet_diplomacy_create_clause_req_100,
+                     cmp_packet_diplomacy_create_clause_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -20977,7 +20012,8 @@ static void ensure_valid_variant_packet_diplomacy_create_clause_req(connection_t
   pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ] = variant;
 }
 
-struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_create_clause_req(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_create_clause_req *
+receive_packet_diplomacy_create_clause_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20997,7 +20033,9 @@ struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_create_claus
   }
 }
 
-int send_packet_diplomacy_create_clause_req(connection_t *pconn, const struct packet_diplomacy_create_clause_req *packet)
+int send_packet_diplomacy_create_clause_req(
+        connection_t *pconn,
+        const struct packet_diplomacy_create_clause_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21017,7 +20055,11 @@ int send_packet_diplomacy_create_clause_req(connection_t *pconn, const struct pa
   }
 }
 
-int dsend_packet_diplomacy_create_clause_req(connection_t *pconn, int counterpart, int giver, enum clause_type type, int value)
+int dsend_packet_diplomacy_create_clause_req(connection_t *pconn,
+                                             int counterpart,
+                                             int giver,
+                                             enum clause_type type,
+                                             int value)
 {
   struct packet_diplomacy_create_clause_req packet, *real_packet = &packet;
 
@@ -21035,7 +20077,8 @@ int dsend_packet_diplomacy_create_clause_req(connection_t *pconn, int counterpar
 
 BV_DEFINE(packet_diplomacy_create_clause_100_fields, 4);
 
-static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_clause_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_create_clause *
+receive_packet_diplomacy_create_clause_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_create_clause_100_fields fields;
   struct packet_diplomacy_create_clause *old;
@@ -21044,7 +20087,6 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
   RECEIVE_PACKET_START(packet_diplomacy_create_clause, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_diplomacy_create_clause_100, cmp_packet_diplomacy_create_clause_100);
@@ -21058,36 +20100,28 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->giver = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->giver = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->value = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->value = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -21100,7 +20134,9 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_create_clause_100(connection_t *pconn, const struct packet_diplomacy_create_clause *packet)
+static int send_packet_diplomacy_create_clause_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_create_clause *packet)
 {
   const struct packet_diplomacy_create_clause *real_packet = packet;
   packet_diplomacy_create_clause_100_fields fields;
@@ -21190,7 +20226,8 @@ static void ensure_valid_variant_packet_diplomacy_create_clause(connection_t *pc
   pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE] = variant;
 }
 
-struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_clause(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_create_clause *
+receive_packet_diplomacy_create_clause(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21210,7 +20247,8 @@ struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_clause(co
   }
 }
 
-int send_packet_diplomacy_create_clause(connection_t *pconn, const struct packet_diplomacy_create_clause *packet)
+int send_packet_diplomacy_create_clause(connection_t *pconn,
+                                        const struct packet_diplomacy_create_clause *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21230,14 +20268,19 @@ int send_packet_diplomacy_create_clause(connection_t *pconn, const struct packet
   }
 }
 
-void lsend_packet_diplomacy_create_clause(struct connection_list *dest, const struct packet_diplomacy_create_clause *packet)
+void lsend_packet_diplomacy_create_clause(struct connection_list *dest,
+                                          const struct packet_diplomacy_create_clause *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_diplomacy_create_clause(p_conn, packet);
   } connection_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_create_clause(connection_t *pconn, int counterpart, int giver, enum clause_type type, int value)
+int dsend_packet_diplomacy_create_clause(connection_t *pconn,
+                                         int counterpart,
+                                         int giver,
+                                         enum clause_type type,
+                                         int value)
 {
   struct packet_diplomacy_create_clause packet, *real_packet = &packet;
 
@@ -21249,7 +20292,11 @@ int dsend_packet_diplomacy_create_clause(connection_t *pconn, int counterpart, i
   return send_packet_diplomacy_create_clause(pconn, real_packet);
 }
 
-void dlsend_packet_diplomacy_create_clause(struct connection_list *dest, int counterpart, int giver, enum clause_type type, int value)
+void dlsend_packet_diplomacy_create_clause(struct connection_list *dest,
+                                           int counterpart,
+                                           int giver,
+                                           enum clause_type type,
+                                           int value)
 {
   struct packet_diplomacy_create_clause packet, *real_packet = &packet;
 
@@ -21267,7 +20314,8 @@ void dlsend_packet_diplomacy_create_clause(struct connection_list *dest, int cou
 
 BV_DEFINE(packet_diplomacy_remove_clause_req_100_fields, 4);
 
-static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remove_clause_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_remove_clause_req *
+receive_packet_diplomacy_remove_clause_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_remove_clause_req_100_fields fields;
   struct packet_diplomacy_remove_clause_req *old;
@@ -21277,9 +20325,9 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_remove_clause_req_100, cmp_packet_diplomacy_remove_clause_req_100);
+    *hash = hash_new(hash_packet_diplomacy_remove_clause_req_100,
+                     cmp_packet_diplomacy_remove_clause_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -21290,36 +20338,28 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->giver = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->giver = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->value = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->value = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -21332,7 +20372,9 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_remove_clause_req_100(connection_t *pconn, const struct packet_diplomacy_remove_clause_req *packet)
+static int send_packet_diplomacy_remove_clause_req_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_remove_clause_req *packet)
 {
   const struct packet_diplomacy_remove_clause_req *real_packet = packet;
   packet_diplomacy_remove_clause_req_100_fields fields;
@@ -21343,7 +20385,8 @@ static int send_packet_diplomacy_remove_clause_req_100(connection_t *pconn, cons
   SEND_PACKET_START(PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_remove_clause_req_100, cmp_packet_diplomacy_remove_clause_req_100);
+    *hash = hash_new(hash_packet_diplomacy_remove_clause_req_100,
+                     cmp_packet_diplomacy_remove_clause_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -21422,7 +20465,8 @@ static void ensure_valid_variant_packet_diplomacy_remove_clause_req(connection_t
   pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ] = variant;
 }
 
-struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remove_clause_req(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_remove_clause_req *
+receive_packet_diplomacy_remove_clause_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21442,7 +20486,8 @@ struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remove_claus
   }
 }
 
-int send_packet_diplomacy_remove_clause_req(connection_t *pconn, const struct packet_diplomacy_remove_clause_req *packet)
+int send_packet_diplomacy_remove_clause_req(connection_t *pconn,
+                                            const struct packet_diplomacy_remove_clause_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21462,7 +20507,11 @@ int send_packet_diplomacy_remove_clause_req(connection_t *pconn, const struct pa
   }
 }
 
-int dsend_packet_diplomacy_remove_clause_req(connection_t *pconn, int counterpart, int giver, enum clause_type type, int value)
+int dsend_packet_diplomacy_remove_clause_req(connection_t *pconn,
+                                             int counterpart,
+                                             int giver,
+                                             enum clause_type type,
+                                             int value)
 {
   struct packet_diplomacy_remove_clause_req packet, *real_packet = &packet;
 
@@ -21480,7 +20529,8 @@ int dsend_packet_diplomacy_remove_clause_req(connection_t *pconn, int counterpar
 
 BV_DEFINE(packet_diplomacy_remove_clause_100_fields, 4);
 
-static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_clause_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_remove_clause *
+receive_packet_diplomacy_remove_clause_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_remove_clause_100_fields fields;
   struct packet_diplomacy_remove_clause *old;
@@ -21489,7 +20539,6 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
   RECEIVE_PACKET_START(packet_diplomacy_remove_clause, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_diplomacy_remove_clause_100, cmp_packet_diplomacy_remove_clause_100);
@@ -21503,36 +20552,28 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->giver = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->giver = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->value = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->value = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -21545,7 +20586,9 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_remove_clause_100(connection_t *pconn, const struct packet_diplomacy_remove_clause *packet)
+static int send_packet_diplomacy_remove_clause_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_remove_clause *packet)
 {
   const struct packet_diplomacy_remove_clause *real_packet = packet;
   packet_diplomacy_remove_clause_100_fields fields;
@@ -21635,7 +20678,8 @@ static void ensure_valid_variant_packet_diplomacy_remove_clause(connection_t *pc
   pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE] = variant;
 }
 
-struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_clause(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_remove_clause *
+receive_packet_diplomacy_remove_clause(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21655,7 +20699,8 @@ struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_clause(co
   }
 }
 
-int send_packet_diplomacy_remove_clause(connection_t *pconn, const struct packet_diplomacy_remove_clause *packet)
+int send_packet_diplomacy_remove_clause(connection_t *pconn,
+                                        const struct packet_diplomacy_remove_clause *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21675,14 +20720,19 @@ int send_packet_diplomacy_remove_clause(connection_t *pconn, const struct packet
   }
 }
 
-void lsend_packet_diplomacy_remove_clause(struct connection_list *dest, const struct packet_diplomacy_remove_clause *packet)
+void lsend_packet_diplomacy_remove_clause(struct connection_list *dest,
+                                          const struct packet_diplomacy_remove_clause *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_diplomacy_remove_clause(p_conn, packet);
   } connection_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_remove_clause(connection_t *pconn, int counterpart, int giver, enum clause_type type, int value)
+int dsend_packet_diplomacy_remove_clause(connection_t *pconn,
+                                         int counterpart,
+                                         int giver,
+                                         enum clause_type type,
+                                         int value)
 {
   struct packet_diplomacy_remove_clause packet, *real_packet = &packet;
 
@@ -21694,7 +20744,11 @@ int dsend_packet_diplomacy_remove_clause(connection_t *pconn, int counterpart, i
   return send_packet_diplomacy_remove_clause(pconn, real_packet);
 }
 
-void dlsend_packet_diplomacy_remove_clause(struct connection_list *dest, int counterpart, int giver, enum clause_type type, int value)
+void dlsend_packet_diplomacy_remove_clause(struct connection_list *dest,
+                                           int counterpart,
+                                           int giver,
+                                           enum clause_type type,
+                                           int value)
 {
   struct packet_diplomacy_remove_clause packet, *real_packet = &packet;
 
@@ -21712,7 +20766,8 @@ void dlsend_packet_diplomacy_remove_clause(struct connection_list *dest, int cou
 
 BV_DEFINE(packet_diplomacy_accept_treaty_req_100_fields, 1);
 
-static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accept_treaty_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_accept_treaty_req *
+receive_packet_diplomacy_accept_treaty_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_accept_treaty_req_100_fields fields;
   struct packet_diplomacy_accept_treaty_req *old;
@@ -21722,9 +20777,9 @@ static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accep
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_accept_treaty_req_100, cmp_packet_diplomacy_accept_treaty_req_100);
+    *hash = hash_new(hash_packet_diplomacy_accept_treaty_req_100,
+                     cmp_packet_diplomacy_accept_treaty_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -21735,12 +20790,10 @@ static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accep
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -21753,7 +20806,9 @@ static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accep
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_accept_treaty_req_100(connection_t *pconn, const struct packet_diplomacy_accept_treaty_req *packet)
+static int send_packet_diplomacy_accept_treaty_req_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_accept_treaty_req *packet)
 {
   const struct packet_diplomacy_accept_treaty_req *real_packet = packet;
   packet_diplomacy_accept_treaty_req_100_fields fields;
@@ -21764,7 +20819,8 @@ static int send_packet_diplomacy_accept_treaty_req_100(connection_t *pconn, cons
   SEND_PACKET_START(PACKET_DIPLOMACY_ACCEPT_TREATY_REQ);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_accept_treaty_req_100, cmp_packet_diplomacy_accept_treaty_req_100);
+    *hash = hash_new(hash_packet_diplomacy_accept_treaty_req_100,
+                     cmp_packet_diplomacy_accept_treaty_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -21816,7 +20872,8 @@ static void ensure_valid_variant_packet_diplomacy_accept_treaty_req(connection_t
   pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ] = variant;
 }
 
-struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accept_treaty_req(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_accept_treaty_req *
+receive_packet_diplomacy_accept_treaty_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21836,7 +20893,8 @@ struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accept_treat
   }
 }
 
-int send_packet_diplomacy_accept_treaty_req(connection_t *pconn, const struct packet_diplomacy_accept_treaty_req *packet)
+int send_packet_diplomacy_accept_treaty_req(connection_t *pconn,
+                                            const struct packet_diplomacy_accept_treaty_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21871,7 +20929,8 @@ int dsend_packet_diplomacy_accept_treaty_req(connection_t *pconn, int counterpar
 
 BV_DEFINE(packet_diplomacy_accept_treaty_100_fields, 3);
 
-static struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_treaty_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_accept_treaty *
+receive_packet_diplomacy_accept_treaty_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_accept_treaty_100_fields fields;
   struct packet_diplomacy_accept_treaty *old;
@@ -21894,12 +20953,10 @@ static struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_tr
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->counterpart = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->counterpart = readin;
   }
   real_packet->I_accepted = BV_ISSET(fields, 1);
   real_packet->other_accepted = BV_ISSET(fields, 2);
@@ -21914,7 +20971,9 @@ static struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_tr
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_accept_treaty_100(connection_t *pconn, const struct packet_diplomacy_accept_treaty *packet)
+static int send_packet_diplomacy_accept_treaty_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_accept_treaty *packet)
 {
   const struct packet_diplomacy_accept_treaty *real_packet = packet;
   packet_diplomacy_accept_treaty_100_fields fields;
@@ -21987,7 +21046,8 @@ static void ensure_valid_variant_packet_diplomacy_accept_treaty(connection_t *pc
   pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY] = variant;
 }
 
-struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_treaty(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_accept_treaty *
+receive_packet_diplomacy_accept_treaty(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22007,7 +21067,8 @@ struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_treaty(co
   }
 }
 
-int send_packet_diplomacy_accept_treaty(connection_t *pconn, const struct packet_diplomacy_accept_treaty *packet)
+int send_packet_diplomacy_accept_treaty(connection_t *pconn,
+                                        const struct packet_diplomacy_accept_treaty *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22027,14 +21088,18 @@ int send_packet_diplomacy_accept_treaty(connection_t *pconn, const struct packet
   }
 }
 
-void lsend_packet_diplomacy_accept_treaty(struct connection_list *dest, const struct packet_diplomacy_accept_treaty *packet)
+void lsend_packet_diplomacy_accept_treaty(struct connection_list *dest,
+                                          const struct packet_diplomacy_accept_treaty *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_diplomacy_accept_treaty(p_conn, packet);
   } connection_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_accept_treaty(connection_t *pconn, int counterpart, bool I_accepted, bool other_accepted)
+int dsend_packet_diplomacy_accept_treaty(connection_t *pconn,
+                                         int counterpart,
+                                         bool I_accepted,
+                                         bool other_accepted)
 {
   struct packet_diplomacy_accept_treaty packet, *real_packet = &packet;
 
@@ -22045,7 +21110,10 @@ int dsend_packet_diplomacy_accept_treaty(connection_t *pconn, int counterpart, b
   return send_packet_diplomacy_accept_treaty(pconn, real_packet);
 }
 
-void dlsend_packet_diplomacy_accept_treaty(struct connection_list *dest, int counterpart, bool I_accepted, bool other_accepted)
+void dlsend_packet_diplomacy_accept_treaty(struct connection_list *dest,
+                                           int counterpart,
+                                           bool I_accepted,
+                                           bool other_accepted)
 {
   struct packet_diplomacy_accept_treaty packet, *real_packet = &packet;
 
@@ -22062,7 +21130,8 @@ void dlsend_packet_diplomacy_accept_treaty(struct connection_list *dest, int cou
 
 BV_DEFINE(packet_diplomacy_cancel_pact_100_fields, 2);
 
-static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact_100(connection_t *pconn, enum packet_type type)
+static struct packet_diplomacy_cancel_pact *
+receive_packet_diplomacy_cancel_pact_100(connection_t *pconn, enum packet_type type)
 {
   packet_diplomacy_cancel_pact_100_fields fields;
   struct packet_diplomacy_cancel_pact *old;
@@ -22071,7 +21140,6 @@ static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact
   RECEIVE_PACKET_START(packet_diplomacy_cancel_pact, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_diplomacy_cancel_pact_100, cmp_packet_diplomacy_cancel_pact_100);
@@ -22085,20 +21153,16 @@ static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->other_player_id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->other_player_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->clause = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->clause = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -22111,7 +21175,9 @@ static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_cancel_pact_100(connection_t *pconn, const struct packet_diplomacy_cancel_pact *packet)
+static int send_packet_diplomacy_cancel_pact_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_cancel_pact *packet)
 {
   const struct packet_diplomacy_cancel_pact *real_packet = packet;
   packet_diplomacy_cancel_pact_100_fields fields;
@@ -22183,7 +21249,8 @@ static void ensure_valid_variant_packet_diplomacy_cancel_pact(connection_t *pcon
   pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT] = variant;
 }
 
-struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact(connection_t *pconn, enum packet_type type)
+struct packet_diplomacy_cancel_pact *
+receive_packet_diplomacy_cancel_pact(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22203,7 +21270,8 @@ struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact(connec
   }
 }
 
-int send_packet_diplomacy_cancel_pact(connection_t *pconn, const struct packet_diplomacy_cancel_pact *packet)
+int send_packet_diplomacy_cancel_pact(connection_t *pconn,
+                                      const struct packet_diplomacy_cancel_pact *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22223,7 +21291,9 @@ int send_packet_diplomacy_cancel_pact(connection_t *pconn, const struct packet_d
   }
 }
 
-int dsend_packet_diplomacy_cancel_pact(connection_t *pconn, int other_player_id, enum clause_type clause)
+int dsend_packet_diplomacy_cancel_pact(connection_t *pconn,
+                                       int other_player_id,
+                                       enum clause_type clause)
 {
   struct packet_diplomacy_cancel_pact packet, *real_packet = &packet;
 
@@ -22265,12 +21335,10 @@ static struct packet_page_msg *receive_packet_page_msg_100(connection_t *pconn, 
     dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->event = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->event = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -22408,7 +21476,8 @@ void lsend_packet_page_msg(struct connection_list *dest, const struct packet_pag
 
 BV_DEFINE(packet_report_req_100_fields, 1);
 
-static struct packet_report_req *receive_packet_report_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_report_req *
+receive_packet_report_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_report_req_100_fields fields;
   struct packet_report_req *old;
@@ -22417,7 +21486,6 @@ static struct packet_report_req *receive_packet_report_req_100(connection_t *pco
   RECEIVE_PACKET_START(packet_report_req, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_report_req_100, cmp_packet_report_req_100);
@@ -22431,12 +21499,10 @@ static struct packet_report_req *receive_packet_report_req_100(connection_t *pco
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -22590,16 +21656,14 @@ static struct packet_conn_info *receive_packet_conn_info_100(connection_t *pconn
   struct packet_conn_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_conn_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_conn_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint8(&din, &readin);
-    real_packet->id = readin;
-  }
-
+  dio_get_uint8(&din, &readin);
+  real_packet->id = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_conn_info_100, cmp_packet_conn_info_100);
@@ -22620,20 +21684,16 @@ static struct packet_conn_info *receive_packet_conn_info_100(connection_t *pconn
   real_packet->established = BV_ISSET(fields, 1);
   real_packet->observer = BV_ISSET(fields, 2);
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->player_num = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->player_num = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->access_level = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->access_level = readin;
   }
   if (BV_ISSET(fields, 5)) {
     dio_get_string(&din, real_packet->username, sizeof(real_packet->username));
@@ -22823,7 +21883,8 @@ void lsend_packet_conn_info(struct connection_list *dest, const struct packet_co
 
 BV_DEFINE(packet_conn_ping_info_100_fields, 3);
 
-static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_conn_ping_info *
+receive_packet_conn_ping_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_conn_ping_info_100_fields fields;
   struct packet_conn_ping_info *old;
@@ -22832,7 +21893,6 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(connectio
   RECEIVE_PACKET_START(packet_conn_ping_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_conn_ping_info_100, cmp_packet_conn_ping_info_100);
@@ -22846,30 +21906,23 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(connectio
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->connections = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->connections = readin;
   }
   if (BV_ISSET(fields, 1)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->connections > MAX_NUM_CONNECTIONS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->connections = MAX_NUM_CONNECTIONS;
-      }
-      for (i = 0; i < real_packet->connections; i++) {
-        {
+    if(real_packet->connections > MAX_NUM_CONNECTIONS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->connections = MAX_NUM_CONNECTIONS;
+    }
+    for (i = 0; i < real_packet->connections; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->conn_id[i] = readin;
-    }
-      }
     }
   }
   if (BV_ISSET(fields, 2)) {
@@ -23013,7 +22066,8 @@ static int send_packet_conn_ping_info_100(connection_t *pconn, const struct pack
 
 BV_DEFINE(packet_conn_ping_info_101_fields, 3);
 
-static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(connection_t *pconn, enum packet_type type)
+static struct packet_conn_ping_info *
+receive_packet_conn_ping_info_101(connection_t *pconn, enum packet_type type)
 {
   packet_conn_ping_info_101_fields fields;
   struct packet_conn_ping_info *old;
@@ -23022,7 +22076,6 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(connectio
   RECEIVE_PACKET_START(packet_conn_ping_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_conn_ping_info_101, cmp_packet_conn_ping_info_101);
@@ -23036,47 +22089,37 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(connectio
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->old_connections = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->old_connections = readin;
   }
   if (BV_ISSET(fields, 1)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->connections > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->connections = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->connections; i++) {
-        {
+    if(real_packet->connections > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->connections = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->connections; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->old_conn_id[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 2)) {
+    int i;
 
-    {
-      int i;
+    if(real_packet->connections > MAX_NUM_PLAYERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->connections = MAX_NUM_PLAYERS;
+    }
+    for (i = 0; i < real_packet->connections; i++) {
+      int tmp;
 
-      if(real_packet->connections > MAX_NUM_PLAYERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->connections = MAX_NUM_PLAYERS;
-      }
-      for (i = 0; i < real_packet->connections; i++) {
-        int tmp;
-
-        dio_get_uint32(&din, &tmp);
-        real_packet->old_ping_time[i] = (float)(tmp) / 1000000.0;
-      }
+      dio_get_uint32(&din, &tmp);
+      real_packet->old_ping_time[i] = (float)(tmp) / 1000000.0;
     }
   }
 
@@ -23398,7 +22441,8 @@ int send_packet_conn_pong(connection_t *pconn)
   }
 }
 
-static struct packet_before_new_year *receive_packet_before_new_year_100(connection_t *pconn, enum packet_type type)
+static struct packet_before_new_year *
+receive_packet_before_new_year_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_before_new_year, real_packet);
 
@@ -23558,7 +22602,6 @@ static struct packet_new_year *receive_packet_new_year_100(connection_t *pconn, 
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_new_year_100, cmp_packet_new_year_100);
   }
@@ -23571,20 +22614,16 @@ static struct packet_new_year *receive_packet_new_year_100(connection_t *pconn, 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->year = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->year = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->turn = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->turn = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -23716,7 +22755,8 @@ void lsend_packet_new_year(struct connection_list *dest, const struct packet_new
   } connection_list_iterate_end;
 }
 
-static struct packet_freeze_client *receive_packet_freeze_client_100(connection_t *pconn, enum packet_type type)
+static struct packet_freeze_client *
+receive_packet_freeze_client_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_freeze_client, real_packet);
 
@@ -23788,7 +22828,8 @@ void lsend_packet_freeze_client(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
-static struct packet_thaw_client *receive_packet_thaw_client_100(connection_t *pconn, enum packet_type type)
+static struct packet_thaw_client *
+receive_packet_thaw_client_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_thaw_client, real_packet);
 
@@ -23860,7 +22901,8 @@ void lsend_packet_thaw_client(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
-static struct packet_spaceship_launch *receive_packet_spaceship_launch_100(connection_t *pconn, enum packet_type type)
+static struct packet_spaceship_launch *
+receive_packet_spaceship_launch_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_spaceship_launch, real_packet);
 
@@ -23885,7 +22927,8 @@ static void ensure_valid_variant_packet_spaceship_launch(connection_t *pconn)
   pconn->phs.variant[PACKET_SPACESHIP_LAUNCH] = variant;
 }
 
-struct packet_spaceship_launch *receive_packet_spaceship_launch(connection_t *pconn, enum packet_type type)
+struct packet_spaceship_launch *
+receive_packet_spaceship_launch(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -23931,7 +22974,8 @@ int send_packet_spaceship_launch(connection_t *pconn)
 
 BV_DEFINE(packet_spaceship_place_100_fields, 2);
 
-static struct packet_spaceship_place *receive_packet_spaceship_place_100(connection_t *pconn, enum packet_type type)
+static struct packet_spaceship_place *
+receive_packet_spaceship_place_100(connection_t *pconn, enum packet_type type)
 {
   packet_spaceship_place_100_fields fields;
   struct packet_spaceship_place *old;
@@ -23940,7 +22984,6 @@ static struct packet_spaceship_place *receive_packet_spaceship_place_100(connect
   RECEIVE_PACKET_START(packet_spaceship_place, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_spaceship_place_100, cmp_packet_spaceship_place_100);
@@ -23954,20 +22997,16 @@ static struct packet_spaceship_place *receive_packet_spaceship_place_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->num = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->num = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -23980,7 +23019,8 @@ static struct packet_spaceship_place *receive_packet_spaceship_place_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_spaceship_place_100(connection_t *pconn, const struct packet_spaceship_place *packet)
+static int send_packet_spaceship_place_100(connection_t *pconn,
+                                           const struct packet_spaceship_place *packet)
 {
   const struct packet_spaceship_place *real_packet = packet;
   packet_spaceship_place_100_fields fields;
@@ -24125,22 +23165,21 @@ static int cmp_packet_spaceship_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_spaceship_info_100_fields, 17);
 
-static struct packet_spaceship_info *receive_packet_spaceship_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_spaceship_info *
+receive_packet_spaceship_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_spaceship_info_100_fields fields;
   struct packet_spaceship_info *old;
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_spaceship_info *clone;
+  int readin;
+
   RECEIVE_PACKET_START(packet_spaceship_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-  {
-    int readin;
 
-    dio_get_uint8(&din, &readin);
-    real_packet->player_num = readin;
-  }
-
+  dio_get_uint8(&din, &readin);
+  real_packet->player_num = readin;
 
   if (!*hash) {
     *hash = hash_new(hash_packet_spaceship_info_100, cmp_packet_spaceship_info_100);
@@ -24158,100 +23197,76 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(connectio
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->sship_state = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->sship_state = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->structurals = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->structurals = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->components = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->components = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->modules = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->modules = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->fuel = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->fuel = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->propulsion = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->propulsion = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->habitation = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->habitation = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->life_support = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->life_support = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->solar_panels = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->solar_panels = readin;
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->launch_year = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->launch_year = readin;
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->population = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->population = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->mass = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->mass = readin;
   }
   if (BV_ISSET(fields, 12)) {
     dio_get_bit_string(&din, real_packet->structure, sizeof(real_packet->structure));
@@ -24560,7 +23575,8 @@ void lsend_packet_spaceship_info(struct connection_list *dest, const struct pack
 
 BV_DEFINE(packet_ruleset_unit_100_fields, 36);
 
-static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_unit *
+receive_packet_ruleset_unit_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_unit_100_fields fields;
   struct packet_ruleset_unit *old;
@@ -24569,7 +23585,6 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(connection_t 
   RECEIVE_PACKET_START(packet_ruleset_unit, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_unit_100, cmp_packet_ruleset_unit_100);
@@ -24583,12 +23598,10 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -24612,218 +23625,163 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(connection_t 
     dio_get_string(&din, real_packet->sound_fight_alt, sizeof(real_packet->sound_fight_alt));
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->move_type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->move_type = readin;
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->build_cost = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->build_cost = readin;
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->pop_cost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->pop_cost = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->attack_strength = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->attack_strength = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->defense_strength = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->defense_strength = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->move_rate = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->move_rate = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech_requirement = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech_requirement = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->impr_requirement = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->impr_requirement = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->vision_range = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->vision_range = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->transport_capacity = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->transport_capacity = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->hp = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->hp = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->firepower = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->firepower = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint8(&din, &readin);
-      real_packet->obsoleted_by = readin;
-    }
+    dio_get_sint8(&din, &readin);
+    real_packet->obsoleted_by = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->fuel = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->fuel = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->happy_cost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->happy_cost = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->shield_cost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->shield_cost = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->food_cost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->food_cost = readin;
   }
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->gold_cost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->gold_cost = readin;
   }
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->paratroopers_range = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->paratroopers_range = readin;
   }
   if (BV_ISSET(fields, 27)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->paratroopers_mr_req = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->paratroopers_mr_req = readin;
   }
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->paratroopers_mr_sub = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->paratroopers_mr_sub = readin;
   }
   if (BV_ISSET(fields, 29)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_VET_LEVELS; i++) {
-        dio_get_string(&din, real_packet->veteran_name[i], sizeof(real_packet->veteran_name[i]));
-      }
+    for (i = 0; i < MAX_VET_LEVELS; i++) {
+      dio_get_string(&din, real_packet->veteran_name[i], sizeof(real_packet->veteran_name[i]));
     }
   }
   if (BV_ISSET(fields, 30)) {
+    int i;
 
-    {
-      int i;
+    for (i = 0; i < MAX_VET_LEVELS; i++) {
+      int tmp;
 
-      for (i = 0; i < MAX_VET_LEVELS; i++) {
-        int tmp;
-
-        dio_get_uint32(&din, &tmp);
-        real_packet->power_fact[i] = (float)(tmp) / 10000.0;
-      }
+      dio_get_uint32(&din, &tmp);
+      real_packet->power_fact[i] = (float)(tmp) / 10000.0;
     }
   }
   if (BV_ISSET(fields, 31)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_VET_LEVELS; i++) {
-        {
+    for (i = 0; i < MAX_VET_LEVELS; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->move_bonus[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 32)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->bombard_rate = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->bombard_rate = readin;
   }
   if (BV_ISSET(fields, 33)) {
     dio_get_string(&din, real_packet->helptext, sizeof(real_packet->helptext));
@@ -25333,7 +24291,8 @@ void lsend_packet_ruleset_unit(struct connection_list *dest, const struct packet
 
 BV_DEFINE(packet_ruleset_game_100_fields, 26);
 
-static struct packet_ruleset_game *receive_packet_ruleset_game_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_game *
+receive_packet_ruleset_game_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_game_100_fields fields;
   struct packet_ruleset_game *old;
@@ -25342,7 +24301,6 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(connection_t 
   RECEIVE_PACKET_START(packet_ruleset_game, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_game_100, cmp_packet_ruleset_game_100);
@@ -25366,219 +24324,159 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(connection_t 
     }
   }
   if (BV_ISSET(fields, 1)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < SP_COUNT; i++) {
-        {
+    for (i = 0; i < SP_COUNT; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->specialist_min_size[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 2)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < SP_COUNT; i++) {
-        {
+    for (i = 0; i < SP_COUNT; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->specialist_bonus[i] = readin;
     }
-      }
-    }
   }
   real_packet->changable_tax = BV_ISSET(fields, 3);
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->forced_science = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->forced_science = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->forced_luxury = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->forced_luxury = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->forced_gold = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->forced_gold = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->min_city_center_food = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->min_city_center_food = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->min_city_center_shield = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->min_city_center_shield = readin;
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->min_city_center_trade = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->min_city_center_trade = readin;
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->min_dist_bw_cities = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->min_dist_bw_cities = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->init_vis_radius_sq = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->init_vis_radius_sq = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->hut_overflight = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->hut_overflight = readin;
   }
   real_packet->pillage_select = BV_ISSET(fields, 13);
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->nuke_contamination = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->nuke_contamination = readin;
   }
   if (BV_ISSET(fields, 15)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_GRANARY_INIS; i++) {
-        {
+    for (i = 0; i < MAX_GRANARY_INIS; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->granary_food_ini[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->granary_num_inis = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->granary_num_inis = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->granary_food_inc = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->granary_food_inc = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech_cost_style = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech_cost_style = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->tech_cost_double_year = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->tech_cost_double_year = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech_leakage = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech_leakage = readin;
   }
   if (BV_ISSET(fields, 21)) {
     dio_get_tech_list(&din, real_packet->global_init_techs);
   }
   real_packet->killstack = BV_ISSET(fields, 22);
   if (BV_ISSET(fields, 23)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_VET_LEVELS; i++) {
-        {
+    for (i = 0; i < MAX_VET_LEVELS; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->trireme_loss_chance[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 24)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_VET_LEVELS; i++) {
-        {
+    for (i = 0; i < MAX_VET_LEVELS; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->work_veteran_chance[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 25)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_VET_LEVELS; i++) {
-        {
+    for (i = 0; i < MAX_VET_LEVELS; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->veteran_chance[i] = readin;
-    }
-      }
     }
   }
 
@@ -26066,7 +24964,8 @@ void lsend_packet_ruleset_game(struct connection_list *dest, const struct packet
 
 BV_DEFINE(packet_ruleset_government_ruler_title_100_fields, 5);
 
-static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_government_ruler_title_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_government_ruler_title *
+receive_packet_ruleset_government_ruler_title_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_government_ruler_title_100_fields fields;
   struct packet_ruleset_government_ruler_title *old;
@@ -26076,9 +24975,9 @@ static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_gove
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_government_ruler_title_100, cmp_packet_ruleset_government_ruler_title_100);
+    *hash = hash_new(hash_packet_ruleset_government_ruler_title_100,
+                     cmp_packet_ruleset_government_ruler_title_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -26089,28 +24988,22 @@ static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_gove
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->gov = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->gov = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->nation = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->nation = readin;
   }
   if (BV_ISSET(fields, 3)) {
     dio_get_string(&din, real_packet->male_title, sizeof(real_packet->male_title));
@@ -26129,7 +25022,9 @@ static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_gove
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_government_ruler_title_100(connection_t *pconn, const struct packet_ruleset_government_ruler_title *packet)
+static int send_packet_ruleset_government_ruler_title_100(
+               connection_t *pconn,
+               const struct packet_ruleset_government_ruler_title *packet)
 {
   const struct packet_ruleset_government_ruler_title *real_packet = packet;
   packet_ruleset_government_ruler_title_100_fields fields;
@@ -26140,7 +25035,8 @@ static int send_packet_ruleset_government_ruler_title_100(connection_t *pconn, c
   SEND_PACKET_START(PACKET_RULESET_GOVERNMENT_RULER_TITLE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_government_ruler_title_100, cmp_packet_ruleset_government_ruler_title_100);
+    *hash = hash_new(hash_packet_ruleset_government_ruler_title_100,
+                     cmp_packet_ruleset_government_ruler_title_100);
   }
   BV_CLR_ALL(fields);
 
@@ -26228,7 +25124,8 @@ static void ensure_valid_variant_packet_ruleset_government_ruler_title(connectio
   pconn->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE] = variant;
 }
 
-struct packet_ruleset_government_ruler_title *receive_packet_ruleset_government_ruler_title(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_government_ruler_title *
+receive_packet_ruleset_government_ruler_title(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -26248,7 +25145,9 @@ struct packet_ruleset_government_ruler_title *receive_packet_ruleset_government_
   }
 }
 
-int send_packet_ruleset_government_ruler_title(connection_t *pconn, const struct packet_ruleset_government_ruler_title *packet)
+int send_packet_ruleset_government_ruler_title(
+        connection_t *pconn,
+        const struct packet_ruleset_government_ruler_title *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -26268,7 +25167,9 @@ int send_packet_ruleset_government_ruler_title(connection_t *pconn, const struct
   }
 }
 
-void lsend_packet_ruleset_government_ruler_title(struct connection_list *dest, const struct packet_ruleset_government_ruler_title *packet)
+void lsend_packet_ruleset_government_ruler_title(
+         struct connection_list *dest,
+         const struct packet_ruleset_government_ruler_title *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_ruleset_government_ruler_title(p_conn, packet);
@@ -26281,7 +25182,8 @@ void lsend_packet_ruleset_government_ruler_title(struct connection_list *dest, c
 
 BV_DEFINE(packet_ruleset_tech_100_fields, 10);
 
-static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_tech *
+receive_packet_ruleset_tech_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_tech_100_fields fields;
   struct packet_ruleset_tech *old;
@@ -26290,7 +25192,6 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(connection_t 
   RECEIVE_PACKET_START(packet_ruleset_tech, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_tech_100, cmp_packet_ruleset_tech_100);
@@ -26304,59 +25205,44 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < 2; i++) {
-        {
+    for (i = 0; i < 2; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->req[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->root_req = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->root_req = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->flags = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->flags = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->preset_cost = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->preset_cost = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->num_reqs = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->num_reqs = readin;
   }
   if (BV_ISSET(fields, 6)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -26597,7 +25483,8 @@ void lsend_packet_ruleset_tech(struct connection_list *dest, const struct packet
 
 BV_DEFINE(packet_ruleset_government_100_fields, 45);
 
-static struct packet_ruleset_government *receive_packet_ruleset_government_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_government *
+receive_packet_ruleset_government_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_government_100_fields fields;
   struct packet_ruleset_government *old;
@@ -26606,7 +25493,6 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(c
   RECEIVE_PACKET_START(packet_ruleset_government, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_government_100, cmp_packet_ruleset_government_100);
@@ -26620,332 +25506,250 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(c
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->required_tech = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->required_tech = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->max_rate = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->max_rate = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->civil_war = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->civil_war = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->martial_law_max = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->martial_law_max = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->martial_law_per = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->martial_law_per = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint8(&din, &readin);
-      real_packet->empire_size_mod = readin;
-    }
+    dio_get_sint8(&din, &readin);
+    real_packet->empire_size_mod = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->empire_size_inc = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->empire_size_inc = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->rapture_size = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->rapture_size = readin;
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->unit_happy_cost_factor = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->unit_happy_cost_factor = readin;
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->unit_shield_cost_factor = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->unit_shield_cost_factor = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->unit_food_cost_factor = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->unit_food_cost_factor = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->unit_gold_cost_factor = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->unit_gold_cost_factor = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->free_happy = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->free_happy = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->free_shield = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->free_shield = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->free_food = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->free_food = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->free_gold = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->free_gold = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->trade_before_penalty = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->trade_before_penalty = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->shields_before_penalty = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->shields_before_penalty = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->food_before_penalty = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->food_before_penalty = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->celeb_trade_before_penalty = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->celeb_trade_before_penalty = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->celeb_shields_before_penalty = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->celeb_shields_before_penalty = readin;
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->celeb_food_before_penalty = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->celeb_food_before_penalty = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->trade_bonus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->trade_bonus = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->shield_bonus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->shield_bonus = readin;
   }
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->food_bonus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->food_bonus = readin;
   }
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->celeb_trade_bonus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->celeb_trade_bonus = readin;
   }
   if (BV_ISSET(fields, 27)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->celeb_shield_bonus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->celeb_shield_bonus = readin;
   }
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->celeb_food_bonus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->celeb_food_bonus = readin;
   }
   if (BV_ISSET(fields, 29)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->corruption_level = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->corruption_level = readin;
   }
   if (BV_ISSET(fields, 30)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->fixed_corruption_distance = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->fixed_corruption_distance = readin;
   }
   if (BV_ISSET(fields, 31)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->corruption_distance_factor = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->corruption_distance_factor = readin;
   }
   if (BV_ISSET(fields, 32)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->extra_corruption_distance = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->extra_corruption_distance = readin;
   }
   if (BV_ISSET(fields, 33)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->corruption_max_distance_cap = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->corruption_max_distance_cap = readin;
   }
   if (BV_ISSET(fields, 34)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->waste_level = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->waste_level = readin;
   }
   if (BV_ISSET(fields, 35)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->fixed_waste_distance = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->fixed_waste_distance = readin;
   }
   if (BV_ISSET(fields, 36)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->waste_distance_factor = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->waste_distance_factor = readin;
   }
   if (BV_ISSET(fields, 37)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->extra_waste_distance = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->extra_waste_distance = readin;
   }
   if (BV_ISSET(fields, 38)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->waste_max_distance_cap = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->waste_max_distance_cap = readin;
   }
   if (BV_ISSET(fields, 39)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->flags = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->flags = readin;
   }
   if (BV_ISSET(fields, 40)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->num_ruler_titles = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->num_ruler_titles = readin;
   }
   if (BV_ISSET(fields, 41)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -26970,7 +25774,9 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(c
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_government_100(connection_t *pconn, const struct packet_ruleset_government *packet)
+static int send_packet_ruleset_government_100(
+               connection_t *pconn,
+               const struct packet_ruleset_government *packet)
 {
   const struct packet_ruleset_government *real_packet = packet;
   packet_ruleset_government_100_fields fields;
@@ -27429,7 +26235,8 @@ static void ensure_valid_variant_packet_ruleset_government(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_GOVERNMENT] = variant;
 }
 
-struct packet_ruleset_government *receive_packet_ruleset_government(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_government *
+receive_packet_ruleset_government(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -27469,7 +26276,9 @@ int send_packet_ruleset_government(connection_t *pconn, const struct packet_rule
   }
 }
 
-void lsend_packet_ruleset_government(struct connection_list *dest, const struct packet_ruleset_government *packet)
+void lsend_packet_ruleset_government(
+         struct connection_list *dest,
+         const struct packet_ruleset_government *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_ruleset_government(p_conn, packet);
@@ -27482,7 +26291,8 @@ void lsend_packet_ruleset_government(struct connection_list *dest, const struct 
 
 BV_DEFINE(packet_ruleset_terrain_control_100_fields, 22);
 
-static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_control_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_terrain_control *
+receive_packet_ruleset_terrain_control_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_terrain_control_100_fields fields;
   struct packet_ruleset_terrain_control *old;
@@ -27509,143 +26319,109 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   real_packet->may_mine = BV_ISSET(fields, 2);
   real_packet->may_transform = BV_ISSET(fields, 3);
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->ocean_reclaim_requirement_pct = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->ocean_reclaim_requirement_pct = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->land_channel_requirement_pct = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->land_channel_requirement_pct = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->river_move_mode = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->river_move_mode = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->river_defense_bonus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->river_defense_bonus = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->river_trade_incr = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->river_trade_incr = readin;
   }
   if (BV_ISSET(fields, 9)) {
     dio_get_string(&din, real_packet->river_help_text, sizeof(real_packet->river_help_text));
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->fortress_defense_bonus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->fortress_defense_bonus = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->road_superhighway_trade_bonus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->road_superhighway_trade_bonus = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->rail_food_bonus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->rail_food_bonus = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->rail_shield_bonus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->rail_shield_bonus = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->rail_trade_bonus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->rail_trade_bonus = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->farmland_supermarket_food_bonus = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->farmland_supermarket_food_bonus = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->pollution_food_penalty = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->pollution_food_penalty = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->pollution_shield_penalty = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->pollution_shield_penalty = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->pollution_trade_penalty = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->pollution_trade_penalty = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->fallout_food_penalty = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->fallout_food_penalty = readin;
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->fallout_shield_penalty = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->fallout_shield_penalty = readin;
   }
   if (BV_ISSET(fields, 21)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->fallout_trade_penalty = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->fallout_trade_penalty = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -27658,7 +26434,9 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_terrain_control_100(connection_t *pconn, const struct packet_ruleset_terrain_control *packet)
+static int send_packet_ruleset_terrain_control_100(
+               connection_t *pconn,
+               const struct packet_ruleset_terrain_control *packet)
 {
   const struct packet_ruleset_terrain_control *real_packet = packet;
   packet_ruleset_terrain_control_100_fields fields;
@@ -27894,7 +26672,8 @@ static void ensure_valid_variant_packet_ruleset_terrain_control(connection_t *pc
   pconn->phs.variant[PACKET_RULESET_TERRAIN_CONTROL] = variant;
 }
 
-struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_control(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_terrain_control *
+receive_packet_ruleset_terrain_control(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -27914,7 +26693,9 @@ struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_control(co
   }
 }
 
-int send_packet_ruleset_terrain_control(connection_t *pconn, const struct packet_ruleset_terrain_control *packet)
+int send_packet_ruleset_terrain_control(
+        connection_t *pconn,
+        const struct packet_ruleset_terrain_control *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -27934,7 +26715,9 @@ int send_packet_ruleset_terrain_control(connection_t *pconn, const struct packet
   }
 }
 
-void lsend_packet_ruleset_terrain_control(struct connection_list *dest, const struct packet_ruleset_terrain_control *packet)
+void lsend_packet_ruleset_terrain_control(
+         struct connection_list *dest,
+         const struct packet_ruleset_terrain_control *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_ruleset_terrain_control(p_conn, packet);
@@ -27947,7 +26730,8 @@ void lsend_packet_ruleset_terrain_control(struct connection_list *dest, const st
 
 BV_DEFINE(packet_ruleset_nation_100_fields, 12);
 
-static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_nation *
+receive_packet_ruleset_nation_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_nation_100_fields fields;
   struct packet_ruleset_nation *old;
@@ -27970,12 +26754,10 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(connectio
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -27996,50 +26778,40 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(connectio
     dio_get_string(&din, real_packet->legend, sizeof(real_packet->legend));
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->city_style = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->city_style = readin;
   }
   if (BV_ISSET(fields, 8)) {
     dio_get_tech_list(&din, real_packet->init_techs);
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->leader_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->leader_count = readin;
   }
   if (BV_ISSET(fields, 10)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->leader_count > MAX_NUM_LEADERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->leader_count = MAX_NUM_LEADERS;
-      }
-      for (i = 0; i < real_packet->leader_count; i++) {
-        dio_get_string(&din, real_packet->leader_name[i], sizeof(real_packet->leader_name[i]));
-      }
+    if(real_packet->leader_count > MAX_NUM_LEADERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->leader_count = MAX_NUM_LEADERS;
+    }
+    for (i = 0; i < real_packet->leader_count; i++) {
+      dio_get_string(&din, real_packet->leader_name[i], sizeof(real_packet->leader_name[i]));
     }
   }
   if (BV_ISSET(fields, 11)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->leader_count > MAX_NUM_LEADERS) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->leader_count = MAX_NUM_LEADERS;
-      }
-      for (i = 0; i < real_packet->leader_count; i++) {
-        dio_get_bool8(&din, &real_packet->leader_sex[i]);
-      }
+    if(real_packet->leader_count > MAX_NUM_LEADERS) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->leader_count = MAX_NUM_LEADERS;
+    }
+    for (i = 0; i < real_packet->leader_count; i++) {
+      dio_get_bool8(&din, &real_packet->leader_sex[i]);
     }
   }
 
@@ -28318,7 +27090,8 @@ void lsend_packet_ruleset_nation(struct connection_list *dest, const struct pack
 
 BV_DEFINE(packet_ruleset_city_100_fields, 8);
 
-static struct packet_ruleset_city *receive_packet_ruleset_city_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_city *
+receive_packet_ruleset_city_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_city_100_fields fields;
   struct packet_ruleset_city *old;
@@ -28341,20 +27114,16 @@ static struct packet_ruleset_city *receive_packet_ruleset_city_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->style_id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->style_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->techreq = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->techreq = readin;
   }
   if (BV_ISSET(fields, 2)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -28372,12 +27141,10 @@ static struct packet_ruleset_city *receive_packet_ruleset_city_100(connection_t 
     dio_get_string(&din, real_packet->graphic_alt, sizeof(real_packet->graphic_alt));
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint8(&din, &readin);
-      real_packet->replaced_by = readin;
-    }
+    dio_get_sint8(&din, &readin);
+    real_packet->replaced_by = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -28569,7 +27336,8 @@ void lsend_packet_ruleset_city(struct connection_list *dest, const struct packet
 
 BV_DEFINE(packet_ruleset_building_100_fields, 24);
 
-static struct packet_ruleset_building *receive_packet_ruleset_building_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_building *
+receive_packet_ruleset_building_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_building_100_fields fields;
   struct packet_ruleset_building *old;
@@ -28592,12 +27360,10 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -28609,69 +27375,53 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(conne
     dio_get_string(&din, real_packet->graphic_alt, sizeof(real_packet->graphic_alt));
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->tech_req = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->tech_req = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->obsolete_by = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->obsolete_by = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->bldg_req = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->bldg_req = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->replaced_by = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->replaced_by = readin;
   }
   real_packet->is_wonder = BV_ISSET(fields, 8);
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->equiv_range = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->equiv_range = readin;
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->build_cost = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->build_cost = readin;
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->upkeep = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->upkeep = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->sabotage = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->sabotage = readin;
   }
   if (BV_ISSET(fields, 13)) {
     dio_get_string(&din, real_packet->soundtag, sizeof(real_packet->soundtag));
@@ -28683,111 +27433,83 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(conne
     dio_get_string(&din, real_packet->helptext, sizeof(real_packet->helptext));
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->terr_gate_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->terr_gate_count = readin;
   }
   if (BV_ISSET(fields, 17)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->terr_gate_count > 255) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->terr_gate_count = 255;
-      }
-      for (i = 0; i < real_packet->terr_gate_count; i++) {
-        {
+    if(real_packet->terr_gate_count > 255) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->terr_gate_count = 255;
+    }
+    for (i = 0; i < real_packet->terr_gate_count; i++) {
       int readin;
 
       dio_get_sint16(&din, &readin);
       real_packet->terr_gate[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->spec_gate_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->spec_gate_count = readin;
   }
   if (BV_ISSET(fields, 19)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->spec_gate_count > 255) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->spec_gate_count = 255;
-      }
-      for (i = 0; i < real_packet->spec_gate_count; i++) {
-        {
+    if(real_packet->spec_gate_count > 255) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->spec_gate_count = 255;
+    }
+    for (i = 0; i < real_packet->spec_gate_count; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->spec_gate[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 20)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->equiv_dupl_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->equiv_dupl_count = readin;
   }
   if (BV_ISSET(fields, 21)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->equiv_dupl_count > 255) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->equiv_dupl_count = 255;
-      }
-      for (i = 0; i < real_packet->equiv_dupl_count; i++) {
-        {
+    if(real_packet->equiv_dupl_count > 255) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->equiv_dupl_count = 255;
+    }
+    for (i = 0; i < real_packet->equiv_dupl_count; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->equiv_dupl[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->equiv_repl_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->equiv_repl_count = readin;
   }
   if (BV_ISSET(fields, 23)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->equiv_repl_count > 255) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->equiv_repl_count = 255;
-      }
-      for (i = 0; i < real_packet->equiv_repl_count; i++) {
-        {
+    if(real_packet->equiv_repl_count > 255) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->equiv_repl_count = 255;
+    }
+    for (i = 0; i < real_packet->equiv_repl_count; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->equiv_repl[i] = readin;
-    }
-      }
     }
   }
 
@@ -28801,7 +27523,9 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_building_100(connection_t *pconn, const struct packet_ruleset_building *packet)
+static int send_packet_ruleset_building_100(
+               connection_t *pconn,
+               const struct packet_ruleset_building *packet)
 {
   const struct packet_ruleset_building *real_packet = packet;
   packet_ruleset_building_100_fields fields;
@@ -29143,7 +27867,8 @@ static void ensure_valid_variant_packet_ruleset_building(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_BUILDING] = variant;
 }
 
-struct packet_ruleset_building *receive_packet_ruleset_building(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_building *
+receive_packet_ruleset_building(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -29183,7 +27908,9 @@ int send_packet_ruleset_building(connection_t *pconn, const struct packet_rulese
   }
 }
 
-void lsend_packet_ruleset_building(struct connection_list *dest, const struct packet_ruleset_building *packet)
+void lsend_packet_ruleset_building(
+         struct connection_list *dest,
+         const struct packet_ruleset_building *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_ruleset_building(p_conn, packet);
@@ -29196,7 +27923,8 @@ void lsend_packet_ruleset_building(struct connection_list *dest, const struct pa
 
 BV_DEFINE(packet_ruleset_terrain_100_fields, 38);
 
-static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_terrain *
+receive_packet_ruleset_terrain_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_terrain_100_fields fields;
   struct packet_ruleset_terrain *old;
@@ -29219,12 +27947,10 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     DIO_BV_GET(&din, real_packet->tags);
@@ -29239,71 +27965,55 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(connect
     dio_get_string(&din, real_packet->graphic_alt, sizeof(real_packet->graphic_alt));
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->movement_cost = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->movement_cost = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->defense_bonus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->defense_bonus = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->food = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->food = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->shield = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->shield = readin;
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->trade = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->trade = readin;
   }
   if (BV_ISSET(fields, 10)) {
     dio_get_string(&din, real_packet->special_1_name, sizeof(real_packet->special_1_name));
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->food_special_1 = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->food_special_1 = readin;
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->shield_special_1 = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->shield_special_1 = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->trade_special_1 = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->trade_special_1 = readin;
   }
   if (BV_ISSET(fields, 14)) {
     dio_get_string(&din, real_packet->graphic_str_special_1, sizeof(real_packet->graphic_str_special_1));
@@ -29315,28 +28025,22 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(connect
     dio_get_string(&din, real_packet->special_2_name, sizeof(real_packet->special_2_name));
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->food_special_2 = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->food_special_2 = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->shield_special_2 = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->shield_special_2 = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->trade_special_2 = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->trade_special_2 = readin;
   }
   if (BV_ISSET(fields, 20)) {
     dio_get_string(&din, real_packet->graphic_str_special_2, sizeof(real_packet->graphic_str_special_2));
@@ -29345,124 +28049,94 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(connect
     dio_get_string(&din, real_packet->graphic_alt_special_2, sizeof(real_packet->graphic_alt_special_2));
   }
   if (BV_ISSET(fields, 22)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->road_trade_incr = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->road_trade_incr = readin;
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->road_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->road_time = readin;
   }
   if (BV_ISSET(fields, 24)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->irrigation_result = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->irrigation_result = readin;
   }
   if (BV_ISSET(fields, 25)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->irrigation_food_incr = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->irrigation_food_incr = readin;
   }
   if (BV_ISSET(fields, 26)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->irrigation_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->irrigation_time = readin;
   }
   if (BV_ISSET(fields, 27)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->mining_result = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->mining_result = readin;
   }
   if (BV_ISSET(fields, 28)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->mining_shield_incr = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->mining_shield_incr = readin;
   }
   if (BV_ISSET(fields, 29)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->mining_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->mining_time = readin;
   }
   if (BV_ISSET(fields, 30)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint16(&din, &readin);
-      real_packet->transform_result = readin;
-    }
+    dio_get_sint16(&din, &readin);
+    real_packet->transform_result = readin;
   }
   if (BV_ISSET(fields, 31)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->transform_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->transform_time = readin;
   }
   if (BV_ISSET(fields, 32)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->rail_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->rail_time = readin;
   }
   if (BV_ISSET(fields, 33)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->airbase_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->airbase_time = readin;
   }
   if (BV_ISSET(fields, 34)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->fortress_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->fortress_time = readin;
   }
   if (BV_ISSET(fields, 35)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->clean_pollution_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->clean_pollution_time = readin;
   }
   if (BV_ISSET(fields, 36)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->clean_fallout_time = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->clean_fallout_time = readin;
   }
   if (BV_ISSET(fields, 37)) {
     dio_get_string(&din, real_packet->helptext, sizeof(real_packet->helptext));
@@ -29478,7 +28152,9 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_terrain_100(connection_t *pconn, const struct packet_ruleset_terrain *packet)
+static int send_packet_ruleset_terrain_100(
+               connection_t *pconn,
+               const struct packet_ruleset_terrain *packet)
 {
   const struct packet_ruleset_terrain *real_packet = packet;
   packet_ruleset_terrain_100_fields fields;
@@ -29914,7 +28590,8 @@ int send_packet_ruleset_terrain(connection_t *pconn, const struct packet_ruleset
   }
 }
 
-void lsend_packet_ruleset_terrain(struct connection_list *dest, const struct packet_ruleset_terrain *packet)
+void lsend_packet_ruleset_terrain(struct connection_list *dest,
+                                  const struct packet_ruleset_terrain *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_ruleset_terrain(p_conn, packet);
@@ -29927,7 +28604,8 @@ void lsend_packet_ruleset_terrain(struct connection_list *dest, const struct pac
 
 BV_DEFINE(packet_ruleset_control_100_fields, 24);
 
-static struct packet_ruleset_control *receive_packet_ruleset_control_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_control *
+receive_packet_ruleset_control_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_control_100_fields fields;
   struct packet_ruleset_control *old;
@@ -29950,179 +28628,136 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->aqueduct_size = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->aqueduct_size = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->add_to_size_limit = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->add_to_size_limit = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->notradesize = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->notradesize = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->fulltradesize = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->fulltradesize = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->num_unit_types = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->num_unit_types = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->num_impr_types = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->num_impr_types = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->num_tech_types = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->num_tech_types = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->rtech_cathedral_plus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->rtech_cathedral_plus = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->rtech_cathedral_minus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->rtech_cathedral_minus = readin;
   }
   if (BV_ISSET(fields, 9)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->rtech_colosseum_plus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->rtech_colosseum_plus = readin;
   }
   if (BV_ISSET(fields, 10)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->rtech_temple_plus = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->rtech_temple_plus = readin;
   }
   if (BV_ISSET(fields, 11)) {
     dio_get_tech_list(&din, real_packet->rtech_partisan_req);
   }
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->government_when_anarchy = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->government_when_anarchy = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->default_government = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->default_government = readin;
   }
   if (BV_ISSET(fields, 14)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->government_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->government_count = readin;
   }
   if (BV_ISSET(fields, 15)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->nation_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->nation_count = readin;
   }
   if (BV_ISSET(fields, 16)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->playable_nation_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->playable_nation_count = readin;
   }
   if (BV_ISSET(fields, 17)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->style_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->style_count = readin;
   }
   if (BV_ISSET(fields, 18)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->terrain_count = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->terrain_count = readin;
   }
   if (BV_ISSET(fields, 19)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->borders = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->borders = readin;
   }
   real_packet->happyborders = BV_ISSET(fields, 20);
   real_packet->slow_invasions = BV_ISSET(fields, 21);
   if (BV_ISSET(fields, 22)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < MAX_NUM_TEAMS; i++) {
-        dio_get_string(&din, real_packet->team_name[i], sizeof(real_packet->team_name[i]));
-      }
+    for (i = 0; i < MAX_NUM_TEAMS; i++) {
+      dio_get_string(&din, real_packet->team_name[i], sizeof(real_packet->team_name[i]));
     }
   }
   if (BV_ISSET(fields, 23)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->default_building = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->default_building = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -30135,7 +28770,9 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_control_100(connection_t *pconn, const struct packet_ruleset_control *packet)
+static int send_packet_ruleset_control_100(
+               connection_t *pconn,
+               const struct packet_ruleset_control *packet)
 {
   const struct packet_ruleset_control *real_packet = packet;
   packet_ruleset_control_100_fields fields;
@@ -30468,7 +29105,8 @@ int send_packet_ruleset_control(connection_t *pconn, const struct packet_ruleset
   }
 }
 
-void lsend_packet_ruleset_control(struct connection_list *dest, const struct packet_ruleset_control *packet)
+void lsend_packet_ruleset_control(struct connection_list *dest,
+                                  const struct packet_ruleset_control *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_ruleset_control(p_conn, packet);
@@ -30481,7 +29119,8 @@ void lsend_packet_ruleset_control(struct connection_list *dest, const struct pac
 
 BV_DEFINE(packet_single_want_hack_req_100_fields, 1);
 
-static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_single_want_hack_req *
+receive_packet_single_want_hack_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_single_want_hack_req_100_fields fields;
   struct packet_single_want_hack_req *old;
@@ -30517,7 +29156,9 @@ static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_single_want_hack_req_100(connection_t *pconn, const struct packet_single_want_hack_req *packet)
+static int send_packet_single_want_hack_req_100(
+               connection_t *pconn,
+               const struct packet_single_want_hack_req *packet)
 {
   const struct packet_single_want_hack_req *real_packet = packet;
   packet_single_want_hack_req_100_fields fields;
@@ -30574,7 +29215,8 @@ static int send_packet_single_want_hack_req_100(connection_t *pconn, const struc
 
 BV_DEFINE(packet_single_want_hack_req_101_fields, 1);
 
-static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_101(connection_t *pconn, enum packet_type type)
+static struct packet_single_want_hack_req *
+receive_packet_single_want_hack_req_101(connection_t *pconn, enum packet_type type)
 {
   packet_single_want_hack_req_101_fields fields;
   struct packet_single_want_hack_req *old;
@@ -30597,12 +29239,10 @@ static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->old_token = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->old_token = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -30615,7 +29255,9 @@ static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_single_want_hack_req_101(connection_t *pconn, const struct packet_single_want_hack_req *packet)
+static int send_packet_single_want_hack_req_101(
+               connection_t *pconn,
+               const struct packet_single_want_hack_req *packet)
 {
   const struct packet_single_want_hack_req *real_packet = packet;
   packet_single_want_hack_req_101_fields fields;
@@ -30688,7 +29330,8 @@ static void ensure_valid_variant_packet_single_want_hack_req(connection_t *pconn
   pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REQ] = variant;
 }
 
-struct packet_single_want_hack_req *receive_packet_single_want_hack_req(connection_t *pconn, enum packet_type type)
+struct packet_single_want_hack_req *
+receive_packet_single_want_hack_req(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -30709,7 +29352,8 @@ struct packet_single_want_hack_req *receive_packet_single_want_hack_req(connecti
   }
 }
 
-int send_packet_single_want_hack_req(connection_t *pconn, const struct packet_single_want_hack_req *packet)
+int send_packet_single_want_hack_req(connection_t *pconn,
+                                     const struct packet_single_want_hack_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -30736,7 +29380,8 @@ int send_packet_single_want_hack_req(connection_t *pconn, const struct packet_si
 
 BV_DEFINE(packet_single_want_hack_reply_100_fields, 1);
 
-static struct packet_single_want_hack_reply *receive_packet_single_want_hack_reply_100(connection_t *pconn, enum packet_type type)
+static struct packet_single_want_hack_reply *
+receive_packet_single_want_hack_reply_100(connection_t *pconn, enum packet_type type)
 {
   packet_single_want_hack_reply_100_fields fields;
   struct packet_single_want_hack_reply *old;
@@ -30770,7 +29415,9 @@ static struct packet_single_want_hack_reply *receive_packet_single_want_hack_rep
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_single_want_hack_reply_100(connection_t *pconn, const struct packet_single_want_hack_reply *packet)
+static int send_packet_single_want_hack_reply_100(
+               connection_t *pconn,
+               const struct packet_single_want_hack_reply *packet)
 {
   const struct packet_single_want_hack_reply *real_packet = packet;
   packet_single_want_hack_reply_100_fields fields;
@@ -30829,7 +29476,8 @@ static void ensure_valid_variant_packet_single_want_hack_reply(connection_t *pco
   pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY] = variant;
 }
 
-struct packet_single_want_hack_reply *receive_packet_single_want_hack_reply(connection_t *pconn, enum packet_type type)
+struct packet_single_want_hack_reply *
+receive_packet_single_want_hack_reply(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -30849,7 +29497,8 @@ struct packet_single_want_hack_reply *receive_packet_single_want_hack_reply(conn
   }
 }
 
-int send_packet_single_want_hack_reply(connection_t *pconn, const struct packet_single_want_hack_reply *packet)
+int send_packet_single_want_hack_reply(connection_t *pconn,
+                                       const struct packet_single_want_hack_reply *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -30908,12 +29557,10 @@ static struct packet_game_load *receive_packet_game_load_100(connection_t *pconn
 
   real_packet->load_successful = BV_ISSET(fields, 0);
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->nplayers = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->nplayers = readin;
   }
   if (BV_ISSET(fields, 2)) {
     dio_get_string(&din, real_packet->load_filename, sizeof(real_packet->load_filename));
@@ -31311,7 +29958,8 @@ void lsend_packet_game_load(struct connection_list *dest, const struct packet_ga
 
 BV_DEFINE(packet_options_settable_control_100_fields, 3);
 
-static struct packet_options_settable_control *receive_packet_options_settable_control_100(connection_t *pconn, enum packet_type type)
+static struct packet_options_settable_control *
+receive_packet_options_settable_control_100(connection_t *pconn, enum packet_type type)
 {
   packet_options_settable_control_100_fields fields;
   struct packet_options_settable_control *old;
@@ -31334,33 +29982,26 @@ static struct packet_options_settable_control *receive_packet_options_settable_c
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->nids = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->nids = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->ncategories = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->ncategories = readin;
   }
   if (BV_ISSET(fields, 2)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->ncategories > 256) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->ncategories = 256;
-      }
-      for (i = 0; i < real_packet->ncategories; i++) {
-        dio_get_string(&din, real_packet->category_names[i], sizeof(real_packet->category_names[i]));
-      }
+    if(real_packet->ncategories > 256) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->ncategories = 256;
+    }
+    for (i = 0; i < real_packet->ncategories; i++) {
+      dio_get_string(&din, real_packet->category_names[i], sizeof(real_packet->category_names[i]));
     }
   }
 
@@ -31374,7 +30015,9 @@ static struct packet_options_settable_control *receive_packet_options_settable_c
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_options_settable_control_100(connection_t *pconn, const struct packet_options_settable_control *packet)
+static int send_packet_options_settable_control_100(
+               connection_t *pconn,
+               const struct packet_options_settable_control *packet)
 {
   const struct packet_options_settable_control *real_packet = packet;
   packet_options_settable_control_100_fields fields;
@@ -31474,7 +30117,8 @@ static void ensure_valid_variant_packet_options_settable_control(connection_t *p
   pconn->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL] = variant;
 }
 
-struct packet_options_settable_control *receive_packet_options_settable_control(connection_t *pconn, enum packet_type type)
+struct packet_options_settable_control *
+receive_packet_options_settable_control(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31494,7 +30138,8 @@ struct packet_options_settable_control *receive_packet_options_settable_control(
   }
 }
 
-int send_packet_options_settable_control(connection_t *pconn, const struct packet_options_settable_control *packet)
+int send_packet_options_settable_control(connection_t *pconn,
+                                         const struct packet_options_settable_control *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31520,7 +30165,8 @@ int send_packet_options_settable_control(connection_t *pconn, const struct packe
 
 BV_DEFINE(packet_options_settable_100_fields, 12);
 
-static struct packet_options_settable *receive_packet_options_settable_100(connection_t *pconn, enum packet_type type)
+static struct packet_options_settable *
+receive_packet_options_settable_100(connection_t *pconn, enum packet_type type)
 {
   packet_options_settable_100_fields fields;
   struct packet_options_settable *old;
@@ -31543,12 +30189,10 @@ static struct packet_options_settable *receive_packet_options_settable_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
@@ -31560,44 +30204,34 @@ static struct packet_options_settable *receive_packet_options_settable_100(conne
     dio_get_string(&din, real_packet->extra_help, sizeof(real_packet->extra_help));
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->type = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint32(&din, &readin);
-      real_packet->val = readin;
-    }
+    dio_get_sint32(&din, &readin);
+    real_packet->val = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint32(&din, &readin);
-      real_packet->default_val = readin;
-    }
+    dio_get_sint32(&din, &readin);
+    real_packet->default_val = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint32(&din, &readin);
-      real_packet->min = readin;
-    }
+    dio_get_sint32(&din, &readin);
+    real_packet->min = readin;
   }
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint32(&din, &readin);
-      real_packet->max = readin;
-    }
+    dio_get_sint32(&din, &readin);
+    real_packet->max = readin;
   }
   if (BV_ISSET(fields, 9)) {
     dio_get_string(&din, real_packet->strval, sizeof(real_packet->strval));
@@ -31606,12 +30240,10 @@ static struct packet_options_settable *receive_packet_options_settable_100(conne
     dio_get_string(&din, real_packet->default_strval, sizeof(real_packet->default_strval));
   }
   if (BV_ISSET(fields, 11)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->category = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->category = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -31624,7 +30256,9 @@ static struct packet_options_settable *receive_packet_options_settable_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_options_settable_100(connection_t *pconn, const struct packet_options_settable *packet)
+static int send_packet_options_settable_100(
+               connection_t *pconn,
+               const struct packet_options_settable *packet)
 {
   const struct packet_options_settable *real_packet = packet;
   packet_options_settable_100_fields fields;
@@ -31786,7 +30420,8 @@ static void ensure_valid_variant_packet_options_settable(connection_t *pconn)
   pconn->phs.variant[PACKET_OPTIONS_SETTABLE] = variant;
 }
 
-struct packet_options_settable *receive_packet_options_settable(connection_t *pconn, enum packet_type type)
+struct packet_options_settable *
+receive_packet_options_settable(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31832,7 +30467,8 @@ int send_packet_options_settable(connection_t *pconn, const struct packet_option
 
 BV_DEFINE(packet_ruleset_cache_group_100_fields, 5);
 
-static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_cache_group *
+receive_packet_ruleset_cache_group_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_cache_group_100_fields fields;
   struct packet_ruleset_cache_group *old;
@@ -31858,63 +30494,48 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
     dio_get_string(&din, real_packet->name, sizeof(real_packet->name));
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->num_elements = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->num_elements = readin;
   }
   if (BV_ISSET(fields, 2)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->num_elements > 255) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->num_elements = 255;
-      }
-      for (i = 0; i < real_packet->num_elements; i++) {
-        {
+    if(real_packet->num_elements > 255) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->num_elements = 255;
+    }
+    for (i = 0; i < real_packet->num_elements; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->source_buildings[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 3)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->num_elements > 255) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->num_elements = 255;
-      }
-      for (i = 0; i < real_packet->num_elements; i++) {
-        {
+    if(real_packet->num_elements > 255) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->num_elements = 255;
+    }
+    for (i = 0; i < real_packet->num_elements; i++) {
       int readin;
 
       dio_get_uint8(&din, &readin);
       real_packet->ranges[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 4)) {
+    int i;
 
-    {
-      int i;
-
-      if(real_packet->num_elements > 255) {
-        freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
-        real_packet->num_elements = 255;
-      }
-      for (i = 0; i < real_packet->num_elements; i++) {
-        dio_get_bool8(&din, &real_packet->survives[i]);
-      }
+    if(real_packet->num_elements > 255) {
+      freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
+      real_packet->num_elements = 255;
+    }
+    for (i = 0; i < real_packet->num_elements; i++) {
+      dio_get_bool8(&din, &real_packet->survives[i]);
     }
   }
 
@@ -31928,7 +30549,9 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_cache_group_100(connection_t *pconn, const struct packet_ruleset_cache_group *packet)
+static int send_packet_ruleset_cache_group_100(
+               connection_t *pconn,
+               const struct packet_ruleset_cache_group *packet)
 {
   const struct packet_ruleset_cache_group *real_packet = packet;
   packet_ruleset_cache_group_100_fields fields;
@@ -32084,7 +30707,8 @@ static void ensure_valid_variant_packet_ruleset_cache_group(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_CACHE_GROUP] = variant;
 }
 
-struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_cache_group *
+receive_packet_ruleset_cache_group(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32124,7 +30748,9 @@ int send_packet_ruleset_cache_group(connection_t *pconn, const struct packet_rul
   }
 }
 
-void lsend_packet_ruleset_cache_group(struct connection_list *dest, const struct packet_ruleset_cache_group *packet)
+void lsend_packet_ruleset_cache_group(
+         struct connection_list *dest,
+         const struct packet_ruleset_cache_group *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_ruleset_cache_group(p_conn, packet);
@@ -32137,7 +30763,8 @@ void lsend_packet_ruleset_cache_group(struct connection_list *dest, const struct
 
 BV_DEFINE(packet_ruleset_cache_effect_100_fields, 8);
 
-static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_100(connection_t *pconn, enum packet_type type)
+static struct packet_ruleset_cache_effect *
+receive_packet_ruleset_cache_effect_100(connection_t *pconn, enum packet_type type)
 {
   packet_ruleset_cache_effect_100_fields fields;
   struct packet_ruleset_cache_effect *old;
@@ -32160,61 +30787,47 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->effect_type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->effect_type = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->range = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->range = readin;
   }
   real_packet->survives = BV_ISSET(fields, 3);
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint32(&din, &readin);
-      real_packet->eff_value = readin;
-    }
+    dio_get_sint32(&din, &readin);
+    real_packet->eff_value = readin;
   }
   if (BV_ISSET(fields, 5)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->req_type = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->req_type = readin;
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint32(&din, &readin);
-      real_packet->req_value = readin;
-    }
+    dio_get_sint32(&din, &readin);
+    real_packet->req_value = readin;
   }
   if (BV_ISSET(fields, 7)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint32(&din, &readin);
-      real_packet->group_id = readin;
-    }
+    dio_get_sint32(&din, &readin);
+    real_packet->group_id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -32227,7 +30840,9 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_cache_effect_100(connection_t *pconn, const struct packet_ruleset_cache_effect *packet)
+static int send_packet_ruleset_cache_effect_100(
+               connection_t *pconn,
+               const struct packet_ruleset_cache_effect *packet)
 {
   const struct packet_ruleset_cache_effect *real_packet = packet;
   packet_ruleset_cache_effect_100_fields fields;
@@ -32349,7 +30964,8 @@ static void ensure_valid_variant_packet_ruleset_cache_effect(connection_t *pconn
   pconn->phs.variant[PACKET_RULESET_CACHE_EFFECT] = variant;
 }
 
-struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_cache_effect *
+receive_packet_ruleset_cache_effect(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32369,7 +30985,8 @@ struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect(connecti
   }
 }
 
-int send_packet_ruleset_cache_effect(connection_t *pconn, const struct packet_ruleset_cache_effect *packet)
+int send_packet_ruleset_cache_effect(connection_t *pconn,
+                                     const struct packet_ruleset_cache_effect *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32389,7 +31006,8 @@ int send_packet_ruleset_cache_effect(connection_t *pconn, const struct packet_ru
   }
 }
 
-void lsend_packet_ruleset_cache_effect(struct connection_list *dest, const struct packet_ruleset_cache_effect *packet)
+void lsend_packet_ruleset_cache_effect(struct connection_list *dest,
+                                       const struct packet_ruleset_cache_effect *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_ruleset_cache_effect(p_conn, packet);
@@ -32402,7 +31020,8 @@ void lsend_packet_ruleset_cache_effect(struct connection_list *dest, const struc
 
 BV_DEFINE(packet_traderoute_info_100_fields, 5);
 
-static struct packet_traderoute_info *receive_packet_traderoute_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_traderoute_info *
+receive_packet_traderoute_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_traderoute_info_100_fields fields;
   struct packet_traderoute_info *old;
@@ -32425,44 +31044,34 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->trademindist = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->trademindist = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->traderevenuepct = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->traderevenuepct = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->traderevenuestyle = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->traderevenuestyle = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->caravanbonusstyle = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->caravanbonusstyle = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->maxtraderoutes = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->maxtraderoutes = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -32475,7 +31084,8 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_traderoute_info_100(connection_t *pconn, const struct packet_traderoute_info *packet)
+static int send_packet_traderoute_info_100(connection_t *pconn,
+                                           const struct packet_traderoute_info *packet)
 {
   const struct packet_traderoute_info *real_packet = packet;
   packet_traderoute_info_100_fields fields;
@@ -32568,7 +31178,8 @@ static int send_packet_traderoute_info_100(connection_t *pconn, const struct pac
 
 BV_DEFINE(packet_traderoute_info_101_fields, 4);
 
-static struct packet_traderoute_info *receive_packet_traderoute_info_101(connection_t *pconn, enum packet_type type)
+static struct packet_traderoute_info *
+receive_packet_traderoute_info_101(connection_t *pconn, enum packet_type type)
 {
   packet_traderoute_info_101_fields fields;
   struct packet_traderoute_info *old;
@@ -32591,36 +31202,28 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_101(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->trademindist = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->trademindist = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->traderevenuepct = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->traderevenuepct = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->traderevenuestyle = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->traderevenuestyle = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->caravanbonusstyle = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->caravanbonusstyle = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -32633,7 +31236,8 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_101(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_traderoute_info_101(connection_t *pconn, const struct packet_traderoute_info *packet)
+static int send_packet_traderoute_info_101(connection_t *pconn,
+                                           const struct packet_traderoute_info *packet)
 {
   const struct packet_traderoute_info *real_packet = packet;
   packet_traderoute_info_101_fields fields;
@@ -32781,7 +31385,8 @@ int send_packet_traderoute_info(connection_t *pconn, const struct packet_tradero
 
 BV_DEFINE(packet_extgame_info_100_fields, 14);
 
-static struct packet_extgame_info *receive_packet_extgame_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_extgame_info *
+receive_packet_extgame_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_extgame_info_100_fields fields;
   struct packet_extgame_info *old;
@@ -32812,31 +31417,25 @@ static struct packet_extgame_info *receive_packet_extgame_info_100(connection_t 
   real_packet->goldtrading = BV_ISSET(fields, 6);
   real_packet->citytrading = BV_ISSET(fields, 7);
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->airliftingstyle = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->airliftingstyle = readin;
   }
   real_packet->teamplacement = BV_ISSET(fields, 9);
   real_packet->globalwarmingon = BV_ISSET(fields, 10);
   real_packet->nuclearwinteron = BV_ISSET(fields, 11);
   if (BV_ISSET(fields, 12)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->maxallies = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->maxallies = readin;
   }
   if (BV_ISSET(fields, 13)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->techleakagerate = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->techleakagerate = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -32979,7 +31578,8 @@ static int send_packet_extgame_info_100(connection_t *pconn, const struct packet
 
 BV_DEFINE(packet_extgame_info_101_fields, 12);
 
-static struct packet_extgame_info *receive_packet_extgame_info_101(connection_t *pconn, enum packet_type type)
+static struct packet_extgame_info *
+receive_packet_extgame_info_101(connection_t *pconn, enum packet_type type)
 {
   packet_extgame_info_101_fields fields;
   struct packet_extgame_info *old;
@@ -33010,12 +31610,10 @@ static struct packet_extgame_info *receive_packet_extgame_info_101(connection_t 
   real_packet->goldtrading = BV_ISSET(fields, 6);
   real_packet->citytrading = BV_ISSET(fields, 7);
   if (BV_ISSET(fields, 8)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->airliftingstyle = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->airliftingstyle = readin;
   }
   real_packet->teamplacement = BV_ISSET(fields, 9);
   real_packet->globalwarmingon = BV_ISSET(fields, 10);
@@ -33230,12 +31828,10 @@ static struct packet_vote_new *receive_packet_vote_new_100(connection_t *pconn, 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->vote_no = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->vote_no = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->user, sizeof(real_packet->user));
@@ -33244,20 +31840,16 @@ static struct packet_vote_new *receive_packet_vote_new_100(connection_t *pconn, 
     dio_get_string(&din, real_packet->desc, sizeof(real_packet->desc));
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->percent_required = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->percent_required = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->flags = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->flags = readin;
   }
   real_packet->is_poll = BV_ISSET(fields, 5);
 
@@ -33421,7 +32013,8 @@ int send_packet_vote_new(connection_t *pconn, const struct packet_vote_new *pack
 
 BV_DEFINE(packet_vote_update_100_fields, 5);
 
-static struct packet_vote_update *receive_packet_vote_update_100(connection_t *pconn, enum packet_type type)
+static struct packet_vote_update *
+receive_packet_vote_update_100(connection_t *pconn, enum packet_type type)
 {
   packet_vote_update_100_fields fields;
   struct packet_vote_update *old;
@@ -33444,44 +32037,34 @@ static struct packet_vote_update *receive_packet_vote_update_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->vote_no = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->vote_no = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->yes = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->yes = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->no = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->no = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->abstain = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->abstain = readin;
   }
   if (BV_ISSET(fields, 4)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->num_voters = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->num_voters = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -33639,7 +32222,8 @@ int send_packet_vote_update(connection_t *pconn, const struct packet_vote_update
 
 BV_DEFINE(packet_vote_remove_100_fields, 1);
 
-static struct packet_vote_remove *receive_packet_vote_remove_100(connection_t *pconn, enum packet_type type)
+static struct packet_vote_remove *
+receive_packet_vote_remove_100(connection_t *pconn, enum packet_type type)
 {
   packet_vote_remove_100_fields fields;
   struct packet_vote_remove *old;
@@ -33662,12 +32246,10 @@ static struct packet_vote_remove *receive_packet_vote_remove_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->vote_no = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->vote_no = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -33789,7 +32371,8 @@ int send_packet_vote_remove(connection_t *pconn, const struct packet_vote_remove
 
 BV_DEFINE(packet_vote_resolve_100_fields, 2);
 
-static struct packet_vote_resolve *receive_packet_vote_resolve_100(connection_t *pconn, enum packet_type type)
+static struct packet_vote_resolve *
+receive_packet_vote_resolve_100(connection_t *pconn, enum packet_type type)
 {
   packet_vote_resolve_100_fields fields;
   struct packet_vote_resolve *old;
@@ -33812,12 +32395,10 @@ static struct packet_vote_resolve *receive_packet_vote_resolve_100(connection_t 
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->vote_no = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->vote_no = readin;
   }
   real_packet->passed = BV_ISSET(fields, 1);
 
@@ -33945,7 +32526,8 @@ int send_packet_vote_resolve(connection_t *pconn, const struct packet_vote_resol
 
 BV_DEFINE(packet_vote_submit_100_fields, 2);
 
-static struct packet_vote_submit *receive_packet_vote_submit_100(connection_t *pconn, enum packet_type type)
+static struct packet_vote_submit *
+receive_packet_vote_submit_100(connection_t *pconn, enum packet_type type)
 {
   packet_vote_submit_100_fields fields;
   struct packet_vote_submit *old;
@@ -33968,20 +32550,16 @@ static struct packet_vote_submit *receive_packet_vote_submit_100(connection_t *p
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint32(&din, &readin);
-      real_packet->vote_no = readin;
-    }
+    dio_get_uint32(&din, &readin);
+    real_packet->vote_no = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_sint8(&din, &readin);
-      real_packet->value = readin;
-    }
+    dio_get_sint8(&din, &readin);
+    real_packet->value = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -34112,7 +32690,8 @@ int send_packet_vote_submit(connection_t *pconn, const struct packet_vote_submit
 
 BV_DEFINE(packet_trade_route_plan_100_fields, 2);
 
-static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(connection_t *pconn, enum packet_type type)
+static struct packet_trade_route_plan *
+receive_packet_trade_route_plan_100(connection_t *pconn, enum packet_type type)
 {
   packet_trade_route_plan_100_fields fields;
   struct packet_trade_route_plan *old;
@@ -34135,20 +32714,16 @@ static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city1 = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city1 = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city2 = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city2 = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -34161,7 +32736,9 @@ static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_trade_route_plan_100(connection_t *pconn, const struct packet_trade_route_plan *packet)
+static int send_packet_trade_route_plan_100(
+               connection_t *pconn,
+               const struct packet_trade_route_plan *packet)
 {
   const struct packet_trade_route_plan *real_packet = packet;
   packet_trade_route_plan_100_fields fields;
@@ -34289,7 +32866,8 @@ int dsend_packet_trade_route_plan(connection_t *pconn, int city1, int city2)
 
 BV_DEFINE(packet_trade_route_remove_100_fields, 2);
 
-static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(connection_t *pconn, enum packet_type type)
+static struct packet_trade_route_remove *
+receive_packet_trade_route_remove_100(connection_t *pconn, enum packet_type type)
 {
   packet_trade_route_remove_100_fields fields;
   struct packet_trade_route_remove *old;
@@ -34312,20 +32890,16 @@ static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(c
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city1 = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city1 = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city2 = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city2 = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -34338,7 +32912,9 @@ static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(c
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_trade_route_remove_100(connection_t *pconn, const struct packet_trade_route_remove *packet)
+static int send_packet_trade_route_remove_100(
+               connection_t *pconn,
+               const struct packet_trade_route_remove *packet)
 {
   const struct packet_trade_route_remove *real_packet = packet;
   packet_trade_route_remove_100_fields fields;
@@ -34410,7 +32986,8 @@ static void ensure_valid_variant_packet_trade_route_remove(connection_t *pconn)
   pconn->phs.variant[PACKET_TRADE_ROUTE_REMOVE] = variant;
 }
 
-struct packet_trade_route_remove *receive_packet_trade_route_remove(connection_t *pconn, enum packet_type type)
+struct packet_trade_route_remove *
+receive_packet_trade_route_remove(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34460,7 +33037,8 @@ int dsend_packet_trade_route_remove(connection_t *pconn, int city1, int city2)
 
 BV_DEFINE(packet_unit_trade_route_100_fields, 3);
 
-static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_trade_route *
+receive_packet_unit_trade_route_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_trade_route_100_fields fields;
   struct packet_unit_trade_route *old;
@@ -34483,28 +33061,22 @@ static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city1 = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city1 = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city2 = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city2 = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -34517,7 +33089,9 @@ static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_trade_route_100(connection_t *pconn, const struct packet_unit_trade_route *packet)
+static int send_packet_unit_trade_route_100(
+               connection_t *pconn,
+               const struct packet_unit_trade_route *packet)
 {
   const struct packet_unit_trade_route *real_packet = packet;
   packet_unit_trade_route_100_fields fields;
@@ -34598,7 +33172,8 @@ static void ensure_valid_variant_packet_unit_trade_route(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_TRADE_ROUTE] = variant;
 }
 
-struct packet_unit_trade_route *receive_packet_unit_trade_route(connection_t *pconn, enum packet_type type)
+struct packet_unit_trade_route *
+receive_packet_unit_trade_route(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34655,7 +33230,8 @@ int dsend_packet_unit_trade_route(connection_t *pconn, int unit_id, int city1, i
 
 BV_DEFINE(packet_trade_route_info_100_fields, 4);
 
-static struct packet_trade_route_info *receive_packet_trade_route_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_trade_route_info *
+receive_packet_trade_route_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_trade_route_info_100_fields fields;
   struct packet_trade_route_info *old;
@@ -34678,36 +33254,28 @@ static struct packet_trade_route_info *receive_packet_trade_route_info_100(conne
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city1 = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city1 = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->city2 = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->city2 = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->unit_id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->unit_id = readin;
   }
   if (BV_ISSET(fields, 3)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->status = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->status = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -34720,7 +33288,9 @@ static struct packet_trade_route_info *receive_packet_trade_route_info_100(conne
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_trade_route_info_100(connection_t *pconn, const struct packet_trade_route_info *packet)
+static int send_packet_trade_route_info_100(
+               connection_t *pconn,
+               const struct packet_trade_route_info *packet)
 {
   const struct packet_trade_route_info *real_packet = packet;
   packet_trade_route_info_100_fields fields;
@@ -34856,7 +33426,8 @@ int send_packet_trade_route_info(connection_t *pconn, const struct packet_trade_
 
 BV_DEFINE(packet_city_set_rally_point_100_fields, 3);
 
-static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_set_rally_point *
+receive_packet_city_set_rally_point_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_set_rally_point_100_fields fields;
   struct packet_city_set_rally_point *old;
@@ -34879,28 +33450,22 @@ static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -34913,7 +33478,9 @@ static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_set_rally_point_100(connection_t *pconn, const struct packet_city_set_rally_point *packet)
+static int send_packet_city_set_rally_point_100(
+               connection_t *pconn,
+               const struct packet_city_set_rally_point *packet)
 {
   const struct packet_city_set_rally_point *real_packet = packet;
   packet_city_set_rally_point_100_fields fields;
@@ -34994,7 +33561,8 @@ static void ensure_valid_variant_packet_city_set_rally_point(connection_t *pconn
   pconn->phs.variant[PACKET_CITY_SET_RALLY_POINT] = variant;
 }
 
-struct packet_city_set_rally_point *receive_packet_city_set_rally_point(connection_t *pconn, enum packet_type type)
+struct packet_city_set_rally_point *
+receive_packet_city_set_rally_point(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35014,7 +33582,8 @@ struct packet_city_set_rally_point *receive_packet_city_set_rally_point(connecti
   }
 }
 
-int send_packet_city_set_rally_point(connection_t *pconn, const struct packet_city_set_rally_point *packet)
+int send_packet_city_set_rally_point(connection_t *pconn,
+                                     const struct packet_city_set_rally_point *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35051,7 +33620,8 @@ int dsend_packet_city_set_rally_point(connection_t *pconn, int id, int x, int y)
 
 BV_DEFINE(packet_city_clear_rally_point_100_fields, 1);
 
-static struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_clear_rally_point *
+receive_packet_city_clear_rally_point_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_clear_rally_point_100_fields fields;
   struct packet_city_clear_rally_point *old;
@@ -35074,12 +33644,10 @@ static struct packet_city_clear_rally_point *receive_packet_city_clear_rally_poi
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -35092,7 +33660,9 @@ static struct packet_city_clear_rally_point *receive_packet_city_clear_rally_poi
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_clear_rally_point_100(connection_t *pconn, const struct packet_city_clear_rally_point *packet)
+static int send_packet_city_clear_rally_point_100(
+               connection_t *pconn,
+               const struct packet_city_clear_rally_point *packet)
 {
   const struct packet_city_clear_rally_point *real_packet = packet;
   packet_city_clear_rally_point_100_fields fields;
@@ -35155,7 +33725,8 @@ static void ensure_valid_variant_packet_city_clear_rally_point(connection_t *pco
   pconn->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT] = variant;
 }
 
-struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point(connection_t *pconn, enum packet_type type)
+struct packet_city_clear_rally_point *
+receive_packet_city_clear_rally_point(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35175,7 +33746,9 @@ struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point(conn
   }
 }
 
-int send_packet_city_clear_rally_point(connection_t *pconn, const struct packet_city_clear_rally_point *packet)
+int send_packet_city_clear_rally_point(
+        connection_t *pconn,
+        const struct packet_city_clear_rally_point *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35210,7 +33783,8 @@ int dsend_packet_city_clear_rally_point(connection_t *pconn, int id)
 
 BV_DEFINE(packet_unit_air_patrol_100_fields, 3);
 
-static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_air_patrol *
+receive_packet_unit_air_patrol_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_air_patrol_100_fields fields;
   struct packet_unit_air_patrol *old;
@@ -35233,28 +33807,22 @@ static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->x = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->x = readin;
   }
   if (BV_ISSET(fields, 2)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->y = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->y = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -35267,7 +33835,9 @@ static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_air_patrol_100(connection_t *pconn, const struct packet_unit_air_patrol *packet)
+static int send_packet_unit_air_patrol_100(
+               connection_t *pconn,
+               const struct packet_unit_air_patrol *packet)
 {
   const struct packet_unit_air_patrol *real_packet = packet;
   packet_unit_air_patrol_100_fields fields;
@@ -35405,7 +33975,8 @@ int dsend_packet_unit_air_patrol(connection_t *pconn, int id, int x, int y)
 
 BV_DEFINE(packet_unit_air_patrol_stop_100_fields, 1);
 
-static struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_air_patrol_stop *
+receive_packet_unit_air_patrol_stop_100(connection_t *pconn, enum packet_type type)
 {
   packet_unit_air_patrol_stop_100_fields fields;
   struct packet_unit_air_patrol_stop *old;
@@ -35428,12 +33999,10 @@ static struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop_1
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -35446,7 +34015,9 @@ static struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_air_patrol_stop_100(connection_t *pconn, const struct packet_unit_air_patrol_stop *packet)
+static int send_packet_unit_air_patrol_stop_100(
+               connection_t *pconn,
+               const struct packet_unit_air_patrol_stop *packet)
 {
   const struct packet_unit_air_patrol_stop *real_packet = packet;
   packet_unit_air_patrol_stop_100_fields fields;
@@ -35509,7 +34080,8 @@ static void ensure_valid_variant_packet_unit_air_patrol_stop(connection_t *pconn
   pconn->phs.variant[PACKET_UNIT_AIR_PATROL_STOP] = variant;
 }
 
-struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop(connection_t *pconn, enum packet_type type)
+struct packet_unit_air_patrol_stop *
+receive_packet_unit_air_patrol_stop(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35529,7 +34101,8 @@ struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop(connecti
   }
 }
 
-int send_packet_unit_air_patrol_stop(connection_t *pconn, const struct packet_unit_air_patrol_stop *packet)
+int send_packet_unit_air_patrol_stop(connection_t *pconn,
+                                     const struct packet_unit_air_patrol_stop *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35564,7 +34137,8 @@ int dsend_packet_unit_air_patrol_stop(connection_t *pconn, int id)
 
 BV_DEFINE(packet_city_manager_param_100_fields, 7);
 
-static struct packet_city_manager_param *receive_packet_city_manager_param_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_manager_param *
+receive_packet_city_manager_param_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_manager_param_100_fields fields;
   struct packet_city_manager_param *old;
@@ -35587,53 +34161,39 @@ static struct packet_city_manager_param *receive_packet_city_manager_param_100(c
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->id = readin;
   }
   if (BV_ISSET(fields, 1)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < CM_NUM_STATS; i++) {
-        {
+    for (i = 0; i < CM_NUM_STATS; i++) {
       int readin;
 
       dio_get_sint16(&din, &readin);
       real_packet->minimal_surplus[i] = readin;
-    }
-      }
     }
   }
   real_packet->require_happy = BV_ISSET(fields, 2);
   real_packet->allow_disorder = BV_ISSET(fields, 3);
   real_packet->allow_specialists = BV_ISSET(fields, 4);
   if (BV_ISSET(fields, 5)) {
+    int i;
 
-    {
-      int i;
-
-      for (i = 0; i < CM_NUM_STATS; i++) {
-        {
+    for (i = 0; i < CM_NUM_STATS; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->factor[i] = readin;
     }
-      }
-    }
   }
   if (BV_ISSET(fields, 6)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->happy_factor = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->happy_factor = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -35646,7 +34206,9 @@ static struct packet_city_manager_param *receive_packet_city_manager_param_100(c
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_manager_param_100(connection_t *pconn, const struct packet_city_manager_param *packet)
+static int send_packet_city_manager_param_100(
+               connection_t *pconn,
+               const struct packet_city_manager_param *packet)
 {
   const struct packet_city_manager_param *real_packet = packet;
   packet_city_manager_param_100_fields fields;
@@ -35789,7 +34351,8 @@ static void ensure_valid_variant_packet_city_manager_param(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_MANAGER_PARAM] = variant;
 }
 
-struct packet_city_manager_param *receive_packet_city_manager_param(connection_t *pconn, enum packet_type type)
+struct packet_city_manager_param *
+receive_packet_city_manager_param(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35806,7 +34369,8 @@ struct packet_city_manager_param *receive_packet_city_manager_param(connection_t
   }
 }
 
-int send_packet_city_manager_param(connection_t *pconn, const struct packet_city_manager_param *packet)
+int send_packet_city_manager_param(connection_t *pconn,
+                                   const struct packet_city_manager_param *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35829,7 +34393,8 @@ int send_packet_city_manager_param(connection_t *pconn, const struct packet_city
 
 BV_DEFINE(packet_city_no_manager_param_100_fields, 1);
 
-static struct packet_city_no_manager_param *receive_packet_city_no_manager_param_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_no_manager_param *
+receive_packet_city_no_manager_param_100(connection_t *pconn, enum packet_type type)
 {
   packet_city_no_manager_param_100_fields fields;
   struct packet_city_no_manager_param *old;
@@ -35852,12 +34417,10 @@ static struct packet_city_no_manager_param *receive_packet_city_no_manager_param
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint16(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint16(&din, &readin);
+    real_packet->id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -35870,7 +34433,8 @@ static struct packet_city_no_manager_param *receive_packet_city_no_manager_param
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_no_manager_param_100(connection_t *pconn, const struct packet_city_no_manager_param *packet)
+static int send_packet_city_no_manager_param_100(connection_t *pconn,
+                                                 const struct packet_city_no_manager_param *packet)
 {
   const struct packet_city_no_manager_param *real_packet = packet;
   packet_city_no_manager_param_100_fields fields;
@@ -35933,7 +34497,8 @@ static void ensure_valid_variant_packet_city_no_manager_param(connection_t *pcon
   pconn->phs.variant[PACKET_CITY_NO_MANAGER_PARAM] = variant;
 }
 
-struct packet_city_no_manager_param *receive_packet_city_no_manager_param(connection_t *pconn, enum packet_type type)
+struct packet_city_no_manager_param *
+receive_packet_city_no_manager_param(connection_t *pconn, enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35950,7 +34515,8 @@ struct packet_city_no_manager_param *receive_packet_city_no_manager_param(connec
   }
 }
 
-int send_packet_city_no_manager_param(connection_t *pconn, const struct packet_city_no_manager_param *packet)
+int send_packet_city_no_manager_param(connection_t *pconn,
+                                      const struct packet_city_no_manager_param *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35982,7 +34548,8 @@ int dsend_packet_city_no_manager_param(connection_t *pconn, int id)
 
 BV_DEFINE(packet_player_info_req_100_fields, 1);
 
-static struct packet_player_info_req *receive_packet_player_info_req_100(connection_t *pconn, enum packet_type type)
+static struct packet_player_info_req *
+receive_packet_player_info_req_100(connection_t *pconn, enum packet_type type)
 {
   packet_player_info_req_100_fields fields;
   struct packet_player_info_req *old;
@@ -36005,12 +34572,10 @@ static struct packet_player_info_req *receive_packet_player_info_req_100(connect
   }
 
   if (BV_ISSET(fields, 0)) {
-    {
-      int readin;
+    int readin;
 
-      dio_get_uint8(&din, &readin);
-      real_packet->id = readin;
-    }
+    dio_get_uint8(&din, &readin);
+    real_packet->id = readin;
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -36023,7 +34588,8 @@ static struct packet_player_info_req *receive_packet_player_info_req_100(connect
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_req_100(connection_t *pconn, const struct packet_player_info_req *packet)
+static int send_packet_player_info_req_100(connection_t *pconn,
+                                           const struct packet_player_info_req *packet)
 {
   const struct packet_player_info_req *real_packet = packet;
   packet_player_info_req_100_fields fields;
@@ -36134,4 +34700,3 @@ int dsend_packet_player_info_req(connection_t *pconn, int id)
 
   return send_packet_player_info_req(pconn, real_packet);
 }
-
