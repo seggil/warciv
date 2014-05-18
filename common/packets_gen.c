@@ -6,7 +6,6 @@
  *                       DO NOT CHANGE THIS FILE                             *
  ****************************************************************************/
 
-
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
 #endif
@@ -471,7 +470,6 @@ void *get_packet_from_connection_helper(connection_t *pconn,
   /* 147 */
   /* 148 */
   /* 149 */
-
 
   case PACKET_PLAYER_INFO_REQ: /* 150 */
     return receive_packet_player_info_req(pconn, type);
@@ -1039,7 +1037,8 @@ int send_packet_processing_finished(connection_t *pconn)
 }
 
 /* 2 sc */
-static struct packet_freeze_hint *receive_packet_freeze_hint_100(connection_t *pconn, enum packet_type type)
+static struct packet_freeze_hint *
+receive_packet_freeze_hint_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_freeze_hint, real_packet);
 
@@ -1399,7 +1398,6 @@ receive_packet_authentication_req_100(connection_t *pconn, enum packet_type type
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_authentication_req_100, cmp_packet_authentication_req_100);
   }
@@ -1478,7 +1476,6 @@ static int send_packet_authentication_req_100(connection_t *pconn, const struct 
   if (BV_ISSET(fields, 1)) {
     dio_put_string(&dout, real_packet->message);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -1864,7 +1861,6 @@ static int send_packet_nation_unavailable_100(connection_t *pconn, const struct 
     dio_put_uint16(&dout, real_packet->nation);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -2030,7 +2026,6 @@ receive_packet_nation_select_req_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_nation_select_req_100, cmp_packet_nation_select_req_100);
   }
@@ -2131,7 +2126,6 @@ static int send_packet_nation_select_req_100(connection_t *pconn,
   if (BV_ISSET(fields, 3)) {
     dio_put_uint8(&dout, real_packet->city_style);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -2311,7 +2305,6 @@ static struct packet_game_state *receive_packet_game_state_100(connection_t *pco
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_game_state_100, cmp_packet_game_state_100);
   }
@@ -2377,7 +2370,6 @@ static int send_packet_game_state_100(connection_t *pconn, const struct packet_g
   if (BV_ISSET(fields, 0)) {
     dio_put_uint32(&dout, real_packet->value);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -2487,7 +2479,6 @@ receive_packet_endgame_report_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_endgame_report, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_endgame_report_100, cmp_packet_endgame_report_100);
@@ -2742,7 +2733,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     BV_SET(fields, 0);
   }
 
-
   {
     differ = (old->nscores != real_packet->nscores);
     if(!differ) {
@@ -2759,7 +2749,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 1);
   }
-
 
   {
     differ = (old->nscores != real_packet->nscores);
@@ -2778,7 +2767,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     BV_SET(fields, 2);
   }
 
-
   {
     differ = (old->nscores != real_packet->nscores);
     if(!differ) {
@@ -2795,7 +2783,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 3);
   }
-
 
   {
     differ = (old->nscores != real_packet->nscores);
@@ -2814,7 +2801,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     BV_SET(fields, 4);
   }
 
-
   {
     differ = (old->nscores != real_packet->nscores);
     if(!differ) {
@@ -2831,7 +2817,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 5);
   }
-
 
   {
     differ = (old->nscores != real_packet->nscores);
@@ -2850,7 +2835,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     BV_SET(fields, 6);
   }
 
-
   {
     differ = (old->nscores != real_packet->nscores);
     if(!differ) {
@@ -2867,7 +2851,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 7);
   }
-
 
   {
     differ = (old->nscores != real_packet->nscores);
@@ -2886,7 +2869,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     BV_SET(fields, 8);
   }
 
-
   {
     differ = (old->nscores != real_packet->nscores);
     if(!differ) {
@@ -2903,7 +2885,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 9);
   }
-
 
   {
     differ = (old->nscores != real_packet->nscores);
@@ -2922,7 +2903,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     BV_SET(fields, 10);
   }
 
-
   {
     differ = (old->nscores != real_packet->nscores);
     if(!differ) {
@@ -2939,7 +2919,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 11);
   }
-
 
   {
     differ = (old->nscores != real_packet->nscores);
@@ -2958,7 +2937,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     BV_SET(fields, 12);
   }
 
-
   {
     differ = (old->nscores != real_packet->nscores);
     if(!differ) {
@@ -2975,7 +2953,6 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 13);
   }
-
 
   {
     differ = (old->nscores != real_packet->nscores);
@@ -3366,7 +3343,6 @@ static int send_packet_tile_info_100(connection_t *pconn, const struct packet_ti
     dio_put_string(&dout, real_packet->spec_sprite);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -3453,7 +3429,6 @@ static struct packet_game_info *receive_packet_game_info_100(connection_t *pconn
   RECEIVE_PACKET_START(packet_game_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_game_info_100, cmp_packet_game_info_100);
@@ -3886,7 +3861,6 @@ static int send_packet_game_info_100(connection_t *pconn, const struct packet_ga
     BV_SET(fields, 28);
   }
 
-
   differ = (B_LAST != B_LAST);
   if(!differ) {
     int i;
@@ -4017,7 +3991,6 @@ static int send_packet_game_info_100(connection_t *pconn, const struct packet_ga
     dio_put_uint8(&dout, 255);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -4089,7 +4062,8 @@ int send_packet_game_info(connection_t *pconn, const struct packet_game_info *pa
 
 BV_DEFINE(packet_map_info_100_fields, 3);
 
-static struct packet_map_info *receive_packet_map_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_map_info *
+receive_packet_map_info_100(connection_t *pconn, enum packet_type type)
 {
   packet_map_info_100_fields fields;
   struct packet_map_info *old;
@@ -4098,7 +4072,6 @@ static struct packet_map_info *receive_packet_map_info_100(connection_t *pconn, 
   RECEIVE_PACKET_START(packet_map_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_map_info_100, cmp_packet_map_info_100);
@@ -4285,7 +4258,6 @@ receive_packet_nuke_tile_info_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_nuke_tile_info_100, cmp_packet_nuke_tile_info_100);
   }
@@ -4368,7 +4340,6 @@ static int send_packet_nuke_tile_info_100(connection_t *pconn,
   if (BV_ISSET(fields, 1)) {
     dio_put_uint8(&dout, real_packet->y);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -4476,7 +4447,6 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(connection_t *pconn, 
   RECEIVE_PACKET_START(packet_chat_msg, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_chat_msg_100, cmp_packet_chat_msg_100);
@@ -4615,7 +4585,6 @@ static int send_packet_chat_msg_100(connection_t *pconn, const struct packet_cha
     dio_put_uint8(&dout, real_packet->conn_id);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -4742,7 +4711,6 @@ receive_packet_chat_msg_req_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_chat_msg_req_100, cmp_packet_chat_msg_req_100);
   }
@@ -4806,7 +4774,6 @@ static int send_packet_chat_msg_req_100(connection_t *pconn, const struct packet
   if (BV_ISSET(fields, 0)) {
     dio_put_string(&dout, real_packet->message);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -4898,7 +4865,6 @@ receive_packet_city_remove_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_city_remove_100, cmp_packet_city_remove_100);
   }
@@ -4965,7 +4931,6 @@ static int send_packet_city_remove_100(connection_t *pconn, const struct packet_
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->city_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -5092,7 +5057,6 @@ static struct packet_city_info *receive_packet_city_info_100(connection_t *pconn
 
   dio_get_uint16(&din, &readin);
   real_packet->id = readin;
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_info_100, cmp_packet_city_info_100);
@@ -5443,7 +5407,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     BV_SET(fields, 4);
   }
 
-
   {
     differ = (5 != 5);
     if(!differ) {
@@ -5460,7 +5423,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     different++;
     BV_SET(fields, 5);
   }
-
 
   {
     differ = (5 != 5);
@@ -5479,7 +5441,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     BV_SET(fields, 6);
   }
 
-
   {
     differ = (5 != 5);
     if(!differ) {
@@ -5497,7 +5458,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     BV_SET(fields, 7);
   }
 
-
   {
     differ = (5 != 5);
     if(!differ) {
@@ -5514,7 +5474,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     different++;
     BV_SET(fields, 8);
   }
-
 
   {
     differ = FALSE;
@@ -5587,7 +5546,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     BV_SET(fields, 18);
   }
 
-
   {
     differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
     if(!differ) {
@@ -5604,7 +5562,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     different++;
     BV_SET(fields, 19);
   }
-
 
   {
     differ = (OLD_NUM_TRADEROUTES != OLD_NUM_TRADEROUTES);
@@ -5711,10 +5668,10 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
 
   differ = (strcmp(old->improvements, real_packet->improvements) != 0);
   if (differ) {
-    different++;
+    different += 2;
     BV_SET(fields, 36);
+    BV_SET(fields, 37);
   }
-
 
   {
     differ = (CITY_MAP_SIZE * CITY_MAP_SIZE != CITY_MAP_SIZE * CITY_MAP_SIZE);
@@ -5727,10 +5684,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
         }
       }
     }
-  }
-  if (differ) {
-    different++;
-    BV_SET(fields, 37);
   }
 
   differ = (old->did_buy != real_packet->did_buy);
@@ -5944,7 +5897,6 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
     dio_put_sint16(&dout, real_packet->turn_founded);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -5994,7 +5946,6 @@ static struct packet_city_info *receive_packet_city_info_101(connection_t *pconn
     dio_get_uint16(&din, &readin);
     real_packet->id = readin;
   }
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_info_101, cmp_packet_city_info_101);
@@ -6334,14 +6285,11 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
   }
 
   {
-    differ = (5 != 5);
-    if(!differ) {
-      int i;
-      for (i = 0; i < 5; i++) {
-        if (old->people_happy[i] != real_packet->people_happy[i]) {
-          differ = TRUE;
-          break;
-        }
+    int i;
+    for (i = 0; i < 5; i++) {
+      if (old->people_happy[i] != real_packet->people_happy[i]) {
+        differ = TRUE;
+        break;
       }
     }
   }
@@ -6351,14 +6299,11 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
   }
 
   {
-    differ = (5 != 5);
-    if(!differ) {
-      int i;
-      for (i = 0; i < 5; i++) {
-        if (old->people_content[i] != real_packet->people_content[i]) {
-          differ = TRUE;
-          break;
-        }
+    int i;
+    for (i = 0; i < 5; i++) {
+      if (old->people_content[i] != real_packet->people_content[i]) {
+        differ = TRUE;
+        break;
       }
     }
   }
@@ -6367,16 +6312,12 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
     BV_SET(fields, 6);
   }
 
-
   {
-    differ = (5 != 5);
-    if(!differ) {
-      int i;
-      for (i = 0; i < 5; i++) {
-        if (old->people_unhappy[i] != real_packet->people_unhappy[i]) {
-          differ = TRUE;
-          break;
-        }
+    int i;
+    for (i = 0; i < 5; i++) {
+      if (old->people_unhappy[i] != real_packet->people_unhappy[i]) {
+        differ = TRUE;
+        break;
       }
     }
   }
@@ -6386,14 +6327,11 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
   }
 
   {
-    differ = (5 != 5);
-    if(!differ) {
-      int i;
-      for (i = 0; i < 5; i++) {
-        if (old->people_angry[i] != real_packet->people_angry[i]) {
-          differ = TRUE;
-          break;
-        }
+    int i;
+    for (i = 0; i < 5; i++) {
+      if (old->people_angry[i] != real_packet->people_angry[i]) {
+        differ = TRUE;
+        break;
       }
     }
   }
@@ -6403,14 +6341,11 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
   }
 
   {
-    differ = FALSE;
-    if(!differ) {
-      int i;
-      for (i = 0; i < SP_COUNT; i++) {
-        if (old->specialists[i] != real_packet->specialists[i]) {
-          differ = TRUE;
-          break;
-        }
+    int i;
+    for (i = 0; i < SP_COUNT; i++) {
+      if (old->specialists[i] != real_packet->specialists[i]) {
+        differ = TRUE;
+        break;
       }
     }
   }
@@ -6828,7 +6763,6 @@ static void ensure_valid_variant_packet_city_info(connection_t *pconn)
     return;
   }
 
-
   if((has_capability("extglobalinfo", pconn->capability)
       && has_capability("extglobalinfo", our_capability)))
   {
@@ -7107,7 +7041,6 @@ static int send_packet_city_short_info_100(connection_t *pconn,
     dio_put_uint16(&dout, real_packet->tile_trade);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -7196,7 +7129,6 @@ static struct packet_city_sell *receive_packet_city_sell_100(connection_t *pconn
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_city_sell_100, cmp_packet_city_sell_100);
   }
@@ -7278,7 +7210,6 @@ static int send_packet_city_sell_100(connection_t *pconn, const struct packet_ci
   if (BV_ISSET(fields, 1)) {
     dio_put_uint8(&dout, real_packet->build_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -7370,7 +7301,6 @@ static struct packet_city_buy *receive_packet_city_buy_100(connection_t *pconn, 
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_city_buy_100, cmp_packet_city_buy_100);
   }
@@ -7437,7 +7367,6 @@ static int send_packet_city_buy_100(connection_t *pconn, const struct packet_cit
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->city_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -7529,7 +7458,6 @@ receive_packet_city_change_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_city_change_100, cmp_packet_city_change_100);
   }
@@ -7617,7 +7545,6 @@ static int send_packet_city_change_100(connection_t *pconn, const struct packet_
     dio_put_uint8(&dout, real_packet->build_id);
   }
   /* field 2 is folded into the header */
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -7710,7 +7637,6 @@ receive_packet_city_worklist_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_city_worklist, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_worklist_100, cmp_packet_city_worklist_100);
@@ -7882,7 +7808,6 @@ receive_packet_city_make_specialist_100(connection_t *pconn, enum packet_type ty
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_city_make_specialist_100, cmp_packet_city_make_specialist_100);
   }
@@ -7981,7 +7906,6 @@ static int send_packet_city_make_specialist_100(connection_t *pconn,
     dio_put_uint8(&dout, real_packet->worker_y);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -8075,7 +7999,6 @@ receive_packet_city_make_worker_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_city_make_worker, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_make_worker_100, cmp_packet_city_make_worker_100);
@@ -8366,7 +8289,6 @@ static int send_packet_city_change_specialist_100(connection_t *pconn,
     dio_put_uint8(&dout, real_packet->to);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -8463,7 +8385,6 @@ receive_packet_city_rename_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_city_rename, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_rename_100, cmp_packet_city_rename_100);
@@ -8634,7 +8555,6 @@ receive_packet_city_options_req_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_city_options_req, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_options_req_100, cmp_packet_city_options_req_100);
@@ -9035,7 +8955,6 @@ static int send_packet_city_incite_inq_100(connection_t *pconn,
     dio_put_uint16(&dout, real_packet->city_id);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -9126,7 +9045,6 @@ receive_packet_city_incite_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_city_incite_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_incite_info_100, cmp_packet_city_incite_info_100);
@@ -9255,7 +9173,9 @@ receive_packet_city_incite_info(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_city_incite_info(connection_t *pconn, const struct packet_city_incite_info *packet)
+int send_packet_city_incite_info(
+        connection_t *pconn,
+        const struct packet_city_incite_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9462,7 +9382,6 @@ receive_packet_city_name_suggestion_info_100(connection_t *pconn, enum packet_ty
   RECEIVE_PACKET_START(packet_city_name_suggestion_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_name_suggestion_info_100, cmp_packet_city_name_suggestion_info_100);
@@ -9838,7 +9757,6 @@ receive_packet_player_remove_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_player_remove, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_player_remove_100, cmp_packet_player_remove_100);
@@ -10319,7 +10237,6 @@ static int send_packet_player_info_100(connection_t *pconn, const struct packet_
     different++;
     BV_SET(fields, 12);
   }
-
 
   {
     differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
@@ -10882,7 +10799,6 @@ static int send_packet_player_info_101(connection_t *pconn, const struct packet_
     different++;
     BV_SET(fields, 12);
   }
-
 
   {
     differ = (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS != MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
@@ -13943,7 +13859,6 @@ static int send_packet_unit_info_100(connection_t *pconn, const struct packet_un
   if (differ) {different++;}
   if(packet->orders_vigilant) {BV_SET(fields, 31);}
 
-
     {
       differ = (old->orders_length != real_packet->orders_length);
       if(!differ) {
@@ -13961,7 +13876,6 @@ static int send_packet_unit_info_100(connection_t *pconn, const struct packet_un
     BV_SET(fields, 32);
   }
 
-
     {
       differ = (old->orders_length != real_packet->orders_length);
       if(!differ) {
@@ -13978,7 +13892,6 @@ static int send_packet_unit_info_100(connection_t *pconn, const struct packet_un
     different++;
     BV_SET(fields, 33);
   }
-
 
     {
       differ = (old->orders_length != real_packet->orders_length);
@@ -14114,7 +14027,6 @@ static int send_packet_unit_info_100(connection_t *pconn, const struct packet_un
       }
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -14560,7 +14472,6 @@ static int send_packet_unit_info_101(connection_t *pconn, const struct packet_un
   if (differ) {different++;}
   if(packet->orders_vigilant) {BV_SET(fields, 29);}
 
-
     {
       differ = (old->orders_length != real_packet->orders_length);
       if(!differ) {
@@ -14578,7 +14489,6 @@ static int send_packet_unit_info_101(connection_t *pconn, const struct packet_un
     BV_SET(fields, 30);
   }
 
-
     {
       differ = (old->orders_length != real_packet->orders_length);
       if(!differ) {
@@ -14595,7 +14505,6 @@ static int send_packet_unit_info_101(connection_t *pconn, const struct packet_un
     different++;
     BV_SET(fields, 31);
   }
-
 
     {
       differ = (old->orders_length != real_packet->orders_length);
@@ -14726,7 +14635,6 @@ static int send_packet_unit_info_101(connection_t *pconn, const struct packet_un
     }
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -14802,7 +14710,9 @@ int send_packet_unit_info(connection_t *pconn, const struct packet_unit_info *pa
   }
 }
 
-void lsend_packet_unit_info(struct connection_list *dest, const struct packet_unit_info *packet)
+void lsend_packet_unit_info(
+          struct connection_list *dest,
+          const struct packet_unit_info *packet)
 {
   connection_list_iterate(dest, p_conn) {
     send_packet_unit_info(p_conn, packet);
@@ -15090,7 +15000,6 @@ static int send_packet_unit_short_info_100(connection_t *pconn,
     dio_put_uint16(&dout, real_packet->serial_num);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -15179,7 +15088,6 @@ receive_packet_unit_combat_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_unit_combat_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_combat_info_100, cmp_packet_unit_combat_info_100);
@@ -15300,7 +15208,6 @@ static int send_packet_unit_combat_info_100(connection_t *pconn,
   }
   /* field 4 is folded into the header */
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -15388,7 +15295,6 @@ static struct packet_unit_move *receive_packet_unit_move_100(connection_t *pconn
   RECEIVE_PACKET_START(packet_unit_move, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_move_100, cmp_packet_unit_move_100);
@@ -15487,7 +15393,6 @@ static int send_packet_unit_move_100(connection_t *pconn, const struct packet_un
     dio_put_uint8(&dout, real_packet->y);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -15580,7 +15485,6 @@ receive_packet_unit_build_city_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_build_city_100, cmp_packet_unit_build_city_100);
   }
@@ -15660,7 +15564,6 @@ static int send_packet_unit_build_city_100(connection_t *pconn,
   if (BV_ISSET(fields, 1)) {
     dio_put_string(&dout, real_packet->name);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -15753,7 +15656,6 @@ receive_packet_unit_disband_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_disband_100, cmp_packet_unit_disband_100);
   }
@@ -15820,7 +15722,6 @@ static int send_packet_unit_disband_100(connection_t *pconn, const struct packet
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->unit_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -15912,7 +15813,6 @@ receive_packet_unit_change_homecity_100(connection_t *pconn, enum packet_type ty
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_change_homecity_100, cmp_packet_unit_change_homecity_100);
   }
@@ -15995,7 +15895,6 @@ static int send_packet_unit_change_homecity_100(connection_t *pconn,
   if (BV_ISSET(fields, 1)) {
     dio_put_uint16(&dout, real_packet->city_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -16090,7 +15989,6 @@ receive_packet_unit_establish_trade_100(connection_t *pconn, enum packet_type ty
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_establish_trade_100, cmp_packet_unit_establish_trade_100);
   }
@@ -16158,7 +16056,6 @@ static int send_packet_unit_establish_trade_100(connection_t *pconn,
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->unit_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -16252,7 +16149,6 @@ receive_packet_unit_help_build_wonder_100(connection_t *pconn, enum packet_type 
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_help_build_wonder_100, cmp_packet_unit_help_build_wonder_100);
   }
@@ -16320,7 +16216,6 @@ static int send_packet_unit_help_build_wonder_100(connection_t *pconn,
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->unit_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -16412,7 +16307,6 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(connection_t *pconn
   RECEIVE_PACKET_START(packet_unit_goto, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_goto_100, cmp_packet_unit_goto_100);
@@ -16510,7 +16404,6 @@ static int send_packet_unit_goto_100(connection_t *pconn, const struct packet_un
   if (BV_ISSET(fields, 2)) {
     dio_put_uint8(&dout, real_packet->y);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -16737,7 +16630,6 @@ static int send_packet_unit_orders_100(connection_t *pconn, const struct packet_
   if (differ) {different++;}
   if(packet->vigilant) {BV_SET(fields, 3);}
 
-
     {
       differ = (old->length != real_packet->length);
       if(!differ) {
@@ -16755,7 +16647,6 @@ static int send_packet_unit_orders_100(connection_t *pconn, const struct packet_
     BV_SET(fields, 4);
   }
 
-
     {
       differ = (old->length != real_packet->length);
       if(!differ) {
@@ -16772,7 +16663,6 @@ static int send_packet_unit_orders_100(connection_t *pconn, const struct packet_
     different++;
     BV_SET(fields, 5);
   }
-
 
     {
       differ = (old->length != real_packet->length);
@@ -16854,7 +16744,6 @@ static int send_packet_unit_orders_100(connection_t *pconn, const struct packet_
     dio_put_uint8(&dout, real_packet->dest_y);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -16935,7 +16824,6 @@ static struct packet_unit_auto *receive_packet_unit_auto_100(connection_t *pconn
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_auto_100, cmp_packet_unit_auto_100);
   }
@@ -17002,7 +16890,6 @@ static int send_packet_unit_auto_100(connection_t *pconn, const struct packet_un
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->unit_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -17093,7 +16980,6 @@ static struct packet_unit_load *receive_packet_unit_load_100(connection_t *pconn
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_load_100, cmp_packet_unit_load_100);
   }
@@ -17175,7 +17061,6 @@ static int send_packet_unit_load_100(connection_t *pconn, const struct packet_un
   if (BV_ISSET(fields, 1)) {
     dio_put_uint16(&dout, real_packet->transporter_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -17268,7 +17153,6 @@ receive_packet_unit_unload_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_unload_100, cmp_packet_unit_unload_100);
   }
@@ -17350,7 +17234,6 @@ static int send_packet_unit_unload_100(connection_t *pconn, const struct packet_
   if (BV_ISSET(fields, 1)) {
     dio_put_uint16(&dout, real_packet->transporter_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -17443,7 +17326,6 @@ receive_packet_unit_upgrade_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_upgrade_100, cmp_packet_unit_upgrade_100);
   }
@@ -17510,7 +17392,6 @@ static int send_packet_unit_upgrade_100(connection_t *pconn, const struct packet
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->unit_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -17601,7 +17482,6 @@ static struct packet_unit_nuke *receive_packet_unit_nuke_100(connection_t *pconn
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_nuke_100, cmp_packet_unit_nuke_100);
   }
@@ -17668,7 +17548,6 @@ static int send_packet_unit_nuke_100(connection_t *pconn, const struct packet_un
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->unit_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -17858,7 +17737,6 @@ static int send_packet_unit_paradrop_to_100(connection_t *pconn,
     dio_put_uint8(&dout, real_packet->y);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -18033,7 +17911,6 @@ static int send_packet_unit_airlift_100(connection_t *pconn, const struct packet
     dio_put_uint16(&dout, real_packet->city_id);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -18192,7 +18069,6 @@ static int send_packet_unit_bribe_inq_100(connection_t *pconn, const struct pack
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->unit_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -18367,7 +18243,6 @@ static int send_packet_unit_bribe_info_100(connection_t *pconn,
     dio_put_uint32(&dout, real_packet->cost);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -18526,7 +18401,6 @@ static int send_packet_unit_type_upgrade_100(connection_t *pconn,
   if (BV_ISSET(fields, 0)) {
     dio_put_uint8(&dout, real_packet->type);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -18732,7 +18606,6 @@ static int send_packet_unit_diplomat_action_100(connection_t *pconn,
     dio_put_sint16(&dout, real_packet->value);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -18916,7 +18789,6 @@ static int send_packet_unit_diplomat_popup_dialog_100(connection_t *pconn,
   if (BV_ISSET(fields, 1)) {
     dio_put_uint32(&dout, real_packet->target_id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -19129,7 +19001,6 @@ static int send_packet_unit_change_activity_100(connection_t *pconn,
     dio_put_uint16(&dout, real_packet->activity_target);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -19296,7 +19167,6 @@ static int send_packet_diplomacy_init_meeting_req_100(connection_t *pconn,
   if (BV_ISSET(fields, 0)) {
     dio_put_uint8(&dout, real_packet->counterpart);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -19472,7 +19342,6 @@ static int send_packet_diplomacy_init_meeting_100(connection_t *pconn,
   if (BV_ISSET(fields, 1)) {
     dio_put_uint8(&dout, real_packet->initiated_from);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -19658,7 +19527,6 @@ static int send_packet_diplomacy_cancel_meeting_req_100(
     dio_put_uint8(&dout, real_packet->counterpart);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -19835,7 +19703,6 @@ static int send_packet_diplomacy_cancel_meeting_100(
   if (BV_ISSET(fields, 1)) {
     dio_put_uint8(&dout, real_packet->initiated_from);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -20066,7 +19933,6 @@ static int send_packet_diplomacy_create_clause_req_100(
     dio_put_uint32(&dout, real_packet->value);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -20280,7 +20146,6 @@ static int send_packet_diplomacy_create_clause_100(
   if (BV_ISSET(fields, 3)) {
     dio_put_uint32(&dout, real_packet->value);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -20521,7 +20386,6 @@ static int send_packet_diplomacy_remove_clause_req_100(
     dio_put_uint32(&dout, real_packet->value);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -20735,7 +20599,6 @@ static int send_packet_diplomacy_remove_clause_100(
     dio_put_uint32(&dout, real_packet->value);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -20930,7 +20793,6 @@ static int send_packet_diplomacy_accept_treaty_req_100(
     dio_put_uint8(&dout, real_packet->counterpart);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -21023,7 +20885,6 @@ receive_packet_diplomacy_accept_treaty_100(connection_t *pconn, enum packet_type
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_diplomacy_accept_treaty_100, cmp_packet_diplomacy_accept_treaty_100);
   }
@@ -21104,7 +20965,6 @@ static int send_packet_diplomacy_accept_treaty_100(
   }
   /* field 1 is folded into the header */
   /* field 2 is folded into the header */
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -21309,7 +21169,6 @@ static int send_packet_diplomacy_cancel_pact_100(
     dio_put_uint8(&dout, real_packet->clause);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -21404,7 +21263,6 @@ static struct packet_page_msg *receive_packet_page_msg_100(connection_t *pconn, 
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_page_msg_100, cmp_packet_page_msg_100);
   }
@@ -21483,7 +21341,6 @@ static int send_packet_page_msg_100(connection_t *pconn, const struct packet_pag
   if (BV_ISSET(fields, 1)) {
     dio_put_sint16(&dout, real_packet->event);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -21639,7 +21496,6 @@ static int send_packet_report_req_100(connection_t *pconn, const struct packet_r
   if (BV_ISSET(fields, 0)) {
     dio_put_uint8(&dout, real_packet->type);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -21893,7 +21749,6 @@ static int send_packet_conn_info_100(connection_t *pconn, const struct packet_co
     dio_put_string(&dout, real_packet->capability);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -22070,7 +21925,6 @@ static int send_packet_conn_ping_info_100(connection_t *pconn, const struct pack
     BV_SET(fields, 0);
   }
 
-
     {
       differ = (old->connections != real_packet->connections);
       if(!differ) {
@@ -22087,7 +21941,6 @@ static int send_packet_conn_ping_info_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 1);
   }
-
 
     {
       differ = (old->connections != real_packet->connections);
@@ -22135,7 +21988,6 @@ static int send_packet_conn_ping_info_100(connection_t *pconn, const struct pack
       }
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -22251,7 +22103,6 @@ static int send_packet_conn_ping_info_101(connection_t *pconn, const struct pack
     BV_SET(fields, 0);
   }
 
-
     {
       differ = (old->connections != real_packet->connections);
       if(!differ) {
@@ -22268,7 +22119,6 @@ static int send_packet_conn_ping_info_101(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 1);
   }
-
 
     {
       differ = (old->connections != real_packet->connections);
@@ -22316,7 +22166,6 @@ static int send_packet_conn_ping_info_101(connection_t *pconn, const struct pack
       }
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -22778,7 +22627,6 @@ static int send_packet_new_year_100(connection_t *pconn, const struct packet_new
     dio_put_sint16(&dout, real_packet->turn);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -23165,7 +23013,6 @@ static int send_packet_spaceship_place_100(connection_t *pconn,
   if (BV_ISSET(fields, 1)) {
     dio_put_uint8(&dout, real_packet->num);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -23596,7 +23443,6 @@ static int send_packet_spaceship_info_100(connection_t *pconn, const struct pack
   if (BV_ISSET(fields, 16)) {
     dio_put_uint32(&dout, (int)(real_packet->travel_time * 10000));
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -24100,7 +23946,6 @@ static int send_packet_ruleset_unit_100(connection_t *pconn, const struct packet
     BV_SET(fields, 28);
   }
 
-
     {
       differ = (MAX_VET_LEVELS != MAX_VET_LEVELS);
       if(!differ) {
@@ -24118,7 +23963,6 @@ static int send_packet_ruleset_unit_100(connection_t *pconn, const struct packet
     BV_SET(fields, 29);
   }
 
-
     {
       differ = (MAX_VET_LEVELS != MAX_VET_LEVELS);
       if(!differ) {
@@ -24135,7 +23979,6 @@ static int send_packet_ruleset_unit_100(connection_t *pconn, const struct packet
     different++;
     BV_SET(fields, 30);
   }
-
 
     {
       differ = (MAX_VET_LEVELS != MAX_VET_LEVELS);
@@ -24313,7 +24156,6 @@ static int send_packet_ruleset_unit_100(connection_t *pconn, const struct packet
   if (BV_ISSET(fields, 35)) {
   DIO_BV_PUT(&dout, packet->roles);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -24614,7 +24456,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
     force_send_of_unchanged = TRUE;
   }
 
-
     {
       differ = FALSE;
       if(!differ) {
@@ -24632,7 +24473,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
     BV_SET(fields, 0);
   }
 
-
     {
       differ = FALSE;
       if(!differ) {
@@ -24649,7 +24489,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
     different++;
     BV_SET(fields, 1);
   }
-
 
     {
       differ = FALSE;
@@ -24736,7 +24575,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
     BV_SET(fields, 14);
   }
 
-
     {
       differ = (MAX_GRANARY_INIS != MAX_GRANARY_INIS);
       if(!differ) {
@@ -24784,7 +24622,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
     BV_SET(fields, 20);
   }
 
-
     {
       differ = (MAX_NUM_TECH_LIST != MAX_NUM_TECH_LIST);
       if(!differ) {
@@ -24806,7 +24643,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
   if (differ) {different++;}
   if(packet->killstack) {BV_SET(fields, 22);}
 
-
     {
       differ = (MAX_VET_LEVELS != MAX_VET_LEVELS);
       if(!differ) {
@@ -24824,7 +24660,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
     BV_SET(fields, 23);
   }
 
-
     {
       differ = (MAX_VET_LEVELS != MAX_VET_LEVELS);
       if(!differ) {
@@ -24841,7 +24676,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
     different++;
     BV_SET(fields, 24);
   }
-
 
     {
       differ = (MAX_VET_LEVELS != MAX_VET_LEVELS);
@@ -24987,7 +24821,6 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
       }
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -25202,7 +25035,6 @@ static int send_packet_ruleset_government_ruler_title_100(
     dio_put_string(&dout, real_packet->female_title);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -25399,7 +25231,6 @@ static int send_packet_ruleset_tech_100(connection_t *pconn, const struct packet
     BV_SET(fields, 0);
   }
 
-
     {
       differ = (2 != 2);
       if(!differ) {
@@ -25508,7 +25339,6 @@ static int send_packet_ruleset_tech_100(connection_t *pconn, const struct packet
   if (BV_ISSET(fields, 9)) {
     dio_put_string(&dout, real_packet->graphic_alt);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -26315,7 +26145,6 @@ static int send_packet_ruleset_government_100(
     dio_put_string(&dout, real_packet->helptext);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -26406,7 +26235,6 @@ receive_packet_ruleset_terrain_control_100(connection_t *pconn, enum packet_type
   RECEIVE_PACKET_START(packet_ruleset_terrain_control, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_terrain_control_100, cmp_packet_ruleset_terrain_control_100);
@@ -26753,7 +26581,6 @@ static int send_packet_ruleset_terrain_control_100(
     dio_put_uint16(&dout, real_packet->fallout_trade_penalty);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -26846,7 +26673,6 @@ receive_packet_ruleset_nation_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_ruleset_nation, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_nation_100, cmp_packet_ruleset_nation_100);
@@ -27002,7 +26828,6 @@ static int send_packet_ruleset_nation_100(connection_t *pconn, const struct pack
     BV_SET(fields, 7);
   }
 
-
     {
       differ = (MAX_NUM_TECH_LIST != MAX_NUM_TECH_LIST);
       if(!differ) {
@@ -27026,7 +26851,6 @@ static int send_packet_ruleset_nation_100(connection_t *pconn, const struct pack
     BV_SET(fields, 9);
   }
 
-
     {
       differ = (old->leader_count != real_packet->leader_count);
       if(!differ) {
@@ -27043,7 +26867,6 @@ static int send_packet_ruleset_nation_100(connection_t *pconn, const struct pack
     different++;
     BV_SET(fields, 10);
   }
-
 
     {
       differ = (old->leader_count != real_packet->leader_count);
@@ -27118,7 +26941,6 @@ static int send_packet_ruleset_nation_100(connection_t *pconn, const struct pack
       }
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -27207,7 +27029,6 @@ receive_packet_ruleset_city_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_ruleset_city, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_city_100, cmp_packet_ruleset_city_100);
@@ -27366,7 +27187,6 @@ static int send_packet_ruleset_city_100(connection_t *pconn, const struct packet
     dio_put_sint8(&dout, real_packet->replaced_by);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -27454,7 +27274,6 @@ receive_packet_ruleset_building_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_ruleset_building, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_building_100, cmp_packet_ruleset_building_100);
@@ -27756,7 +27575,6 @@ static int send_packet_ruleset_building_100(
     BV_SET(fields, 16);
   }
 
-
     {
       differ = (old->terr_gate_count != real_packet->terr_gate_count);
       if(!differ) {
@@ -27779,7 +27597,6 @@ static int send_packet_ruleset_building_100(
     different++;
     BV_SET(fields, 18);
   }
-
 
     {
       differ = (old->spec_gate_count != real_packet->spec_gate_count);
@@ -27804,7 +27621,6 @@ static int send_packet_ruleset_building_100(
     BV_SET(fields, 20);
   }
 
-
     {
       differ = (old->equiv_dupl_count != real_packet->equiv_dupl_count);
       if(!differ) {
@@ -27827,7 +27643,6 @@ static int send_packet_ruleset_building_100(
     different++;
     BV_SET(fields, 22);
   }
-
 
     {
       differ = (old->equiv_repl_count != real_packet->equiv_repl_count);
@@ -27951,7 +27766,6 @@ static int send_packet_ruleset_building_100(
     }
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -28042,7 +27856,6 @@ receive_packet_ruleset_terrain_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_ruleset_terrain, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_terrain_100, cmp_packet_ruleset_terrain_100);
@@ -28635,7 +28448,6 @@ static int send_packet_ruleset_terrain_100(
     dio_put_string(&dout, real_packet->helptext);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -28724,7 +28536,6 @@ receive_packet_ruleset_control_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_ruleset_control, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_control_100, cmp_packet_ruleset_control_100);
@@ -28971,7 +28782,6 @@ static int send_packet_ruleset_control_100(
     BV_SET(fields, 10);
   }
 
-
     {
       differ = (MAX_NUM_TECH_LIST != MAX_NUM_TECH_LIST);
       if(!differ) {
@@ -29044,7 +28854,6 @@ static int send_packet_ruleset_control_100(
   differ = (old->slow_invasions != real_packet->slow_invasions);
   if (differ) {different++;}
   if(packet->slow_invasions) {BV_SET(fields, 21);}
-
 
     {
       differ = (MAX_NUM_TEAMS != MAX_NUM_TEAMS);
@@ -29151,7 +28960,6 @@ static int send_packet_ruleset_control_100(
     dio_put_uint8(&dout, real_packet->default_building);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -29241,7 +29049,6 @@ receive_packet_single_want_hack_req_100(connection_t *pconn, enum packet_type ty
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_single_want_hack_req_100, cmp_packet_single_want_hack_req_100);
   }
@@ -29308,7 +29115,6 @@ static int send_packet_single_want_hack_req_100(
     dio_put_string(&dout, real_packet->token);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -29336,7 +29142,6 @@ receive_packet_single_want_hack_req_101(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_START(packet_single_want_hack_req, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_single_want_hack_req_101, cmp_packet_single_want_hack_req_101);
@@ -29406,7 +29211,6 @@ static int send_packet_single_want_hack_req_101(
   if (BV_ISSET(fields, 0)) {
     dio_put_uint32(&dout, real_packet->old_token);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -29503,7 +29307,6 @@ receive_packet_single_want_hack_reply_100(connection_t *pconn, enum packet_type 
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_single_want_hack_reply_100, cmp_packet_single_want_hack_reply_100);
   }
@@ -29563,7 +29366,6 @@ static int send_packet_single_want_hack_reply_100(
   DIO_BV_PUT(&dout, fields);
 
   /* field 0 is folded into the header */
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -29655,7 +29457,6 @@ static struct packet_game_load *receive_packet_game_load_100(connection_t *pconn
   RECEIVE_PACKET_START(packet_game_load, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_game_load_100, cmp_packet_game_load_100);
@@ -29812,7 +29613,6 @@ static int send_packet_game_load_100(connection_t *pconn, const struct packet_ga
     BV_SET(fields, 2);
   }
 
-
     {
       differ = (old->nplayers != real_packet->nplayers);
       if(!differ) {
@@ -29829,7 +29629,6 @@ static int send_packet_game_load_100(connection_t *pconn, const struct packet_ga
     different++;
     BV_SET(fields, 3);
   }
-
 
     {
       differ = (old->nplayers != real_packet->nplayers);
@@ -29848,7 +29647,6 @@ static int send_packet_game_load_100(connection_t *pconn, const struct packet_ga
     BV_SET(fields, 4);
   }
 
-
     {
       differ = (old->nplayers != real_packet->nplayers);
       if(!differ) {
@@ -29865,7 +29663,6 @@ static int send_packet_game_load_100(connection_t *pconn, const struct packet_ga
     different++;
     BV_SET(fields, 5);
   }
-
 
     {
       differ = (old->nplayers != real_packet->nplayers);
@@ -29884,7 +29681,6 @@ static int send_packet_game_load_100(connection_t *pconn, const struct packet_ga
     BV_SET(fields, 6);
   }
 
-
     {
       differ = (old->nplayers != real_packet->nplayers);
       if(!differ) {
@@ -29901,7 +29697,6 @@ static int send_packet_game_load_100(connection_t *pconn, const struct packet_ga
     different++;
     BV_SET(fields, 7);
   }
-
 
     {
       differ = (old->nplayers != real_packet->nplayers);
@@ -29994,7 +29789,6 @@ static int send_packet_game_load_100(connection_t *pconn, const struct packet_ga
     }
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -30083,7 +29877,6 @@ receive_packet_options_settable_control_100(connection_t *pconn, enum packet_typ
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_options_settable_control_100, cmp_packet_options_settable_control_100);
   }
@@ -30166,7 +29959,6 @@ static int send_packet_options_settable_control_100(
     BV_SET(fields, 1);
   }
 
-
     {
       differ = (old->ncategories != real_packet->ncategories);
       if(!differ) {
@@ -30206,7 +29998,6 @@ static int send_packet_options_settable_control_100(
       }
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -30290,7 +30081,6 @@ receive_packet_options_settable_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_options_settable, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_options_settable_100, cmp_packet_options_settable_100);
@@ -30511,7 +30301,6 @@ static int send_packet_options_settable_100(
     dio_put_uint8(&dout, real_packet->category);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -30593,7 +30382,6 @@ receive_packet_ruleset_cache_group_100(connection_t *pconn, enum packet_type typ
   RECEIVE_PACKET_START(packet_ruleset_cache_group, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_cache_group_100, cmp_packet_ruleset_cache_group_100);
@@ -30702,7 +30490,6 @@ static int send_packet_ruleset_cache_group_100(
     BV_SET(fields, 1);
   }
 
-
     {
       differ = (old->num_elements != real_packet->num_elements);
       if(!differ) {
@@ -30720,7 +30507,6 @@ static int send_packet_ruleset_cache_group_100(
     BV_SET(fields, 2);
   }
 
-
     {
       differ = (old->num_elements != real_packet->num_elements);
       if(!differ) {
@@ -30737,7 +30523,6 @@ static int send_packet_ruleset_cache_group_100(
     different++;
     BV_SET(fields, 3);
   }
-
 
     {
       differ = (old->num_elements != real_packet->num_elements);
@@ -30798,7 +30583,6 @@ static int send_packet_ruleset_cache_group_100(
       }
     }
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -30890,7 +30674,6 @@ receive_packet_ruleset_cache_effect_100(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_START(packet_ruleset_cache_effect, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_ruleset_cache_effect_100, cmp_packet_ruleset_cache_effect_100);
@@ -31057,7 +30840,6 @@ static int send_packet_ruleset_cache_effect_100(
     dio_put_sint32(&dout, real_packet->group_id);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -31148,7 +30930,6 @@ receive_packet_traderoute_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_traderoute_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_traderoute_info_100, cmp_packet_traderoute_info_100);
@@ -31278,7 +31059,6 @@ static int send_packet_traderoute_info_100(connection_t *pconn,
     dio_put_uint8(&dout, real_packet->maxtraderoutes);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -31306,7 +31086,6 @@ receive_packet_traderoute_info_101(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_traderoute_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_traderoute_info_101, cmp_packet_traderoute_info_101);
@@ -31421,7 +31200,6 @@ static int send_packet_traderoute_info_101(connection_t *pconn,
     dio_put_uint8(&dout, real_packet->caravanbonusstyle);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -31514,7 +31292,6 @@ receive_packet_extgame_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_extgame_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_extgame_info_100, cmp_packet_extgame_info_100);
@@ -31679,7 +31456,6 @@ static int send_packet_extgame_info_100(connection_t *pconn, const struct packet
     dio_put_uint8(&dout, real_packet->techleakagerate);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -31707,7 +31483,6 @@ receive_packet_extgame_info_101(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_extgame_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_extgame_info_101, cmp_packet_extgame_info_101);
@@ -31842,7 +31617,6 @@ static int send_packet_extgame_info_101(connection_t *pconn, const struct packet
   /* field 10 is folded into the header */
   /* field 11 is folded into the header */
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -31934,7 +31708,6 @@ static struct packet_vote_new *receive_packet_vote_new_100(connection_t *pconn, 
   RECEIVE_PACKET_START(packet_vote_new, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_vote_new_100, cmp_packet_vote_new_100);
@@ -32063,7 +31836,6 @@ static int send_packet_vote_new_100(connection_t *pconn, const struct packet_vot
   }
   /* field 5 is folded into the header */
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -32144,7 +31916,6 @@ receive_packet_vote_update_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_vote_update, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_vote_update_100, cmp_packet_vote_update_100);
@@ -32273,7 +32044,6 @@ static int send_packet_vote_update_100(connection_t *pconn, const struct packet_
     dio_put_uint8(&dout, real_packet->num_voters);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -32355,7 +32125,6 @@ receive_packet_vote_remove_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_vote_remove_100, cmp_packet_vote_remove_100);
   }
@@ -32422,7 +32191,6 @@ static int send_packet_vote_remove_100(connection_t *pconn, const struct packet_
   if (BV_ISSET(fields, 0)) {
     dio_put_uint32(&dout, real_packet->vote_no);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -32505,7 +32273,6 @@ receive_packet_vote_resolve_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_vote_resolve_100, cmp_packet_vote_resolve_100);
   }
@@ -32578,7 +32345,6 @@ static int send_packet_vote_resolve_100(connection_t *pconn, const struct packet
     dio_put_uint32(&dout, real_packet->vote_no);
   }
   /* field 1 is folded into the header */
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -32660,7 +32426,6 @@ receive_packet_vote_submit_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_vote_submit, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_vote_submit_100, cmp_packet_vote_submit_100);
@@ -32744,7 +32509,6 @@ static int send_packet_vote_submit_100(connection_t *pconn, const struct packet_
     dio_put_sint8(&dout, real_packet->value);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -32825,7 +32589,6 @@ receive_packet_trade_route_plan_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_trade_route_plan, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_trade_route_plan_100, cmp_packet_trade_route_plan_100);
@@ -32910,7 +32673,6 @@ static int send_packet_trade_route_plan_100(
   if (BV_ISSET(fields, 1)) {
     dio_put_uint16(&dout, real_packet->city2);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -33003,7 +32765,6 @@ receive_packet_trade_route_remove_100(connection_t *pconn, enum packet_type type
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_trade_route_remove_100, cmp_packet_trade_route_remove_100);
   }
@@ -33087,7 +32848,6 @@ static int send_packet_trade_route_remove_100(
   if (BV_ISSET(fields, 1)) {
     dio_put_uint16(&dout, real_packet->city2);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -33174,7 +32934,6 @@ receive_packet_unit_trade_route_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_unit_trade_route, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_trade_route_100, cmp_packet_unit_trade_route_100);
@@ -33275,7 +33034,6 @@ static int send_packet_unit_trade_route_100(
     dio_put_uint16(&dout, real_packet->city2);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -33368,7 +33126,6 @@ receive_packet_trade_route_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_trade_route_info, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_trade_route_info_100, cmp_packet_trade_route_info_100);
@@ -33484,7 +33241,6 @@ static int send_packet_trade_route_info_100(
     dio_put_uint8(&dout, real_packet->status);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -33565,7 +33321,6 @@ receive_packet_city_set_rally_point_100(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_START(packet_city_set_rally_point, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_set_rally_point_100, cmp_packet_city_set_rally_point_100);
@@ -33666,7 +33421,6 @@ static int send_packet_city_set_rally_point_100(
     dio_put_uint8(&dout, real_packet->y);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -33761,7 +33515,6 @@ receive_packet_city_clear_rally_point_100(connection_t *pconn, enum packet_type 
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_city_clear_rally_point_100, cmp_packet_city_clear_rally_point_100);
   }
@@ -33830,7 +33583,6 @@ static int send_packet_city_clear_rally_point_100(
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -33924,7 +33676,6 @@ receive_packet_unit_air_patrol_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_START(packet_unit_air_patrol, real_packet);
 
   DIO_BV_GET(&din, fields);
-
 
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_air_patrol_100, cmp_packet_unit_air_patrol_100);
@@ -34025,7 +33776,6 @@ static int send_packet_unit_air_patrol_100(
     dio_put_uint8(&dout, real_packet->y);
   }
 
-
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
   }
@@ -34118,7 +33868,6 @@ receive_packet_unit_air_patrol_stop_100(connection_t *pconn, enum packet_type ty
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_unit_air_patrol_stop_100, cmp_packet_unit_air_patrol_stop_100);
   }
@@ -34187,7 +33936,6 @@ static int send_packet_unit_air_patrol_stop_100(
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -34281,7 +34029,6 @@ receive_packet_city_manager_param_100(connection_t *pconn, enum packet_type type
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_city_manager_param_100, cmp_packet_city_manager_param_100);
   }
@@ -34370,7 +34117,6 @@ static int send_packet_city_manager_param_100(
     BV_SET(fields, 0);
   }
 
-
     {
       differ = FALSE;
       if(!differ) {
@@ -34399,7 +34145,6 @@ static int send_packet_city_manager_param_100(
   differ = (old->allow_specialists != real_packet->allow_specialists);
   if (differ) {different++;}
   if(packet->allow_specialists) {BV_SET(fields, 4);}
-
 
     {
       differ = FALSE;
@@ -34459,7 +34204,6 @@ static int send_packet_city_manager_param_100(
   if (BV_ISSET(fields, 6)) {
     dio_put_uint16(&dout, real_packet->happy_factor);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -34538,7 +34282,6 @@ receive_packet_city_no_manager_param_100(connection_t *pconn, enum packet_type t
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_city_no_manager_param_100, cmp_packet_city_no_manager_param_100);
   }
@@ -34606,7 +34349,6 @@ static int send_packet_city_no_manager_param_100(connection_t *pconn,
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -34694,7 +34436,6 @@ receive_packet_player_info_req_100(connection_t *pconn, enum packet_type type)
 
   DIO_BV_GET(&din, fields);
 
-
   if (!*hash) {
     *hash = hash_new(hash_packet_player_info_req_100, cmp_packet_player_info_req_100);
   }
@@ -34762,7 +34503,6 @@ static int send_packet_player_info_req_100(connection_t *pconn,
   if (BV_ISSET(fields, 0)) {
     dio_put_uint8(&dout, real_packet->id);
   }
-
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
