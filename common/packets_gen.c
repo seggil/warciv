@@ -895,6 +895,7 @@ const char *get_packet_name(enum packet_type type)
   }
 }
 
+/* 0 sc */
 static struct packet_processing_started *
 receive_packet_processing_started_100(connection_t *pconn,
                                       enum packet_type type)
@@ -922,7 +923,6 @@ static void ensure_valid_variant_packet_processing_started(connection_t *pconn)
   pconn->phs.variant[PACKET_PROCESSING_STARTED] = variant;
 }
 
-/* 0 sc */
 struct packet_processing_started *
 receive_packet_processing_started(connection_t *pconn, enum packet_type type)
 {
@@ -969,6 +969,7 @@ int send_packet_processing_started(connection_t *pconn)
   }
 }
 
+/* 1 sc */
 static struct packet_processing_finished *
 receive_packet_processing_finished_100(connection_t *pconn, enum packet_type type)
 {
@@ -1037,6 +1038,7 @@ int send_packet_processing_finished(connection_t *pconn)
   }
 }
 
+/* 2 sc */
 static struct packet_freeze_hint *receive_packet_freeze_hint_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_freeze_hint, real_packet);
@@ -1111,6 +1113,7 @@ void lsend_packet_freeze_hint(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 3 sc */
 static struct packet_thaw_hint *
 receive_packet_thaw_hint_100(connection_t *pconn, enum packet_type type)
 {
@@ -1186,6 +1189,7 @@ void lsend_packet_thaw_hint(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 4 cs */
 static struct packet_server_join_req *
 receive_packet_server_join_req_100(connection_t *pconn, enum packet_type type)
 {
@@ -1291,6 +1295,7 @@ int dsend_packet_server_join_req(connection_t *pconn, const char *username, cons
   return send_packet_server_join_req(pconn, real_packet);
 }
 
+/* 5 sc */
 static struct packet_server_join_reply *
 receive_packet_server_join_reply_100(connection_t *pconn, enum packet_type type)
 {
@@ -1376,6 +1381,7 @@ int send_packet_server_join_reply(connection_t *pconn, const struct packet_serve
   }
 }
 
+/* 6 sc */
 #define hash_packet_authentication_req_100 hash_const
 
 #define cmp_packet_authentication_req_100 cmp_const
@@ -1549,6 +1555,7 @@ int dsend_packet_authentication_req(connection_t *pconn, enum authentication_typ
   return send_packet_authentication_req(pconn, real_packet);
 }
 
+/* 7 cs */
 #define hash_packet_authentication_reply_100 hash_const
 
 #define cmp_packet_authentication_reply_100 cmp_const
@@ -1696,6 +1703,7 @@ int send_packet_authentication_reply(connection_t *pconn, const struct packet_au
   }
 }
 
+/* 8 sc */
 static struct packet_server_shutdown *
 receive_packet_server_shutdown_100(connection_t *pconn, enum packet_type type)
 {
@@ -1771,6 +1779,7 @@ void lsend_packet_server_shutdown(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 9 sc */
 #define hash_packet_nation_unavailable_100 hash_const
 
 #define cmp_packet_nation_unavailable_100 cmp_const
@@ -1928,6 +1937,7 @@ void lsend_packet_nation_unavailable(struct connection_list *dest, const struct 
   } connection_list_iterate_end;
 }
 
+/* 114 sc */
 static struct packet_select_races *
 receive_packet_select_races_100(connection_t *pconn, enum packet_type type)
 {
@@ -2002,6 +2012,7 @@ void lsend_packet_select_races(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 10 cs */
 #define hash_packet_nation_select_req_100 hash_const
 
 #define cmp_packet_nation_select_req_100 cmp_const
@@ -2166,7 +2177,6 @@ receive_packet_nation_select_req(connection_t *pconn, enum packet_type type)
   }
 }
 
-/* 10 cs */
 int send_packet_nation_select_req(connection_t *pconn,
                                   const struct packet_nation_select_req *packet)
 {
@@ -2207,6 +2217,7 @@ int dsend_packet_nation_select_req(connection_t *pconn,
   return send_packet_nation_select_req(pconn, real_packet);
 }
 
+/* 11 sc */
 static struct packet_nation_select_ok *
 receive_packet_nation_select_ok_100(connection_t *pconn, enum packet_type type)
 {
@@ -2281,6 +2292,7 @@ void lsend_packet_nation_select_ok(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 12 sc */
 #define hash_packet_game_state_100 hash_const
 
 #define cmp_packet_game_state_100 cmp_const
@@ -2456,6 +2468,7 @@ void dlsend_packet_game_state(struct connection_list *dest, int value)
   lsend_packet_game_state(dest, real_packet);
 }
 
+/* 13 sc */
 #define hash_packet_endgame_report_100 hash_const
 
 #define cmp_packet_endgame_report_100 cmp_const
@@ -3159,6 +3172,7 @@ void lsend_packet_endgame_report(struct connection_list *dest, const struct pack
   } connection_list_iterate_end;
 }
 
+/* 14 sc */
 static unsigned int hash_packet_tile_info_100(const void *vkey, unsigned int num_buckets)
 {
   const struct packet_tile_info *key = (const struct packet_tile_info *) vkey;
@@ -3423,6 +3437,7 @@ void lsend_packet_tile_info(struct connection_list *dest, const struct packet_ti
   } connection_list_iterate_end;
 }
 
+/* 15 sc */
 #define hash_packet_game_info_100 hash_const
 
 #define cmp_packet_game_info_100 cmp_const
@@ -4067,6 +4082,7 @@ int send_packet_game_info(connection_t *pconn, const struct packet_game_info *pa
   }
 }
 
+/* 16 sc */
 #define hash_packet_map_info_100 hash_const
 
 #define cmp_packet_map_info_100 cmp_const
@@ -4251,6 +4267,7 @@ void lsend_packet_map_info(struct connection_list *dest, const struct packet_map
   } connection_list_iterate_end;
 }
 
+/* 17 sc */
 #define hash_packet_nuke_tile_info_100 hash_const
 
 #define cmp_packet_nuke_tile_info_100 cmp_const
@@ -4443,6 +4460,7 @@ void dlsend_packet_nuke_tile_info(struct connection_list *dest, int x, int y)
   lsend_packet_nuke_tile_info(dest, real_packet);
 }
 
+/* 18 sc */
 #define hash_packet_chat_msg_100 hash_const
 
 #define cmp_packet_chat_msg_100 cmp_const
@@ -4706,6 +4724,7 @@ void dlsend_packet_chat_msg(struct connection_list *dest,
   lsend_packet_chat_msg(dest, real_packet);
 }
 
+/* 19 cs */
 #define hash_packet_chat_msg_req_100 hash_const
 
 #define cmp_packet_chat_msg_req_100 cmp_const
@@ -4861,6 +4880,7 @@ int dsend_packet_chat_msg_req(connection_t *pconn, const char *message)
   return send_packet_chat_msg_req(pconn, real_packet);
 }
 
+/* 20 sc */
 #define hash_packet_city_remove_100 hash_const
 
 #define cmp_packet_city_remove_100 cmp_const
@@ -5035,6 +5055,7 @@ void dlsend_packet_city_remove(struct connection_list *dest, int city_id)
   lsend_packet_city_remove(dest, real_packet);
 }
 
+/* 21 sc */
 static unsigned int hash_packet_city_info_100(const void *vkey, unsigned int num_buckets)
 {
   const struct packet_city_info *key = (const struct packet_city_info *) vkey;
@@ -6871,6 +6892,7 @@ void lsend_packet_city_info(struct connection_list *dest, const struct packet_ci
   } connection_list_iterate_end;
 }
 
+/* 22 sc */
 static unsigned int hash_packet_city_short_info_100(const void *vkey, unsigned int num_buckets)
 {
   const struct packet_city_short_info *key = (const struct packet_city_short_info *) vkey;
@@ -7157,6 +7179,7 @@ void lsend_packet_city_short_info(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
+/* 23 cs */
 #define hash_packet_city_sell_100 hash_const
 
 #define cmp_packet_city_sell_100 cmp_const
@@ -7330,6 +7353,7 @@ int dsend_packet_city_sell(connection_t *pconn, int city_id, int build_id)
   return send_packet_city_sell(pconn, real_packet);
 }
 
+/* 24 cs */
 #define hash_packet_city_buy_100 hash_const
 
 #define cmp_packet_city_buy_100 cmp_const
@@ -7487,6 +7511,7 @@ int dsend_packet_city_buy(connection_t *pconn, int city_id)
   return send_packet_city_buy(pconn, real_packet);
 }
 
+/* 25 cs */
 #define hash_packet_city_change_100 hash_const
 
 #define cmp_packet_city_change_100 cmp_const
@@ -7668,6 +7693,7 @@ int dsend_packet_city_change(connection_t *pconn, int city_id, int build_id, boo
   return send_packet_city_change(pconn, real_packet);
 }
 
+/* 26 cs */
 #define hash_packet_city_worklist_100 hash_const
 
 #define cmp_packet_city_worklist_100 cmp_const
@@ -7838,6 +7864,7 @@ int dsend_packet_city_worklist(connection_t *pconn, int city_id, struct worklist
   return send_packet_city_worklist(pconn, real_packet);
 }
 
+/* 27 cs */
 #define hash_packet_city_make_specialist_100 hash_const
 
 #define cmp_packet_city_make_specialist_100 cmp_const
@@ -8031,6 +8058,7 @@ int dsend_packet_city_make_specialist(connection_t *pconn, int city_id, int work
   return send_packet_city_make_specialist(pconn, real_packet);
 }
 
+/* 28 cs */
 #define hash_packet_city_make_worker_100 hash_const
 
 #define cmp_packet_city_make_worker_100 cmp_const
@@ -8222,6 +8250,7 @@ int dsend_packet_city_make_worker(connection_t *pconn, int city_id, int worker_x
   return send_packet_city_make_worker(pconn, real_packet);
 }
 
+/* 29 cs */
 #define hash_packet_city_change_specialist_100 hash_const
 
 #define cmp_packet_city_change_specialist_100 cmp_const
@@ -8417,6 +8446,7 @@ int dsend_packet_city_change_specialist(connection_t *pconn,
   return send_packet_city_change_specialist(pconn, real_packet);
 }
 
+/* 30 cs */
 #define hash_packet_city_rename_100 hash_const
 
 #define cmp_packet_city_rename_100 cmp_const
@@ -8587,6 +8617,7 @@ int dsend_packet_city_rename(connection_t *pconn, int city_id, const char *name)
   return send_packet_city_rename(pconn, real_packet);
 }
 
+/* 31 cs */
 #define hash_packet_city_options_req_100 hash_const
 
 #define cmp_packet_city_options_req_100 cmp_const
@@ -8761,6 +8792,7 @@ int dsend_packet_city_options_req(connection_t *pconn, int city_id, int value)
   return send_packet_city_options_req(pconn, real_packet);
 }
 
+/* 32 cs */
 #define hash_packet_city_refresh_100 hash_const
 
 #define cmp_packet_city_refresh_100 cmp_const
@@ -8917,6 +8949,7 @@ int dsend_packet_city_refresh(connection_t *pconn, int city_id)
   return send_packet_city_refresh(pconn, real_packet);
 }
 
+/* 33 cs */
 #define hash_packet_city_incite_inq_100 hash_const
 
 #define cmp_packet_city_incite_inq_100 cmp_const
@@ -9076,6 +9109,7 @@ int dsend_packet_city_incite_inq(connection_t *pconn, int city_id)
   return send_packet_city_incite_inq(pconn, real_packet);
 }
 
+/* 34 cs */
 #define hash_packet_city_incite_info_100 hash_const
 
 #define cmp_packet_city_incite_info_100 cmp_const
@@ -9251,6 +9285,7 @@ int dsend_packet_city_incite_info(connection_t *pconn, int city_id, int cost)
   return send_packet_city_incite_info(pconn, real_packet);
 }
 
+/* 35 cs */
 #define hash_packet_city_name_suggestion_req_100 hash_const
 
 #define cmp_packet_city_name_suggestion_req_100 cmp_const
@@ -9410,6 +9445,7 @@ int dsend_packet_city_name_suggestion_req(connection_t *pconn, int unit_id)
   return send_packet_city_name_suggestion_req(pconn, real_packet);
 }
 
+/* 36 sc */
 #define hash_packet_city_name_suggestion_info_100 hash_const
 
 #define cmp_packet_city_name_suggestion_info_100 cmp_const
@@ -9600,6 +9636,7 @@ void dlsend_packet_city_name_suggestion_info(struct connection_list *dest, int u
   lsend_packet_city_name_suggestion_info(dest, real_packet);
 }
 
+/* 37 sc */
 #define hash_packet_city_sabotage_list_100 hash_const
 
 #define cmp_packet_city_sabotage_list_100 cmp_const
@@ -9784,6 +9821,7 @@ void lsend_packet_city_sabotage_list(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
+/* 38 sc */
 #define hash_packet_player_remove_100 hash_const
 
 #define cmp_packet_player_remove_100 cmp_const
@@ -9957,6 +9995,7 @@ void dlsend_packet_player_remove(struct connection_list *dest, int player_id)
   lsend_packet_player_remove(dest, real_packet);
 }
 
+/* 39 sc */
 static unsigned int hash_packet_player_info_100(const void *vkey, unsigned int num_buckets)
 {
   const struct packet_player_info *key = (const struct packet_player_info *) vkey;
@@ -12264,6 +12303,7 @@ int send_packet_player_info(connection_t *pconn, const struct packet_player_info
   }
 }
 
+/* 40 cs */
 static struct packet_player_turn_done *
 receive_packet_player_turn_done_100(connection_t *pconn, enum packet_type type)
 {
@@ -12331,6 +12371,7 @@ int send_packet_player_turn_done(connection_t *pconn)
   }
 }
 
+/* 41 cs */
 #define hash_packet_player_rates_100 hash_const
 
 #define cmp_packet_player_rates_100 cmp_const
@@ -12519,6 +12560,8 @@ int dsend_packet_player_rates(connection_t *pconn, int tax, int luxury, int scie
   return send_packet_player_rates(pconn, real_packet);
 }
 
+/* 42 */
+/* 43 cs */
 #define hash_packet_player_change_government_100 hash_const
 
 #define cmp_packet_player_change_government_100 cmp_const
@@ -12678,6 +12721,7 @@ int dsend_packet_player_change_government(connection_t *pconn, int government)
   return send_packet_player_change_government(pconn, real_packet);
 }
 
+/* 44 cs */
 #define hash_packet_player_research_100 hash_const
 
 #define cmp_packet_player_research_100 cmp_const
@@ -12835,6 +12879,7 @@ int dsend_packet_player_research(connection_t *pconn, int tech)
   return send_packet_player_research(pconn, real_packet);
 }
 
+/* 45 cs */
 #define hash_packet_player_tech_goal_100 hash_const
 
 #define cmp_packet_player_tech_goal_100 cmp_const
@@ -12992,6 +13037,7 @@ int dsend_packet_player_tech_goal(connection_t *pconn, int tech)
   return send_packet_player_tech_goal(pconn, real_packet);
 }
 
+/* 46 cs */
 static struct packet_player_attribute_block *
 receive_packet_player_attribute_block_100(connection_t *pconn, enum packet_type type)
 {
@@ -13059,6 +13105,7 @@ int send_packet_player_attribute_block(connection_t *pconn)
   }
 }
 
+/* 47 cs sc */
 #define hash_packet_player_attribute_chunk_100 hash_const
 
 #define cmp_packet_player_attribute_chunk_100 cmp_const
@@ -13265,6 +13312,7 @@ int send_packet_player_attribute_chunk(connection_t *pconn,
   }
 }
 
+/* 48 sc */
 #define hash_packet_unit_remove_100 hash_const
 
 #define cmp_packet_unit_remove_100 cmp_const
@@ -13437,6 +13485,7 @@ void dlsend_packet_unit_remove(struct connection_list *dest, int unit_id)
   lsend_packet_unit_remove(dest, real_packet);
 }
 
+/* 49 sc */
 static unsigned int hash_packet_unit_info_100(const void *vkey, unsigned int num_buckets)
 {
   const struct packet_unit_info *key = (const struct packet_unit_info *) vkey;
@@ -14760,6 +14809,7 @@ void lsend_packet_unit_info(struct connection_list *dest, const struct packet_un
   } connection_list_iterate_end;
 }
 
+/* 50 sc */
 static unsigned int hash_packet_unit_short_info_100(const void *vkey, unsigned int num_buckets)
 {
   const struct packet_unit_short_info *key = (const struct packet_unit_short_info *) vkey;
@@ -15112,6 +15162,7 @@ void lsend_packet_unit_short_info(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
+/* 51 sc */
 #define hash_packet_unit_combat_info_100 hash_const
 
 #define cmp_packet_unit_combat_info_100 cmp_const
@@ -15321,6 +15372,7 @@ void lsend_packet_unit_combat_info(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
+/* 52 cs */
 #define hash_packet_unit_move_100 hash_const
 
 #define cmp_packet_unit_move_100 cmp_const
@@ -15510,6 +15562,7 @@ int dsend_packet_unit_move(connection_t *pconn, int unit_id, int x, int y)
   return send_packet_unit_move(pconn, real_packet);
 }
 
+/* 53 cs */
 #define hash_packet_unit_build_city_100 hash_const
 
 #define cmp_packet_unit_build_city_100 cmp_const
@@ -15682,6 +15735,7 @@ int dsend_packet_unit_build_city(connection_t *pconn, int unit_id, const char *n
   return send_packet_unit_build_city(pconn, real_packet);
 }
 
+/* 54 cs */
 #define hash_packet_unit_disband_100 hash_const
 
 #define cmp_packet_unit_disband_100 cmp_const
@@ -15840,6 +15894,7 @@ int dsend_packet_unit_disband(connection_t *pconn, int unit_id)
   return send_packet_unit_disband(pconn, real_packet);
 }
 
+/* 55 cs */
 #define hash_packet_unit_change_homecity_100 hash_const
 
 #define cmp_packet_unit_change_homecity_100 cmp_const
@@ -16017,6 +16072,7 @@ int dsend_packet_unit_change_homecity(connection_t *pconn, int unit_id, int city
   return send_packet_unit_change_homecity(pconn, real_packet);
 }
 
+/* 56 cs */
 #define hash_packet_unit_establish_trade_100 hash_const
 
 #define cmp_packet_unit_establish_trade_100 cmp_const
@@ -16178,6 +16234,7 @@ int dsend_packet_unit_establish_trade(connection_t *pconn, int unit_id)
   return send_packet_unit_establish_trade(pconn, real_packet);
 }
 
+/* 57 cs */
 #define hash_packet_unit_help_build_wonder_100 hash_const
 
 #define cmp_packet_unit_help_build_wonder_100 cmp_const
@@ -16339,6 +16396,7 @@ int dsend_packet_unit_help_build_wonder(connection_t *pconn, int unit_id)
   return send_packet_unit_help_build_wonder(pconn, real_packet);
 }
 
+/* 58 cs */
 #define hash_packet_unit_goto_100 hash_const
 
 #define cmp_packet_unit_goto_100 cmp_const
@@ -16528,6 +16586,7 @@ int dsend_packet_unit_goto(connection_t *pconn, int unit_id, int x, int y)
   return send_packet_unit_goto(pconn, real_packet);
 }
 
+/* 59 cs */
 #define hash_packet_unit_orders_100 hash_const
 
 #define cmp_packet_unit_orders_100 cmp_const
@@ -16859,6 +16918,7 @@ int send_packet_unit_orders(connection_t *pconn, const struct packet_unit_orders
   }
 }
 
+/* 60 cs */
 #define hash_packet_unit_auto_100 hash_const
 
 #define cmp_packet_unit_auto_100 cmp_const
@@ -17016,6 +17076,7 @@ int dsend_packet_unit_auto(connection_t *pconn, int unit_id)
   return send_packet_unit_auto(pconn, real_packet);
 }
 
+/* 107 cs */
 #define hash_packet_unit_load_100 hash_const
 
 #define cmp_packet_unit_load_100 cmp_const
@@ -17189,6 +17250,7 @@ int dsend_packet_unit_load(connection_t *pconn, int cargo_id, int transporter_id
   return send_packet_unit_load(pconn, real_packet);
 }
 
+/* 61 cs */
 #define hash_packet_unit_unload_100 hash_const
 
 #define cmp_packet_unit_unload_100 cmp_const
@@ -17363,6 +17425,7 @@ int dsend_packet_unit_unload(connection_t *pconn, int cargo_id, int transporter_
   return send_packet_unit_unload(pconn, real_packet);
 }
 
+/* 62 cs */
 #define hash_packet_unit_upgrade_100 hash_const
 
 #define cmp_packet_unit_upgrade_100 cmp_const
@@ -17521,6 +17584,7 @@ int dsend_packet_unit_upgrade(connection_t *pconn, int unit_id)
   return send_packet_unit_upgrade(pconn, real_packet);
 }
 
+/* 63 cs */
 #define hash_packet_unit_nuke_100 hash_const
 
 #define cmp_packet_unit_nuke_100 cmp_const
@@ -17678,6 +17742,7 @@ int dsend_packet_unit_nuke(connection_t *pconn, int unit_id)
   return send_packet_unit_nuke(pconn, real_packet);
 }
 
+/* 64 cs */
 #define hash_packet_unit_paradrop_to_100 hash_const
 
 #define cmp_packet_unit_paradrop_to_100 cmp_const
@@ -17868,6 +17933,7 @@ int dsend_packet_unit_paradrop_to(connection_t *pconn, int unit_id, int x, int y
   return send_packet_unit_paradrop_to(pconn, real_packet);
 }
 
+/* 65 cs */
 #define hash_packet_unit_airlift_100 hash_const
 
 #define cmp_packet_unit_airlift_100 cmp_const
@@ -18041,6 +18107,8 @@ int dsend_packet_unit_airlift(connection_t *pconn, int unit_id, int city_id)
   return send_packet_unit_airlift(pconn, real_packet);
 }
 
+/* 66 */
+/* 67 cs */
 #define hash_packet_unit_bribe_inq_100 hash_const
 
 #define cmp_packet_unit_bribe_inq_100 cmp_const
@@ -18198,6 +18266,7 @@ int dsend_packet_unit_bribe_inq(connection_t *pconn, int unit_id)
   return send_packet_unit_bribe_inq(pconn, real_packet);
 }
 
+/* 68 sc */
 #define hash_packet_unit_bribe_info_100 hash_const
 
 #define cmp_packet_unit_bribe_info_100 cmp_const
@@ -18372,6 +18441,7 @@ int dsend_packet_unit_bribe_info(connection_t *pconn, int unit_id, int cost)
   return send_packet_unit_bribe_info(pconn, real_packet);
 }
 
+/* 69 cs */
 #define hash_packet_unit_type_upgrade_100 hash_const
 
 #define cmp_packet_unit_type_upgrade_100 cmp_const
@@ -18531,6 +18601,7 @@ int dsend_packet_unit_type_upgrade(connection_t *pconn, Unit_Type_id type)
   return send_packet_unit_type_upgrade(pconn, real_packet);
 }
 
+/* 70 cs */
 #define hash_packet_unit_diplomat_action_100 hash_const
 
 #define cmp_packet_unit_diplomat_action_100 cmp_const
@@ -18743,6 +18814,7 @@ int dsend_packet_unit_diplomat_action(connection_t *pconn,
   return send_packet_unit_diplomat_action(pconn, real_packet);
 }
 
+/* 71 sc */
 #define hash_packet_unit_diplomat_popup_dialog_100 hash_const
 
 #define cmp_packet_unit_diplomat_popup_dialog_100 cmp_const
@@ -18941,6 +19013,7 @@ void dlsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest,
   lsend_packet_unit_diplomat_popup_dialog(dest, real_packet);
 }
 
+/* 72 cs */
 #define hash_packet_unit_change_activity_100 hash_const
 
 #define cmp_packet_unit_change_activity_100 cmp_const
@@ -19136,6 +19209,7 @@ int dsend_packet_unit_change_activity(connection_t *pconn,
   return send_packet_unit_change_activity(pconn, real_packet);
 }
 
+/* 73 cs */
 #define hash_packet_diplomacy_init_meeting_req_100 hash_const
 
 #define cmp_packet_diplomacy_init_meeting_req_100 cmp_const
@@ -19298,6 +19372,7 @@ int dsend_packet_diplomacy_init_meeting_req(connection_t *pconn, int counterpart
   return send_packet_diplomacy_init_meeting_req(pconn, real_packet);
 }
 
+/* 74 sc */
 #define hash_packet_diplomacy_init_meeting_100 hash_const
 
 #define cmp_packet_diplomacy_init_meeting_100 cmp_const
@@ -19494,6 +19569,7 @@ void dlsend_packet_diplomacy_init_meeting(struct connection_list *dest,
   lsend_packet_diplomacy_init_meeting(dest, real_packet);
 }
 
+/* 75 cs */
 #define hash_packet_diplomacy_cancel_meeting_req_100 hash_const
 
 #define cmp_packet_diplomacy_cancel_meeting_req_100 cmp_const
@@ -19657,6 +19733,7 @@ int dsend_packet_diplomacy_cancel_meeting_req(connection_t *pconn, int counterpa
   return send_packet_diplomacy_cancel_meeting_req(pconn, real_packet);
 }
 
+/* 76 sc */
 #define hash_packet_diplomacy_cancel_meeting_100 hash_const
 
 #define cmp_packet_diplomacy_cancel_meeting_100 cmp_const
@@ -19855,6 +19932,7 @@ void dlsend_packet_diplomacy_cancel_meeting(struct connection_list *dest,
   lsend_packet_diplomacy_cancel_meeting(dest, real_packet);
 }
 
+/* 77 cs */
 #define hash_packet_diplomacy_create_clause_req_100 hash_const
 
 #define cmp_packet_diplomacy_create_clause_req_100 cmp_const
@@ -20071,6 +20149,7 @@ int dsend_packet_diplomacy_create_clause_req(connection_t *pconn,
   return send_packet_diplomacy_create_clause_req(pconn, real_packet);
 }
 
+/* 78 sc */
 #define hash_packet_diplomacy_create_clause_100 hash_const
 
 #define cmp_packet_diplomacy_create_clause_100 cmp_const
@@ -20308,6 +20387,7 @@ void dlsend_packet_diplomacy_create_clause(struct connection_list *dest,
   lsend_packet_diplomacy_create_clause(dest, real_packet);
 }
 
+/* 79 cs */
 #define hash_packet_diplomacy_remove_clause_req_100 hash_const
 
 #define cmp_packet_diplomacy_remove_clause_req_100 cmp_const
@@ -20523,6 +20603,7 @@ int dsend_packet_diplomacy_remove_clause_req(connection_t *pconn,
   return send_packet_diplomacy_remove_clause_req(pconn, real_packet);
 }
 
+/* 80 sc */
 #define hash_packet_diplomacy_remove_clause_100 hash_const
 
 #define cmp_packet_diplomacy_remove_clause_100 cmp_const
@@ -20760,6 +20841,7 @@ void dlsend_packet_diplomacy_remove_clause(struct connection_list *dest,
   lsend_packet_diplomacy_remove_clause(dest, real_packet);
 }
 
+/* 81 cs */
 #define hash_packet_diplomacy_accept_treaty_req_100 hash_const
 
 #define cmp_packet_diplomacy_accept_treaty_req_100 cmp_const
@@ -20923,6 +21005,7 @@ int dsend_packet_diplomacy_accept_treaty_req(connection_t *pconn, int counterpar
   return send_packet_diplomacy_accept_treaty_req(pconn, real_packet);
 }
 
+/* 82 sc */
 #define hash_packet_diplomacy_accept_treaty_100 hash_const
 
 #define cmp_packet_diplomacy_accept_treaty_100 cmp_const
@@ -21124,6 +21207,7 @@ void dlsend_packet_diplomacy_accept_treaty(struct connection_list *dest,
   lsend_packet_diplomacy_accept_treaty(dest, real_packet);
 }
 
+/* 83 cs */
 #define hash_packet_diplomacy_cancel_pact_100 hash_const
 
 #define cmp_packet_diplomacy_cancel_pact_100 cmp_const
@@ -21303,6 +21387,7 @@ int dsend_packet_diplomacy_cancel_pact(connection_t *pconn,
   return send_packet_diplomacy_cancel_pact(pconn, real_packet);
 }
 
+/* 84 sc */
 #define hash_packet_page_msg_100 hash_const
 
 #define cmp_packet_page_msg_100 cmp_const
@@ -21470,6 +21555,7 @@ void lsend_packet_page_msg(struct connection_list *dest, const struct packet_pag
   } connection_list_iterate_end;
 }
 
+/* 85 cs */
 #define hash_packet_report_req_100 hash_const
 
 #define cmp_packet_report_req_100 cmp_const
@@ -21627,6 +21713,7 @@ int dsend_packet_report_req(connection_t *pconn, enum report_type type)
   return send_packet_report_req(pconn, real_packet);
 }
 
+/* 86 sc */
 static unsigned int hash_packet_conn_info_100(const void *vkey, unsigned int num_buckets)
 {
   const struct packet_conn_info *key = (const struct packet_conn_info *) vkey;
@@ -21877,6 +21964,7 @@ void lsend_packet_conn_info(struct connection_list *dest, const struct packet_co
   } connection_list_iterate_end;
 }
 
+/* 87 sc */
 #define hash_packet_conn_ping_info_100 hash_const
 
 #define cmp_packet_conn_ping_info_100 cmp_const
@@ -22060,6 +22148,7 @@ static int send_packet_conn_ping_info_100(connection_t *pconn, const struct pack
   SEND_PACKET_END;
 }
 
+/* 87 sc */
 #define hash_packet_conn_ping_info_101 hash_const
 
 #define cmp_packet_conn_ping_info_101 cmp_const
@@ -22311,6 +22400,7 @@ void lsend_packet_conn_ping_info(struct connection_list *dest, const struct pack
   } connection_list_iterate_end;
 }
 
+/* 88 sc */
 static struct packet_conn_ping *receive_packet_conn_ping_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_conn_ping, real_packet);
@@ -22376,6 +22466,7 @@ int send_packet_conn_ping(connection_t *pconn)
   }
 }
 
+/* 89 cs */
 static struct packet_conn_pong *receive_packet_conn_pong_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_conn_pong, real_packet);
@@ -22441,6 +22532,7 @@ int send_packet_conn_pong(connection_t *pconn)
   }
 }
 
+/* 90 sc */
 static struct packet_before_new_year *
 receive_packet_before_new_year_100(connection_t *pconn, enum packet_type type)
 {
@@ -22514,6 +22606,7 @@ void lsend_packet_before_new_year(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 91 sc */
 static struct packet_start_turn *receive_packet_start_turn_100(connection_t *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_start_turn, real_packet);
@@ -22586,6 +22679,7 @@ void lsend_packet_start_turn(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 92 sc */
 #define hash_packet_new_year_100 hash_const
 
 #define cmp_packet_new_year_100 cmp_const
@@ -22755,6 +22849,7 @@ void lsend_packet_new_year(struct connection_list *dest, const struct packet_new
   } connection_list_iterate_end;
 }
 
+/* 135 sc */
 static struct packet_freeze_client *
 receive_packet_freeze_client_100(connection_t *pconn, enum packet_type type)
 {
@@ -22828,6 +22923,7 @@ void lsend_packet_freeze_client(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 136 sc */
 static struct packet_thaw_client *
 receive_packet_thaw_client_100(connection_t *pconn, enum packet_type type)
 {
@@ -22901,6 +22997,7 @@ void lsend_packet_thaw_client(struct connection_list *dest)
   } connection_list_iterate_end;
 }
 
+/* 93 cs */
 static struct packet_spaceship_launch *
 receive_packet_spaceship_launch_100(connection_t *pconn, enum packet_type type)
 {
@@ -22968,6 +23065,7 @@ int send_packet_spaceship_launch(connection_t *pconn)
   }
 }
 
+/* 94 cs */
 #define hash_packet_spaceship_place_100 hash_const
 
 #define cmp_packet_spaceship_place_100 cmp_const
@@ -23142,6 +23240,7 @@ int dsend_packet_spaceship_place(connection_t *pconn, enum spaceship_place_type 
   return send_packet_spaceship_place(pconn, real_packet);
 }
 
+/* 95 sc */
 static unsigned int hash_packet_spaceship_info_100(const void *vkey, unsigned int num_buckets)
 {
   const struct packet_spaceship_info *key = (const struct packet_spaceship_info *) vkey;
@@ -23569,6 +23668,7 @@ void lsend_packet_spaceship_info(struct connection_list *dest, const struct pack
   } connection_list_iterate_end;
 }
 
+/* 96 sc */
 #define hash_packet_ruleset_unit_100 hash_const
 
 #define cmp_packet_ruleset_unit_100 cmp_const
@@ -24490,6 +24590,7 @@ receive_packet_ruleset_game_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
+/* 97 sc */
 static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet_ruleset_game *packet)
 {
   const struct packet_ruleset_game *real_packet = packet;
@@ -25022,6 +25123,7 @@ receive_packet_ruleset_government_ruler_title_100(connection_t *pconn, enum pack
   RECEIVE_PACKET_END(real_packet);
 }
 
+/* 98 sc */
 static int send_packet_ruleset_government_ruler_title_100(
                connection_t *pconn,
                const struct packet_ruleset_government_ruler_title *packet)
@@ -25267,6 +25369,7 @@ receive_packet_ruleset_tech_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
+/* 99 sc */
 static int send_packet_ruleset_tech_100(connection_t *pconn, const struct packet_ruleset_tech *packet)
 {
   const struct packet_ruleset_tech *real_packet = packet;
@@ -25477,6 +25580,7 @@ void lsend_packet_ruleset_tech(struct connection_list *dest, const struct packet
   } connection_list_iterate_end;
 }
 
+/* 100 sc */
 #define hash_packet_ruleset_government_100 hash_const
 
 #define cmp_packet_ruleset_government_100 cmp_const
@@ -26285,6 +26389,7 @@ void lsend_packet_ruleset_government(
   } connection_list_iterate_end;
 }
 
+/* 101 sc */
 #define hash_packet_ruleset_terrain_control_100 hash_const
 
 #define cmp_packet_ruleset_terrain_control_100 cmp_const
@@ -26724,6 +26829,7 @@ void lsend_packet_ruleset_terrain_control(
   } connection_list_iterate_end;
 }
 
+/* 102 sc */
 #define hash_packet_ruleset_nation_100 hash_const
 
 #define cmp_packet_ruleset_nation_100 cmp_const
@@ -27084,6 +27190,7 @@ void lsend_packet_ruleset_nation(struct connection_list *dest, const struct pack
   } connection_list_iterate_end;
 }
 
+/* 103 sc */
 #define hash_packet_ruleset_city_100 hash_const
 
 #define cmp_packet_ruleset_city_100 cmp_const
@@ -27330,6 +27437,7 @@ void lsend_packet_ruleset_city(struct connection_list *dest, const struct packet
   } connection_list_iterate_end;
 }
 
+/* 104 sc */
 #define hash_packet_ruleset_building_100 hash_const
 
 #define cmp_packet_ruleset_building_100 cmp_const
@@ -27917,6 +28025,7 @@ void lsend_packet_ruleset_building(
   } connection_list_iterate_end;
 }
 
+/* 105 sc */
 #define hash_packet_ruleset_terrain_100 hash_const
 
 #define cmp_packet_ruleset_terrain_100 cmp_const
@@ -28598,6 +28707,7 @@ void lsend_packet_ruleset_terrain(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
+/* 106 sc */
 #define hash_packet_ruleset_control_100 hash_const
 
 #define cmp_packet_ruleset_control_100 cmp_const
@@ -29113,6 +29223,7 @@ void lsend_packet_ruleset_control(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
+/* 108 cs */
 #define hash_packet_single_want_hack_req_100 hash_const
 
 #define cmp_packet_single_want_hack_req_100 cmp_const
@@ -29374,6 +29485,7 @@ int send_packet_single_want_hack_req(connection_t *pconn,
   }
 }
 
+/* 109 sc */
 #define hash_packet_single_want_hack_reply_100 hash_const
 
 #define cmp_packet_single_want_hack_reply_100 cmp_const
@@ -29527,6 +29639,7 @@ int dsend_packet_single_want_hack_reply(connection_t *pconn, bool you_have_hack)
   return send_packet_single_want_hack_reply(pconn, real_packet);
 }
 
+/* 111 sc */
 #define hash_packet_game_load_100 hash_const
 
 #define cmp_packet_game_load_100 cmp_const
@@ -29952,6 +30065,7 @@ void lsend_packet_game_load(struct connection_list *dest, const struct packet_ga
   } connection_list_iterate_end;
 }
 
+/* 112 sc */
 #define hash_packet_options_settable_control_100 hash_const
 
 #define cmp_packet_options_settable_control_100 cmp_const
@@ -30159,6 +30273,7 @@ int send_packet_options_settable_control(connection_t *pconn,
   }
 }
 
+/* 113 sc */
 #define hash_packet_options_settable_100 hash_const
 
 #define cmp_packet_options_settable_100 cmp_const
@@ -30461,6 +30576,7 @@ int send_packet_options_settable(connection_t *pconn, const struct packet_option
   }
 }
 
+/* 120 sc */
 #define hash_packet_ruleset_cache_group_100 hash_const
 
 #define cmp_packet_ruleset_cache_group_100 cmp_const
@@ -30757,6 +30873,7 @@ void lsend_packet_ruleset_cache_group(
   } connection_list_iterate_end;
 }
 
+/* 121 sc */
 #define hash_packet_ruleset_cache_effect_100 hash_const
 
 #define cmp_packet_ruleset_cache_effect_100 cmp_const
@@ -31014,6 +31131,7 @@ void lsend_packet_ruleset_cache_effect(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
+/* 122 sc */
 #define hash_packet_traderoute_info_100 hash_const
 
 #define cmp_packet_traderoute_info_100 cmp_const
@@ -31379,6 +31497,7 @@ int send_packet_traderoute_info(connection_t *pconn, const struct packet_tradero
   }
 }
 
+/* 123 sc */
 #define hash_packet_extgame_info_100 hash_const
 
 #define cmp_packet_extgame_info_100 cmp_const
@@ -31799,6 +31918,7 @@ int send_packet_extgame_info(connection_t *pconn, const struct packet_extgame_in
   }
 }
 
+/* 124 sc */
 #define hash_packet_vote_new_100 hash_const
 
 #define cmp_packet_vote_new_100 cmp_const
@@ -32007,6 +32127,7 @@ int send_packet_vote_new(connection_t *pconn, const struct packet_vote_new *pack
   }
 }
 
+/* 125 sc */
 #define hash_packet_vote_update_100 hash_const
 
 #define cmp_packet_vote_update_100 cmp_const
@@ -32216,6 +32337,7 @@ int send_packet_vote_update(connection_t *pconn, const struct packet_vote_update
   }
 }
 
+/* 126 sc */
 #define hash_packet_vote_remove_100 hash_const
 
 #define cmp_packet_vote_remove_100 cmp_const
@@ -32365,6 +32487,7 @@ int send_packet_vote_remove(connection_t *pconn, const struct packet_vote_remove
   }
 }
 
+/* 127 sc */
 #define hash_packet_vote_resolve_100 hash_const
 
 #define cmp_packet_vote_resolve_100 cmp_const
@@ -32520,6 +32643,7 @@ int send_packet_vote_resolve(connection_t *pconn, const struct packet_vote_resol
   }
 }
 
+/* 128 sc */
 #define hash_packet_vote_submit_100 hash_const
 
 #define cmp_packet_vote_submit_100 cmp_const
@@ -32684,6 +32808,7 @@ int send_packet_vote_submit(connection_t *pconn, const struct packet_vote_submit
   }
 }
 
+/* 130 cs */
 #define hash_packet_trade_route_plan_100 hash_const
 
 #define cmp_packet_trade_route_plan_100 cmp_const
@@ -32860,6 +32985,7 @@ int dsend_packet_trade_route_plan(connection_t *pconn, int city1, int city2)
   return send_packet_trade_route_plan(pconn, real_packet);
 }
 
+/* 131 cs */
 #define hash_packet_trade_route_remove_100 hash_const
 
 #define cmp_packet_trade_route_remove_100 cmp_const
@@ -33031,6 +33157,7 @@ int dsend_packet_trade_route_remove(connection_t *pconn, int city1, int city2)
   return send_packet_trade_route_remove(pconn, real_packet);
 }
 
+/* 132 cs */
 #define hash_packet_unit_trade_route_100 hash_const
 
 #define cmp_packet_unit_trade_route_100 cmp_const
@@ -33224,6 +33351,7 @@ int dsend_packet_unit_trade_route(connection_t *pconn, int unit_id, int city1, i
   return send_packet_unit_trade_route(pconn, real_packet);
 }
 
+/* 133 sc */
 #define hash_packet_trade_route_info_100 hash_const
 
 #define cmp_packet_trade_route_info_100 cmp_const
@@ -33420,6 +33548,7 @@ int send_packet_trade_route_info(connection_t *pconn, const struct packet_trade_
   }
 }
 
+/* 138 cs */
 #define hash_packet_city_set_rally_point_100 hash_const
 
 #define cmp_packet_city_set_rally_point_100 cmp_const
@@ -33614,6 +33743,7 @@ int dsend_packet_city_set_rally_point(connection_t *pconn, int id, int x, int y)
   return send_packet_city_set_rally_point(pconn, real_packet);
 }
 
+/* 139 cs */
 #define hash_packet_city_clear_rally_point_100 hash_const
 
 #define cmp_packet_city_clear_rally_point_100 cmp_const
@@ -33777,6 +33907,7 @@ int dsend_packet_city_clear_rally_point(connection_t *pconn, int id)
   return send_packet_city_clear_rally_point(pconn, real_packet);
 }
 
+/* 141 cs */
 #define hash_packet_unit_air_patrol_100 hash_const
 
 #define cmp_packet_unit_air_patrol_100 cmp_const
@@ -33969,6 +34100,7 @@ int dsend_packet_unit_air_patrol(connection_t *pconn, int id, int x, int y)
   return send_packet_unit_air_patrol(pconn, real_packet);
 }
 
+/* 142 cs */
 #define hash_packet_unit_air_patrol_stop_100 hash_const
 
 #define cmp_packet_unit_air_patrol_stop_100 cmp_const
@@ -34131,6 +34263,7 @@ int dsend_packet_unit_air_patrol_stop(connection_t *pconn, int id)
   return send_packet_unit_air_patrol_stop(pconn, real_packet);
 }
 
+/* 145 cs */
 #define hash_packet_city_manager_param_100 hash_const
 
 #define cmp_packet_city_manager_param_100 cmp_const
@@ -34387,6 +34520,7 @@ int send_packet_city_manager_param(connection_t *pconn,
   }
 }
 
+/* 146 cs */
 #define hash_packet_city_no_manager_param_100 hash_const
 
 #define cmp_packet_city_no_manager_param_100 cmp_const
@@ -34542,6 +34676,7 @@ int dsend_packet_city_no_manager_param(connection_t *pconn, int id)
   return send_packet_city_no_manager_param(pconn, real_packet);
 }
 
+/* 150 cs */
 #define hash_packet_player_info_req_100 hash_const
 
 #define cmp_packet_player_info_req_100 cmp_const

@@ -581,6 +581,8 @@ PACKET_PLAYER_RATES=41;cs,dsend
   PERCENT tax, luxury, science;
 end
 
+/* 42 */
+
 PACKET_PLAYER_CHANGE_GOVERNMENT=43;cs,dsend
   GOVERNMENT government;
 end
@@ -737,6 +739,8 @@ PACKET_UNIT_AIRLIFT=65;cs,dsend
   UNIT unit_id;
   CITY city_id;
 end
+
+# 66
 
 PACKET_UNIT_BRIBE_INQ=67;cs,handle-per-conn,dsend
   UNIT unit_id;
