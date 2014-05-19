@@ -8247,8 +8247,13 @@ int send_packet_city_make_specialist(connection_t *pconn,
   ensure_valid_variant_packet_city_make_specialist(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_MAKE_SPECIALIST]) {
-    case 100: return send_packet_city_make_specialist_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_make_specialist_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -8443,8 +8448,13 @@ int send_packet_city_make_worker(connection_t *pconn, const struct packet_city_m
   ensure_valid_variant_packet_city_make_worker(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_MAKE_WORKER]) {
-    case 100: return send_packet_city_make_worker_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_make_worker_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -8640,8 +8650,13 @@ int send_packet_city_change_specialist(connection_t *pconn,
   ensure_valid_variant_packet_city_change_specialist(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_CHANGE_SPECIALIST]) {
-    case 100: return send_packet_city_change_specialist_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_change_specialist_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -8819,8 +8834,13 @@ int send_packet_city_rename(connection_t *pconn, const struct packet_city_rename
   ensure_valid_variant_packet_city_rename(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_RENAME]) {
-    case 100: return send_packet_city_rename_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_rename_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -8998,8 +9018,13 @@ int send_packet_city_options_req(connection_t *pconn, const struct packet_city_o
   ensure_valid_variant_packet_city_options_req(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_OPTIONS_REQ]) {
-    case 100: return send_packet_city_options_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_options_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -9161,8 +9186,13 @@ int send_packet_city_refresh(connection_t *pconn, const struct packet_city_refre
   ensure_valid_variant_packet_city_refresh(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_REFRESH]) {
-    case 100: return send_packet_city_refresh_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_refresh_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -9325,8 +9355,13 @@ int send_packet_city_incite_inq(connection_t *pconn, const struct packet_city_in
   ensure_valid_variant_packet_city_incite_inq(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_INCITE_INQ]) {
-    case 100: return send_packet_city_incite_inq_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_incite_inq_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -9506,8 +9541,13 @@ int send_packet_city_incite_info(
   ensure_valid_variant_packet_city_incite_info(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_INCITE_INFO]) {
-    case 100: return send_packet_city_incite_info_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_incite_info_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -9672,8 +9712,13 @@ int send_packet_city_name_suggestion_req(connection_t *pconn,
   ensure_valid_variant_packet_city_name_suggestion_req(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ]) {
-    case 100: return send_packet_city_name_suggestion_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_name_suggestion_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -9848,8 +9893,13 @@ int send_packet_city_name_suggestion_info(connection_t *pconn, const struct pack
   ensure_valid_variant_packet_city_name_suggestion_info(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO]) {
-    case 100: return send_packet_city_name_suggestion_info_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_name_suggestion_info_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -10058,8 +10108,13 @@ int send_packet_city_sabotage_list(connection_t *pconn, const struct packet_city
   ensure_valid_variant_packet_city_sabotage_list(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_SABOTAGE_LIST]) {
-    case 100: return send_packet_city_sabotage_list_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_sabotage_list_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -10219,8 +10274,13 @@ int send_packet_player_remove(connection_t *pconn, const struct packet_player_re
   ensure_valid_variant_packet_player_remove(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_REMOVE]) {
-    case 100: return send_packet_player_remove_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_remove_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -12524,11 +12584,22 @@ struct packet_player_info *receive_packet_player_info(connection_t *pconn, enum 
   ensure_valid_variant_packet_player_info(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_INFO]) {
-    case 100: return receive_packet_player_info_100(pconn, type);
-    case 101: return receive_packet_player_info_101(pconn, type);
-    case 102: return receive_packet_player_info_102(pconn, type);
-    case 103: return receive_packet_player_info_103(pconn, type);
-    default: die("unknown variant"); return NULL;
+    case 100: {
+      return receive_packet_player_info_100(pconn, type);
+    }
+    case 101: {
+      return receive_packet_player_info_101(pconn, type);
+    }
+    case 102: {
+      return receive_packet_player_info_102(pconn, type);
+    }
+    case 103: {
+      return receive_packet_player_info_103(pconn, type);
+    }
+    default: {
+      die("unknown variant");
+      return NULL;
+    }
   }
 }
 
@@ -12547,11 +12618,22 @@ int send_packet_player_info(connection_t *pconn, const struct packet_player_info
   ensure_valid_variant_packet_player_info(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_INFO]) {
-    case 100: return send_packet_player_info_100(pconn, packet);
-    case 101: return send_packet_player_info_101(pconn, packet);
-    case 102: return send_packet_player_info_102(pconn, packet);
-    case 103: return send_packet_player_info_103(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_info_100(pconn, packet);
+    }
+    case 101: {
+      return send_packet_player_info_101(pconn, packet);
+    }
+    case 102: {
+      return send_packet_player_info_102(pconn, packet);
+    }
+    case 103: {
+      return send_packet_player_info_103(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -12623,8 +12705,13 @@ int send_packet_player_turn_done(connection_t *pconn)
   ensure_valid_variant_packet_player_turn_done(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_TURN_DONE]) {
-    case 100: return send_packet_player_turn_done_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_turn_done_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -12806,8 +12893,13 @@ int send_packet_player_rates(connection_t *pconn, const struct packet_player_rat
   ensure_valid_variant_packet_player_rates(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_RATES]) {
-    case 100: return send_packet_player_rates_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_rates_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -12974,8 +13066,13 @@ int send_packet_player_change_government(connection_t *pconn,
   ensure_valid_variant_packet_player_change_government(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT]) {
-    case 100: return send_packet_player_change_government_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_change_government_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -13137,8 +13234,13 @@ int send_packet_player_research(connection_t *pconn, const struct packet_player_
   ensure_valid_variant_packet_player_research(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_RESEARCH]) {
-    case 100: return send_packet_player_research_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_research_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -13300,8 +13402,13 @@ int send_packet_player_tech_goal(connection_t *pconn, const struct packet_player
   ensure_valid_variant_packet_player_tech_goal(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_TECH_GOAL]) {
-    case 100: return send_packet_player_tech_goal_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_tech_goal_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -13382,8 +13489,13 @@ int send_packet_player_attribute_block(connection_t *pconn)
   ensure_valid_variant_packet_player_attribute_block(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK]) {
-    case 100: return send_packet_player_attribute_block_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_attribute_block_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -13594,8 +13706,13 @@ int send_packet_player_attribute_chunk(connection_t *pconn,
   ensure_valid_variant_packet_player_attribute_chunk(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK]) {
-    case 100: return send_packet_player_attribute_chunk_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_attribute_chunk_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -13747,8 +13864,13 @@ int send_packet_unit_remove(connection_t *pconn, const struct packet_unit_remove
   ensure_valid_variant_packet_unit_remove(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_REMOVE]) {
-    case 100: return send_packet_unit_remove_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_remove_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -15059,9 +15181,16 @@ struct packet_unit_info *receive_packet_unit_info(connection_t *pconn, enum pack
   ensure_valid_variant_packet_unit_info(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_INFO]) {
-    case 100: return receive_packet_unit_info_100(pconn, type);
-    case 101: return receive_packet_unit_info_101(pconn, type);
-    default: die("unknown variant"); return NULL;
+    case 100: {
+      return receive_packet_unit_info_100(pconn, type);
+    }
+    case 101: {
+      return receive_packet_unit_info_101(pconn, type);
+    }
+    default: {
+      die("unknown variant");
+      return NULL;
+    }
   }
 }
 
@@ -15080,9 +15209,16 @@ int send_packet_unit_info(connection_t *pconn, const struct packet_unit_info *pa
   ensure_valid_variant_packet_unit_info(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_INFO]) {
-    case 100: return send_packet_unit_info_100(pconn, packet);
-    case 101: return send_packet_unit_info_101(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_info_100(pconn, packet);
+    }
+    case 101: {
+      return send_packet_unit_info_101(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -15439,8 +15575,13 @@ int send_packet_unit_short_info(connection_t *pconn, const struct packet_unit_sh
   ensure_valid_variant_packet_unit_short_info(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_SHORT_INFO]) {
-    case 100: return send_packet_unit_short_info_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_short_info_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -15652,8 +15793,13 @@ int send_packet_unit_combat_info(connection_t *pconn, const struct packet_unit_c
   ensure_valid_variant_packet_unit_combat_info(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_COMBAT_INFO]) {
-    case 100: return send_packet_unit_combat_info_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_combat_info_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -15842,8 +15988,13 @@ int send_packet_unit_move(connection_t *pconn, const struct packet_unit_move *pa
   ensure_valid_variant_packet_unit_move(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_MOVE]) {
-    case 100: return send_packet_unit_move_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_move_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -16019,8 +16170,13 @@ int send_packet_unit_build_city(connection_t *pconn, const struct packet_unit_bu
   ensure_valid_variant_packet_unit_build_city(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_BUILD_CITY]) {
-    case 100: return send_packet_unit_build_city_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_build_city_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -16182,8 +16338,13 @@ int send_packet_unit_disband(connection_t *pconn, const struct packet_unit_disba
   ensure_valid_variant_packet_unit_disband(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_DISBAND]) {
-    case 100: return send_packet_unit_disband_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_disband_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -16362,8 +16523,13 @@ int send_packet_unit_change_homecity(connection_t *pconn,
   ensure_valid_variant_packet_unit_change_homecity(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_CHANGE_HOMECITY]) {
-    case 100: return send_packet_unit_change_homecity_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_change_homecity_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -16528,8 +16694,13 @@ int send_packet_unit_establish_trade(connection_t *pconn,
   ensure_valid_variant_packet_unit_establish_trade(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_ESTABLISH_TRADE]) {
-    case 100: return send_packet_unit_establish_trade_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_establish_trade_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -16693,8 +16864,13 @@ int send_packet_unit_help_build_wonder(connection_t *pconn,
   ensure_valid_variant_packet_unit_help_build_wonder(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER]) {
-    case 100: return send_packet_unit_help_build_wonder_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_help_build_wonder_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -16884,8 +17060,13 @@ int send_packet_unit_goto(connection_t *pconn, const struct packet_unit_goto *pa
   ensure_valid_variant_packet_unit_goto(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_GOTO]) {
-    case 100: return send_packet_unit_goto_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_goto_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -17228,8 +17409,13 @@ int send_packet_unit_orders(connection_t *pconn, const struct packet_unit_orders
   ensure_valid_variant_packet_unit_orders(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_ORDERS]) {
-    case 100: return send_packet_unit_orders_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_orders_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -17380,8 +17566,13 @@ int send_packet_unit_auto(connection_t *pconn, const struct packet_unit_auto *pa
   ensure_valid_variant_packet_unit_auto(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_AUTO]) {
-    case 100: return send_packet_unit_auto_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_auto_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -17556,8 +17747,13 @@ int send_packet_unit_load(connection_t *pconn, const struct packet_unit_load *pa
   ensure_valid_variant_packet_unit_load(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_LOAD]) {
-    case 100: return send_packet_unit_load_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_load_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -17734,8 +17930,13 @@ int send_packet_unit_unload(connection_t *pconn, const struct packet_unit_unload
   ensure_valid_variant_packet_unit_unload(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_UNLOAD]) {
-    case 100: return send_packet_unit_unload_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_unload_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -17897,8 +18098,13 @@ int send_packet_unit_upgrade(connection_t *pconn, const struct packet_unit_upgra
   ensure_valid_variant_packet_unit_upgrade(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_UPGRADE]) {
-    case 100: return send_packet_unit_upgrade_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_upgrade_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -18058,8 +18264,13 @@ int send_packet_unit_nuke(connection_t *pconn, const struct packet_unit_nuke *pa
   ensure_valid_variant_packet_unit_nuke(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_NUKE]) {
-    case 100: return send_packet_unit_nuke_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_nuke_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -18251,8 +18462,13 @@ int send_packet_unit_paradrop_to(connection_t *pconn, const struct packet_unit_p
   ensure_valid_variant_packet_unit_paradrop_to(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_PARADROP_TO]) {
-    case 100: return send_packet_unit_paradrop_to_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_paradrop_to_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -18430,8 +18646,13 @@ int send_packet_unit_airlift(connection_t *pconn, const struct packet_unit_airli
   ensure_valid_variant_packet_unit_airlift(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_AIRLIFT]) {
-    case 100: return send_packet_unit_airlift_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_airlift_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -18594,8 +18815,13 @@ int send_packet_unit_bribe_inq(connection_t *pconn, const struct packet_unit_bri
   ensure_valid_variant_packet_unit_bribe_inq(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_BRIBE_INQ]) {
-    case 100: return send_packet_unit_bribe_inq_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_bribe_inq_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -18772,8 +18998,13 @@ int send_packet_unit_bribe_info(connection_t *pconn, const struct packet_unit_br
   ensure_valid_variant_packet_unit_bribe_info(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_BRIBE_INFO]) {
-    case 100: return send_packet_unit_bribe_info_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_bribe_info_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -18937,8 +19168,13 @@ int send_packet_unit_type_upgrade(connection_t *pconn, const struct packet_unit_
   ensure_valid_variant_packet_unit_type_upgrade(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_TYPE_UPGRADE]) {
-    case 100: return send_packet_unit_type_upgrade_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_type_upgrade_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -19147,8 +19383,13 @@ int send_packet_unit_diplomat_action(connection_t *pconn,
   ensure_valid_variant_packet_unit_diplomat_action(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION]) {
-    case 100: return send_packet_unit_diplomat_action_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_diplomat_action_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -19336,8 +19577,13 @@ int send_packet_unit_diplomat_popup_dialog(connection_t *pconn,
   ensure_valid_variant_packet_unit_diplomat_popup_dialog(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG]) {
-    case 100: return send_packet_unit_diplomat_popup_dialog_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_diplomat_popup_dialog_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -19552,8 +19798,13 @@ int send_packet_unit_change_activity(connection_t *pconn,
   ensure_valid_variant_packet_unit_change_activity(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY]) {
-    case 100: return send_packet_unit_change_activity_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_change_activity_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -19724,8 +19975,13 @@ int send_packet_diplomacy_init_meeting_req(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_init_meeting_req(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ]) {
-    case 100: return send_packet_diplomacy_init_meeting_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_init_meeting_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -19904,8 +20160,13 @@ int send_packet_diplomacy_init_meeting(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_init_meeting(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING]) {
-    case 100: return send_packet_diplomacy_init_meeting_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_init_meeting_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -20093,8 +20354,13 @@ int send_packet_diplomacy_cancel_meeting_req(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_cancel_meeting_req(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ]) {
-    case 100: return send_packet_diplomacy_cancel_meeting_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_cancel_meeting_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -20275,8 +20541,13 @@ int send_packet_diplomacy_cancel_meeting(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_cancel_meeting(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING]) {
-    case 100: return send_packet_diplomacy_cancel_meeting_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_cancel_meeting_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -20510,8 +20781,13 @@ int send_packet_diplomacy_create_clause_req(
   ensure_valid_variant_packet_diplomacy_create_clause_req(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ]) {
-    case 100: return send_packet_diplomacy_create_clause_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_create_clause_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -20728,8 +21004,13 @@ int send_packet_diplomacy_create_clause(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_create_clause(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE]) {
-    case 100: return send_packet_diplomacy_create_clause_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_create_clause_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -20972,8 +21253,13 @@ int send_packet_diplomacy_remove_clause_req(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_remove_clause_req(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ]) {
-    case 100: return send_packet_diplomacy_remove_clause_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_remove_clause_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -21190,8 +21476,13 @@ int send_packet_diplomacy_remove_clause(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_remove_clause(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE]) {
-    case 100: return send_packet_diplomacy_remove_clause_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_remove_clause_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -21389,8 +21680,13 @@ int send_packet_diplomacy_accept_treaty_req(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_accept_treaty_req(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ]) {
-    case 100: return send_packet_diplomacy_accept_treaty_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_accept_treaty_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -21567,8 +21863,13 @@ int send_packet_diplomacy_accept_treaty(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_accept_treaty(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY]) {
-    case 100: return send_packet_diplomacy_accept_treaty_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_accept_treaty_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -21775,8 +22076,13 @@ int send_packet_diplomacy_cancel_pact(connection_t *pconn,
   ensure_valid_variant_packet_diplomacy_cancel_pact(pconn);
 
   switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT]) {
-    case 100: return send_packet_diplomacy_cancel_pact_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_diplomacy_cancel_pact_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -21951,8 +22257,13 @@ int send_packet_page_msg(connection_t *pconn, const struct packet_page_msg *pack
   ensure_valid_variant_packet_page_msg(pconn);
 
   switch(pconn->phs.variant[PACKET_PAGE_MSG]) {
-    case 100: return send_packet_page_msg_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_page_msg_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -22111,8 +22422,13 @@ int send_packet_report_req(connection_t *pconn, const struct packet_report_req *
   ensure_valid_variant_packet_report_req(pconn);
 
   switch(pconn->phs.variant[PACKET_REPORT_REQ]) {
-    case 100: return send_packet_report_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_report_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -22368,8 +22684,13 @@ int send_packet_conn_info(connection_t *pconn, const struct packet_conn_info *pa
   ensure_valid_variant_packet_conn_info(pconn);
 
   switch(pconn->phs.variant[PACKET_CONN_INFO]) {
-    case 100: return send_packet_conn_info_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_conn_info_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -22776,9 +23097,16 @@ struct packet_conn_ping_info *receive_packet_conn_ping_info(connection_t *pconn,
   ensure_valid_variant_packet_conn_ping_info(pconn);
 
   switch(pconn->phs.variant[PACKET_CONN_PING_INFO]) {
-    case 100: return receive_packet_conn_ping_info_100(pconn, type);
-    case 101: return receive_packet_conn_ping_info_101(pconn, type);
-    default: die("unknown variant"); return NULL;
+    case 100: {
+      return receive_packet_conn_ping_info_100(pconn, type);
+    }
+    case 101: {
+      return receive_packet_conn_ping_info_101(pconn, type);
+    }
+    default: {
+      die("unknown variant");
+      return NULL;
+    }
   }
 }
 
@@ -22797,9 +23125,16 @@ int send_packet_conn_ping_info(connection_t *pconn, const struct packet_conn_pin
   ensure_valid_variant_packet_conn_ping_info(pconn);
 
   switch(pconn->phs.variant[PACKET_CONN_PING_INFO]) {
-    case 100: return send_packet_conn_ping_info_100(pconn, packet);
-    case 101: return send_packet_conn_ping_info_101(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_conn_ping_info_100(pconn, packet);
+    }
+    case 101: {
+      return send_packet_conn_ping_info_101(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -22876,8 +23211,13 @@ int send_packet_conn_ping(connection_t *pconn)
   ensure_valid_variant_packet_conn_ping(pconn);
 
   switch(pconn->phs.variant[PACKET_CONN_PING]) {
-    case 100: return send_packet_conn_ping_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_conn_ping_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -22947,8 +23287,13 @@ int send_packet_conn_pong(connection_t *pconn)
   ensure_valid_variant_packet_conn_pong(pconn);
 
   switch(pconn->phs.variant[PACKET_CONN_PONG]) {
-    case 100: return send_packet_conn_pong_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_conn_pong_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -23019,8 +23364,13 @@ int send_packet_before_new_year(connection_t *pconn)
   ensure_valid_variant_packet_before_new_year(pconn);
 
   switch(pconn->phs.variant[PACKET_BEFORE_NEW_YEAR]) {
-    case 100: return send_packet_before_new_year_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_before_new_year_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -23097,8 +23447,13 @@ int send_packet_start_turn(connection_t *pconn)
   ensure_valid_variant_packet_start_turn(pconn);
 
   switch(pconn->phs.variant[PACKET_START_TURN]) {
-    case 100: return send_packet_start_turn_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_start_turn_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -23271,8 +23626,13 @@ int send_packet_new_year(connection_t *pconn, const struct packet_new_year *pack
   ensure_valid_variant_packet_new_year(pconn);
 
   switch(pconn->phs.variant[PACKET_NEW_YEAR]) {
-    case 100: return send_packet_new_year_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_new_year_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -23350,8 +23710,13 @@ int send_packet_freeze_client(connection_t *pconn)
   ensure_valid_variant_packet_freeze_client(pconn);
 
   switch(pconn->phs.variant[PACKET_FREEZE_CLIENT]) {
-    case 100: return send_packet_freeze_client_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_freeze_client_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -23429,8 +23794,13 @@ int send_packet_thaw_client(connection_t *pconn)
   ensure_valid_variant_packet_thaw_client(pconn);
 
   switch(pconn->phs.variant[PACKET_THAW_CLIENT]) {
-    case 100: return send_packet_thaw_client_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_thaw_client_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -23509,8 +23879,13 @@ int send_packet_spaceship_launch(connection_t *pconn)
   ensure_valid_variant_packet_spaceship_launch(pconn);
 
   switch(pconn->phs.variant[PACKET_SPACESHIP_LAUNCH]) {
-    case 100: return send_packet_spaceship_launch_100(pconn);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_spaceship_launch_100(pconn);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -23678,8 +24053,13 @@ int send_packet_spaceship_place(connection_t *pconn, const struct packet_spacesh
   ensure_valid_variant_packet_spaceship_place(pconn);
 
   switch(pconn->phs.variant[PACKET_SPACESHIP_PLACE]) {
-    case 100: return send_packet_spaceship_place_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_spaceship_place_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -24113,8 +24493,13 @@ int send_packet_spaceship_info(connection_t *pconn, const struct packet_spaceshi
   ensure_valid_variant_packet_spaceship_info(pconn);
 
   switch(pconn->phs.variant[PACKET_SPACESHIP_INFO]) {
-    case 100: return send_packet_spaceship_info_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_spaceship_info_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -24831,8 +25216,13 @@ int send_packet_ruleset_unit(connection_t *pconn, const struct packet_ruleset_un
   ensure_valid_variant_packet_ruleset_unit(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_UNIT]) {
-    case 100: return send_packet_ruleset_unit_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_unit_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -25501,8 +25891,13 @@ int send_packet_ruleset_game(connection_t *pconn, const struct packet_ruleset_ga
   ensure_valid_variant_packet_ruleset_game(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_GAME]) {
-    case 100: return send_packet_ruleset_game_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_game_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -25722,8 +26117,13 @@ int send_packet_ruleset_government_ruler_title(
   ensure_valid_variant_packet_ruleset_government_ruler_title(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE]) {
-    case 100: return send_packet_ruleset_government_ruler_title_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_government_ruler_title_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -26029,8 +26429,13 @@ int send_packet_ruleset_tech(connection_t *pconn, const struct packet_ruleset_te
   ensure_valid_variant_packet_ruleset_tech(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_TECH]) {
-    case 100: return send_packet_ruleset_tech_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_tech_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -26840,8 +27245,13 @@ int send_packet_ruleset_government(connection_t *pconn, const struct packet_rule
   ensure_valid_variant_packet_ruleset_government(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_GOVERNMENT]) {
-    case 100: return send_packet_ruleset_government_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_government_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -27283,8 +27693,13 @@ int send_packet_ruleset_terrain_control(
   ensure_valid_variant_packet_ruleset_terrain_control(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_TERRAIN_CONTROL]) {
-    case 100: return send_packet_ruleset_terrain_control_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_terrain_control_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -27646,8 +28061,13 @@ int send_packet_ruleset_nation(connection_t *pconn, const struct packet_ruleset_
   ensure_valid_variant_packet_ruleset_nation(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_NATION]) {
-    case 100: return send_packet_ruleset_nation_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_nation_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -27896,8 +28316,13 @@ int send_packet_ruleset_city(connection_t *pconn, const struct packet_ruleset_ci
   ensure_valid_variant_packet_ruleset_city(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_CITY]) {
-    case 100: return send_packet_ruleset_city_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_city_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -28481,8 +28906,13 @@ int send_packet_ruleset_building(connection_t *pconn, const struct packet_rulese
   ensure_valid_variant_packet_ruleset_building(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_BUILDING]) {
-    case 100: return send_packet_ruleset_building_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_building_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -29167,8 +29597,13 @@ int send_packet_ruleset_terrain(connection_t *pconn, const struct packet_ruleset
   ensure_valid_variant_packet_ruleset_terrain(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_TERRAIN]) {
-    case 100: return send_packet_ruleset_terrain_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_terrain_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -29684,8 +30119,13 @@ int send_packet_ruleset_control(connection_t *pconn, const struct packet_ruleset
   ensure_valid_variant_packet_ruleset_control(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_CONTROL]) {
-    case 100: return send_packet_ruleset_control_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_control_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -29956,9 +30396,16 @@ int send_packet_single_want_hack_req(connection_t *pconn,
   ensure_valid_variant_packet_single_want_hack_req(pconn);
 
   switch(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REQ]) {
-    case 100: return send_packet_single_want_hack_req_100(pconn, packet);
-    case 101: return send_packet_single_want_hack_req_101(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_single_want_hack_req_100(pconn, packet);
+    }
+    case 101: {
+      return send_packet_single_want_hack_req_101(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -30105,8 +30552,13 @@ int send_packet_single_want_hack_reply(connection_t *pconn,
   ensure_valid_variant_packet_single_want_hack_reply(pconn);
 
   switch(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY]) {
-    case 100: return send_packet_single_want_hack_reply_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_single_want_hack_reply_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -30530,8 +30982,13 @@ int send_packet_game_load(connection_t *pconn, const struct packet_game_load *pa
   ensure_valid_variant_packet_game_load(pconn);
 
   switch(pconn->phs.variant[PACKET_GAME_LOAD]) {
-    case 100: return send_packet_game_load_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_game_load_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -30747,8 +31204,13 @@ int send_packet_options_settable_control(connection_t *pconn,
   ensure_valid_variant_packet_options_settable_control(pconn);
 
   switch(pconn->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL]) {
-    case 100: return send_packet_options_settable_control_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_options_settable_control_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -31053,8 +31515,13 @@ int send_packet_options_settable(connection_t *pconn, const struct packet_option
   ensure_valid_variant_packet_options_settable(pconn);
 
   switch(pconn->phs.variant[PACKET_OPTIONS_SETTABLE]) {
-    case 100: return send_packet_options_settable_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_options_settable_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -31341,8 +31808,13 @@ int send_packet_ruleset_cache_group(connection_t *pconn, const struct packet_rul
   ensure_valid_variant_packet_ruleset_cache_group(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_CACHE_GROUP]) {
-    case 100: return send_packet_ruleset_cache_group_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_cache_group_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -31603,8 +32075,13 @@ int send_packet_ruleset_cache_effect(connection_t *pconn,
   ensure_valid_variant_packet_ruleset_cache_effect(pconn);
 
   switch(pconn->phs.variant[PACKET_RULESET_CACHE_EFFECT]) {
-    case 100: return send_packet_ruleset_cache_effect_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_ruleset_cache_effect_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -31979,9 +32456,16 @@ int send_packet_traderoute_info(connection_t *pconn, const struct packet_tradero
   ensure_valid_variant_packet_traderoute_info(pconn);
 
   switch(pconn->phs.variant[PACKET_TRADEROUTE_INFO]) {
-    case 100: return send_packet_traderoute_info_100(pconn, packet);
-    case 101: return send_packet_traderoute_info_101(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_traderoute_info_100(pconn, packet);
+    }
+    case 101: {
+      return send_packet_traderoute_info_101(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -32375,9 +32859,16 @@ struct packet_extgame_info *receive_packet_extgame_info(connection_t *pconn, enu
   ensure_valid_variant_packet_extgame_info(pconn);
 
   switch(pconn->phs.variant[PACKET_EXTGAME_INFO]) {
-    case 100: return receive_packet_extgame_info_100(pconn, type);
-    case 101: return receive_packet_extgame_info_101(pconn, type);
-    default: die("unknown variant"); return NULL;
+    case 100: {
+      return receive_packet_extgame_info_100(pconn, type);
+    }
+    case 101: {
+      return receive_packet_extgame_info_101(pconn, type);
+    }
+    default: {
+      die("unknown variant");
+      return NULL;
+    }
   }
 }
 
@@ -32396,9 +32887,16 @@ int send_packet_extgame_info(connection_t *pconn, const struct packet_extgame_in
   ensure_valid_variant_packet_extgame_info(pconn);
 
   switch(pconn->phs.variant[PACKET_EXTGAME_INFO]) {
-    case 100: return send_packet_extgame_info_100(pconn, packet);
-    case 101: return send_packet_extgame_info_101(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_extgame_info_100(pconn, packet);
+    }
+    case 101: {
+      return send_packet_extgame_info_101(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -32609,8 +33107,13 @@ int send_packet_vote_new(connection_t *pconn, const struct packet_vote_new *pack
   ensure_valid_variant_packet_vote_new(pconn);
 
   switch(pconn->phs.variant[PACKET_VOTE_NEW]) {
-    case 100: return send_packet_vote_new_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_vote_new_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -32822,8 +33325,13 @@ int send_packet_vote_update(connection_t *pconn, const struct packet_vote_update
   ensure_valid_variant_packet_vote_update(pconn);
 
   switch(pconn->phs.variant[PACKET_VOTE_UPDATE]) {
-    case 100: return send_packet_vote_update_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_vote_update_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -32975,8 +33483,13 @@ int send_packet_vote_remove(connection_t *pconn, const struct packet_vote_remove
   ensure_valid_variant_packet_vote_remove(pconn);
 
   switch(pconn->phs.variant[PACKET_VOTE_REMOVE]) {
-    case 100: return send_packet_vote_remove_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_vote_remove_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -33134,8 +33647,13 @@ int send_packet_vote_resolve(connection_t *pconn, const struct packet_vote_resol
   ensure_valid_variant_packet_vote_resolve(pconn);
 
   switch(pconn->phs.variant[PACKET_VOTE_RESOLVE]) {
-    case 100: return send_packet_vote_resolve_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_vote_resolve_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -33302,8 +33820,13 @@ int send_packet_vote_submit(connection_t *pconn, const struct packet_vote_submit
   ensure_valid_variant_packet_vote_submit(pconn);
 
   switch(pconn->phs.variant[PACKET_VOTE_SUBMIT]) {
-    case 100: return send_packet_vote_submit_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_vote_submit_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -33472,8 +33995,13 @@ int send_packet_trade_route_plan(connection_t *pconn, const struct packet_trade_
   ensure_valid_variant_packet_trade_route_plan(pconn);
 
   switch(pconn->phs.variant[PACKET_TRADE_ROUTE_PLAN]) {
-    case 100: return send_packet_trade_route_plan_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_trade_route_plan_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -33647,8 +34175,13 @@ int send_packet_trade_route_remove(connection_t *pconn, const struct packet_trad
   ensure_valid_variant_packet_trade_route_remove(pconn);
 
   switch(pconn->phs.variant[PACKET_TRADE_ROUTE_REMOVE]) {
-    case 100: return send_packet_trade_route_remove_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_trade_route_remove_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -33843,8 +34376,13 @@ int send_packet_unit_trade_route(connection_t *pconn, const struct packet_unit_t
   ensure_valid_variant_packet_unit_trade_route(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_TRADE_ROUTE]) {
-    case 100: return send_packet_unit_trade_route_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_trade_route_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -34054,8 +34592,13 @@ int send_packet_trade_route_info(connection_t *pconn, const struct packet_trade_
   ensure_valid_variant_packet_trade_route_info(pconn);
 
   switch(pconn->phs.variant[PACKET_TRADE_ROUTE_INFO]) {
-    case 100: return send_packet_trade_route_info_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_trade_route_info_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -34241,8 +34784,13 @@ int send_packet_city_set_rally_point(connection_t *pconn,
   ensure_valid_variant_packet_city_set_rally_point(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_SET_RALLY_POINT]) {
-    case 100: return send_packet_city_set_rally_point_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_set_rally_point_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -34410,8 +34958,13 @@ int send_packet_city_clear_rally_point(
   ensure_valid_variant_packet_city_clear_rally_point(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT]) {
-    case 100: return send_packet_city_clear_rally_point_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_clear_rally_point_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -34604,8 +35157,13 @@ int send_packet_unit_air_patrol(connection_t *pconn, const struct packet_unit_ai
   ensure_valid_variant_packet_unit_air_patrol(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_AIR_PATROL]) {
-    case 100: return send_packet_unit_air_patrol_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_air_patrol_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -34772,8 +35330,13 @@ int send_packet_unit_air_patrol_stop(connection_t *pconn,
   ensure_valid_variant_packet_unit_air_patrol_stop(pconn);
 
   switch(pconn->phs.variant[PACKET_UNIT_AIR_PATROL_STOP]) {
-    case 100: return send_packet_unit_air_patrol_stop_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_unit_air_patrol_stop_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -35039,8 +35602,13 @@ int send_packet_city_manager_param(connection_t *pconn,
   ensure_valid_variant_packet_city_manager_param(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_MANAGER_PARAM]) {
-    case 100: return send_packet_city_manager_param_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_manager_param_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -35189,8 +35757,13 @@ int send_packet_city_no_manager_param(connection_t *pconn,
   ensure_valid_variant_packet_city_no_manager_param(pconn);
 
   switch(pconn->phs.variant[PACKET_CITY_NO_MANAGER_PARAM]) {
-    case 100: return send_packet_city_no_manager_param_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_city_no_manager_param_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
@@ -35352,8 +35925,13 @@ int send_packet_player_info_req(connection_t *pconn, const struct packet_player_
   ensure_valid_variant_packet_player_info_req(pconn);
 
   switch(pconn->phs.variant[PACKET_PLAYER_INFO_REQ]) {
-    case 100: return send_packet_player_info_req_100(pconn, packet);
-    default: die("unknown variant"); return -1;
+    case 100: {
+      return send_packet_player_info_req_100(pconn, packet);
+    }
+    default: {
+      die("unknown variant");
+      return -1;
+    }
   }
 }
 
