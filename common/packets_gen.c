@@ -2226,7 +2226,9 @@ static int send_packet_nation_select_req_100(connection_t *pconn,
 
   differ = (old->is_male != real_packet->is_male);
   if (differ) {different++;}
-  if(packet->is_male) {BV_SET(fields, 1);}
+  if(packet->is_male) {
+    BV_SET(fields, 1);
+  }
 
   differ = (strcmp(old->name, real_packet->name) != 0);
   if (differ) {
@@ -13835,10 +13837,10 @@ static int send_packet_player_attribute_chunk_100(connection_t *pconn,
   }
 
   if (different == 0 && !force_send_of_unchanged) {
-
-  if (real_packet != packet) {
-    free((void *) real_packet);
-  }
+    if (real_packet != packet) {
+      free((void *) real_packet);
+    }
+    printf("\n");
     return 0;
   }
 
@@ -17515,59 +17517,67 @@ static int send_packet_unit_orders_100(connection_t *pconn, const struct packet_
   }
 
   differ = (old->repeat != real_packet->repeat);
-  if (differ) {different++;}
-  if(packet->repeat) {BV_SET(fields, 2);}
+  if (differ) {
+    different++;
+  }
+  if (packet->repeat) {
+    BV_SET(fields, 2);
+  }
 
   differ = (old->vigilant != real_packet->vigilant);
-  if (differ) {different++;}
-  if(packet->vigilant) {BV_SET(fields, 3);}
+  if (differ) {
+    different++;
+  }
+  if (packet->vigilant) {
+    BV_SET(fields, 3);
+  }
 
-    {
-      differ = (old->length != real_packet->length);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->length; i++) {
-          if (old->orders[i] != real_packet->orders[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->length != real_packet->length);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->length; i++) {
+        if (old->orders[i] != real_packet->orders[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 4);
   }
 
-    {
-      differ = (old->length != real_packet->length);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->length; i++) {
-          if (old->dir[i] != real_packet->dir[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->length != real_packet->length);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->length; i++) {
+        if (old->dir[i] != real_packet->dir[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 5);
   }
 
-    {
-      differ = (old->length != real_packet->length);
-      if(!differ) {
-        int i;
-        for (i = 0; i < real_packet->length; i++) {
-          if (old->activity[i] != real_packet->activity[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = (old->length != real_packet->length);
+    if(!differ) {
+      int i;
+      for (i = 0; i < real_packet->length; i++) {
+        if (old->activity[i] != real_packet->activity[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 6);
@@ -36043,18 +36053,18 @@ static int send_packet_city_manager_param_100(
     BV_SET(fields, 0);
   }
 
-    {
-      differ = FALSE;
-      if(!differ) {
-        int i;
-        for (i = 0; i < CM_NUM_STATS; i++) {
-          if (old->minimal_surplus[i] != real_packet->minimal_surplus[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = FALSE;
+    if(!differ) {
+      int i;
+      for (i = 0; i < CM_NUM_STATS; i++) {
+        if (old->minimal_surplus[i] != real_packet->minimal_surplus[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 1);
@@ -36062,28 +36072,34 @@ static int send_packet_city_manager_param_100(
 
   differ = (old->require_happy != real_packet->require_happy);
   if (differ) {different++;}
-  if(packet->require_happy) {BV_SET(fields, 2);}
+  if(packet->require_happy) {
+    BV_SET(fields, 2);
+  }
 
   differ = (old->allow_disorder != real_packet->allow_disorder);
   if (differ) {different++;}
-  if(packet->allow_disorder) {BV_SET(fields, 3);}
+  if(packet->allow_disorder) {
+    BV_SET(fields, 3);
+  }
 
   differ = (old->allow_specialists != real_packet->allow_specialists);
   if (differ) {different++;}
-  if(packet->allow_specialists) {BV_SET(fields, 4);}
+  if(packet->allow_specialists) {
+    BV_SET(fields, 4);
+  }
 
-    {
-      differ = FALSE;
-      if(!differ) {
-        int i;
-        for (i = 0; i < CM_NUM_STATS; i++) {
-          if (old->factor[i] != real_packet->factor[i]) {
-            differ = TRUE;
-            break;
-          }
+  {
+    differ = FALSE;
+    if(!differ) {
+      int i;
+      for (i = 0; i < CM_NUM_STATS; i++) {
+        if (old->factor[i] != real_packet->factor[i]) {
+          differ = TRUE;
+          break;
         }
       }
     }
+  }
   if (differ) {
     different++;
     BV_SET(fields, 5);
