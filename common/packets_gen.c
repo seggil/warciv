@@ -1311,7 +1311,9 @@ receive_packet_server_join_req(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_server_join_req(connection_t *pconn, const struct packet_server_join_req *packet)
+int send_packet_server_join_req(
+        connection_t *pconn,
+        const struct packet_server_join_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1421,7 +1423,9 @@ receive_packet_server_join_reply(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_server_join_reply(connection_t *pconn, const struct packet_server_join_reply *packet)
+int send_packet_server_join_reply(
+        connection_t *pconn,
+        const struct packet_server_join_reply *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1595,7 +1599,9 @@ receive_packet_authentication_req(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_authentication_req(connection_t *pconn, const struct packet_authentication_req *packet)
+int send_packet_authentication_req(
+        connection_t *pconn,
+        const struct packet_authentication_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1770,7 +1776,9 @@ receive_packet_authentication_reply(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_authentication_reply(connection_t *pconn, const struct packet_authentication_reply *packet)
+int send_packet_authentication_reply(
+        connection_t *pconn,
+        const struct packet_authentication_reply *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2018,7 +2026,9 @@ receive_packet_nation_unavailable(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_nation_unavailable(connection_t *pconn, const struct packet_nation_unavailable *packet)
+int send_packet_nation_unavailable(
+        connection_t *pconn,
+        const struct packet_nation_unavailable *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2314,8 +2324,9 @@ receive_packet_nation_select_req(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_nation_select_req(connection_t *pconn,
-                                  const struct packet_nation_select_req *packet)
+int send_packet_nation_select_req(
+        connection_t *pconn,
+        const struct packet_nation_select_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2577,7 +2588,9 @@ struct packet_game_state *receive_packet_game_state(connection_t *pconn, enum pa
   }
 }
 
-int send_packet_game_state(connection_t *pconn, const struct packet_game_state *packet)
+int send_packet_game_state(
+        connection_t *pconn,
+        const struct packet_game_state *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -3296,7 +3309,9 @@ struct packet_endgame_report *receive_packet_endgame_report(connection_t *pconn,
   }
 }
 
-int send_packet_endgame_report(connection_t *pconn, const struct packet_endgame_report *packet)
+int send_packet_endgame_report(
+        connection_t *pconn,
+        const struct packet_endgame_report *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -3572,7 +3587,9 @@ struct packet_tile_info *receive_packet_tile_info(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_tile_info(connection_t *pconn, const struct packet_tile_info *packet)
+int send_packet_tile_info(
+        connection_t *pconn,
+        const struct packet_tile_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -4233,7 +4250,9 @@ struct packet_game_info *receive_packet_game_info(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_game_info(connection_t *pconn, const struct packet_game_info *packet)
+int send_packet_game_info(
+        connection_t *pconn,
+        const struct packet_game_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -4423,7 +4442,9 @@ struct packet_map_info *receive_packet_map_info(connection_t *pconn, enum packet
   }
 }
 
-int send_packet_map_info(connection_t *pconn, const struct packet_map_info *packet)
+int send_packet_map_info(
+        connection_t *pconn,
+        const struct packet_map_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -4606,7 +4627,9 @@ struct packet_nuke_tile_info *receive_packet_nuke_tile_info(connection_t *pconn,
   }
 }
 
-int send_packet_nuke_tile_info(connection_t *pconn, const struct packet_nuke_tile_info *packet)
+int send_packet_nuke_tile_info(
+        connection_t *pconn,
+        const struct packet_nuke_tile_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -4866,7 +4889,9 @@ struct packet_chat_msg *receive_packet_chat_msg(connection_t *pconn, enum packet
   }
 }
 
-int send_packet_chat_msg(connection_t *pconn, const struct packet_chat_msg *packet)
+int send_packet_chat_msg(
+        connection_t *pconn,
+        const struct packet_chat_msg *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -5069,7 +5094,9 @@ struct packet_chat_msg_req *receive_packet_chat_msg_req(connection_t *pconn, enu
   }
 }
 
-int send_packet_chat_msg_req(connection_t *pconn, const struct packet_chat_msg_req *packet)
+int send_packet_chat_msg_req(
+        connection_t *pconn,
+        const struct packet_chat_msg_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -5238,7 +5265,9 @@ struct packet_city_remove *receive_packet_city_remove(connection_t *pconn, enum 
   }
 }
 
-int send_packet_city_remove(connection_t *pconn, const struct packet_city_remove *packet)
+int send_packet_city_remove(
+        connection_t *pconn,
+        const struct packet_city_remove *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7077,7 +7106,9 @@ struct packet_city_info *receive_packet_city_info(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_city_info(connection_t *pconn, const struct packet_city_info *packet)
+int send_packet_city_info(
+        connection_t *pconn,
+        const struct packet_city_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7377,7 +7408,9 @@ struct packet_city_short_info *receive_packet_city_short_info(connection_t *pcon
   }
 }
 
-int send_packet_city_short_info(connection_t *pconn, const struct packet_city_short_info *packet)
+int send_packet_city_short_info(
+        connection_t *pconn,
+        const struct packet_city_short_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7565,7 +7598,9 @@ struct packet_city_sell *receive_packet_city_sell(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_city_sell(connection_t *pconn, const struct packet_city_sell *packet)
+int send_packet_city_sell(
+        connection_t *pconn,
+        const struct packet_city_sell *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7739,7 +7774,9 @@ struct packet_city_buy *receive_packet_city_buy(connection_t *pconn, enum packet
   }
 }
 
-int send_packet_city_buy(connection_t *pconn, const struct packet_city_buy *packet)
+int send_packet_city_buy(
+        connection_t *pconn,
+        const struct packet_city_buy *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7935,7 +7972,9 @@ struct packet_city_change *receive_packet_city_change(connection_t *pconn, enum 
   }
 }
 
-int send_packet_city_change(connection_t *pconn, const struct packet_city_change *packet)
+int send_packet_city_change(
+        connection_t *pconn,
+        const struct packet_city_change *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8132,7 +8171,9 @@ struct packet_city_worklist *receive_packet_city_worklist(connection_t *pconn, e
   }
 }
 
-int send_packet_city_worklist(connection_t *pconn, const struct packet_city_worklist *packet)
+int send_packet_city_worklist(
+        connection_t *pconn,
+        const struct packet_city_worklist *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8341,8 +8382,9 @@ receive_packet_city_make_specialist(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_city_make_specialist(connection_t *pconn,
-                                     const struct packet_city_make_specialist *packet)
+int send_packet_city_make_specialist(
+        connection_t *pconn,
+        const struct packet_city_make_specialist *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8552,7 +8594,9 @@ receive_packet_city_make_worker(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_city_make_worker(connection_t *pconn, const struct packet_city_make_worker *packet)
+int send_packet_city_make_worker(
+        connection_t *pconn,
+        const struct packet_city_make_worker *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8762,8 +8806,9 @@ receive_packet_city_change_specialist(connection_t *pconn, enum packet_type type
   }
 }
 
-int send_packet_city_change_specialist(connection_t *pconn,
-                                       const struct packet_city_change_specialist *packet)
+int send_packet_city_change_specialist(
+        connection_t *pconn,
+        const struct packet_city_change_specialist *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8955,7 +9000,9 @@ struct packet_city_rename *receive_packet_city_rename(connection_t *pconn, enum 
   }
 }
 
-int send_packet_city_rename(connection_t *pconn, const struct packet_city_rename *packet)
+int send_packet_city_rename(
+        connection_t *pconn,
+        const struct packet_city_rename *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9147,7 +9194,9 @@ struct packet_city_options_req *receive_packet_city_options_req(connection_t *pc
   }
 }
 
-int send_packet_city_options_req(connection_t *pconn, const struct packet_city_options_req *packet)
+int send_packet_city_options_req(
+        connection_t *pconn,
+        const struct packet_city_options_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9322,7 +9371,9 @@ struct packet_city_refresh *receive_packet_city_refresh(connection_t *pconn, enu
   }
 }
 
-int send_packet_city_refresh(connection_t *pconn, const struct packet_city_refresh *packet)
+int send_packet_city_refresh(
+        connection_t *pconn,
+        const struct packet_city_refresh *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9498,7 +9549,9 @@ receive_packet_city_incite_inq(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_city_incite_inq(connection_t *pconn, const struct packet_city_incite_inq *packet)
+int send_packet_city_incite_inq(
+        connection_t *pconn,
+        const struct packet_city_incite_inq *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9863,8 +9916,9 @@ receive_packet_city_name_suggestion_req(connection_t *pconn, enum packet_type ty
   }
 }
 
-int send_packet_city_name_suggestion_req(connection_t *pconn,
-                                         const struct packet_city_name_suggestion_req *packet)
+int send_packet_city_name_suggestion_req(
+        connection_t *pconn,
+        const struct packet_city_name_suggestion_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10047,7 +10101,9 @@ receive_packet_city_name_suggestion_info(connection_t *pconn, enum packet_type t
   }
 }
 
-int send_packet_city_name_suggestion_info(connection_t *pconn, const struct packet_city_name_suggestion_info *packet)
+int send_packet_city_name_suggestion_info(
+        connection_t *pconn,
+        const struct packet_city_name_suggestion_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10264,7 +10320,9 @@ receive_packet_city_sabotage_list(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_city_sabotage_list(connection_t *pconn, const struct packet_city_sabotage_list *packet)
+int send_packet_city_sabotage_list(
+        connection_t *pconn,
+        const struct packet_city_sabotage_list *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10432,7 +10490,9 @@ struct packet_player_remove *receive_packet_player_remove(connection_t *pconn, e
   }
 }
 
-int send_packet_player_remove(connection_t *pconn, const struct packet_player_remove *packet)
+int send_packet_player_remove(
+        connection_t *pconn,
+        const struct packet_player_remove *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -12784,7 +12844,9 @@ struct packet_player_info *receive_packet_player_info(connection_t *pconn, enum 
   }
 }
 
-int send_packet_player_info(connection_t *pconn, const struct packet_player_info *packet)
+int send_packet_player_info(
+        connection_t *pconn,
+        const struct packet_player_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13069,7 +13131,9 @@ struct packet_player_rates *receive_packet_player_rates(connection_t *pconn, enu
   }
 }
 
-int send_packet_player_rates(connection_t *pconn, const struct packet_player_rates *packet)
+int send_packet_player_rates(
+        connection_t *pconn,
+        const struct packet_player_rates *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13248,8 +13312,9 @@ receive_packet_player_change_government(connection_t *pconn, enum packet_type ty
   }
 }
 
-int send_packet_player_change_government(connection_t *pconn,
-                                         const struct packet_player_change_government *packet)
+int send_packet_player_change_government(
+               connection_t *pconn,
+               const struct packet_player_change_government *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13424,7 +13489,9 @@ struct packet_player_research *receive_packet_player_research(connection_t *pcon
   }
 }
 
-int send_packet_player_research(connection_t *pconn, const struct packet_player_research *packet)
+int send_packet_player_research(
+        connection_t *pconn,
+        const struct packet_player_research *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13599,7 +13666,9 @@ struct packet_player_tech_goal *receive_packet_player_tech_goal(connection_t *pc
   }
 }
 
-int send_packet_player_tech_goal(connection_t *pconn, const struct packet_player_tech_goal *packet)
+int send_packet_player_tech_goal(
+        connection_t *pconn,
+        const struct packet_player_tech_goal *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13920,8 +13989,9 @@ receive_packet_player_attribute_chunk(connection_t *pconn, enum packet_type type
   }
 }
 
-int send_packet_player_attribute_chunk(connection_t *pconn,
-                                       const struct packet_player_attribute_chunk *packet)
+int send_packet_player_attribute_chunk(
+        connection_t *pconn,
+        const struct packet_player_attribute_chunk *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -14078,7 +14148,9 @@ struct packet_unit_remove *receive_packet_unit_remove(connection_t *pconn, enum 
   }
 }
 
-int send_packet_unit_remove(connection_t *pconn, const struct packet_unit_remove *packet)
+int send_packet_unit_remove(
+        connection_t *pconn,
+        const struct packet_unit_remove *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -15427,7 +15499,9 @@ struct packet_unit_info *receive_packet_unit_info(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_unit_info(connection_t *pconn, const struct packet_unit_info *packet)
+int send_packet_unit_info(
+        connection_t *pconn,
+        const struct packet_unit_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -15795,7 +15869,9 @@ struct packet_unit_short_info *receive_packet_unit_short_info(connection_t *pcon
   }
 }
 
-int send_packet_unit_short_info(connection_t *pconn, const struct packet_unit_short_info *packet)
+int send_packet_unit_short_info(
+        connection_t *pconn,
+        const struct packet_unit_short_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16015,7 +16091,9 @@ struct packet_unit_combat_info *receive_packet_unit_combat_info(connection_t *pc
   }
 }
 
-int send_packet_unit_combat_info(connection_t *pconn, const struct packet_unit_combat_info *packet)
+int send_packet_unit_combat_info(
+        connection_t *pconn,
+        const struct packet_unit_combat_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16218,7 +16296,9 @@ struct packet_unit_move *receive_packet_unit_move(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_unit_move(connection_t *pconn, const struct packet_unit_move *packet)
+int send_packet_unit_move(
+        connection_t *pconn,
+        const struct packet_unit_move *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16408,7 +16488,9 @@ struct packet_unit_build_city *receive_packet_unit_build_city(connection_t *pcon
   }
 }
 
-int send_packet_unit_build_city(connection_t *pconn, const struct packet_unit_build_city *packet)
+int send_packet_unit_build_city(
+        connection_t *pconn,
+        const struct packet_unit_build_city *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16583,7 +16665,9 @@ struct packet_unit_disband *receive_packet_unit_disband(connection_t *pconn, enu
   }
 }
 
-int send_packet_unit_disband(connection_t *pconn, const struct packet_unit_disband *packet)
+int send_packet_unit_disband(
+        connection_t *pconn,
+        const struct packet_unit_disband *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16774,8 +16858,9 @@ receive_packet_unit_change_homecity(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_unit_change_homecity(connection_t *pconn,
-                                     const struct packet_unit_change_homecity *packet)
+int send_packet_unit_change_homecity(
+        connection_t *pconn,
+        const struct packet_unit_change_homecity *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16952,8 +17037,9 @@ receive_packet_unit_establish_trade(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_unit_establish_trade(connection_t *pconn,
-                                     const struct packet_unit_establish_trade *packet)
+int send_packet_unit_establish_trade(
+        connection_t *pconn,
+        const struct packet_unit_establish_trade *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17128,8 +17214,9 @@ receive_packet_unit_help_build_wonder(connection_t *pconn, enum packet_type type
   }
 }
 
-int send_packet_unit_help_build_wonder(connection_t *pconn,
-                                       const struct packet_unit_help_build_wonder *packet)
+int send_packet_unit_help_build_wonder(
+        connection_t *pconn,
+        const struct packet_unit_help_build_wonder *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17334,7 +17421,9 @@ struct packet_unit_goto *receive_packet_unit_goto(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_unit_goto(connection_t *pconn, const struct packet_unit_goto *packet)
+int send_packet_unit_goto(
+        connection_t *pconn,
+        const struct packet_unit_goto *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17697,7 +17786,9 @@ struct packet_unit_orders *receive_packet_unit_orders(connection_t *pconn, enum 
   }
 }
 
-int send_packet_unit_orders(connection_t *pconn, const struct packet_unit_orders *packet)
+int send_packet_unit_orders(
+        connection_t *pconn,
+        const struct packet_unit_orders *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17861,7 +17952,9 @@ struct packet_unit_auto *receive_packet_unit_auto(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_unit_auto(connection_t *pconn, const struct packet_unit_auto *packet)
+int send_packet_unit_auto(
+        connection_t *pconn,
+        const struct packet_unit_auto *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18050,7 +18143,9 @@ struct packet_unit_load *receive_packet_unit_load(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_unit_load(connection_t *pconn, const struct packet_unit_load *packet)
+int send_packet_unit_load(
+        connection_t *pconn,
+        const struct packet_unit_load *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18241,7 +18336,9 @@ struct packet_unit_unload *receive_packet_unit_unload(connection_t *pconn, enum 
   }
 }
 
-int send_packet_unit_unload(connection_t *pconn, const struct packet_unit_unload *packet)
+int send_packet_unit_unload(
+        connection_t *pconn,
+        const struct packet_unit_unload *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18415,7 +18512,9 @@ struct packet_unit_upgrade *receive_packet_unit_upgrade(connection_t *pconn, enu
   }
 }
 
-int send_packet_unit_upgrade(connection_t *pconn, const struct packet_unit_upgrade *packet)
+int send_packet_unit_upgrade(
+        connection_t *pconn,
+        const struct packet_unit_upgrade *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18587,7 +18686,9 @@ struct packet_unit_nuke *receive_packet_unit_nuke(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_unit_nuke(connection_t *pconn, const struct packet_unit_nuke *packet)
+int send_packet_unit_nuke(
+        connection_t *pconn,
+        const struct packet_unit_nuke *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18792,7 +18893,9 @@ struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to(connection_t *pc
   }
 }
 
-int send_packet_unit_paradrop_to(connection_t *pconn, const struct packet_unit_paradrop_to *packet)
+int send_packet_unit_paradrop_to(
+        connection_t *pconn,
+        const struct packet_unit_paradrop_to *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18984,7 +19087,9 @@ struct packet_unit_airlift *receive_packet_unit_airlift(connection_t *pconn, enu
   }
 }
 
-int send_packet_unit_airlift(connection_t *pconn, const struct packet_unit_airlift *packet)
+int send_packet_unit_airlift(
+        connection_t *pconn,
+        const struct packet_unit_airlift *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19160,7 +19265,9 @@ struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq(connection_t *pconn,
   }
 }
 
-int send_packet_unit_bribe_inq(connection_t *pconn, const struct packet_unit_bribe_inq *packet)
+int send_packet_unit_bribe_inq(
+        connection_t *pconn,
+        const struct packet_unit_bribe_inq *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19345,7 +19452,9 @@ struct packet_unit_bribe_info *receive_packet_unit_bribe_info(connection_t *pcon
   }
 }
 
-int send_packet_unit_bribe_info(connection_t *pconn, const struct packet_unit_bribe_info *packet)
+int send_packet_unit_bribe_info(
+        connection_t *pconn,
+        const struct packet_unit_bribe_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19522,7 +19631,9 @@ receive_packet_unit_type_upgrade(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_unit_type_upgrade(connection_t *pconn, const struct packet_unit_type_upgrade *packet)
+int send_packet_unit_type_upgrade(
+        connection_t *pconn,
+        const struct packet_unit_type_upgrade *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19746,8 +19857,9 @@ receive_packet_unit_diplomat_action(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_unit_diplomat_action(connection_t *pconn,
-                                     const struct packet_unit_diplomat_action *packet)
+int send_packet_unit_diplomat_action(
+        connection_t *pconn,
+        const struct packet_unit_diplomat_action *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19940,8 +20052,9 @@ receive_packet_unit_diplomat_popup_dialog(connection_t *pconn, enum packet_type 
   }
 }
 
-int send_packet_unit_diplomat_popup_dialog(connection_t *pconn,
-                                           const struct packet_unit_diplomat_popup_dialog *packet)
+int send_packet_unit_diplomat_popup_dialog(
+        connection_t *pconn,
+        const struct packet_unit_diplomat_popup_dialog *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20170,8 +20283,9 @@ receive_packet_unit_change_activity(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_unit_change_activity(connection_t *pconn,
-                                     const struct packet_unit_change_activity *packet)
+int send_packet_unit_change_activity(
+        connection_t *pconn,
+        const struct packet_unit_change_activity *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20352,8 +20466,9 @@ receive_packet_diplomacy_init_meeting_req(connection_t *pconn, enum packet_type 
   }
 }
 
-int send_packet_diplomacy_init_meeting_req(connection_t *pconn,
-                                           const struct packet_diplomacy_init_meeting_req *packet)
+int send_packet_diplomacy_init_meeting_req(
+        connection_t *pconn,
+        const struct packet_diplomacy_init_meeting_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20539,8 +20654,9 @@ receive_packet_diplomacy_init_meeting(connection_t *pconn, enum packet_type type
   }
 }
 
-int send_packet_diplomacy_init_meeting(connection_t *pconn,
-                                       const struct packet_diplomacy_init_meeting *packet)
+int send_packet_diplomacy_init_meeting(
+        connection_t *pconn,
+        const struct packet_diplomacy_init_meeting *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20738,8 +20854,9 @@ receive_packet_diplomacy_cancel_meeting_req(connection_t *pconn, enum packet_typ
   }
 }
 
-int send_packet_diplomacy_cancel_meeting_req(connection_t *pconn,
-                                             const struct packet_diplomacy_cancel_meeting_req *packet)
+int send_packet_diplomacy_cancel_meeting_req(
+        connection_t *pconn,
+        const struct packet_diplomacy_cancel_meeting_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20926,8 +21043,9 @@ receive_packet_diplomacy_cancel_meeting(connection_t *pconn, enum packet_type ty
   }
 }
 
-int send_packet_diplomacy_cancel_meeting(connection_t *pconn,
-                                         const struct packet_diplomacy_cancel_meeting *packet)
+int send_packet_diplomacy_cancel_meeting(
+        connection_t *pconn,
+        const struct packet_diplomacy_cancel_meeting *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21399,8 +21517,9 @@ receive_packet_diplomacy_create_clause(connection_t *pconn, enum packet_type typ
   }
 }
 
-int send_packet_diplomacy_create_clause(connection_t *pconn,
-                                        const struct packet_diplomacy_create_clause *packet)
+int send_packet_diplomacy_create_clause(
+        connection_t *pconn,
+        const struct packet_diplomacy_create_clause *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21656,8 +21775,9 @@ receive_packet_diplomacy_remove_clause_req(connection_t *pconn, enum packet_type
   }
 }
 
-int send_packet_diplomacy_remove_clause_req(connection_t *pconn,
-                                            const struct packet_diplomacy_remove_clause_req *packet)
+int send_packet_diplomacy_remove_clause_req(
+        connection_t *pconn,
+        const struct packet_diplomacy_remove_clause_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21881,8 +22001,9 @@ receive_packet_diplomacy_remove_clause(connection_t *pconn, enum packet_type typ
   }
 }
 
-int send_packet_diplomacy_remove_clause(connection_t *pconn,
-                                        const struct packet_diplomacy_remove_clause *packet)
+int send_packet_diplomacy_remove_clause(
+        connection_t *pconn,
+        const struct packet_diplomacy_remove_clause *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22090,8 +22211,9 @@ receive_packet_diplomacy_accept_treaty_req(connection_t *pconn, enum packet_type
   }
 }
 
-int send_packet_diplomacy_accept_treaty_req(connection_t *pconn,
-                                            const struct packet_diplomacy_accept_treaty_req *packet)
+int send_packet_diplomacy_accept_treaty_req(
+        connection_t *pconn,
+        const struct packet_diplomacy_accept_treaty_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22275,8 +22397,9 @@ receive_packet_diplomacy_accept_treaty(connection_t *pconn, enum packet_type typ
   }
 }
 
-int send_packet_diplomacy_accept_treaty(connection_t *pconn,
-                                        const struct packet_diplomacy_accept_treaty *packet)
+int send_packet_diplomacy_accept_treaty(
+        connection_t *pconn,
+        const struct packet_diplomacy_accept_treaty *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22496,8 +22619,9 @@ receive_packet_diplomacy_cancel_pact(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_diplomacy_cancel_pact(connection_t *pconn,
-                                      const struct packet_diplomacy_cancel_pact *packet)
+int send_packet_diplomacy_cancel_pact(
+        connection_t *pconn,
+        const struct packet_diplomacy_cancel_pact *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22680,7 +22804,9 @@ struct packet_page_msg *receive_packet_page_msg(connection_t *pconn, enum packet
   }
 }
 
-int send_packet_page_msg(connection_t *pconn, const struct packet_page_msg *packet)
+int send_packet_page_msg(
+        connection_t *pconn,
+        const struct packet_page_msg *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22852,7 +22978,9 @@ struct packet_report_req *receive_packet_report_req(connection_t *pconn, enum pa
   }
 }
 
-int send_packet_report_req(connection_t *pconn, const struct packet_report_req *packet)
+int send_packet_report_req(
+        connection_t *pconn,
+        const struct packet_report_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -23116,7 +23244,9 @@ struct packet_conn_info *receive_packet_conn_info(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_conn_info(connection_t *pconn, const struct packet_conn_info *packet)
+int send_packet_conn_info(
+        connection_t *pconn,
+        const struct packet_conn_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -23561,7 +23691,9 @@ struct packet_conn_ping_info *receive_packet_conn_ping_info(connection_t *pconn,
   }
 }
 
-int send_packet_conn_ping_info(connection_t *pconn, const struct packet_conn_ping_info *packet)
+int send_packet_conn_ping_info(
+        connection_t *pconn,
+        const struct packet_conn_ping_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24065,7 +24197,9 @@ struct packet_new_year *receive_packet_new_year(connection_t *pconn, enum packet
   }
 }
 
-int send_packet_new_year(connection_t *pconn, const struct packet_new_year *packet)
+int send_packet_new_year(
+        connection_t *pconn,
+        const struct packet_new_year *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24500,7 +24634,9 @@ struct packet_spaceship_place *receive_packet_spaceship_place(connection_t *pcon
   }
 }
 
-int send_packet_spaceship_place(connection_t *pconn, const struct packet_spaceship_place *packet)
+int send_packet_spaceship_place(
+        connection_t *pconn,
+        const struct packet_spaceship_place *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24942,7 +25078,9 @@ struct packet_spaceship_info *receive_packet_spaceship_info(connection_t *pconn,
   }
 }
 
-int send_packet_spaceship_info(connection_t *pconn, const struct packet_spaceship_info *packet)
+int send_packet_spaceship_info(
+        connection_t *pconn,
+        const struct packet_spaceship_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -25667,7 +25805,9 @@ struct packet_ruleset_unit *receive_packet_ruleset_unit(connection_t *pconn, enu
   }
 }
 
-int send_packet_ruleset_unit(connection_t *pconn, const struct packet_ruleset_unit *packet)
+int send_packet_ruleset_unit(
+        connection_t *pconn,
+        const struct packet_ruleset_unit *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -26345,7 +26485,9 @@ struct packet_ruleset_game *receive_packet_ruleset_game(connection_t *pconn, enu
   }
 }
 
-int send_packet_ruleset_game(connection_t *pconn, const struct packet_ruleset_game *packet)
+int send_packet_ruleset_game(
+        connection_t *pconn,
+        const struct packet_ruleset_game *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -26887,7 +27029,9 @@ struct packet_ruleset_tech *receive_packet_ruleset_tech(connection_t *pconn, enu
   }
 }
 
-int send_packet_ruleset_tech(connection_t *pconn, const struct packet_ruleset_tech *packet)
+int send_packet_ruleset_tech(
+        connection_t *pconn,
+        const struct packet_ruleset_tech *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -27705,7 +27849,9 @@ receive_packet_ruleset_government(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_ruleset_government(connection_t *pconn, const struct packet_ruleset_government *packet)
+int send_packet_ruleset_government(
+        connection_t *pconn,
+        const struct packet_ruleset_government *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -28525,7 +28671,9 @@ struct packet_ruleset_nation *receive_packet_ruleset_nation(connection_t *pconn,
   }
 }
 
-int send_packet_ruleset_nation(connection_t *pconn, const struct packet_ruleset_nation *packet)
+int send_packet_ruleset_nation(
+        connection_t *pconn,
+        const struct packet_ruleset_nation *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -28782,7 +28930,9 @@ struct packet_ruleset_city *receive_packet_ruleset_city(connection_t *pconn, enu
   }
 }
 
-int send_packet_ruleset_city(connection_t *pconn, const struct packet_ruleset_city *packet)
+int send_packet_ruleset_city(
+        connection_t *pconn,
+        const struct packet_ruleset_city *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -29374,7 +29524,9 @@ receive_packet_ruleset_building(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_ruleset_building(connection_t *pconn, const struct packet_ruleset_building *packet)
+int send_packet_ruleset_building(
+        connection_t *pconn,
+        const struct packet_ruleset_building *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -30067,7 +30219,9 @@ struct packet_ruleset_terrain *receive_packet_ruleset_terrain(connection_t *pcon
   }
 }
 
-int send_packet_ruleset_terrain(connection_t *pconn, const struct packet_ruleset_terrain *packet)
+int send_packet_ruleset_terrain(
+        connection_t *pconn,
+        const struct packet_ruleset_terrain *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -30591,7 +30745,9 @@ struct packet_ruleset_control *receive_packet_ruleset_control(connection_t *pcon
   }
 }
 
-int send_packet_ruleset_control(connection_t *pconn, const struct packet_ruleset_control *packet)
+int send_packet_ruleset_control(
+        connection_t *pconn,
+        const struct packet_ruleset_control *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -30882,8 +31038,9 @@ receive_packet_single_want_hack_req(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_single_want_hack_req(connection_t *pconn,
-                                     const struct packet_single_want_hack_req *packet)
+int send_packet_single_want_hack_req(
+        connection_t *pconn,
+        const struct packet_single_want_hack_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31040,8 +31197,9 @@ receive_packet_single_want_hack_reply(connection_t *pconn, enum packet_type type
   }
 }
 
-int send_packet_single_want_hack_reply(connection_t *pconn,
-                                       const struct packet_single_want_hack_reply *packet)
+int send_packet_single_want_hack_reply(
+        connection_t *pconn,
+        const struct packet_single_want_hack_reply *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31473,7 +31631,9 @@ struct packet_game_load *receive_packet_game_load(connection_t *pconn, enum pack
   }
 }
 
-int send_packet_game_load(connection_t *pconn, const struct packet_game_load *packet)
+int send_packet_game_load(
+        connection_t *pconn,
+        const struct packet_game_load *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31696,8 +31856,9 @@ receive_packet_options_settable_control(connection_t *pconn, enum packet_type ty
   }
 }
 
-int send_packet_options_settable_control(connection_t *pconn,
-                                         const struct packet_options_settable_control *packet)
+int send_packet_options_settable_control(
+        connection_t *pconn,
+        const struct packet_options_settable_control *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32010,7 +32171,9 @@ receive_packet_options_settable(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_options_settable(connection_t *pconn, const struct packet_options_settable *packet)
+int send_packet_options_settable(
+        connection_t *pconn,
+        const struct packet_options_settable *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32305,7 +32468,9 @@ receive_packet_ruleset_cache_group(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_ruleset_cache_group(connection_t *pconn, const struct packet_ruleset_cache_group *packet)
+int send_packet_ruleset_cache_group(
+        connection_t *pconn,
+        const struct packet_ruleset_cache_group *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32573,8 +32738,9 @@ receive_packet_ruleset_cache_effect(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_ruleset_cache_effect(connection_t *pconn,
-                                     const struct packet_ruleset_cache_effect *packet)
+int send_packet_ruleset_cache_effect(
+        connection_t *pconn,
+        const struct packet_ruleset_cache_effect *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32959,7 +33125,9 @@ struct packet_traderoute_info *receive_packet_traderoute_info(connection_t *pcon
   }
 }
 
-int send_packet_traderoute_info(connection_t *pconn, const struct packet_traderoute_info *packet)
+int send_packet_traderoute_info(
+        connection_t *pconn,
+        const struct packet_traderoute_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -33394,7 +33562,9 @@ struct packet_extgame_info *receive_packet_extgame_info(connection_t *pconn, enu
   }
 }
 
-int send_packet_extgame_info(connection_t *pconn, const struct packet_extgame_info *packet)
+int send_packet_extgame_info(
+        connection_t *pconn,
+        const struct packet_extgame_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -33616,7 +33786,9 @@ struct packet_vote_new *receive_packet_vote_new(connection_t *pconn, enum packet
   }
 }
 
-int send_packet_vote_new(connection_t *pconn, const struct packet_vote_new *packet)
+int send_packet_vote_new(
+        connection_t *pconn,
+        const struct packet_vote_new *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -33836,7 +34008,9 @@ struct packet_vote_update *receive_packet_vote_update(connection_t *pconn, enum 
   }
 }
 
-int send_packet_vote_update(connection_t *pconn, const struct packet_vote_update *packet)
+int send_packet_vote_update(
+        connection_t *pconn,
+        const struct packet_vote_update *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -33996,7 +34170,9 @@ struct packet_vote_remove *receive_packet_vote_remove(connection_t *pconn, enum 
   }
 }
 
-int send_packet_vote_remove(connection_t *pconn, const struct packet_vote_remove *packet)
+int send_packet_vote_remove(
+        connection_t *pconn,
+        const struct packet_vote_remove *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34162,7 +34338,9 @@ struct packet_vote_resolve *receive_packet_vote_resolve(connection_t *pconn, enu
   }
 }
 
-int send_packet_vote_resolve(connection_t *pconn, const struct packet_vote_resolve *packet)
+int send_packet_vote_resolve(
+        connection_t *pconn,
+        const struct packet_vote_resolve *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34341,7 +34519,9 @@ struct packet_vote_submit *receive_packet_vote_submit(connection_t *pconn, enum 
   }
 }
 
-int send_packet_vote_submit(connection_t *pconn, const struct packet_vote_submit *packet)
+int send_packet_vote_submit(
+        connection_t *pconn,
+        const struct packet_vote_submit *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34524,7 +34704,9 @@ struct packet_trade_route_plan *receive_packet_trade_route_plan(connection_t *pc
   }
 }
 
-int send_packet_trade_route_plan(connection_t *pconn, const struct packet_trade_route_plan *packet)
+int send_packet_trade_route_plan(
+        connection_t *pconn,
+        const struct packet_trade_route_plan *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34715,7 +34897,9 @@ receive_packet_trade_route_remove(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_trade_route_remove(connection_t *pconn, const struct packet_trade_route_remove *packet)
+int send_packet_trade_route_remove(
+        connection_t *pconn,
+        const struct packet_trade_route_remove *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34922,7 +35106,9 @@ receive_packet_unit_trade_route(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_unit_trade_route(connection_t *pconn, const struct packet_unit_trade_route *packet)
+int send_packet_unit_trade_route(
+        connection_t *pconn,
+        const struct packet_unit_trade_route *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35140,7 +35326,9 @@ struct packet_trade_route_info *receive_packet_trade_route_info(connection_t *pc
   }
 }
 
-int send_packet_trade_route_info(connection_t *pconn, const struct packet_trade_route_info *packet)
+int send_packet_trade_route_info(
+        connection_t *pconn,
+        const struct packet_trade_route_info *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35340,8 +35528,9 @@ receive_packet_city_set_rally_point(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_city_set_rally_point(connection_t *pconn,
-                                     const struct packet_city_set_rally_point *packet)
+int send_packet_city_set_rally_point(
+        connection_t *pconn,
+        const struct packet_city_set_rally_point *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35730,7 +35919,9 @@ struct packet_unit_air_patrol *receive_packet_unit_air_patrol(connection_t *pcon
   }
 }
 
-int send_packet_unit_air_patrol(connection_t *pconn, const struct packet_unit_air_patrol *packet)
+int send_packet_unit_air_patrol(
+        connection_t *pconn,
+        const struct packet_unit_air_patrol *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35909,8 +36100,9 @@ receive_packet_unit_air_patrol_stop(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_unit_air_patrol_stop(connection_t *pconn,
-                                     const struct packet_unit_air_patrol_stop *packet)
+int send_packet_unit_air_patrol_stop(
+        connection_t *pconn,
+        const struct packet_unit_air_patrol_stop *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -36196,8 +36388,9 @@ receive_packet_city_manager_param(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_city_manager_param(connection_t *pconn,
-                                   const struct packet_city_manager_param *packet)
+int send_packet_city_manager_param(
+        connection_t *pconn,
+        const struct packet_city_manager_param *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -36358,8 +36551,9 @@ receive_packet_city_no_manager_param(connection_t *pconn, enum packet_type type)
   }
 }
 
-int send_packet_city_no_manager_param(connection_t *pconn,
-                                      const struct packet_city_no_manager_param *packet)
+int send_packet_city_no_manager_param(
+        connection_t *pconn,
+        const struct packet_city_no_manager_param *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -36531,7 +36725,9 @@ struct packet_player_info_req *receive_packet_player_info_req(connection_t *pcon
   }
 }
 
-int send_packet_player_info_req(connection_t *pconn, const struct packet_player_info_req *packet)
+int send_packet_player_info_req(
+        connection_t *pconn,
+        const struct packet_player_info_req *packet)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
