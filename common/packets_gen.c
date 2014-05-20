@@ -1465,7 +1465,8 @@ receive_packet_authentication_req_100(connection_t *pconn, enum packet_type type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_authentication_req_100, cmp_packet_authentication_req_100);
+    *hash = hash_new(hash_packet_authentication_req_100,
+                     cmp_packet_authentication_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -1506,7 +1507,8 @@ static int send_packet_authentication_req_100(connection_t *pconn, const struct 
   SEND_PACKET_START(PACKET_AUTHENTICATION_REQ);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_authentication_req_100, cmp_packet_authentication_req_100);
+    *hash = hash_new(hash_packet_authentication_req_100,
+                     cmp_packet_authentication_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -1647,7 +1649,8 @@ receive_packet_authentication_reply_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_authentication_reply_100, cmp_packet_authentication_reply_100);
+    *hash = hash_new(hash_packet_authentication_reply_100,
+                     cmp_packet_authentication_reply_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -1684,7 +1687,8 @@ static int send_packet_authentication_reply_100(connection_t *pconn, const struc
   SEND_PACKET_START(PACKET_AUTHENTICATION_REPLY);
   printf("cs opcode=7 AUTHENTICATION_REPLY");
   if (!*hash) {
-    *hash = hash_new(hash_packet_authentication_reply_100, cmp_packet_authentication_reply_100);
+    *hash = hash_new(hash_packet_authentication_reply_100,
+                     cmp_packet_authentication_reply_100);
   }
   BV_CLR_ALL(fields);
 
@@ -1896,7 +1900,8 @@ receive_packet_nation_unavailable_100(connection_t *pconn, enum packet_type type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_nation_unavailable_100, cmp_packet_nation_unavailable_100);
+    *hash = hash_new(hash_packet_nation_unavailable_100,
+                     cmp_packet_nation_unavailable_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -1934,7 +1939,8 @@ static int send_packet_nation_unavailable_100(connection_t *pconn, const struct 
   SEND_PACKET_START(PACKET_NATION_UNAVAILABLE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_nation_unavailable_100, cmp_packet_nation_unavailable_100);
+    *hash = hash_new(hash_packet_nation_unavailable_100,
+                     cmp_packet_nation_unavailable_100);
   }
   BV_CLR_ALL(fields);
 
@@ -2148,7 +2154,8 @@ receive_packet_nation_select_req_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_nation_select_req_100, cmp_packet_nation_select_req_100);
+    *hash = hash_new(hash_packet_nation_select_req_100,
+                     cmp_packet_nation_select_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -2198,7 +2205,8 @@ static int send_packet_nation_select_req_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_NATION_SELECT_REQ);
   printf("cs opcode=10 NATION_SELECT_REQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_nation_select_req_100, cmp_packet_nation_select_req_100);
+    *hash = hash_new(hash_packet_nation_select_req_100,
+                     cmp_packet_nation_select_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -2451,7 +2459,8 @@ static struct packet_game_state *receive_packet_game_state_100(connection_t *pco
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_game_state_100, cmp_packet_game_state_100);
+    *hash = hash_new(hash_packet_game_state_100,
+                     cmp_packet_game_state_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -2488,7 +2497,8 @@ static int send_packet_game_state_100(connection_t *pconn, const struct packet_g
   SEND_PACKET_START(PACKET_GAME_STATE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_game_state_100, cmp_packet_game_state_100);
+    *hash = hash_new(hash_packet_game_state_100,
+                     cmp_packet_game_state_100);
   }
   BV_CLR_ALL(fields);
 
@@ -2636,7 +2646,8 @@ receive_packet_endgame_report_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_endgame_report_100, cmp_packet_endgame_report_100);
+    *hash = hash_new(hash_packet_endgame_report_100,
+                     cmp_packet_endgame_report_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -2870,7 +2881,8 @@ static int send_packet_endgame_report_100(connection_t *pconn, const struct pack
   SEND_PACKET_START(PACKET_ENDGAME_REPORT);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_endgame_report_100, cmp_packet_endgame_report_100);
+    *hash = hash_new(hash_packet_endgame_report_100,
+                     cmp_packet_endgame_report_100);
   }
   BV_CLR_ALL(fields);
 
@@ -3362,7 +3374,8 @@ static struct packet_tile_info *receive_packet_tile_info_100(connection_t *pconn
     real_packet->y = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_tile_info_100, cmp_packet_tile_info_100);
+    *hash = hash_new(hash_packet_tile_info_100,
+                     cmp_packet_tile_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -3433,7 +3446,8 @@ static int send_packet_tile_info_100(connection_t *pconn, const struct packet_ti
   SEND_PACKET_START(PACKET_TILE_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_tile_info_100, cmp_packet_tile_info_100);
+    *hash = hash_new(hash_packet_tile_info_100,
+                     cmp_packet_tile_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -3606,7 +3620,8 @@ static struct packet_game_info *receive_packet_game_info_100(connection_t *pconn
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_game_info_100, cmp_packet_game_info_100);
+    *hash = hash_new(hash_packet_game_info_100,
+                     cmp_packet_game_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -3841,7 +3856,8 @@ static int send_packet_game_info_100(connection_t *pconn, const struct packet_ga
   SEND_PACKET_START(PACKET_GAME_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_game_info_100, cmp_packet_game_info_100);
+    *hash = hash_new(hash_packet_game_info_100,
+                     cmp_packet_game_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -4259,7 +4275,8 @@ receive_packet_map_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_map_info_100, cmp_packet_map_info_100);
+    *hash = hash_new(hash_packet_map_info_100,
+                     cmp_packet_map_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -4309,7 +4326,8 @@ static int send_packet_map_info_100(connection_t *pconn, const struct packet_map
   SEND_PACKET_START(PACKET_MAP_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_map_info_100, cmp_packet_map_info_100);
+    *hash = hash_new(hash_packet_map_info_100,
+                     cmp_packet_map_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -4454,7 +4472,8 @@ receive_packet_nuke_tile_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_nuke_tile_info_100, cmp_packet_nuke_tile_info_100);
+    *hash = hash_new(hash_packet_nuke_tile_info_100,
+                     cmp_packet_nuke_tile_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -4499,7 +4518,8 @@ static int send_packet_nuke_tile_info_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_NUKE_TILE_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_nuke_tile_info_100, cmp_packet_nuke_tile_info_100);
+    *hash = hash_new(hash_packet_nuke_tile_info_100,
+                     cmp_packet_nuke_tile_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -4654,7 +4674,8 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(connection_t *pconn, 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_chat_msg_100, cmp_packet_chat_msg_100);
+    *hash = hash_new(hash_packet_chat_msg_100,
+                     cmp_packet_chat_msg_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -4722,7 +4743,8 @@ static int send_packet_chat_msg_100(connection_t *pconn, const struct packet_cha
   }
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_chat_msg_100, cmp_packet_chat_msg_100);
+    *hash = hash_new(hash_packet_chat_msg_100,
+                     cmp_packet_chat_msg_100);
   }
   BV_CLR_ALL(fields);
 
@@ -4927,7 +4949,8 @@ receive_packet_chat_msg_req_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_chat_msg_req_100, cmp_packet_chat_msg_req_100);
+    *hash = hash_new(hash_packet_chat_msg_req_100,
+                     cmp_packet_chat_msg_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -4963,7 +4986,8 @@ static int send_packet_chat_msg_req_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_CHAT_MSG_REQ);
   printf("cs opcode=19 CHAT_MSG_REQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_chat_msg_req_100, cmp_packet_chat_msg_req_100);
+    *hash = hash_new(hash_packet_chat_msg_req_100,
+                     cmp_packet_chat_msg_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -5096,7 +5120,8 @@ receive_packet_city_remove_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_remove_100, cmp_packet_city_remove_100);
+    *hash = hash_new(hash_packet_city_remove_100,
+                     cmp_packet_city_remove_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -5134,7 +5159,8 @@ static int send_packet_city_remove_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_CITY_REMOVE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_remove_100, cmp_packet_city_remove_100);
+    *hash = hash_new(hash_packet_city_remove_100,
+                     cmp_packet_city_remove_100);
   }
   BV_CLR_ALL(fields);
 
@@ -5299,7 +5325,8 @@ static struct packet_city_info *receive_packet_city_info_100(connection_t *pconn
   real_packet->id = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_info_100, cmp_packet_city_info_100);
+    *hash = hash_new(hash_packet_city_info_100,
+                     cmp_packet_city_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -5605,7 +5632,8 @@ static int send_packet_city_info_100(connection_t *pconn, const struct packet_ci
   SEND_PACKET_START(PACKET_CITY_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_info_100, cmp_packet_city_info_100);
+    *hash = hash_new(hash_packet_city_info_100,
+                     cmp_packet_city_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -6188,7 +6216,8 @@ static struct packet_city_info *receive_packet_city_info_101(connection_t *pconn
   }
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_info_101, cmp_packet_city_info_101);
+    *hash = hash_new(hash_packet_city_info_101,
+                     cmp_packet_city_info_101);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -6482,7 +6511,8 @@ static int send_packet_city_info_101(connection_t *pconn, const struct packet_ci
   SEND_PACKET_START(PACKET_CITY_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_info_101, cmp_packet_city_info_101);
+    *hash = hash_new(hash_packet_city_info_101,
+                     cmp_packet_city_info_101);
   }
   BV_CLR_ALL(fields);
 
@@ -7121,7 +7151,8 @@ receive_packet_city_short_info_100(connection_t *pconn, enum packet_type type)
   real_packet->id = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_short_info_100, cmp_packet_city_short_info_100);
+    *hash = hash_new(hash_packet_city_short_info_100,
+                     cmp_packet_city_short_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -7196,7 +7227,8 @@ static int send_packet_city_short_info_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_SHORT_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_short_info_100, cmp_packet_city_short_info_100);
+    *hash = hash_new(hash_packet_city_short_info_100,
+                     cmp_packet_city_short_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -7394,7 +7426,8 @@ static struct packet_city_sell *receive_packet_city_sell_100(connection_t *pconn
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_sell_100, cmp_packet_city_sell_100);
+    *hash = hash_new(hash_packet_city_sell_100,
+                     cmp_packet_city_sell_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -7439,7 +7472,8 @@ static int send_packet_city_sell_100(connection_t *pconn, const struct packet_ci
   SEND_PACKET_START(PACKET_CITY_SELL);
   printf("cs opcode=23 CITY_SELL");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_sell_100, cmp_packet_city_sell_100);
+    *hash = hash_new(hash_packet_city_sell_100,
+                     cmp_packet_city_sell_100);
   }
   BV_CLR_ALL(fields);
 
@@ -7582,7 +7616,8 @@ static struct packet_city_buy *receive_packet_city_buy_100(connection_t *pconn, 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_buy_100, cmp_packet_city_buy_100);
+    *hash = hash_new(hash_packet_city_buy_100,
+                     cmp_packet_city_buy_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -7621,7 +7656,8 @@ static int send_packet_city_buy_100(connection_t *pconn, const struct packet_cit
   SEND_PACKET_START(PACKET_CITY_BUY);
   printf("cs opcode=24 CITY_BUY");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_buy_100, cmp_packet_city_buy_100);
+    *hash = hash_new(hash_packet_city_buy_100,
+                     cmp_packet_city_buy_100);
   }
   BV_CLR_ALL(fields);
 
@@ -7754,7 +7790,8 @@ receive_packet_city_change_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_change_100, cmp_packet_city_change_100);
+    *hash = hash_new(hash_packet_city_change_100,
+                     cmp_packet_city_change_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -7800,7 +7837,8 @@ static int send_packet_city_change_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_CITY_CHANGE);
   printf("cs opcode=25 CITY_CHANGE");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_change_100, cmp_packet_city_change_100);
+    *hash = hash_new(hash_packet_city_change_100,
+                     cmp_packet_city_change_100);
   }
   BV_CLR_ALL(fields);
 
@@ -7950,7 +7988,8 @@ receive_packet_city_worklist_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_worklist_100, cmp_packet_city_worklist_100);
+    *hash = hash_new(hash_packet_city_worklist_100,
+                     cmp_packet_city_worklist_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -7992,7 +8031,8 @@ static int send_packet_city_worklist_100(connection_t *pconn, const struct packe
   SEND_PACKET_START(PACKET_CITY_WORKLIST);
   printf("cs opcode=26 CITY_WORKLIST");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_worklist_100, cmp_packet_city_worklist_100);
+    *hash = hash_new(hash_packet_city_worklist_100,
+                     cmp_packet_city_worklist_100);
   }
   BV_CLR_ALL(fields);
 
@@ -8144,7 +8184,8 @@ receive_packet_city_make_specialist_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_make_specialist_100, cmp_packet_city_make_specialist_100);
+    *hash = hash_new(hash_packet_city_make_specialist_100,
+                     cmp_packet_city_make_specialist_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -8196,7 +8237,8 @@ static int send_packet_city_make_specialist_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_MAKE_SPECIALIST);
   printf("cs opcode=27 CITY_MAKE_SPECIALIST");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_make_specialist_100, cmp_packet_city_make_specialist_100);
+    *hash = hash_new(hash_packet_city_make_specialist_100,
+                     cmp_packet_city_make_specialist_100);
   }
   BV_CLR_ALL(fields);
 
@@ -8353,7 +8395,8 @@ receive_packet_city_make_worker_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_make_worker_100, cmp_packet_city_make_worker_100);
+    *hash = hash_new(hash_packet_city_make_worker_100,
+                     cmp_packet_city_make_worker_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -8405,7 +8448,8 @@ static int send_packet_city_make_worker_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_MAKE_WORKER);
   printf("cs opcode=28 CITY_MAKE_WORKER");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_make_worker_100, cmp_packet_city_make_worker_100);
+    *hash = hash_new(hash_packet_city_make_worker_100,
+                     cmp_packet_city_make_worker_100);
   }
   BV_CLR_ALL(fields);
 
@@ -8561,7 +8605,8 @@ receive_packet_city_change_specialist_100(connection_t *pconn, enum packet_type 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_change_specialist_100, cmp_packet_city_change_specialist_100);
+    *hash = hash_new(hash_packet_city_change_specialist_100,
+                     cmp_packet_city_change_specialist_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -8613,7 +8658,8 @@ static int send_packet_city_change_specialist_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_CHANGE_SPECIALIST);
   printf("cs opcode=29 CITY_CHANGE_SPECIALIST");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_change_specialist_100, cmp_packet_city_change_specialist_100);
+    *hash = hash_new(hash_packet_city_change_specialist_100,
+                     cmp_packet_city_change_specialist_100);
   }
   BV_CLR_ALL(fields);
 
@@ -8773,7 +8819,8 @@ receive_packet_city_rename_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_rename_100, cmp_packet_city_rename_100);
+    *hash = hash_new(hash_packet_city_rename_100,
+                     cmp_packet_city_rename_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -8815,7 +8862,8 @@ static int send_packet_city_rename_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_CITY_RENAME);
   printf("cs opcode=30 CITY_RENAME");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_rename_100, cmp_packet_city_rename_100);
+    *hash = hash_new(hash_packet_city_rename_100,
+                     cmp_packet_city_rename_100);
   }
   BV_CLR_ALL(fields);
 
@@ -8959,7 +9007,8 @@ receive_packet_city_options_req_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_options_req_100, cmp_packet_city_options_req_100);
+    *hash = hash_new(hash_packet_city_options_req_100,
+                     cmp_packet_city_options_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -9005,7 +9054,8 @@ static int send_packet_city_options_req_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_OPTIONS_REQ);
   printf("cs opcode=31 CITY_OPTIONS_REQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_options_req_100, cmp_packet_city_options_req_100);
+    *hash = hash_new(hash_packet_city_options_req_100,
+                     cmp_packet_city_options_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -9149,7 +9199,8 @@ receive_packet_city_refresh_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_refresh_100, cmp_packet_city_refresh_100);
+    *hash = hash_new(hash_packet_city_refresh_100,
+                     cmp_packet_city_refresh_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -9188,7 +9239,8 @@ static int send_packet_city_refresh_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_CITY_REFRESH);
   printf("cs opcode=32 CITY_REFRESH");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_refresh_100, cmp_packet_city_refresh_100);
+    *hash = hash_new(hash_packet_city_refresh_100,
+                     cmp_packet_city_refresh_100);
   }
   BV_CLR_ALL(fields);
 
@@ -9321,7 +9373,8 @@ receive_packet_city_incite_inq_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_incite_inq_100, cmp_packet_city_incite_inq_100);
+    *hash = hash_new(hash_packet_city_incite_inq_100,
+                     cmp_packet_city_incite_inq_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -9361,7 +9414,8 @@ static int send_packet_city_incite_inq_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_INCITE_INQ);
   printf("cs opcode=33 CITY_INCITE_INQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_incite_inq_100, cmp_packet_city_incite_inq_100);
+    *hash = hash_new(hash_packet_city_incite_inq_100,
+                     cmp_packet_city_incite_inq_100);
   }
   BV_CLR_ALL(fields);
 
@@ -9495,7 +9549,8 @@ receive_packet_city_incite_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_incite_info_100, cmp_packet_city_incite_info_100);
+    *hash = hash_new(hash_packet_city_incite_info_100,
+                     cmp_packet_city_incite_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -9540,7 +9595,8 @@ static int send_packet_city_incite_info_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_INCITE_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_incite_info_100, cmp_packet_city_incite_info_100);
+    *hash = hash_new(hash_packet_city_incite_info_100,
+                     cmp_packet_city_incite_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -9682,7 +9738,8 @@ receive_packet_city_name_suggestion_req_100(connection_t *pconn, enum packet_typ
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_name_suggestion_req_100, cmp_packet_city_name_suggestion_req_100);
+    *hash = hash_new(hash_packet_city_name_suggestion_req_100,
+                     cmp_packet_city_name_suggestion_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -9722,7 +9779,8 @@ static int send_packet_city_name_suggestion_req_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_NAME_SUGGESTION_REQ);
   printf("cs opcode=35 CITY_NAME_SUGGESTION_REQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_name_suggestion_req_100, cmp_packet_city_name_suggestion_req_100);
+    *hash = hash_new(hash_packet_city_name_suggestion_req_100,
+                     cmp_packet_city_name_suggestion_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -9857,7 +9915,8 @@ receive_packet_city_name_suggestion_info_100(connection_t *pconn, enum packet_ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_name_suggestion_info_100, cmp_packet_city_name_suggestion_info_100);
+    *hash = hash_new(hash_packet_city_name_suggestion_info_100,
+                     cmp_packet_city_name_suggestion_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -9899,7 +9958,8 @@ static int send_packet_city_name_suggestion_info_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_NAME_SUGGESTION_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_name_suggestion_info_100, cmp_packet_city_name_suggestion_info_100);
+    *hash = hash_new(hash_packet_city_name_suggestion_info_100,
+                     cmp_packet_city_name_suggestion_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -10057,7 +10117,8 @@ receive_packet_city_sabotage_list_100(connection_t *pconn, enum packet_type type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_sabotage_list_100, cmp_packet_city_sabotage_list_100);
+    *hash = hash_new(hash_packet_city_sabotage_list_100,
+                     cmp_packet_city_sabotage_list_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -10105,7 +10166,8 @@ static int send_packet_city_sabotage_list_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_SABOTAGE_LIST);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_sabotage_list_100, cmp_packet_city_sabotage_list_100);
+    *hash = hash_new(hash_packet_city_sabotage_list_100,
+                     cmp_packet_city_sabotage_list_100);
   }
   BV_CLR_ALL(fields);
 
@@ -10252,7 +10314,8 @@ receive_packet_player_remove_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_remove_100, cmp_packet_player_remove_100);
+    *hash = hash_new(hash_packet_player_remove_100,
+                     cmp_packet_player_remove_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -10290,7 +10353,8 @@ static int send_packet_player_remove_100(connection_t *pconn, const struct packe
   SEND_PACKET_START(PACKET_PLAYER_REMOVE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_remove_100, cmp_packet_player_remove_100);
+    *hash = hash_new(hash_packet_player_remove_100,
+                     cmp_packet_player_remove_100);
   }
   BV_CLR_ALL(fields);
 
@@ -10458,7 +10522,8 @@ receive_packet_player_info_100(connection_t *pconn, enum packet_type type)
   }
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_100, cmp_packet_player_info_100);
+    *hash = hash_new(hash_packet_player_info_100,
+                     cmp_packet_player_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -10657,7 +10722,8 @@ static int send_packet_player_info_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_PLAYER_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_100, cmp_packet_player_info_100);
+    *hash = hash_new(hash_packet_player_info_100,
+                     cmp_packet_player_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -11026,7 +11092,8 @@ receive_packet_player_info_101(connection_t *pconn, enum packet_type type)
   real_packet->playerno = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_101, cmp_packet_player_info_101);
+    *hash = hash_new(hash_packet_player_info_101,
+                     cmp_packet_player_info_101);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -11219,7 +11286,8 @@ static int send_packet_player_info_101(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_PLAYER_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_101, cmp_packet_player_info_101);
+    *hash = hash_new(hash_packet_player_info_101,
+                     cmp_packet_player_info_101);
   }
   BV_CLR_ALL(fields);
 
@@ -11579,7 +11647,8 @@ receive_packet_player_info_102(connection_t *pconn, enum packet_type type)
   real_packet->playerno = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_102, cmp_packet_player_info_102);
+    *hash = hash_new(hash_packet_player_info_102,
+                     cmp_packet_player_info_102);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -11775,7 +11844,8 @@ static int send_packet_player_info_102(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_PLAYER_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_102, cmp_packet_player_info_102);
+    *hash = hash_new(hash_packet_player_info_102,
+                     cmp_packet_player_info_102);
   }
   BV_CLR_ALL(fields);
 
@@ -12131,7 +12201,8 @@ receive_packet_player_info_103(connection_t *pconn, enum packet_type type)
   real_packet->playerno = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_103, cmp_packet_player_info_103);
+    *hash = hash_new(hash_packet_player_info_103,
+                     cmp_packet_player_info_103);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -12321,7 +12392,8 @@ static int send_packet_player_info_103(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_PLAYER_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_103, cmp_packet_player_info_103);
+    *hash = hash_new(hash_packet_player_info_103,
+                     cmp_packet_player_info_103);
   }
   BV_CLR_ALL(fields);
 
@@ -12842,7 +12914,8 @@ receive_packet_player_rates_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_rates_100, cmp_packet_player_rates_100);
+    *hash = hash_new(hash_packet_player_rates_100,
+                     cmp_packet_player_rates_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -12893,7 +12966,8 @@ static int send_packet_player_rates_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_PLAYER_RATES);
   printf("cs opcode=41 PLAYER_RATES");
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_rates_100, cmp_packet_player_rates_100);
+    *hash = hash_new(hash_packet_player_rates_100,
+                     cmp_packet_player_rates_100);
   }
   BV_CLR_ALL(fields);
 
@@ -13049,7 +13123,8 @@ receive_packet_player_change_government_100(connection_t *pconn, enum packet_typ
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_change_government_100, cmp_packet_player_change_government_100);
+    *hash = hash_new(hash_packet_player_change_government_100,
+                     cmp_packet_player_change_government_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -13089,7 +13164,8 @@ static int send_packet_player_change_government_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_PLAYER_CHANGE_GOVERNMENT);
   printf("cs opcode=43 PLAYER_CHANGE_GOVERNMENT");
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_change_government_100, cmp_packet_player_change_government_100);
+    *hash = hash_new(hash_packet_player_change_government_100,
+                     cmp_packet_player_change_government_100);
   }
   BV_CLR_ALL(fields);
 
@@ -13224,7 +13300,8 @@ receive_packet_player_research_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_research_100, cmp_packet_player_research_100);
+    *hash = hash_new(hash_packet_player_research_100,
+                     cmp_packet_player_research_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -13264,7 +13341,8 @@ static int send_packet_player_research_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_PLAYER_RESEARCH);
   printf("cs opcode=44 PLAYER_RESEARCH");
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_research_100, cmp_packet_player_research_100);
+    *hash = hash_new(hash_packet_player_research_100,
+                     cmp_packet_player_research_100);
   }
   BV_CLR_ALL(fields);
 
@@ -13397,7 +13475,8 @@ receive_packet_player_tech_goal_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_tech_goal_100, cmp_packet_player_tech_goal_100);
+    *hash = hash_new(hash_packet_player_tech_goal_100,
+                     cmp_packet_player_tech_goal_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -13437,7 +13516,8 @@ static int send_packet_player_tech_goal_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_PLAYER_TECH_GOAL);
   printf("cs opcode=45 PLAYER_TECH_GOAL");
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_tech_goal_100, cmp_packet_player_tech_goal_100);
+    *hash = hash_new(hash_packet_player_tech_goal_100,
+                     cmp_packet_player_tech_goal_100);
   }
   BV_CLR_ALL(fields);
 
@@ -13649,7 +13729,8 @@ receive_packet_player_attribute_chunk_100(connection_t *pconn, enum packet_type 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_attribute_chunk_100, cmp_packet_player_attribute_chunk_100);
+    *hash = hash_new(hash_packet_player_attribute_chunk_100,
+                     cmp_packet_player_attribute_chunk_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -13716,7 +13797,8 @@ static int send_packet_player_attribute_chunk_100(connection_t *pconn,
   }
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_attribute_chunk_100, cmp_packet_player_attribute_chunk_100);
+    *hash = hash_new(hash_packet_player_attribute_chunk_100,
+                     cmp_packet_player_attribute_chunk_100);
   }
   BV_CLR_ALL(fields);
 
@@ -13878,7 +13960,8 @@ receive_packet_unit_remove_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_remove_100, cmp_packet_unit_remove_100);
+    *hash = hash_new(hash_packet_unit_remove_100,
+                     cmp_packet_unit_remove_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -13916,7 +13999,8 @@ static int send_packet_unit_remove_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_UNIT_REMOVE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_remove_100, cmp_packet_unit_remove_100);
+    *hash = hash_new(hash_packet_unit_remove_100,
+                     cmp_packet_unit_remove_100);
   }
   BV_CLR_ALL(fields);
 
@@ -14082,7 +14166,8 @@ static struct packet_unit_info *receive_packet_unit_info_100(connection_t *pconn
   real_packet->id = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_info_100, cmp_packet_unit_info_100);
+    *hash = hash_new(hash_packet_unit_info_100,
+                     cmp_packet_unit_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -14312,7 +14397,8 @@ static int send_packet_unit_info_100(connection_t *pconn, const struct packet_un
   SEND_PACKET_START(PACKET_UNIT_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_info_100, cmp_packet_unit_info_100);
+    *hash = hash_new(hash_packet_unit_info_100,
+                     cmp_packet_unit_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -14719,7 +14805,8 @@ static struct packet_unit_info *receive_packet_unit_info_101(connection_t *pconn
   real_packet->id = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_info_101, cmp_packet_unit_info_101);
+    *hash = hash_new(hash_packet_unit_info_101,
+                     cmp_packet_unit_info_101);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -14937,7 +15024,8 @@ static int send_packet_unit_info_101(connection_t *pconn, const struct packet_un
   SEND_PACKET_START(PACKET_UNIT_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_info_101, cmp_packet_unit_info_101);
+    *hash = hash_new(hash_packet_unit_info_101,
+                     cmp_packet_unit_info_101);
   }
   BV_CLR_ALL(fields);
 
@@ -15415,7 +15503,8 @@ receive_packet_unit_short_info_100(connection_t *pconn, enum packet_type type)
   real_packet->id = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_short_info_100, cmp_packet_unit_short_info_100);
+    *hash = hash_new(hash_packet_unit_short_info_100,
+                     cmp_packet_unit_short_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -15521,7 +15610,8 @@ static int send_packet_unit_short_info_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_SHORT_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_short_info_100, cmp_packet_unit_short_info_100);
+    *hash = hash_new(hash_packet_unit_short_info_100,
+                     cmp_packet_unit_short_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -15755,7 +15845,8 @@ receive_packet_unit_combat_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_combat_info_100, cmp_packet_unit_combat_info_100);
+    *hash = hash_new(hash_packet_unit_combat_info_100,
+                     cmp_packet_unit_combat_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -15813,7 +15904,8 @@ static int send_packet_unit_combat_info_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_COMBAT_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_combat_info_100, cmp_packet_unit_combat_info_100);
+    *hash = hash_new(hash_packet_unit_combat_info_100,
+                     cmp_packet_unit_combat_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -15972,7 +16064,8 @@ static struct packet_unit_move *receive_packet_unit_move_100(connection_t *pconn
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_move_100, cmp_packet_unit_move_100);
+    *hash = hash_new(hash_packet_unit_move_100,
+                     cmp_packet_unit_move_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -16023,7 +16116,8 @@ static int send_packet_unit_move_100(connection_t *pconn, const struct packet_un
   SEND_PACKET_START(PACKET_UNIT_MOVE);
   printf("cs opcode=52 UNIT_MOVE");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_move_100, cmp_packet_unit_move_100);
+    *hash = hash_new(hash_packet_unit_move_100,
+                     cmp_packet_unit_move_100);
   }
   BV_CLR_ALL(fields);
 
@@ -16177,7 +16271,8 @@ receive_packet_unit_build_city_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_build_city_100, cmp_packet_unit_build_city_100);
+    *hash = hash_new(hash_packet_unit_build_city_100,
+                     cmp_packet_unit_build_city_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -16220,7 +16315,8 @@ static int send_packet_unit_build_city_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_BUILD_CITY);
   printf("cs opcode=53 UNIT_BUILD_CITY");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_build_city_100, cmp_packet_unit_build_city_100);
+    *hash = hash_new(hash_packet_unit_build_city_100,
+                     cmp_packet_unit_build_city_100);
   }
   BV_CLR_ALL(fields);
 
@@ -16364,7 +16460,8 @@ receive_packet_unit_disband_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_disband_100, cmp_packet_unit_disband_100);
+    *hash = hash_new(hash_packet_unit_disband_100,
+                     cmp_packet_unit_disband_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -16403,7 +16500,8 @@ static int send_packet_unit_disband_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_UNIT_DISBAND);
   printf("cs opcode=54 UNIT_DISBAND");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_disband_100, cmp_packet_unit_disband_100);
+    *hash = hash_new(hash_packet_unit_disband_100,
+                     cmp_packet_unit_disband_100);
   }
   BV_CLR_ALL(fields);
 
@@ -16536,7 +16634,8 @@ receive_packet_unit_change_homecity_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_change_homecity_100, cmp_packet_unit_change_homecity_100);
+    *hash = hash_new(hash_packet_unit_change_homecity_100,
+                     cmp_packet_unit_change_homecity_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -16582,7 +16681,8 @@ static int send_packet_unit_change_homecity_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_CHANGE_HOMECITY);
   printf("cs opcode=55 UNIT_CHANGE_HOMECITY");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_change_homecity_100, cmp_packet_unit_change_homecity_100);
+    *hash = hash_new(hash_packet_unit_change_homecity_100,
+                     cmp_packet_unit_change_homecity_100);
   }
   BV_CLR_ALL(fields);
 
@@ -16727,7 +16827,8 @@ receive_packet_unit_establish_trade_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_establish_trade_100, cmp_packet_unit_establish_trade_100);
+    *hash = hash_new(hash_packet_unit_establish_trade_100,
+                     cmp_packet_unit_establish_trade_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -16767,7 +16868,8 @@ static int send_packet_unit_establish_trade_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_ESTABLISH_TRADE);
   printf("cs opcode=56 UNIT_ESTABLISH_TRADE");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_establish_trade_100, cmp_packet_unit_establish_trade_100);
+    *hash = hash_new(hash_packet_unit_establish_trade_100,
+                     cmp_packet_unit_establish_trade_100);
   }
   BV_CLR_ALL(fields);
 
@@ -16902,7 +17004,8 @@ receive_packet_unit_help_build_wonder_100(connection_t *pconn, enum packet_type 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_help_build_wonder_100, cmp_packet_unit_help_build_wonder_100);
+    *hash = hash_new(hash_packet_unit_help_build_wonder_100,
+                     cmp_packet_unit_help_build_wonder_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -16942,7 +17045,8 @@ static int send_packet_unit_help_build_wonder_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_HELP_BUILD_WONDER);
   printf("cs opcode=57 UNIT_HELP_BUILD_WONDER");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_help_build_wonder_100, cmp_packet_unit_help_build_wonder_100);
+    *hash = hash_new(hash_packet_unit_help_build_wonder_100,
+                     cmp_packet_unit_help_build_wonder_100);
   }
   BV_CLR_ALL(fields);
 
@@ -17075,7 +17179,8 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(connection_t *pconn
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_goto_100, cmp_packet_unit_goto_100);
+    *hash = hash_new(hash_packet_unit_goto_100,
+                     cmp_packet_unit_goto_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -17126,7 +17231,8 @@ static int send_packet_unit_goto_100(connection_t *pconn, const struct packet_un
   SEND_PACKET_START(PACKET_UNIT_GOTO);
   printf("cs opcode=58 UNIT_GOTO");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_goto_100, cmp_packet_unit_goto_100);
+    *hash = hash_new(hash_packet_unit_goto_100,
+                     cmp_packet_unit_goto_100);
   }
   BV_CLR_ALL(fields);
 
@@ -17281,7 +17387,8 @@ receive_packet_unit_orders_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_orders_100, cmp_packet_unit_orders_100);
+    *hash = hash_new(hash_packet_unit_orders_100,
+                     cmp_packet_unit_orders_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -17382,7 +17489,8 @@ static int send_packet_unit_orders_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_UNIT_ORDERS);
   printf("cs opcode=58 UNIT_ORDER");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_orders_100, cmp_packet_unit_orders_100);
+    *hash = hash_new(hash_packet_unit_orders_100,
+                     cmp_packet_unit_orders_100);
   }
   BV_CLR_ALL(fields);
 
@@ -17622,7 +17730,8 @@ static struct packet_unit_auto *receive_packet_unit_auto_100(connection_t *pconn
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_auto_100, cmp_packet_unit_auto_100);
+    *hash = hash_new(hash_packet_unit_auto_100,
+                     cmp_packet_unit_auto_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -17661,7 +17770,8 @@ static int send_packet_unit_auto_100(connection_t *pconn, const struct packet_un
   SEND_PACKET_START(PACKET_UNIT_AUTO);
   printf("cs opcode=60 UNIT_AUTO");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_auto_100, cmp_packet_unit_auto_100);
+    *hash = hash_new(hash_packet_unit_auto_100,
+                     cmp_packet_unit_auto_100);
   }
   BV_CLR_ALL(fields);
 
@@ -17793,7 +17903,8 @@ static struct packet_unit_load *receive_packet_unit_load_100(connection_t *pconn
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_load_100, cmp_packet_unit_load_100);
+    *hash = hash_new(hash_packet_unit_load_100,
+                     cmp_packet_unit_load_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -17838,7 +17949,8 @@ static int send_packet_unit_load_100(connection_t *pconn, const struct packet_un
   SEND_PACKET_START(PACKET_UNIT_LOAD);
   printf("cs opcode=107 UNIT_LOAD");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_load_100, cmp_packet_unit_load_100);
+    *hash = hash_new(hash_packet_unit_load_100,
+                     cmp_packet_unit_load_100);
   }
   BV_CLR_ALL(fields);
 
@@ -17982,7 +18094,8 @@ receive_packet_unit_unload_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_unload_100, cmp_packet_unit_unload_100);
+    *hash = hash_new(hash_packet_unit_unload_100,
+                     cmp_packet_unit_unload_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -18027,7 +18140,8 @@ static int send_packet_unit_unload_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_UNIT_UNLOAD);
   printf("cs opcode=61 UNIT_UNLOAD");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_unload_100, cmp_packet_unit_unload_100);
+    *hash = hash_new(hash_packet_unit_unload_100,
+                     cmp_packet_unit_unload_100);
   }
   BV_CLR_ALL(fields);
 
@@ -18171,7 +18285,8 @@ receive_packet_unit_upgrade_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_upgrade_100, cmp_packet_unit_upgrade_100);
+    *hash = hash_new(hash_packet_unit_upgrade_100,
+                     cmp_packet_unit_upgrade_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -18209,7 +18324,8 @@ static int send_packet_unit_upgrade_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_UNIT_UPGRADE);
   printf("cs opcode=62 UNIT_UPGRADE");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_upgrade_100, cmp_packet_unit_upgrade_100);
+    *hash = hash_new(hash_packet_unit_upgrade_100,
+                     cmp_packet_unit_upgrade_100);
   }
   BV_CLR_ALL(fields);
 
@@ -18341,7 +18457,8 @@ static struct packet_unit_nuke *receive_packet_unit_nuke_100(connection_t *pconn
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_nuke_100, cmp_packet_unit_nuke_100);
+    *hash = hash_new(hash_packet_unit_nuke_100,
+                     cmp_packet_unit_nuke_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -18379,7 +18496,8 @@ static int send_packet_unit_nuke_100(connection_t *pconn, const struct packet_un
   SEND_PACKET_START(PACKET_UNIT_NUKE);
   printf("cs opcode=63 UNIT_NUKE");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_nuke_100, cmp_packet_unit_nuke_100);
+    *hash = hash_new(hash_packet_unit_nuke_100,
+                     cmp_packet_unit_nuke_100);
   }
   BV_CLR_ALL(fields);
 
@@ -18512,7 +18630,8 @@ receive_packet_unit_paradrop_to_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_paradrop_to_100, cmp_packet_unit_paradrop_to_100);
+    *hash = hash_new(hash_packet_unit_paradrop_to_100,
+                     cmp_packet_unit_paradrop_to_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -18564,7 +18683,8 @@ static int send_packet_unit_paradrop_to_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_PARADROP_TO);
   printf("cs opcode=64 UNIT_PARADROP_TO");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_paradrop_to_100, cmp_packet_unit_paradrop_to_100);
+    *hash = hash_new(hash_packet_unit_paradrop_to_100,
+                     cmp_packet_unit_paradrop_to_100);
   }
   BV_CLR_ALL(fields);
 
@@ -18717,7 +18837,8 @@ receive_packet_unit_airlift_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_airlift_100, cmp_packet_unit_airlift_100);
+    *hash = hash_new(hash_packet_unit_airlift_100,
+                     cmp_packet_unit_airlift_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -18762,7 +18883,8 @@ static int send_packet_unit_airlift_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_UNIT_AIRLIFT);
   printf("cs opcode=65 UNIT_AIRLIFT");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_airlift_100, cmp_packet_unit_airlift_100);
+    *hash = hash_new(hash_packet_unit_airlift_100,
+                     cmp_packet_unit_airlift_100);
   }
   BV_CLR_ALL(fields);
 
@@ -18907,7 +19029,8 @@ receive_packet_unit_bribe_inq_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_bribe_inq_100, cmp_packet_unit_bribe_inq_100);
+    *hash = hash_new(hash_packet_unit_bribe_inq_100,
+                     cmp_packet_unit_bribe_inq_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -18946,7 +19069,8 @@ static int send_packet_unit_bribe_inq_100(connection_t *pconn, const struct pack
   SEND_PACKET_START(PACKET_UNIT_BRIBE_INQ);
   printf("cs opcode=67 UNIT_BRIBE_INQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_bribe_inq_100, cmp_packet_unit_bribe_inq_100);
+    *hash = hash_new(hash_packet_unit_bribe_inq_100,
+                     cmp_packet_unit_bribe_inq_100);
   }
   BV_CLR_ALL(fields);
 
@@ -19079,7 +19203,8 @@ receive_packet_unit_bribe_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_bribe_info_100, cmp_packet_unit_bribe_info_100);
+    *hash = hash_new(hash_packet_unit_bribe_info_100,
+                     cmp_packet_unit_bribe_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -19124,7 +19249,8 @@ static int send_packet_unit_bribe_info_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_BRIBE_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_bribe_info_100, cmp_packet_unit_bribe_info_100);
+    *hash = hash_new(hash_packet_unit_bribe_info_100,
+                     cmp_packet_unit_bribe_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -19263,7 +19389,8 @@ receive_packet_unit_type_upgrade_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_type_upgrade_100, cmp_packet_unit_type_upgrade_100);
+    *hash = hash_new(hash_packet_unit_type_upgrade_100,
+                     cmp_packet_unit_type_upgrade_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -19303,7 +19430,8 @@ static int send_packet_unit_type_upgrade_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_TYPE_UPGRADE);
   printf("cs opcode=69 UNIT_TYPE_UPGRADE");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_type_upgrade_100, cmp_packet_unit_type_upgrade_100);
+    *hash = hash_new(hash_packet_unit_type_upgrade_100,
+                     cmp_packet_unit_type_upgrade_100);
   }
   BV_CLR_ALL(fields);
 
@@ -19437,7 +19565,8 @@ receive_packet_unit_diplomat_action_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_diplomat_action_100, cmp_packet_unit_diplomat_action_100);
+    *hash = hash_new(hash_packet_unit_diplomat_action_100,
+                     cmp_packet_unit_diplomat_action_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -19495,7 +19624,8 @@ static int send_packet_unit_diplomat_action_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_DIPLOMAT_ACTION);
   printf("cs opcode=70 UNIT_DIPLOMAT_ACTION");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_diplomat_action_100, cmp_packet_unit_diplomat_action_100);
+    *hash = hash_new(hash_packet_unit_diplomat_action_100,
+                     cmp_packet_unit_diplomat_action_100);
   }
   BV_CLR_ALL(fields);
 
@@ -19875,7 +20005,8 @@ receive_packet_unit_change_activity_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_change_activity_100, cmp_packet_unit_change_activity_100);
+    *hash = hash_new(hash_packet_unit_change_activity_100,
+                     cmp_packet_unit_change_activity_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -19927,7 +20058,8 @@ static int send_packet_unit_change_activity_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_UNIT_CHANGE_ACTIVITY);
   printf("cs opcode=72 UNIT_CHANGE_ACTIVITY");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_change_activity_100, cmp_packet_unit_change_activity_100);
+    *hash = hash_new(hash_packet_unit_change_activity_100,
+                     cmp_packet_unit_change_activity_100);
   }
   BV_CLR_ALL(fields);
 
@@ -20264,7 +20396,8 @@ receive_packet_diplomacy_init_meeting_100(connection_t *pconn, enum packet_type 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_init_meeting_100, cmp_packet_diplomacy_init_meeting_100);
+    *hash = hash_new(hash_packet_diplomacy_init_meeting_100,
+                     cmp_packet_diplomacy_init_meeting_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -20309,7 +20442,8 @@ static int send_packet_diplomacy_init_meeting_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_DIPLOMACY_INIT_MEETING);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_init_meeting_100, cmp_packet_diplomacy_init_meeting_100);
+    *hash = hash_new(hash_packet_diplomacy_init_meeting_100,
+                     cmp_packet_diplomacy_init_meeting_100);
   }
   BV_CLR_ALL(fields);
 
@@ -20695,7 +20829,8 @@ static int send_packet_diplomacy_cancel_meeting_100(
   SEND_PACKET_START(PACKET_DIPLOMACY_CANCEL_MEETING);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_100, cmp_packet_diplomacy_cancel_meeting_100);
+    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_100,
+                     cmp_packet_diplomacy_cancel_meeting_100);
   }
   BV_CLR_ALL(fields);
 
@@ -21090,7 +21225,8 @@ receive_packet_diplomacy_create_clause_100(connection_t *pconn, enum packet_type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_create_clause_100, cmp_packet_diplomacy_create_clause_100);
+    *hash = hash_new(hash_packet_diplomacy_create_clause_100,
+                     cmp_packet_diplomacy_create_clause_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -21148,7 +21284,8 @@ static int send_packet_diplomacy_create_clause_100(
   SEND_PACKET_START(PACKET_DIPLOMACY_CREATE_CLAUSE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_create_clause_100, cmp_packet_diplomacy_create_clause_100);
+    *hash = hash_new(hash_packet_diplomacy_create_clause_100,
+                     cmp_packet_diplomacy_create_clause_100);
   }
   BV_CLR_ALL(fields);
 
@@ -21570,7 +21707,8 @@ receive_packet_diplomacy_remove_clause_100(connection_t *pconn, enum packet_type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_remove_clause_100, cmp_packet_diplomacy_remove_clause_100);
+    *hash = hash_new(hash_packet_diplomacy_remove_clause_100,
+                     cmp_packet_diplomacy_remove_clause_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -21628,7 +21766,8 @@ static int send_packet_diplomacy_remove_clause_100(
   SEND_PACKET_START(PACKET_DIPLOMACY_REMOVE_CLAUSE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_remove_clause_100, cmp_packet_diplomacy_remove_clause_100);
+    *hash = hash_new(hash_packet_diplomacy_remove_clause_100,
+                     cmp_packet_diplomacy_remove_clause_100);
   }
   BV_CLR_ALL(fields);
 
@@ -21995,7 +22134,8 @@ receive_packet_diplomacy_accept_treaty_100(connection_t *pconn, enum packet_type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_accept_treaty_100, cmp_packet_diplomacy_accept_treaty_100);
+    *hash = hash_new(hash_packet_diplomacy_accept_treaty_100,
+                     cmp_packet_diplomacy_accept_treaty_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -22037,7 +22177,8 @@ static int send_packet_diplomacy_accept_treaty_100(
   SEND_PACKET_START(PACKET_DIPLOMACY_ACCEPT_TREATY);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_accept_treaty_100, cmp_packet_diplomacy_accept_treaty_100);
+    *hash = hash_new(hash_packet_diplomacy_accept_treaty_100,
+                     cmp_packet_diplomacy_accept_treaty_100);
   }
   BV_CLR_ALL(fields);
 
@@ -22205,7 +22346,8 @@ receive_packet_diplomacy_cancel_pact_100(connection_t *pconn, enum packet_type t
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_cancel_pact_100, cmp_packet_diplomacy_cancel_pact_100);
+    *hash = hash_new(hash_packet_diplomacy_cancel_pact_100,
+                     cmp_packet_diplomacy_cancel_pact_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -22252,7 +22394,8 @@ static int send_packet_diplomacy_cancel_pact_100(
   SEND_PACKET_START(PACKET_DIPLOMACY_CANCEL_PACT);
   printf("cs opcode=83 DIPLOMACY_CANCEL_PACT");
   if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_cancel_pact_100, cmp_packet_diplomacy_cancel_pact_100);
+    *hash = hash_new(hash_packet_diplomacy_cancel_pact_100,
+                     cmp_packet_diplomacy_cancel_pact_100);
   }
   BV_CLR_ALL(fields);
 
@@ -22399,7 +22542,8 @@ static struct packet_page_msg *receive_packet_page_msg_100(connection_t *pconn, 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_page_msg_100, cmp_packet_page_msg_100);
+    *hash = hash_new(hash_packet_page_msg_100,
+                     cmp_packet_page_msg_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -22440,7 +22584,8 @@ static int send_packet_page_msg_100(connection_t *pconn, const struct packet_pag
   SEND_PACKET_START(PACKET_PAGE_MSG);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_page_msg_100, cmp_packet_page_msg_100);
+    *hash = hash_new(hash_packet_page_msg_100,
+                     cmp_packet_page_msg_100);
   }
   BV_CLR_ALL(fields);
 
@@ -22576,7 +22721,8 @@ receive_packet_report_req_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_report_req_100, cmp_packet_report_req_100);
+    *hash = hash_new(hash_packet_report_req_100,
+                     cmp_packet_report_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -22615,7 +22761,8 @@ static int send_packet_report_req_100(connection_t *pconn, const struct packet_r
   SEND_PACKET_START(PACKET_REPORT_REQ);
   printf("cs opcode=85 REPORT_REQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_report_req_100, cmp_packet_report_req_100);
+    *hash = hash_new(hash_packet_report_req_100,
+                     cmp_packet_report_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -22769,7 +22916,8 @@ static struct packet_conn_info *receive_packet_conn_info_100(connection_t *pconn
   real_packet->id = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_conn_info_100, cmp_packet_conn_info_100);
+    *hash = hash_new(hash_packet_conn_info_100,
+                     cmp_packet_conn_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -22829,7 +22977,8 @@ static int send_packet_conn_info_100(connection_t *pconn, const struct packet_co
   SEND_PACKET_START(PACKET_CONN_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_conn_info_100, cmp_packet_conn_info_100);
+    *hash = hash_new(hash_packet_conn_info_100,
+                     cmp_packet_conn_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -23008,7 +23157,8 @@ receive_packet_conn_ping_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_conn_ping_info_100, cmp_packet_conn_ping_info_100);
+    *hash = hash_new(hash_packet_conn_ping_info_100,
+                     cmp_packet_conn_ping_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -23077,7 +23227,8 @@ static int send_packet_conn_ping_info_100(connection_t *pconn, const struct pack
   SEND_PACKET_START(PACKET_CONN_PING_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_conn_ping_info_100, cmp_packet_conn_ping_info_100);
+    *hash = hash_new(hash_packet_conn_ping_info_100,
+                     cmp_packet_conn_ping_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -23189,7 +23340,8 @@ receive_packet_conn_ping_info_101(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_conn_ping_info_101, cmp_packet_conn_ping_info_101);
+    *hash = hash_new(hash_packet_conn_ping_info_101,
+                     cmp_packet_conn_ping_info_101);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -23255,7 +23407,8 @@ static int send_packet_conn_ping_info_101(connection_t *pconn, const struct pack
   SEND_PACKET_START(PACKET_CONN_PING_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_conn_ping_info_101, cmp_packet_conn_ping_info_101);
+    *hash = hash_new(hash_packet_conn_ping_info_101,
+                     cmp_packet_conn_ping_info_101);
   }
   BV_CLR_ALL(fields);
 
@@ -23771,7 +23924,8 @@ static struct packet_new_year *receive_packet_new_year_100(connection_t *pconn, 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_new_year_100, cmp_packet_new_year_100);
+    *hash = hash_new(hash_packet_new_year_100,
+                     cmp_packet_new_year_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -23815,7 +23969,8 @@ static int send_packet_new_year_100(connection_t *pconn, const struct packet_new
   SEND_PACKET_START(PACKET_NEW_YEAR);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_new_year_100, cmp_packet_new_year_100);
+    *hash = hash_new(hash_packet_new_year_100,
+                     cmp_packet_new_year_100);
   }
   BV_CLR_ALL(fields);
 
@@ -24197,7 +24352,8 @@ receive_packet_spaceship_place_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_spaceship_place_100, cmp_packet_spaceship_place_100);
+    *hash = hash_new(hash_packet_spaceship_place_100,
+                     cmp_packet_spaceship_place_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -24243,7 +24399,8 @@ static int send_packet_spaceship_place_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_SPACESHIP_PLACE);
   printf("cs opcode=94 SPACESHIP_PLACE");
   if (!*hash) {
-    *hash = hash_new(hash_packet_spaceship_place_100, cmp_packet_spaceship_place_100);
+    *hash = hash_new(hash_packet_spaceship_place_100,
+                     cmp_packet_spaceship_place_100);
   }
   BV_CLR_ALL(fields);
 
@@ -24409,7 +24566,8 @@ receive_packet_spaceship_info_100(connection_t *pconn, enum packet_type type)
   real_packet->player_num = readin;
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_spaceship_info_100, cmp_packet_spaceship_info_100);
+    *hash = hash_new(hash_packet_spaceship_info_100,
+                     cmp_packet_spaceship_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -24552,7 +24710,8 @@ static int send_packet_spaceship_info_100(connection_t *pconn, const struct pack
   SEND_PACKET_START(PACKET_SPACESHIP_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_spaceship_info_100, cmp_packet_spaceship_info_100);
+    *hash = hash_new(hash_packet_spaceship_info_100,
+                     cmp_packet_spaceship_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -24824,7 +24983,8 @@ receive_packet_ruleset_unit_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_unit_100, cmp_packet_ruleset_unit_100);
+    *hash = hash_new(hash_packet_ruleset_unit_100,
+                     cmp_packet_ruleset_unit_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -25051,7 +25211,8 @@ static int send_packet_ruleset_unit_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_RULESET_UNIT);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_unit_100, cmp_packet_ruleset_unit_100);
+    *hash = hash_new(hash_packet_ruleset_unit_100,
+                     cmp_packet_ruleset_unit_100);
   }
   BV_CLR_ALL(fields);
 
@@ -25547,7 +25708,8 @@ receive_packet_ruleset_game_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_game_100, cmp_packet_ruleset_game_100);
+    *hash = hash_new(hash_packet_ruleset_game_100,
+                     cmp_packet_ruleset_game_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -25746,7 +25908,8 @@ static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_RULESET_GAME);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_game_100, cmp_packet_ruleset_game_100);
+    *hash = hash_new(hash_packet_ruleset_game_100,
+                     cmp_packet_ruleset_game_100);
   }
   BV_CLR_ALL(fields);
 
@@ -26452,7 +26615,8 @@ receive_packet_ruleset_tech_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_tech_100, cmp_packet_ruleset_tech_100);
+    *hash = hash_new(hash_packet_ruleset_tech_100,
+                     cmp_packet_ruleset_tech_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -26537,7 +26701,8 @@ static int send_packet_ruleset_tech_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_RULESET_TECH);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_tech_100, cmp_packet_ruleset_tech_100);
+    *hash = hash_new(hash_packet_ruleset_tech_100,
+                     cmp_packet_ruleset_tech_100);
   }
   BV_CLR_ALL(fields);
 
@@ -26763,7 +26928,8 @@ receive_packet_ruleset_government_100(connection_t *pconn, enum packet_type type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_government_100, cmp_packet_ruleset_government_100);
+    *hash = hash_new(hash_packet_ruleset_government_100,
+                     cmp_packet_ruleset_government_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -27055,7 +27221,8 @@ static int send_packet_ruleset_government_100(
   SEND_PACKET_START(PACKET_RULESET_GOVERNMENT);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_government_100, cmp_packet_ruleset_government_100);
+    *hash = hash_new(hash_packet_ruleset_government_100,
+                     cmp_packet_ruleset_government_100);
   }
   BV_CLR_ALL(fields);
 
@@ -27581,7 +27748,8 @@ receive_packet_ruleset_terrain_control_100(connection_t *pconn, enum packet_type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_terrain_control_100, cmp_packet_ruleset_terrain_control_100);
+    *hash = hash_new(hash_packet_ruleset_terrain_control_100,
+                     cmp_packet_ruleset_terrain_control_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -27724,7 +27892,8 @@ static int send_packet_ruleset_terrain_control_100(
   SEND_PACKET_START(PACKET_RULESET_TERRAIN_CONTROL);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_terrain_control_100, cmp_packet_ruleset_terrain_control_100);
+    *hash = hash_new(hash_packet_ruleset_terrain_control_100,
+                     cmp_packet_ruleset_terrain_control_100);
   }
   BV_CLR_ALL(fields);
 
@@ -28029,7 +28198,8 @@ receive_packet_ruleset_nation_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_nation_100, cmp_packet_ruleset_nation_100);
+    *hash = hash_new(hash_packet_ruleset_nation_100,
+                     cmp_packet_ruleset_nation_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -28122,7 +28292,8 @@ static int send_packet_ruleset_nation_100(connection_t *pconn, const struct pack
   SEND_PACKET_START(PACKET_RULESET_NATION);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_nation_100, cmp_packet_ruleset_nation_100);
+    *hash = hash_new(hash_packet_ruleset_nation_100,
+                     cmp_packet_ruleset_nation_100);
   }
   BV_CLR_ALL(fields);
 
@@ -28395,7 +28566,8 @@ receive_packet_ruleset_city_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_city_100, cmp_packet_ruleset_city_100);
+    *hash = hash_new(hash_packet_ruleset_city_100,
+                     cmp_packet_ruleset_city_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -28460,7 +28632,8 @@ static int send_packet_ruleset_city_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_RULESET_CITY);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_city_100, cmp_packet_ruleset_city_100);
+    *hash = hash_new(hash_packet_ruleset_city_100,
+                     cmp_packet_ruleset_city_100);
   }
   BV_CLR_ALL(fields);
 
@@ -28650,7 +28823,8 @@ receive_packet_ruleset_building_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_building_100, cmp_packet_ruleset_building_100);
+    *hash = hash_new(hash_packet_ruleset_building_100,
+                     cmp_packet_ruleset_building_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -28837,7 +29011,8 @@ static int send_packet_ruleset_building_100(
   SEND_PACKET_START(PACKET_RULESET_BUILDING);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_building_100, cmp_packet_ruleset_building_100);
+    *hash = hash_new(hash_packet_ruleset_building_100,
+                     cmp_packet_ruleset_building_100);
   }
   BV_CLR_ALL(fields);
 
@@ -29242,7 +29417,8 @@ receive_packet_ruleset_terrain_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_terrain_100, cmp_packet_ruleset_terrain_100);
+    *hash = hash_new(hash_packet_ruleset_terrain_100,
+                     cmp_packet_ruleset_terrain_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -29471,7 +29647,8 @@ static int send_packet_ruleset_terrain_100(
   SEND_PACKET_START(PACKET_RULESET_TERRAIN);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_terrain_100, cmp_packet_ruleset_terrain_100);
+    *hash = hash_new(hash_packet_ruleset_terrain_100,
+                     cmp_packet_ruleset_terrain_100);
   }
   BV_CLR_ALL(fields);
 
@@ -29932,7 +30109,8 @@ receive_packet_ruleset_control_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_control_100, cmp_packet_ruleset_control_100);
+    *hash = hash_new(hash_packet_ruleset_control_100,
+                     cmp_packet_ruleset_control_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -30098,7 +30276,8 @@ static int send_packet_ruleset_control_100(
   SEND_PACKET_START(PACKET_RULESET_CONTROL);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_control_100, cmp_packet_ruleset_control_100);
+    *hash = hash_new(hash_packet_ruleset_control_100,
+                     cmp_packet_ruleset_control_100);
   }
   BV_CLR_ALL(fields);
 
@@ -30454,7 +30633,8 @@ receive_packet_single_want_hack_req_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_single_want_hack_req_100, cmp_packet_single_want_hack_req_100);
+    *hash = hash_new(hash_packet_single_want_hack_req_100,
+                     cmp_packet_single_want_hack_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -30492,7 +30672,8 @@ static int send_packet_single_want_hack_req_100(
   SEND_PACKET_START(PACKET_SINGLE_WANT_HACK_REQ);
   printf("cs opcode=108 SINGLE_WANT_HACK_REQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_single_want_hack_req_100, cmp_packet_single_want_hack_req_100);
+    *hash = hash_new(hash_packet_single_want_hack_req_100,
+                     cmp_packet_single_want_hack_req_100);
   }
   BV_CLR_ALL(fields);
 
@@ -30554,7 +30735,8 @@ receive_packet_single_want_hack_req_101(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_single_want_hack_req_101, cmp_packet_single_want_hack_req_101);
+    *hash = hash_new(hash_packet_single_want_hack_req_101,
+                     cmp_packet_single_want_hack_req_101);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -30595,7 +30777,8 @@ static int send_packet_single_want_hack_req_101(
   SEND_PACKET_START(PACKET_SINGLE_WANT_HACK_REQ);
   printf("cs opcode=108 SINGLE_WANT_HACK_REQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_single_want_hack_req_101, cmp_packet_single_want_hack_req_101);
+    *hash = hash_new(hash_packet_single_want_hack_req_101,
+                     cmp_packet_single_want_hack_req_101);
   }
   BV_CLR_ALL(fields);
 
@@ -30737,7 +30920,8 @@ receive_packet_single_want_hack_reply_100(connection_t *pconn, enum packet_type 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_single_want_hack_reply_100, cmp_packet_single_want_hack_reply_100);
+    *hash = hash_new(hash_packet_single_want_hack_reply_100,
+                     cmp_packet_single_want_hack_reply_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -30772,7 +30956,8 @@ static int send_packet_single_want_hack_reply_100(
   SEND_PACKET_START(PACKET_SINGLE_WANT_HACK_REPLY);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_single_want_hack_reply_100, cmp_packet_single_want_hack_reply_100);
+    *hash = hash_new(hash_packet_single_want_hack_reply_100,
+                     cmp_packet_single_want_hack_reply_100);
   }
   BV_CLR_ALL(fields);
 
@@ -30898,7 +31083,8 @@ static struct packet_game_load *receive_packet_game_load_100(connection_t *pconn
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_game_load_100, cmp_packet_game_load_100);
+    *hash = hash_new(hash_packet_game_load_100,
+                     cmp_packet_game_load_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -31024,7 +31210,8 @@ static int send_packet_game_load_100(connection_t *pconn, const struct packet_ga
   SEND_PACKET_START(PACKET_GAME_LOAD);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_game_load_100, cmp_packet_game_load_100);
+    *hash = hash_new(hash_packet_game_load_100,
+                     cmp_packet_game_load_100);
   }
   BV_CLR_ALL(fields);
 
@@ -31327,7 +31514,8 @@ receive_packet_options_settable_control_100(connection_t *pconn, enum packet_typ
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_options_settable_control_100, cmp_packet_options_settable_control_100);
+    *hash = hash_new(hash_packet_options_settable_control_100,
+                     cmp_packet_options_settable_control_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -31384,7 +31572,8 @@ static int send_packet_options_settable_control_100(
   SEND_PACKET_START(PACKET_OPTIONS_SETTABLE_CONTROL);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_options_settable_control_100, cmp_packet_options_settable_control_100);
+    *hash = hash_new(hash_packet_options_settable_control_100,
+                     cmp_packet_options_settable_control_100);
   }
   BV_CLR_ALL(fields);
 
@@ -31542,7 +31731,8 @@ receive_packet_options_settable_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_options_settable_100, cmp_packet_options_settable_100);
+    *hash = hash_new(hash_packet_options_settable_100,
+                     cmp_packet_options_settable_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -31633,7 +31823,8 @@ static int send_packet_options_settable_100(
   SEND_PACKET_START(PACKET_OPTIONS_SETTABLE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_options_settable_100, cmp_packet_options_settable_100);
+    *hash = hash_new(hash_packet_options_settable_100,
+                     cmp_packet_options_settable_100);
   }
   BV_CLR_ALL(fields);
 
@@ -31853,7 +32044,8 @@ receive_packet_ruleset_cache_group_100(connection_t *pconn, enum packet_type typ
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_cache_group_100, cmp_packet_ruleset_cache_group_100);
+    *hash = hash_new(hash_packet_ruleset_cache_group_100,
+                     cmp_packet_ruleset_cache_group_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -31935,7 +32127,8 @@ static int send_packet_ruleset_cache_group_100(
   SEND_PACKET_START(PACKET_RULESET_CACHE_GROUP);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_cache_group_100, cmp_packet_ruleset_cache_group_100);
+    *hash = hash_new(hash_packet_ruleset_cache_group_100,
+                     cmp_packet_ruleset_cache_group_100);
   }
   BV_CLR_ALL(fields);
 
@@ -32155,7 +32348,8 @@ receive_packet_ruleset_cache_effect_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_cache_effect_100, cmp_packet_ruleset_cache_effect_100);
+    *hash = hash_new(hash_packet_ruleset_cache_effect_100,
+                     cmp_packet_ruleset_cache_effect_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -32232,7 +32426,8 @@ static int send_packet_ruleset_cache_effect_100(
   SEND_PACKET_START(PACKET_RULESET_CACHE_EFFECT);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_ruleset_cache_effect_100, cmp_packet_ruleset_cache_effect_100);
+    *hash = hash_new(hash_packet_ruleset_cache_effect_100,
+                     cmp_packet_ruleset_cache_effect_100);
   }
   BV_CLR_ALL(fields);
 
@@ -32421,7 +32616,8 @@ receive_packet_traderoute_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_traderoute_info_100, cmp_packet_traderoute_info_100);
+    *hash = hash_new(hash_packet_traderoute_info_100,
+                     cmp_packet_traderoute_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -32484,7 +32680,8 @@ static int send_packet_traderoute_info_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_TRADEROUTE_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_traderoute_info_100, cmp_packet_traderoute_info_100);
+    *hash = hash_new(hash_packet_traderoute_info_100,
+                     cmp_packet_traderoute_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -32577,7 +32774,8 @@ receive_packet_traderoute_info_101(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_traderoute_info_101, cmp_packet_traderoute_info_101);
+    *hash = hash_new(hash_packet_traderoute_info_101,
+                     cmp_packet_traderoute_info_101);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -32634,7 +32832,8 @@ static int send_packet_traderoute_info_101(connection_t *pconn,
   SEND_PACKET_START(PACKET_TRADEROUTE_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_traderoute_info_101, cmp_packet_traderoute_info_101);
+    *hash = hash_new(hash_packet_traderoute_info_101,
+                     cmp_packet_traderoute_info_101);
   }
   BV_CLR_ALL(fields);
 
@@ -32797,7 +32996,8 @@ receive_packet_extgame_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_extgame_info_100, cmp_packet_extgame_info_100);
+    *hash = hash_new(hash_packet_extgame_info_100,
+                     cmp_packet_extgame_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -32858,7 +33058,8 @@ static int send_packet_extgame_info_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_EXTGAME_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_extgame_info_100, cmp_packet_extgame_info_100);
+    *hash = hash_new(hash_packet_extgame_info_100,
+                     cmp_packet_extgame_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -32988,7 +33189,8 @@ receive_packet_extgame_info_101(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_extgame_info_101, cmp_packet_extgame_info_101);
+    *hash = hash_new(hash_packet_extgame_info_101,
+                     cmp_packet_extgame_info_101);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -33037,7 +33239,8 @@ static int send_packet_extgame_info_101(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_EXTGAME_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_extgame_info_101, cmp_packet_extgame_info_101);
+    *hash = hash_new(hash_packet_extgame_info_101,
+                     cmp_packet_extgame_info_101);
   }
   BV_CLR_ALL(fields);
 
@@ -33227,7 +33430,8 @@ static struct packet_vote_new *receive_packet_vote_new_100(connection_t *pconn, 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_new_100, cmp_packet_vote_new_100);
+    *hash = hash_new(hash_packet_vote_new_100,
+                     cmp_packet_vote_new_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -33284,7 +33488,8 @@ static int send_packet_vote_new_100(connection_t *pconn, const struct packet_vot
   SEND_PACKET_START(PACKET_VOTE_NEW);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_new_100, cmp_packet_vote_new_100);
+    *hash = hash_new(hash_packet_vote_new_100,
+                     cmp_packet_vote_new_100);
   }
   BV_CLR_ALL(fields);
 
@@ -33445,7 +33650,8 @@ receive_packet_vote_update_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_update_100, cmp_packet_vote_update_100);
+    *hash = hash_new(hash_packet_vote_update_100,
+                     cmp_packet_vote_update_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -33507,7 +33713,8 @@ static int send_packet_vote_update_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_VOTE_UPDATE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_update_100, cmp_packet_vote_update_100);
+    *hash = hash_new(hash_packet_vote_update_100,
+                     cmp_packet_vote_update_100);
   }
   BV_CLR_ALL(fields);
 
@@ -33663,7 +33870,8 @@ receive_packet_vote_remove_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_remove_100, cmp_packet_vote_remove_100);
+    *hash = hash_new(hash_packet_vote_remove_100,
+                     cmp_packet_vote_remove_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -33701,7 +33909,8 @@ static int send_packet_vote_remove_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_VOTE_REMOVE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_remove_100, cmp_packet_vote_remove_100);
+    *hash = hash_new(hash_packet_vote_remove_100,
+                     cmp_packet_vote_remove_100);
   }
   BV_CLR_ALL(fields);
 
@@ -33821,7 +34030,8 @@ receive_packet_vote_resolve_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_resolve_100, cmp_packet_vote_resolve_100);
+    *hash = hash_new(hash_packet_vote_resolve_100,
+                     cmp_packet_vote_resolve_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -33860,7 +34070,8 @@ static int send_packet_vote_resolve_100(connection_t *pconn, const struct packet
   SEND_PACKET_START(PACKET_VOTE_RESOLVE);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_resolve_100, cmp_packet_vote_resolve_100);
+    *hash = hash_new(hash_packet_vote_resolve_100,
+                     cmp_packet_vote_resolve_100);
   }
   BV_CLR_ALL(fields);
 
@@ -33985,7 +34196,8 @@ receive_packet_vote_submit_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_submit_100, cmp_packet_vote_submit_100);
+    *hash = hash_new(hash_packet_vote_submit_100,
+                     cmp_packet_vote_submit_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -34030,7 +34242,8 @@ static int send_packet_vote_submit_100(connection_t *pconn, const struct packet_
   SEND_PACKET_START(PACKET_VOTE_SUBMIT);
   printf("cs opcode-128 VOTE_SUBMIT");
   if (!*hash) {
-    *hash = hash_new(hash_packet_vote_submit_100, cmp_packet_vote_submit_100);
+    *hash = hash_new(hash_packet_vote_submit_100,
+                     cmp_packet_vote_submit_100);
   }
   BV_CLR_ALL(fields);
 
@@ -34162,7 +34375,8 @@ receive_packet_trade_route_plan_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_trade_route_plan_100, cmp_packet_trade_route_plan_100);
+    *hash = hash_new(hash_packet_trade_route_plan_100,
+                     cmp_packet_trade_route_plan_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -34209,7 +34423,8 @@ static int send_packet_trade_route_plan_100(
   SEND_PACKET_START(PACKET_TRADE_ROUTE_PLAN);
   printf("cs opcode=130 TRADE_ROUTE_PLAN");
   if (!*hash) {
-    *hash = hash_new(hash_packet_trade_route_plan_100, cmp_packet_trade_route_plan_100);
+    *hash = hash_new(hash_packet_trade_route_plan_100,
+                     cmp_packet_trade_route_plan_100);
   }
   BV_CLR_ALL(fields);
 
@@ -34353,7 +34568,8 @@ receive_packet_trade_route_remove_100(connection_t *pconn, enum packet_type type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_trade_route_remove_100, cmp_packet_trade_route_remove_100);
+    *hash = hash_new(hash_packet_trade_route_remove_100,
+                     cmp_packet_trade_route_remove_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -34400,7 +34616,8 @@ static int send_packet_trade_route_remove_100(
   SEND_PACKET_START(PACKET_TRADE_ROUTE_REMOVE);
   printf("cs opcode=131 TRADE_ROUTE_REMOVE\n");
   if (!*hash) {
-    *hash = hash_new(hash_packet_trade_route_remove_100, cmp_packet_trade_route_remove_100);
+    *hash = hash_new(hash_packet_trade_route_remove_100,
+                     cmp_packet_trade_route_remove_100);
   }
   BV_CLR_ALL(fields);
 
@@ -34539,7 +34756,8 @@ receive_packet_unit_trade_route_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_trade_route_100, cmp_packet_unit_trade_route_100);
+    *hash = hash_new(hash_packet_unit_trade_route_100,
+                     cmp_packet_unit_trade_route_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -34592,7 +34810,8 @@ static int send_packet_unit_trade_route_100(
   SEND_PACKET_START(PACKET_UNIT_TRADE_ROUTE);
   printf("cs opcode132 UNIT_TRADE_ROUTE");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_trade_route_100, cmp_packet_unit_trade_route_100);
+    *hash = hash_new(hash_packet_unit_trade_route_100,
+                     cmp_packet_unit_trade_route_100);
   }
   BV_CLR_ALL(fields);
 
@@ -34748,7 +34967,8 @@ receive_packet_trade_route_info_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_trade_route_info_100, cmp_packet_trade_route_info_100);
+    *hash = hash_new(hash_packet_trade_route_info_100,
+                     cmp_packet_trade_route_info_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -34806,7 +35026,8 @@ static int send_packet_trade_route_info_100(
   SEND_PACKET_START(PACKET_TRADE_ROUTE_INFO);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_trade_route_info_100, cmp_packet_trade_route_info_100);
+    *hash = hash_new(hash_packet_trade_route_info_100,
+                     cmp_packet_trade_route_info_100);
   }
   BV_CLR_ALL(fields);
 
@@ -34953,7 +35174,8 @@ receive_packet_city_set_rally_point_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_set_rally_point_100, cmp_packet_city_set_rally_point_100);
+    *hash = hash_new(hash_packet_city_set_rally_point_100,
+                     cmp_packet_city_set_rally_point_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -35006,7 +35228,8 @@ static int send_packet_city_set_rally_point_100(
   SEND_PACKET_START(PACKET_CITY_SET_RALLY_POINT);
   printf("cs opcode=138 CITY_SET_RALLY_POINT");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_set_rally_point_100, cmp_packet_city_set_rally_point_100);
+    *hash = hash_new(hash_packet_city_set_rally_point_100,
+                     cmp_packet_city_set_rally_point_100);
   }
   BV_CLR_ALL(fields);
 
@@ -35163,7 +35386,8 @@ receive_packet_city_clear_rally_point_100(connection_t *pconn, enum packet_type 
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_clear_rally_point_100, cmp_packet_city_clear_rally_point_100);
+    *hash = hash_new(hash_packet_city_clear_rally_point_100,
+                     cmp_packet_city_clear_rally_point_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -35204,7 +35428,8 @@ static int send_packet_city_clear_rally_point_100(
   SEND_PACKET_START(PACKET_CITY_CLEAR_RALLY_POINT);
   printf("cs opcode=139 CITY_CLEAR_RALLY_POINT");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_clear_rally_point_100, cmp_packet_city_clear_rally_point_100);
+    *hash = hash_new(hash_packet_city_clear_rally_point_100,
+                     cmp_packet_city_clear_rally_point_100);
   }
   BV_CLR_ALL(fields);
 
@@ -35340,7 +35565,8 @@ receive_packet_unit_air_patrol_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_air_patrol_100, cmp_packet_unit_air_patrol_100);
+    *hash = hash_new(hash_packet_unit_air_patrol_100,
+                     cmp_packet_unit_air_patrol_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -35393,7 +35619,8 @@ static int send_packet_unit_air_patrol_100(
   SEND_PACKET_START(PACKET_UNIT_AIR_PATROL);
   printf("cs opcode=141 UNIT_AIR_PATROL");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_air_patrol_100, cmp_packet_unit_air_patrol_100);
+    *hash = hash_new(hash_packet_unit_air_patrol_100,
+                     cmp_packet_unit_air_patrol_100);
   }
   BV_CLR_ALL(fields);
 
@@ -35548,7 +35775,8 @@ receive_packet_unit_air_patrol_stop_100(connection_t *pconn, enum packet_type ty
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_air_patrol_stop_100, cmp_packet_unit_air_patrol_stop_100);
+    *hash = hash_new(hash_packet_unit_air_patrol_stop_100,
+                     cmp_packet_unit_air_patrol_stop_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -35589,7 +35817,8 @@ static int send_packet_unit_air_patrol_stop_100(
   SEND_PACKET_START(PACKET_UNIT_AIR_PATROL_STOP);
   printf("cs opcode=142 UNIT_AIR_PATROL_STOP");
   if (!*hash) {
-    *hash = hash_new(hash_packet_unit_air_patrol_stop_100, cmp_packet_unit_air_patrol_stop_100);
+    *hash = hash_new(hash_packet_unit_air_patrol_stop_100,
+                     cmp_packet_unit_air_patrol_stop_100);
   }
   BV_CLR_ALL(fields);
 
@@ -35724,7 +35953,8 @@ receive_packet_city_manager_param_100(connection_t *pconn, enum packet_type type
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_manager_param_100, cmp_packet_city_manager_param_100);
+    *hash = hash_new(hash_packet_city_manager_param_100,
+                     cmp_packet_city_manager_param_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -35794,7 +36024,8 @@ static int send_packet_city_manager_param_100(
   SEND_PACKET_START(PACKET_CITY_MANAGER_PARAM);
   printf("cs opcode=145 CITY_MANAGER_PARAM");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_manager_param_100, cmp_packet_city_manager_param_100);
+    *hash = hash_new(hash_packet_city_manager_param_100,
+                     cmp_packet_city_manager_param_100);
   }
   BV_CLR_ALL(fields);
 
@@ -35991,7 +36222,8 @@ receive_packet_city_no_manager_param_100(connection_t *pconn, enum packet_type t
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_no_manager_param_100, cmp_packet_city_no_manager_param_100);
+    *hash = hash_new(hash_packet_city_no_manager_param_100,
+                     cmp_packet_city_no_manager_param_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -36031,7 +36263,8 @@ static int send_packet_city_no_manager_param_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_CITY_NO_MANAGER_PARAM);
   printf("cs opcode=146 CITY_NO_MANAGER_PARAM");
   if (!*hash) {
-    *hash = hash_new(hash_packet_city_no_manager_param_100, cmp_packet_city_no_manager_param_100);
+    *hash = hash_new(hash_packet_city_no_manager_param_100,
+                     cmp_packet_city_no_manager_param_100);
   }
   BV_CLR_ALL(fields);
 
@@ -36160,7 +36393,8 @@ receive_packet_player_info_req_100(connection_t *pconn, enum packet_type type)
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_req_100, cmp_packet_player_info_req_100);
+    *hash = hash_new(hash_packet_player_info_req_100,
+                     cmp_packet_player_info_req_100);
   }
   old = hash_delete_entry(*hash, real_packet);
 
@@ -36200,7 +36434,8 @@ static int send_packet_player_info_req_100(connection_t *pconn,
   SEND_PACKET_START(PACKET_PLAYER_INFO_REQ);
   printf("cs opcode=150 PLAYER_INFO_REQ");
   if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_req_100, cmp_packet_player_info_req_100);
+    *hash = hash_new(hash_packet_player_info_req_100,
+                     cmp_packet_player_info_req_100);
   }
   BV_CLR_ALL(fields);
 
