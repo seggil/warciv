@@ -581,7 +581,7 @@ PACKET_PLAYER_RATES=41;cs,dsend
   PERCENT tax, luxury, science;
 end
 
-/* 42 */
+# 42
 
 PACKET_PLAYER_CHANGE_GOVERNMENT=43;cs,dsend
   GOVERNMENT government;
@@ -1272,6 +1272,8 @@ PACKET_SINGLE_WANT_HACK_REPLY=109;sc,dsend
  BOOL you_have_hack;
 end
 
+# 110
+
 PACKET_GAME_LOAD=111;sc,handle-via-packet,lsend
   BOOL load_successful;
   UINT8 nplayers;
@@ -1398,7 +1400,7 @@ PACKET_VOTE_SUBMIT=128;cs,is-info,handle-per-conn
   SINT8 value;
 end
 
-/* 129 */
+# 129
 
 /************** "extglobalinfo" capability packets **********************/
 
@@ -1421,7 +1423,7 @@ PACKET_TRADE_ROUTE_INFO=133;sc,handle-via-packet
   UINT8 status; /* enum trade_route_status */
 end
 
-/* 134 */
+# 134
 
 # Freeze reports and agents
 PACKET_FREEZE_CLIENT=135;sc,lsend
@@ -1431,7 +1433,7 @@ end
 PACKET_THAW_CLIENT=136;sc,lsend
 end
 
-/* 137 */
+# 137
 
 PACKET_CITY_SET_RALLY_POINT=138;cs,dsend
   CITY id;
@@ -1442,7 +1444,7 @@ PACKET_CITY_CLEAR_RALLY_POINT=139;cs,dsend
   CITY id;
 end
 
-/* 140 */
+# 140
 
 PACKET_UNIT_AIR_PATROL=141;cs,dsend
   UNIT id;
@@ -1453,8 +1455,8 @@ PACKET_UNIT_AIR_PATROL_STOP=142;cs,dsend
   UNIT id;
 end
 
-/* 143 */
-/* 144 */
+# 143
+# 144
 
 /* CMA parameter */
 PACKET_CITY_MANAGER_PARAM=145;cs,sc,handle-via-packet
@@ -1471,9 +1473,9 @@ PACKET_CITY_NO_MANAGER_PARAM=146;cs,sc,dsend
   CITY id;
 end
 
-/* 147 */
-/* 148 */
-/* 149 */
+# 147
+# 148
+# 149
 
 PACKET_PLAYER_INFO_REQ=150;cs,dsend,handle-per-conn
   PLAYER id;
