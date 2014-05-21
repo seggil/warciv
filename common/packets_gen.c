@@ -1338,7 +1338,14 @@ int send_packet_server_join_req(
   }
 }
 
-int dsend_packet_server_join_req(connection_t *pconn, const char *username, const char *capability, const char *version_label, int major_version, int minor_version, int patch_version)
+int dsend_packet_server_join_req(
+         connection_t *pconn,
+         const char *username,
+         const char *capability,
+         const char *version_label,
+         int major_version,
+         int minor_version,
+         int patch_version)
 {
   struct packet_server_join_req packet, *real_packet = &packet;
 
@@ -1626,7 +1633,10 @@ int send_packet_authentication_req(
   }
 }
 
-int dsend_packet_authentication_req(connection_t *pconn, enum authentication_type type, const char *message)
+int dsend_packet_authentication_req(
+         connection_t *pconn,
+         enum authentication_type type,
+         const char *message)
 {
   struct packet_authentication_req packet, *real_packet = &packet;
 
@@ -4661,7 +4671,10 @@ void lsend_packet_nuke_tile_info(struct connection_list *dest, const struct pack
   } connection_list_iterate_end;
 }
 
-int dsend_packet_nuke_tile_info(connection_t *pconn, int x, int y)
+int dsend_packet_nuke_tile_info(
+         connection_t *pconn,
+         int x, int
+         y)
 {
   struct packet_nuke_tile_info packet, *real_packet = &packet;
 
@@ -7625,7 +7638,10 @@ int send_packet_city_sell(
   }
 }
 
-int dsend_packet_city_sell(connection_t *pconn, int city_id, int build_id)
+int dsend_packet_city_sell(
+         connection_t *pconn,
+         int city_id, int
+         build_id)
 {
   struct packet_city_sell packet, *real_packet = &packet;
 
@@ -7999,7 +8015,10 @@ int send_packet_city_change(
   }
 }
 
-int dsend_packet_city_change(connection_t *pconn, int city_id, int build_id, bool is_build_id_unit_id)
+int dsend_packet_city_change(
+         connection_t *pconn,
+         int city_id, int
+         build_id, bool is_build_id_unit_id)
 {
   struct packet_city_change packet, *real_packet = &packet;
 
@@ -8198,7 +8217,10 @@ int send_packet_city_worklist(
   }
 }
 
-int dsend_packet_city_worklist(connection_t *pconn, int city_id, struct worklist *worklist)
+int dsend_packet_city_worklist(
+         connection_t *pconn,
+         int city_id, struct
+         worklist *worklist)
 {
   struct packet_city_worklist packet, *real_packet = &packet;
 
@@ -8409,7 +8431,11 @@ int send_packet_city_make_specialist(
   }
 }
 
-int dsend_packet_city_make_specialist(connection_t *pconn, int city_id, int worker_x, int worker_y)
+int dsend_packet_city_make_specialist(
+         connection_t *pconn,
+         int city_id,
+         int worker_x,
+         int worker_y)
 {
   struct packet_city_make_specialist packet, *real_packet = &packet;
 
@@ -8621,7 +8647,11 @@ int send_packet_city_make_worker(
   }
 }
 
-int dsend_packet_city_make_worker(connection_t *pconn, int city_id, int worker_x, int worker_y)
+int dsend_packet_city_make_worker(
+         connection_t *pconn,
+         int city_id,
+         int worker_x,
+         int worker_y)
 {
   struct packet_city_make_worker packet, *real_packet = &packet;
 
@@ -9027,7 +9057,10 @@ int send_packet_city_rename(
   }
 }
 
-int dsend_packet_city_rename(connection_t *pconn, int city_id, const char *name)
+int dsend_packet_city_rename(
+         connection_t *pconn,
+         int city_id,
+         const char *name)
 {
   struct packet_city_rename packet, *real_packet = &packet;
 
@@ -9221,7 +9254,10 @@ int send_packet_city_options_req(
   }
 }
 
-int dsend_packet_city_options_req(connection_t *pconn, int city_id, int value)
+int dsend_packet_city_options_req(
+         connection_t *pconn,
+         int city_id,
+         int value)
 {
   struct packet_city_options_req packet, *real_packet = &packet;
 
@@ -9764,7 +9800,10 @@ int send_packet_city_incite_info(
   }
 }
 
-int dsend_packet_city_incite_info(connection_t *pconn, int city_id, int cost)
+int dsend_packet_city_incite_info(
+         connection_t *pconn,
+         int city_id,
+         int cost)
 {
   struct packet_city_incite_info packet, *real_packet = &packet;
 
@@ -10136,7 +10175,10 @@ void lsend_packet_city_name_suggestion_info(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
-int dsend_packet_city_name_suggestion_info(connection_t *pconn, int unit_id, const char *name)
+int dsend_packet_city_name_suggestion_info(
+         connection_t *pconn,
+         int unit_id,
+         const char *name)
 {
   struct packet_city_name_suggestion_info packet, *real_packet = &packet;
 
@@ -13158,7 +13200,11 @@ int send_packet_player_rates(
   }
 }
 
-int dsend_packet_player_rates(connection_t *pconn, int tax, int luxury, int science)
+int dsend_packet_player_rates(
+         connection_t *pconn,
+         int tax,
+         int luxury,
+         int science)
 {
   struct packet_player_rates packet, *real_packet = &packet;
 
@@ -13339,7 +13385,9 @@ int send_packet_player_change_government(
   }
 }
 
-int dsend_packet_player_change_government(connection_t *pconn, int government)
+int dsend_packet_player_change_government(
+         connection_t *pconn,
+         int government)
 {
   struct packet_player_change_government packet, *real_packet = &packet;
 
@@ -16323,7 +16371,11 @@ int send_packet_unit_move(
   }
 }
 
-int dsend_packet_unit_move(connection_t *pconn, int unit_id, int x, int y)
+int dsend_packet_unit_move(
+         connection_t *pconn,
+         int unit_id,
+         int x,
+         int y)
 {
   struct packet_unit_move packet, *real_packet = &packet;
 
@@ -16515,7 +16567,10 @@ int send_packet_unit_build_city(
   }
 }
 
-int dsend_packet_unit_build_city(connection_t *pconn, int unit_id, const char *name)
+int dsend_packet_unit_build_city(
+         connection_t *pconn,
+         int unit_id,
+         const char *name)
 {
   struct packet_unit_build_city packet, *real_packet = &packet;
 
@@ -16885,7 +16940,10 @@ int send_packet_unit_change_homecity(
   }
 }
 
-int dsend_packet_unit_change_homecity(connection_t *pconn, int unit_id, int city_id)
+int dsend_packet_unit_change_homecity(
+         connection_t *pconn,
+         int unit_id,
+         int city_id)
 {
   struct packet_unit_change_homecity packet, *real_packet = &packet;
 
@@ -17448,7 +17506,10 @@ int send_packet_unit_goto(
   }
 }
 
-int dsend_packet_unit_goto(connection_t *pconn, int unit_id, int x, int y)
+int dsend_packet_unit_goto(
+         connection_t *pconn,
+         int unit_id,
+         int x, int y)
 {
   struct packet_unit_goto packet, *real_packet = &packet;
 
@@ -18170,7 +18231,10 @@ int send_packet_unit_load(
   }
 }
 
-int dsend_packet_unit_load(connection_t *pconn, int cargo_id, int transporter_id)
+int dsend_packet_unit_load(
+         connection_t *pconn,
+         int cargo_id,
+         int transporter_id)
 {
   struct packet_unit_load packet, *real_packet = &packet;
 
@@ -18363,7 +18427,10 @@ int send_packet_unit_unload(
   }
 }
 
-int dsend_packet_unit_unload(connection_t *pconn, int cargo_id, int transporter_id)
+int dsend_packet_unit_unload(
+         connection_t *pconn,
+         int cargo_id,
+         int transporter_id)
 {
   struct packet_unit_unload packet, *real_packet = &packet;
 
@@ -18920,7 +18987,10 @@ int send_packet_unit_paradrop_to(
   }
 }
 
-int dsend_packet_unit_paradrop_to(connection_t *pconn, int unit_id, int x, int y)
+int dsend_packet_unit_paradrop_to(
+         connection_t *pconn,
+         int unit_id,
+         int x, int y)
 {
   struct packet_unit_paradrop_to packet, *real_packet = &packet;
 
@@ -19114,7 +19184,10 @@ int send_packet_unit_airlift(
   }
 }
 
-int dsend_packet_unit_airlift(connection_t *pconn, int unit_id, int city_id)
+int dsend_packet_unit_airlift(
+         connection_t *pconn,
+         int unit_id,
+         int city_id)
 {
   struct packet_unit_airlift packet, *real_packet = &packet;
 
@@ -19479,7 +19552,10 @@ int send_packet_unit_bribe_info(
   }
 }
 
-int dsend_packet_unit_bribe_info(connection_t *pconn, int unit_id, int cost)
+int dsend_packet_unit_bribe_info(
+         connection_t *pconn,
+         int unit_id,
+         int cost)
 {
   struct packet_unit_bribe_info packet, *real_packet = &packet;
 
@@ -19884,11 +19960,12 @@ int send_packet_unit_diplomat_action(
   }
 }
 
-int dsend_packet_unit_diplomat_action(connection_t *pconn,
-                                      int diplomat_id,
-                                      enum diplomat_actions action_type,
-                                      int target_id,
-                                      int value)
+int dsend_packet_unit_diplomat_action(
+         connection_t *pconn,
+         int diplomat_id,
+         enum diplomat_actions action_type,
+         int target_id,
+         int value)
 {
   struct packet_unit_diplomat_action packet, *real_packet = &packet;
 
@@ -20087,7 +20164,10 @@ void lsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
-int dsend_packet_unit_diplomat_popup_dialog(connection_t *pconn, int diplomat_id, int target_id)
+int dsend_packet_unit_diplomat_popup_dialog(
+         connection_t *pconn,
+         int diplomat_id,
+         int target_id)
 {
   struct packet_unit_diplomat_popup_dialog packet, *real_packet = &packet;
 
@@ -20310,10 +20390,11 @@ int send_packet_unit_change_activity(
   }
 }
 
-int dsend_packet_unit_change_activity(connection_t *pconn,
-                                      int unit_id,
-                                      enum unit_activity activity,
-                                      enum tile_special_type activity_target)
+int dsend_packet_unit_change_activity(
+         connection_t *pconn,
+         int unit_id,
+         enum unit_activity activity,
+         enum tile_special_type activity_target)
 {
   struct packet_unit_change_activity packet, *real_packet = &packet;
 
@@ -20493,7 +20574,9 @@ int send_packet_diplomacy_init_meeting_req(
   }
 }
 
-int dsend_packet_diplomacy_init_meeting_req(connection_t *pconn, int counterpart)
+int dsend_packet_diplomacy_init_meeting_req(
+         connection_t *pconn,
+         int counterpart)
 {
   struct packet_diplomacy_init_meeting_req packet, *real_packet = &packet;
 
@@ -20689,7 +20772,10 @@ void lsend_packet_diplomacy_init_meeting(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_init_meeting(connection_t *pconn, int counterpart, int initiated_from)
+int dsend_packet_diplomacy_init_meeting(
+         connection_t *pconn,
+         int counterpart,
+         int initiated_from)
 {
   struct packet_diplomacy_init_meeting packet, *real_packet = &packet;
 
@@ -20881,7 +20967,9 @@ int send_packet_diplomacy_cancel_meeting_req(
   }
 }
 
-int dsend_packet_diplomacy_cancel_meeting_req(connection_t *pconn, int counterpart)
+int dsend_packet_diplomacy_cancel_meeting_req(
+         connection_t *pconn,
+         int counterpart)
 {
   struct packet_diplomacy_cancel_meeting_req packet, *real_packet = &packet;
 
@@ -21078,7 +21166,10 @@ void lsend_packet_diplomacy_cancel_meeting(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_cancel_meeting(connection_t *pconn, int counterpart, int initiated_from)
+int dsend_packet_diplomacy_cancel_meeting(
+         connection_t *pconn,
+         int counterpart,
+         int initiated_from)
 {
   struct packet_diplomacy_cancel_meeting packet, *real_packet = &packet;
 
@@ -21318,11 +21409,12 @@ int send_packet_diplomacy_create_clause_req(
   }
 }
 
-int dsend_packet_diplomacy_create_clause_req(connection_t *pconn,
-                                             int counterpart,
-                                             int giver,
-                                             enum clause_type type,
-                                             int value)
+int dsend_packet_diplomacy_create_clause_req(
+         connection_t *pconn,
+         int counterpart,
+         int giver,
+         enum clause_type type,
+         int value)
 {
   struct packet_diplomacy_create_clause_req packet, *real_packet = &packet;
 
@@ -21552,11 +21644,12 @@ void lsend_packet_diplomacy_create_clause(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_create_clause(connection_t *pconn,
-                                         int counterpart,
-                                         int giver,
-                                         enum clause_type type,
-                                         int value)
+int dsend_packet_diplomacy_create_clause(
+         connection_t *pconn,
+         int counterpart,
+         int giver,
+         enum clause_type type,
+         int value)
 {
   struct packet_diplomacy_create_clause packet, *real_packet = &packet;
 
@@ -21802,11 +21895,12 @@ int send_packet_diplomacy_remove_clause_req(
   }
 }
 
-int dsend_packet_diplomacy_remove_clause_req(connection_t *pconn,
-                                             int counterpart,
-                                             int giver,
-                                             enum clause_type type,
-                                             int value)
+int dsend_packet_diplomacy_remove_clause_req(
+         connection_t *pconn,
+         int counterpart,
+         int giver,
+         enum clause_type type,
+         int value)
 {
   struct packet_diplomacy_remove_clause_req packet, *real_packet = &packet;
 
@@ -22036,11 +22130,12 @@ void lsend_packet_diplomacy_remove_clause(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_remove_clause(connection_t *pconn,
-                                         int counterpart,
-                                         int giver,
-                                         enum clause_type type,
-                                         int value)
+int dsend_packet_diplomacy_remove_clause(
+         connection_t *pconn,
+         int counterpart,
+         int giver,
+         enum clause_type type,
+         int value)
 {
   struct packet_diplomacy_remove_clause packet, *real_packet = &packet;
 
@@ -22238,7 +22333,9 @@ int send_packet_diplomacy_accept_treaty_req(
   }
 }
 
-int dsend_packet_diplomacy_accept_treaty_req(connection_t *pconn, int counterpart)
+int dsend_packet_diplomacy_accept_treaty_req(
+         connection_t *pconn,
+         int counterpart)
 {
   struct packet_diplomacy_accept_treaty_req packet, *real_packet = &packet;
 
@@ -22432,10 +22529,11 @@ void lsend_packet_diplomacy_accept_treaty(struct connection_list *dest,
   } connection_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_accept_treaty(connection_t *pconn,
-                                         int counterpart,
-                                         bool I_accepted,
-                                         bool other_accepted)
+int dsend_packet_diplomacy_accept_treaty(
+         connection_t *pconn,
+         int counterpart,
+         bool I_accepted,
+         bool other_accepted)
 {
   struct packet_diplomacy_accept_treaty packet, *real_packet = &packet;
 
@@ -22646,9 +22744,10 @@ int send_packet_diplomacy_cancel_pact(
   }
 }
 
-int dsend_packet_diplomacy_cancel_pact(connection_t *pconn,
-                                       int other_player_id,
-                                       enum clause_type clause)
+int dsend_packet_diplomacy_cancel_pact(
+         connection_t *pconn,
+         int other_player_id,
+         enum clause_type clause)
 {
   struct packet_diplomacy_cancel_pact packet, *real_packet = &packet;
 
@@ -23356,7 +23455,9 @@ receive_packet_conn_ping_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_ping_info_100(connection_t *pconn, const struct packet_conn_ping_info *packet)
+static int send_packet_conn_ping_info_100(
+        connection_t *pconn,
+        const struct packet_conn_ping_info *packet)
 {
   const struct packet_conn_ping_info *real_packet = packet;
   packet_conn_ping_info_100_fields fields;
@@ -24661,7 +24762,10 @@ int send_packet_spaceship_place(
   }
 }
 
-int dsend_packet_spaceship_place(connection_t *pconn, enum spaceship_place_type type, int num)
+int dsend_packet_spaceship_place(
+         connection_t *pconn,
+         enum spaceship_place_type type,
+         int num)
 {
   struct packet_spaceship_place packet, *real_packet = &packet;
 
@@ -31224,7 +31328,9 @@ int send_packet_single_want_hack_reply(
   }
 }
 
-int dsend_packet_single_want_hack_reply(connection_t *pconn, bool you_have_hack)
+int dsend_packet_single_want_hack_reply(
+         connection_t *pconn,
+         bool you_have_hack)
 {
   struct packet_single_want_hack_reply packet, *real_packet = &packet;
 
@@ -34731,7 +34837,10 @@ int send_packet_trade_route_plan(
   }
 }
 
-int dsend_packet_trade_route_plan(connection_t *pconn, int city1, int city2)
+int dsend_packet_trade_route_plan(
+         connection_t *pconn,
+         int city1,
+         int city2)
 {
   struct packet_trade_route_plan packet, *real_packet = &packet;
 
@@ -34921,7 +35030,10 @@ int send_packet_trade_route_remove(
   }
 }
 
-int dsend_packet_trade_route_remove(connection_t *pconn, int city1, int city2)
+int dsend_packet_trade_route_remove(
+         connection_t *pconn,
+         int city1,
+         int city2)
 {
   struct packet_trade_route_remove packet, *real_packet = &packet;
 
@@ -35133,7 +35245,10 @@ int send_packet_unit_trade_route(
   }
 }
 
-int dsend_packet_unit_trade_route(connection_t *pconn, int unit_id, int city1, int city2)
+int dsend_packet_unit_trade_route(
+         connection_t *pconn,
+         int unit_id,
+         int city1, int city2)
 {
   struct packet_unit_trade_route packet, *real_packet = &packet;
 
@@ -35555,7 +35670,10 @@ int send_packet_city_set_rally_point(
   }
 }
 
-int dsend_packet_city_set_rally_point(connection_t *pconn, int id, int x, int y)
+int dsend_packet_city_set_rally_point(
+         connection_t *pconn,
+         int id,
+         int x, int y)
 {
   struct packet_city_set_rally_point packet, *real_packet = &packet;
 
@@ -35946,7 +36064,10 @@ int send_packet_unit_air_patrol(
   }
 }
 
-int dsend_packet_unit_air_patrol(connection_t *pconn, int id, int x, int y)
+int dsend_packet_unit_air_patrol(
+         connection_t *pconn,
+         int id,
+         int x, int y)
 {
   struct packet_unit_air_patrol packet, *real_packet = &packet;
 
