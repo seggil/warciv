@@ -1377,7 +1377,9 @@ receive_packet_server_join_reply_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_server_join_reply_100(connection_t *pconn, const struct packet_server_join_reply *packet)
+static int send_packet_server_join_reply_100(
+               connection_t *pconn,
+               const struct packet_server_join_reply *packet)
 {
   const struct packet_server_join_reply *real_packet = packet;
   SEND_PACKET_START(PACKET_SERVER_JOIN_REPLY);
@@ -1507,7 +1509,9 @@ receive_packet_authentication_req_100(connection_t *pconn, enum packet_type type
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_authentication_req_100(connection_t *pconn, const struct packet_authentication_req *packet)
+static int send_packet_authentication_req_100(
+               connection_t *pconn,
+               const struct packet_authentication_req *packet)
 {
   const struct packet_authentication_req *real_packet = packet;
   packet_authentication_req_100_fields fields;
@@ -1690,7 +1694,9 @@ receive_packet_authentication_reply_100(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_authentication_reply_100(connection_t *pconn, const struct packet_authentication_reply *packet)
+static int send_packet_authentication_reply_100(
+               connection_t *pconn,
+               const struct packet_authentication_reply *packet)
 {
   const struct packet_authentication_reply *real_packet = packet;
   packet_authentication_reply_100_fields fields;
@@ -1946,7 +1952,9 @@ receive_packet_nation_unavailable_100(connection_t *pconn, enum packet_type type
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nation_unavailable_100(connection_t *pconn, const struct packet_nation_unavailable *packet)
+static int send_packet_nation_unavailable_100(
+               connection_t *pconn,
+               const struct packet_nation_unavailable *packet)
 {
   const struct packet_nation_unavailable *real_packet = packet;
   packet_nation_unavailable_100_fields fields;
@@ -2212,8 +2220,9 @@ receive_packet_nation_select_req_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nation_select_req_100(connection_t *pconn,
-                                             const struct packet_nation_select_req *packet)
+static int send_packet_nation_select_req_100(
+               connection_t *pconn,
+               const struct packet_nation_select_req *packet)
 {
   const struct packet_nation_select_req *real_packet = packet;
   packet_nation_select_req_100_fields fields;
@@ -2509,7 +2518,9 @@ static struct packet_game_state *receive_packet_game_state_100(connection_t *pco
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_game_state_100(connection_t *pconn, const struct packet_game_state *packet)
+static int send_packet_game_state_100(
+               connection_t *pconn,
+               const struct packet_game_state *packet)
 {
   const struct packet_game_state *real_packet = packet;
   packet_game_state_100_fields fields;
@@ -2894,7 +2905,9 @@ receive_packet_endgame_report_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_endgame_report_100(connection_t *pconn, const struct packet_endgame_report *packet)
+static int send_packet_endgame_report_100(
+               connection_t *pconn,
+               const struct packet_endgame_report *packet)
 {
   const struct packet_endgame_report *real_packet = packet;
   packet_endgame_report_100_fields fields;
@@ -3462,7 +3475,9 @@ static struct packet_tile_info *receive_packet_tile_info_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_tile_info_100(connection_t *pconn, const struct packet_tile_info *packet)
+static int send_packet_tile_info_100(
+               connection_t *pconn,
+               const struct packet_tile_info *packet)
 {
   const struct packet_tile_info *real_packet = packet;
   packet_tile_info_100_fields fields;
@@ -3873,7 +3888,9 @@ static struct packet_game_info *receive_packet_game_info_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_game_info_100(connection_t *pconn, const struct packet_game_info *packet)
+static int send_packet_game_info_100(
+               connection_t *pconn,
+               const struct packet_game_info *packet)
 {
   const struct packet_game_info *real_packet = packet;
   packet_game_info_100_fields fields;
@@ -4346,7 +4363,9 @@ receive_packet_map_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_map_info_100(connection_t *pconn, const struct packet_map_info *packet)
+static int send_packet_map_info_100(
+               connection_t *pconn,
+               const struct packet_map_info *packet)
 {
   const struct packet_map_info *real_packet = packet;
   packet_map_info_100_fields fields;
@@ -4539,8 +4558,9 @@ receive_packet_nuke_tile_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nuke_tile_info_100(connection_t *pconn,
-                                          const struct packet_nuke_tile_info *packet)
+static int send_packet_nuke_tile_info_100(
+               connection_t *pconn,
+               const struct packet_nuke_tile_info *packet)
 {
   const struct packet_nuke_tile_info *real_packet = packet;
   packet_nuke_tile_info_100_fields fields;
@@ -4762,7 +4782,9 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(connection_t *pconn, 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_chat_msg_100(connection_t *pconn, const struct packet_chat_msg *packet)
+static int send_packet_chat_msg_100(
+               connection_t *pconn,
+               const struct packet_chat_msg *packet)
 {
   const struct packet_chat_msg *real_packet = packet;
   packet_chat_msg_100_fields fields;
@@ -5014,7 +5036,9 @@ receive_packet_chat_msg_req_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_chat_msg_req_100(connection_t *pconn, const struct packet_chat_msg_req *packet)
+static int send_packet_chat_msg_req_100(
+               connection_t *pconn,
+               const struct packet_chat_msg_req *packet)
 {
   const struct packet_chat_msg_req *real_packet = packet;
   packet_chat_msg_req_100_fields fields;
@@ -5190,7 +5214,9 @@ receive_packet_city_remove_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_remove_100(connection_t *pconn, const struct packet_city_remove *packet)
+static int send_packet_city_remove_100(
+               connection_t *pconn,
+               const struct packet_city_remove *packet)
 {
   const struct packet_city_remove *real_packet = packet;
   packet_city_remove_100_fields fields;
@@ -5665,7 +5691,9 @@ static struct packet_city_info *receive_packet_city_info_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_info_100(connection_t *pconn, const struct packet_city_info *packet)
+static int send_packet_city_info_100(
+               connection_t *pconn,
+               const struct packet_city_info *packet)
 {
   const struct packet_city_info *real_packet = packet;
   packet_city_info_100_fields fields;
@@ -6544,7 +6572,9 @@ static struct packet_city_info *receive_packet_city_info_101(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_info_101(connection_t *pconn, const struct packet_city_info *packet)
+static int send_packet_city_info_101(
+               connection_t *pconn,
+               const struct packet_city_info *packet)
 {
   const struct packet_city_info *real_packet = packet;
   packet_city_info_101_fields fields;
@@ -7261,8 +7291,9 @@ receive_packet_city_short_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_short_info_100(connection_t *pconn,
-                                           const struct packet_city_short_info *packet)
+static int send_packet_city_short_info_100(
+               connection_t *pconn,
+               const struct packet_city_short_info *packet)
 {
   const struct packet_city_short_info *real_packet = packet;
   packet_city_short_info_100_fields fields;
@@ -7508,7 +7539,9 @@ static struct packet_city_sell *receive_packet_city_sell_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_sell_100(connection_t *pconn, const struct packet_city_sell *packet)
+static int send_packet_city_sell_100(
+               connection_t *pconn,
+               const struct packet_city_sell *packet)
 {
   const struct packet_city_sell *real_packet = packet;
   packet_city_sell_100_fields fields;
@@ -7697,7 +7730,9 @@ static struct packet_city_buy *receive_packet_city_buy_100(connection_t *pconn, 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_buy_100(connection_t *pconn, const struct packet_city_buy *packet)
+static int send_packet_city_buy_100(
+               connection_t *pconn,
+               const struct packet_city_buy *packet)
 {
   const struct packet_city_buy *real_packet = packet;
   packet_city_buy_100_fields fields;
@@ -7880,7 +7915,9 @@ receive_packet_city_change_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_change_100(connection_t *pconn, const struct packet_city_change *packet)
+static int send_packet_city_change_100(
+               connection_t *pconn,
+               const struct packet_city_change *packet)
 {
   const struct packet_city_change *real_packet = packet;
   packet_city_change_100_fields fields;
@@ -8079,7 +8116,9 @@ receive_packet_city_worklist_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_worklist_100(connection_t *pconn, const struct packet_city_worklist *packet)
+static int send_packet_city_worklist_100(
+               connection_t *pconn,
+               const struct packet_city_worklist *packet)
 {
   const struct packet_city_worklist *real_packet = packet;
   packet_city_worklist_100_fields fields;
@@ -8289,8 +8328,9 @@ receive_packet_city_make_specialist_100(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_make_specialist_100(connection_t *pconn,
-                                                const struct packet_city_make_specialist *packet)
+static int send_packet_city_make_specialist_100(
+               connection_t *pconn,
+               const struct packet_city_make_specialist *packet)
 {
   const struct packet_city_make_specialist *real_packet = packet;
   packet_city_make_specialist_100_fields fields;
@@ -8505,8 +8545,9 @@ receive_packet_city_make_worker_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_make_worker_100(connection_t *pconn,
-                                            const struct packet_city_make_worker *packet)
+static int send_packet_city_make_worker_100(
+               connection_t *pconn,
+               const struct packet_city_make_worker *packet)
 {
   const struct packet_city_make_worker *real_packet = packet;
   packet_city_make_worker_100_fields fields;
@@ -8721,8 +8762,9 @@ receive_packet_city_change_specialist_100(connection_t *pconn, enum packet_type 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_change_specialist_100(connection_t *pconn,
-                                                  const struct packet_city_change_specialist *packet)
+static int send_packet_city_change_specialist_100(
+               connection_t *pconn,
+               const struct packet_city_change_specialist *packet)
 {
   const struct packet_city_change_specialist *real_packet = packet;
   packet_city_change_specialist_100_fields fields;
@@ -8927,7 +8969,9 @@ receive_packet_city_rename_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_rename_100(connection_t *pconn, const struct packet_city_rename *packet)
+static int send_packet_city_rename_100(
+               connection_t *pconn,
+               const struct packet_city_rename *packet)
 {
   const struct packet_city_rename *real_packet = packet;
   packet_city_rename_100_fields fields;
@@ -9123,8 +9167,9 @@ receive_packet_city_options_req_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_options_req_100(connection_t *pconn,
-                                            const struct packet_city_options_req *packet)
+static int send_packet_city_options_req_100(
+               connection_t *pconn,
+               const struct packet_city_options_req *packet)
 {
   const struct packet_city_options_req *real_packet = packet;
   packet_city_options_req_100_fields fields;
@@ -9314,7 +9359,9 @@ receive_packet_city_refresh_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_refresh_100(connection_t *pconn, const struct packet_city_refresh *packet)
+static int send_packet_city_refresh_100(
+               connection_t *pconn,
+               const struct packet_city_refresh *packet)
 {
   const struct packet_city_refresh *real_packet = packet;
   packet_city_refresh_100_fields fields;
@@ -9490,8 +9537,9 @@ receive_packet_city_incite_inq_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_incite_inq_100(connection_t *pconn,
-                                           const struct packet_city_incite_inq *packet)
+static int send_packet_city_incite_inq_100(
+               connection_t *pconn,
+               const struct packet_city_incite_inq *packet)
 {
   const struct packet_city_incite_inq *real_packet = packet;
   packet_city_incite_inq_100_fields fields;
@@ -9674,8 +9722,9 @@ receive_packet_city_incite_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_incite_info_100(connection_t *pconn,
-                                            const struct packet_city_incite_info *packet)
+static int send_packet_city_incite_info_100(
+               connection_t *pconn,
+               const struct packet_city_incite_info *packet)
 {
   const struct packet_city_incite_info *real_packet = packet;
   packet_city_incite_info_100_fields fields;
@@ -9860,8 +9909,9 @@ receive_packet_city_name_suggestion_req_100(connection_t *pconn, enum packet_typ
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_name_suggestion_req_100(connection_t *pconn,
-                                                    const struct packet_city_name_suggestion_req *packet)
+static int send_packet_city_name_suggestion_req_100(
+               connection_t *pconn,
+               const struct packet_city_name_suggestion_req *packet)
 {
   const struct packet_city_name_suggestion_req *real_packet = packet;
   packet_city_name_suggestion_req_100_fields fields;
@@ -10041,8 +10091,9 @@ receive_packet_city_name_suggestion_info_100(connection_t *pconn, enum packet_ty
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_name_suggestion_info_100(connection_t *pconn,
-                                                     const struct packet_city_name_suggestion_info *packet)
+static int send_packet_city_name_suggestion_info_100(
+               connection_t *pconn,
+               const struct packet_city_name_suggestion_info *packet)
 {
   const struct packet_city_name_suggestion_info *real_packet = packet;
   packet_city_name_suggestion_info_100_fields fields;
@@ -10254,8 +10305,9 @@ receive_packet_city_sabotage_list_100(connection_t *pconn, enum packet_type type
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_sabotage_list_100(connection_t *pconn,
-                                              const struct packet_city_sabotage_list *packet)
+static int send_packet_city_sabotage_list_100(
+               connection_t *pconn,
+               const struct packet_city_sabotage_list *packet)
 {
   const struct packet_city_sabotage_list *real_packet = packet;
   packet_city_sabotage_list_100_fields fields;
@@ -10444,7 +10496,9 @@ receive_packet_player_remove_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_remove_100(connection_t *pconn, const struct packet_player_remove *packet)
+static int send_packet_player_remove_100(
+               connection_t *pconn,
+               const struct packet_player_remove *packet)
 {
   const struct packet_player_remove *real_packet = packet;
   packet_player_remove_100_fields fields;
@@ -10815,7 +10869,9 @@ receive_packet_player_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_100(connection_t *pconn, const struct packet_player_info *packet)
+static int send_packet_player_info_100(
+               connection_t *pconn,
+               const struct packet_player_info *packet)
 {
   const struct packet_player_info *real_packet = packet;
   packet_player_info_100_fields fields;
@@ -11379,7 +11435,9 @@ receive_packet_player_info_101(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_101(connection_t *pconn, const struct packet_player_info *packet)
+static int send_packet_player_info_101(
+               connection_t *pconn,
+               const struct packet_player_info *packet)
 {
   const struct packet_player_info *real_packet = packet;
   packet_player_info_101_fields fields;
@@ -11937,7 +11995,9 @@ receive_packet_player_info_102(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_102(connection_t *pconn, const struct packet_player_info *packet)
+static int send_packet_player_info_102(
+               connection_t *pconn,
+               const struct packet_player_info *packet)
 {
   const struct packet_player_info *real_packet = packet;
   packet_player_info_102_fields fields;
@@ -12485,7 +12545,9 @@ receive_packet_player_info_103(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_103(connection_t *pconn, const struct packet_player_info *packet)
+static int send_packet_player_info_103(
+               connection_t *pconn,
+               const struct packet_player_info *packet)
 {
   const struct packet_player_info *real_packet = packet;
   packet_player_info_103_fields fields;
@@ -13060,7 +13122,9 @@ receive_packet_player_rates_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_rates_100(connection_t *pconn, const struct packet_player_rates *packet)
+static int send_packet_player_rates_100(
+               connection_t *pconn,
+               const struct packet_player_rates *packet)
 {
   const struct packet_player_rates *real_packet = packet;
   packet_player_rates_100_fields fields;
@@ -13263,8 +13327,9 @@ receive_packet_player_change_government_100(connection_t *pconn, enum packet_typ
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_change_government_100(connection_t *pconn,
-                                                    const struct packet_player_change_government *packet)
+static int send_packet_player_change_government_100(
+               connection_t *pconn,
+               const struct packet_player_change_government *packet)
 {
   const struct packet_player_change_government *real_packet = packet;
   packet_player_change_government_100_fields fields;
@@ -13443,8 +13508,9 @@ receive_packet_player_research_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_research_100(connection_t *pconn,
-                                           const struct packet_player_research *packet)
+static int send_packet_player_research_100(
+               connection_t *pconn,
+               const struct packet_player_research *packet)
 {
   const struct packet_player_research *real_packet = packet;
   packet_player_research_100_fields fields;
@@ -13620,8 +13686,9 @@ receive_packet_player_tech_goal_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_tech_goal_100(connection_t *pconn,
-                                            const struct packet_player_tech_goal *packet)
+static int send_packet_player_tech_goal_100(
+               connection_t *pconn,
+               const struct packet_player_tech_goal *packet)
 {
   const struct packet_player_tech_goal *real_packet = packet;
   packet_player_tech_goal_100_fields fields;
@@ -13895,8 +13962,9 @@ receive_packet_player_attribute_chunk_100(connection_t *pconn, enum packet_type 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_attribute_chunk_100(connection_t *pconn,
-                                                  const struct packet_player_attribute_chunk *packet)
+static int send_packet_player_attribute_chunk_100(
+               connection_t *pconn,
+               const struct packet_player_attribute_chunk *packet)
 {
   const struct packet_player_attribute_chunk *real_packet = packet;
   packet_player_attribute_chunk_100_fields fields;
@@ -14108,7 +14176,9 @@ receive_packet_unit_remove_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_remove_100(connection_t *pconn, const struct packet_unit_remove *packet)
+static int send_packet_unit_remove_100(
+               connection_t *pconn,
+               const struct packet_unit_remove *packet)
 {
   const struct packet_unit_remove *real_packet = packet;
   packet_unit_remove_100_fields fields;
@@ -14508,7 +14578,9 @@ static struct packet_unit_info *receive_packet_unit_info_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_info_100(connection_t *pconn, const struct packet_unit_info *packet)
+static int send_packet_unit_info_100(
+               connection_t *pconn,
+               const struct packet_unit_info *packet)
 {
   const struct packet_unit_info *real_packet = packet;
   packet_unit_info_100_fields fields;
@@ -15135,7 +15207,9 @@ static struct packet_unit_info *receive_packet_unit_info_101(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_info_101(connection_t *pconn, const struct packet_unit_info *packet)
+static int send_packet_unit_info_101(
+               connection_t *pconn,
+               const struct packet_unit_info *packet)
 {
   const struct packet_unit_info *real_packet = packet;
   packet_unit_info_101_fields fields;
@@ -15722,8 +15796,9 @@ receive_packet_unit_short_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_short_info_100(connection_t *pconn,
-                                           const struct packet_unit_short_info *packet)
+static int send_packet_unit_short_info_100(
+               connection_t *pconn,
+               const struct packet_unit_short_info *packet)
 {
   const struct packet_unit_short_info *real_packet = packet;
   packet_unit_short_info_100_fields fields;
@@ -16018,8 +16093,9 @@ receive_packet_unit_combat_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_combat_info_100(connection_t *pconn,
-                                            const struct packet_unit_combat_info *packet)
+static int send_packet_unit_combat_info_100(
+               connection_t *pconn,
+               const struct packet_unit_combat_info *packet)
 {
   const struct packet_unit_combat_info *real_packet = packet;
   packet_unit_combat_info_100_fields fields;
@@ -16232,7 +16308,9 @@ static struct packet_unit_move *receive_packet_unit_move_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_move_100(connection_t *pconn, const struct packet_unit_move *packet)
+static int send_packet_unit_move_100(
+               connection_t *pconn,
+               const struct packet_unit_move *packet)
 {
   const struct packet_unit_move *real_packet = packet;
   packet_unit_move_100_fields fields;
@@ -16436,8 +16514,9 @@ receive_packet_unit_build_city_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_build_city_100(connection_t *pconn,
-                                           const struct packet_unit_build_city *packet)
+static int send_packet_unit_build_city_100(
+               connection_t *pconn,
+               const struct packet_unit_build_city *packet)
 {
   const struct packet_unit_build_city *real_packet = packet;
   packet_unit_build_city_100_fields fields;
@@ -16627,7 +16706,9 @@ receive_packet_unit_disband_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_disband_100(connection_t *pconn, const struct packet_unit_disband *packet)
+static int send_packet_unit_disband_100(
+               connection_t *pconn,
+               const struct packet_unit_disband *packet)
 {
   const struct packet_unit_disband *real_packet = packet;
   packet_unit_disband_100_fields fields;
@@ -16809,8 +16890,9 @@ receive_packet_unit_change_homecity_100(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_change_homecity_100(connection_t *pconn,
-                                                const struct packet_unit_change_homecity *packet)
+static int send_packet_unit_change_homecity_100(
+               connection_t *pconn,
+               const struct packet_unit_change_homecity *packet)
 {
   const struct packet_unit_change_homecity *real_packet = packet;
   packet_unit_change_homecity_100_fields fields;
@@ -17000,8 +17082,9 @@ receive_packet_unit_establish_trade_100(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_establish_trade_100(connection_t *pconn,
-                                                const struct packet_unit_establish_trade *packet)
+static int send_packet_unit_establish_trade_100(
+               connection_t *pconn,
+               const struct packet_unit_establish_trade *packet)
 {
   const struct packet_unit_establish_trade *real_packet = packet;
   packet_unit_establish_trade_100_fields fields;
@@ -17178,8 +17261,9 @@ receive_packet_unit_help_build_wonder_100(connection_t *pconn, enum packet_type 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_help_build_wonder_100(connection_t *pconn,
-                                                  const struct packet_unit_help_build_wonder *packet)
+static int send_packet_unit_help_build_wonder_100(
+               connection_t *pconn,
+               const struct packet_unit_help_build_wonder *packet)
 {
   const struct packet_unit_help_build_wonder *real_packet = packet;
   packet_unit_help_build_wonder_100_fields fields;
@@ -17366,7 +17450,9 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_goto_100(connection_t *pconn, const struct packet_unit_goto *packet)
+static int send_packet_unit_goto_100(
+               connection_t *pconn,
+               const struct packet_unit_goto *packet)
 {
   const struct packet_unit_goto *real_packet = packet;
   packet_unit_goto_100_fields fields;
@@ -17629,7 +17715,9 @@ receive_packet_unit_orders_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_orders_100(connection_t *pconn, const struct packet_unit_orders *packet)
+static int send_packet_unit_orders_100(
+               connection_t *pconn,
+               const struct packet_unit_orders *packet)
 {
   const struct packet_unit_orders *real_packet = packet;
   packet_unit_orders_100_fields fields;
@@ -17920,7 +18008,9 @@ static struct packet_unit_auto *receive_packet_unit_auto_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_auto_100(connection_t *pconn, const struct packet_unit_auto *packet)
+static int send_packet_unit_auto_100(
+               connection_t *pconn,
+               const struct packet_unit_auto *packet)
 {
   const struct packet_unit_auto *real_packet = packet;
   packet_unit_auto_100_fields fields;
@@ -18101,7 +18191,9 @@ static struct packet_unit_load *receive_packet_unit_load_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_load_100(connection_t *pconn, const struct packet_unit_load *packet)
+static int send_packet_unit_load_100(
+               connection_t *pconn,
+               const struct packet_unit_load *packet)
 {
   const struct packet_unit_load *real_packet = packet;
   packet_unit_load_100_fields fields;
@@ -18297,7 +18389,9 @@ receive_packet_unit_unload_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_unload_100(connection_t *pconn, const struct packet_unit_unload *packet)
+static int send_packet_unit_unload_100(
+               connection_t *pconn,
+               const struct packet_unit_unload *packet)
 {
   const struct packet_unit_unload *real_packet = packet;
   packet_unit_unload_100_fields fields;
@@ -18487,7 +18581,9 @@ receive_packet_unit_upgrade_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_upgrade_100(connection_t *pconn, const struct packet_unit_upgrade *packet)
+static int send_packet_unit_upgrade_100(
+               connection_t *pconn,
+               const struct packet_unit_upgrade *packet)
 {
   const struct packet_unit_upgrade *real_packet = packet;
   packet_unit_upgrade_100_fields fields;
@@ -18661,7 +18757,9 @@ static struct packet_unit_nuke *receive_packet_unit_nuke_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_nuke_100(connection_t *pconn, const struct packet_unit_nuke *packet)
+static int send_packet_unit_nuke_100(
+               connection_t *pconn,
+               const struct packet_unit_nuke *packet)
 {
   const struct packet_unit_nuke *real_packet = packet;
   packet_unit_nuke_100_fields fields;
@@ -18848,8 +18946,9 @@ receive_packet_unit_paradrop_to_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_paradrop_to_100(connection_t *pconn,
-                                            const struct packet_unit_paradrop_to *packet)
+static int send_packet_unit_paradrop_to_100(
+               connection_t *pconn,
+               const struct packet_unit_paradrop_to *packet)
 {
   const struct packet_unit_paradrop_to *real_packet = packet;
   packet_unit_paradrop_to_100_fields fields;
@@ -19054,7 +19153,9 @@ receive_packet_unit_airlift_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_airlift_100(connection_t *pconn, const struct packet_unit_airlift *packet)
+static int send_packet_unit_airlift_100(
+               connection_t *pconn,
+               const struct packet_unit_airlift *packet)
 {
   const struct packet_unit_airlift *real_packet = packet;
   packet_unit_airlift_100_fields fields;
@@ -19245,7 +19346,9 @@ receive_packet_unit_bribe_inq_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_bribe_inq_100(connection_t *pconn, const struct packet_unit_bribe_inq *packet)
+static int send_packet_unit_bribe_inq_100(
+               connection_t *pconn,
+               const struct packet_unit_bribe_inq *packet)
 {
   const struct packet_unit_bribe_inq *real_packet = packet;
   packet_unit_bribe_inq_100_fields fields;
@@ -19427,8 +19530,9 @@ receive_packet_unit_bribe_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_bribe_info_100(connection_t *pconn,
-                                           const struct packet_unit_bribe_info *packet)
+static int send_packet_unit_bribe_info_100(
+               connection_t *pconn,
+               const struct packet_unit_bribe_info *packet)
 {
   const struct packet_unit_bribe_info *real_packet = packet;
   packet_unit_bribe_info_100_fields fields;
@@ -19612,8 +19716,9 @@ receive_packet_unit_type_upgrade_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_type_upgrade_100(connection_t *pconn,
-                                             const struct packet_unit_type_upgrade *packet)
+static int send_packet_unit_type_upgrade_100(
+               connection_t *pconn,
+               const struct packet_unit_type_upgrade *packet)
 {
   const struct packet_unit_type_upgrade *real_packet = packet;
   packet_unit_type_upgrade_100_fields fields;
@@ -19808,8 +19913,9 @@ receive_packet_unit_diplomat_action_100(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_diplomat_action_100(connection_t *pconn,
-                                                const struct packet_unit_diplomat_action *packet)
+static int send_packet_unit_diplomat_action_100(
+               connection_t *pconn,
+               const struct packet_unit_diplomat_action *packet)
 {
   const struct packet_unit_diplomat_action *real_packet = packet;
   packet_unit_diplomat_action_100_fields fields;
@@ -20030,8 +20136,9 @@ receive_packet_unit_diplomat_popup_dialog_100(connection_t *pconn, enum packet_t
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_diplomat_popup_dialog_100(connection_t *pconn,
-                                                      const struct packet_unit_diplomat_popup_dialog *packet)
+static int send_packet_unit_diplomat_popup_dialog_100(
+               connection_t *pconn,
+               const struct packet_unit_diplomat_popup_dialog *packet)
 {
   const struct packet_unit_diplomat_popup_dialog *real_packet = packet;
   packet_unit_diplomat_popup_dialog_100_fields fields;
@@ -20248,8 +20355,9 @@ receive_packet_unit_change_activity_100(connection_t *pconn, enum packet_type ty
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_change_activity_100(connection_t *pconn,
-                                                const struct packet_unit_change_activity *packet)
+static int send_packet_unit_change_activity_100(
+               connection_t *pconn,
+               const struct packet_unit_change_activity *packet)
 {
   const struct packet_unit_change_activity *real_packet = packet;
   packet_unit_change_activity_100_fields fields;
@@ -20452,8 +20560,9 @@ receive_packet_diplomacy_init_meeting_req_100(connection_t *pconn, enum packet_t
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_init_meeting_req_100(connection_t *pconn,
-                                                      const struct packet_diplomacy_init_meeting_req *packet)
+static int send_packet_diplomacy_init_meeting_req_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_init_meeting_req *packet)
 {
   const struct packet_diplomacy_init_meeting_req *real_packet = packet;
   packet_diplomacy_init_meeting_req_100_fields fields;
@@ -20638,8 +20747,9 @@ receive_packet_diplomacy_init_meeting_100(connection_t *pconn, enum packet_type 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_init_meeting_100(connection_t *pconn,
-                                                  const struct packet_diplomacy_init_meeting *packet)
+static int send_packet_diplomacy_init_meeting_100(
+               connection_t *pconn,
+               const struct packet_diplomacy_init_meeting *packet)
 {
   const struct packet_diplomacy_init_meeting *real_packet = packet;
   packet_diplomacy_init_meeting_100_fields fields;
@@ -22806,7 +22916,9 @@ static struct packet_page_msg *receive_packet_page_msg_100(connection_t *pconn, 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_page_msg_100(connection_t *pconn, const struct packet_page_msg *packet)
+static int send_packet_page_msg_100(
+               connection_t *pconn,
+               const struct packet_page_msg *packet)
 {
   const struct packet_page_msg *real_packet = packet;
   packet_page_msg_100_fields fields;
@@ -22984,7 +23096,9 @@ receive_packet_report_req_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_report_req_100(connection_t *pconn, const struct packet_report_req *packet)
+static int send_packet_report_req_100(
+               connection_t *pconn,
+               const struct packet_report_req *packet)
 {
   const struct packet_report_req *real_packet = packet;
   packet_report_req_100_fields fields;
@@ -23203,7 +23317,9 @@ static struct packet_conn_info *receive_packet_conn_info_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_info_100(connection_t *pconn, const struct packet_conn_info *packet)
+static int send_packet_conn_info_100(
+               connection_t *pconn,
+               const struct packet_conn_info *packet)
 {
   const struct packet_conn_info *real_packet = packet;
   packet_conn_info_100_fields fields;
@@ -23456,8 +23572,8 @@ receive_packet_conn_ping_info_100(connection_t *pconn, enum packet_type type)
 }
 
 static int send_packet_conn_ping_info_100(
-        connection_t *pconn,
-        const struct packet_conn_ping_info *packet)
+               connection_t *pconn,
+               const struct packet_conn_ping_info *packet)
 {
   const struct packet_conn_ping_info *real_packet = packet;
   packet_conn_ping_info_100_fields fields;
@@ -23637,7 +23753,9 @@ receive_packet_conn_ping_info_101(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_ping_info_101(connection_t *pconn, const struct packet_conn_ping_info *packet)
+static int send_packet_conn_ping_info_101(
+               connection_t *pconn,
+               const struct packet_conn_ping_info *packet)
 {
   const struct packet_conn_ping_info *real_packet = packet;
   packet_conn_ping_info_101_fields fields;
@@ -24201,7 +24319,9 @@ static struct packet_new_year *receive_packet_new_year_100(connection_t *pconn, 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_new_year_100(connection_t *pconn, const struct packet_new_year *packet)
+static int send_packet_new_year_100(
+               connection_t *pconn,
+               const struct packet_new_year *packet)
 {
   const struct packet_new_year *real_packet = packet;
   packet_new_year_100_fields fields;
@@ -24631,8 +24751,9 @@ receive_packet_spaceship_place_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_spaceship_place_100(connection_t *pconn,
-                                           const struct packet_spaceship_place *packet)
+static int send_packet_spaceship_place_100(
+               connection_t *pconn,
+               const struct packet_spaceship_place *packet)
 {
   const struct packet_spaceship_place *real_packet = packet;
   packet_spaceship_place_100_fields fields;
@@ -24949,7 +25070,9 @@ receive_packet_spaceship_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_spaceship_info_100(connection_t *pconn, const struct packet_spaceship_info *packet)
+static int send_packet_spaceship_info_100(
+               connection_t *pconn,
+               const struct packet_spaceship_info *packet)
 {
   const struct packet_spaceship_info *real_packet = packet;
   packet_spaceship_info_100_fields fields;
@@ -25452,7 +25575,9 @@ receive_packet_ruleset_unit_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_unit_100(connection_t *pconn, const struct packet_ruleset_unit *packet)
+static int send_packet_ruleset_unit_100(
+               connection_t *pconn,
+               const struct packet_ruleset_unit *packet)
 {
   const struct packet_ruleset_unit *real_packet = packet;
   packet_ruleset_unit_100_fields fields;
@@ -26151,7 +26276,9 @@ receive_packet_ruleset_game_100(connection_t *pconn, enum packet_type type)
 }
 
 /* 97 sc */
-static int send_packet_ruleset_game_100(connection_t *pconn, const struct packet_ruleset_game *packet)
+static int send_packet_ruleset_game_100(
+               connection_t *pconn,
+               const struct packet_ruleset_game *packet)
 {
   const struct packet_ruleset_game *real_packet = packet;
   packet_ruleset_game_100_fields fields;
@@ -26946,7 +27073,9 @@ receive_packet_ruleset_tech_100(connection_t *pconn, enum packet_type type)
 }
 
 /* 99 sc */
-static int send_packet_ruleset_tech_100(connection_t *pconn, const struct packet_ruleset_tech *packet)
+static int send_packet_ruleset_tech_100(
+               connection_t *pconn,
+               const struct packet_ruleset_tech *packet)
 {
   const struct packet_ruleset_tech *real_packet = packet;
   packet_ruleset_tech_100_fields fields;
@@ -28541,7 +28670,9 @@ receive_packet_ruleset_nation_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_nation_100(connection_t *pconn, const struct packet_ruleset_nation *packet)
+static int send_packet_ruleset_nation_100(
+               connection_t *pconn,
+               const struct packet_ruleset_nation *packet)
 {
   const struct packet_ruleset_nation *real_packet = packet;
   packet_ruleset_nation_100_fields fields;
@@ -28883,7 +29014,9 @@ receive_packet_ruleset_city_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_city_100(connection_t *pconn, const struct packet_ruleset_city *packet)
+static int send_packet_ruleset_city_100(
+               connection_t *pconn,
+               const struct packet_ruleset_city *packet)
 {
   const struct packet_ruleset_city *real_packet = packet;
   packet_ruleset_city_100_fields fields;
@@ -31473,7 +31606,9 @@ static struct packet_game_load *receive_packet_game_load_100(connection_t *pconn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_game_load_100(connection_t *pconn, const struct packet_game_load *packet)
+static int send_packet_game_load_100(
+               connection_t *pconn,
+               const struct packet_game_load *packet)
 {
   const struct packet_game_load *real_packet = packet;
   packet_game_load_100_fields fields;
@@ -32950,8 +33085,9 @@ receive_packet_traderoute_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_traderoute_info_100(connection_t *pconn,
-                                           const struct packet_traderoute_info *packet)
+static int send_packet_traderoute_info_100(
+               connection_t *pconn,
+               const struct packet_traderoute_info *packet)
 {
   const struct packet_traderoute_info *real_packet = packet;
   packet_traderoute_info_100_fields fields;
@@ -33102,8 +33238,9 @@ receive_packet_traderoute_info_101(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_traderoute_info_101(connection_t *pconn,
-                                           const struct packet_traderoute_info *packet)
+static int send_packet_traderoute_info_101(
+               connection_t *pconn,
+               const struct packet_traderoute_info *packet)
 {
   const struct packet_traderoute_info *real_packet = packet;
   packet_traderoute_info_101_fields fields;
@@ -33331,7 +33468,9 @@ receive_packet_extgame_info_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_extgame_info_100(connection_t *pconn, const struct packet_extgame_info *packet)
+static int send_packet_extgame_info_100(
+               connection_t *pconn,
+               const struct packet_extgame_info *packet)
 {
   const struct packet_extgame_info *real_packet = packet;
   packet_extgame_info_100_fields fields;
@@ -33512,7 +33651,9 @@ receive_packet_extgame_info_101(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_extgame_info_101(connection_t *pconn, const struct packet_extgame_info *packet)
+static int send_packet_extgame_info_101(
+               connection_t *pconn,
+               const struct packet_extgame_info *packet)
 {
   const struct packet_extgame_info *real_packet = packet;
   packet_extgame_info_101_fields fields;
@@ -33763,7 +33904,9 @@ static struct packet_vote_new *receive_packet_vote_new_100(connection_t *pconn, 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_new_100(connection_t *pconn, const struct packet_vote_new *packet)
+static int send_packet_vote_new_100(
+               connection_t *pconn,
+               const struct packet_vote_new *packet)
 {
   const struct packet_vote_new *real_packet = packet;
   packet_vote_new_100_fields fields;
@@ -33990,7 +34133,9 @@ receive_packet_vote_update_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_update_100(connection_t *pconn, const struct packet_vote_update *packet)
+static int send_packet_vote_update_100(
+               connection_t *pconn,
+               const struct packet_vote_update *packet)
 {
   const struct packet_vote_update *real_packet = packet;
   packet_vote_update_100_fields fields;
@@ -34188,7 +34333,9 @@ receive_packet_vote_remove_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_remove_100(connection_t *pconn, const struct packet_vote_remove *packet)
+static int send_packet_vote_remove_100(
+               connection_t *pconn,
+               const struct packet_vote_remove *packet)
 {
   const struct packet_vote_remove *real_packet = packet;
   packet_vote_remove_100_fields fields;
@@ -34351,7 +34498,9 @@ receive_packet_vote_resolve_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_resolve_100(connection_t *pconn, const struct packet_vote_resolve *packet)
+static int send_packet_vote_resolve_100(
+               connection_t *pconn,
+               const struct packet_vote_resolve *packet)
 {
   const struct packet_vote_resolve *real_packet = packet;
   packet_vote_resolve_100_fields fields;
@@ -34524,7 +34673,9 @@ receive_packet_vote_submit_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_submit_100(connection_t *pconn, const struct packet_vote_submit *packet)
+static int send_packet_vote_submit_100(
+               connection_t *pconn,
+               const struct packet_vote_submit *packet)
 {
   const struct packet_vote_submit *real_packet = packet;
   packet_vote_submit_100_fields fields;
@@ -36580,8 +36731,9 @@ receive_packet_city_no_manager_param_100(connection_t *pconn, enum packet_type t
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_no_manager_param_100(connection_t *pconn,
-                                                 const struct packet_city_no_manager_param *packet)
+static int send_packet_city_no_manager_param_100(
+               connection_t *pconn,
+               const struct packet_city_no_manager_param *packet)
 {
   const struct packet_city_no_manager_param *real_packet = packet;
   packet_city_no_manager_param_100_fields fields;
@@ -36752,8 +36904,9 @@ receive_packet_player_info_req_100(connection_t *pconn, enum packet_type type)
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_req_100(connection_t *pconn,
-                                           const struct packet_player_info_req *packet)
+static int send_packet_player_info_req_100(
+               connection_t *pconn,
+               const struct packet_player_info_req *packet)
 {
   const struct packet_player_info_req *real_packet = packet;
   packet_player_info_req_100_fields fields;
