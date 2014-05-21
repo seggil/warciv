@@ -895,8 +895,9 @@ const char *get_packet_name(enum packet_type type)
 
 /* 0 sc */
 static struct packet_processing_started *
-receive_packet_processing_started_100(connection_t *pconn,
-                                      enum packet_type type)
+receive_packet_processing_started_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_processing_started, real_packet);
 
@@ -922,7 +923,9 @@ static void ensure_valid_variant_packet_processing_started(connection_t *pconn)
 }
 
 struct packet_processing_started *
-receive_packet_processing_started(connection_t *pconn, enum packet_type type)
+receive_packet_processing_started(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -974,7 +977,9 @@ int send_packet_processing_started(connection_t *pconn)
 
 /* 1 sc */
 static struct packet_processing_finished *
-receive_packet_processing_finished_100(connection_t *pconn, enum packet_type type)
+receive_packet_processing_finished_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_processing_finished, real_packet);
 
@@ -1001,7 +1006,9 @@ static void ensure_valid_variant_packet_processing_finished(connection_t *pconn)
 
 /* 1 sc */
 struct packet_processing_finished *
-receive_packet_processing_finished(connection_t *pconn, enum packet_type type)
+receive_packet_processing_finished(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1053,7 +1060,9 @@ int send_packet_processing_finished(connection_t *pconn)
 
 /* 2 sc */
 static struct packet_freeze_hint *
-receive_packet_freeze_hint_100(connection_t *pconn, enum packet_type type)
+receive_packet_freeze_hint_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_freeze_hint, real_packet);
 
@@ -1080,7 +1089,9 @@ static void ensure_valid_variant_packet_freeze_hint(connection_t *pconn)
 
 /* 2 sc */
 struct packet_freeze_hint *
-receive_packet_freeze_hint(connection_t *pconn, enum packet_type type)
+receive_packet_freeze_hint(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1139,7 +1150,9 @@ void lsend_packet_freeze_hint(struct connection_list *dest)
 
 /* 3 sc */
 static struct packet_thaw_hint *
-receive_packet_thaw_hint_100(connection_t *pconn, enum packet_type type)
+receive_packet_thaw_hint_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_thaw_hint, real_packet);
 
@@ -1166,7 +1179,9 @@ static void ensure_valid_variant_packet_thaw_hint(connection_t *pconn)
 
 /* 3 sc */
 struct packet_thaw_hint *
-receive_packet_thaw_hint(connection_t *pconn, enum packet_type type)
+receive_packet_thaw_hint(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1225,7 +1240,9 @@ void lsend_packet_thaw_hint(struct connection_list *dest)
 
 /* 4 cs */
 static struct packet_server_join_req *
-receive_packet_server_join_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_server_join_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   int readin;
 
@@ -1286,7 +1303,9 @@ static void ensure_valid_variant_packet_server_join_req(connection_t *pconn)
 
 /* 4 cs */
 struct packet_server_join_req *
-receive_packet_server_join_req(connection_t *pconn, enum packet_type type)
+receive_packet_server_join_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1361,7 +1380,9 @@ int dsend_packet_server_join_req(
 
 /* 5 sc */
 static struct packet_server_join_reply *
-receive_packet_server_join_reply_100(connection_t *pconn, enum packet_type type)
+receive_packet_server_join_reply_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   int readin;
 
@@ -1407,7 +1428,9 @@ static void ensure_valid_variant_packet_server_join_reply(connection_t *pconn)
 
 /* 5 sc */
 struct packet_server_join_reply *
-receive_packet_server_join_reply(connection_t *pconn, enum packet_type type)
+receive_packet_server_join_reply(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1467,7 +1490,9 @@ int send_packet_server_join_reply(
 BV_DEFINE(packet_authentication_req_100_fields, 2);
 
 static struct packet_authentication_req *
-receive_packet_authentication_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_authentication_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_authentication_req_100_fields fields;
   struct packet_authentication_req *old;
@@ -1585,7 +1610,9 @@ static void ensure_valid_variant_packet_authentication_req(connection_t *pconn)
 
 /* 6 sc */
 struct packet_authentication_req *
-receive_packet_authentication_req(connection_t *pconn, enum packet_type type)
+receive_packet_authentication_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1658,7 +1685,9 @@ int dsend_packet_authentication_req(
 BV_DEFINE(packet_authentication_reply_100_fields, 1);
 
 static struct packet_authentication_reply *
-receive_packet_authentication_reply_100(connection_t *pconn, enum packet_type type)
+receive_packet_authentication_reply_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_authentication_reply_100_fields fields;
   struct packet_authentication_reply *old;
@@ -1767,7 +1796,9 @@ static void ensure_valid_variant_packet_authentication_reply(connection_t *pconn
 
 /* 7 cs */
 struct packet_authentication_reply *
-receive_packet_authentication_reply(connection_t *pconn, enum packet_type type)
+receive_packet_authentication_reply(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1821,7 +1852,9 @@ int send_packet_authentication_reply(
 
 /* 8 sc */
 static struct packet_server_shutdown *
-receive_packet_server_shutdown_100(connection_t *pconn, enum packet_type type)
+receive_packet_server_shutdown_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_server_shutdown, real_packet);
 
@@ -1848,7 +1881,9 @@ static void ensure_valid_variant_packet_server_shutdown(connection_t *pconn)
 
 /* 8 sc */
 struct packet_server_shutdown *
-receive_packet_server_shutdown(connection_t *pconn, enum packet_type type)
+receive_packet_server_shutdown(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -1913,7 +1948,9 @@ void lsend_packet_server_shutdown(struct connection_list *dest)
 BV_DEFINE(packet_nation_unavailable_100_fields, 1);
 
 static struct packet_nation_unavailable *
-receive_packet_nation_unavailable_100(connection_t *pconn, enum packet_type type)
+receive_packet_nation_unavailable_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_nation_unavailable_100_fields fields;
   struct packet_nation_unavailable *old;
@@ -2019,7 +2056,9 @@ static void ensure_valid_variant_packet_nation_unavailable(connection_t *pconn)
 
 /* 9 sc */
 struct packet_nation_unavailable *
-receive_packet_nation_unavailable(connection_t *pconn, enum packet_type type)
+receive_packet_nation_unavailable(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2080,7 +2119,9 @@ void lsend_packet_nation_unavailable(struct connection_list *dest, const struct 
 
 /* 114 sc */
 static struct packet_select_races *
-receive_packet_select_races_100(connection_t *pconn, enum packet_type type)
+receive_packet_select_races_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_select_races, real_packet);
 
@@ -2106,7 +2147,9 @@ static void ensure_valid_variant_packet_select_races(connection_t *pconn)
 }
 
 struct packet_select_races *
-receive_packet_select_races(connection_t *pconn, enum packet_type type)
+receive_packet_select_races(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2171,7 +2214,9 @@ void lsend_packet_select_races(struct connection_list *dest)
 BV_DEFINE(packet_nation_select_req_100_fields, 4);
 
 static struct packet_nation_select_req *
-receive_packet_nation_select_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_nation_select_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_nation_select_req_100_fields fields;
   struct packet_nation_select_req *old;
@@ -2318,7 +2363,9 @@ static void ensure_valid_variant_packet_nation_select_req(connection_t *pconn)
 }
 
 struct packet_nation_select_req *
-receive_packet_nation_select_req(connection_t *pconn, enum packet_type type)
+receive_packet_nation_select_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2388,7 +2435,9 @@ int dsend_packet_nation_select_req(connection_t *pconn,
 
 /* 11 sc */
 static struct packet_nation_select_ok *
-receive_packet_nation_select_ok_100(connection_t *pconn, enum packet_type type)
+receive_packet_nation_select_ok_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_nation_select_ok, real_packet);
 
@@ -2414,7 +2463,9 @@ static void ensure_valid_variant_packet_nation_select_ok(connection_t *pconn)
 }
 
 struct packet_nation_select_ok *
-receive_packet_nation_select_ok(connection_t *pconn, enum packet_type type)
+receive_packet_nation_select_ok(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2478,7 +2529,10 @@ void lsend_packet_nation_select_ok(struct connection_list *dest)
 
 BV_DEFINE(packet_game_state_100_fields, 1);
 
-static struct packet_game_state *receive_packet_game_state_100(connection_t *pconn, enum packet_type type)
+static struct packet_game_state *
+receive_packet_game_state_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_game_state_100_fields fields;
   struct packet_game_state *old;
@@ -2584,7 +2638,10 @@ static void ensure_valid_variant_packet_game_state(connection_t *pconn)
   pconn->phs.variant[PACKET_GAME_STATE] = variant;
 }
 
-struct packet_game_state *receive_packet_game_state(connection_t *pconn, enum packet_type type)
+struct packet_game_state *
+receive_packet_game_state(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -2669,7 +2726,9 @@ void dlsend_packet_game_state(struct connection_list *dest, int value)
 BV_DEFINE(packet_endgame_report_100_fields, 15);
 
 static struct packet_endgame_report *
-receive_packet_endgame_report_100(connection_t *pconn, enum packet_type type)
+receive_packet_endgame_report_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_endgame_report_100_fields fields;
   struct packet_endgame_report *old;
@@ -3307,7 +3366,10 @@ static void ensure_valid_variant_packet_endgame_report(connection_t *pconn)
   pconn->phs.variant[PACKET_ENDGAME_REPORT] = variant;
 }
 
-struct packet_endgame_report *receive_packet_endgame_report(connection_t *pconn, enum packet_type type)
+struct packet_endgame_report *
+receive_packet_endgame_report(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -3395,7 +3457,10 @@ static int cmp_packet_tile_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_tile_info_100_fields, 6);
 
-static struct packet_tile_info *receive_packet_tile_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_tile_info *
+receive_packet_tile_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_tile_info_100_fields fields;
   struct packet_tile_info *old;
@@ -3587,7 +3652,10 @@ static void ensure_valid_variant_packet_tile_info(connection_t *pconn)
   pconn->phs.variant[PACKET_TILE_INFO] = variant;
 }
 
-struct packet_tile_info *receive_packet_tile_info(connection_t *pconn, enum packet_type type)
+struct packet_tile_info *
+receive_packet_tile_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -3653,7 +3721,10 @@ void lsend_packet_tile_info(struct connection_list *dest, const struct packet_ti
 
 BV_DEFINE(packet_game_info_100_fields, 30);
 
-static struct packet_game_info *receive_packet_game_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_game_info *
+receive_packet_game_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_game_info_100_fields fields;
   struct packet_game_info *old;
@@ -4252,7 +4323,10 @@ static void ensure_valid_variant_packet_game_info(connection_t *pconn)
   pconn->phs.variant[PACKET_GAME_INFO] = variant;
 }
 
-struct packet_game_info *receive_packet_game_info(connection_t *pconn, enum packet_type type)
+struct packet_game_info *
+receive_packet_game_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -4312,7 +4386,9 @@ int send_packet_game_info(
 BV_DEFINE(packet_map_info_100_fields, 3);
 
 static struct packet_map_info *
-receive_packet_map_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_map_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_map_info_100_fields fields;
   struct packet_map_info *old;
@@ -4446,7 +4522,10 @@ static void ensure_valid_variant_packet_map_info(connection_t *pconn)
   pconn->phs.variant[PACKET_MAP_INFO] = variant;
 }
 
-struct packet_map_info *receive_packet_map_info(connection_t *pconn, enum packet_type type)
+struct packet_map_info *
+receive_packet_map_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -4513,7 +4592,9 @@ void lsend_packet_map_info(struct connection_list *dest, const struct packet_map
 BV_DEFINE(packet_nuke_tile_info_100_fields, 2);
 
 static struct packet_nuke_tile_info *
-receive_packet_nuke_tile_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_nuke_tile_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_nuke_tile_info_100_fields fields;
   struct packet_nuke_tile_info *old;
@@ -4632,7 +4713,10 @@ static void ensure_valid_variant_packet_nuke_tile_info(connection_t *pconn)
   pconn->phs.variant[PACKET_NUKE_TILE_INFO] = variant;
 }
 
-struct packet_nuke_tile_info *receive_packet_nuke_tile_info(connection_t *pconn, enum packet_type type)
+struct packet_nuke_tile_info *
+receive_packet_nuke_tile_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -4721,7 +4805,10 @@ void dlsend_packet_nuke_tile_info(struct connection_list *dest, int x, int y)
 
 BV_DEFINE(packet_chat_msg_100_fields, 5);
 
-static struct packet_chat_msg *receive_packet_chat_msg_100(connection_t *pconn, enum packet_type type)
+static struct packet_chat_msg *
+receive_packet_chat_msg_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_chat_msg_100_fields fields;
   struct packet_chat_msg *old;
@@ -4899,7 +4986,10 @@ static void ensure_valid_variant_packet_chat_msg(connection_t *pconn)
   pconn->phs.variant[PACKET_CHAT_MSG] = variant;
 }
 
-struct packet_chat_msg *receive_packet_chat_msg(connection_t *pconn, enum packet_type type)
+struct packet_chat_msg *
+receive_packet_chat_msg(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -5000,7 +5090,9 @@ void dlsend_packet_chat_msg(struct connection_list *dest,
 BV_DEFINE(packet_chat_msg_req_100_fields, 1);
 
 static struct packet_chat_msg_req *
-receive_packet_chat_msg_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_chat_msg_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_chat_msg_req_100_fields fields;
   struct packet_chat_msg_req *old;
@@ -5106,7 +5198,10 @@ static void ensure_valid_variant_packet_chat_msg_req(connection_t *pconn)
   pconn->phs.variant[PACKET_CHAT_MSG_REQ] = variant;
 }
 
-struct packet_chat_msg_req *receive_packet_chat_msg_req(connection_t *pconn, enum packet_type type)
+struct packet_chat_msg_req *
+receive_packet_chat_msg_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -5175,7 +5270,9 @@ int dsend_packet_chat_msg_req(connection_t *pconn, const char *message)
 BV_DEFINE(packet_city_remove_100_fields, 1);
 
 static struct packet_city_remove *
-receive_packet_city_remove_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_remove_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_remove_100_fields fields;
   struct packet_city_remove *old;
@@ -5279,7 +5376,10 @@ static void ensure_valid_variant_packet_city_remove(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_REMOVE] = variant;
 }
 
-struct packet_city_remove *receive_packet_city_remove(connection_t *pconn, enum packet_type type)
+struct packet_city_remove *
+receive_packet_city_remove(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -5380,7 +5480,10 @@ static int cmp_packet_city_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_city_info_100_fields, 47);
 
-static struct packet_city_info *receive_packet_city_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_info *
+receive_packet_city_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_info_100_fields fields;
   struct packet_city_info *old;
@@ -6271,7 +6374,10 @@ static int cmp_packet_city_info_101(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_city_info_101_fields, 45);
 
-static struct packet_city_info *receive_packet_city_info_101(connection_t *pconn, enum packet_type type)
+static struct packet_city_info *
+receive_packet_city_info_101(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_info_101_fields fields;
   struct packet_city_info *old;
@@ -7121,7 +7227,10 @@ static void ensure_valid_variant_packet_city_info(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_INFO] = variant;
 }
 
-struct packet_city_info *receive_packet_city_info(connection_t *pconn, enum packet_type type)
+struct packet_city_info *
+receive_packet_city_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7211,7 +7320,9 @@ static int cmp_packet_city_short_info_100(const void *vkey1, const void *vkey2)
 BV_DEFINE(packet_city_short_info_100_fields, 11);
 
 static struct packet_city_short_info *
-receive_packet_city_short_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_short_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_short_info_100_fields fields;
   struct packet_city_short_info *old;
@@ -7427,7 +7538,10 @@ static void ensure_valid_variant_packet_city_short_info(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_SHORT_INFO] = variant;
 }
 
-struct packet_city_short_info *receive_packet_city_short_info(connection_t *pconn, enum packet_type type)
+struct packet_city_short_info *
+receive_packet_city_short_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7494,7 +7608,10 @@ void lsend_packet_city_short_info(struct connection_list *dest,
 
 BV_DEFINE(packet_city_sell_100_fields, 2);
 
-static struct packet_city_sell *receive_packet_city_sell_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_sell *
+receive_packet_city_sell_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_sell_100_fields fields;
   struct packet_city_sell *old;
@@ -7619,7 +7736,10 @@ static void ensure_valid_variant_packet_city_sell(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_SELL] = variant;
 }
 
-struct packet_city_sell *receive_packet_city_sell(connection_t *pconn, enum packet_type type)
+struct packet_city_sell *
+receive_packet_city_sell(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7691,7 +7811,10 @@ int dsend_packet_city_sell(
 
 BV_DEFINE(packet_city_buy_100_fields, 1);
 
-static struct packet_city_buy *receive_packet_city_buy_100(connection_t *pconn, enum packet_type type)
+static struct packet_city_buy *
+receive_packet_city_buy_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_buy_100_fields fields;
   struct packet_city_buy *old;
@@ -7800,7 +7923,10 @@ static void ensure_valid_variant_packet_city_buy(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_BUY] = variant;
 }
 
-struct packet_city_buy *receive_packet_city_buy(connection_t *pconn, enum packet_type type)
+struct packet_city_buy *
+receive_packet_city_buy(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -7869,7 +7995,9 @@ int dsend_packet_city_buy(connection_t *pconn, int city_id)
 BV_DEFINE(packet_city_change_100_fields, 3);
 
 static struct packet_city_change *
-receive_packet_city_change_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_change_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_change_100_fields fields;
   struct packet_city_change *old;
@@ -8000,7 +8128,10 @@ static void ensure_valid_variant_packet_city_change(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_CHANGE] = variant;
 }
 
-struct packet_city_change *receive_packet_city_change(connection_t *pconn, enum packet_type type)
+struct packet_city_change *
+receive_packet_city_change(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8074,7 +8205,9 @@ int dsend_packet_city_change(
 BV_DEFINE(packet_city_worklist_100_fields, 2);
 
 static struct packet_city_worklist *
-receive_packet_city_worklist_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_worklist_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_worklist_100_fields fields;
   struct packet_city_worklist *old;
@@ -8204,7 +8337,10 @@ static void ensure_valid_variant_packet_city_worklist(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_WORKLIST] = variant;
 }
 
-struct packet_city_worklist *receive_packet_city_worklist(connection_t *pconn, enum packet_type type)
+struct packet_city_worklist *
+receive_packet_city_worklist(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8277,7 +8413,9 @@ int dsend_packet_city_worklist(
 BV_DEFINE(packet_city_make_specialist_100_fields, 3);
 
 static struct packet_city_make_specialist *
-receive_packet_city_make_specialist_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_make_specialist_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_make_specialist_100_fields fields;
   struct packet_city_make_specialist *old;
@@ -8419,7 +8557,9 @@ static void ensure_valid_variant_packet_city_make_specialist(connection_t *pconn
 }
 
 struct packet_city_make_specialist *
-receive_packet_city_make_specialist(connection_t *pconn, enum packet_type type)
+receive_packet_city_make_specialist(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8494,7 +8634,9 @@ int dsend_packet_city_make_specialist(
 BV_DEFINE(packet_city_make_worker_100_fields, 3);
 
 static struct packet_city_make_worker *
-receive_packet_city_make_worker_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_make_worker_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_make_worker_100_fields fields;
   struct packet_city_make_worker *old;
@@ -8636,7 +8778,9 @@ static void ensure_valid_variant_packet_city_make_worker(connection_t *pconn)
 }
 
 struct packet_city_make_worker *
-receive_packet_city_make_worker(connection_t *pconn, enum packet_type type)
+receive_packet_city_make_worker(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8711,7 +8855,9 @@ int dsend_packet_city_make_worker(
 BV_DEFINE(packet_city_change_specialist_100_fields, 3);
 
 static struct packet_city_change_specialist *
-receive_packet_city_change_specialist_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_change_specialist_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_change_specialist_100_fields fields;
   struct packet_city_change_specialist *old;
@@ -8853,7 +8999,9 @@ static void ensure_valid_variant_packet_city_change_specialist(connection_t *pco
 }
 
 struct packet_city_change_specialist *
-receive_packet_city_change_specialist(connection_t *pconn, enum packet_type type)
+receive_packet_city_change_specialist(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -8927,7 +9075,9 @@ int dsend_packet_city_change_specialist(connection_t *pconn,
 BV_DEFINE(packet_city_rename_100_fields, 2);
 
 static struct packet_city_rename *
-receive_packet_city_rename_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_rename_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_rename_100_fields fields;
   struct packet_city_rename *old;
@@ -9049,7 +9199,10 @@ static void ensure_valid_variant_packet_city_rename(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_RENAME] = variant;
 }
 
-struct packet_city_rename *receive_packet_city_rename(connection_t *pconn, enum packet_type type)
+struct packet_city_rename *
+receive_packet_city_rename(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9122,7 +9275,9 @@ int dsend_packet_city_rename(
 BV_DEFINE(packet_city_options_req_100_fields, 2);
 
 static struct packet_city_options_req *
-receive_packet_city_options_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_options_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_options_req_100_fields fields;
   struct packet_city_options_req *old;
@@ -9247,7 +9402,10 @@ static void ensure_valid_variant_packet_city_options_req(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_OPTIONS_REQ] = variant;
 }
 
-struct packet_city_options_req *receive_packet_city_options_req(connection_t *pconn, enum packet_type type)
+struct packet_city_options_req *
+receive_packet_city_options_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9320,7 +9478,9 @@ int dsend_packet_city_options_req(
 BV_DEFINE(packet_city_refresh_100_fields, 1);
 
 static struct packet_city_refresh *
-receive_packet_city_refresh_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_refresh_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_refresh_100_fields fields;
   struct packet_city_refresh *old;
@@ -9429,7 +9589,10 @@ static void ensure_valid_variant_packet_city_refresh(connection_t *pconn)
   pconn->phs.variant[PACKET_CITY_REFRESH] = variant;
 }
 
-struct packet_city_refresh *receive_packet_city_refresh(connection_t *pconn, enum packet_type type)
+struct packet_city_refresh *
+receive_packet_city_refresh(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9498,7 +9661,9 @@ int dsend_packet_city_refresh(connection_t *pconn, int city_id)
 BV_DEFINE(packet_city_incite_inq_100_fields, 1);
 
 static struct packet_city_incite_inq *
-receive_packet_city_incite_inq_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_incite_inq_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_incite_inq_100_fields fields;
   struct packet_city_incite_inq *old;
@@ -9608,7 +9773,9 @@ static void ensure_valid_variant_packet_city_incite_inq(connection_t *pconn)
 }
 
 struct packet_city_incite_inq *
-receive_packet_city_incite_inq(connection_t *pconn, enum packet_type type)
+receive_packet_city_incite_inq(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9677,7 +9844,9 @@ int dsend_packet_city_incite_inq(connection_t *pconn, int city_id)
 BV_DEFINE(packet_city_incite_info_100_fields, 2);
 
 static struct packet_city_incite_info *
-receive_packet_city_incite_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_incite_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_incite_info_100_fields fields;
   struct packet_city_incite_info *old;
@@ -9797,7 +9966,9 @@ static void ensure_valid_variant_packet_city_incite_info(connection_t *pconn)
 }
 
 struct packet_city_incite_info *
-receive_packet_city_incite_info(connection_t *pconn, enum packet_type type)
+receive_packet_city_incite_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -9870,7 +10041,9 @@ int dsend_packet_city_incite_info(
 BV_DEFINE(packet_city_name_suggestion_req_100_fields, 1);
 
 static struct packet_city_name_suggestion_req *
-receive_packet_city_name_suggestion_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_name_suggestion_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_name_suggestion_req_100_fields fields;
   struct packet_city_name_suggestion_req *old;
@@ -9980,7 +10153,9 @@ static void ensure_valid_variant_packet_city_name_suggestion_req(connection_t *p
 }
 
 struct packet_city_name_suggestion_req *
-receive_packet_city_name_suggestion_req(connection_t *pconn, enum packet_type type)
+receive_packet_city_name_suggestion_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10049,7 +10224,9 @@ int dsend_packet_city_name_suggestion_req(connection_t *pconn, int unit_id)
 BV_DEFINE(packet_city_name_suggestion_info_100_fields, 2);
 
 static struct packet_city_name_suggestion_info *
-receive_packet_city_name_suggestion_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_name_suggestion_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_name_suggestion_info_100_fields fields;
   struct packet_city_name_suggestion_info *old;
@@ -10166,7 +10343,9 @@ static void ensure_valid_variant_packet_city_name_suggestion_info(connection_t *
 }
 
 struct packet_city_name_suggestion_info *
-receive_packet_city_name_suggestion_info(connection_t *pconn, enum packet_type type)
+receive_packet_city_name_suggestion_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10257,7 +10436,9 @@ void dlsend_packet_city_name_suggestion_info(struct connection_list *dest, int u
 BV_DEFINE(packet_city_sabotage_list_100_fields, 3);
 
 static struct packet_city_sabotage_list *
-receive_packet_city_sabotage_list_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_sabotage_list_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_sabotage_list_100_fields fields;
   struct packet_city_sabotage_list *old;
@@ -10389,7 +10570,9 @@ static void ensure_valid_variant_packet_city_sabotage_list(connection_t *pconn)
 }
 
 struct packet_city_sabotage_list *
-receive_packet_city_sabotage_list(connection_t *pconn, enum packet_type type)
+receive_packet_city_sabotage_list(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10457,7 +10640,9 @@ void lsend_packet_city_sabotage_list(struct connection_list *dest,
 BV_DEFINE(packet_player_remove_100_fields, 1);
 
 static struct packet_player_remove *
-receive_packet_player_remove_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_remove_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_remove_100_fields fields;
   struct packet_player_remove *old;
@@ -10561,7 +10746,10 @@ static void ensure_valid_variant_packet_player_remove(connection_t *pconn)
   pconn->phs.variant[PACKET_PLAYER_REMOVE] = variant;
 }
 
-struct packet_player_remove *receive_packet_player_remove(connection_t *pconn, enum packet_type type)
+struct packet_player_remove *
+receive_packet_player_remove(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -10663,7 +10851,9 @@ static int cmp_packet_player_info_100(const void *vkey1, const void *vkey2)
 BV_DEFINE(packet_player_info_100_fields, 32);
 
 static struct packet_player_info *
-receive_packet_player_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_info_100_fields fields;
   struct packet_player_info *old;
@@ -11236,7 +11426,9 @@ static int cmp_packet_player_info_101(const void *vkey1, const void *vkey2)
 BV_DEFINE(packet_player_info_101_fields, 31);
 
 static struct packet_player_info *
-receive_packet_player_info_101(connection_t *pconn, enum packet_type type)
+receive_packet_player_info_101(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_info_101_fields fields;
   struct packet_player_info *old;
@@ -11793,7 +11985,9 @@ static int cmp_packet_player_info_102(const void *vkey1, const void *vkey2)
 BV_DEFINE(packet_player_info_102_fields, 31);
 
 static struct packet_player_info *
-receive_packet_player_info_102(connection_t *pconn, enum packet_type type)
+receive_packet_player_info_102(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_info_102_fields fields;
   struct packet_player_info *old;
@@ -12349,7 +12543,9 @@ static int cmp_packet_player_info_103(const void *vkey1, const void *vkey2)
 BV_DEFINE(packet_player_info_103_fields, 30);
 
 static struct packet_player_info *
-receive_packet_player_info_103(connection_t *pconn, enum packet_type type)
+receive_packet_player_info_103(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_info_103_fields fields;
   struct packet_player_info *old;
@@ -12914,7 +13110,10 @@ static void ensure_valid_variant_packet_player_info(connection_t *pconn)
   pconn->phs.variant[PACKET_PLAYER_INFO] = variant;
 }
 
-struct packet_player_info *receive_packet_player_info(connection_t *pconn, enum packet_type type)
+struct packet_player_info *
+receive_packet_player_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -12986,7 +13185,9 @@ int send_packet_player_info(
 
 /* 40 cs */
 static struct packet_player_turn_done *
-receive_packet_player_turn_done_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_turn_done_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_player_turn_done, real_packet);
 
@@ -13013,7 +13214,9 @@ static void ensure_valid_variant_packet_player_turn_done(connection_t *pconn)
 }
 
 struct packet_player_turn_done *
-receive_packet_player_turn_done(connection_t *pconn, enum packet_type type)
+receive_packet_player_turn_done(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13071,7 +13274,9 @@ int send_packet_player_turn_done(connection_t *pconn)
 BV_DEFINE(packet_player_rates_100_fields, 3);
 
 static struct packet_player_rates *
-receive_packet_player_rates_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_rates_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_rates_100_fields fields;
   struct packet_player_rates *old;
@@ -13212,7 +13417,10 @@ static void ensure_valid_variant_packet_player_rates(connection_t *pconn)
   pconn->phs.variant[PACKET_PLAYER_RATES] = variant;
 }
 
-struct packet_player_rates *receive_packet_player_rates(connection_t *pconn, enum packet_type type)
+struct packet_player_rates *
+receive_packet_player_rates(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13288,7 +13496,9 @@ int dsend_packet_player_rates(
 BV_DEFINE(packet_player_change_government_100_fields, 1);
 
 static struct packet_player_change_government *
-receive_packet_player_change_government_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_change_government_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_change_government_100_fields fields;
   struct packet_player_change_government *old;
@@ -13398,7 +13608,9 @@ static void ensure_valid_variant_packet_player_change_government(connection_t *p
 }
 
 struct packet_player_change_government *
-receive_packet_player_change_government(connection_t *pconn, enum packet_type type)
+receive_packet_player_change_government(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13469,7 +13681,9 @@ int dsend_packet_player_change_government(
 BV_DEFINE(packet_player_research_100_fields, 1);
 
 static struct packet_player_research *
-receive_packet_player_research_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_research_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_research_100_fields fields;
   struct packet_player_research *old;
@@ -13578,7 +13792,10 @@ static void ensure_valid_variant_packet_player_research(connection_t *pconn)
   pconn->phs.variant[PACKET_PLAYER_RESEARCH] = variant;
 }
 
-struct packet_player_research *receive_packet_player_research(connection_t *pconn, enum packet_type type)
+struct packet_player_research *
+receive_packet_player_research(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13647,7 +13864,9 @@ int dsend_packet_player_research(connection_t *pconn, int tech)
 BV_DEFINE(packet_player_tech_goal_100_fields, 1);
 
 static struct packet_player_tech_goal *
-receive_packet_player_tech_goal_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_tech_goal_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_tech_goal_100_fields fields;
   struct packet_player_tech_goal *old;
@@ -13756,7 +13975,10 @@ static void ensure_valid_variant_packet_player_tech_goal(connection_t *pconn)
   pconn->phs.variant[PACKET_PLAYER_TECH_GOAL] = variant;
 }
 
-struct packet_player_tech_goal *receive_packet_player_tech_goal(connection_t *pconn, enum packet_type type)
+struct packet_player_tech_goal *
+receive_packet_player_tech_goal(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13819,7 +14041,9 @@ int dsend_packet_player_tech_goal(connection_t *pconn, int tech)
 
 /* 46 cs */
 static struct packet_player_attribute_block *
-receive_packet_player_attribute_block_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_attribute_block_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_player_attribute_block, real_packet);
 
@@ -13846,7 +14070,9 @@ static void ensure_valid_variant_packet_player_attribute_block(connection_t *pco
 }
 
 struct packet_player_attribute_block *
-receive_packet_player_attribute_block(connection_t *pconn, enum packet_type type)
+receive_packet_player_attribute_block(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -13904,7 +14130,9 @@ int send_packet_player_attribute_block(connection_t *pconn)
 BV_DEFINE(packet_player_attribute_chunk_100_fields, 4);
 
 static struct packet_player_attribute_chunk *
-receive_packet_player_attribute_chunk_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_attribute_chunk_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_attribute_chunk_100_fields fields;
   struct packet_player_attribute_chunk *old;
@@ -14083,7 +14311,9 @@ static void ensure_valid_variant_packet_player_attribute_chunk(connection_t *pco
 }
 
 struct packet_player_attribute_chunk *
-receive_packet_player_attribute_chunk(connection_t *pconn, enum packet_type type)
+receive_packet_player_attribute_chunk(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -14137,7 +14367,9 @@ int send_packet_player_attribute_chunk(
 BV_DEFINE(packet_unit_remove_100_fields, 1);
 
 static struct packet_unit_remove *
-receive_packet_unit_remove_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_remove_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_remove_100_fields fields;
   struct packet_unit_remove *old;
@@ -14241,7 +14473,10 @@ static void ensure_valid_variant_packet_unit_remove(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_REMOVE] = variant;
 }
 
-struct packet_unit_remove *receive_packet_unit_remove(connection_t *pconn, enum packet_type type)
+struct packet_unit_remove *
+receive_packet_unit_remove(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -14342,7 +14577,10 @@ static int cmp_packet_unit_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_unit_info_100_fields, 35);
 
-static struct packet_unit_info *receive_packet_unit_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_info *
+receive_packet_unit_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_info_100_fields fields;
   struct packet_unit_info *old;
@@ -14983,7 +15221,10 @@ static int cmp_packet_unit_info_101(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_unit_info_101_fields, 33);
 
-static struct packet_unit_info *receive_packet_unit_info_101(connection_t *pconn, enum packet_type type)
+static struct packet_unit_info *
+receive_packet_unit_info_101(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_info_101_fields fields;
   struct packet_unit_info *old;
@@ -15593,7 +15834,10 @@ static void ensure_valid_variant_packet_unit_info(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_INFO] = variant;
 }
 
-struct packet_unit_info *receive_packet_unit_info(connection_t *pconn, enum packet_type type)
+struct packet_unit_info *
+receive_packet_unit_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -15685,7 +15929,9 @@ static int cmp_packet_unit_short_info_100(const void *vkey1, const void *vkey2)
 BV_DEFINE(packet_unit_short_info_100_fields, 14);
 
 static struct packet_unit_short_info *
-receive_packet_unit_short_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_short_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_short_info_100_fields fields;
   struct packet_unit_short_info *old;
@@ -15967,7 +16213,10 @@ static void ensure_valid_variant_packet_unit_short_info(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_SHORT_INFO] = variant;
 }
 
-struct packet_unit_short_info *receive_packet_unit_short_info(connection_t *pconn, enum packet_type type)
+struct packet_unit_short_info *
+receive_packet_unit_short_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16035,7 +16284,9 @@ void lsend_packet_unit_short_info(struct connection_list *dest,
 BV_DEFINE(packet_unit_combat_info_100_fields, 5);
 
 static struct packet_unit_combat_info *
-receive_packet_unit_combat_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_combat_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_combat_info_100_fields fields;
   struct packet_unit_combat_info *old;
@@ -16190,7 +16441,10 @@ static void ensure_valid_variant_packet_unit_combat_info(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_COMBAT_INFO] = variant;
 }
 
-struct packet_unit_combat_info *receive_packet_unit_combat_info(connection_t *pconn, enum packet_type type)
+struct packet_unit_combat_info *
+receive_packet_unit_combat_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16257,7 +16511,10 @@ void lsend_packet_unit_combat_info(struct connection_list *dest,
 
 BV_DEFINE(packet_unit_move_100_fields, 3);
 
-static struct packet_unit_move *receive_packet_unit_move_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_move *
+receive_packet_unit_move_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_move_100_fields fields;
   struct packet_unit_move *old;
@@ -16397,7 +16654,10 @@ static void ensure_valid_variant_packet_unit_move(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_MOVE] = variant;
 }
 
-struct packet_unit_move *receive_packet_unit_move(connection_t *pconn, enum packet_type type)
+struct packet_unit_move *
+receive_packet_unit_move(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16472,7 +16732,9 @@ int dsend_packet_unit_move(
 BV_DEFINE(packet_unit_build_city_100_fields, 2);
 
 static struct packet_unit_build_city *
-receive_packet_unit_build_city_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_build_city_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_build_city_100_fields fields;
   struct packet_unit_build_city *old;
@@ -16594,7 +16856,10 @@ static void ensure_valid_variant_packet_unit_build_city(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_BUILD_CITY] = variant;
 }
 
-struct packet_unit_build_city *receive_packet_unit_build_city(connection_t *pconn, enum packet_type type)
+struct packet_unit_build_city *
+receive_packet_unit_build_city(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16667,7 +16932,9 @@ int dsend_packet_unit_build_city(
 BV_DEFINE(packet_unit_disband_100_fields, 1);
 
 static struct packet_unit_disband *
-receive_packet_unit_disband_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_disband_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_disband_100_fields fields;
   struct packet_unit_disband *old;
@@ -16776,7 +17043,10 @@ static void ensure_valid_variant_packet_unit_disband(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_DISBAND] = variant;
 }
 
-struct packet_unit_disband *receive_packet_unit_disband(connection_t *pconn, enum packet_type type)
+struct packet_unit_disband *
+receive_packet_unit_disband(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -16845,7 +17115,9 @@ int dsend_packet_unit_disband(connection_t *pconn, int unit_id)
 BV_DEFINE(packet_unit_change_homecity_100_fields, 2);
 
 static struct packet_unit_change_homecity *
-receive_packet_unit_change_homecity_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_change_homecity_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_change_homecity_100_fields fields;
   struct packet_unit_change_homecity *old;
@@ -16970,7 +17242,9 @@ static void ensure_valid_variant_packet_unit_change_homecity(connection_t *pconn
 }
 
 struct packet_unit_change_homecity *
-receive_packet_unit_change_homecity(connection_t *pconn, enum packet_type type)
+receive_packet_unit_change_homecity(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17043,7 +17317,9 @@ int dsend_packet_unit_change_homecity(
 BV_DEFINE(packet_unit_establish_trade_100_fields, 1);
 
 static struct packet_unit_establish_trade *
-receive_packet_unit_establish_trade_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_establish_trade_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_establish_trade_100_fields fields;
   struct packet_unit_establish_trade *old;
@@ -17153,7 +17429,9 @@ static void ensure_valid_variant_packet_unit_establish_trade(connection_t *pconn
 }
 
 struct packet_unit_establish_trade *
-receive_packet_unit_establish_trade(connection_t *pconn, enum packet_type type)
+receive_packet_unit_establish_trade(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17222,7 +17500,9 @@ int dsend_packet_unit_establish_trade(connection_t *pconn, int unit_id)
 BV_DEFINE(packet_unit_help_build_wonder_100_fields, 1);
 
 static struct packet_unit_help_build_wonder *
-receive_packet_unit_help_build_wonder_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_help_build_wonder_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_help_build_wonder_100_fields fields;
   struct packet_unit_help_build_wonder *old;
@@ -17331,7 +17611,9 @@ static void ensure_valid_variant_packet_unit_help_build_wonder(connection_t *pco
 }
 
 struct packet_unit_help_build_wonder *
-receive_packet_unit_help_build_wonder(connection_t *pconn, enum packet_type type)
+receive_packet_unit_help_build_wonder(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17399,7 +17681,10 @@ int dsend_packet_unit_help_build_wonder(connection_t *pconn, int unit_id)
 
 BV_DEFINE(packet_unit_goto_100_fields, 3);
 
-static struct packet_unit_goto *receive_packet_unit_goto_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_goto *
+receive_packet_unit_goto_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_goto_100_fields fields;
   struct packet_unit_goto *old;
@@ -17540,7 +17825,10 @@ static void ensure_valid_variant_packet_unit_goto(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_GOTO] = variant;
 }
 
-struct packet_unit_goto *receive_packet_unit_goto(connection_t *pconn, enum packet_type type)
+struct packet_unit_goto *
+receive_packet_unit_goto(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17614,7 +17902,9 @@ int dsend_packet_unit_goto(
 BV_DEFINE(packet_unit_orders_100_fields, 9);
 
 static struct packet_unit_orders *
-receive_packet_unit_orders_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_orders_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_orders_100_fields fields;
   struct packet_unit_orders *old;
@@ -17910,7 +18200,10 @@ static void ensure_valid_variant_packet_unit_orders(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_ORDERS] = variant;
 }
 
-struct packet_unit_orders *receive_packet_unit_orders(connection_t *pconn, enum packet_type type)
+struct packet_unit_orders *
+receive_packet_unit_orders(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -17969,7 +18262,10 @@ int send_packet_unit_orders(
 
 BV_DEFINE(packet_unit_auto_100_fields, 1);
 
-static struct packet_unit_auto *receive_packet_unit_auto_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_auto *
+receive_packet_unit_auto_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_auto_100_fields fields;
   struct packet_unit_auto *old;
@@ -18078,7 +18374,10 @@ static void ensure_valid_variant_packet_unit_auto(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_AUTO] = variant;
 }
 
-struct packet_unit_auto *receive_packet_unit_auto(connection_t *pconn, enum packet_type type)
+struct packet_unit_auto *
+receive_packet_unit_auto(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18146,7 +18445,10 @@ int dsend_packet_unit_auto(connection_t *pconn, int unit_id)
 
 BV_DEFINE(packet_unit_load_100_fields, 2);
 
-static struct packet_unit_load *receive_packet_unit_load_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_load *
+receive_packet_unit_load_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_load_100_fields fields;
   struct packet_unit_load *old;
@@ -18271,7 +18573,10 @@ static void ensure_valid_variant_packet_unit_load(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_LOAD] = variant;
 }
 
-struct packet_unit_load *receive_packet_unit_load(connection_t *pconn, enum packet_type type)
+struct packet_unit_load *
+receive_packet_unit_load(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18344,7 +18649,9 @@ int dsend_packet_unit_load(
 BV_DEFINE(packet_unit_unload_100_fields, 2);
 
 static struct packet_unit_unload *
-receive_packet_unit_unload_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_unload_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_unload_100_fields fields;
   struct packet_unit_unload *old;
@@ -18469,7 +18776,10 @@ static void ensure_valid_variant_packet_unit_unload(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_UNLOAD] = variant;
 }
 
-struct packet_unit_unload *receive_packet_unit_unload(connection_t *pconn, enum packet_type type)
+struct packet_unit_unload *
+receive_packet_unit_unload(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18542,7 +18852,9 @@ int dsend_packet_unit_unload(
 BV_DEFINE(packet_unit_upgrade_100_fields, 1);
 
 static struct packet_unit_upgrade *
-receive_packet_unit_upgrade_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_upgrade_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_upgrade_100_fields fields;
   struct packet_unit_upgrade *old;
@@ -18650,7 +18962,10 @@ static void ensure_valid_variant_packet_unit_upgrade(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_UPGRADE] = variant;
 }
 
-struct packet_unit_upgrade *receive_packet_unit_upgrade(connection_t *pconn, enum packet_type type)
+struct packet_unit_upgrade *
+receive_packet_unit_upgrade(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18718,7 +19033,10 @@ int dsend_packet_unit_upgrade(connection_t *pconn, int unit_id)
 
 BV_DEFINE(packet_unit_nuke_100_fields, 1);
 
-static struct packet_unit_nuke *receive_packet_unit_nuke_100(connection_t *pconn, enum packet_type type)
+static struct packet_unit_nuke *
+receive_packet_unit_nuke_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_nuke_100_fields fields;
   struct packet_unit_nuke *old;
@@ -18826,7 +19144,10 @@ static void ensure_valid_variant_packet_unit_nuke(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_NUKE] = variant;
 }
 
-struct packet_unit_nuke *receive_packet_unit_nuke(connection_t *pconn, enum packet_type type)
+struct packet_unit_nuke *
+receive_packet_unit_nuke(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -18895,7 +19216,9 @@ int dsend_packet_unit_nuke(connection_t *pconn, int unit_id)
 BV_DEFINE(packet_unit_paradrop_to_100_fields, 3);
 
 static struct packet_unit_paradrop_to *
-receive_packet_unit_paradrop_to_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_paradrop_to_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_paradrop_to_100_fields fields;
   struct packet_unit_paradrop_to *old;
@@ -19034,7 +19357,10 @@ static void ensure_valid_variant_packet_unit_paradrop_to(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_PARADROP_TO] = variant;
 }
 
-struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to(connection_t *pconn, enum packet_type type)
+struct packet_unit_paradrop_to *
+receive_packet_unit_paradrop_to(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19108,7 +19434,9 @@ int dsend_packet_unit_paradrop_to(
 BV_DEFINE(packet_unit_airlift_100_fields, 2);
 
 static struct packet_unit_airlift *
-receive_packet_unit_airlift_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_airlift_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_airlift_100_fields fields;
   struct packet_unit_airlift *old;
@@ -19233,7 +19561,10 @@ static void ensure_valid_variant_packet_unit_airlift(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_AIRLIFT] = variant;
 }
 
-struct packet_unit_airlift *receive_packet_unit_airlift(connection_t *pconn, enum packet_type type)
+struct packet_unit_airlift *
+receive_packet_unit_airlift(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19307,7 +19638,9 @@ int dsend_packet_unit_airlift(
 BV_DEFINE(packet_unit_bribe_inq_100_fields, 1);
 
 static struct packet_unit_bribe_inq *
-receive_packet_unit_bribe_inq_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_bribe_inq_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_bribe_inq_100_fields fields;
   struct packet_unit_bribe_inq *old;
@@ -19416,7 +19749,10 @@ static void ensure_valid_variant_packet_unit_bribe_inq(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_BRIBE_INQ] = variant;
 }
 
-struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq(connection_t *pconn, enum packet_type type)
+struct packet_unit_bribe_inq *
+receive_packet_unit_bribe_inq(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19485,7 +19821,9 @@ int dsend_packet_unit_bribe_inq(connection_t *pconn, int unit_id)
 BV_DEFINE(packet_unit_bribe_info_100_fields, 2);
 
 static struct packet_unit_bribe_info *
-receive_packet_unit_bribe_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_bribe_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_bribe_info_100_fields fields;
   struct packet_unit_bribe_info *old;
@@ -19604,7 +19942,10 @@ static void ensure_valid_variant_packet_unit_bribe_info(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_BRIBE_INFO] = variant;
 }
 
-struct packet_unit_bribe_info *receive_packet_unit_bribe_info(connection_t *pconn, enum packet_type type)
+struct packet_unit_bribe_info *
+receive_packet_unit_bribe_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19677,7 +20018,9 @@ int dsend_packet_unit_bribe_info(
 BV_DEFINE(packet_unit_type_upgrade_100_fields, 1);
 
 static struct packet_unit_type_upgrade *
-receive_packet_unit_type_upgrade_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_type_upgrade_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_type_upgrade_100_fields fields;
   struct packet_unit_type_upgrade *old;
@@ -19787,7 +20130,9 @@ static void ensure_valid_variant_packet_unit_type_upgrade(connection_t *pconn)
 }
 
 struct packet_unit_type_upgrade *
-receive_packet_unit_type_upgrade(connection_t *pconn, enum packet_type type)
+receive_packet_unit_type_upgrade(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -19856,7 +20201,9 @@ int dsend_packet_unit_type_upgrade(connection_t *pconn, Unit_Type_id type)
 BV_DEFINE(packet_unit_diplomat_action_100_fields, 4);
 
 static struct packet_unit_diplomat_action *
-receive_packet_unit_diplomat_action_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_diplomat_action_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_diplomat_action_100_fields fields;
   struct packet_unit_diplomat_action *old;
@@ -20014,7 +20361,9 @@ static void ensure_valid_variant_packet_unit_diplomat_action(connection_t *pconn
 }
 
 struct packet_unit_diplomat_action *
-receive_packet_unit_diplomat_action(connection_t *pconn, enum packet_type type)
+receive_packet_unit_diplomat_action(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20091,7 +20440,9 @@ int dsend_packet_unit_diplomat_action(
 BV_DEFINE(packet_unit_diplomat_popup_dialog_100_fields, 2);
 
 static struct packet_unit_diplomat_popup_dialog *
-receive_packet_unit_diplomat_popup_dialog_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_diplomat_popup_dialog_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_diplomat_popup_dialog_100_fields fields;
   struct packet_unit_diplomat_popup_dialog *old;
@@ -20211,7 +20562,9 @@ static void ensure_valid_variant_packet_unit_diplomat_popup_dialog(connection_t 
 }
 
 struct packet_unit_diplomat_popup_dialog *
-receive_packet_unit_diplomat_popup_dialog(connection_t *pconn, enum packet_type type)
+receive_packet_unit_diplomat_popup_dialog(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20304,7 +20657,9 @@ void dlsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest,
 BV_DEFINE(packet_unit_change_activity_100_fields, 3);
 
 static struct packet_unit_change_activity *
-receive_packet_unit_change_activity_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_change_activity_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_change_activity_100_fields fields;
   struct packet_unit_change_activity *old;
@@ -20446,7 +20801,9 @@ static void ensure_valid_variant_packet_unit_change_activity(connection_t *pconn
 }
 
 struct packet_unit_change_activity *
-receive_packet_unit_change_activity(connection_t *pconn, enum packet_type type)
+receive_packet_unit_change_activity(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20521,7 +20878,9 @@ int dsend_packet_unit_change_activity(
 BV_DEFINE(packet_diplomacy_init_meeting_req_100_fields, 1);
 
 static struct packet_diplomacy_init_meeting_req *
-receive_packet_diplomacy_init_meeting_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_init_meeting_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_init_meeting_req_100_fields fields;
   struct packet_diplomacy_init_meeting_req *old;
@@ -20631,7 +20990,9 @@ static void ensure_valid_variant_packet_diplomacy_init_meeting_req(connection_t 
 }
 
 struct packet_diplomacy_init_meeting_req *
-receive_packet_diplomacy_init_meeting_req(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_init_meeting_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20702,7 +21063,9 @@ int dsend_packet_diplomacy_init_meeting_req(
 BV_DEFINE(packet_diplomacy_init_meeting_100_fields, 2);
 
 static struct packet_diplomacy_init_meeting *
-receive_packet_diplomacy_init_meeting_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_init_meeting_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_init_meeting_100_fields fields;
   struct packet_diplomacy_init_meeting *old;
@@ -20822,7 +21185,9 @@ static void ensure_valid_variant_packet_diplomacy_init_meeting(connection_t *pco
 }
 
 struct packet_diplomacy_init_meeting *
-receive_packet_diplomacy_init_meeting(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_init_meeting(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -20915,7 +21280,9 @@ void dlsend_packet_diplomacy_init_meeting(struct connection_list *dest,
 BV_DEFINE(packet_diplomacy_cancel_meeting_req_100_fields, 1);
 
 static struct packet_diplomacy_cancel_meeting_req *
-receive_packet_diplomacy_cancel_meeting_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_cancel_meeting_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_cancel_meeting_req_100_fields fields;
   struct packet_diplomacy_cancel_meeting_req *old;
@@ -21025,7 +21392,9 @@ static void ensure_valid_variant_packet_diplomacy_cancel_meeting_req(connection_
 }
 
 struct packet_diplomacy_cancel_meeting_req *
-receive_packet_diplomacy_cancel_meeting_req(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_cancel_meeting_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21096,7 +21465,9 @@ int dsend_packet_diplomacy_cancel_meeting_req(
 BV_DEFINE(packet_diplomacy_cancel_meeting_100_fields, 2);
 
 static struct packet_diplomacy_cancel_meeting *
-receive_packet_diplomacy_cancel_meeting_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_cancel_meeting_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_cancel_meeting_100_fields fields;
   struct packet_diplomacy_cancel_meeting *old;
@@ -21216,7 +21587,9 @@ static void ensure_valid_variant_packet_diplomacy_cancel_meeting(connection_t *p
 }
 
 struct packet_diplomacy_cancel_meeting *
-receive_packet_diplomacy_cancel_meeting(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_cancel_meeting(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21309,7 +21682,9 @@ void dlsend_packet_diplomacy_cancel_meeting(struct connection_list *dest,
 BV_DEFINE(packet_diplomacy_create_clause_req_100_fields, 4);
 
 static struct packet_diplomacy_create_clause_req *
-receive_packet_diplomacy_create_clause_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_create_clause_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_create_clause_req_100_fields fields;
   struct packet_diplomacy_create_clause_req *old;
@@ -21467,7 +21842,9 @@ static void ensure_valid_variant_packet_diplomacy_create_clause_req(connection_t
 }
 
 struct packet_diplomacy_create_clause_req *
-receive_packet_diplomacy_create_clause_req(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_create_clause_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21544,7 +21921,9 @@ int dsend_packet_diplomacy_create_clause_req(
 BV_DEFINE(packet_diplomacy_create_clause_100_fields, 4);
 
 static struct packet_diplomacy_create_clause *
-receive_packet_diplomacy_create_clause_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_create_clause_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_create_clause_100_fields fields;
   struct packet_diplomacy_create_clause *old;
@@ -21694,7 +22073,9 @@ static void ensure_valid_variant_packet_diplomacy_create_clause(connection_t *pc
 }
 
 struct packet_diplomacy_create_clause *
-receive_packet_diplomacy_create_clause(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_create_clause(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -21795,7 +22176,9 @@ void dlsend_packet_diplomacy_create_clause(struct connection_list *dest,
 BV_DEFINE(packet_diplomacy_remove_clause_req_100_fields, 4);
 
 static struct packet_diplomacy_remove_clause_req *
-receive_packet_diplomacy_remove_clause_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_remove_clause_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_remove_clause_req_100_fields fields;
   struct packet_diplomacy_remove_clause_req *old;
@@ -21953,7 +22336,9 @@ static void ensure_valid_variant_packet_diplomacy_remove_clause_req(connection_t
 }
 
 struct packet_diplomacy_remove_clause_req *
-receive_packet_diplomacy_remove_clause_req(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_remove_clause_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22030,7 +22415,9 @@ int dsend_packet_diplomacy_remove_clause_req(
 BV_DEFINE(packet_diplomacy_remove_clause_100_fields, 4);
 
 static struct packet_diplomacy_remove_clause *
-receive_packet_diplomacy_remove_clause_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_remove_clause_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_remove_clause_100_fields fields;
   struct packet_diplomacy_remove_clause *old;
@@ -22180,7 +22567,9 @@ static void ensure_valid_variant_packet_diplomacy_remove_clause(connection_t *pc
 }
 
 struct packet_diplomacy_remove_clause *
-receive_packet_diplomacy_remove_clause(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_remove_clause(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22281,7 +22670,9 @@ void dlsend_packet_diplomacy_remove_clause(struct connection_list *dest,
 BV_DEFINE(packet_diplomacy_accept_treaty_req_100_fields, 1);
 
 static struct packet_diplomacy_accept_treaty_req *
-receive_packet_diplomacy_accept_treaty_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_accept_treaty_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_accept_treaty_req_100_fields fields;
   struct packet_diplomacy_accept_treaty_req *old;
@@ -22391,7 +22782,9 @@ static void ensure_valid_variant_packet_diplomacy_accept_treaty_req(connection_t
 }
 
 struct packet_diplomacy_accept_treaty_req *
-receive_packet_diplomacy_accept_treaty_req(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_accept_treaty_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22462,7 +22855,9 @@ int dsend_packet_diplomacy_accept_treaty_req(
 BV_DEFINE(packet_diplomacy_accept_treaty_100_fields, 3);
 
 static struct packet_diplomacy_accept_treaty *
-receive_packet_diplomacy_accept_treaty_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_accept_treaty_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_accept_treaty_100_fields fields;
   struct packet_diplomacy_accept_treaty *old;
@@ -22579,7 +22974,9 @@ static void ensure_valid_variant_packet_diplomacy_accept_treaty(connection_t *pc
 }
 
 struct packet_diplomacy_accept_treaty *
-receive_packet_diplomacy_accept_treaty(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_accept_treaty(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22676,7 +23073,9 @@ void dlsend_packet_diplomacy_accept_treaty(struct connection_list *dest,
 BV_DEFINE(packet_diplomacy_cancel_pact_100_fields, 2);
 
 static struct packet_diplomacy_cancel_pact *
-receive_packet_diplomacy_cancel_pact_100(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_cancel_pact_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_diplomacy_cancel_pact_100_fields fields;
   struct packet_diplomacy_cancel_pact *old;
@@ -22802,7 +23201,9 @@ static void ensure_valid_variant_packet_diplomacy_cancel_pact(connection_t *pcon
 }
 
 struct packet_diplomacy_cancel_pact *
-receive_packet_diplomacy_cancel_pact(connection_t *pconn, enum packet_type type)
+receive_packet_diplomacy_cancel_pact(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -22874,7 +23275,10 @@ int dsend_packet_diplomacy_cancel_pact(
 
 BV_DEFINE(packet_page_msg_100_fields, 2);
 
-static struct packet_page_msg *receive_packet_page_msg_100(connection_t *pconn, enum packet_type type)
+static struct packet_page_msg *
+receive_packet_page_msg_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_page_msg_100_fields fields;
   struct packet_page_msg *old;
@@ -22990,7 +23394,10 @@ static void ensure_valid_variant_packet_page_msg(connection_t *pconn)
   pconn->phs.variant[PACKET_PAGE_MSG] = variant;
 }
 
-struct packet_page_msg *receive_packet_page_msg(connection_t *pconn, enum packet_type type)
+struct packet_page_msg *
+receive_packet_page_msg(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -23057,7 +23464,9 @@ void lsend_packet_page_msg(struct connection_list *dest, const struct packet_pag
 BV_DEFINE(packet_report_req_100_fields, 1);
 
 static struct packet_report_req *
-receive_packet_report_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_report_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_report_req_100_fields fields;
   struct packet_report_req *old;
@@ -23166,7 +23575,10 @@ static void ensure_valid_variant_packet_report_req(connection_t *pconn)
   pconn->phs.variant[PACKET_REPORT_REQ] = variant;
 }
 
-struct packet_report_req *receive_packet_report_req(connection_t *pconn, enum packet_type type)
+struct packet_report_req *
+receive_packet_report_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -23251,7 +23663,10 @@ static int cmp_packet_conn_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_conn_info_100_fields, 8);
 
-static struct packet_conn_info *receive_packet_conn_info_100(connection_t *pconn, enum packet_type type)
+static struct packet_conn_info *
+receive_packet_conn_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_conn_info_100_fields fields;
   struct packet_conn_info *old;
@@ -23434,7 +23849,10 @@ static void ensure_valid_variant_packet_conn_info(connection_t *pconn)
   pconn->phs.variant[PACKET_CONN_INFO] = variant;
 }
 
-struct packet_conn_info *receive_packet_conn_info(connection_t *pconn, enum packet_type type)
+struct packet_conn_info *
+receive_packet_conn_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -23501,7 +23919,9 @@ void lsend_packet_conn_info(struct connection_list *dest, const struct packet_co
 BV_DEFINE(packet_conn_ping_info_100_fields, 3);
 
 static struct packet_conn_ping_info *
-receive_packet_conn_ping_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_conn_ping_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_conn_ping_info_100_fields fields;
   struct packet_conn_ping_info *old;
@@ -23686,7 +24106,9 @@ static int send_packet_conn_ping_info_100(
 BV_DEFINE(packet_conn_ping_info_101_fields, 3);
 
 static struct packet_conn_ping_info *
-receive_packet_conn_ping_info_101(connection_t *pconn, enum packet_type type)
+receive_packet_conn_ping_info_101(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_conn_ping_info_101_fields fields;
   struct packet_conn_ping_info *old;
@@ -23882,7 +24304,10 @@ static void ensure_valid_variant_packet_conn_ping_info(connection_t *pconn)
   pconn->phs.variant[PACKET_CONN_PING_INFO] = variant;
 }
 
-struct packet_conn_ping_info *receive_packet_conn_ping_info(connection_t *pconn, enum packet_type type)
+struct packet_conn_ping_info *
+receive_packet_conn_ping_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -23948,7 +24373,10 @@ void lsend_packet_conn_ping_info(struct connection_list *dest, const struct pack
 }
 
 /* 88 sc */
-static struct packet_conn_ping *receive_packet_conn_ping_100(connection_t *pconn, enum packet_type type)
+static struct packet_conn_ping *
+receive_packet_conn_ping_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_conn_ping, real_packet);
 
@@ -23973,7 +24401,10 @@ static void ensure_valid_variant_packet_conn_ping(connection_t *pconn)
   pconn->phs.variant[PACKET_CONN_PING] = variant;
 }
 
-struct packet_conn_ping *receive_packet_conn_ping(connection_t *pconn, enum packet_type type)
+struct packet_conn_ping *
+receive_packet_conn_ping(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24024,7 +24455,10 @@ int send_packet_conn_ping(connection_t *pconn)
 }
 
 /* 89 cs */
-static struct packet_conn_pong *receive_packet_conn_pong_100(connection_t *pconn, enum packet_type type)
+static struct packet_conn_pong *
+receive_packet_conn_pong_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_conn_pong, real_packet);
 
@@ -24050,7 +24484,10 @@ static void ensure_valid_variant_packet_conn_pong(connection_t *pconn)
   pconn->phs.variant[PACKET_CONN_PONG] = variant;
 }
 
-struct packet_conn_pong *receive_packet_conn_pong(connection_t *pconn, enum packet_type type)
+struct packet_conn_pong *
+receive_packet_conn_pong(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24102,7 +24539,9 @@ int send_packet_conn_pong(connection_t *pconn)
 
 /* 90 sc */
 static struct packet_before_new_year *
-receive_packet_before_new_year_100(connection_t *pconn, enum packet_type type)
+receive_packet_before_new_year_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_before_new_year, real_packet);
 
@@ -24127,7 +24566,10 @@ static void ensure_valid_variant_packet_before_new_year(connection_t *pconn)
   pconn->phs.variant[PACKET_BEFORE_NEW_YEAR] = variant;
 }
 
-struct packet_before_new_year *receive_packet_before_new_year(connection_t *pconn, enum packet_type type)
+struct packet_before_new_year *
+receive_packet_before_new_year(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24185,7 +24627,10 @@ void lsend_packet_before_new_year(struct connection_list *dest)
 }
 
 /* 91 sc */
-static struct packet_start_turn *receive_packet_start_turn_100(connection_t *pconn, enum packet_type type)
+static struct packet_start_turn *
+receive_packet_start_turn_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_start_turn, real_packet);
 
@@ -24210,7 +24655,10 @@ static void ensure_valid_variant_packet_start_turn(connection_t *pconn)
   pconn->phs.variant[PACKET_START_TURN] = variant;
 }
 
-struct packet_start_turn *receive_packet_start_turn(connection_t *pconn, enum packet_type type)
+struct packet_start_turn *
+receive_packet_start_turn(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24274,7 +24722,10 @@ void lsend_packet_start_turn(struct connection_list *dest)
 
 BV_DEFINE(packet_new_year_100_fields, 2);
 
-static struct packet_new_year *receive_packet_new_year_100(connection_t *pconn, enum packet_type type)
+static struct packet_new_year *
+receive_packet_new_year_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_new_year_100_fields fields;
   struct packet_new_year *old;
@@ -24393,7 +24844,10 @@ static void ensure_valid_variant_packet_new_year(connection_t *pconn)
   pconn->phs.variant[PACKET_NEW_YEAR] = variant;
 }
 
-struct packet_new_year *receive_packet_new_year(connection_t *pconn, enum packet_type type)
+struct packet_new_year *
+receive_packet_new_year(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24454,7 +24908,9 @@ void lsend_packet_new_year(struct connection_list *dest, const struct packet_new
 
 /* 135 sc */
 static struct packet_freeze_client *
-receive_packet_freeze_client_100(connection_t *pconn, enum packet_type type)
+receive_packet_freeze_client_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_freeze_client, real_packet);
 
@@ -24479,7 +24935,10 @@ static void ensure_valid_variant_packet_freeze_client(connection_t *pconn)
   pconn->phs.variant[PACKET_FREEZE_CLIENT] = variant;
 }
 
-struct packet_freeze_client *receive_packet_freeze_client(connection_t *pconn, enum packet_type type)
+struct packet_freeze_client *
+receive_packet_freeze_client(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24538,7 +24997,9 @@ void lsend_packet_freeze_client(struct connection_list *dest)
 
 /* 136 sc */
 static struct packet_thaw_client *
-receive_packet_thaw_client_100(connection_t *pconn, enum packet_type type)
+receive_packet_thaw_client_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_thaw_client, real_packet);
 
@@ -24563,7 +25024,10 @@ static void ensure_valid_variant_packet_thaw_client(connection_t *pconn)
   pconn->phs.variant[PACKET_THAW_CLIENT] = variant;
 }
 
-struct packet_thaw_client *receive_packet_thaw_client(connection_t *pconn, enum packet_type type)
+struct packet_thaw_client *
+receive_packet_thaw_client(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24622,7 +25086,9 @@ void lsend_packet_thaw_client(struct connection_list *dest)
 
 /* 93 cs */
 static struct packet_spaceship_launch *
-receive_packet_spaceship_launch_100(connection_t *pconn, enum packet_type type)
+receive_packet_spaceship_launch_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_spaceship_launch, real_packet);
   printf("cs opcode=93 SPACESHIP_LAUNCH\n");
@@ -24648,7 +25114,9 @@ static void ensure_valid_variant_packet_spaceship_launch(connection_t *pconn)
 }
 
 struct packet_spaceship_launch *
-receive_packet_spaceship_launch(connection_t *pconn, enum packet_type type)
+receive_packet_spaceship_launch(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24706,7 +25174,9 @@ int send_packet_spaceship_launch(connection_t *pconn)
 BV_DEFINE(packet_spaceship_place_100_fields, 2);
 
 static struct packet_spaceship_place *
-receive_packet_spaceship_place_100(connection_t *pconn, enum packet_type type)
+receive_packet_spaceship_place_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_spaceship_place_100_fields fields;
   struct packet_spaceship_place *old;
@@ -24831,7 +25301,10 @@ static void ensure_valid_variant_packet_spaceship_place(connection_t *pconn)
   pconn->phs.variant[PACKET_SPACESHIP_PLACE] = variant;
 }
 
-struct packet_spaceship_place *receive_packet_spaceship_place(connection_t *pconn, enum packet_type type)
+struct packet_spaceship_place *
+receive_packet_spaceship_place(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -24921,7 +25394,9 @@ static int cmp_packet_spaceship_info_100(const void *vkey1, const void *vkey2)
 BV_DEFINE(packet_spaceship_info_100_fields, 17);
 
 static struct packet_spaceship_info *
-receive_packet_spaceship_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_spaceship_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_spaceship_info_100_fields fields;
   struct packet_spaceship_info *old;
@@ -25280,7 +25755,10 @@ static void ensure_valid_variant_packet_spaceship_info(connection_t *pconn)
   pconn->phs.variant[PACKET_SPACESHIP_INFO] = variant;
 }
 
-struct packet_spaceship_info *receive_packet_spaceship_info(connection_t *pconn, enum packet_type type)
+struct packet_spaceship_info *
+receive_packet_spaceship_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -25347,7 +25825,9 @@ void lsend_packet_spaceship_info(struct connection_list *dest, const struct pack
 BV_DEFINE(packet_ruleset_unit_100_fields, 36);
 
 static struct packet_ruleset_unit *
-receive_packet_ruleset_unit_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_unit_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_unit_100_fields fields;
   struct packet_ruleset_unit *old;
@@ -26009,7 +26489,10 @@ static void ensure_valid_variant_packet_ruleset_unit(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_UNIT] = variant;
 }
 
-struct packet_ruleset_unit *receive_packet_ruleset_unit(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_unit *
+receive_packet_ruleset_unit(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -26076,7 +26559,9 @@ void lsend_packet_ruleset_unit(struct connection_list *dest, const struct packet
 BV_DEFINE(packet_ruleset_game_100_fields, 26);
 
 static struct packet_ruleset_game *
-receive_packet_ruleset_game_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_game_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_game_100_fields fields;
   struct packet_ruleset_game *old;
@@ -26691,7 +27176,10 @@ static void ensure_valid_variant_packet_ruleset_game(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_GAME] = variant;
 }
 
-struct packet_ruleset_game *receive_packet_ruleset_game(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_game *
+receive_packet_ruleset_game(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -26758,7 +27246,9 @@ void lsend_packet_ruleset_game(struct connection_list *dest, const struct packet
 BV_DEFINE(packet_ruleset_government_ruler_title_100_fields, 5);
 
 static struct packet_ruleset_government_ruler_title *
-receive_packet_ruleset_government_ruler_title_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_government_ruler_title_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_government_ruler_title_100_fields fields;
   struct packet_ruleset_government_ruler_title *old;
@@ -26918,7 +27408,9 @@ static void ensure_valid_variant_packet_ruleset_government_ruler_title(connectio
 }
 
 struct packet_ruleset_government_ruler_title *
-receive_packet_ruleset_government_ruler_title(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_government_ruler_title(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -26987,7 +27479,9 @@ void lsend_packet_ruleset_government_ruler_title(
 BV_DEFINE(packet_ruleset_tech_100_fields, 10);
 
 static struct packet_ruleset_tech *
-receive_packet_ruleset_tech_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_tech_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_tech_100_fields fields;
   struct packet_ruleset_tech *old;
@@ -27237,7 +27731,10 @@ static void ensure_valid_variant_packet_ruleset_tech(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_TECH] = variant;
 }
 
-struct packet_ruleset_tech *receive_packet_ruleset_tech(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_tech *
+receive_packet_ruleset_tech(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -27304,7 +27801,9 @@ void lsend_packet_ruleset_tech(struct connection_list *dest, const struct packet
 BV_DEFINE(packet_ruleset_government_100_fields, 45);
 
 static struct packet_ruleset_government *
-receive_packet_ruleset_government_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_government_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_government_100_fields fields;
   struct packet_ruleset_government *old;
@@ -28057,7 +28556,9 @@ static void ensure_valid_variant_packet_ruleset_government(connection_t *pconn)
 }
 
 struct packet_ruleset_government *
-receive_packet_ruleset_government(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_government(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -28126,7 +28627,9 @@ void lsend_packet_ruleset_government(
 BV_DEFINE(packet_ruleset_terrain_control_100_fields, 22);
 
 static struct packet_ruleset_terrain_control *
-receive_packet_ruleset_terrain_control_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_terrain_control_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_terrain_control_100_fields fields;
   struct packet_ruleset_terrain_control *old;
@@ -28507,7 +29010,9 @@ static void ensure_valid_variant_packet_ruleset_terrain_control(connection_t *pc
 }
 
 struct packet_ruleset_terrain_control *
-receive_packet_ruleset_terrain_control(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_terrain_control(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -28576,7 +29081,9 @@ void lsend_packet_ruleset_terrain_control(
 BV_DEFINE(packet_ruleset_nation_100_fields, 12);
 
 static struct packet_ruleset_nation *
-receive_packet_ruleset_nation_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_nation_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_nation_100_fields fields;
   struct packet_ruleset_nation *old;
@@ -28881,7 +29388,10 @@ static void ensure_valid_variant_packet_ruleset_nation(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_NATION] = variant;
 }
 
-struct packet_ruleset_nation *receive_packet_ruleset_nation(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_nation *
+receive_packet_ruleset_nation(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -28948,7 +29458,9 @@ void lsend_packet_ruleset_nation(struct connection_list *dest, const struct pack
 BV_DEFINE(packet_ruleset_city_100_fields, 8);
 
 static struct packet_ruleset_city *
-receive_packet_ruleset_city_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_city_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_city_100_fields fields;
   struct packet_ruleset_city *old;
@@ -29142,7 +29654,10 @@ static void ensure_valid_variant_packet_ruleset_city(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_CITY] = variant;
 }
 
-struct packet_ruleset_city *receive_packet_ruleset_city(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_city *
+receive_packet_ruleset_city(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -29209,7 +29724,9 @@ void lsend_packet_ruleset_city(struct connection_list *dest, const struct packet
 BV_DEFINE(packet_ruleset_building_100_fields, 24);
 
 static struct packet_ruleset_building *
-receive_packet_ruleset_building_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_building_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_building_100_fields fields;
   struct packet_ruleset_building *old;
@@ -29736,7 +30253,9 @@ static void ensure_valid_variant_packet_ruleset_building(connection_t *pconn)
 }
 
 struct packet_ruleset_building *
-receive_packet_ruleset_building(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_building(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -29805,7 +30324,9 @@ void lsend_packet_ruleset_building(
 BV_DEFINE(packet_ruleset_terrain_100_fields, 38);
 
 static struct packet_ruleset_terrain *
-receive_packet_ruleset_terrain_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_terrain_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_terrain_100_fields fields;
   struct packet_ruleset_terrain *old;
@@ -30431,7 +30952,10 @@ static void ensure_valid_variant_packet_ruleset_terrain(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_TERRAIN] = variant;
 }
 
-struct packet_ruleset_terrain *receive_packet_ruleset_terrain(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_terrain *
+receive_packet_ruleset_terrain(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -30499,7 +31023,9 @@ void lsend_packet_ruleset_terrain(struct connection_list *dest,
 BV_DEFINE(packet_ruleset_control_100_fields, 24);
 
 static struct packet_ruleset_control *
-receive_packet_ruleset_control_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_control_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_control_100_fields fields;
   struct packet_ruleset_control *old;
@@ -30957,7 +31483,10 @@ static void ensure_valid_variant_packet_ruleset_control(connection_t *pconn)
   pconn->phs.variant[PACKET_RULESET_CONTROL] = variant;
 }
 
-struct packet_ruleset_control *receive_packet_ruleset_control(connection_t *pconn, enum packet_type type)
+struct packet_ruleset_control *
+receive_packet_ruleset_control(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31025,7 +31554,9 @@ void lsend_packet_ruleset_control(struct connection_list *dest,
 BV_DEFINE(packet_single_want_hack_req_100_fields, 1);
 
 static struct packet_single_want_hack_req *
-receive_packet_single_want_hack_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_single_want_hack_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_single_want_hack_req_100_fields fields;
   struct packet_single_want_hack_req *old;
@@ -31127,7 +31658,9 @@ static int send_packet_single_want_hack_req_100(
 BV_DEFINE(packet_single_want_hack_req_101_fields, 1);
 
 static struct packet_single_want_hack_req *
-receive_packet_single_want_hack_req_101(connection_t *pconn, enum packet_type type)
+receive_packet_single_want_hack_req_101(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_single_want_hack_req_101_fields fields;
   struct packet_single_want_hack_req *old;
@@ -31247,7 +31780,9 @@ static void ensure_valid_variant_packet_single_want_hack_req(connection_t *pconn
 }
 
 struct packet_single_want_hack_req *
-receive_packet_single_want_hack_req(connection_t *pconn, enum packet_type type)
+receive_packet_single_want_hack_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31313,7 +31848,9 @@ int send_packet_single_want_hack_req(
 BV_DEFINE(packet_single_want_hack_reply_100_fields, 1);
 
 static struct packet_single_want_hack_reply *
-receive_packet_single_want_hack_reply_100(connection_t *pconn, enum packet_type type)
+receive_packet_single_want_hack_reply_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_single_want_hack_reply_100_fields fields;
   struct packet_single_want_hack_reply *old;
@@ -31409,7 +31946,9 @@ static void ensure_valid_variant_packet_single_want_hack_reply(connection_t *pco
 }
 
 struct packet_single_want_hack_reply *
-receive_packet_single_want_hack_reply(connection_t *pconn, enum packet_type type)
+receive_packet_single_want_hack_reply(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31479,7 +32018,10 @@ int dsend_packet_single_want_hack_reply(
 
 BV_DEFINE(packet_game_load_100_fields, 9);
 
-static struct packet_game_load *receive_packet_game_load_100(connection_t *pconn, enum packet_type type)
+static struct packet_game_load *
+receive_packet_game_load_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_game_load_100_fields fields;
   struct packet_game_load *old;
@@ -31847,7 +32389,10 @@ static void ensure_valid_variant_packet_game_load(connection_t *pconn)
   pconn->phs.variant[PACKET_GAME_LOAD] = variant;
 }
 
-struct packet_game_load *receive_packet_game_load(connection_t *pconn, enum packet_type type)
+struct packet_game_load *
+receive_packet_game_load(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -31914,7 +32459,9 @@ void lsend_packet_game_load(struct connection_list *dest, const struct packet_ga
 BV_DEFINE(packet_options_settable_control_100_fields, 3);
 
 static struct packet_options_settable_control *
-receive_packet_options_settable_control_100(connection_t *pconn, enum packet_type type)
+receive_packet_options_settable_control_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_options_settable_control_100_fields fields;
   struct packet_options_settable_control *old;
@@ -32072,7 +32619,9 @@ static void ensure_valid_variant_packet_options_settable_control(connection_t *p
 }
 
 struct packet_options_settable_control *
-receive_packet_options_settable_control(connection_t *pconn, enum packet_type type)
+receive_packet_options_settable_control(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32132,7 +32681,9 @@ int send_packet_options_settable_control(
 BV_DEFINE(packet_options_settable_100_fields, 12);
 
 static struct packet_options_settable *
-receive_packet_options_settable_100(connection_t *pconn, enum packet_type type)
+receive_packet_options_settable_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_options_settable_100_fields fields;
   struct packet_options_settable *old;
@@ -32387,7 +32938,9 @@ static void ensure_valid_variant_packet_options_settable(connection_t *pconn)
 }
 
 struct packet_options_settable *
-receive_packet_options_settable(connection_t *pconn, enum packet_type type)
+receive_packet_options_settable(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32447,7 +33000,9 @@ int send_packet_options_settable(
 BV_DEFINE(packet_ruleset_cache_group_100_fields, 5);
 
 static struct packet_ruleset_cache_group *
-receive_packet_ruleset_cache_group_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_cache_group_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_cache_group_100_fields fields;
   struct packet_ruleset_cache_group *old;
@@ -32684,7 +33239,9 @@ static void ensure_valid_variant_packet_ruleset_cache_group(connection_t *pconn)
 }
 
 struct packet_ruleset_cache_group *
-receive_packet_ruleset_cache_group(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_cache_group(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -32753,7 +33310,9 @@ void lsend_packet_ruleset_cache_group(
 BV_DEFINE(packet_ruleset_cache_effect_100_fields, 8);
 
 static struct packet_ruleset_cache_effect *
-receive_packet_ruleset_cache_effect_100(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_cache_effect_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_ruleset_cache_effect_100_fields fields;
   struct packet_ruleset_cache_effect *old;
@@ -32954,7 +33513,9 @@ static void ensure_valid_variant_packet_ruleset_cache_effect(connection_t *pconn
 }
 
 struct packet_ruleset_cache_effect *
-receive_packet_ruleset_cache_effect(connection_t *pconn, enum packet_type type)
+receive_packet_ruleset_cache_effect(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -33022,7 +33583,9 @@ void lsend_packet_ruleset_cache_effect(struct connection_list *dest,
 BV_DEFINE(packet_traderoute_info_100_fields, 5);
 
 static struct packet_traderoute_info *
-receive_packet_traderoute_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_traderoute_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_traderoute_info_100_fields fields;
   struct packet_traderoute_info *old;
@@ -33181,7 +33744,9 @@ static int send_packet_traderoute_info_100(
 BV_DEFINE(packet_traderoute_info_101_fields, 4);
 
 static struct packet_traderoute_info *
-receive_packet_traderoute_info_101(connection_t *pconn, enum packet_type type)
+receive_packet_traderoute_info_101(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_traderoute_info_101_fields fields;
   struct packet_traderoute_info *old;
@@ -33340,7 +33905,10 @@ static void ensure_valid_variant_packet_traderoute_info(connection_t *pconn)
   pconn->phs.variant[PACKET_TRADEROUTE_INFO] = variant;
 }
 
-struct packet_traderoute_info *receive_packet_traderoute_info(connection_t *pconn, enum packet_type type)
+struct packet_traderoute_info *
+receive_packet_traderoute_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -33406,7 +33974,9 @@ int send_packet_traderoute_info(
 BV_DEFINE(packet_extgame_info_100_fields, 14);
 
 static struct packet_extgame_info *
-receive_packet_extgame_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_extgame_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_extgame_info_100_fields fields;
   struct packet_extgame_info *old;
@@ -33601,7 +34171,9 @@ static int send_packet_extgame_info_100(
 BV_DEFINE(packet_extgame_info_101_fields, 12);
 
 static struct packet_extgame_info *
-receive_packet_extgame_info_101(connection_t *pconn, enum packet_type type)
+receive_packet_extgame_info_101(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_extgame_info_101_fields fields;
   struct packet_extgame_info *old;
@@ -33781,7 +34353,10 @@ static void ensure_valid_variant_packet_extgame_info(connection_t *pconn)
   pconn->phs.variant[PACKET_EXTGAME_INFO] = variant;
 }
 
-struct packet_extgame_info *receive_packet_extgame_info(connection_t *pconn, enum packet_type type)
+struct packet_extgame_info *
+receive_packet_extgame_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -33846,7 +34421,10 @@ int send_packet_extgame_info(
 
 BV_DEFINE(packet_vote_new_100_fields, 6);
 
-static struct packet_vote_new *receive_packet_vote_new_100(connection_t *pconn, enum packet_type type)
+static struct packet_vote_new *
+receive_packet_vote_new_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_vote_new_100_fields fields;
   struct packet_vote_new *old;
@@ -34010,7 +34588,10 @@ static void ensure_valid_variant_packet_vote_new(connection_t *pconn)
   pconn->phs.variant[PACKET_VOTE_NEW] = variant;
 }
 
-struct packet_vote_new *receive_packet_vote_new(connection_t *pconn, enum packet_type type)
+struct packet_vote_new *
+receive_packet_vote_new(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34070,7 +34651,9 @@ int send_packet_vote_new(
 BV_DEFINE(packet_vote_update_100_fields, 5);
 
 static struct packet_vote_update *
-receive_packet_vote_update_100(connection_t *pconn, enum packet_type type)
+receive_packet_vote_update_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_vote_update_100_fields fields;
   struct packet_vote_update *old;
@@ -34234,7 +34817,10 @@ static void ensure_valid_variant_packet_vote_update(connection_t *pconn)
   pconn->phs.variant[PACKET_VOTE_UPDATE] = variant;
 }
 
-struct packet_vote_update *receive_packet_vote_update(connection_t *pconn, enum packet_type type)
+struct packet_vote_update *
+receive_packet_vote_update(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34294,7 +34880,9 @@ int send_packet_vote_update(
 BV_DEFINE(packet_vote_remove_100_fields, 1);
 
 static struct packet_vote_remove *
-receive_packet_vote_remove_100(connection_t *pconn, enum packet_type type)
+receive_packet_vote_remove_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_vote_remove_100_fields fields;
   struct packet_vote_remove *old;
@@ -34398,7 +34986,10 @@ static void ensure_valid_variant_packet_vote_remove(connection_t *pconn)
   pconn->phs.variant[PACKET_VOTE_REMOVE] = variant;
 }
 
-struct packet_vote_remove *receive_packet_vote_remove(connection_t *pconn, enum packet_type type)
+struct packet_vote_remove *
+receive_packet_vote_remove(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34458,7 +35049,9 @@ int send_packet_vote_remove(
 BV_DEFINE(packet_vote_resolve_100_fields, 2);
 
 static struct packet_vote_resolve *
-receive_packet_vote_resolve_100(connection_t *pconn, enum packet_type type)
+receive_packet_vote_resolve_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_vote_resolve_100_fields fields;
   struct packet_vote_resolve *old;
@@ -34568,7 +35161,10 @@ static void ensure_valid_variant_packet_vote_resolve(connection_t *pconn)
   pconn->phs.variant[PACKET_VOTE_RESOLVE] = variant;
 }
 
-struct packet_vote_resolve *receive_packet_vote_resolve(connection_t *pconn, enum packet_type type)
+struct packet_vote_resolve *
+receive_packet_vote_resolve(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34628,7 +35224,9 @@ int send_packet_vote_resolve(
 BV_DEFINE(packet_vote_submit_100_fields, 2);
 
 static struct packet_vote_submit *
-receive_packet_vote_submit_100(connection_t *pconn, enum packet_type type)
+receive_packet_vote_submit_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_vote_submit_100_fields fields;
   struct packet_vote_submit *old;
@@ -34751,7 +35349,10 @@ static void ensure_valid_variant_packet_vote_submit(connection_t *pconn)
   pconn->phs.variant[PACKET_VOTE_SUBMIT] = variant;
 }
 
-struct packet_vote_submit *receive_packet_vote_submit(connection_t *pconn, enum packet_type type)
+struct packet_vote_submit *
+receive_packet_vote_submit(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -34811,7 +35412,9 @@ int send_packet_vote_submit(
 BV_DEFINE(packet_trade_route_plan_100_fields, 2);
 
 static struct packet_trade_route_plan *
-receive_packet_trade_route_plan_100(connection_t *pconn, enum packet_type type)
+receive_packet_trade_route_plan_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_trade_route_plan_100_fields fields;
   struct packet_trade_route_plan *old;
@@ -34936,7 +35539,10 @@ static void ensure_valid_variant_packet_trade_route_plan(connection_t *pconn)
   pconn->phs.variant[PACKET_TRADE_ROUTE_PLAN] = variant;
 }
 
-struct packet_trade_route_plan *receive_packet_trade_route_plan(connection_t *pconn, enum packet_type type)
+struct packet_trade_route_plan *
+receive_packet_trade_route_plan(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35009,7 +35615,9 @@ int dsend_packet_trade_route_plan(
 BV_DEFINE(packet_trade_route_remove_100_fields, 2);
 
 static struct packet_trade_route_remove *
-receive_packet_trade_route_remove_100(connection_t *pconn, enum packet_type type)
+receive_packet_trade_route_remove_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_trade_route_remove_100_fields fields;
   struct packet_trade_route_remove *old;
@@ -35135,7 +35743,9 @@ static void ensure_valid_variant_packet_trade_route_remove(connection_t *pconn)
 }
 
 struct packet_trade_route_remove *
-receive_packet_trade_route_remove(connection_t *pconn, enum packet_type type)
+receive_packet_trade_route_remove(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35202,7 +35812,9 @@ int dsend_packet_trade_route_remove(
 BV_DEFINE(packet_unit_trade_route_100_fields, 3);
 
 static struct packet_unit_trade_route *
-receive_packet_unit_trade_route_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_trade_route_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_trade_route_100_fields fields;
   struct packet_unit_trade_route *old;
@@ -35344,7 +35956,9 @@ static void ensure_valid_variant_packet_unit_trade_route(connection_t *pconn)
 }
 
 struct packet_unit_trade_route *
-receive_packet_unit_trade_route(connection_t *pconn, enum packet_type type)
+receive_packet_unit_trade_route(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35418,7 +36032,9 @@ int dsend_packet_unit_trade_route(
 BV_DEFINE(packet_trade_route_info_100_fields, 4);
 
 static struct packet_trade_route_info *
-receive_packet_trade_route_info_100(connection_t *pconn, enum packet_type type)
+receive_packet_trade_route_info_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_trade_route_info_100_fields fields;
   struct packet_trade_route_info *old;
@@ -35567,7 +36183,10 @@ static void ensure_valid_variant_packet_trade_route_info(connection_t *pconn)
   pconn->phs.variant[PACKET_TRADE_ROUTE_INFO] = variant;
 }
 
-struct packet_trade_route_info *receive_packet_trade_route_info(connection_t *pconn, enum packet_type type)
+struct packet_trade_route_info *
+receive_packet_trade_route_info(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35627,7 +36246,9 @@ int send_packet_trade_route_info(
 BV_DEFINE(packet_city_set_rally_point_100_fields, 3);
 
 static struct packet_city_set_rally_point *
-receive_packet_city_set_rally_point_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_set_rally_point_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_set_rally_point_100_fields fields;
   struct packet_city_set_rally_point *old;
@@ -35769,7 +36390,9 @@ static void ensure_valid_variant_packet_city_set_rally_point(connection_t *pconn
 }
 
 struct packet_city_set_rally_point *
-receive_packet_city_set_rally_point(connection_t *pconn, enum packet_type type)
+receive_packet_city_set_rally_point(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -35843,7 +36466,9 @@ int dsend_packet_city_set_rally_point(
 BV_DEFINE(packet_city_clear_rally_point_100_fields, 1);
 
 static struct packet_city_clear_rally_point *
-receive_packet_city_clear_rally_point_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_clear_rally_point_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_clear_rally_point_100_fields fields;
   struct packet_city_clear_rally_point *old;
@@ -35953,7 +36578,9 @@ static void ensure_valid_variant_packet_city_clear_rally_point(connection_t *pco
 }
 
 struct packet_city_clear_rally_point *
-receive_packet_city_clear_rally_point(connection_t *pconn, enum packet_type type)
+receive_packet_city_clear_rally_point(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -36022,7 +36649,9 @@ int dsend_packet_city_clear_rally_point(connection_t *pconn, int id)
 BV_DEFINE(packet_unit_air_patrol_100_fields, 3);
 
 static struct packet_unit_air_patrol *
-receive_packet_unit_air_patrol_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_air_patrol_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_air_patrol_100_fields fields;
   struct packet_unit_air_patrol *old;
@@ -36163,7 +36792,10 @@ static void ensure_valid_variant_packet_unit_air_patrol(connection_t *pconn)
   pconn->phs.variant[PACKET_UNIT_AIR_PATROL] = variant;
 }
 
-struct packet_unit_air_patrol *receive_packet_unit_air_patrol(connection_t *pconn, enum packet_type type)
+struct packet_unit_air_patrol *
+receive_packet_unit_air_patrol(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -36237,7 +36869,9 @@ int dsend_packet_unit_air_patrol(
 BV_DEFINE(packet_unit_air_patrol_stop_100_fields, 1);
 
 static struct packet_unit_air_patrol_stop *
-receive_packet_unit_air_patrol_stop_100(connection_t *pconn, enum packet_type type)
+receive_packet_unit_air_patrol_stop_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_unit_air_patrol_stop_100_fields fields;
   struct packet_unit_air_patrol_stop *old;
@@ -36347,7 +36981,9 @@ static void ensure_valid_variant_packet_unit_air_patrol_stop(connection_t *pconn
 }
 
 struct packet_unit_air_patrol_stop *
-receive_packet_unit_air_patrol_stop(connection_t *pconn, enum packet_type type)
+receive_packet_unit_air_patrol_stop(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -36416,7 +37052,9 @@ int dsend_packet_unit_air_patrol_stop(connection_t *pconn, int id)
 BV_DEFINE(packet_city_manager_param_100_fields, 7);
 
 static struct packet_city_manager_param *
-receive_packet_city_manager_param_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_manager_param_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_manager_param_100_fields fields;
   struct packet_city_manager_param *old;
@@ -36638,7 +37276,9 @@ static void ensure_valid_variant_packet_city_manager_param(connection_t *pconn)
 }
 
 struct packet_city_manager_param *
-receive_packet_city_manager_param(connection_t *pconn, enum packet_type type)
+receive_packet_city_manager_param(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -36692,7 +37332,9 @@ int send_packet_city_manager_param(
 BV_DEFINE(packet_city_no_manager_param_100_fields, 1);
 
 static struct packet_city_no_manager_param *
-receive_packet_city_no_manager_param_100(connection_t *pconn, enum packet_type type)
+receive_packet_city_no_manager_param_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_city_no_manager_param_100_fields fields;
   struct packet_city_no_manager_param *old;
@@ -36802,7 +37444,9 @@ static void ensure_valid_variant_packet_city_no_manager_param(connection_t *pcon
 }
 
 struct packet_city_no_manager_param *
-receive_packet_city_no_manager_param(connection_t *pconn, enum packet_type type)
+receive_packet_city_no_manager_param(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
@@ -36865,7 +37509,9 @@ int dsend_packet_city_no_manager_param(connection_t *pconn, int id)
 BV_DEFINE(packet_player_info_req_100_fields, 1);
 
 static struct packet_player_info_req *
-receive_packet_player_info_req_100(connection_t *pconn, enum packet_type type)
+receive_packet_player_info_req_100(
+       connection_t *pconn,
+       enum packet_type type)
 {
   packet_player_info_req_100_fields fields;
   struct packet_player_info_req *old;
@@ -36974,7 +37620,10 @@ static void ensure_valid_variant_packet_player_info_req(connection_t *pconn)
   pconn->phs.variant[PACKET_PLAYER_INFO_REQ] = variant;
 }
 
-struct packet_player_info_req *receive_packet_player_info_req(connection_t *pconn, enum packet_type type)
+struct packet_player_info_req *
+receive_packet_player_info_req(
+       connection_t *pconn,
+       enum packet_type type)
 {
   if(!pconn->used) {
     freelog(LOG_ERROR,
