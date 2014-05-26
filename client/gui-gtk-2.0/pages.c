@@ -693,7 +693,7 @@ static void set_connection_state(enum connection_state state)
 void handle_authentication_req(enum authentication_type type, char *message) /* 6 sc */
 {
 # if REPLAY
-  printf("PACKET_AUTHENTICATION_REQ\n"); /* done */
+  printf("AUTHENTICATION_REQ\n"); /* done */
   printf("type=%d message=%s\n", type, message);
 # endif
   append_network_statusbar(message);
@@ -1617,7 +1617,7 @@ void handle_game_load(struct packet_game_load *packet) /* 111 sc */
 {
 # if REPLAY
   int i;
-  printf("PACKET_GAME_LOAD\n"); /* done */
+  printf("GAME_LOAD\n"); /* done */
   printf("load_successful=%d ", packet->load_successful);
   printf("nplayers=%d ", packet->nplayers);
   printf("load_filename=%s ", packet->load_filename);

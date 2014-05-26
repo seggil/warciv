@@ -234,7 +234,7 @@ void handle_options_settable_control( /* 112 sc */
   int i;
 
 # if REPLAY
-  printf("PACKET_OPTIONS_SETTABLE_CONTROL\n"); /* done */
+  printf("OPTIONS_SETTABLE_CONTROL\n"); /* done */
   printf("nids=%d ", packet->nids);
   printf("ncategories=%d ", packet->ncategories);
   printf("category_names[256]={");
@@ -278,7 +278,7 @@ void handle_options_settable(struct packet_options_settable *packet) /* 113 sc *
   int i = packet->id;
 
 # if REPLAY
-  printf("PACKET_OPTIONS_SETTABLE\n"); /* done */
+  printf("OPTIONS_SETTABLE\n"); /* done */
   printf("id=%d ", packet->id);
   printf("name=%s ", packet->name);
   printf("short_help=%s ", packet->short_help);

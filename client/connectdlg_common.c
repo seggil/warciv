@@ -483,7 +483,7 @@ handle response (by the server) if the client has got hack or not.
 void handle_single_want_hack_reply(bool you_have_hack) /* 109 sc */
 {
 # if REPLAY
-  printf("PACKET_SINGLE_WANT_HACK_REPLY you_have_hack=%d\n", you_have_hack); /* done */
+  printf("SINGLE_WANT_HACK_REPLY you_have_hack=%d\n", you_have_hack); /* done */
 # endif
   if (has_capability("new_hack", aconnection.capability)) {
     /* remove challenge file */

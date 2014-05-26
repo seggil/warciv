@@ -96,7 +96,7 @@ void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted, /* 82 sc *
   struct Diplomacy_dialog *pdialog;
 
 # if REPLAY
-  printf("PACKET_DIPLOMACY_ACCEPT_TREATY\n"); /* done */
+  printf("DIPLOMACY_ACCEPT_TREATY\n"); /* done */
   printf("counterpart=%d I_accepted=%d other_accepted=%d\n",
          counterpart, I_accepted, other_accepted);
 # endif
@@ -119,7 +119,7 @@ void handle_diplomacy_init_meeting(int counterpart, int initiated_from) /* 74 sc
   player_t *pplayer;
 
 # if REPLAY
-  printf("PACKET_DIPLOMACY_INIT_MEETING counterpart=%d initiated_from=%d\n",
+  printf("DIPLOMACY_INIT_MEETING counterpart=%d initiated_from=%d\n",
           counterpart, initiated_from); /* done */
 # endif
   if (!is_valid_player_id(counterpart)) {
@@ -146,7 +146,7 @@ void handle_diplomacy_cancel_meeting(int counterpart, int initiated_from) /* 76 
   struct Diplomacy_dialog *pdialog;
 
 # if REPLAY
-  printf("PACKET_DIPLOMACY_CANCEL_MEETING counterpart=%d initiated_from=%d\n",
+  printf("DIPLOMACY_CANCEL_MEETING counterpart=%d initiated_from=%d\n",
           counterpart, initiated_from); /* done */
 # endif
   pdialog = find_diplomacy_dialog(counterpart);
@@ -166,7 +166,7 @@ void handle_diplomacy_create_clause(int counterpart, int giver, /* 78 sc */
   struct Diplomacy_dialog *pdialog;
 
 # if REPLAY
-  printf("PACKET_DIPLOMACY_CREATE_CLAUSE"
+  printf("DIPLOMACY_CREATE_CLAUSE"
          "counterpart=%d giver=%d type=%d value=%d\n",
          counterpart, giver, type, value); /* done */
 # endif
@@ -188,7 +188,7 @@ void handle_diplomacy_remove_clause(int counterpart, int giver, /* 80 sc */
   struct Diplomacy_dialog *pdialog;
 
 # if REPLAY
-  printf("PACKET_DIPLOMACY_REMOVE_CLAUSE"
+  printf("DIPLOMACY_REMOVE_CLAUSE"
          "counterpart=%d giver=%d type=%d value=%d\n",
          counterpart, giver, type, value); /* done */
 # endif

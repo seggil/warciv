@@ -900,7 +900,7 @@ receive_packet_processing_started_100(
        enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_processing_started, real_packet);
-
+  printf("sc op=0 PROCESSING_STARTED\n");
   RECEIVE_PACKET_END(real_packet);
 }
 
@@ -982,7 +982,7 @@ receive_packet_processing_finished_100(
        enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_processing_finished, real_packet);
-
+  printf("sc op=1 PROCESSING_FINISHED\n");
   RECEIVE_PACKET_END(real_packet);
 }
 
@@ -1065,7 +1065,7 @@ receive_packet_freeze_hint_100(
        enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_freeze_hint, real_packet);
-
+  printf("sc op=2 FREEZE_HINT\n");
   RECEIVE_PACKET_END(real_packet);
 }
 
@@ -1155,7 +1155,7 @@ receive_packet_thaw_hint_100(
        enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_thaw_hint, real_packet);
-
+  printf("sc op=3 THAW_HINT\n");
   RECEIVE_PACKET_END(real_packet);
 }
 
@@ -1387,6 +1387,7 @@ receive_packet_server_join_reply_100(
   int readin;
 
   RECEIVE_PACKET_START(packet_server_join_reply, real_packet);
+  printf("sc op=5 SERVER_JOIN_REPLY");
   dio_get_bool8(&din, &real_packet->you_can_join);
   dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
   dio_get_string(&din, real_packet->capability, sizeof(real_packet->capability));
@@ -1394,7 +1395,11 @@ receive_packet_server_join_reply_100(
 
   dio_get_uint8(&din, &readin);
   real_packet->conn_id = readin;
-
+  printf(" you_can_join=%d; message=%s; capability=%s; challenge_file=%s"
+         "conn_id=%d\n",
+         real_packet->you_can_join, real_packet->message,
+         real_packet->capability, real_packet->challenge_file,
+         real_packet->conn_id);
   RECEIVE_PACKET_END(real_packet);
 }
 
@@ -1499,7 +1504,7 @@ receive_packet_authentication_req_100(
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_authentication_req *clone;
   RECEIVE_PACKET_START(packet_authentication_req, real_packet);
-
+  printf("sc op=6 AUTHENTICATION_REQ");
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
@@ -1518,10 +1523,14 @@ receive_packet_authentication_req_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
+    printf(" type=%d", readin);
     real_packet->type = readin;
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
+    printf(" message=%s\n", real_packet->message);
+  } else {
+    printf("\n");
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -1694,7 +1703,7 @@ receive_packet_authentication_reply_100(
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_authentication_reply *clone;
   RECEIVE_PACKET_START(packet_authentication_reply, real_packet);
-
+  printf("cs op=7 AUTHENTICATION_REPLY");
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
@@ -1711,6 +1720,9 @@ receive_packet_authentication_reply_100(
 
   if (BV_ISSET(fields, 0)) {
     dio_get_string(&din, real_packet->password, sizeof(real_packet->password));
+    printf("password=%s\n", real_packet->password);
+  } else {
+    printf("\n");
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -1857,7 +1869,7 @@ receive_packet_server_shutdown_100(
        enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_server_shutdown, real_packet);
-
+  printf("sc op=8 SERVER_SHUTDOWN\n");
   RECEIVE_PACKET_END(real_packet);
 }
 
@@ -1957,7 +1969,7 @@ receive_packet_nation_unavailable_100(
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_nation_unavailable *clone;
   RECEIVE_PACKET_START(packet_nation_unavailable, real_packet);
-
+  printf("sc op=9 NATION_UNAVAILABLE");
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
@@ -1977,6 +1989,9 @@ receive_packet_nation_unavailable_100(
 
     dio_get_uint16(&din, &readin);
     real_packet->nation = readin;
+    printf(" nation=%d\n", readin);
+  } else {
+    printf("\n");
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -2440,7 +2455,7 @@ receive_packet_nation_select_ok_100(
        enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_nation_select_ok, real_packet);
-
+  printf("sc op=11 NATION_SELECT_OK\n");
   RECEIVE_PACKET_END(real_packet);
 }
 
@@ -2541,7 +2556,7 @@ receive_packet_game_state_100(
   int readin;
 
   RECEIVE_PACKET_START(packet_game_state, real_packet);
-
+  printf("sc op=12 GAME_STATE");
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
@@ -2559,6 +2574,9 @@ receive_packet_game_state_100(
   if (BV_ISSET(fields, 0)) {
     dio_get_uint32(&din, &readin);
     real_packet->value = readin;
+    printf(" value=%d\n", readin);
+  } else {
+    printf("\n");
   }
 
   clone = wc_malloc(sizeof(*clone));

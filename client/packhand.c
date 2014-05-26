@@ -181,7 +181,7 @@ void handle_server_join_reply(bool you_can_join, /* 5 sc */
   char *s_capability = aconnection.capability;
 
 # if REPLAY
-  printf("PACKET_SERVER_JOIN_REPLY\n"); /* done */
+  printf("SERVER_JOIN_REPLY\n"); /* done */
   printf("you_can_join=%d; message=%s; capability=%s; challenge_file=%s"
          "conn_id=%d\n",
          you_can_join, message, capability, challenge_file, conn_id);
@@ -234,7 +234,7 @@ void handle_city_remove(int city_id) /* 20 sc */
   tile_t *ptile;
 
 # if REPLAY
-  printf("PACKET_CITY_REMOVE "); /* done */
+  printf("CITY_REMOVE "); /* done */
   printf("city_id=%d\n", city_id);
 # endif
   if (!pcity)
@@ -261,7 +261,7 @@ void handle_unit_remove(int unit_id) /* 48 sc */
   player_t *powner;
 
 # if REPLAY
-  printf("PACKET_UNIT_REMOVE "); /* done */
+  printf("UNIT_REMOVE "); /* done */
   printf("unit_id=%d\n", unit_id);
 # endif
   if (!punit) {
@@ -284,7 +284,7 @@ void handle_unit_remove(int unit_id) /* 48 sc */
 void handle_nuke_tile_info(int x, int y) /* 17 sc */
 {
 # if REPLAY
-  printf("PACKET_NUKE_TILE_INFO\n"); /* done */
+  printf("NUKE_TILE_INFO\n"); /* done */
   printf("x=%d y=%d\n", x, y);
 # endif
   flush_dirty();
@@ -304,7 +304,7 @@ void handle_unit_combat_info(int attacker_unit_id, int defender_unit_id, /* 51 s
   unit_t *punit1 = find_unit_by_id(defender_unit_id);
 
 # if REPLAY
-  printf("PACKET_UNIT_COMBAT_INFO\n"); /* done */
+  printf("UNIT_COMBAT_INFO\n"); /* done */
   printf("attacker_unit_id=%d defender_unit_id=%d attacker_hp=%d defender_hp=%d "
          "make_winner_veteran=%d\n",
          attacker_unit_id, defender_unit_id, attacker_hp, defender_hp,
@@ -401,8 +401,8 @@ void handle_game_state(int value) /* 12 sc */
   bool changed = (get_client_state() != value);
 
 # if REPLAY
-  printf("PACKET_GAME_STATE "); /* done */
-  printf("value=%d\n", value);
+  printf("GAME_STATE"); /* done */
+  printf(" value=%d\n", value);
 # endif
 
   if (get_client_state() == CLIENT_SELECT_RACE_STATE
@@ -461,7 +461,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
   tile_t *ptile;
 
 # if REPLAY
-  printf("PACKET_CITY_INFO\n"); /* done */
+  printf("CITY_INFO\n"); /* done */
   printf("id=%d ", packet->id);
   printf("owner=%d ", packet->owner);
   printf("x=%d ", packet->x);
@@ -930,7 +930,7 @@ void handle_city_short_info(struct packet_city_short_info *packet) /* 22 sc */
   tile_t *ptile;
 
 # if REPLAY
-  printf("PACKET_CITY_SHORT_INFO\n"); /* done */
+  printf("CITY_SHORT_INFO\n"); /* done */
   printf("id=%d ", packet->id);
   printf("owner=%d ", packet->owner);
   printf("x=%d ", packet->x);
@@ -1065,7 +1065,7 @@ void handle_new_year(int year, int turn) /* 92 sc */
   player_t *pplayer;
 
 # if REPLAY
-  printf("PACKET_NEW_YEAR year=%d turn=%d\n", year, turn); /* done */
+  printf("NEW_YEAR year=%d turn=%d\n", year, turn); /* done */
 # endif
   focus_turn = TRUE;
   game.info.year = year;
@@ -1122,7 +1122,7 @@ void handle_new_year(int year, int turn) /* 92 sc */
 void handle_before_new_year(void) /* 90 sc */
 {
 # if REPLAY
-  printf("PACKET_BEFORE_NEW_YEAR\n"); /* done */
+  printf("BEFORE_NEW_YEAR\n"); /* done */
 # endif
   clear_notify_window();
   /*
@@ -1145,7 +1145,7 @@ void handle_before_new_year(void) /* 90 sc */
 void handle_start_turn(void) /* 91 sc */
 {
 # if REPLAY
-  printf("PACKET_START_TURN\n"); /* done */
+  printf("START_TURN\n"); /* done */
 # endif
   agents_start_turn();
   non_ai_unit_focus = FALSE;
@@ -1187,7 +1187,7 @@ void handle_chat_msg(char *message, int x, int y, /* 18 sc */
   tile_t *ptile = NULL;
 
 # if REPLAY
-  printf("PACKET_CHAT_MSG\n"); /* done */
+  printf("CHAT_MSG\n"); /* done */
   printf("msg=\"%s\" x=%d y=%d event=%d conn_id=%d\n",
          message, x ,y , event, conn_id);
 # endif
@@ -1208,7 +1208,7 @@ void handle_page_msg(char *message, enum event_type event) /* 84 sc */
   char *lines;
 
 # if REPLAY
-  printf("PACKET_PAGE_MSG\n"); /* done */
+  printf("PAGE_MSG\n"); /* done */
   printf("message=%s event=%d\n", message, event);
 # endif
   caption = message;
@@ -1245,7 +1245,7 @@ void handle_unit_info(struct packet_unit_info *packet) /* 49 sc */
 # if REPLAY
   int i;
 
-  printf("PACKET_UNIT_INFO\n"); /* done */
+  printf("UNIT_INFO\n"); /* done */
   printf("id=%d ", packet->id);
   printf("owner=%d ", packet->owner);
   printf("x=%d ", packet->x);
@@ -1735,7 +1735,7 @@ void handle_unit_short_info(struct packet_unit_short_info *packet) /* 50 sc */
   unit_t *punit;
 
 # if REPLAY
-  printf("PACKET_UNIT_SHORT_INFO\n"); /* done */
+  printf("UNIT_SHORT_INFO\n"); /* done */
   printf("id=%d ", packet->id);
   printf("owner=%d ", packet->owner);
   printf("x=%d ", packet->x);
@@ -1818,7 +1818,7 @@ void handle_unit_short_info(struct packet_unit_short_info *packet) /* 50 sc */
 void handle_map_info(struct packet_map_info *map_info) /* 16 sc */
 {
 # if REPLAY
-  printf("PACKET_MAP_INFO\n"); /* done */
+  printf("MAP_INFO\n"); /* done */
   printf("xsize=%d ysize=%d topology_id=%d\n",
          map_info->xsize, map_info->xsize, map_info->topology_id);
 # endif
@@ -1841,7 +1841,7 @@ void handle_map_info(struct packet_map_info *map_info) /* 16 sc */
 void handle_traderoute_info(struct packet_traderoute_info *packet) /* 122 sc */
 {
 # if REPLAY
-  printf("PACKET_TRADEROUTE_INFO\n"); /* done */
+  printf("TRADEROUTE_INFO\n"); /* done */
   printf("trademindist=%d ", packet->trademindist);
   printf("traderevenuepct=%d ", packet->traderevenuepct);
   printf("traderevenuestyle=%d ", packet->traderevenuestyle);
@@ -1860,7 +1860,7 @@ void handle_traderoute_info(struct packet_traderoute_info *packet) /* 122 sc */
 void handle_extgame_info(struct packet_extgame_info *packet) /* 123 sc */
 {
 # if REPLAY
-  printf("PACKET_EXTGAME_INFO\n"); /* done */
+  printf("EXTGAME_INFO\n"); /* done */
   printf("futuretechsscore=%d ", packet->futuretechsscore);
   printf("improvedautoattack=%d ", packet->improvedautoattack);
   printf("stackbribing=%d ", packet->stackbribing);
@@ -1894,7 +1894,7 @@ void handle_game_info(struct packet_game_info *pinfo) /* 15 sc */
   bool timeout_changed;
 
 # if REPLAY
-  printf("PACKET_GAME_INFO\n"); /* done */
+  printf("GAME_INFO\n"); /* done */
   printf("gold=%d ", pinfo->gold);
   printf("tech=%d ", pinfo->tech);
   printf("researchcost=%d ", pinfo->researchcost);
@@ -2077,7 +2077,7 @@ void handle_player_info(struct packet_player_info *pinfo) /* 39 sc */
   player_t *pplayer = &game.players[pinfo->playerno];
 
 # if REPLAY
-  printf("PACKET_PLAYER_INFO\n"); /* done */
+  printf("PLAYER_INFO\n"); /* done */
   printf("playerno=%d ", pinfo->playerno);
   printf("name=\"%s\" ", pinfo->name);
   printf("username=\"%s\" ", pinfo->username);
@@ -2288,7 +2288,7 @@ void handle_conn_info(struct packet_conn_info *pinfo) /* 86 sc */
   connection_t *pconn = find_conn_by_id(pinfo->id);
 
 # if REPLAY
-  printf("PACKET_CONN_INFO\n"); /* done */
+  printf("CONN_INFO\n"); /* done */
   printf("id=%d used=%d establish=%d observer=%d player_num=%d access_level=%d ",
          pinfo->id, pinfo->used, pinfo->established,
          pinfo->observer, pinfo->player_num,
@@ -2367,7 +2367,7 @@ void handle_conn_ping_info(struct packet_conn_ping_info *packet) /* 87 sc */
   int i;
 
 # if REPLAY
-  printf("PACKET_CONN_PING_INFO\n"); /* done */
+  printf("CONN_PING_INFO\n"); /* done */
   printf("old_connections=%d ", packet->old_connections);
   printf("old_conn_id[%d]={ ", MAX_NUM_PLAYERS);
   for ( i = 0; i < MAX_NUM_PLAYERS; i++) {
@@ -2549,7 +2549,7 @@ void handle_spaceship_info(struct packet_spaceship_info *p) /* 95 sc */
   struct player_spaceship *ship = &pplayer->spaceship;
 
 # if REPLAY
-  printf("PACKET_SPACESHIP_INFO\n"); /* done */
+  printf("SPACESHIP_INFO\n"); /* done */
   printf("player_num=%d ", p->player_num);
   printf("sship_state=%d ", p->sship_state);
   printf("structurals=%d ", p->structurals);
@@ -2627,7 +2627,7 @@ void handle_tile_info(struct packet_tile_info *packet) /* 14 sc */
   bool renumbered = FALSE;
 
 # if REPLAY
-  printf("PACKET_TILE_INFO\n"); /* done */
+  printf("TILE_INFO\n"); /* done */
   printf("x=%d y=%d terrain=%d known=%d special=%d owner=%d continent=%d "
          "sprite=\"%s\"\n",
          packet->x, packet->y,
@@ -2771,7 +2771,7 @@ void handle_tile_info(struct packet_tile_info *packet) /* 14 sc */
 void handle_player_remove(int player_id) /* 38 sc */
 {
 # if REPLAY
-  printf("PACKET_PLAYER_REMOVE "); /* done */
+  printf("PLAYER_REMOVE "); /* done */
   printf("player_id=%d\n", player_id);
 # endif
   client_remove_player(player_id);
@@ -2783,7 +2783,7 @@ void handle_player_remove(int player_id) /* 38 sc */
 void handle_nation_select_ok(void) /* 11 sc */
 {
 # if REPLAY
-  printf("PACKET_NATION_SELECT_OK\n"); /* done */
+  printf("NATION_SELECT_OK\n"); /* done */
 # endif
   if (get_client_state() == CLIENT_SELECT_RACE_STATE) {
     set_client_state(CLIENT_WAITING_FOR_GAME_START_STATE);
@@ -2799,11 +2799,11 @@ static bool *nations_used;
 /**************************************************************************
   Mark a nation as unavailable, after we've entered the select-race state.
 **************************************************************************/
-void handle_nation_unavailable(Nation_Type_id nation) /* 9 cs */
+void handle_nation_unavailable(Nation_Type_id nation) /* 9 sc */
 {
 # if REPLAY
-  printf("PACKET_NATION_UNAVAILABLE "); /* done */
-  printf("nation=%d\n", nation);
+  printf("NATION_UNAVAILABLE"); /* done */
+  printf(" nation=%d\n", nation);
 # endif
   if (get_client_state() == CLIENT_SELECT_RACE_STATE
       && nation >= 0 && nation < game.ruleset_control.playable_nation_count) {
@@ -2823,7 +2823,7 @@ void handle_nation_unavailable(Nation_Type_id nation) /* 9 cs */
 void handle_select_races(void) /* 114 sc */
 {
 # if REPLAY
-  printf("PACKET_SELECT_RACES\n"); /* done */
+  printf("SELECT_RACES\n"); /* done */
 # endif
   if (get_client_state() == CLIENT_PRE_GAME_STATE) {
     /* First set the state. */
@@ -2854,7 +2854,7 @@ void handle_ruleset_control(struct packet_ruleset_control *packet) /* 106 sc */
 {
 # if REPLAY
   int i;
-  printf("PACKET_RULESET_CONTROL\n"); /* done */
+  printf("RULESET_CONTROL\n"); /* done */
   printf("aqueduct_size=%d ", packet->aqueduct_size);
   printf("add_to_size_limit=%d ", packet->add_to_size_limit);
   printf("notradesize=%d ", packet->notradesize);
@@ -2910,7 +2910,7 @@ void handle_ruleset_unit(struct packet_ruleset_unit *p) /* 96 sc */
   int i;
 
 # if REPLAY
-  printf("PACKET_RULESET_UNIT\n"); /* done */
+  printf("RULESET_UNIT\n"); /* done */
   printf("id=%d ", p->id);
   printf("name=%s ", p->name);
   printf("graphic_str=%s ", p->graphic_str);
@@ -3033,7 +3033,7 @@ void handle_ruleset_tech(struct packet_ruleset_tech *p) /* 99 sc */
   struct advance *a;
 
 # if REPLAY
-  printf("PACKET_RULESET_TECH\n"); /* done */
+  printf("RULESET_TECH\n"); /* done */
   printf("id=%d ", p->id);
   printf("req[0]=%d req[1]=%d", p->req[0], p->req[1]);
   printf("root_req=%d ", p->root_req);
@@ -3076,7 +3076,7 @@ void handle_ruleset_building(struct packet_ruleset_building *p) /* 104 sc */
   int i;
 
 # if REPLAY
-  printf("PACKET_RULESET_BUILDING\n"); /* done */
+  printf("RULESET_BUILDING\n"); /* done */
   printf("id=%d ", p->id);
   printf("name=%s ", p->name);
   printf("graphic_str=%s ", p->graphic_str);
@@ -3237,7 +3237,7 @@ void handle_ruleset_government(struct packet_ruleset_government *p) /* 100 sc */
   struct government *gov;
 
 # if REPLAY
-  printf("PACKET_RULESET_GOVERNMENT\n"); /* done */
+  printf("RULESET_GOVERNMENT\n"); /* done */
   printf("id=%d ", p->id);
   printf("required_tech=%d ", p->required_tech);
   printf("max_rate=%d ", p->max_rate);
@@ -3364,7 +3364,7 @@ void handle_ruleset_government_ruler_title( /* 98 sc */
   struct government *gov;
 
 # if REPLAY
-  printf("PACKET_RULESET_GOVERNMENT_RULER_TITLE\n"); /* done */
+  printf("RULESET_GOVERNMENT_RULER_TITLE\n"); /* done */
   printf("gov=%d ", p->gov);
   printf("id=%d ", p->id);
   printf("nation=%d ", p->nation);
@@ -3400,7 +3400,7 @@ void handle_ruleset_terrain(struct packet_ruleset_terrain *p) /* 105 sc */
 # if REPLAY
   int i;
 
-  printf("PACKET_RULESET_TERRAIN\n");
+  printf("RULESET_TERRAIN\n");
   printf("id=%d ", p->id);
   printf("tags[8]={");
   for  (i = 0; i < 8; i++) {
@@ -3513,7 +3513,7 @@ void handle_ruleset_terrain(struct packet_ruleset_terrain *p) /* 105 sc */
 void handle_ruleset_terrain_control(struct packet_ruleset_terrain_control *p) /* 101 sc */
 {
 # if REPLAY
-  printf("PACKET_RULESET_TERRAIN_CONTROL\n"); /* done */
+  printf("RULESET_TERRAIN_CONTROL\n"); /* done */
   printf("may_road=%d ", p->may_road);
   printf("may_irrigate=%d ", p->may_irrigate);
   printf("may_mine=%d ", p->may_mine);
@@ -3553,7 +3553,7 @@ void handle_ruleset_nation(struct packet_ruleset_nation *p) /* 102 sc */
   struct nation_type *pl;
 
 # if REPLAY
-  printf("PACKET_RULESET_NATION\n"); /* done */
+  printf("RULESET_NATION\n"); /* done */
   printf("id=%d ", p->id);
   printf("name=%s ", p->name);
   printf("name_plural=%s ", p->name_plural);
@@ -3626,7 +3626,7 @@ void handle_ruleset_city(struct packet_ruleset_city *packet) /* 103 sc */
   struct citystyle *cs;
 
 # if REPLAY
-  printf("PACKET_RULESET_CITY\n"); /* done */
+  printf("RULESET_CITY\n"); /* done */
   printf("style_id=%d ", packet->style_id);
   printf("techreq=%d ", packet->techreq);
   printf("name=%s ", packet->name);
@@ -3700,7 +3700,7 @@ void handle_ruleset_game(struct packet_ruleset_game *packet) /* 97 sc */
 {
 # if REPLAY
   int i;
-  printf("PACKET_RULESET_GAME\n"); /* done */
+  printf("RULESET_GAME\n"); /* done */
   printf("specialist_name[%d]={", SP_COUNT);
   for ( i = 0; i < SP_COUNT; i++) {
     printf("%s ", packet->specialist_name[i]);
@@ -3773,7 +3773,7 @@ void handle_unit_bribe_info(int unit_id, int cost) /* 68 sc */
   unit_t *punit = find_unit_by_id(unit_id);
 
 # if REPLAY
-  printf("PACKET_UNIT_BRIBE_INFO unit_id=%d cost=%d\n", unit_id, cost); /* done */
+  printf("UNIT_BRIBE_INFO unit_id=%d cost=%d\n", unit_id, cost); /* done */
 # endif
   if (punit) {
     if (get_player_ptr()
@@ -3791,7 +3791,7 @@ void handle_city_incite_info(int city_id, int cost) /* 34 sc */
   city_t *pcity = find_city_by_id(city_id);
 
 # if REPLAY
-  printf("PACKET_CITY_INCITE_INFO "); /* done */
+  printf("CITY_INCITE_INFO "); /* done */
   printf("city_id=%d cost=%d\n", city_id, cost);
 # endif
   if (pcity) {
@@ -3808,7 +3808,7 @@ void handle_city_incite_info(int city_id, int cost) /* 34 sc */
 void handle_city_name_suggestion_info(int unit_id, char *name) /* 36 sc */
 {
 # if REPLAY
-  printf("PACKET_CITY_NAME_SUGGESTION_INFO\n"); /* done */
+  printf("CITY_NAME_SUGGESTION_INFO\n"); /* done */
   printf("unit_id=%d name=\"%s\"\n", unit_id, name);
 # endif
   if (!can_client_issue_orders()) {
@@ -3832,7 +3832,7 @@ void handle_city_name_suggestion_info(int unit_id, char *name) /* 36 sc */
 void handle_unit_diplomat_popup_dialog(int diplomat_id, int target_id) /* 71 sc */
 {
 # if REPLAY
-  printf("PACKET_UNIT_DIPLOMAT_POPUP_DIALOG diplomat_id=%d target_id=%d\n",
+  printf("UNIT_DIPLOMAT_POPUP_DIALOG diplomat_id=%d target_id=%d\n",
          diplomat_id, target_id); /* done */
 # endif
   if (client_is_global_observer()) {
@@ -3855,7 +3855,7 @@ void handle_city_sabotage_list(int diplomat_id, int city_id, /* 37 sc */
 # if REPLAY
   int i;
 
-  printf("PACKET_CITY_SABOTAGE_LIST\n"); /* done */
+  printf("CITY_SABOTAGE_LIST\n"); /* done */
   printf("diplomat_id=%d city_id=%d ", diplomat_id, city_id);
   printf("improvements[%d]=[", B_LAST);
   for (i=0; i < B_LAST; i++ ) {
@@ -3888,7 +3888,7 @@ void handle_endgame_report(struct packet_endgame_report *packet) /* 13 sc */
 {
 # if REPLAY
   int i;
-  printf("PACKET_ENDGAME_REPORT\n"); /* done */
+  printf("ENDGAME_REPORT\n"); /* done */
   for (i = 0; i < packet->nscores; i++) {
     printf("nameid[%d]=%d ", packet->nscores, packet->id[i]);
     printf("score=%d ", packet->score[i]);
@@ -3917,7 +3917,7 @@ void handle_player_attribute_chunk(struct packet_player_attribute_chunk *packet)
 # if REPLAY
   int i;
 
-  printf("PACKET_PLAYER_ATTRIBUTE_CHUNK\n"); /* done */
+  printf("PLAYER_ATTRIBUTE_CHUNK\n"); /* done */
   printf("offset=%d total_length=%d chunk_length=%d data[]=[\n",
          packet->offset, packet->total_length, packet->chunk_length);
   for (i=0;i < packet->chunk_length; i++) {
@@ -3946,7 +3946,7 @@ void handle_player_attribute_chunk(struct packet_player_attribute_chunk *packet)
 void handle_processing_started(void) /* 0 sc */
 {
 # if REPLAY
-  printf("PACKET_PROCESSING_STARTED\n"); /* done */
+  printf("PROCESSING_STARTED\n"); /* done */
 # endif
   agents_processing_started();
 
@@ -3966,7 +3966,7 @@ void handle_processing_finished(void) /* 1 sc */
   int i;
 
 # if REPLAY
-  printf("PACKET_PROCESSING_FINISHED\n"); /* done */
+  printf("PROCESSING_FINISHED\n"); /* done */
 # endif
   freelog(LOG_DEBUG, "finish processing packet %d",
           aconnection.u.client.request_id_of_currently_handled_packet);
@@ -4042,7 +4042,7 @@ void set_reports_thaw_request(int request_id)
 void handle_freeze_hint(void) /* 2 sc */
 {
 # if REPLAY
-  printf("PACKET_FREEZE_HINT\n"); /* done */
+  printf("FREEZE_HINT\n"); /* done */
 # endif
   freelog(LOG_DEBUG, "handle_freeze_hint");
 
@@ -4056,7 +4056,7 @@ void handle_freeze_hint(void) /* 2 sc */
 void handle_thaw_hint(void) /* 3 sc */
 {
 # if REPLAY
-  printf("PACKET_THAW_HINT\n"); /* done */
+  printf("THAW_HINT\n"); /* done */
 # endif
   freelog(LOG_DEBUG, "handle_thaw_hint");
 
@@ -4072,7 +4072,7 @@ void handle_thaw_hint(void) /* 3 sc */
 void handle_server_shutdown(void) /* 8 sc */
 {
 # if REPLAY
-  printf("PACKET_SERVER_SHUTDOWN\n"); /* done */
+  printf("SERVER_SHUTDOWN\n"); /* done */
 # endif
   freelog(LOG_VERBOSE, "server shutdown");
 }
@@ -4083,7 +4083,7 @@ void handle_server_shutdown(void) /* 8 sc */
 void handle_conn_ping(void) /* 88 sc */
 {
 # if REPLAY
-  printf("PACKET_CONN_PING\n"); /* done */
+  printf("CONN_PING\n"); /* done */
 # endif
   send_packet_conn_pong(&aconnection);
 }
@@ -4094,7 +4094,7 @@ void handle_conn_ping(void) /* 88 sc */
 void handle_freeze_client(void) /* 135 sc */
 {
 # if REPLAY
-  printf("PACKET_FREEZE_CLIENT\n"); /* done */
+  printf("FREEZE_CLIENT\n"); /* done */
 # endif
   freelog(LOG_DEBUG, "handle_freeze_client");
 
@@ -4109,7 +4109,7 @@ void handle_freeze_client(void) /* 135 sc */
 void handle_thaw_client(void) /* 136 sc */
 {
 # if REPLAY
-  printf("PACKET_THAW_CLIENT\n"); /* done */
+  printf("THAW_CLIENT\n"); /* done */
 # endif
   freelog(LOG_DEBUG, "handle_thaw_client");
 
@@ -4128,7 +4128,7 @@ void handle_ruleset_cache_group(struct packet_ruleset_cache_group *packet) /* 12
   int i;
 
 # if REPLAY
-  printf("PACKET_RULESET_CACHE_GROUP\n"); /* done */
+  printf("RULESET_CACHE_GROUP\n"); /* done */
   printf("name=%s ", packet->name);
   printf("num_elements=%d ", packet->num_elements);
   printf("source_buildings[255]={\n");
@@ -4174,7 +4174,7 @@ void handle_ruleset_cache_group(struct packet_ruleset_cache_group *packet) /* 12
 void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet) /* 121 sc */
 {
 # if REPLAY
-  printf("PACKET_RULESET_CACHE_EFFECT\n"); /* done */
+  printf("RULESET_CACHE_EFFECT\n"); /* done */
   printf("id=%d ", packet->id);
   printf("effect_type=%d ", packet->effect_type);
   printf("range=%d ", packet->range);
@@ -4196,7 +4196,7 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet) /* 
 void handle_vote_remove(int vote_no) /* 126 sc */
 {
 # if REPLAY
-  printf("PACKET_VOTE_REMOVE vote_no=%d\n", vote_no); /* done */
+  printf("VOTE_REMOVE vote_no=%d\n", vote_no); /* done */
 # endif
   voteinfo_queue_delayed_remove(vote_no);
   voteinfo_gui_update();
@@ -4211,7 +4211,7 @@ void handle_vote_update(int vote_no, int yes, int no, int abstain, /* 125 sc */
   struct voteinfo *vi;
 
 # if REPLAY
-  printf("PACKET_VOTE_UPDATE\n"); /* done */
+  printf("VOTE_UPDATE\n"); /* done */
   printf("vote_no=%d ", vote_no);
   printf("yes=%d ", yes);
   printf("no=%d ", no);
@@ -4241,7 +4241,7 @@ void handle_vote_new(struct packet_vote_new *packet) /* 124 sc */
 {
 # if REPLAY
   /* int i;*/
-  printf("PACKET_VOTE_NEW\n"); /* done */
+  printf("VOTE_NEW\n"); /* done */
   printf("vote_no=%d ", packet->vote_no);
   printf("user=%s ", packet->user);
   printf("desc[512]=%s\n", packet->desc);
@@ -4284,7 +4284,7 @@ void handle_vote_resolve(int vote_no, bool passed) /* 127 sc */
   struct voteinfo *vi;
 
 # if REPLAY
-  printf("PACKET_VOTE_RESOLVE vote_no=%d passed=%d\n", vote_no, passed); /* done */
+  printf("VOTE_RESOLVE vote_no=%d passed=%d\n", vote_no, passed); /* done */
 # endif
   vi = voteinfo_queue_find(vote_no);
   if (vi == NULL) {
@@ -4309,7 +4309,7 @@ void handle_city_manager_param(struct packet_city_manager_param *packet)/* 145 c
   int i;
 
 # if REPLAY
-  printf("PACKET_CITY_MANAGER_PARAM\n"); /* done */
+  printf("CITY_MANAGER_PARAM\n"); /* done */
   printf("id=%d ", packet->id);
   printf("minimal_surplus[%d]={\n", CM_NUM_STATS);
   for ( i = 0; i < CM_NUM_STATS; i++) {
@@ -4357,7 +4357,7 @@ void handle_city_no_manager_param(int city_id) /* 146 cs sc */
   city_t *pcity = find_city_by_id(city_id);
 
 # if REPLAY
-  printf("PACKET_CITY_NO_MANAGER_PARAM city_id=%d\n", city_id); /* done */
+  printf("CITY_NO_MANAGER_PARAM city_id=%d\n", city_id); /* done */
 # endif
   pcity = find_city_by_id(city_id);
   if (!pcity) {
