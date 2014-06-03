@@ -22,7 +22,7 @@ bool client_handle_packet(enum packet_type type, void *packet)
 {
   freelog(LOG_VERBOSE, "sc opcode=%d", type);
 # if REPLAY
-  printf("sc opcode=%d ", type);
+  printf("sc opc=%d ", type);
 # endif
   switch(type) {
   case PACKET_PROCESSING_STARTED: /* 0 sc */
@@ -380,7 +380,7 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* 110 */
 
   case PACKET_GAME_LOAD:      /* 111 sc */
-    handle_game_load(packet); /* packhand */
+    handle_game_load(packet); /* gui-gtk-2.0/pages.c */
     return TRUE;
 
   case PACKET_OPTIONS_SETTABLE_CONTROL:      /* 112 sc */
@@ -392,7 +392,7 @@ bool client_handle_packet(enum packet_type type, void *packet)
     return TRUE;
 
   case PACKET_SELECT_RACES: /* 114 sc */
-    handle_select_races();
+    handle_select_races();  /* packhand */
     return TRUE;
 
 /* 115 */
