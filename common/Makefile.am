@@ -40,8 +40,9 @@ libcivcommon_a_SOURCES = \
 		nation.h        \
 		packets.c	\
 		packets.h	\
-		packets_gen.c	\
-		packets_gen.h	\
+        packets_gen.c    \
+        packets_gen.h    \
+        packets_client.c \
 		packets.def	\
 		player.c	\
 		player.h	\
