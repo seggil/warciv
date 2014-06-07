@@ -712,11 +712,6 @@ PACKET_UNIT_AUTO=60;cs,dsend
   UNIT unit_id;
 end
 
-# Load the given cargo into the transporter.
-PACKET_UNIT_LOAD=107;cs,dsend
-  UNIT cargo_id, transporter_id;
-end
-
 # Unload the given cargo from the transporter.
 PACKET_UNIT_UNLOAD=61;cs,dsend
   UNIT cargo_id, transporter_id;
@@ -1259,6 +1254,10 @@ PACKET_RULESET_CONTROL=106;sc,lsend
   IMPROVEMENT default_building;
 end
 
+# Load the given cargo into the transporter.
+PACKET_UNIT_LOAD=107;cs,dsend
+  UNIT cargo_id, transporter_id;
+end
 
 /*********************************************************
  Below are the packets that control single-player mode.
