@@ -155,6 +155,19 @@ if test x$enable_replay = xtrue; then
   AC_DEFINE(REPLAY, 1, [Define to print packet to stdout.])
 fi
 
+AC_ARG_ENABLE([replay2],
+  AS_HELP_STRING([--enable-replay2],
+                 [print packet to stdout]),
+  [case "${enableval}" in
+    yes) enable_replay2=true ;;
+    no)  enable_replay2=false;;
+    *)   AC_MSG_ERROR([bad value ${enableval} for --enable-replay2]) ;;
+  esac],
+  [enable_replay2="false"])
+if test x$enable_replay2 = xtrue; then
+  AC_DEFINE(REPLAY_2, 1, [Define to print packet to stdout.])
+fi
+
 dnl Checks for programs.
 AC_PROG_AWK
 AC_PROG_CC
