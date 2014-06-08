@@ -1108,32 +1108,6 @@ receive_packet_server_join_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_server_join_req_100(
-               connection_t *pconn,
-               const struct packet_server_join_req *packet)
-{
-  const struct packet_server_join_req *real_packet = packet;
-  SEND_PACKET_START(PACKET_SERVER_JOIN_REQ);
-
-  dio_put_string(&dout, real_packet->username);
-  dio_put_string(&dout, real_packet->capability);
-  dio_put_string(&dout, real_packet->version_label);
-  dio_put_uint32(&dout, real_packet->major_version);
-  dio_put_uint32(&dout, real_packet->minor_version);
-  dio_put_uint32(&dout, real_packet->patch_version);
-  printf("cs opc=4 SERVER_JOIN_REQ, username=%s, "
-         "capability=%s, version_label=%s, "
-         "major_version=%u, minor_version=%u, patch_version=%u\n",
-         real_packet->username,
-         real_packet->capability,
-         real_packet->version_label,
-         real_packet->major_version,
-         real_packet->minor_version,
-         real_packet->patch_version);
-
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_server_join_req(connection_t *pconn)
 {
   int variant = -1;
@@ -1172,54 +1146,6 @@ receive_packet_server_join_req(
       return NULL;
     }
   }
-}
-
-int send_packet_server_join_req(
-        connection_t *pconn,
-        const struct packet_server_join_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_server_join_req from the server.");
-  }
-  ensure_valid_variant_packet_server_join_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_SERVER_JOIN_REQ]) {
-    case 100: {
-      return send_packet_server_join_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_server_join_req(
-         connection_t *pconn,
-         const char *username,
-         const char *capability,
-         const char *version_label,
-         int major_version,
-         int minor_version,
-         int patch_version)
-{
-  struct packet_server_join_req packet, *real_packet = &packet;
-
-  sz_strlcpy(real_packet->username, username);
-  sz_strlcpy(real_packet->capability, capability);
-  sz_strlcpy(real_packet->version_label, version_label);
-  real_packet->major_version = major_version;
-  real_packet->minor_version = minor_version;
-  real_packet->patch_version = patch_version;
-
-  return send_packet_server_join_req(pconn, real_packet);
 }
 
 /* 5 sc */
@@ -1449,65 +1375,6 @@ receive_packet_authentication_reply_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_authentication_reply_100(
-               connection_t *pconn,
-               const struct packet_authentication_reply *packet)
-{
-  const struct packet_authentication_reply *real_packet = packet;
-  packet_authentication_reply_100_fields fields;
-  struct packet_authentication_reply *old, *clone;
-  bool differ, old_from_hash;
-  bool force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_AUTHENTICATION_REPLY];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_AUTHENTICATION_REPLY);
-  printf("cs op=7 AUTHENTICATION_REPLY");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_authentication_reply_100,
-                     cmp_packet_authentication_reply_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (strcmp(old->password, real_packet->password) != 0);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_string(&dout, real_packet->password);
-    printf(" password=%s\n", real_packet->password);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_authentication_reply(connection_t *pconn)
 {
   int variant = -1;
@@ -1544,33 +1411,6 @@ receive_packet_authentication_reply(
     default: {
       die("unknown variant");
       return NULL;
-    }
-  }
-}
-
-int send_packet_authentication_reply(
-        connection_t *pconn,
-        const struct packet_authentication_reply *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_authentication_reply from the server.");
-  }
-  ensure_valid_variant_packet_authentication_reply(pconn);
-
-  switch(pconn->phs.variant[PACKET_AUTHENTICATION_REPLY]) {
-    case 100: {
-      return send_packet_authentication_reply_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
     }
   }
 }
@@ -1792,91 +1632,6 @@ receive_packet_nation_select_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nation_select_req_100(
-               connection_t *pconn,
-               const struct packet_nation_select_req *packet)
-{
-  const struct packet_nation_select_req *real_packet = packet;
-  packet_nation_select_req_100_fields fields;
-  struct packet_nation_select_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_NATION_SELECT_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_NATION_SELECT_REQ);
-  printf("cs opc=10 NATION_SELECT_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_nation_select_req_100,
-                     cmp_packet_nation_select_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->nation_no != real_packet->nation_no);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->is_male != real_packet->is_male);
-  if (differ) {different++;}
-  if(packet->is_male) {
-    BV_SET(fields, 1);
-  }
-
-  differ = (strcmp(old->name, real_packet->name) != 0);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  differ = (old->city_style != real_packet->city_style);
-  if (differ) {
-    different++;
-    BV_SET(fields, 3);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->nation_no);
-    printf(" nation_no=%u", real_packet->nation_no);
-  }
-  /* field 1 is folded into the header */
-  if (BV_ISSET(fields, 2)) {
-    dio_put_string(&dout, real_packet->name);
-    printf(" name=%s", real_packet->name);
-  }
-  if (BV_ISSET(fields, 3)) {
-    dio_put_uint8(&dout, real_packet->city_style);
-    printf(" city_style=%u\n", real_packet->city_style);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_nation_select_req(connection_t *pconn)
 {
   int variant = -1;
@@ -1915,49 +1670,6 @@ receive_packet_nation_select_req(
       return NULL;
     }
   }
-}
-
-int send_packet_nation_select_req(
-        connection_t *pconn,
-        const struct packet_nation_select_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_nation_select_req from the server.");
-  }
-  ensure_valid_variant_packet_nation_select_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_NATION_SELECT_REQ]) {
-    case 100: {
-      return send_packet_nation_select_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_nation_select_req(connection_t *pconn,
-                                   Nation_Type_id nation_no,
-                                   bool is_male,
-                                   const char *name,
-                                   int city_style)
-{
-  struct packet_nation_select_req packet, *real_packet = &packet;
-
-  real_packet->nation_no = nation_no;
-  real_packet->is_male = is_male;
-  sz_strlcpy(real_packet->name, name);
-  real_packet->city_style = city_style;
-
-  return send_packet_nation_select_req(pconn, real_packet);
 }
 
 /* 11 sc */
@@ -3658,64 +3370,6 @@ receive_packet_chat_msg_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_chat_msg_req_100(
-               connection_t *pconn,
-               const struct packet_chat_msg_req *packet)
-{
-  const struct packet_chat_msg_req *real_packet = packet;
-  packet_chat_msg_req_100_fields fields;
-  struct packet_chat_msg_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CHAT_MSG_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CHAT_MSG_REQ);
-  printf("cs opc=19 CHAT_MSG_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_chat_msg_req_100,
-                     cmp_packet_chat_msg_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (strcmp(old->message, real_packet->message) != 0);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_string(&dout, real_packet->message);
-    printf(" message=%s\n", real_packet->message);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_chat_msg_req(connection_t *pconn)
 {
   int variant = -1;
@@ -3754,42 +3408,6 @@ receive_packet_chat_msg_req(
       return NULL;
     }
   }
-}
-
-int send_packet_chat_msg_req(
-        connection_t *pconn,
-        const struct packet_chat_msg_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_chat_msg_req from the server.");
-  }
-  ensure_valid_variant_packet_chat_msg_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_CHAT_MSG_REQ]) {
-    case 100: {
-      return send_packet_chat_msg_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_chat_msg_req(connection_t *pconn, const char *message)
-{
-  struct packet_chat_msg_req packet, *real_packet = &packet;
-
-  sz_strlcpy(real_packet->message, message);
-
-  return send_packet_chat_msg_req(pconn, real_packet);
 }
 
 /* 20 sc */
@@ -5359,74 +4977,6 @@ receive_packet_city_sell_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_sell_100(
-               connection_t *pconn,
-               const struct packet_city_sell *packet)
-{
-  const struct packet_city_sell *real_packet = packet;
-  packet_city_sell_100_fields fields;
-  struct packet_city_sell *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_SELL];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_SELL);
-  printf("cs opc=23 CITY_SELL");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_sell_100,
-                     cmp_packet_city_sell_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->build_id != real_packet->build_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u ", real_packet->city_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->build_id);
-    printf(" build_id=%u\n", real_packet->build_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_sell(connection_t *pconn)
 {
   int variant = -1;
@@ -5465,46 +5015,6 @@ receive_packet_city_sell(
       return NULL;
     }
   }
-}
-
-int send_packet_city_sell(
-        connection_t *pconn,
-        const struct packet_city_sell *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_sell from the server.");
-  }
-  ensure_valid_variant_packet_city_sell(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_SELL]) {
-    case 100: {
-      return send_packet_city_sell_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_sell(
-         connection_t *pconn,
-         int city_id, int
-         build_id)
-{
-  struct packet_city_sell packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-  real_packet->build_id = build_id;
-
-  return send_packet_city_sell(pconn, real_packet);
 }
 
 /* 24 cs */
@@ -5556,64 +5066,6 @@ receive_packet_city_buy_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_buy_100(
-               connection_t *pconn,
-               const struct packet_city_buy *packet)
-{
-  const struct packet_city_buy *real_packet = packet;
-  packet_city_buy_100_fields fields;
-  struct packet_city_buy *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_BUY];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_BUY);
-  printf("cs opc=24 CITY_BUY");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_buy_100,
-                     cmp_packet_city_buy_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u\n", real_packet->city_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_buy(connection_t *pconn)
 {
   int variant = -1;
@@ -5652,42 +5104,6 @@ receive_packet_city_buy(
       return NULL;
     }
   }
-}
-
-int send_packet_city_buy(
-        connection_t *pconn,
-        const struct packet_city_buy *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_buy from the server.");
-  }
-  ensure_valid_variant_packet_city_buy(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_BUY]) {
-    case 100: {
-      return send_packet_city_buy_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_buy(connection_t *pconn, int city_id)
-{
-  struct packet_city_buy packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-
-  return send_packet_city_buy(pconn, real_packet);
 }
 
 /* 25 cs */
@@ -5746,79 +5162,6 @@ receive_packet_city_change_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_change_100(
-               connection_t *pconn,
-               const struct packet_city_change *packet)
-{
-  const struct packet_city_change *real_packet = packet;
-  packet_city_change_100_fields fields;
-  struct packet_city_change *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_CHANGE];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_CHANGE);
-  printf("cs opc=25 CITY_CHANGE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_change_100,
-                     cmp_packet_city_change_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->build_id != real_packet->build_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->is_build_id_unit_id != real_packet->is_build_id_unit_id);
-  if (differ) {different++;}
-  if(packet->is_build_id_unit_id) {BV_SET(fields, 2);}
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u ", real_packet->city_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->build_id);
-    printf(" build_id=%u\n", real_packet->build_id);
-  } else {
-    printf("\n");
-  }
-  /* field 2 is folded into the header */
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_change(connection_t *pconn)
 {
   int variant = -1;
@@ -5857,47 +5200,6 @@ receive_packet_city_change(
       return NULL;
     }
   }
-}
-
-int send_packet_city_change(
-        connection_t *pconn,
-        const struct packet_city_change *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_change from the server.");
-  }
-  ensure_valid_variant_packet_city_change(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_CHANGE]) {
-    case 100: {
-      return send_packet_city_change_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_change(
-         connection_t *pconn,
-         int city_id, int
-         build_id, bool is_build_id_unit_id)
-{
-  struct packet_city_change packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-  real_packet->build_id = build_id;
-  real_packet->is_build_id_unit_id = is_build_id_unit_id;
-
-  return send_packet_city_change(pconn, real_packet);
 }
 
 /* 26 cs */
@@ -5952,82 +5254,6 @@ receive_packet_city_worklist_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_worklist_100(
-               connection_t *pconn,
-               const struct packet_city_worklist *packet)
-{
-  const struct packet_city_worklist *real_packet = packet;
-  packet_city_worklist_100_fields fields;
-  struct packet_city_worklist *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_WORKLIST];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_WORKLIST);
-  printf("cs opc=26 CITY_WORKLIST");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_worklist_100,
-                     cmp_packet_city_worklist_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = !are_worklists_equal(&old->worklist, &real_packet->worklist);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u", real_packet->city_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    int length = worklist_length(&real_packet->worklist);
-    int i;
-
-    dio_put_worklist(&dout, &real_packet->worklist);
-    printf(" worklist={ length=%d", length);
-    for (i=0; i < length; i++) {
-      printf("(%d %d)",
-             real_packet->worklist.wlefs[i],
-             real_packet->worklist.wlids[i]);
-    }
-    printf(" }");
-  }
-  printf("\n");
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_worklist(connection_t *pconn)
 {
   int variant = -1;
@@ -6066,46 +5292,6 @@ receive_packet_city_worklist(
       return NULL;
     }
   }
-}
-
-int send_packet_city_worklist(
-        connection_t *pconn,
-        const struct packet_city_worklist *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_worklist from the server.");
-  }
-  ensure_valid_variant_packet_city_worklist(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_WORKLIST]) {
-    case 100: {
-      return send_packet_city_worklist_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_worklist(
-         connection_t *pconn,
-         int city_id, struct
-         worklist *worklist)
-{
-  struct packet_city_worklist packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-  copy_worklist(&real_packet->worklist, worklist);
-
-  return send_packet_city_worklist(pconn, real_packet);
 }
 
 /* 27 cs */
@@ -6169,84 +5355,6 @@ receive_packet_city_make_specialist_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_make_specialist_100(
-               connection_t *pconn,
-               const struct packet_city_make_specialist *packet)
-{
-  const struct packet_city_make_specialist *real_packet = packet;
-  packet_city_make_specialist_100_fields fields;
-  struct packet_city_make_specialist *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_MAKE_SPECIALIST];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_MAKE_SPECIALIST);
-  printf("cs opc=27 CITY_MAKE_SPECIALIST");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_make_specialist_100,
-                     cmp_packet_city_make_specialist_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->worker_x != real_packet->worker_x);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->worker_y != real_packet->worker_y);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u", real_packet->city_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->worker_x);
-    printf(" worker_x=%u", real_packet->worker_x);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->worker_y);
-    printf(" worker_y=%u\n", real_packet->worker_y);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_make_specialist(connection_t *pconn)
 {
   int variant = -1;
@@ -6285,48 +5393,6 @@ receive_packet_city_make_specialist(
       return NULL;
     }
   }
-}
-
-int send_packet_city_make_specialist(
-        connection_t *pconn,
-        const struct packet_city_make_specialist *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_make_specialist from the server.");
-  }
-  ensure_valid_variant_packet_city_make_specialist(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_MAKE_SPECIALIST]) {
-    case 100: {
-      return send_packet_city_make_specialist_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_make_specialist(
-         connection_t *pconn,
-         int city_id,
-         int worker_x,
-         int worker_y)
-{
-  struct packet_city_make_specialist packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-  real_packet->worker_x = worker_x;
-  real_packet->worker_y = worker_y;
-
-  return send_packet_city_make_specialist(pconn, real_packet);
 }
 
 /* 28 cs */
@@ -6390,84 +5456,6 @@ receive_packet_city_make_worker_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_make_worker_100(
-               connection_t *pconn,
-               const struct packet_city_make_worker *packet)
-{
-  const struct packet_city_make_worker *real_packet = packet;
-  packet_city_make_worker_100_fields fields;
-  struct packet_city_make_worker *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_MAKE_WORKER];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_MAKE_WORKER);
-  printf("cs opc=28 CITY_MAKE_WORKER");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_make_worker_100,
-                     cmp_packet_city_make_worker_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->worker_x != real_packet->worker_x);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->worker_y != real_packet->worker_y);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u", real_packet->city_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->worker_x);
-    printf(" worker_x=%u", real_packet->worker_x);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->worker_y);
-    printf(" worker_y=%u\n", real_packet->worker_y);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_make_worker(connection_t *pconn)
 {
   int variant = -1;
@@ -6506,48 +5494,6 @@ receive_packet_city_make_worker(
       return NULL;
     }
   }
-}
-
-int send_packet_city_make_worker(
-        connection_t *pconn,
-        const struct packet_city_make_worker *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_make_worker from the server.");
-  }
-  ensure_valid_variant_packet_city_make_worker(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_MAKE_WORKER]) {
-    case 100: {
-      return send_packet_city_make_worker_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_make_worker(
-         connection_t *pconn,
-         int city_id,
-         int worker_x,
-         int worker_y)
-{
-  struct packet_city_make_worker packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-  real_packet->worker_x = worker_x;
-  real_packet->worker_y = worker_y;
-
-  return send_packet_city_make_worker(pconn, real_packet);
 }
 
 /* 29 cs */
@@ -6611,84 +5557,6 @@ receive_packet_city_change_specialist_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_change_specialist_100(
-               connection_t *pconn,
-               const struct packet_city_change_specialist *packet)
-{
-  const struct packet_city_change_specialist *real_packet = packet;
-  packet_city_change_specialist_100_fields fields;
-  struct packet_city_change_specialist *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_CHANGE_SPECIALIST];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_CHANGE_SPECIALIST);
-  printf("cs opc=29 CITY_CHANGE_SPECIALIST");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_change_specialist_100,
-                     cmp_packet_city_change_specialist_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->from != real_packet->from);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->to != real_packet->to);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u", real_packet->city_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->from);
-    printf(" from=%u", real_packet->from);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->to);
-    printf(" to=%u\n", real_packet->to);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_change_specialist(connection_t *pconn)
 {
   int variant = -1;
@@ -6727,47 +5595,6 @@ receive_packet_city_change_specialist(
       return NULL;
     }
   }
-}
-
-int send_packet_city_change_specialist(
-        connection_t *pconn,
-        const struct packet_city_change_specialist *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_change_specialist from the server.");
-  }
-  ensure_valid_variant_packet_city_change_specialist(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_CHANGE_SPECIALIST]) {
-    case 100: {
-      return send_packet_city_change_specialist_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_change_specialist(connection_t *pconn,
-                                        int city_id,
-                                        Specialist_type_id from,
-                                        Specialist_type_id to)
-{
-  struct packet_city_change_specialist packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-  real_packet->from = from;
-  real_packet->to = to;
-
-  return send_packet_city_change_specialist(pconn, real_packet);
 }
 
 /* 30 cs */
@@ -6822,74 +5649,6 @@ receive_packet_city_rename_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_rename_100(
-               connection_t *pconn,
-               const struct packet_city_rename *packet)
-{
-  const struct packet_city_rename *real_packet = packet;
-  packet_city_rename_100_fields fields;
-  struct packet_city_rename *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_RENAME];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_RENAME);
-  printf("cs opc=30 CITY_RENAME");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_rename_100,
-                     cmp_packet_city_rename_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (strcmp(old->name, real_packet->name) != 0);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u", real_packet->city_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_string(&dout, real_packet->name);
-    printf(" name=%s\n", real_packet->name);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_rename(connection_t *pconn)
 {
   int variant = -1;
@@ -6928,46 +5687,6 @@ receive_packet_city_rename(
       return NULL;
     }
   }
-}
-
-int send_packet_city_rename(
-        connection_t *pconn,
-        const struct packet_city_rename *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_rename from the server.");
-  }
-  ensure_valid_variant_packet_city_rename(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_RENAME]) {
-    case 100: {
-      return send_packet_city_rename_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_rename(
-         connection_t *pconn,
-         int city_id,
-         const char *name)
-{
-  struct packet_city_rename packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-  sz_strlcpy(real_packet->name, name);
-
-  return send_packet_city_rename(pconn, real_packet);
 }
 
 /* 31 cs */
@@ -7025,74 +5744,6 @@ receive_packet_city_options_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_options_req_100(
-               connection_t *pconn,
-               const struct packet_city_options_req *packet)
-{
-  const struct packet_city_options_req *real_packet = packet;
-  packet_city_options_req_100_fields fields;
-  struct packet_city_options_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_OPTIONS_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_OPTIONS_REQ);
-  printf("cs opc=31 CITY_OPTIONS_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_options_req_100,
-                     cmp_packet_city_options_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->value != real_packet->value);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u", real_packet->city_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->value);
-    printf(" value=%u\n", real_packet->value);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_options_req(connection_t *pconn)
 {
   int variant = -1;
@@ -7131,46 +5782,6 @@ receive_packet_city_options_req(
       return NULL;
     }
   }
-}
-
-int send_packet_city_options_req(
-        connection_t *pconn,
-        const struct packet_city_options_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_options_req from the server.");
-  }
-  ensure_valid_variant_packet_city_options_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_OPTIONS_REQ]) {
-    case 100: {
-      return send_packet_city_options_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_options_req(
-         connection_t *pconn,
-         int city_id,
-         int value)
-{
-  struct packet_city_options_req packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-  real_packet->value = value;
-
-  return send_packet_city_options_req(pconn, real_packet);
 }
 
 /* 32 cs */
@@ -7222,64 +5833,6 @@ receive_packet_city_refresh_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_refresh_100(
-               connection_t *pconn,
-               const struct packet_city_refresh *packet)
-{
-  const struct packet_city_refresh *real_packet = packet;
-  packet_city_refresh_100_fields fields;
-  struct packet_city_refresh *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_REFRESH];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_REFRESH);
-  printf("cs opc=32 CITY_REFRESH");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_refresh_100,
-                     cmp_packet_city_refresh_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u\n", real_packet->city_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_refresh(connection_t *pconn)
 {
   int variant = -1;
@@ -7318,42 +5871,6 @@ receive_packet_city_refresh(
       return NULL;
     }
   }
-}
-
-int send_packet_city_refresh(
-        connection_t *pconn,
-        const struct packet_city_refresh *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_refresh from the server.");
-  }
-  ensure_valid_variant_packet_city_refresh(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_REFRESH]) {
-    case 100: {
-      return send_packet_city_refresh_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_refresh(connection_t *pconn, int city_id)
-{
-  struct packet_city_refresh packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-
-  return send_packet_city_refresh(pconn, real_packet);
 }
 
 /* 33 cs */
@@ -7405,64 +5922,6 @@ receive_packet_city_incite_inq_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_incite_inq_100(
-               connection_t *pconn,
-               const struct packet_city_incite_inq *packet)
-{
-  const struct packet_city_incite_inq *real_packet = packet;
-  packet_city_incite_inq_100_fields fields;
-  struct packet_city_incite_inq *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_INCITE_INQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_INCITE_INQ);
-  printf("cs opc=33 CITY_INCITE_INQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_incite_inq_100,
-                     cmp_packet_city_incite_inq_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u\n", real_packet->city_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_incite_inq(connection_t *pconn)
 {
   int variant = -1;
@@ -7501,42 +5960,6 @@ receive_packet_city_incite_inq(
       return NULL;
     }
   }
-}
-
-int send_packet_city_incite_inq(
-        connection_t *pconn,
-        const struct packet_city_incite_inq *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_incite_inq from the server.");
-  }
-  ensure_valid_variant_packet_city_incite_inq(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_INCITE_INQ]) {
-    case 100: {
-      return send_packet_city_incite_inq_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_incite_inq(connection_t *pconn, int city_id)
-{
-  struct packet_city_incite_inq packet, *real_packet = &packet;
-
-  real_packet->city_id = city_id;
-
-  return send_packet_city_incite_inq(pconn, real_packet);
 }
 
 /* 34 sc */
@@ -7710,64 +6133,6 @@ receive_packet_city_name_suggestion_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_name_suggestion_req_100(
-               connection_t *pconn,
-               const struct packet_city_name_suggestion_req *packet)
-{
-  const struct packet_city_name_suggestion_req *real_packet = packet;
-  packet_city_name_suggestion_req_100_fields fields;
-  struct packet_city_name_suggestion_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_NAME_SUGGESTION_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_NAME_SUGGESTION_REQ);
-  printf("cs op=35 CITY_NAME_SUGGESTION_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_name_suggestion_req_100,
-                     cmp_packet_city_name_suggestion_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u\n", real_packet->unit_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_name_suggestion_req(connection_t *pconn)
 {
   int variant = -1;
@@ -7806,42 +6171,6 @@ receive_packet_city_name_suggestion_req(
       return NULL;
     }
   }
-}
-
-int send_packet_city_name_suggestion_req(
-        connection_t *pconn,
-        const struct packet_city_name_suggestion_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_name_suggestion_req from the server.");
-  }
-  ensure_valid_variant_packet_city_name_suggestion_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ]) {
-    case 100: {
-      return send_packet_city_name_suggestion_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_name_suggestion_req(connection_t *pconn, int unit_id)
-{
-  struct packet_city_name_suggestion_req packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-
-  return send_packet_city_name_suggestion_req(pconn, real_packet);
 }
 
 /* 36 sc */
@@ -9752,13 +8081,6 @@ receive_packet_player_turn_done_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_turn_done_100(connection_t *pconn)
-{
-  SEND_PACKET_START(PACKET_PLAYER_TURN_DONE);
-  printf("cs opc=40 PLAYER_TURN_DONE\n");
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_player_turn_done(connection_t *pconn)
 {
   int variant = -1;
@@ -9795,31 +8117,6 @@ receive_packet_player_turn_done(
     default: {
       die("unknown variant");
       return NULL;
-    }
-  }
-}
-
-int send_packet_player_turn_done(connection_t *pconn)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_player_turn_done from the server.");
-  }
-  ensure_valid_variant_packet_player_turn_done(pconn);
-
-  switch(pconn->phs.variant[PACKET_PLAYER_TURN_DONE]) {
-    case 100: {
-      return send_packet_player_turn_done_100(pconn);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
     }
   }
 }
@@ -9885,84 +8182,6 @@ receive_packet_player_rates_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_rates_100(
-               connection_t *pconn,
-               const struct packet_player_rates *packet)
-{
-  const struct packet_player_rates *real_packet = packet;
-  packet_player_rates_100_fields fields;
-  struct packet_player_rates *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_RATES];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_PLAYER_RATES);
-  printf("cs opc=41 PLAYER_RATES");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_player_rates_100,
-                     cmp_packet_player_rates_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->tax != real_packet->tax);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->luxury != real_packet->luxury);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->science != real_packet->science);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->tax);
-    printf(" tax=%u", real_packet->tax);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->luxury);
-    printf(" luxury=%u", real_packet->luxury);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->science);
-    printf(" science=%u\n", real_packet->science);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_player_rates(connection_t *pconn)
 {
   int variant = -1;
@@ -10001,48 +8220,6 @@ receive_packet_player_rates(
       return NULL;
     }
   }
-}
-
-int send_packet_player_rates(
-        connection_t *pconn,
-        const struct packet_player_rates *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_player_rates from the server.");
-  }
-  ensure_valid_variant_packet_player_rates(pconn);
-
-  switch(pconn->phs.variant[PACKET_PLAYER_RATES]) {
-    case 100: {
-      return send_packet_player_rates_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_player_rates(
-         connection_t *pconn,
-         int tax,
-         int luxury,
-         int science)
-{
-  struct packet_player_rates packet, *real_packet = &packet;
-
-  real_packet->tax = tax;
-  real_packet->luxury = luxury;
-  real_packet->science = science;
-
-  return send_packet_player_rates(pconn, real_packet);
 }
 
 /* 42 */
@@ -10095,64 +8272,6 @@ receive_packet_player_change_government_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_change_government_100(
-               connection_t *pconn,
-               const struct packet_player_change_government *packet)
-{
-  const struct packet_player_change_government *real_packet = packet;
-  packet_player_change_government_100_fields fields;
-  struct packet_player_change_government *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_CHANGE_GOVERNMENT];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_PLAYER_CHANGE_GOVERNMENT);
-  printf("cs opc=43 PLAYER_CHANGE_GOVERNMENT");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_player_change_government_100,
-                     cmp_packet_player_change_government_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->government != real_packet->government);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->government);
-    printf(" government=%u\n", real_packet->government);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_player_change_government(connection_t *pconn)
 {
   int variant = -1;
@@ -10191,44 +8310,6 @@ receive_packet_player_change_government(
       return NULL;
     }
   }
-}
-
-int send_packet_player_change_government(
-               connection_t *pconn,
-               const struct packet_player_change_government *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_player_change_government from the server.");
-  }
-  ensure_valid_variant_packet_player_change_government(pconn);
-
-  switch(pconn->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT]) {
-    case 100: {
-      return send_packet_player_change_government_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_player_change_government(
-         connection_t *pconn,
-         int government)
-{
-  struct packet_player_change_government packet, *real_packet = &packet;
-
-  real_packet->government = government;
-
-  return send_packet_player_change_government(pconn, real_packet);
 }
 
 /* 44 cs */
@@ -10280,64 +8361,6 @@ receive_packet_player_research_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_research_100(
-               connection_t *pconn,
-               const struct packet_player_research *packet)
-{
-  const struct packet_player_research *real_packet = packet;
-  packet_player_research_100_fields fields;
-  struct packet_player_research *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_RESEARCH];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_PLAYER_RESEARCH);
-  printf("cs opc=44 PLAYER_RESEARCH");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_player_research_100,
-                     cmp_packet_player_research_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->tech != real_packet->tech);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->tech);
-    printf(" tech=%u\n", real_packet->tech);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_player_research(connection_t *pconn)
 {
   int variant = -1;
@@ -10376,42 +8399,6 @@ receive_packet_player_research(
       return NULL;
     }
   }
-}
-
-int send_packet_player_research(
-        connection_t *pconn,
-        const struct packet_player_research *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_player_research from the server.");
-  }
-  ensure_valid_variant_packet_player_research(pconn);
-
-  switch(pconn->phs.variant[PACKET_PLAYER_RESEARCH]) {
-    case 100: {
-      return send_packet_player_research_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_player_research(connection_t *pconn, int tech)
-{
-  struct packet_player_research packet, *real_packet = &packet;
-
-  real_packet->tech = tech;
-
-  return send_packet_player_research(pconn, real_packet);
 }
 
 /* 45 cs */
@@ -10463,64 +8450,6 @@ receive_packet_player_tech_goal_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_tech_goal_100(
-               connection_t *pconn,
-               const struct packet_player_tech_goal *packet)
-{
-  const struct packet_player_tech_goal *real_packet = packet;
-  packet_player_tech_goal_100_fields fields;
-  struct packet_player_tech_goal *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_TECH_GOAL];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_PLAYER_TECH_GOAL);
-  printf("cs opc=45 PLAYER_TECH_GOAL");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_player_tech_goal_100,
-                     cmp_packet_player_tech_goal_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->tech != real_packet->tech);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->tech);
-    printf("tech=%u\n", real_packet->tech);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_player_tech_goal(connection_t *pconn)
 {
   int variant = -1;
@@ -10561,42 +8490,6 @@ receive_packet_player_tech_goal(
   }
 }
 
-int send_packet_player_tech_goal(
-        connection_t *pconn,
-        const struct packet_player_tech_goal *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_player_tech_goal from the server.");
-  }
-  ensure_valid_variant_packet_player_tech_goal(pconn);
-
-  switch(pconn->phs.variant[PACKET_PLAYER_TECH_GOAL]) {
-    case 100: {
-      return send_packet_player_tech_goal_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_player_tech_goal(connection_t *pconn, int tech)
-{
-  struct packet_player_tech_goal packet, *real_packet = &packet;
-
-  real_packet->tech = tech;
-
-  return send_packet_player_tech_goal(pconn, real_packet);
-}
-
 /* 46 cs */
 static struct packet_player_attribute_block *
 receive_packet_player_attribute_block_100(
@@ -10606,13 +8499,6 @@ receive_packet_player_attribute_block_100(
   RECEIVE_PACKET_START(packet_player_attribute_block, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
-}
-
-static int send_packet_player_attribute_block_100(connection_t *pconn)
-{
-  SEND_PACKET_START(PACKET_PLAYER_ATTRIBUTE_BLOCK);
-  printf("cs opc=46 PLAYER_ATTRIBUTE_BLOCK\n");
-  SEND_PACKET_END;
 }
 
 static void ensure_valid_variant_packet_player_attribute_block(connection_t *pconn)
@@ -10651,31 +8537,6 @@ receive_packet_player_attribute_block(
     default: {
       die("unknown variant");
       return NULL;
-    }
-  }
-}
-
-int send_packet_player_attribute_block(connection_t *pconn)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_player_attribute_block from the server.");
-  }
-  ensure_valid_variant_packet_player_attribute_block(pconn);
-
-  switch(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK]) {
-    case 100: {
-      return send_packet_player_attribute_block_100(pconn);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
     }
   }
 }
@@ -12341,83 +10202,6 @@ receive_packet_unit_move_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_move_100(
-               connection_t *pconn,
-               const struct packet_unit_move *packet)
-{
-  const struct packet_unit_move *real_packet = packet;
-  packet_unit_move_100_fields fields;
-  struct packet_unit_move *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_MOVE];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_MOVE);
-  printf("cs opc=52 UNIT_MOVE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_move_100,
-                     cmp_packet_unit_move_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->x != real_packet->x);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->y != real_packet->y);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->x);
-    printf(" x=%u", real_packet->x);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->y);
-    printf(" y=%u\n", real_packet->y);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_move(connection_t *pconn)
 {
   int variant = -1;
@@ -12456,48 +10240,6 @@ receive_packet_unit_move(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_move(
-        connection_t *pconn,
-        const struct packet_unit_move *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_move from the server.");
-  }
-  ensure_valid_variant_packet_unit_move(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_MOVE]) {
-    case 100: {
-      return send_packet_unit_move_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_move(
-         connection_t *pconn,
-         int unit_id,
-         int x,
-         int y)
-{
-  struct packet_unit_move packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-  real_packet->x = x;
-  real_packet->y = y;
-
-  return send_packet_unit_move(pconn, real_packet);
 }
 
 /* 53 cs */
@@ -12552,74 +10294,6 @@ receive_packet_unit_build_city_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_build_city_100(
-               connection_t *pconn,
-               const struct packet_unit_build_city *packet)
-{
-  const struct packet_unit_build_city *real_packet = packet;
-  packet_unit_build_city_100_fields fields;
-  struct packet_unit_build_city *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_BUILD_CITY];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_BUILD_CITY);
-  printf("cs opc=53 UNIT_BUILD_CITY");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_build_city_100,
-                     cmp_packet_unit_build_city_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (strcmp(old->name, real_packet->name) != 0);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_string(&dout, real_packet->name);
-    printf(" name=%s\n", real_packet->name);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_build_city(connection_t *pconn)
 {
   int variant = -1;
@@ -12658,46 +10332,6 @@ receive_packet_unit_build_city(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_build_city(
-        connection_t *pconn,
-        const struct packet_unit_build_city *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_build_city from the server.");
-  }
-  ensure_valid_variant_packet_unit_build_city(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_BUILD_CITY]) {
-    case 100: {
-      return send_packet_unit_build_city_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_build_city(
-         connection_t *pconn,
-         int unit_id,
-         const char *name)
-{
-  struct packet_unit_build_city packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-  sz_strlcpy(real_packet->name, name);
-
-  return send_packet_unit_build_city(pconn, real_packet);
 }
 
 /* 54 cs */
@@ -12749,64 +10383,6 @@ receive_packet_unit_disband_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_disband_100(
-               connection_t *pconn,
-               const struct packet_unit_disband *packet)
-{
-  const struct packet_unit_disband *real_packet = packet;
-  packet_unit_disband_100_fields fields;
-  struct packet_unit_disband *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_DISBAND];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_DISBAND);
-  printf("cs opc=54 UNIT_DISBAND");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_disband_100,
-                     cmp_packet_unit_disband_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u\n", real_packet->unit_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_disband(connection_t *pconn)
 {
   int variant = -1;
@@ -12845,42 +10421,6 @@ receive_packet_unit_disband(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_disband(
-        connection_t *pconn,
-        const struct packet_unit_disband *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_disband from the server.");
-  }
-  ensure_valid_variant_packet_unit_disband(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_DISBAND]) {
-    case 100: {
-      return send_packet_unit_disband_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_disband(connection_t *pconn, int unit_id)
-{
-  struct packet_unit_disband packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-
-  return send_packet_unit_disband(pconn, real_packet);
 }
 
 /* 55 cs */
@@ -12938,73 +10478,6 @@ receive_packet_unit_change_homecity_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_change_homecity_100(
-               connection_t *pconn,
-               const struct packet_unit_change_homecity *packet)
-{
-  const struct packet_unit_change_homecity *real_packet = packet;
-  packet_unit_change_homecity_100_fields fields;
-  struct packet_unit_change_homecity *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_CHANGE_HOMECITY];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_CHANGE_HOMECITY);
-  printf("cs opc=55 UNIT_CHANGE_HOMECITY");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_change_homecity_100,
-                     cmp_packet_unit_change_homecity_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u\n", real_packet->city_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_change_homecity(connection_t *pconn)
 {
   int variant = -1;
@@ -13043,46 +10516,6 @@ receive_packet_unit_change_homecity(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_change_homecity(
-        connection_t *pconn,
-        const struct packet_unit_change_homecity *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_change_homecity from the server.");
-  }
-  ensure_valid_variant_packet_unit_change_homecity(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_CHANGE_HOMECITY]) {
-    case 100: {
-      return send_packet_unit_change_homecity_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_change_homecity(
-         connection_t *pconn,
-         int unit_id,
-         int city_id)
-{
-  struct packet_unit_change_homecity packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-  real_packet->city_id = city_id;
-
-  return send_packet_unit_change_homecity(pconn, real_packet);
 }
 
 /* 56 cs */
@@ -13134,64 +10567,6 @@ receive_packet_unit_establish_trade_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_establish_trade_100(
-               connection_t *pconn,
-               const struct packet_unit_establish_trade *packet)
-{
-  const struct packet_unit_establish_trade *real_packet = packet;
-  packet_unit_establish_trade_100_fields fields;
-  struct packet_unit_establish_trade *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_ESTABLISH_TRADE];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_ESTABLISH_TRADE);
-  printf("cs opc=56 UNIT_ESTABLISH_TRADE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_establish_trade_100,
-                     cmp_packet_unit_establish_trade_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u\n", real_packet->unit_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_establish_trade(connection_t *pconn)
 {
   int variant = -1;
@@ -13230,42 +10605,6 @@ receive_packet_unit_establish_trade(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_establish_trade(
-        connection_t *pconn,
-        const struct packet_unit_establish_trade *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_establish_trade from the server.");
-  }
-  ensure_valid_variant_packet_unit_establish_trade(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_ESTABLISH_TRADE]) {
-    case 100: {
-      return send_packet_unit_establish_trade_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_establish_trade(connection_t *pconn, int unit_id)
-{
-  struct packet_unit_establish_trade packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-
-  return send_packet_unit_establish_trade(pconn, real_packet);
 }
 
 /* 57 cs */
@@ -13317,63 +10656,6 @@ receive_packet_unit_help_build_wonder_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_help_build_wonder_100(
-               connection_t *pconn,
-               const struct packet_unit_help_build_wonder *packet)
-{
-  const struct packet_unit_help_build_wonder *real_packet = packet;
-  packet_unit_help_build_wonder_100_fields fields;
-  struct packet_unit_help_build_wonder *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_HELP_BUILD_WONDER];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_HELP_BUILD_WONDER);
-  printf("cs opc=57 UNIT_HELP_BUILD_WONDER");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_help_build_wonder_100,
-                     cmp_packet_unit_help_build_wonder_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u\n", real_packet->unit_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_help_build_wonder(connection_t *pconn)
 {
   int variant = -1;
@@ -13412,42 +10694,6 @@ receive_packet_unit_help_build_wonder(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_help_build_wonder(
-        connection_t *pconn,
-        const struct packet_unit_help_build_wonder *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_help_build_wonder from the server.");
-  }
-  ensure_valid_variant_packet_unit_help_build_wonder(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER]) {
-    case 100: {
-      return send_packet_unit_help_build_wonder_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_help_build_wonder(connection_t *pconn, int unit_id)
-{
-  struct packet_unit_help_build_wonder packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-
-  return send_packet_unit_help_build_wonder(pconn, real_packet);
 }
 
 /* 58 cs */
@@ -13511,84 +10757,6 @@ receive_packet_unit_goto_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_goto_100(
-               connection_t *pconn,
-               const struct packet_unit_goto *packet)
-{
-  const struct packet_unit_goto *real_packet = packet;
-  packet_unit_goto_100_fields fields;
-  struct packet_unit_goto *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_GOTO];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_GOTO);
-  printf("cs opc=58 UNIT_GOTO");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_goto_100,
-                     cmp_packet_unit_goto_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->x != real_packet->x);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->y != real_packet->y);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->x);
-    printf(" x=%u", real_packet->x);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->y);
-    printf(" y=%u\n", real_packet->y);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_goto(connection_t *pconn)
 {
   int variant = -1;
@@ -13627,47 +10795,6 @@ receive_packet_unit_goto(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_goto(
-        connection_t *pconn,
-        const struct packet_unit_goto *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_goto from the server.");
-  }
-  ensure_valid_variant_packet_unit_goto(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_GOTO]) {
-    case 100: {
-      return send_packet_unit_goto_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_goto(
-         connection_t *pconn,
-         int unit_id,
-         int x, int y)
-{
-  struct packet_unit_goto packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-  real_packet->x = x;
-  real_packet->y = y;
-
-  return send_packet_unit_goto(pconn, real_packet);
 }
 
 /* 59 cs */
@@ -13781,189 +10908,6 @@ receive_packet_unit_orders_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_orders_100(
-               connection_t *pconn,
-               const struct packet_unit_orders *packet)
-{
-  const struct packet_unit_orders *real_packet = packet;
-  packet_unit_orders_100_fields fields;
-  struct packet_unit_orders *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_ORDERS];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_ORDERS);
-  printf("cs opc=59 UNIT_ORDER");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_orders_100,
-                     cmp_packet_unit_orders_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->length != real_packet->length);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->repeat != real_packet->repeat);
-  if (differ) {
-    different++;
-  }
-  if (packet->repeat) {
-    BV_SET(fields, 2);
-  }
-
-  differ = (old->vigilant != real_packet->vigilant);
-  if (differ) {
-    different++;
-  }
-  if (packet->vigilant) {
-    BV_SET(fields, 3);
-  }
-
-  {
-    differ = (old->length != real_packet->length);
-    if(!differ) {
-      int i;
-      for (i = 0; i < real_packet->length; i++) {
-        if (old->orders[i] != real_packet->orders[i]) {
-          differ = TRUE;
-          break;
-        }
-      }
-    }
-  }
-  if (differ) {
-    different++;
-    BV_SET(fields, 4);
-  }
-
-  {
-    differ = (old->length != real_packet->length);
-    if(!differ) {
-      int i;
-      for (i = 0; i < real_packet->length; i++) {
-        if (old->dir[i] != real_packet->dir[i]) {
-          differ = TRUE;
-          break;
-        }
-      }
-    }
-  }
-  if (differ) {
-    different++;
-    BV_SET(fields, 5);
-  }
-
-  {
-    differ = (old->length != real_packet->length);
-    if(!differ) {
-      int i;
-      for (i = 0; i < real_packet->length; i++) {
-        if (old->activity[i] != real_packet->activity[i]) {
-          differ = TRUE;
-          break;
-        }
-      }
-    }
-  }
-  if (differ) {
-    different++;
-    BV_SET(fields, 6);
-  }
-
-  differ = (old->dest_x != real_packet->dest_x);
-  if (differ) {
-    different++;
-    BV_SET(fields, 7);
-  }
-
-  differ = (old->dest_y != real_packet->dest_y);
-  if (differ) {
-    different++;
-    BV_SET(fields, 8);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint16(&dout, real_packet->length);
-  }
-  /* field 2 is folded into the header */
-  /* field 3 is folded into the header */
-  if (BV_ISSET(fields, 4)) {
-    int i;
-
-    printf(" orders[i]=");
-    for (i = 0; i < real_packet->length; i++) {
-      dio_put_uint8(&dout, real_packet->orders[i]);
-      printf("%0X", real_packet->orders[i]);
-    }
-  }
-  if (BV_ISSET(fields, 5)) {
-    int i;
-
-    printf(" dir[i]=");
-    for (i = 0; i < real_packet->length; i++) {
-      dio_put_uint8(&dout, real_packet->dir[i]);
-      printf("%0X", real_packet->dir[i]);
-    }
-  }
-  if (BV_ISSET(fields, 6)) {
-    int i;
-
-    printf(" activity[i]=");
-    for (i = 0; i < real_packet->length; i++) {
-      dio_put_uint8(&dout, real_packet->activity[i]);
-      printf("%0X", real_packet->activity[i]);
-    }
-  }
-  if (BV_ISSET(fields, 7)) {
-    dio_put_uint8(&dout, real_packet->dest_x);
-    printf(" dest_x=%u", real_packet->dest_x);
-  }
-  if (BV_ISSET(fields, 8)) {
-    dio_put_uint8(&dout, real_packet->dest_y);
-    printf(" dest_y=%u\n", real_packet->dest_y);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_orders(connection_t *pconn)
 {
   int variant = -1;
@@ -14000,33 +10944,6 @@ receive_packet_unit_orders(
     default: {
       die("unknown variant");
       return NULL;
-    }
-  }
-}
-
-int send_packet_unit_orders(
-        connection_t *pconn,
-        const struct packet_unit_orders *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_orders from the server.");
-  }
-  ensure_valid_variant_packet_unit_orders(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_ORDERS]) {
-    case 100: {
-      return send_packet_unit_orders_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
     }
   }
 }
@@ -14080,64 +10997,6 @@ receive_packet_unit_auto_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_auto_100(
-               connection_t *pconn,
-               const struct packet_unit_auto *packet)
-{
-  const struct packet_unit_auto *real_packet = packet;
-  packet_unit_auto_100_fields fields;
-  struct packet_unit_auto *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_AUTO];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_AUTO);
-  printf("cs opc=60 UNIT_AUTO");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_auto_100,
-                     cmp_packet_unit_auto_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u\n", real_packet->unit_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_auto(connection_t *pconn)
 {
   int variant = -1;
@@ -14176,42 +11035,6 @@ receive_packet_unit_auto(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_auto(
-        connection_t *pconn,
-        const struct packet_unit_auto *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_auto from the server.");
-  }
-  ensure_valid_variant_packet_unit_auto(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_AUTO]) {
-    case 100: {
-      return send_packet_unit_auto_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_auto(connection_t *pconn, int unit_id)
-{
-  struct packet_unit_auto packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-
-  return send_packet_unit_auto(pconn, real_packet);
 }
 
 /* 61 cs */
@@ -14269,74 +11092,6 @@ receive_packet_unit_unload_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_unload_100(
-               connection_t *pconn,
-               const struct packet_unit_unload *packet)
-{
-  const struct packet_unit_unload *real_packet = packet;
-  packet_unit_unload_100_fields fields;
-  struct packet_unit_unload *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_UNLOAD];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_UNLOAD);
-  printf("cs opc=61 UNIT_UNLOAD");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_unload_100,
-                     cmp_packet_unit_unload_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->cargo_id != real_packet->cargo_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->transporter_id != real_packet->transporter_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->cargo_id);
-    printf(" cargo_id=%u", real_packet->cargo_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint16(&dout, real_packet->transporter_id);
-    printf(" transporter_id=%u\n", real_packet->transporter_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_unload(connection_t *pconn)
 {
   int variant = -1;
@@ -14375,46 +11130,6 @@ receive_packet_unit_unload(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_unload(
-        connection_t *pconn,
-        const struct packet_unit_unload *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_unload from the server.");
-  }
-  ensure_valid_variant_packet_unit_unload(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_UNLOAD]) {
-    case 100: {
-      return send_packet_unit_unload_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_unload(
-         connection_t *pconn,
-         int cargo_id,
-         int transporter_id)
-{
-  struct packet_unit_unload packet, *real_packet = &packet;
-
-  real_packet->cargo_id = cargo_id;
-  real_packet->transporter_id = transporter_id;
-
-  return send_packet_unit_unload(pconn, real_packet);
 }
 
 /* 62 cs */
@@ -14466,63 +11181,6 @@ receive_packet_unit_upgrade_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_upgrade_100(
-               connection_t *pconn,
-               const struct packet_unit_upgrade *packet)
-{
-  const struct packet_unit_upgrade *real_packet = packet;
-  packet_unit_upgrade_100_fields fields;
-  struct packet_unit_upgrade *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_UPGRADE];
-  int different = 0;
-  SEND_PACKET_START(PACKET_UNIT_UPGRADE);
-  printf("cs opc=62 UNIT_UPGRADE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_upgrade_100,
-                     cmp_packet_unit_upgrade_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u\n", real_packet->unit_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_upgrade(connection_t *pconn)
 {
   int variant = -1;
@@ -14561,42 +11219,6 @@ receive_packet_unit_upgrade(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_upgrade(
-        connection_t *pconn,
-        const struct packet_unit_upgrade *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_upgrade from the server.");
-  }
-  ensure_valid_variant_packet_unit_upgrade(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_UPGRADE]) {
-    case 100: {
-      return send_packet_unit_upgrade_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_upgrade(connection_t *pconn, int unit_id)
-{
-  struct packet_unit_upgrade packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-
-  return send_packet_unit_upgrade(pconn, real_packet);
 }
 
 /* 63 cs */
@@ -14648,63 +11270,6 @@ receive_packet_unit_nuke_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_nuke_100(
-               connection_t *pconn,
-               const struct packet_unit_nuke *packet)
-{
-  const struct packet_unit_nuke *real_packet = packet;
-  packet_unit_nuke_100_fields fields;
-  struct packet_unit_nuke *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_NUKE];
-  int different = 0;
-  SEND_PACKET_START(PACKET_UNIT_NUKE);
-  printf("cs opc=63 UNIT_NUKE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_nuke_100,
-                     cmp_packet_unit_nuke_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u\n", real_packet->unit_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_nuke(connection_t *pconn)
 {
   int variant = -1;
@@ -14743,42 +11308,6 @@ receive_packet_unit_nuke(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_nuke(
-        connection_t *pconn,
-        const struct packet_unit_nuke *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_nuke from the server.");
-  }
-  ensure_valid_variant_packet_unit_nuke(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_NUKE]) {
-    case 100: {
-      return send_packet_unit_nuke_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_nuke(connection_t *pconn, int unit_id)
-{
-  struct packet_unit_nuke packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-
-  return send_packet_unit_nuke(pconn, real_packet);
 }
 
 /* 64 cs */
@@ -14842,84 +11371,6 @@ receive_packet_unit_paradrop_to_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_paradrop_to_100(
-               connection_t *pconn,
-               const struct packet_unit_paradrop_to *packet)
-{
-  const struct packet_unit_paradrop_to *real_packet = packet;
-  packet_unit_paradrop_to_100_fields fields;
-  struct packet_unit_paradrop_to *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_PARADROP_TO];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_PARADROP_TO);
-  printf("cs opc=64 UNIT_PARADROP_TO");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_paradrop_to_100,
-                     cmp_packet_unit_paradrop_to_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->x != real_packet->x);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->y != real_packet->y);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->x);
-    printf(" x=%u", real_packet->x);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->y);
-    printf(" y=%u\n", real_packet->y);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_paradrop_to(connection_t *pconn)
 {
   int variant = -1;
@@ -14958,47 +11409,6 @@ receive_packet_unit_paradrop_to(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_paradrop_to(
-        connection_t *pconn,
-        const struct packet_unit_paradrop_to *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_paradrop_to from the server.");
-  }
-  ensure_valid_variant_packet_unit_paradrop_to(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_PARADROP_TO]) {
-    case 100: {
-      return send_packet_unit_paradrop_to_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_paradrop_to(
-         connection_t *pconn,
-         int unit_id,
-         int x, int y)
-{
-  struct packet_unit_paradrop_to packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-  real_packet->x = x;
-  real_packet->y = y;
-
-  return send_packet_unit_paradrop_to(pconn, real_packet);
 }
 
 /* 65 cs */
@@ -15056,74 +11466,6 @@ receive_packet_unit_airlift_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_airlift_100(
-               connection_t *pconn,
-               const struct packet_unit_airlift *packet)
-{
-  const struct packet_unit_airlift *real_packet = packet;
-  packet_unit_airlift_100_fields fields;
-  struct packet_unit_airlift *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_AIRLIFT];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_AIRLIFT);
-  printf("cs opc=65 UNIT_AIRLIFT");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_airlift_100,
-                     cmp_packet_unit_airlift_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->city_id != real_packet->city_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint16(&dout, real_packet->city_id);
-    printf(" city_id=%u\n", real_packet->city_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_airlift(connection_t *pconn)
 {
   int variant = -1;
@@ -15162,46 +11504,6 @@ receive_packet_unit_airlift(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_airlift(
-        connection_t *pconn,
-        const struct packet_unit_airlift *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_airlift from the server.");
-  }
-  ensure_valid_variant_packet_unit_airlift(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_AIRLIFT]) {
-    case 100: {
-      return send_packet_unit_airlift_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_airlift(
-         connection_t *pconn,
-         int unit_id,
-         int city_id)
-{
-  struct packet_unit_airlift packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-  real_packet->city_id = city_id;
-
-  return send_packet_unit_airlift(pconn, real_packet);
 }
 
 /* 66 */
@@ -15254,64 +11556,6 @@ receive_packet_unit_bribe_inq_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_bribe_inq_100(
-               connection_t *pconn,
-               const struct packet_unit_bribe_inq *packet)
-{
-  const struct packet_unit_bribe_inq *real_packet = packet;
-  packet_unit_bribe_inq_100_fields fields;
-  struct packet_unit_bribe_inq *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_BRIBE_INQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_BRIBE_INQ);
-  printf("cs opc=67 UNIT_BRIBE_INQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_bribe_inq_100,
-                     cmp_packet_unit_bribe_inq_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u\n", real_packet->unit_id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_bribe_inq(connection_t *pconn)
 {
   int variant = -1;
@@ -15350,42 +11594,6 @@ receive_packet_unit_bribe_inq(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_bribe_inq(
-        connection_t *pconn,
-        const struct packet_unit_bribe_inq *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_bribe_inq from the server.");
-  }
-  ensure_valid_variant_packet_unit_bribe_inq(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_BRIBE_INQ]) {
-    case 100: {
-      return send_packet_unit_bribe_inq_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_bribe_inq(connection_t *pconn, int unit_id)
-{
-  struct packet_unit_bribe_inq packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-
-  return send_packet_unit_bribe_inq(pconn, real_packet);
 }
 
 /* 68 sc */
@@ -15559,64 +11767,6 @@ receive_packet_unit_type_upgrade_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_type_upgrade_100(
-               connection_t *pconn,
-               const struct packet_unit_type_upgrade *packet)
-{
-  const struct packet_unit_type_upgrade *real_packet = packet;
-  packet_unit_type_upgrade_100_fields fields;
-  struct packet_unit_type_upgrade *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_TYPE_UPGRADE];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_TYPE_UPGRADE);
-  printf("cs opc=69 UNIT_TYPE_UPGRADE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_type_upgrade_100,
-                     cmp_packet_unit_type_upgrade_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->type != real_packet->type);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->type);
-    printf(" type=%u\n", real_packet->type);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_type_upgrade(connection_t *pconn)
 {
   int variant = -1;
@@ -15655,42 +11805,6 @@ receive_packet_unit_type_upgrade(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_type_upgrade(
-        connection_t *pconn,
-        const struct packet_unit_type_upgrade *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_type_upgrade from the server.");
-  }
-  ensure_valid_variant_packet_unit_type_upgrade(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_TYPE_UPGRADE]) {
-    case 100: {
-      return send_packet_unit_type_upgrade_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_type_upgrade(connection_t *pconn, Unit_Type_id type)
-{
-  struct packet_unit_type_upgrade packet, *real_packet = &packet;
-
-  real_packet->type = type;
-
-  return send_packet_unit_type_upgrade(pconn, real_packet);
 }
 
 /* 70 cs */
@@ -15760,94 +11874,6 @@ receive_packet_unit_diplomat_action_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_diplomat_action_100(
-               connection_t *pconn,
-               const struct packet_unit_diplomat_action *packet)
-{
-  const struct packet_unit_diplomat_action *real_packet = packet;
-  packet_unit_diplomat_action_100_fields fields;
-  struct packet_unit_diplomat_action *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_DIPLOMAT_ACTION];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_DIPLOMAT_ACTION);
-  printf("cs opc=70 UNIT_DIPLOMAT_ACTION");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_diplomat_action_100,
-                     cmp_packet_unit_diplomat_action_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->diplomat_id != real_packet->diplomat_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->action_type != real_packet->action_type);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->target_id != real_packet->target_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  differ = (old->value != real_packet->value);
-  if (differ) {
-    different++;
-    BV_SET(fields, 3);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->diplomat_id);
-    printf(" diplomat_id=%u", real_packet->diplomat_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->action_type);
-    printf(" action_type=%u", real_packet->action_type);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint16(&dout, real_packet->target_id);
-    printf(" target_id=%u", real_packet->target_id);
-  }
-  if (BV_ISSET(fields, 3)) {
-    dio_put_sint16(&dout, real_packet->value);
-    printf(" value=%d\n", real_packet->value);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_diplomat_action(connection_t *pconn)
 {
   int variant = -1;
@@ -15886,50 +11912,6 @@ receive_packet_unit_diplomat_action(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_diplomat_action(
-        connection_t *pconn,
-        const struct packet_unit_diplomat_action *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_diplomat_action from the server.");
-  }
-  ensure_valid_variant_packet_unit_diplomat_action(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION]) {
-    case 100: {
-      return send_packet_unit_diplomat_action_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_diplomat_action(
-         connection_t *pconn,
-         int diplomat_id,
-         enum diplomat_actions action_type,
-         int target_id,
-         int value)
-{
-  struct packet_unit_diplomat_action packet, *real_packet = &packet;
-
-  real_packet->diplomat_id = diplomat_id;
-  real_packet->action_type = action_type;
-  real_packet->target_id = target_id;
-  real_packet->value = value;
-
-  return send_packet_unit_diplomat_action(pconn, real_packet);
 }
 
 /* 71 sc */
@@ -16135,84 +12117,6 @@ receive_packet_unit_change_activity_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_change_activity_100(
-               connection_t *pconn,
-               const struct packet_unit_change_activity *packet)
-{
-  const struct packet_unit_change_activity *real_packet = packet;
-  packet_unit_change_activity_100_fields fields;
-  struct packet_unit_change_activity *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_CHANGE_ACTIVITY];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_CHANGE_ACTIVITY);
-  printf("cs opc=72 UNIT_CHANGE_ACTIVITY");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_change_activity_100,
-                     cmp_packet_unit_change_activity_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->activity != real_packet->activity);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->activity_target != real_packet->activity_target);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->activity);
-    printf(" activity=%u", real_packet->activity);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint16(&dout, real_packet->activity_target);
-    printf(" activity_target=%u\n", real_packet->activity_target);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_change_activity(connection_t *pconn)
 {
   int variant = -1;
@@ -16251,48 +12155,6 @@ receive_packet_unit_change_activity(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_change_activity(
-        connection_t *pconn,
-        const struct packet_unit_change_activity *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_change_activity from the server.");
-  }
-  ensure_valid_variant_packet_unit_change_activity(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY]) {
-    case 100: {
-      return send_packet_unit_change_activity_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_change_activity(
-         connection_t *pconn,
-         int unit_id,
-         enum unit_activity activity,
-         enum tile_special_type activity_target)
-{
-  struct packet_unit_change_activity packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-  real_packet->activity = activity;
-  real_packet->activity_target = activity_target;
-
-  return send_packet_unit_change_activity(pconn, real_packet);
 }
 
 /* 73 cs */
@@ -16344,64 +12206,6 @@ receive_packet_diplomacy_init_meeting_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_init_meeting_req_100(
-               connection_t *pconn,
-               const struct packet_diplomacy_init_meeting_req *packet)
-{
-  const struct packet_diplomacy_init_meeting_req *real_packet = packet;
-  packet_diplomacy_init_meeting_req_100_fields fields;
-  struct packet_diplomacy_init_meeting_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_INIT_MEETING_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_DIPLOMACY_INIT_MEETING_REQ);
-  printf("cs opc=73 DIPLOMACY_INIT_MEETING_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_init_meeting_req_100,
-                     cmp_packet_diplomacy_init_meeting_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->counterpart != real_packet->counterpart);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->counterpart);
-    printf(" counterpart=%u\n", real_packet->counterpart);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_diplomacy_init_meeting_req(connection_t *pconn)
 {
   int variant = -1;
@@ -16440,44 +12244,6 @@ receive_packet_diplomacy_init_meeting_req(
       return NULL;
     }
   }
-}
-
-int send_packet_diplomacy_init_meeting_req(
-        connection_t *pconn,
-        const struct packet_diplomacy_init_meeting_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_diplomacy_init_meeting_req from the server.");
-  }
-  ensure_valid_variant_packet_diplomacy_init_meeting_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ]) {
-    case 100: {
-      return send_packet_diplomacy_init_meeting_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_diplomacy_init_meeting_req(
-         connection_t *pconn,
-         int counterpart)
-{
-  struct packet_diplomacy_init_meeting_req packet, *real_packet = &packet;
-
-  real_packet->counterpart = counterpart;
-
-  return send_packet_diplomacy_init_meeting_req(pconn, real_packet);
 }
 
 /* 74 sc */
@@ -16671,64 +12437,6 @@ receive_packet_diplomacy_cancel_meeting_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_cancel_meeting_req_100(
-               connection_t *pconn,
-               const struct packet_diplomacy_cancel_meeting_req *packet)
-{
-  const struct packet_diplomacy_cancel_meeting_req *real_packet = packet;
-  packet_diplomacy_cancel_meeting_req_100_fields fields;
-  struct packet_diplomacy_cancel_meeting_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_CANCEL_MEETING_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_DIPLOMACY_CANCEL_MEETING_REQ);
-  printf("cs opc=75 DIPLOMACY_CANCEL_MEETING_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_cancel_meeting_req_100,
-                     cmp_packet_diplomacy_cancel_meeting_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->counterpart != real_packet->counterpart);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->counterpart);
-    printf(" counterpart=%u\n", real_packet->counterpart);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_diplomacy_cancel_meeting_req(connection_t *pconn)
 {
   int variant = -1;
@@ -16767,44 +12475,6 @@ receive_packet_diplomacy_cancel_meeting_req(
       return NULL;
     }
   }
-}
-
-int send_packet_diplomacy_cancel_meeting_req(
-        connection_t *pconn,
-        const struct packet_diplomacy_cancel_meeting_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_diplomacy_cancel_meeting_req from the server.");
-  }
-  ensure_valid_variant_packet_diplomacy_cancel_meeting_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ]) {
-    case 100: {
-      return send_packet_diplomacy_cancel_meeting_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_diplomacy_cancel_meeting_req(
-         connection_t *pconn,
-         int counterpart)
-{
-  struct packet_diplomacy_cancel_meeting_req packet, *real_packet = &packet;
-
-  real_packet->counterpart = counterpart;
-
-  return send_packet_diplomacy_cancel_meeting_req(pconn, real_packet);
 }
 
 /* 76 sc */
@@ -17016,94 +12686,6 @@ receive_packet_diplomacy_create_clause_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_create_clause_req_100(
-               connection_t *pconn,
-               const struct packet_diplomacy_create_clause_req *packet)
-{
-  const struct packet_diplomacy_create_clause_req *real_packet = packet;
-  packet_diplomacy_create_clause_req_100_fields fields;
-  struct packet_diplomacy_create_clause_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_DIPLOMACY_CREATE_CLAUSE_REQ);
-  printf("cs opc=77 DIPLOMACY_CREATE_CLAUSE_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_create_clause_req_100,
-                     cmp_packet_diplomacy_create_clause_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->counterpart != real_packet->counterpart);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->giver != real_packet->giver);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->type != real_packet->type);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  differ = (old->value != real_packet->value);
-  if (differ) {
-    different++;
-    BV_SET(fields, 3);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->counterpart);
-    printf(" counterpart=%u", real_packet->counterpart);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->giver);
-    printf(" giver=%u", real_packet->giver);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->type);
-    printf(" type=%u", real_packet->type);
-  }
-  if (BV_ISSET(fields, 3)) {
-    dio_put_uint32(&dout, real_packet->value);
-    printf(" value=%u\n", real_packet->value);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_diplomacy_create_clause_req(connection_t *pconn)
 {
   int variant = -1;
@@ -17142,50 +12724,6 @@ receive_packet_diplomacy_create_clause_req(
       return NULL;
     }
   }
-}
-
-int send_packet_diplomacy_create_clause_req(
-        connection_t *pconn,
-        const struct packet_diplomacy_create_clause_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_diplomacy_create_clause_req from the server.");
-  }
-  ensure_valid_variant_packet_diplomacy_create_clause_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ]) {
-    case 100: {
-      return send_packet_diplomacy_create_clause_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_diplomacy_create_clause_req(
-         connection_t *pconn,
-         int counterpart,
-         int giver,
-         enum clause_type type,
-         int value)
-{
-  struct packet_diplomacy_create_clause_req packet, *real_packet = &packet;
-
-  real_packet->counterpart = counterpart;
-  real_packet->giver = giver;
-  real_packet->type = type;
-  real_packet->value = value;
-
-  return send_packet_diplomacy_create_clause_req(pconn, real_packet);
 }
 
 /* 78 sc */
@@ -17423,94 +12961,6 @@ receive_packet_diplomacy_remove_clause_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_remove_clause_req_100(
-               connection_t *pconn,
-               const struct packet_diplomacy_remove_clause_req *packet)
-{
-  const struct packet_diplomacy_remove_clause_req *real_packet = packet;
-  packet_diplomacy_remove_clause_req_100_fields fields;
-  struct packet_diplomacy_remove_clause_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ);
-  printf("cs opc=79 DIPLOMACY_REMOVE_CLAUSE_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_remove_clause_req_100,
-                     cmp_packet_diplomacy_remove_clause_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->counterpart != real_packet->counterpart);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->giver != real_packet->giver);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->type != real_packet->type);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  differ = (old->value != real_packet->value);
-  if (differ) {
-    different++;
-    BV_SET(fields, 3);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->counterpart);
-    printf(" counterpart=%u", real_packet->counterpart);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->giver);
-    printf(" giver=%u", real_packet->giver);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->type);
-    printf(" type=%u", real_packet->type);
-  }
-  if (BV_ISSET(fields, 3)) {
-    dio_put_uint32(&dout, real_packet->value);
-    printf(" value=%u\n", real_packet->value);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_diplomacy_remove_clause_req(connection_t *pconn)
 {
   int variant = -1;
@@ -17549,50 +12999,6 @@ receive_packet_diplomacy_remove_clause_req(
       return NULL;
     }
   }
-}
-
-int send_packet_diplomacy_remove_clause_req(
-        connection_t *pconn,
-        const struct packet_diplomacy_remove_clause_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_diplomacy_remove_clause_req from the server.");
-  }
-  ensure_valid_variant_packet_diplomacy_remove_clause_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ]) {
-    case 100: {
-      return send_packet_diplomacy_remove_clause_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_diplomacy_remove_clause_req(
-         connection_t *pconn,
-         int counterpart,
-         int giver,
-         enum clause_type type,
-         int value)
-{
-  struct packet_diplomacy_remove_clause_req packet, *real_packet = &packet;
-
-  real_packet->counterpart = counterpart;
-  real_packet->giver = giver;
-  real_packet->type = type;
-  real_packet->value = value;
-
-  return send_packet_diplomacy_remove_clause_req(pconn, real_packet);
 }
 
 /* 80 sc */
@@ -17812,64 +13218,6 @@ receive_packet_diplomacy_accept_treaty_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_accept_treaty_req_100(
-               connection_t *pconn,
-               const struct packet_diplomacy_accept_treaty_req *packet)
-{
-  const struct packet_diplomacy_accept_treaty_req *real_packet = packet;
-  packet_diplomacy_accept_treaty_req_100_fields fields;
-  struct packet_diplomacy_accept_treaty_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_DIPLOMACY_ACCEPT_TREATY_REQ);
-  printf("cs op=81 DIPLOMACY_ACCEPT_TREATY_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_accept_treaty_req_100,
-                     cmp_packet_diplomacy_accept_treaty_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->counterpart != real_packet->counterpart);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->counterpart);
-    printf(" counterpart=%u\n", real_packet->counterpart);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_diplomacy_accept_treaty_req(connection_t *pconn)
 {
   int variant = -1;
@@ -17908,44 +13256,6 @@ receive_packet_diplomacy_accept_treaty_req(
       return NULL;
     }
   }
-}
-
-int send_packet_diplomacy_accept_treaty_req(
-        connection_t *pconn,
-        const struct packet_diplomacy_accept_treaty_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_diplomacy_accept_treaty_req from the server.");
-  }
-  ensure_valid_variant_packet_diplomacy_accept_treaty_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ]) {
-    case 100: {
-      return send_packet_diplomacy_accept_treaty_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_diplomacy_accept_treaty_req(
-         connection_t *pconn,
-         int counterpart)
-{
-  struct packet_diplomacy_accept_treaty_req packet, *real_packet = &packet;
-
-  real_packet->counterpart = counterpart;
-
-  return send_packet_diplomacy_accept_treaty_req(pconn, real_packet);
 }
 
 /* 82 sc */
@@ -18150,74 +13460,6 @@ receive_packet_diplomacy_cancel_pact_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_cancel_pact_100(
-               connection_t *pconn,
-               const struct packet_diplomacy_cancel_pact *packet)
-{
-  const struct packet_diplomacy_cancel_pact *real_packet = packet;
-  packet_diplomacy_cancel_pact_100_fields fields;
-  struct packet_diplomacy_cancel_pact *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_CANCEL_PACT];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_DIPLOMACY_CANCEL_PACT);
-  printf("cs opc=83 DIPLOMACY_CANCEL_PACT");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_diplomacy_cancel_pact_100,
-                     cmp_packet_diplomacy_cancel_pact_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->other_player_id != real_packet->other_player_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->clause != real_packet->clause);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->other_player_id);
-    printf(" other_player_id=%u", real_packet->other_player_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->clause);
-    printf(" clause=%u\n", real_packet->clause);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_diplomacy_cancel_pact(connection_t *pconn)
 {
   int variant = -1;
@@ -18256,46 +13498,6 @@ receive_packet_diplomacy_cancel_pact(
       return NULL;
     }
   }
-}
-
-int send_packet_diplomacy_cancel_pact(
-        connection_t *pconn,
-        const struct packet_diplomacy_cancel_pact *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_diplomacy_cancel_pact from the server.");
-  }
-  ensure_valid_variant_packet_diplomacy_cancel_pact(pconn);
-
-  switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT]) {
-    case 100: {
-      return send_packet_diplomacy_cancel_pact_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_diplomacy_cancel_pact(
-         connection_t *pconn,
-         int other_player_id,
-         enum clause_type clause)
-{
-  struct packet_diplomacy_cancel_pact packet, *real_packet = &packet;
-
-  real_packet->other_player_id = other_player_id;
-  real_packet->clause = clause;
-
-  return send_packet_diplomacy_cancel_pact(pconn, real_packet);
 }
 
 /* 84 sc */
@@ -18462,64 +13664,6 @@ receive_packet_report_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_report_req_100(
-               connection_t *pconn,
-               const struct packet_report_req *packet)
-{
-  const struct packet_report_req *real_packet = packet;
-  packet_report_req_100_fields fields;
-  struct packet_report_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_REPORT_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_REPORT_REQ);
-  printf("cs opc=85 REPORT_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_report_req_100,
-                     cmp_packet_report_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->type != real_packet->type);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->type);
-    printf(" type=%u\n", real_packet->type);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_report_req(connection_t *pconn)
 {
   int variant = -1;
@@ -18558,42 +13702,6 @@ receive_packet_report_req(
       return NULL;
     }
   }
-}
-
-int send_packet_report_req(
-        connection_t *pconn,
-        const struct packet_report_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_report_req from the server.");
-  }
-  ensure_valid_variant_packet_report_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_REPORT_REQ]) {
-    case 100: {
-      return send_packet_report_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_report_req(connection_t *pconn, enum report_type type)
-{
-  struct packet_report_req packet, *real_packet = &packet;
-
-  real_packet->type = type;
-
-  return send_packet_report_req(pconn, real_packet);
 }
 
 /* 86 sc */
@@ -19115,13 +14223,6 @@ receive_packet_conn_pong_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_pong_100(connection_t *pconn)
-{
-  SEND_PACKET_START(PACKET_CONN_PONG);
-  printf("cs opc=89 CONN_PONG\n");
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_conn_pong(connection_t *pconn)
 {
   int variant = -1;
@@ -19158,31 +14259,6 @@ receive_packet_conn_pong(
     default: {
       die("unknown variant");
       return NULL;
-    }
-  }
-}
-
-int send_packet_conn_pong(connection_t *pconn)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_conn_pong from the server.");
-  }
-  ensure_valid_variant_packet_conn_pong(pconn);
-
-  switch(pconn->phs.variant[PACKET_CONN_PONG]) {
-    case 100: {
-      return send_packet_conn_pong_100(pconn);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
     }
   }
 }
@@ -19418,12 +14494,6 @@ receive_packet_spaceship_launch_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_spaceship_launch_100(connection_t *pconn)
-{
-  SEND_PACKET_START(PACKET_SPACESHIP_LAUNCH);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_spaceship_launch(connection_t *pconn)
 {
   int variant = -1;
@@ -19460,31 +14530,6 @@ receive_packet_spaceship_launch(
     default: {
       die("unknown variant");
       return NULL;
-    }
-  }
-}
-
-int send_packet_spaceship_launch(connection_t *pconn)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_spaceship_launch from the server.");
-  }
-  ensure_valid_variant_packet_spaceship_launch(pconn);
-
-  switch(pconn->phs.variant[PACKET_SPACESHIP_LAUNCH]) {
-    case 100: {
-      return send_packet_spaceship_launch_100(pconn);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
     }
   }
 }
@@ -19544,74 +14589,6 @@ receive_packet_spaceship_place_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_spaceship_place_100(
-               connection_t *pconn,
-               const struct packet_spaceship_place *packet)
-{
-  const struct packet_spaceship_place *real_packet = packet;
-  packet_spaceship_place_100_fields fields;
-  struct packet_spaceship_place *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_SPACESHIP_PLACE];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_SPACESHIP_PLACE);
-  printf("cs opc=94 SPACESHIP_PLACE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_spaceship_place_100,
-                     cmp_packet_spaceship_place_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->type != real_packet->type);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->num != real_packet->num);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->type);
-    printf(" type=%u", real_packet->type);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->num);
-    printf(" num=%u\n", real_packet->num);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_spaceship_place(connection_t *pconn)
 {
   int variant = -1;
@@ -19650,46 +14627,6 @@ receive_packet_spaceship_place(
       return NULL;
     }
   }
-}
-
-int send_packet_spaceship_place(
-        connection_t *pconn,
-        const struct packet_spaceship_place *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_spaceship_place from the server.");
-  }
-  ensure_valid_variant_packet_spaceship_place(pconn);
-
-  switch(pconn->phs.variant[PACKET_SPACESHIP_PLACE]) {
-    case 100: {
-      return send_packet_spaceship_place_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_spaceship_place(
-         connection_t *pconn,
-         enum spaceship_place_type type,
-         int num)
-{
-  struct packet_spaceship_place packet, *real_packet = &packet;
-
-  real_packet->type = type;
-  real_packet->num = num;
-
-  return send_packet_spaceship_place(pconn, real_packet);
 }
 
 /* 95 sc */
@@ -23665,73 +18602,6 @@ receive_packet_unit_load_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_load_100(
-               connection_t *pconn,
-               const struct packet_unit_load *packet)
-{
-  const struct packet_unit_load *real_packet = packet;
-  packet_unit_load_100_fields fields;
-  struct packet_unit_load *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_LOAD];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_LOAD);
-  printf("cs opc=107 UNIT_LOAD");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_load_100,
-                     cmp_packet_unit_load_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->cargo_id != real_packet->cargo_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->transporter_id != real_packet->transporter_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->cargo_id);
-    printf(" cargo_id=%u", real_packet->cargo_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint16(&dout, real_packet->transporter_id);
-    printf(" transporter_id=%u", real_packet->transporter_id);
-  }
-  printf("\n");
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_load(connection_t *pconn)
 {
   int variant = -1;
@@ -23770,46 +18640,6 @@ receive_packet_unit_load(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_load(
-        connection_t *pconn,
-        const struct packet_unit_load *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_load from the server.");
-  }
-  ensure_valid_variant_packet_unit_load(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_LOAD]) {
-    case 100: {
-      return send_packet_unit_load_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_load(
-         connection_t *pconn,
-         int cargo_id,
-         int transporter_id)
-{
-  struct packet_unit_load packet, *real_packet = &packet;
-
-  real_packet->cargo_id = cargo_id;
-  real_packet->transporter_id = transporter_id;
-
-  return send_packet_unit_load(pconn, real_packet);
 }
 
 /* 108 cs */
@@ -23858,63 +18688,6 @@ receive_packet_single_want_hack_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_single_want_hack_req_100(
-               connection_t *pconn,
-               const struct packet_single_want_hack_req *packet)
-{
-  const struct packet_single_want_hack_req *real_packet = packet;
-  packet_single_want_hack_req_100_fields fields;
-  struct packet_single_want_hack_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_SINGLE_WANT_HACK_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_SINGLE_WANT_HACK_REQ);
-  printf("cs opc=108 SINGLE_WANT_HACK_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_single_want_hack_req_100,
-                     cmp_packet_single_want_hack_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (strcmp(old->token, real_packet->token) != 0);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_string(&dout, real_packet->token);
-    printf(" token=\"%s\"", real_packet->token);
-  }
-  printf("\n");
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 #define hash_packet_single_want_hack_req_101 hash_const
 
 #define cmp_packet_single_want_hack_req_101 cmp_const
@@ -23961,64 +18734,6 @@ receive_packet_single_want_hack_req_101(
   hash_insert(*hash, clone, clone);
 
   RECEIVE_PACKET_END(real_packet);
-}
-
-static int send_packet_single_want_hack_req_101(
-               connection_t *pconn,
-               const struct packet_single_want_hack_req *packet)
-{
-  const struct packet_single_want_hack_req *real_packet = packet;
-  packet_single_want_hack_req_101_fields fields;
-  struct packet_single_want_hack_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_SINGLE_WANT_HACK_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_SINGLE_WANT_HACK_REQ);
-  printf("cs opc=108 SINGLE_WANT_HACK_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_single_want_hack_req_101,
-                     cmp_packet_single_want_hack_req_101);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->old_token != real_packet->old_token);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint32(&dout, real_packet->old_token);
-    printf(" old_token=%0X\n", real_packet->old_token);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
 }
 
 static void ensure_valid_variant_packet_single_want_hack_req(connection_t *pconn)
@@ -24070,36 +18785,6 @@ receive_packet_single_want_hack_req(
     default: {
       die("unknown variant");
       return NULL;
-    }
-  }
-}
-
-int send_packet_single_want_hack_req(
-        connection_t *pconn,
-        const struct packet_single_want_hack_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_single_want_hack_req from the server.");
-  }
-  ensure_valid_variant_packet_single_want_hack_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REQ]) {
-    case 100: {
-      return send_packet_single_want_hack_req_100(pconn, packet);
-    }
-    case 101: {
-      return send_packet_single_want_hack_req_101(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
     }
   }
 }
@@ -26327,74 +21012,6 @@ receive_packet_vote_submit_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_submit_100(
-               connection_t *pconn,
-               const struct packet_vote_submit *packet)
-{
-  const struct packet_vote_submit *real_packet = packet;
-  packet_vote_submit_100_fields fields;
-  struct packet_vote_submit *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_VOTE_SUBMIT];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_VOTE_SUBMIT);
-  printf("cs opc=128 VOTE_SUBMIT");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_vote_submit_100,
-                     cmp_packet_vote_submit_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->vote_no != real_packet->vote_no);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->value != real_packet->value);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint32(&dout, real_packet->vote_no);
-    printf(" vote_no=%u", real_packet->vote_no);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_sint8(&dout, real_packet->value);
-    printf(" value=%d\n", real_packet->value);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_vote_submit(connection_t *pconn)
 {
   int variant = -1;
@@ -26431,33 +21048,6 @@ receive_packet_vote_submit(
     default: {
       die("unknown variant");
       return NULL;
-    }
-  }
-}
-
-int send_packet_vote_submit(
-        connection_t *pconn,
-        const struct packet_vote_submit *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_vote_submit from the server.");
-  }
-  ensure_valid_variant_packet_vote_submit(pconn);
-
-  switch(pconn->phs.variant[PACKET_VOTE_SUBMIT]) {
-    case 100: {
-      return send_packet_vote_submit_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
     }
   }
 }
@@ -26518,74 +21108,6 @@ receive_packet_trade_route_plan_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_trade_route_plan_100(
-               connection_t *pconn,
-               const struct packet_trade_route_plan *packet)
-{
-  const struct packet_trade_route_plan *real_packet = packet;
-  packet_trade_route_plan_100_fields fields;
-  struct packet_trade_route_plan *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_TRADE_ROUTE_PLAN];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_TRADE_ROUTE_PLAN);
-  printf("cs opc=130 TRADE_ROUTE_PLAN");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_trade_route_plan_100,
-                     cmp_packet_trade_route_plan_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city1 != real_packet->city1);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->city2 != real_packet->city2);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city1);
-    printf(" city1=%u", real_packet->city1);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint16(&dout, real_packet->city2);
-    printf(" city2=%u\n", real_packet->city2);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_trade_route_plan(connection_t *pconn)
 {
   int variant = -1;
@@ -26624,46 +21146,6 @@ receive_packet_trade_route_plan(
       return NULL;
     }
   }
-}
-
-int send_packet_trade_route_plan(
-        connection_t *pconn,
-        const struct packet_trade_route_plan *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_trade_route_plan from the server.");
-  }
-  ensure_valid_variant_packet_trade_route_plan(pconn);
-
-  switch(pconn->phs.variant[PACKET_TRADE_ROUTE_PLAN]) {
-    case 100: {
-      return send_packet_trade_route_plan_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_trade_route_plan(
-         connection_t *pconn,
-         int city1,
-         int city2)
-{
-  struct packet_trade_route_plan packet, *real_packet = &packet;
-
-  real_packet->city1 = city1;
-  real_packet->city2 = city2;
-
-  return send_packet_trade_route_plan(pconn, real_packet);
 }
 
 /* 131 cs */
@@ -26721,74 +21203,6 @@ receive_packet_trade_route_remove_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_trade_route_remove_100(
-               connection_t *pconn,
-               const struct packet_trade_route_remove *packet)
-{
-  const struct packet_trade_route_remove *real_packet = packet;
-  packet_trade_route_remove_100_fields fields;
-  struct packet_trade_route_remove *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_TRADE_ROUTE_REMOVE];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_TRADE_ROUTE_REMOVE);
-  printf("cs opc=131 TRADE_ROUTE_REMOVE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_trade_route_remove_100,
-                     cmp_packet_trade_route_remove_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->city1 != real_packet->city1);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->city2 != real_packet->city2);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->city1);
-    printf(" city1=%u", real_packet->city1);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint16(&dout, real_packet->city2);
-    printf(" city2=%u\n", real_packet->city2);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_trade_route_remove(connection_t *pconn)
 {
   int variant = -1;
@@ -26824,43 +21238,6 @@ receive_packet_trade_route_remove(
       return NULL;
     }
   }
-}
-
-int send_packet_trade_route_remove(
-        connection_t *pconn,
-        const struct packet_trade_route_remove *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  ensure_valid_variant_packet_trade_route_remove(pconn);
-
-  switch(pconn->phs.variant[PACKET_TRADE_ROUTE_REMOVE]) {
-    case 100: {
-      return send_packet_trade_route_remove_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_trade_route_remove(
-         connection_t *pconn,
-         int city1,
-         int city2)
-{
-  struct packet_trade_route_remove packet, *real_packet = &packet;
-
-  real_packet->city1 = city1;
-  real_packet->city2 = city2;
-
-  return send_packet_trade_route_remove(pconn, real_packet);
 }
 
 /* 132 cs */
@@ -26924,84 +21301,6 @@ receive_packet_unit_trade_route_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_trade_route_100(
-               connection_t *pconn,
-               const struct packet_unit_trade_route *packet)
-{
-  const struct packet_unit_trade_route *real_packet = packet;
-  packet_unit_trade_route_100_fields fields;
-  struct packet_unit_trade_route *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_TRADE_ROUTE];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_TRADE_ROUTE);
-  printf("cs opc=132 UNIT_TRADE_ROUTE");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_trade_route_100,
-                     cmp_packet_unit_trade_route_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->unit_id != real_packet->unit_id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->city1 != real_packet->city1);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->city2 != real_packet->city2);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->unit_id);
-    printf(" unit_id=%u", real_packet->unit_id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint16(&dout, real_packet->city1);
-    printf(" city1=%u", real_packet->city1);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint16(&dout, real_packet->city2);
-    printf(" city2=%u\n", real_packet->city2);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_trade_route(connection_t *pconn)
 {
   int variant = -1;
@@ -27040,47 +21339,6 @@ receive_packet_unit_trade_route(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_trade_route(
-        connection_t *pconn,
-        const struct packet_unit_trade_route *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_trade_route from the server.");
-  }
-  ensure_valid_variant_packet_unit_trade_route(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_TRADE_ROUTE]) {
-    case 100: {
-      return send_packet_unit_trade_route_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_trade_route(
-         connection_t *pconn,
-         int unit_id,
-         int city1, int city2)
-{
-  struct packet_unit_trade_route packet, *real_packet = &packet;
-
-  real_packet->unit_id = unit_id;
-  real_packet->city1 = city1;
-  real_packet->city2 = city2;
-
-  return send_packet_unit_trade_route(pconn, real_packet);
 }
 
 /* 133 sc */
@@ -27377,84 +21635,6 @@ receive_packet_city_set_rally_point_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_set_rally_point_100(
-               connection_t *pconn,
-               const struct packet_city_set_rally_point *packet)
-{
-  const struct packet_city_set_rally_point *real_packet = packet;
-  packet_city_set_rally_point_100_fields fields;
-  struct packet_city_set_rally_point *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_SET_RALLY_POINT];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_SET_RALLY_POINT);
-  printf("cs opc=138 CITY_SET_RALLY_POINT");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_set_rally_point_100,
-                     cmp_packet_city_set_rally_point_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->id != real_packet->id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->x != real_packet->x);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->y != real_packet->y);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->id);
-    printf(" id=%u", real_packet->id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->x);
-    printf(" x=%u", real_packet->x);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->y);
-    printf(" y=%u\n", real_packet->y);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_set_rally_point(connection_t *pconn)
 {
   int variant = -1;
@@ -27493,47 +21673,6 @@ receive_packet_city_set_rally_point(
       return NULL;
     }
   }
-}
-
-int send_packet_city_set_rally_point(
-        connection_t *pconn,
-        const struct packet_city_set_rally_point *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_set_rally_point from the server.");
-  }
-  ensure_valid_variant_packet_city_set_rally_point(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_SET_RALLY_POINT]) {
-    case 100: {
-      return send_packet_city_set_rally_point_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_set_rally_point(
-         connection_t *pconn,
-         int id,
-         int x, int y)
-{
-  struct packet_city_set_rally_point packet, *real_packet = &packet;
-
-  real_packet->id = id;
-  real_packet->x = x;
-  real_packet->y = y;
-
-  return send_packet_city_set_rally_point(pconn, real_packet);
 }
 
 /* 139 cs */
@@ -27585,64 +21724,6 @@ receive_packet_city_clear_rally_point_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_clear_rally_point_100(
-               connection_t *pconn,
-               const struct packet_city_clear_rally_point *packet)
-{
-  const struct packet_city_clear_rally_point *real_packet = packet;
-  packet_city_clear_rally_point_100_fields fields;
-  struct packet_city_clear_rally_point *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_CLEAR_RALLY_POINT];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_CITY_CLEAR_RALLY_POINT);
-  printf("cs opc=139 CITY_CLEAR_RALLY_POINT");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_city_clear_rally_point_100,
-                     cmp_packet_city_clear_rally_point_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->id != real_packet->id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->id);
-    printf(" id=%u\n", real_packet->id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_city_clear_rally_point(connection_t *pconn)
 {
   int variant = -1;
@@ -27681,42 +21762,6 @@ receive_packet_city_clear_rally_point(
       return NULL;
     }
   }
-}
-
-int send_packet_city_clear_rally_point(
-        connection_t *pconn,
-        const struct packet_city_clear_rally_point *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_city_clear_rally_point from the server.");
-  }
-  ensure_valid_variant_packet_city_clear_rally_point(pconn);
-
-  switch(pconn->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT]) {
-    case 100: {
-      return send_packet_city_clear_rally_point_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_city_clear_rally_point(connection_t *pconn, int id)
-{
-  struct packet_city_clear_rally_point packet, *real_packet = &packet;
-
-  real_packet->id = id;
-
-  return send_packet_city_clear_rally_point(pconn, real_packet);
 }
 
 /* 140 */
@@ -27781,84 +21826,6 @@ receive_packet_unit_air_patrol_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_air_patrol_100(
-               connection_t *pconn,
-               const struct packet_unit_air_patrol *packet)
-{
-  const struct packet_unit_air_patrol *real_packet = packet;
-  packet_unit_air_patrol_100_fields fields;
-  struct packet_unit_air_patrol *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_AIR_PATROL];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_AIR_PATROL);
-  printf("cs opc=141 UNIT_AIR_PATROL");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_air_patrol_100,
-                     cmp_packet_unit_air_patrol_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->id != real_packet->id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  differ = (old->x != real_packet->x);
-  if (differ) {
-    different++;
-    BV_SET(fields, 1);
-  }
-
-  differ = (old->y != real_packet->y);
-  if (differ) {
-    different++;
-    BV_SET(fields, 2);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->id);
-    printf("id=%u ", real_packet->id);
-  }
-  if (BV_ISSET(fields, 1)) {
-    dio_put_uint8(&dout, real_packet->x);
-    printf(" x=%u ", real_packet->x);
-  }
-  if (BV_ISSET(fields, 2)) {
-    dio_put_uint8(&dout, real_packet->y);
-    printf(" y=%u\n", real_packet->y);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_air_patrol(connection_t *pconn)
 {
   int variant = -1;
@@ -27897,47 +21864,6 @@ receive_packet_unit_air_patrol(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_air_patrol(
-        connection_t *pconn,
-        const struct packet_unit_air_patrol *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_air_patrol from the server.");
-  }
-  ensure_valid_variant_packet_unit_air_patrol(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_AIR_PATROL]) {
-    case 100: {
-      return send_packet_unit_air_patrol_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_air_patrol(
-         connection_t *pconn,
-         int id,
-         int x, int y)
-{
-  struct packet_unit_air_patrol packet, *real_packet = &packet;
-
-  real_packet->id = id;
-  real_packet->x = x;
-  real_packet->y = y;
-
-  return send_packet_unit_air_patrol(pconn, real_packet);
 }
 
 /* 142 cs */
@@ -27989,64 +21915,6 @@ receive_packet_unit_air_patrol_stop_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_air_patrol_stop_100(
-               connection_t *pconn,
-               const struct packet_unit_air_patrol_stop *packet)
-{
-  const struct packet_unit_air_patrol_stop *real_packet = packet;
-  packet_unit_air_patrol_stop_100_fields fields;
-  struct packet_unit_air_patrol_stop *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_AIR_PATROL_STOP];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_UNIT_AIR_PATROL_STOP);
-  printf("cs opc=142 UNIT_AIR_PATROL_STOP");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_unit_air_patrol_stop_100,
-                     cmp_packet_unit_air_patrol_stop_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->id != real_packet->id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint16(&dout, real_packet->id);
-    printf(" id=%u\n", real_packet->id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_unit_air_patrol_stop(connection_t *pconn)
 {
   int variant = -1;
@@ -28085,42 +21953,6 @@ receive_packet_unit_air_patrol_stop(
       return NULL;
     }
   }
-}
-
-int send_packet_unit_air_patrol_stop(
-        connection_t *pconn,
-        const struct packet_unit_air_patrol_stop *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_unit_air_patrol_stop from the server.");
-  }
-  ensure_valid_variant_packet_unit_air_patrol_stop(pconn);
-
-  switch(pconn->phs.variant[PACKET_UNIT_AIR_PATROL_STOP]) {
-    case 100: {
-      return send_packet_unit_air_patrol_stop_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_unit_air_patrol_stop(connection_t *pconn, int id)
-{
-  struct packet_unit_air_patrol_stop packet, *real_packet = &packet;
-
-  real_packet->id = id;
-
-  return send_packet_unit_air_patrol_stop(pconn, real_packet);
 }
 
 /* 143 */
@@ -28650,64 +22482,6 @@ receive_packet_player_info_req_100(
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_req_100(
-               connection_t *pconn,
-               const struct packet_player_info_req *packet)
-{
-  const struct packet_player_info_req *real_packet = packet;
-  packet_player_info_req_100_fields fields;
-  struct packet_player_info_req *old, *clone;
-  bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_INFO_REQ];
-  int different = 0;
-
-  SEND_PACKET_START(PACKET_PLAYER_INFO_REQ);
-  printf("cs opc=150 PLAYER_INFO_REQ");
-  if (!*hash) {
-    *hash = hash_new(hash_packet_player_info_req_100,
-                     cmp_packet_player_info_req_100);
-  }
-  BV_CLR_ALL(fields);
-
-  old = hash_lookup_data(*hash, real_packet);
-  old_from_hash = (old != NULL);
-  if (!old) {
-    old = wc_malloc(sizeof(*old));
-    memset(old, 0, sizeof(*old));
-    force_send_of_unchanged = TRUE;
-  }
-
-  differ = (old->id != real_packet->id);
-  if (differ) {
-    different++;
-    BV_SET(fields, 0);
-  }
-
-  if (different == 0 && !force_send_of_unchanged) {
-    printf("\n");
-    return 0;
-  }
-
-  DIO_BV_PUT(&dout, fields);
-
-  if (BV_ISSET(fields, 0)) {
-    dio_put_uint8(&dout, real_packet->id);
-    printf(" id=%u\n", real_packet->id);
-  } else {
-    printf("\n");
-  }
-
-  if (old_from_hash) {
-    hash_delete_entry(*hash, old);
-  }
-
-  clone = old;
-
-  *clone = *real_packet;
-  hash_insert(*hash, clone, clone);
-  SEND_PACKET_END;
-}
-
 static void ensure_valid_variant_packet_player_info_req(connection_t *pconn)
 {
   int variant = -1;
@@ -28746,40 +22520,4 @@ receive_packet_player_info_req(
       return NULL;
     }
   }
-}
-
-int send_packet_player_info_req(
-        connection_t *pconn,
-        const struct packet_player_info_req *packet)
-{
-  if(!pconn->used) {
-    freelog(LOG_ERROR,
-            "WARNING: trying to send data to the closed connection %s",
-            conn_description(pconn));
-    return -1;
-  }
-  assert(pconn->phs.variant != NULL);
-  if(is_server) {
-    freelog(LOG_ERROR, "Sending packet_player_info_req from the server.");
-  }
-  ensure_valid_variant_packet_player_info_req(pconn);
-
-  switch(pconn->phs.variant[PACKET_PLAYER_INFO_REQ]) {
-    case 100: {
-      return send_packet_player_info_req_100(pconn, packet);
-    }
-    default: {
-      die("unknown variant");
-      return -1;
-    }
-  }
-}
-
-int dsend_packet_player_info_req(connection_t *pconn, int id)
-{
-  struct packet_player_info_req packet, *real_packet = &packet;
-
-  real_packet->id = id;
-
-  return send_packet_player_info_req(pconn, real_packet);
 }
