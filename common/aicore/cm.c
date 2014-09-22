@@ -248,7 +248,7 @@ static void print_tile_type(int loglevel,
                             const struct cm_tile_type *ptype,
                             const char *prefix);
 static void print_lattice(int loglevel,
-                          const struct tile_type_vector *lattice);
+                          const struct cm_tile_type_vector *lattice);
 static void print_partial_solution(int loglevel,
                                    const struct partial_solution *soln,
                                    const struct cm_state         *cmstate);
@@ -696,16 +696,16 @@ static void apply_solution(struct cm_state *cmstate,
   values based on the city's data.
 ****************************************************************************/
 static void get_city_surplus(const city_t *pcity,
-                             int (*surplus)[CM_NUM_STATS],
+                             int surplus[CM_NUM_STATS],
                              bool *disorder,
                              bool *happy)
 {
-  (*surplus)[CM_FOOD]    = pcity->common.food_surplus;
-  (*surplus)[CM_SHIELD]  = pcity->common.shield_surplus;
-  (*surplus)[CM_TRADE]   = pcity->common.trade_prod;
-  (*surplus)[CM_GOLD]    = city_gold_surplus(pcity, pcity->common.tax_total);
-  (*surplus)[CM_LUXURY]  = pcity->common.luxury_total;
-  (*surplus)[CM_SCIENCE] = pcity->common.science_total;
+  surplus[CM_FOOD]    = pcity->common.food_surplus;
+  surplus[CM_SHIELD]  = pcity->common.shield_surplus;
+  surplus[CM_TRADE]   = pcity->common.trade_prod;
+  surplus[CM_GOLD]    = city_gold_surplus(pcity, pcity->common.tax_total);
+  surplus[CM_LUXURY]  = pcity->common.luxury_total;
+  surplus[CM_SCIENCE] = pcity->common.science_total;
 
   *disorder = city_unhappy(pcity);
   *happy = city_happy(pcity);
@@ -728,7 +728,7 @@ evaluate_solution(struct cm_state *cmstate,
    * one "apply". */
   memcpy(&backup, pcity, sizeof(backup));
   apply_solution(cmstate, soln);
-  get_city_surplus(pcity, &surplus, &disorder, &happy);
+  get_city_surplus(pcity, surplus, &disorder, &happy);
   memcpy(pcity, &backup, sizeof(backup));
   compute_fitness(surplus, disorder, happy, &cmstate->parameter, fitness3);
   return fitness3;
@@ -1133,7 +1133,7 @@ static void clean_lattice(struct cm_tile_type_vector *lattice,
   much of the domain-specific knowledge.
 ****************************************************************************/
 static double estimate_fitness(const struct cm_state *cmstate,
-                               int (*production)[CM_NUM_STATS]);
+                               int production[CM_NUM_STATS]);
 
 static void sort_lattice_by_fitness(const struct cm_state *cmstate,
                                     struct cm_tile_type_vector *lattice)
@@ -1142,7 +1142,7 @@ static void sort_lattice_by_fitness(const struct cm_state *cmstate,
 
   /* compute fitness */
   tile_type_vector_iterate(lattice, ptype) {
-    ptype->estimated_fitness = estimate_fitness(cmstate, &ptype->production);
+    ptype->estimated_fitness = estimate_fitness(cmstate, ptype->production);
   } tile_type_vector_iterate_end;
 
   /* sort by it */
@@ -1359,7 +1359,7 @@ static int next_choice(struct cm_state *cmstate, int oldchoice)
       /* heuristic says we can't beat the best going this way */
       freelog(LOG_PRUNE_BRANCH, "--- pruning branch ---");
       print_partial_solution(LOG_PRUNE_BRANCH, &cmstate->current, cmstate);
-      print_tile_type(LOG_PRUNE_BRANCH, tile_type_get(cmstate, newchoice),
+      print_tile_type(LOG_PRUNE_BRANCH, cm_tile_type_get(cmstate, newchoice),
                       " + worker on ");
       freelog(LOG_PRUNE_BRANCH, "--- branch pruned ---");
       continue;
@@ -1500,7 +1500,7 @@ static void complete_solution(struct partial_solution *soln,
 static void
 compute_max_stats_heuristic(const struct cm_state *cmstate,
                             const struct partial_solution *soln,
-                            int (*production)[CM_NUM_STATS],
+                            int production[CM_NUM_STATS],
                             int check_choice)
 {
   enum cm_stat stat;
@@ -1516,9 +1516,9 @@ compute_max_stats_heuristic(const struct cm_state *cmstate,
     enum cm_stat stat;
     const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, check_choice);
 
-    memcpy(production, &soln->production, sizeof(soln->production));
+    memcpy(production, soln->production, sizeof(soln->production));
     for (stat = 0; stat < CM_NUM_STATS; stat++) {
-      (*production)[stat] += ptype->production[stat];
+      production[stat] += ptype->production[stat];
     }
     return;
   }
@@ -1533,7 +1533,7 @@ compute_max_stats_heuristic(const struct cm_state *cmstate,
     add_worker(&solnplus, check_choice, cmstate);
     complete_solution(&solnplus, cmstate, &cmstate->lattice_by_prod[stat]);
 
-    (*production)[stat] = solnplus.production[stat];
+    production[stat] = solnplus.production[stat];
   }
 
   /*destroy_partial_solution(&solnplus);*/
@@ -1553,7 +1553,7 @@ static bool choice_is_promising(struct cm_state *cmstate, int newchoice)
   enum cm_stat stat;
   bool beats_best = FALSE;
 
-  compute_max_stats_heuristic(cmstate, &cmstate->current, &production, newchoice);
+  compute_max_stats_heuristic(cmstate, &cmstate->current, production, newchoice);
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     if (production[stat] < cmstate->min_production[stat]) {
@@ -1654,7 +1654,7 @@ static void init_min_production(struct cm_state *cmstate)
   The only fields of the cmstate used are the city and parameter.
 ****************************************************************************/
 static double estimate_fitness(const struct cm_state *cmstate,
-                               int (*production)[CM_NUM_STATS])
+                               int production[CM_NUM_STATS])
 {
   const city_t *pcity = cmstate->pcity;
   const player_t *pplayer = get_player(pcity->common.owner);
@@ -1663,7 +1663,7 @@ static double estimate_fitness(const struct cm_state *cmstate,
   double sum = 0;
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
-    estimates[stat] = (*production)[stat];
+    estimates[stat] = production[stat];
   }
 
   /* sci/lux/gold get benefit from the tax rates (in percentage) */
@@ -2052,7 +2052,7 @@ void cm_copy_result_from_city(const city_t *pcity,
   } specialist_type_iterate_end;
 
   /* find the surplus production numbers */
-  get_city_surplus(pcity, &result->surplus,
+  get_city_surplus(pcity, result->surplus,
                    &result->disorder, &result->happy);
 
   /* this is a valid result, in a sense */
@@ -2065,14 +2065,17 @@ void cm_copy_result_from_city(const city_t *pcity,
 #ifdef CM_DEBUG
 static void snprint_production(char *buffer,
                                size_t bufsz,
-                               const int (production*)[CM_NUM_STATS])
+                               const int production[CM_NUM_STATS])
 {
+# ifndef NDEBUG
   int nout;
 
-  nout = my_snprintf(buffer, bufsz, "[%d %d %d %d %d %d]",
-                     (production*)[CM_FOOD], (production*)[CM_SHIELD],
-                     (production*)[CM_TRADE], (production*)[CM_GOLD],
-                     (production*)[CM_LUXURY], (production*)[CM_SCIENCE]);
+  nout =
+# endif
+         my_snprintf(buffer, bufsz, "[%d %d %d %d %d %d]",
+                     production[CM_FOOD], production[CM_SHIELD],
+                     production[CM_TRADE], production[CM_GOLD],
+                     production[CM_LUXURY], production[CM_SCIENCE]);
 
   assert(nout >= 0 && nout <= bufsz);
 }
@@ -2086,7 +2089,7 @@ static void print_tile_type(int loglevel,
 {
   char prodstr[256];
 
-  snprint_production(prodstr, sizeof(prodstr), &ptype->production);
+  snprint_production(prodstr, sizeof(prodstr), ptype->production);
   freelog(loglevel, "%s%s fitness %g depth %d, idx %d; %d tiles",
           prefix,
           prodstr, ptype->estimated_fitness,
@@ -2099,7 +2102,7 @@ static void print_tile_type(int loglevel,
   Print debugging data about a whole B&B lattice.
 ****************************************************************************/
 static void print_lattice(int loglevel,
-                          const struct tile_type_vector *lattice)
+                          const struct cm_tile_type_vector *lattice)
 {
   freelog(loglevel, "lattice has %u terrain types", (unsigned)lattice->size);
   tile_type_vector_iterate(lattice, ptype) {
@@ -2124,7 +2127,7 @@ static void print_partial_solution(int loglevel,
     freelog(loglevel, "** completed solution:");
   }
 
-  snprint_production(buf, sizeof(buf), &soln->production);
+  snprint_production(buf, sizeof(buf), soln->production);
   freelog(loglevel, "production: %s", buf);
 
   freelog(loglevel, "tiles used:");
@@ -2132,7 +2135,7 @@ static void print_partial_solution(int loglevel,
     if (soln->worker_counts[i] != 0) {
       my_snprintf(buf, sizeof(buf),
                   "  %d tiles of type ", soln->worker_counts[i]);
-      print_tile_type(loglevel, tile_type_get(cmstate, i), buf);
+      print_tile_type(loglevel, cm_tile_type_get(cmstate, i), buf);
     }
   }
 
@@ -2144,11 +2147,11 @@ static void print_partial_solution(int loglevel,
 
   freelog(loglevel, "tiles available:");
   for (i = last_type; i < num_types(cmstate); i++) {
-    const struct cm_tile_type *ptype = tile_type_get(cmstate, i);
+    const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, i);
 
     if (soln->prereqs_filled[i] == cm_tile_type_num_prereqs(ptype)
         && soln->worker_counts[i] < cm_tile_type_num_tiles(ptype)) {
-      print_tile_type(loglevel, tile_type_get(cmstate, i), "  ");
+      print_tile_type(loglevel, cm_tile_type_get(cmstate, i), "  ");
     }
   }
 }
