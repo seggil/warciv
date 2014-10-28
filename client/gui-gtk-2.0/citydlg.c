@@ -120,7 +120,7 @@ struct city_dialog {
   GtkTooltips *tips;
   GtkWidget *popup_menu;
 
-  struct {
+  struct city_dialog_overview_s {
     GtkWidget *map_canvas;
     GtkWidget *map_canvas_pixmap;
     GtkWidget *tradelist;
@@ -140,13 +140,13 @@ struct city_dialog {
     GtkWidget *info_label[NUM_INFO_FIELDS];
   } overview;
 
-  struct {
+  struct city_dialog_production_s {
     GtkWidget *production_bar;
     GtkWidget *buy_command;
     GtkWidget *worklist;
   } production;
 
-  struct {
+  struct city_dialog_happiness_s {
     GtkWidget *map_canvas;
     GtkWidget *map_canvas_pixmap;
     GtkWidget *widget;
@@ -155,13 +155,13 @@ struct city_dialog {
 
   struct cma_dialog *cma_editor;
 
-  struct {
+  struct city_dialog_trade_s {
     GtkListStore *established_trade_routes;
     GtkListStore *in_route_trade_routes;
     GtkListStore *planned_trade_routes;
   } trade;
 
-  struct {
+  struct city_dialog_misc_s {
     GtkWidget *rename_command;
     GtkWidget *new_citizens_radio[3];
     GtkWidget *city_opts[NUM_CITY_OPTS];

@@ -53,7 +53,7 @@ struct server {
   char *topic;
   char *message;
 
-  struct players {
+  struct server_players {
     char *name;
     char *user;
     char *type;
@@ -64,7 +64,7 @@ struct server {
   int nplayers;
 
   int nvars;
-  struct vars {
+  struct server_vars {
     char *name;
     char *value;
   } *vars;

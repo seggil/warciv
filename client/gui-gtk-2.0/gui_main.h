@@ -28,7 +28,7 @@ struct canvas
 {
   enum canvas_type type;
 
-  union {
+  union canvas_u {
     GdkPixmap *pixmap;
     GtkPixcomm *pixcomm;
     GdkPixbuf *pixbuf;

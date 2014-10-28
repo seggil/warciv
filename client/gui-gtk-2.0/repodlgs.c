@@ -75,9 +75,9 @@ static GtkListStore *science_model[3], *reachable_techs, *reachable_goals;
 static int science_dialog_shell_is_modal;
 static bool no_science_callback = FALSE;
 
-enum {TECH_ID, TECH_NAME, TECH_STEPS, TECH_NUM};
+enum tech_e {TECH_ID, TECH_NAME, TECH_STEPS, TECH_NUM};
 /******************************************************************/
-enum {
+enum economy_e {
   ECONOMY_SELL_OBSOLETE = 1, ECONOMY_SELL_ALL
 };
 

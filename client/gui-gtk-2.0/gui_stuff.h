@@ -70,9 +70,9 @@ struct gui_dialog {
   enum gui_dialog_type type;
   gint position;
 
-  union {
+  union gui_dialog_u {
     GtkWidget *window;
-    struct {
+    struct gui_dialog_v_tab_s {
       GtkWidget *label;
       GtkWidget *notebook;
       gulong handler_id;
