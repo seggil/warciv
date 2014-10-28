@@ -154,20 +154,19 @@ struct terrain_drawing_data {
 };
 
 struct named_sprites {
-  struct Sprite
-    *bulb[NUM_TILES_PROGRESS],
-    *warming[NUM_TILES_PROGRESS],
-    *cooling[NUM_TILES_PROGRESS],
-    *treaty_thumb[2],     /* 0=disagree, 1=agree */
-    *right_arrow,
+  struct Sprite *bulb[NUM_TILES_PROGRESS];
+  struct Sprite *warming[NUM_TILES_PROGRESS];
+  struct Sprite *cooling[NUM_TILES_PROGRESS];
+  struct Sprite *treaty_thumb[2];     /* 0=disagree, 1=agree */
+  struct Sprite *right_arrow;
 
-    /* The panel sprites for showing tax % allocations. */
-    *tax_luxury, *tax_science, *tax_gold,
+  /* The panel sprites for showing tax % allocations. */
+  struct Sprite *tax_luxury, *tax_science, *tax_gold;
 
-    *black_tile,      /* only used for isometric view */
-    *dither_tile;     /* only used for isometric view */
+  struct Sprite *black_tile;      /* only used for isometric view */
+  struct Sprite *dither_tile;     /* only used for isometric view */
 
-  struct citizen_graphic {
+  struct ns_citizen_graphic {
     /* Each citizen type has up to MAX_NUM_CITIZEN_SPRITES different
      * sprites, as defined by the tileset. */
     int count;

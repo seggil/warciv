@@ -217,9 +217,11 @@ bool client_start_server(void)
   server_pid = fork();
 
   if (server_pid == 0) {
-    int fd, argc = 0;
+    int fd;
+    int argc = 0;
     const int max_nargs = 13;
-    char *argv[max_nargs + 1], port_buf[32];
+    char *argv[max_nargs + 1];
+    char port_buf[32];
 
     /* inside the child */
 
