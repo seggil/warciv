@@ -3355,7 +3355,7 @@ struct Sprite *get_citizen_sprite(struct citizen_type type,
                                   int citizen_index,
                                   const city_t *pcity)
 {
-  struct citizen_graphic *graphic;
+  struct ns_citizen_graphic *graphic;
 
   if (type.type == CITIZEN_SPECIALIST) {
     graphic = &sprites.specialist[type.spec_type];
