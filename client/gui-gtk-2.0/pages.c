@@ -288,8 +288,9 @@ static GtkWidget *network_confirm_password_label, *network_confirm_password;
 **************************************************************************/
 static int get_real_player_number(struct server *pserver)
 {
-  struct players *pplayer;
-  int i, nplayers = 0;
+  struct server_players *pplayer;
+  int i;
+  int nplayers = 0;
 
   if (!pserver->players) {
     /* We don't have the list to verify */
@@ -801,7 +802,8 @@ static void network_activate_callback(GtkTreeView *view,
 static void meta_player_tree_store_append(struct server *pserver,
                                           const char *type)
 {
-  struct players *pplayer, *pobserver;
+  struct server_players *pplayer;
+  struct server_players *pobserver;
   GtkTreeIter parent, iter;
   int i, j;
   size_t name_len;
@@ -841,7 +843,7 @@ static void meta_player_tree_store_append(struct server *pserver,
 static void
 meta_player_tree_store_append_global_observers(struct server *pserver)
 {
-  struct players *pobserver;
+  struct server_players *pobserver;
   GtkTreeIter parent, iter;
   int i;
   bool first = TRUE;
@@ -871,7 +873,7 @@ meta_player_tree_store_append_global_observers(struct server *pserver)
 **************************************************************************/
 static void meta_player_tree_store_append_detached_conn(struct server *pserver)
 {
-  struct players *pdetached;
+  struct server_players *pdetached;
   GtkTreeIter parent, iter;
   int i;
   bool first = TRUE;
