@@ -4361,8 +4361,8 @@ static int send_packet_city_worklist_100(
 # endif
   }
   if (BV_ISSET(fields, 1)) {
-    int length = worklist_length(&real_packet->worklist);
 # ifdef REPLAY_2
+    int length = worklist_length(&real_packet->worklist);
     int i;
 # endif
 
@@ -4377,6 +4377,8 @@ static int send_packet_city_worklist_100(
     printf(" }");
   }
   printf("\n");
+# else
+  }
 # endif
 
   if (old_from_hash) {
