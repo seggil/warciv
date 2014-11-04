@@ -3752,7 +3752,9 @@ receive_packet_city_short_info_100(
 
   dio_get_uint16(&din, &readin);
   real_packet->id = readin;
+# ifdef REPLAY_2
   printf(" id=%u", readin);
+# endif
 
   if (!*hash) {
     *hash = hash_new(hash_packet_city_short_info_100,
@@ -7453,7 +7455,9 @@ receive_packet_player_info(
 static int send_packet_player_turn_done_100(connection_t *pconn)
 {
   SEND_PACKET_START(PACKET_PLAYER_TURN_DONE);
+#ifdef REPLAY_2
   printf("cs opc=40 PLAYER_TURN_DONE\n");
+#endif
   SEND_PACKET_END;
 }
 
@@ -20126,9 +20130,9 @@ receive_packet_vote_update_100(
     real_packet->num_voters = readin;
 #   ifdef REPLAY_2
     printf(" num_voters=%u\n", readin);
-#   endif
   } else {
     printf("\n");
+# endif
   }
 
   clone = wc_malloc(sizeof(*clone));
