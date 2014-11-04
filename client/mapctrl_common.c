@@ -251,6 +251,7 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
 
   /* It is currently drawn only to the screen, not backing store */
   rectangle_active = TRUE;
+  printf("%s ", __FUNCTION__);
   draw_selection_rectangle(canvas_x, canvas_y, rec_w, rec_h);
   rec_corner_x = canvas_x;
   rec_corner_y = canvas_y;
