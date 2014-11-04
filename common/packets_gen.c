@@ -1343,7 +1343,9 @@ receive_packet_authentication_reply_100(
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_authentication_reply *clone;
   RECEIVE_PACKET_START(packet_authentication_reply, real_packet);
+# ifdef REPLAY3
   printf("cs op=7 AUTHENTICATION_REPLY");
+# endif
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
@@ -1360,9 +1362,11 @@ receive_packet_authentication_reply_100(
 
   if (BV_ISSET(fields, 0)) {
     dio_get_string(&din, real_packet->password, sizeof(real_packet->password));
+# ifdef REPLAY3
     printf("password=%s\n", real_packet->password);
   } else {
     printf("\n");
+# endif
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -8558,7 +8562,9 @@ receive_packet_player_attribute_chunk_100(
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_attribute_chunk *clone;
   RECEIVE_PACKET_START(packet_player_attribute_chunk, real_packet);
+# ifdef REPLAY3
   printf("s>c cs PLAYER_ATTRIBUTE_CHUNK");
+# endif
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
@@ -8578,38 +8584,48 @@ receive_packet_player_attribute_chunk_100(
 
     dio_get_uint32(&din, &readin);
     real_packet->offset = readin;
+# ifdef REPLAY3
     printf(" offset=%u", readin);
+# endif
   }
   if (BV_ISSET(fields, 1)) {
     int readin;
 
     dio_get_uint32(&din, &readin);
     real_packet->total_length = readin;
+# ifdef REPLAY3
     printf(" total_length=%u", readin);
+# endif
   }
   if (BV_ISSET(fields, 2)) {
     int readin;
 
     dio_get_uint32(&din, &readin);
     real_packet->chunk_length = readin;
+# ifdef REPLAY3
     printf(" chunk_length=%u", readin);
+# endif
   }
   if (BV_ISSET(fields, 3)) {
+# ifdef REPLAY3
     int i;
+# endif
 
     if(real_packet->chunk_length > ATTRIBUTE_CHUNK_SIZE) {
       freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
       real_packet->chunk_length = ATTRIBUTE_CHUNK_SIZE;
     }
     dio_get_memory(&din, real_packet->data, real_packet->chunk_length);
+# ifdef REPLAY3
     printf(" data[]=");
     for ( i = 0; i < real_packet->chunk_length; i++) {
       printf("%0X", real_packet->data[i]);
     }
-    printf("\n");
-  } else {
-    printf("\n");
+# endif
   }
+# ifdef REPLAY3
+  printf("\n");
+# endif
 
   clone = wc_malloc(sizeof(*clone));
   *clone = *real_packet;
@@ -8633,7 +8649,9 @@ static int send_packet_player_attribute_chunk_100(
   int different = 0;
 
   SEND_PACKET_START(PACKET_PLAYER_ATTRIBUTE_CHUNK);
+# ifdef REPLAY3
   printf("c>s sc opc=47 PLAYER_ATTRIBUTE_CHUNK");
+# endif
   {
     struct packet_player_attribute_chunk *tmp = wc_malloc(sizeof(*tmp));
 
@@ -8684,7 +8702,9 @@ static int send_packet_player_attribute_chunk_100(
     if (real_packet != packet) {
       free((void *) real_packet);
     }
+# ifdef REPLAY3
     printf("\n");
+# endif
     return 0;
   }
 
@@ -8692,27 +8712,37 @@ static int send_packet_player_attribute_chunk_100(
 
   if (BV_ISSET(fields, 0)) {
     dio_put_uint32(&dout, real_packet->offset);
+# ifdef REPLAY3
     printf(" offset=%u", real_packet->offset);
+# endif
   }
   if (BV_ISSET(fields, 1)) {
     dio_put_uint32(&dout, real_packet->total_length);
+# ifdef REPLAY3
     printf(" total_length=%u", real_packet->total_length);
+# endif
   }
   if (BV_ISSET(fields, 2)) {
     dio_put_uint32(&dout, real_packet->chunk_length);
+# ifdef REPLAY3
     printf(" chunk_length=%u", real_packet->chunk_length);
+# endif
   }
   if (BV_ISSET(fields, 3)) {
+# ifdef REPLAY3
     int i;
+# endif
     dio_put_memory(&dout, &real_packet->data, real_packet->chunk_length);
+# ifdef REPLAY3
     printf(" data[]=");
     for (i=0; i < real_packet->chunk_length; i++) {
       printf(" %0X", real_packet->data[i]);
     }
-    printf("\n");
-  } else {
-    printf("\n");
+# endif
   }
+# ifdef REPLAY3
+  printf("\n");
+# endif
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -14490,7 +14520,9 @@ receive_packet_spaceship_launch_100(
        enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_spaceship_launch, real_packet);
+# ifdef REPLAY3
   printf("cs opc=93 SPACESHIP_LAUNCH\n");
+# endif
   RECEIVE_PACKET_END(real_packet);
 }
 
@@ -20768,7 +20800,9 @@ static int send_packet_vote_remove_100(
   struct hash_table **hash = &pconn->phs.sent[PACKET_VOTE_REMOVE];
   int different = 0;
   SEND_PACKET_START(PACKET_VOTE_REMOVE);
+# ifdef REPLAY3
   printf("s<c op=126 VOTE_REMOVE");
+# endif
   if (!*hash) {
     *hash = hash_new(hash_packet_vote_remove_100,
                      cmp_packet_vote_remove_100);
@@ -20797,9 +20831,13 @@ static int send_packet_vote_remove_100(
 
   if (BV_ISSET(fields, 0)) {
     dio_put_uint32(&dout, real_packet->vote_no);
+# ifdef REPLAY3
     printf(" vote_no=%u", real_packet->vote_no);
+# endif
   }
+# ifdef REPLAY3
   printf("\n");
+# endif
 
   if (old_from_hash) {
     hash_delete_entry(*hash, old);
@@ -21974,7 +22012,9 @@ receive_packet_city_manager_param_100(
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_manager_param *clone;
   RECEIVE_PACKET_START(packet_city_manager_param, real_packet);
+# ifdef REPLAY3
   printf("s>c op=145 CITY_MANAGER_PARAM");
+# endif
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
@@ -22006,24 +22046,34 @@ receive_packet_city_manager_param_100(
     }
   }
   real_packet->require_happy = BV_ISSET(fields, 2);
+# ifdef REPLAY3
   printf(" require_happy=%u", real_packet->require_happy);
+# endif
 
   real_packet->allow_disorder = BV_ISSET(fields, 3);
+# ifdef REPLAY3
   printf(" allow_disorder=%u", real_packet->allow_disorder);
+# endif
 
   real_packet->allow_specialists = BV_ISSET(fields, 4);
+# ifdef REPLAY3
   printf(" allow_specialists=%u", real_packet->allow_specialists);
+# endif
 
   if (BV_ISSET(fields, 5)) {
     int i;
 
+# ifdef REPLAY3
     printf("factor[i]=");
+# endif
     for (i = 0; i < CM_NUM_STATS; i++) {
       int readin;
 
       dio_get_uint16(&din, &readin);
       real_packet->factor[i] = readin;
+# ifdef REPLAY3
       printf(" %u", readin);
+# endif
     }
   }
   if (BV_ISSET(fields, 6)) {
@@ -22031,9 +22081,11 @@ receive_packet_city_manager_param_100(
 
     dio_get_uint16(&din, &readin);
     real_packet->happy_factor = readin;
+# ifdef REPLAY3
     printf(" happy_factor=%u\n", readin);
   } else {
     printf("\n");
+# endif
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -22058,7 +22110,9 @@ static int send_packet_city_manager_param_100(
   int different = 0;
 
   SEND_PACKET_START(PACKET_CITY_MANAGER_PARAM);
+# ifdef REPLAY3
   printf("c>s opc=145 CITY_MANAGER_PARAM");
+# endif
   if (!*hash) {
     *hash = hash_new(hash_packet_city_manager_param_100,
                      cmp_packet_city_manager_param_100);
@@ -22138,7 +22192,9 @@ static int send_packet_city_manager_param_100(
   }
 
   if (different == 0 && !force_send_of_unchanged) {
+# ifdef REPLAY3
     printf("\n");
+# endif
     return 0;
   }
 
@@ -22146,17 +22202,25 @@ static int send_packet_city_manager_param_100(
 
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->id);
+# ifdef REPLAY3
     printf(" id=%u", real_packet->id);
+# endif
   }
   if (BV_ISSET(fields, 1)) {
     int i;
 
+# ifdef REPLAY3
     printf(" minimal_surplus[]=");
+# endif
     for (i = 0; i < CM_NUM_STATS; i++) {
       dio_put_sint16(&dout, real_packet->minimal_surplus[i]);
+# ifdef REPLAY3
       printf("%d", real_packet->minimal_surplus[i]);
+# endif
     }
+# ifdef REPLAY3
     printf("\n");
+# endif
   }
   /* field 2 is folded into the header */
   /* field 3 is folded into the header */
@@ -22164,18 +22228,26 @@ static int send_packet_city_manager_param_100(
   if (BV_ISSET(fields, 5)) {
     int i;
 
+# ifdef REPLAY3
     printf(" factor[]=");
+# endif
     for (i = 0; i < CM_NUM_STATS; i++) {
       dio_put_uint16(&dout, real_packet->factor[i]);
+# ifdef REPLAY3
       printf("%u\n", real_packet->factor[i]);
+# endif
     }
+# ifdef REPLAY3
     printf("\n");
+# endif
   }
   if (BV_ISSET(fields, 6)) {
     dio_put_uint16(&dout, real_packet->happy_factor);
+# ifdef REPLAY3
     printf("happy_factor=%u\n", real_packet->happy_factor);
   } else {
     printf("\n");
+# endif
   }
 
   if (old_from_hash) {
@@ -22267,7 +22339,9 @@ receive_packet_city_no_manager_param_100(
   struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_no_manager_param *clone;
   RECEIVE_PACKET_START(packet_city_no_manager_param, real_packet);
+# ifdef REPLAY3
   printf("s>c op=146 CITY_NO_MANAGER_PARAM");
+# endif
   DIO_BV_GET(&din, fields);
 
   if (!*hash) {
@@ -22287,9 +22361,11 @@ receive_packet_city_no_manager_param_100(
 
     dio_get_uint16(&din, &readin);
     real_packet->id = readin;
+# ifdef REPLAY3
     printf(" id=%u\n", readin);
   } else {
     printf("\n");
+# endif
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -22314,7 +22390,9 @@ static int send_packet_city_no_manager_param_100(
   int different = 0;
 
   SEND_PACKET_START(PACKET_CITY_NO_MANAGER_PARAM);
+# ifdef REPLAY3
   printf("c>s opc=146 CITY_NO_MANAGER_PARAM");
+# endif
   if (!*hash) {
     *hash = hash_new(hash_packet_city_no_manager_param_100,
                      cmp_packet_city_no_manager_param_100);
@@ -22336,7 +22414,9 @@ static int send_packet_city_no_manager_param_100(
   }
 
   if (different == 0 && !force_send_of_unchanged) {
+# ifdef REPLAY3
     printf("\n");
+# endif
     return 0;
   }
 
@@ -22344,9 +22424,11 @@ static int send_packet_city_no_manager_param_100(
 
   if (BV_ISSET(fields, 0)) {
     dio_put_uint16(&dout, real_packet->id);
+# ifdef REPLAY3
     printf(" id=%u\n", real_packet->id);
   } else {
     printf("\n");
+# endif
   }
 
   if (old_from_hash) {
