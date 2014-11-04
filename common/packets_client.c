@@ -449,7 +449,7 @@ receive_packet_authentication_req_100(
     printf(" message=%s\n", real_packet->message);
   } else {
     printf("\n");
-# endif
+#   endif
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -711,7 +711,7 @@ receive_packet_nation_unavailable_100(
     printf(" nation=%u\n", readin);
   } else {
     printf("\n");
-# endif
+#   endif
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -1018,7 +1018,7 @@ receive_packet_game_state_100(
     printf(" value=%u\n", readin);
   } else {
     printf("\n");
-# endif
+#   endif
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -1571,7 +1571,7 @@ receive_packet_tile_info_100(
     printf(" spec_sprite=\"%s\"\n", real_packet->spec_sprite);
   } else {
     printf("\n");
-# endif
+#   endif
   }
 
   clone = wc_malloc(sizeof(*clone));
@@ -3033,7 +3033,7 @@ receive_packet_city_info_100(
       if ( i % 100 == 99)
         printf("\n");
       else if ((i % 10) == 9)
-       printf(" ");
+        printf(" ");
     }
     printf("] ");
 #   endif
@@ -3579,7 +3579,7 @@ receive_packet_city_info_101(
       if ( i % 100 == 99)
         printf("\n");
       else if ((i % 10) == 9)
-       printf(" ");
+        printf(" ");
     }
     printf("] ");
 #   endif
@@ -5800,7 +5800,8 @@ receive_packet_city_sabotage_list_100(
     printf(" improvements[%d]=[", B_LAST);
     for (i=0; i < B_LAST; i++ ) {
       printf("%d", real_packet->improvements[i]);
-      if ((i % 10) == 9) printf("\n");
+      if ((i % 10) == 9)
+        printf("\n");
     }
     printf("]\n");
   } else {
@@ -6280,7 +6281,8 @@ receive_packet_player_info_100(
     printf(" inventions[%d]=[", B_LAST);
     for (i = 0; i < B_LAST; i++ ) {
       printf("%d", real_packet->inventions[i]);
-      if ((i % 10) == 9) printf("\n");
+      if ((i % 10) == 9)
+        printf("\n");
     }
     printf("]\n");
 #   endif
@@ -6634,7 +6636,8 @@ receive_packet_player_info_101(
     printf(" inventions[%d]=[", B_LAST);
     for (i = 0; i < B_LAST; i++ ) {
       printf("%d", real_packet->inventions[i]);
-      if ((i % 10) == 9) printf("\n");
+      if ((i % 10) == 9)
+        printf("\n");
     }
     printf("]\n");
 #   endif
@@ -6991,7 +6994,8 @@ receive_packet_player_info_102(
     printf(" inventions[%d]=[", B_LAST);
     for (i = 0; i < B_LAST; i++ ) {
       printf("%d", real_packet->inventions[i]);
-      if ((i % 10) == 9) printf("\n");
+      if ((i % 10) == 9)
+        printf("\n");
     }
     printf("]\n");
 #   endif
@@ -7331,7 +7335,8 @@ receive_packet_player_info_103(
     printf(" inventions[%d]=[", B_LAST);
     for (i = 0; i < B_LAST; i++ ) {
       printf("%d", real_packet->inventions[i]);
-      if ((i % 10) == 9) printf("\n");
+      if ((i % 10) == 9)
+        printf("\n");
     }
     printf("]\n");
 #   endif
@@ -14771,7 +14776,7 @@ receive_packet_spaceship_info_100(
       if ( i % 100 == 99)
         printf("\n");
       else if ((i % 10) == 9)
-       printf(" ");
+        printf(" ");
     }
     printf("] ");
 #   endif
