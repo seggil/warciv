@@ -262,9 +262,12 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
 **************************************************************************/
 void redraw_selection_rectangle(void)
 {
+#if 0
   if (rectangle_active) {
     draw_selection_rectangle(rec_corner_x, rec_corner_y, rec_w, rec_h);
-  } else if (dist_first_tile) {
+  } else
+#endif
+  if (dist_first_tile) {
     /* Redraw the distance tool */
     redraw_distance_tool();
   }
