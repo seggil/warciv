@@ -33,8 +33,11 @@ AC_DEFUN([WC_VARIABLE_ARRAYS],
   AC_CACHE_CHECK([for C99 variable arrays],
     [ac_cv_c99_variable_arrays],
     [AC_TRY_COMPILE(
-        [],
-        [char *s1 = "foo", *s2 = "bar";
+        [#include <string.h>
+         #include <stdio.h>
+        ],
+        [char const *s1 = "foo";
+         char const *s2 = "bar";
          char s3[strlen(s1) + strlen(s2) + 1];
          sprintf(s3, "%s%s", s1, s2);],
         ac_cv_c99_variable_arrays=yes,
