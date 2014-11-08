@@ -67,9 +67,9 @@ AC_ARG_ENABLE(gtktest,
     gtk_config_micro_version=`$PKG_CONFIG --modversion gtk+-2.0 | \
            sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
     if test "x$enable_gtktest" = "xyes" ; then
-      ac_save_CFLAGS="$CFLAGS"
+      ac_save_CXXFLAGS="$CXXFLAGS"
       ac_save_LIBS="$LIBS"
-      CFLAGS="$CFLAGS $GTK_CFLAGS"
+      CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
       LIBS="$GTK_LIBS $LIBS"
 dnl
 dnl Now check if the installed GTK+ is sufficiently new. (Also sanity
@@ -148,7 +148,7 @@ main ()
   return 1;
 }
 ],, no_gtk=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
-       CFLAGS="$ac_save_CFLAGS"
+       CXXFLAGS="$ac_save_CXXFLAGS"
        LIBS="$ac_save_LIBS"
      fi
   fi
