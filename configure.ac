@@ -170,8 +170,8 @@ fi
 
 dnl Checks for programs.
 AC_PROG_AWK
-AC_PROG_CC
-AC_PROG_CPP
+AC_PROG_CXX
+AC_PROG_CXXCPP
 AC_PROG_LN_S
 AC_PROG_RANLIB
 AC_CHECK_TOOL(AR, ar)
@@ -179,6 +179,7 @@ if test -z $AR; then
 	AC_MSG_ERROR([*** 'ar' missing.  Install binutils, fix your \$PATH, or set \$AR manually. ***])
 fi
 
+AC_LANG([C++])
 AC_CHECK_PROG(UNAME,uname,uname,:)
 
 dnl Programs already checked by AM_INIT_AUTOMAKE:
