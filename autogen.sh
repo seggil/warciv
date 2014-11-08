@@ -232,21 +232,21 @@ cd $SRCDIR
 }
 
 # autoconf and autoheader version numbers must be kept in sync
-real_package_name "autoconf" "ftp://ftp.gnu.org/pub/gnu/autoconf/" 2 55 || DIE=1
+real_package_name "autoconf" "ftp://ftp.gnu.org/pub/gnu/autoconf/" 2 69 || DIE=1
 AUTOCONF=$REALPKGNAME
-real_package_name "autoheader" "ftp://ftp.gnu.org/pub/gnu/autoconf/" 2 55 || DIE=1
+real_package_name "autoheader" "ftp://ftp.gnu.org/pub/gnu/autoconf/" 2 69 || DIE=1
 AUTOHEADER=$REALPKGNAME
 
 # automake and aclocal version numbers must be kept in sync
-real_package_name "automake" "ftp://ftp.gnu.org/pub/gnu/automake/" 1 6 || DIE=1
+real_package_name "automake" "ftp://ftp.gnu.org/pub/gnu/automake/" 1 13 || DIE=1
 AUTOMAKE=$REALPKGNAME
-real_package_name "aclocal" "ftp://ftp.gnu.org/pub/gnu/automake/" 1 6 || DIE=1
+real_package_name "aclocal" "ftp://ftp.gnu.org/pub/gnu/automake/" 1 13 || DIE=1
 ACLOCAL=$REALPKGNAME
 
 if [ "$WC_USE_NLS" = "yes" ]; then
   DIE2=0
-  version_check 1 "xgettext" "xgettext" "ftp://ftp.gnu.org/pub/gnu/gettext/" 0 10 36 || DIE2=1
-  version_check 1 "msgfmt" "msgfmt" "ftp://ftp.gnu.org/pub/gnu/gettext/" 0 10 36 || DIE2=1
+  version_check 1 "xgettext" "xgettext" "ftp://ftp.gnu.org/pub/gnu/gettext/" 0 18 3 || DIE2=1
+  version_check 1 "msgfmt" "msgfmt" "ftp://ftp.gnu.org/pub/gnu/gettext/" 0 18 3 || DIE2=1
   if [ "$DIE2" -eq 1 ]; then
     echo 
     echo "You may want to use --disable-nls to disable NLS."
