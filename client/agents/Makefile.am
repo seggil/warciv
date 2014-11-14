@@ -13,11 +13,11 @@ AM_CPPFLAGS = \
    @CLIENT_CFLAGS@
 
 libagents_a_SOURCES = 	\
-	agents.c	\
-	agents.h	\
-	cma_core.c 	\
-	cma_core.h 	\
-	cma_fec.c	\
-	cma_fec.h	\
-	sha.c           \
-	sha.h
+	agents.cc	\
+	agents.hh	\
+	cma_core.cc 	\
+	cma_core.hh 	\
+	cma_fec.cc	\
+	cma_fec.hh	\
+	sha.cc           \
+	sha.hh

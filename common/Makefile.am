@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS=	aicore
+SUBDIRS = aicore
 
 noinst_LIBRARIES = libcivcommon.a
 
@@ -9,61 +9,61 @@ AM_CPPFLAGS = -I../intl -I$(top_srcdir)/utility
 ## Above, note -I../intl instead of -I$(top_srcdir/intl) is deliberate.
 
 libcivcommon_a_SOURCES = \
-		capstr.c	\
-		capstr.h	\
-		city.c		\
-		city.h		\
-		combat.c	\
-		combat.h	\
-		connection.c	\
-		connection.h	\
-		dataio.c	\
-		dataio.h	\
-		diptreaty.c	\
-		diptreaty.h	\
-		effects.c	\
-		effects.h	\
-		events.h	\
-		wc_types.h	\
-		game.c		\
-		game.h		\
-		generate_packets.py \
-		government.c	\
-		government.h	\
-		idex.c		\
-		idex.h		\
-		improvement.c	\
-		improvement.h	\
-		map.c		\
-		map.h		\
-		nation.c        \
-		nation.h        \
-		packets.c	\
-		packets.h	\
-        packets_gen.c    \
-        packets_gen.h    \
-        packets_client.c \
-		packets.def	\
-		player.c	\
-		player.h	\
-		spaceship.c	\
-		spaceship.h	\
-		tech.c		\
-		tech.h		\
-		terrain.c	\
-		terrain.h	\
-		traderoute.c	\
-		traderoute.h	\
-		unit.c		\
-		unit.h		\
-		unittype.c	\
-		unittype.h	\
-		worklist.c	\
-		worklist.h	\
-		version.c	\
-		version.h
+  capstr.cc \
+  capstr.hh \
+  city.cc   \
+  city.hh   \
+  combat.cc \
+  combat.hh \
+  connection.cc \
+  connection.hh \
+  dataio.cc \
+  dataio.hh \
+  diptreaty.cc \
+  diptreaty.hh \
+  effects.cc \
+  effects.hh \
+  events.hh \
+  wc_types.hh \
+  game.cc  \
+  game.hh  \
+  generate_packets.py \
+  government.cc \
+  government.hh \
+  idex.cc  \
+  idex.hh  \
+  improvement.cc \
+  improvement.hh \
+  map.cc  \
+  map.hh  \
+  nation.cc        \
+  nation.hh        \
+  packets.cc \
+  packets.hh \
+  packets_gen.cc    \
+  packets_gen.hh    \
+  packets_client.cc \
+  packets.def \
+  player.cc \
+  player.hh \
+  spaceship.cc \
+  spaceship.hh \
+  tech.cc  \
+  tech.hh  \
+  terrain.cc \
+  terrain.hh \
+  traderoute.cc \
+  traderoute.hh \
+  unit.cc  \
+  unit.hh  \
+  unittype.cc \
+  unittype.hh \
+  worklist.cc \
+  worklist.hh \
+  version.cc \
+  version.hh
 
-#BUILT_SOURCES = packets_gen.c packets_gen.h wc_svnrev_gen.h
+#BUILT_SOURCES = packets_gen.cc packets_gen.hh wc_svnrev_gen.hh
 BUILT_SOURCES =
 
 # ./generate_packets makes both packets_gen.[ch]
@@ -72,8 +72,8 @@ BUILT_SOURCES =
 #packets_gen.h packets_gen.c: packets_generate
 #.INTERMEDIATE: packets_generate
 #packets_generate: packets.def generate_packets.py
-#	./generate_packets.py
-#	touch packets_generate
+# ./generate_packets.py
+# touch packets_generate
 
 if SVNREV
 # wc_svnrev_gen.h must be generated before it can be included.
@@ -81,12 +81,11 @@ if SVNREV
 # build. We need dependency for that first build.
 BUILT_SOURCES += wc_svnrev_gen.h
 
-.PHONY : wc_svnrev_gen.h
-wc_svnrev_gen.h :
+.PHONY : wc_svnrev_gen.hh
+wc_svnrev_gen.hh :
 	$(top_srcdir)/bootstrap/generate_svnrev.sh $(top_srcdir) $(top_builddir)
 
 endif
 
 #libcivcommon_a_DEPENDENCIES = ../utility/libcivutility.a
 #libcivcommon_a_LIBADD       = ../utility/libcivutility.a
-

@@ -12,10 +12,10 @@ if CLIENT_GUI_GTK_3_0
 GUI_SUBDIRS = gui-gtk-3.0
 endif
 
-ALL_ESD_FILES=audio_esd.c audio_esd.h
-ALL_SDL_FILES=audio_sdl.c audio_sdl.h
-ALL_ALSA_FILES=audio_alsa.c audio_alsa.h
-ALL_WINMM_FILES=audio_winmm.c audio_winmm.h
+ALL_ESD_FILES=audio_esd.cc audio_esd.hh
+ALL_SDL_FILES=audio_sdl.cc audio_sdl.hh
+ALL_ALSA_FILES=audio_alsa.cc audio_alsa.hh
+ALL_WINMM_FILES=audio_winmm.cc audio_winmm.hh
 
 if ESD
 ESD_FILES=$(ALL_ESD_FILES)
@@ -61,62 +61,62 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/utility \
     -I$(top_srcdir)/common \
     -I../intl @SOUND_CFLAGS@
-
+AM_CXXFLAGS = -std=gnu++11
 ## Above, note -I../intl instead of -I$(top_srdir/intl) is deliberate.
 
 civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
-	attribute.h	\
-	attribute.c	\
-	audio.c         \
-	audio.h         \
-	audio_none.c    \
-	audio_none.h	\
-	citydlg_common.c \
-	citydlg_common.h \
-	cityrepdata.c	\
-	cityrepdata.h	\
-	civclient.c	\
-	civclient.h	\
-	chatline_common.c \
-	chatline_common.h \
-	connectdlg_common.c \
-	connectdlg_common.h \
-	climisc.c	\
-	climisc.h	\
-	climap.c	\
-	climap.h	\
-	clinet.c	\
-	clinet.h	\
-	control.c	\
-	control.h	\
-	goto.c		\
-	goto.h		\
-	helpdata.c	\
-	helpdata.h	\
-	mapctrl_common.c \
-	mapctrl_common.h \
-	mapview_common.c \
-	mapview_common.h \
-	messagewin_common.c \
-	messagewin_common.h \
-	multiselect.c	\
-	multiselect.h	\
-	options.c	\
+	attribute.hh	\
+	attribute.cc	\
+	audio.cc         \
+	audio.hh         \
+	audio_none.cc    \
+	audio_none.hh	\
+	citydlg_common.cc \
+	citydlg_common.hc \
+	cityrepdata.cc	\
+	cityrepdata.hh	\
+	civclient.cc	\
+	civclient.hh	\
+	chatline_common.cc \
+	chatline_common.hh \
+	connectdlg_common.cc \
+	connectdlg_common.hh \
+	climisc.cc	\
+	climisc.hh	\
+	climap.cc	\
+	climap.hh	\
+	clinet.cc	\
+	clinet.hh	\
+	control.cc	\
+	control.hh	\
+	goto.cc		\
+	goto.hh		\
+	helpdata.cc	\
+	helpdata.hh	\
+	mapctrl_common.cc \
+	mapctrl_common.hh \
+	mapview_common.cc \
+	mapview_common.hh \
+	messagewin_common.cc \
+	messagewin_common.hh \
+	multiselect.cc	\
+	multiselect.hh	\
+	options.cc	\
 	options.h	\
-	packhand.c	\
-	packhand.h	\
-	packhand_gen.h	\
-	packhand_gen.c	\
-	plrdlg_common.c \
-	plrdlg_common.h \
-	repodlgs_common.c \
-	repodlgs_common.h \
-	text.c	\
-	text.h	\
-	tilespec.c	\
-	tilespec.h	\
-	trade.c	\
-	trade.h
+	packhand.cc	\
+	packhand.hh	\
+	packhand_gen.cc	\
+	packhand_gen.hh	\
+	plrdlg_common.cc \
+	plrdlg_common.hh \
+	repodlgs_common.cc \
+	repodlgs_common.hh \
+	text.cc	\
+	text.hh	\
+	tilespec.cc	\
+	tilespec.hh	\
+	trade.cc	\
+	trade.hh
 
 civclient_LDFLAGS = @CLIENT_LDFLAGS@
 wc_civclient_libs =	../utility/libcivutility.a	\
@@ -131,3 +131,6 @@ civclient_LDADD        = $(wc_civclient_libs) $(wc_civclient_libs) \
 desktopfiledir = $(prefix)/share/applications
 desktopfile_DATA = warciv.desktop
 
+.c.o:
+	$(AM_V_CC)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po

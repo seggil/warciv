@@ -17,25 +17,25 @@ noinst_HEADERS = \
 	dest_cursor_mask.xbm	\
 	trade_cursor.xbm	\
 	trade_cursor_mask.xbm	\
-	chatline_g.h	\
-	citydlg_g.h	\
-	cityrep_g.h	\
-	colors_g.h	\
-	connectdlg_g.h	\
-	dialogs_g.h	\
-	diplodlg_g.h	\
-	finddlg_g.h	\
-	gotodlg_g.h	\
-	graphics_g.h	\
-	gui_main_g.h	\
-	helpdlg_g.h	\
-	inteldlg_g.h	\
-	mapctrl_g.h	\
-	mapview_g.h	\
-	menu_g.h	\
-	messagewin_g.h	\
-	pages_g.h	\
-	plrdlg_g.h	\
-	ratesdlg_g.h	\
-	repodlgs_g.h	\
-	spaceshipdlg_g.h
+	chatline_g.hh	\
+	citydlg_g.hh	\
+	cityrep_g.hh	\
+	colors_g.hh	\
+	connectdlg_g.hh	\
+	dialogs_g.hh	\
+	diplodlg_g.hh	\
+	finddlg_g.hh	\
+	gotodlg_g.hh	\
+	graphics_g.hh	\
+	gui_main_g.hh	\
+	helpdlg_g.hh	\
+	inteldlg_g.hh	\
+	mapctrl_g.hh	\
+	mapview_g.hh	\
+	menu_g.hh	\
+	messagewin_g.hh	\
+	pages_g.hh	\
+	plrdlg_g.hh	\
+	ratesdlg_g.hh	\
+	repodlgs_g.hh	\
+	spaceshipdlg_g.hh
