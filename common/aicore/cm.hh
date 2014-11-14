@@ -26,8 +26,8 @@
  * the weighted sum over the surplus of each type.
  */
 
-#include "../city.h"            /* CITY_MAP_SIZE */
-#include "shared.h"             /* bool type */
+#include "../city.hh"           /* CITY_MAP_SIZE */
+#include "shared.hh"             /* bool type */
 
 /* A result which can examined. */
 struct cm_result {

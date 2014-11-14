@@ -13,10 +13,10 @@
 #ifndef WC_COMMON_AICORE_PATH_FINDING_H
 #define WC_COMMON_AICORE_PATH_FINDING_H
 
-#include "../map.h"
-#include "../terrain.h"
-#include "../unit.h"
-#include "../unittype.h"
+#include "../map.hh"
+#include "../terrain.hh"
+#include "../unit.hh"
+#include "../unittype.hh"
 
 /* ========================= Explanations =============================== */
 
@@ -273,7 +273,8 @@ enum turn_mode {
 /* Full specification of a position and time to reach it. */
 struct pf_position {
   tile_t *tile;
-  int turn, moves_left;         /* See definitions above */
+  int turn;
+  int moves_left;         /* See definitions above */
 
   int total_MC;                 /* Total Move Cost to reach this point */
   int total_EC;                 /* Total Extra Cost to reach this point */

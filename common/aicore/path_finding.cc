@@ -17,13 +17,13 @@
 
 #include <assert.h>
 
-#include "../game.h"
-#include "log.h"
-#include "../map.h"
-#include "mem.h"
-#include "pqueue.h"
+#include "../game.hh"
+#include "log.hh"
+#include "../map.hh"
+#include "mem.hh"
+#include "pqueue.hh"
 
-#include "path_finding.h"
+#include "path_finding.hh"
 
 /* For explanations on how to use this module, see path_finding.h */
 
@@ -54,10 +54,10 @@ struct path_finding_node {
   utiny_t dir_to_here;          /* direction from which we came */
 
   /* Cached values */
-  int extra_tile;               /* Extra Cost */
-  utiny_t node_known_type;
-  utiny_t behavior;
-  utiny_t zoc_number;           /* 1 if allied, 2 if my zoc, 0 otherwise */
+  int           extra_tile;     /* Extra Cost */
+  utiny_t       node_known_type;
+  tile_behavior behavior;
+  utiny_t       zoc_number;     /* 1 if allied, 2 if my zoc, 0 otherwise */
 };
 
 /*
@@ -199,7 +199,9 @@ static void init_node(struct path_finding_map *pf_map, struct path_finding_node 
 
   /* Establish the tile behavior */
   if (params->get_TB) {
-    node->behavior = params->get_TB(ptile, node->node_known_type, params);
+    node->behavior = params->get_TB(ptile,
+                                    static_cast<known_type>(node->node_known_type),
+                                    params);
   } else {
     /* The default */
     node->behavior = TB_NORMAL;
@@ -219,7 +221,9 @@ static void init_node(struct path_finding_map *pf_map, struct path_finding_node 
 
   /* Evaluate the extra cost of the destination */
   if (params->get_EC) {
-    node->extra_tile = params->get_EC(ptile, node->node_known_type, params);
+    node->extra_tile = params->get_EC(ptile,
+                                      static_cast<known_type>(node->node_known_type),
+                                      params);
   }
 }
 
@@ -417,16 +421,20 @@ bool pf_next(struct path_finding_map *pf_map)
 ******************************************************************/
 static struct path_finding_map *create_map(bool with_danger)
 {
-  struct path_finding_map *pf_map = wc_calloc(1, sizeof(struct path_finding_map));
+  struct path_finding_map *pf_map = static_cast<path_finding_map*>(
+      wc_calloc(1, sizeof(struct path_finding_map)));
 
-  pf_map->lattice = wc_malloc(sizeof(struct path_finding_node) * MAX_MAP_INDEX);
+  pf_map->lattice = static_cast<path_finding_node*>(
+      wc_malloc(sizeof(struct path_finding_node) * MAX_MAP_INDEX));
   pf_map->queue = pq_create(INITIAL_QUEUE_SIZE);
-  pf_map->status = wc_calloc(MAX_MAP_INDEX, sizeof(*(pf_map->status)));
+  pf_map->status = static_cast<utiny_t*>(
+      wc_calloc(MAX_MAP_INDEX, sizeof(*(pf_map->status))));
 
   if (with_danger) {
     /* Initialize stuff for dangerous positions.
      * Otherwise they stay NULL */
-    pf_map->d_lattice = wc_calloc(MAX_MAP_INDEX, sizeof(struct danger_node));
+    pf_map->d_lattice = static_cast<danger_node*>(
+        wc_calloc(MAX_MAP_INDEX, sizeof(struct danger_node)));
     pf_map->danger_queue = pq_create(INITIAL_QUEUE_SIZE);
   }
 
@@ -445,7 +453,8 @@ struct path_finding_map *pf_create_map(const struct pf_parameter *const paramete
   assert(parameter->get_MC != NULL);
 
   /* Copy parameters */
-  pf_map->params = wc_malloc(sizeof(struct pf_parameter));
+  pf_map->params = static_cast<pf_parameter*>(
+      wc_malloc(sizeof(struct pf_parameter)));
   *pf_map->params = *parameter;
 
   /* Initialise starting coordinates */
@@ -535,9 +544,9 @@ static void fill_position(const struct path_finding_map *pf_map, tile_t *ptile,
     die("unknown TC");
   }
 
-  pos->dir_to_here = node->dir_to_here;
+  pos->dir_to_here = static_cast<direction8>(node->dir_to_here);
   /* This field does not apply */
-  pos->dir_to_next_pos = -1;
+  pos->dir_to_next_pos = static_cast<direction8>(-1);
 }
 
 /*******************************************************************
@@ -600,7 +609,7 @@ static struct pf_path* construct_path(const struct path_finding_map *pf_map,
   }
 
   ptile = dest_tile;
-  path = wc_malloc(sizeof(*path));
+  path = static_cast<pf_path *>(wc_malloc(sizeof(*path)));
 
   /* 1: Count the number of steps to get here.
    * To do it, backtrack until we hit the starting point */
@@ -612,18 +621,20 @@ static struct pf_path* construct_path(const struct path_finding_map *pf_map,
       break;
     }
 
-    dir_next = node->dir_to_here;
+    dir_next = static_cast<direction8>(node->dir_to_here);
 
-    ptile = mapstep(ptile, DIR_REVERSE(dir_next));
+    ptile = mapstep(ptile,
+                    static_cast<direction8>(DIR_REVERSE(dir_next)));
   }
 
   /* 2: Allocate the memory */
   path->length = i + 1;
-  path->positions = wc_malloc((i+1) * sizeof(*(path->positions)));
+  path->positions = static_cast<pf_position*>(
+      wc_malloc((i+1) * sizeof(*(path->positions))));
 
   /* 3: Backtrack again and fill the positions this time */
   ptile = dest_tile;
-  dir_next = -1;
+  dir_next = static_cast<direction8>(-1);
   for (; i >=0; i--) {
     struct path_finding_node *node = &pf_map->lattice[ptile->index];
 
@@ -631,11 +642,12 @@ static struct pf_path* construct_path(const struct path_finding_map *pf_map,
     /* fill_position doesn't set direction */
     path->positions[i].dir_to_next_pos = dir_next;
 
-    dir_next = node->dir_to_here;
+    dir_next = static_cast<direction8>(node->dir_to_here);
 
     if (i > 0) {
       /* Step further back, if we haven't finished yet */
-      ptile = mapstep(ptile, DIR_REVERSE(dir_next));
+      ptile = mapstep(ptile,
+                      static_cast<direction8>(DIR_REVERSE(dir_next)));
     }
   }
 
@@ -745,7 +757,9 @@ static void init_danger_node(struct path_finding_map *pf_map,
   /* Is the tile dangerous (i.e. no ending turn there) */
   if (params->is_pos_dangerous) {
     d_node->is_dangerous =
-        params->is_pos_dangerous(ptile, node->node_known_type, params);
+        params->is_pos_dangerous(ptile,
+                                 static_cast<known_type>(node->node_known_type),
+                                 params);
   } else {
     freelog(LOG_ERROR, "PF: init_danger_node called without"
             "is_pos_dangerous callback");
@@ -777,13 +791,15 @@ static void create_danger_segment(struct path_finding_map *pf_map,
   /* First iteration for determining segment length */
   while(d_node->is_dangerous) {
     length++;
-    ptile = mapstep(ptile, DIR_REVERSE(node->dir_to_here));
+    ptile = mapstep(ptile,
+                    static_cast<direction8>(DIR_REVERSE(node->dir_to_here)));
     node = &pf_map->lattice[ptile->index];
     d_node = &pf_map->d_lattice[ptile->index];
   }
 
   /* Allocate memory for segment */
-  d_node1->danger_segment = wc_malloc(length * sizeof(struct pf_danger_pos));
+  d_node1->danger_segment = static_cast<struct danger_node::pf_danger_pos*>(
+      wc_malloc(length * sizeof(struct danger_node::pf_danger_pos)));
 
   /* Reset tile and node pointers for main iteration */
   ptile = pf_map->tile;
@@ -792,7 +808,7 @@ static void create_danger_segment(struct path_finding_map *pf_map,
   /* Now fill the positions */
   for (i = 0; i < length; i++) {
     /* Record the direction */
-    d_node1->danger_segment[i].dir = node->dir_to_here;
+    d_node1->danger_segment[i].dir = static_cast<direction8>(node->dir_to_here);
     d_node1->danger_segment[i].cost = node->cost;
     d_node1->danger_segment[i].extra_cost = node->extra_cost;
     if (i == length - 1) {
@@ -801,7 +817,7 @@ static void create_danger_segment(struct path_finding_map *pf_map,
     }
 
     /* Step further down the tree */
-    ptile = mapstep(ptile, DIR_REVERSE(node->dir_to_here));
+    ptile = mapstep(ptile, static_cast<direction8>(DIR_REVERSE(node->dir_to_here)));
     node = &pf_map->lattice[ptile->index];
   }
 
@@ -1044,10 +1060,10 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
 static struct pf_path *danger_construct_path(const struct path_finding_map *pf_map,
                                              tile_t *ptile)
 {
-  struct pf_path *path = wc_malloc(sizeof(*path));
+  struct pf_path *path = static_cast<pf_path*>(wc_malloc(sizeof(*path)));
   int i;
-  enum direction8 dir_next = -1;
-  struct pf_danger_pos *danger_seg = NULL;      /* For danger segments */
+  enum direction8 dir_next = static_cast<direction8>(-1);
+  struct danger_node::pf_danger_pos *danger_seg = NULL;      /* For danger segments */
   int segment_index = -1;                       /* For danger segments */
   bool waited = FALSE;
   struct path_finding_node *node = &pf_map->lattice[ptile->index];
@@ -1072,7 +1088,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
 
     if (!d_node->is_dangerous) {
       /* We are in the normal node and dir_to_here field is valid */
-      dir_next = node->dir_to_here;
+      dir_next = static_cast<direction8>(node->dir_to_here);
       /* d_node->danger_segment is the indicator of what lies ahead
        * if it's non-NULL, we are entering a danger segment,
        * if it's NULL, we are not on one so danger_seg should be NULL */
@@ -1085,14 +1101,14 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
     }
 
     /* Step backward */
-    iter_tile = mapstep(iter_tile, DIR_REVERSE(dir_next));
+    iter_tile = mapstep(iter_tile, static_cast<direction8>(DIR_REVERSE(dir_next)));
     node = &pf_map->lattice[iter_tile->index];
     d_node = &pf_map->d_lattice[iter_tile->index];
   }
 
   /* Allocate memory for path */
-  path->positions
-    = wc_malloc(length * sizeof(struct pf_position));
+  path->positions = static_cast<pf_position*>(
+      wc_malloc(length * sizeof(struct pf_position)));
   path->length = length;
 
   /* Reset variables for main iteration */
@@ -1142,7 +1158,10 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
       = get_moves_left(pf_map, path->positions[i].total_MC);
     path->positions[i].total_MC -= pf_map->params->move_rate
       - pf_map->params->moves_left_initially;
-    path->positions[i].dir_to_next_pos = (old_waited ? -1 : dir_next);
+    if (old_waited)
+      path->positions[i].dir_to_next_pos = static_cast<direction8>(-1);
+    else
+      path->positions[i].dir_to_next_pos = dir_next;
 
     /* 3: Check if we finished */
     if (i == 0) {
@@ -1154,7 +1173,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
     /* 4: Calculate the next direction */
     if (!d_node->is_dangerous) {
       /* We are in the normal node and dir_to_here field is valid */
-      dir_next = node->dir_to_here;
+      dir_next = static_cast<direction8>(node->dir_to_here);
       /* d_node->danger_segment is the indicator of what lies ahead
        * if it's non-NULL, we are entering a danger segment,
        * if it's NULL, we are not on one so danger_seg should be NULL */
@@ -1167,7 +1186,8 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
     }
 
     /* 5: Step further back */
-    iter_tile = mapstep(iter_tile, DIR_REVERSE(dir_next));
+    iter_tile = mapstep(iter_tile,
+                        static_cast<direction8>(DIR_REVERSE(dir_next)));
     node = &pf_map->lattice[iter_tile->index];
     d_node = &pf_map->d_lattice[iter_tile->index];
 

@@ -19,18 +19,18 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../city.h"
-#include "../game.h"
+#include "../city.hh"
+#include "../game.hh"
 #ifdef DEBUG
-# include "log.h"
+# include "log.hh"
 #endif
-#include "../map.h"
-#include "mem.h"
-#include "support.h"
-#include "../unit.h"
-#include "../unittype.h"
+#include "../map.hh"
+#include "mem.hh"
+#include "support.hh"
+#include "../unit.hh"
+#include "../unittype.hh"
 
-#include "citymap.h"
+#include "citymap.hh"
 
 /* CITYMAP - reserve space for cities
  *
@@ -62,7 +62,8 @@ void citymap_turn_init(player_t *pplayer)
   /* The citymap is reinitialized at the start of ever turn.  This includes
    * a call to realloc, which only really matters if this is the first turn
    * of the game (but it's easier than a separate function to do this). */
-  citymap = wc_realloc(citymap, MAX_MAP_INDEX * sizeof(*citymap));
+  citymap = static_cast<int*>(
+      wc_realloc(citymap, MAX_MAP_INDEX * sizeof(*citymap)));
   memset(citymap, 0, MAX_MAP_INDEX * sizeof(*citymap));
 
   players_iterate(pplayer) {
@@ -76,6 +77,7 @@ void citymap_turn_init(player_t *pplayer)
       } map_city_radius_iterate_end;
     } city_list_iterate_end;
   } players_iterate_end;
+
   unit_list_iterate(pplayer->units, punit) {
     if (unit_flag(punit, F_CITIES)
         && punit->ai.ai_role == AIUNIT_BUILD_CITY) {

@@ -13,7 +13,7 @@
 #ifndef WC_COMMON_AICORE_PF_TOOLS_H
 #define WC_COMMON_AICORE_PF_TOOLS_H
 
-#include "path_finding.h"
+#include "path_finding.hh"
 
 struct pf_path *pft_concat(struct pf_path *dest_path,
                            const struct pf_path *src_path);

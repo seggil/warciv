@@ -15,17 +15,17 @@
 #  include "../../config.h"
 #endif
 
-#include "../city.h"
-#include "../game.h"
-#include "../map.h"
-#include "../player.h"
-#include "shared.h"
-#include "../spaceship.h"
-#include "support.h"
-#include "../tech.h"
-#include "../traderoute.h"
+#include "../city.hh"
+#include "../game.hh"
+#include "../map.hh"
+#include "../player.hh"
+#include "shared.hh"
+#include "../spaceship.hh"
+#include "support.hh"
+#include "../tech.hh"
+#include "../traderoute.hh"
 
-#include "aisupport.h"
+#include "aisupport.hh"
 
 /**********************************************************************
   Find who is leading the space race. Returns NULL if nobody is.

@@ -18,12 +18,12 @@
 #include <assert.h>
 #include <string.h>
 
-#include "mem.h"
+#include "mem.hh"
 
-#include "../city.h"
-#include "../game.h"
+#include "../city.hh"
+#include "../game.hh"
 
-#include "pf_tools.h"
+#include "pf_tools.hh"
 
 
 static void pft_fill_unit_default_parameter(struct pf_parameter *parameter,
@@ -601,10 +601,10 @@ struct pf_path *pft_concat(struct pf_path *dest_path,
                            const struct pf_path *src_path)
 {
   if (!dest_path) {
-    dest_path = wc_malloc(sizeof(*dest_path));
+    dest_path = static_cast<pf_path*>(wc_malloc(sizeof(*dest_path)));
     dest_path->length = src_path->length;
-    dest_path->positions =
-        wc_malloc(sizeof(*dest_path->positions) * dest_path->length);
+    dest_path->positions = static_cast<pf_position*>(
+        wc_malloc(sizeof(*dest_path->positions) * dest_path->length));
     memcpy(dest_path->positions, src_path->positions,
            sizeof(*dest_path->positions) * dest_path->length);
   } else {
@@ -614,9 +614,9 @@ struct pf_path *pft_concat(struct pf_path *dest_path,
     assert(pf_last_position(dest_path)->moves_left ==
            src_path->positions[0].moves_left);
     dest_path->length += src_path->length - 1;
-    dest_path->positions =
+    dest_path->positions = static_cast<pf_position*>(
         wc_realloc(dest_path->positions,
-                   sizeof(*dest_path->positions) * dest_path->length);
+                   sizeof(*dest_path->positions) * dest_path->length));
     /* Be careful to include the first position of src_path, it contains
      * the direction (it is undefined in the last position of dest_path) */
     memcpy(dest_path->positions + old_length - 1, src_path->positions,

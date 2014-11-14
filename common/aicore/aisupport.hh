@@ -13,7 +13,7 @@
 #ifndef WC_COMMON_AICORE_AISUPPORT_H
 #define WC_COMMON_AICORE_AISUPPORT_H
 
-#include "../wc_types.h"
+#include "../wc_types.hh"
 
 player_t *player_leading_spacerace(void);
 int player_distance_to_player(player_t *pplayer, player_t *target);

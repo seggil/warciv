@@ -21,19 +21,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../city.h"
-#include "wc_intl.h"
-#include "../game.h"
-#include "../government.h"
-#include "hash.h"
-#include "log.h"
-#include "../map.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
-#include "timing.h"
+#include "../city.hh"
+#include "wc_intl.hh"
+#include "../game.hh"
+#include "../government.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "../map.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "timing.hh"
 
-#include "cm.h"
+#include "cm.hh"
 
 /*
  * Terms used
@@ -141,12 +141,12 @@ struct cm_tile {
 /* define the cm_tile_vector as array<struct cm_tile> */
 #define SPECVEC_TAG cm_tile
 #define SPECVEC_TYPE struct cm_tile
-#include "specvec.h"
+#include "specvec.hh"
 
 /* define the cm_tile_type_vector as array <cm_tile_type*> */
 #define SPECVEC_TAG cm_tile_type
 #define SPECVEC_TYPE struct cm_tile_type *
-#include "specvec.h"
+#include "specvec.hh"
 #define tile_type_vector_iterate(vector, var) { \
     struct cm_tile_type *var; \
     TYPED_VECTOR_ITERATE(struct cm_tile_type*, vector, var##p) { \
@@ -347,7 +347,8 @@ static void cm_tile_type_init(struct cm_tile_type *type)
 static struct cm_tile_type *
 cm_tile_type_dup(const struct cm_tile_type *oldtype)
 {
-  struct cm_tile_type *newtype = wc_malloc(sizeof(struct cm_tile_type));
+  struct cm_tile_type *newtype = static_cast<cm_tile_type*>(
+      wc_malloc(sizeof(struct cm_tile_type)));
 
   memcpy(newtype, oldtype, sizeof(*oldtype));
   cm_tile_vector_init(&newtype->tiles);
@@ -391,7 +392,7 @@ static void cm_tile_type_vector_free_all(struct cm_tile_type_vector *vec)
 static bool cm_tile_type_equal(const struct cm_tile_type *a,
                                const struct cm_tile_type *b)
 {
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     if (a->production[stat] != b->production[stat])  {
@@ -415,7 +416,7 @@ static bool cm_tile_type_equal(const struct cm_tile_type *a,
 static bool cm_tile_type_better(const struct cm_tile_type *a,
                                 const struct cm_tile_type *b)
 {
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     if (a->production[stat] < b->production[stat])  {
@@ -547,7 +548,7 @@ static void compute_fitness(const int surplus[CM_NUM_STATS],
                             const struct cm_parameter *parameter,
                             struct cm_fitness         *fitness)
 {
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
   /* struct cm_fitness *fitness = malloc(sizeof(struct cm_fitness)); */
 
   fitness->sufficient = TRUE;
@@ -585,8 +586,10 @@ static void init_partial_solution(struct partial_solution *into,
                                   int ntypes,
                                   int idle)
 {
-  into->worker_counts  = wc_calloc(ntypes, sizeof(int));	/* sizeof(*into->worker_counts) */
-  into->prereqs_filled = wc_calloc(ntypes, sizeof(int));	/* sizeof(*into->prereqs_filled) */
+  /* sizeof(*into->worker_counts) */
+  into->worker_counts  = (int*)wc_calloc(ntypes, sizeof(int));
+  /* sizeof(*into->prereqs_filled) */
+  into->prereqs_filled = (int*)wc_calloc(ntypes, sizeof(int));
   memset(into->production, 0, sizeof(into->production));
   into->idle = idle;
 }
@@ -722,7 +725,8 @@ evaluate_solution(struct cm_state *cmstate,
   city_t backup;
   int surplus[CM_NUM_STATS];
   bool disorder, happy;
-  struct cm_fitness *fitness3 = malloc(sizeof(struct cm_fitness));
+  struct cm_fitness *fitness3 = static_cast<cm_fitness*>(
+      malloc(sizeof(struct cm_fitness)));
 
   /* make a backup, apply and evaluate the solution, and restore.  This costs
    * one "apply". */
@@ -781,7 +785,7 @@ static void convert_solution_to_result(struct cm_state *cmstate,
 static int compare_tile_type_by_lattice_order(const struct cm_tile_type *a,
                                               const struct cm_tile_type *b)
 {
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
 
   if (a == b) {
     return 0;
@@ -812,8 +816,8 @@ static int compare_tile_type_by_lattice_order(const struct cm_tile_type *a,
 ****************************************************************************/
 static int compare_tile_type_by_fitness(const void *va, const void *vb)
 {
-  struct cm_tile_type * const *a = va;
-  struct cm_tile_type * const *b = vb;
+  struct cm_tile_type * const *a = static_cast<struct cm_tile_type * const *>(va);
+  struct cm_tile_type * const *b = static_cast<struct cm_tile_type * const *>(vb);
   double diff;
 
   if (*a == *b) {
@@ -843,8 +847,8 @@ static enum cm_stat compare_key;
 ****************************************************************************/
 static int compare_tile_type_by_stat(const void *va, const void *vb)
 {
-  struct cm_tile_type * const *a = va;
-  struct cm_tile_type * const *b = vb;
+  struct cm_tile_type * const *a = static_cast<struct cm_tile_type * const *>(va);
+  struct cm_tile_type * const *b = static_cast<struct cm_tile_type * const *>(vb);
 
   if (*a == *b) {
     return 0;
@@ -1234,7 +1238,7 @@ static void add_workers(struct partial_solution *soln,
                         int itype, int number,
                         const struct cm_state *cmstate)
 {
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
   const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, itype);
   int newcount;
   int old_worker_count = soln->worker_counts[itype];
@@ -1503,7 +1507,7 @@ compute_max_stats_heuristic(const struct cm_state *cmstate,
                             int production[CM_NUM_STATS],
                             int check_choice)
 {
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
   struct partial_solution solnplus; /* will be soln, plus some tiles */
 
   /* Production is whatever the solution produces, plus the
@@ -1513,7 +1517,6 @@ compute_max_stats_heuristic(const struct cm_state *cmstate,
   if (soln->idle == 1) {
     /* Then the total solution is soln + this new worker.  So we know the
        production exactly, and can shortcut the later code. */
-    enum cm_stat stat;
     const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, check_choice);
 
     memcpy(production, soln->production, sizeof(soln->production));
@@ -1550,7 +1553,7 @@ compute_max_stats_heuristic(const struct cm_state *cmstate,
 static bool choice_is_promising(struct cm_state *cmstate, int newchoice)
 {
   int production[CM_NUM_STATS];
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
   bool beats_best = FALSE;
 
   compute_max_stats_heuristic(cmstate, &cmstate->current, production, newchoice);
@@ -1558,7 +1561,8 @@ static bool choice_is_promising(struct cm_state *cmstate, int newchoice)
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     if (production[stat] < cmstate->min_production[stat]) {
       freelog(LOG_PRUNE_BRANCH, "--- pruning: insufficient %s (%d < %d)",
-              cm_get_stat_name(stat), production[stat],
+              cm_get_stat_name(static_cast<cm_stat>(stat)),
+              production[stat],
               cmstate->min_production[stat]);
       return FALSE;
     }
@@ -1658,7 +1662,7 @@ static double estimate_fitness(const struct cm_state *cmstate,
 {
   const city_t *pcity = cmstate->pcity;
   const player_t *pplayer = get_player(pcity->common.owner);
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
   double estimates[CM_NUM_STATS];
   double sum = 0;
 
@@ -1741,8 +1745,9 @@ static bool bb_next(struct cm_state *cmstate)
 struct cm_state *cm_init_cmstate(city_t *pcity)
 {
   int numtypes;
-  enum cm_stat stat;
-  struct cm_state *cmstate = wc_malloc(sizeof(struct cm_state));
+  int /* enum cm_stat */ stat;
+  struct cm_state *cmstate = static_cast<cm_state *>(
+      wc_malloc(sizeof(struct cm_state)));
 
   freelog(LOG_CM_STATE, "creating cm_state for %s (size %d)",
           pcity->common.name, pcity->common.pop_size);
@@ -1759,7 +1764,7 @@ struct cm_state *cm_init_cmstate(city_t *pcity)
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     cm_tile_type_vector_init(&cmstate->lattice_by_prod[stat]);
     cm_tile_type_vector_copy(&cmstate->lattice_by_prod[stat], &cmstate->lattice);
-    compare_key = stat;
+    compare_key = static_cast<cm_stat>(stat);
     qsort(cmstate->lattice_by_prod[stat].p, cmstate->lattice_by_prod[stat].size,
           sizeof(*cmstate->lattice_by_prod[stat].p),
           compare_tile_type_by_stat);
@@ -1773,8 +1778,8 @@ struct cm_state *cm_init_cmstate(city_t *pcity)
 
   /* Initialize the current solution and choice stack to empty */
   init_partial_solution(&cmstate->current, numtypes, pcity->common.pop_size);
-  cmstate->choice.stack = wc_malloc(pcity->common.pop_size
-                                    * sizeof(*cmstate->choice.stack));
+  cmstate->choice.stack = (int*)wc_malloc(pcity->common.pop_size
+                                          * sizeof(*cmstate->choice.stack));
   cmstate->choice.size = 0;
 
   return cmstate;
@@ -1833,7 +1838,7 @@ static void end_search(/*struct cm_state *cmstate*/)
 ****************************************************************************/
 static void cm_free_cmstate(struct cm_state *cmstate)
 {
-  enum cm_stat cmstat;
+  int /* enum cm_stat */ cmstat;
 
   cm_tile_type_vector_free_all(&cmstate->lattice);
   for (cmstat = 0; cmstat < CM_NUM_STATS; cmstat++) {
@@ -1971,7 +1976,7 @@ void cm_copy_parameter(struct cm_parameter *dest,
 **************************************************************************/
 void cm_init_parameter(struct cm_parameter *dest)
 {
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     dest->minimal_surplus[stat] = 0;
@@ -1990,7 +1995,7 @@ void cm_init_parameter(struct cm_parameter *dest)
 ***************************************************************************/
 void cm_init_emergency_parameter(struct cm_parameter *dest)
 {
-  enum cm_stat stat;
+  int /* enum cm_stat */ stat;
 
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     dest->minimal_surplus[stat] = -WC_INFINITY;
@@ -2260,7 +2265,8 @@ void cm_print_result(const city_t *pcity,
 
   for (i = 0; i < CM_NUM_STATS; i++) {
     freelog(LOG_NORMAL, "print_result:  %10s surplus=%d",
-        cm_get_stat_name(i), result->surplus[i]);
+            cm_get_stat_name(static_cast<cm_stat>(i)),
+            result->surplus[i]);
   }
 }
 

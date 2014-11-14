@@ -13,7 +13,7 @@
 #ifndef WC_COMMON_AICORE_CITYMAP_H
 #define WC_COMMON_AICORE_CITYMAP_H
 
-#include "wc_intl.h"
+#include "wc_intl.hh"
 
 void citymap_turn_init(player_t *pplayer);
 void citymap_reserve_city_spot(tile_t *ptile, int id);
