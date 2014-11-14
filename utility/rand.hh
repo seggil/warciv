@@ -13,7 +13,7 @@
 #ifndef WC_UTILITY_RAND_H
 #define WC_UTILITY_RAND_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"            /* bool type */
 
 /* This is duplicated in shared.h to avoid extra includes: */
 #define MAX_UINT32 0xFFFFFFFF

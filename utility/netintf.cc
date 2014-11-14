@@ -49,16 +49,16 @@
 #include <windows.h>    /* GetTempPath */
 #endif
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "shared.h"             /* TRUE, FALSE */
-#include "support.h"
-#include "tadns.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh"             /* TRUE, FALSE */
+#include "support.hh"
+#include "tadns.hh"
 
-#include "netintf.h"
+#include "netintf.hh"
 
 #ifndef INADDR_NONE
 #define INADDR_NONE 0xffffffff
@@ -203,7 +203,7 @@ static void dns_result_callback(const unsigned char *addr,
                                 enum dns_query_type qtype,
                                 void *data)
 {
-  struct adns_ctx *ctx = data;
+  struct adns_ctx *ctx = (struct adns_ctx *)data;
 
   freelog(LOG_DEBUG, "drc dns_result_callback data=%p "
           " qtype=%d hostname=\"%s\" addrlen=%lu",
@@ -295,7 +295,7 @@ int adns_lookup_full(const char *query_data,
   check_init_lookup_tables();
   assert(dns != NULL);
 
-  ctx = wc_calloc(1, sizeof(struct adns_ctx));
+  ctx = (struct adns_ctx *)wc_calloc(1, sizeof(struct adns_ctx));
   freelog(LOG_DEBUG, "alf new adns_ctx %p", ctx);
   ctx->guard = ADNS_CTX_MEMORY_GUARD;
   ctx->callback = cb;
@@ -356,7 +356,7 @@ void *adns_cancel(int id)
   check_init_lookup_tables();
 
   freelog(LOG_DEBUG, "ac hash_delete_entry adns req_id=%d", id);
-  ctx = hash_delete_entry(adns_request_table, INT_TO_PTR(id));
+  ctx = (struct adns_ctx *)hash_delete_entry(adns_request_table, INT_TO_PTR(id));
 
   if (ctx) {
     assert(ctx->req_id == id);
@@ -423,7 +423,7 @@ static void destroy_net_lookup_ctx(struct net_lookup_ctx *ctx)
 static bool adns_result_callback(const unsigned char *address,
                                  int addrlen, void *data)
 {
-  struct net_lookup_ctx *ctx = data;
+  struct net_lookup_ctx *ctx = (struct net_lookup_ctx *)data;
   struct sockaddr_in *sock;
 
   freelog(LOG_DEBUG, "arc adns_result_callback address=%p "
@@ -473,7 +473,8 @@ void *cancel_net_lookup_service(int id)
   check_init_lookup_tables();
 
   freelog(LOG_DEBUG, "cnls hash_delete_entry in nlst id=%d", id);
-  ctx = hash_delete_entry(net_lookup_service_table, INT_TO_PTR(id));
+  ctx = (struct net_lookup_ctx *)hash_delete_entry(net_lookup_service_table,
+                                                   INT_TO_PTR(id));
 
   if (!ctx) {
     return NULL;
@@ -508,13 +509,13 @@ int net_lookup_service_async(const char *name, int port,
   freelog(LOG_DEBUG, "nlsa net_lookup_service_async name=\"%s\" port=%d "
           "cb=%p data=%p datafree=%p", name, port, cb, data, datafree);
 
-  ctx = wc_calloc(1, sizeof(struct net_lookup_ctx));
+  ctx = (struct net_lookup_ctx *)wc_calloc(1, sizeof(struct net_lookup_ctx));
   freelog(LOG_DEBUG, "nlsa new net_lookup_ctx %p", ctx);
   ctx->guard = NET_LOOKUP_CTX_MEMORY_GUARD;
   ctx->callback = cb;
   ctx->userdata = data;
   ctx->datafree = datafree;
-  ctx->addr = wc_calloc(1, sizeof(union my_sockaddr));
+  ctx->addr = (my_sockaddr*)wc_calloc(1, sizeof(union my_sockaddr));
   ctx->req_id = 0;
   ctx->adns_id = -1;
 

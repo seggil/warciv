@@ -17,7 +17,7 @@
 
 #include <assert.h>
 
-#include "distribute.h"
+#include "distribute.hh"
 
 /****************************************************************************
   Distribute "number" elements into "groups" groups with ratios given by

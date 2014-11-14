@@ -153,18 +153,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "astring.h"
-#include "genlist.h"
-#include "hash.h"
-#include "inputfile.h"
-#include "ioz.h"
-#include "log.h"
-#include "mem.h"
-#include "sbuffer.h"
-#include "shared.h"
-#include "support.h"
+#include "astring.hh"
+#include "genlist.hh"
+#include "hash.hh"
+#include "inputfile.hh"
+#include "ioz.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "sbuffer.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "registry.h"
+#include "registry.hh"
 
 #define MAX_LEN_BUFFER 1024
 
@@ -172,7 +172,7 @@
 #define SECF_DEBUG_ENTRIES FALSE/* LOG_DEBUG each entry value */
 
 #define SPECVEC_TAG astring
-#include "specvec.h"
+#include "specvec.hh"
 
 /* An 'entry' is a string, integer or string vector;
  * Whether it is string or int or string vector is determined by whether
@@ -190,7 +190,7 @@ struct entry {
 
 /* create a 'struct entry_list' and related functions: */
 #define SPECLIST_TAG entry
-#include "speclist.h"
+#include "speclist.hh"
 
 #define entry_list_iterate(entlist, pentry) \
   TYPED_LIST_ITERATE(struct entry, entlist, pentry)
@@ -204,7 +204,7 @@ struct section {
 
 /* create a 'struct section_list' and related functions: */
 #define SPECLIST_TAG section
-#include "speclist.h"
+#include "speclist.hh"
 
 #define section_list_iterate(seclist, psection) \
   TYPED_LIST_ITERATE(struct section, seclist, psection)
@@ -330,7 +330,7 @@ static struct entry *new_entry(struct sbuffer *sb, const char *name,
 {
   struct entry *pentry;
 
-  pentry = sbuf_malloc(sb, sizeof(struct entry));
+  pentry = (struct entry *)sbuf_malloc(sb, sizeof(struct entry));
   pentry->name = sbuf_strdup(sb, name);
   pentry->comment = NULL;
   if (tok[0] == '\"') {
@@ -428,7 +428,7 @@ static bool section_file_read_dup(struct section_file *sf,
       */
       psection = find_section_by_name(sf, tok);
       if (!psection) {
-        psection = sbuf_malloc(sb, sizeof(struct section));
+        psection = (struct section*)sbuf_malloc(sb, sizeof(struct section));
         psection->name = sbuf_strdup(sb, tok);
         psection->entries = entry_list_new();
         section_list_append(sf->sections, psection);
@@ -678,8 +678,9 @@ bool section_file_save(struct section_file *my_section_file,
      * tricky things with the iterators...
      */
     for (ent_iter = genlist_get_head((const genlist *)psection->entries);
-         (pentry = ITERATOR_PTR(ent_iter)); ITERATOR_NEXT(ent_iter)) {
-
+         (pentry = (struct entry *)ITERATOR_PTR(ent_iter));
+         ITERATOR_NEXT(ent_iter))
+    {
       /* Tables: break out of this loop if this is a non-table
        * entry (pentry and ent_iter unchanged) or after table (pentry
        * and ent_iter suitably updated, pentry possibly NULL).
@@ -730,7 +731,9 @@ bool section_file_save(struct section_file *my_section_file,
         /* write the column names, and calculate ncol: */
         ncol = 0;
         col_iter = save_iter;
-        for (; (col_pentry = ITERATOR_PTR(col_iter)); ITERATOR_NEXT(col_iter)) {
+        for (; (col_pentry = (struct entry *)ITERATOR_PTR(col_iter));
+             (struct entry *)ITERATOR_NEXT(col_iter))
+        {
           if (strncmp(col_pentry->name, first, offset) != 0)
             break;
           fz_fprintf(fs, "%c\"%s\"", (ncol==0?' ':','),
@@ -748,8 +751,8 @@ bool section_file_save(struct section_file *my_section_file,
         for (;;) {
           char expect[128];     /* pentry->name we're expecting */
 
-          pentry = ITERATOR_PTR(ent_iter);
-          col_pentry = ITERATOR_PTR(col_iter);
+          pentry = (struct entry *)ITERATOR_PTR(ent_iter);
+          col_pentry = (struct entry *)ITERATOR_PTR(col_iter);
 
           my_snprintf(expect, sizeof(expect), "%s%d.%s",
                       base, irow, col_pentry->name+offset);
@@ -1049,7 +1052,7 @@ void secfile_insert_str_vec(struct section_file *my_section_file,
 
   pentry = section_file_insert_internal(my_section_file, buf);
   pentry->dim = dim;
-  pentry->vec_values = sbuf_malloc(my_section_file->sb,
+  pentry->vec_values = (char**)sbuf_malloc(my_section_file->sb,
                                    sizeof(char*) * dim);
   for (i = 0; i < dim; i++) {
     pentry->vec_values[i] = sbuf_strdup(my_section_file->sb, values[i]);
@@ -1256,7 +1259,7 @@ section_file_lookup_internal(struct section_file *my_section_file,
   }
 
   if (secfilehash_hashash(my_section_file)) {
-    result = hash_lookup_data(my_section_file->hashd->htbl, fullpath);
+    result = (entry*)hash_lookup_data(my_section_file->hashd->htbl, fullpath);
     if (result) {
       result->used++;
     }
@@ -1328,18 +1331,18 @@ section_file_insert_internal(struct section_file *my_section_file,
     /* This DOES NOT check whether the entry already exists in
      * the section, to avoid O(N^2) behaviour.
      */
-    pentry = sbuf_malloc(sb, sizeof(struct entry));
+    pentry = (entry*)sbuf_malloc(sb, sizeof(struct entry));
     pentry->name = sbuf_strdup(sb, ent_name);
     entry_list_append(psection->entries, pentry);
     return pentry;
   }
 
-  psection = sbuf_malloc(sb, sizeof(struct section));
+  psection = (section*)sbuf_malloc(sb, sizeof(struct section));
   psection->name = sbuf_strdup(sb, sec_name);
   psection->entries = entry_list_new();
   section_list_append(my_section_file->sections, psection);
 
-  pentry = sbuf_malloc(sb, sizeof(struct entry));
+  pentry = (entry*)sbuf_malloc(sb, sizeof(struct entry));
   pentry->name = sbuf_strdup(sb, ent_name);
   entry_list_append(psection->entries, pentry);
 
@@ -1382,7 +1385,7 @@ static void secfilehash_insert(struct section_file *file,
   struct entry *hentry;
 
   key = sbuf_strdup(file->sb, key);
-  hentry = hash_replace(file->hashd->htbl, key, data);
+  hentry = (entry*)hash_replace(file->hashd->htbl, key, data);
   if (hentry) {
     if (file->hashd->allow_duplicates) {
       hentry->used = 1;
@@ -1413,7 +1416,7 @@ void secfilehash_build(struct section_file *file, bool allow_duplicates)
   struct hash_data *hashd;
   char buf[256];
 
-  hashd = file->hashd = wc_malloc(sizeof(struct hash_data));
+  hashd = file->hashd = (struct hash_data *)wc_malloc(sizeof(struct hash_data));
   hashd->htbl = hash_new_nentries(hash_fval_string, hash_fcmp_string,
                                   file->num_entries);
 
@@ -1493,7 +1496,7 @@ int *secfile_lookup_int_vec(struct section_file *my_section_file,
   if (*dimen == 0) {
     return NULL;
   }
-  res = wc_malloc((*dimen)*sizeof(int));
+  res = (int*)wc_malloc((*dimen)*sizeof(int));
   for(j=0; j<(*dimen); j++) {
     res[j] = secfile_lookup_int(my_section_file, "%s,%d", buf, j);
   }
@@ -1525,7 +1528,7 @@ char **secfile_lookup_str_vec(struct section_file *my_section_file,
   if (*dimen == 0) {
     return NULL;
   }
-  res = wc_malloc((*dimen)*sizeof(char*));
+  res = (char**)wc_malloc((*dimen)*sizeof(char*));
   for(j=0; j<(*dimen); j++) {
     res[j] = secfile_lookup_str(my_section_file, "%s,%d", buf, j);
   }
@@ -1540,7 +1543,7 @@ char **secfile_lookup_str_vec(struct section_file *my_section_file,
 ***************************************************************/
 static char *minstrdup(struct sbuffer *sb, const char *str)
 {
-  char *dest = sbuf_malloc(sb, strlen(str)+1);
+  char *dest = (char*)sbuf_malloc(sb, strlen(str)+1);
   char *d2=dest;
   if(dest) {
     while (*str != '\0') {
@@ -1601,7 +1604,7 @@ static char *moutstr(char *str)
   }
   if (len > nalloc) {
     nalloc = 2 * len + 1;
-    buf = wc_realloc(buf, nalloc);
+    buf = (char*)wc_realloc(buf, nalloc);
   }
 
   dest = buf;
@@ -1656,7 +1659,7 @@ char **secfile_get_secnames_prefix(struct section_file *my_section_file,
     return NULL;
   }
 
-  ret = wc_malloc((*num) * sizeof(char*));
+  ret = (char**)wc_malloc((*num) * sizeof(char*));
 
   i = 0;
   section_list_iterate(my_section_file->sections, psection) {
@@ -1697,7 +1700,7 @@ char **secfile_get_section_entries(struct section_file *my_section_file,
     return NULL;
   }
 
-  ret = wc_malloc((*num) * sizeof(*ret));
+  ret = (char**)wc_malloc((*num) * sizeof(*ret));
 
   i = 0;
   entry_list_iterate(psection->entries, pentry) {

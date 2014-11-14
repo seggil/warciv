@@ -21,7 +21,7 @@
 
 #include <stddef.h>             /* size_t */
 
-#include "shared.h"             /* ADD_TO_POINTER */
+#include "shared.hh"            /* ADD_TO_POINTER */
 
 struct astring {
   char  *str;                   /* the string */

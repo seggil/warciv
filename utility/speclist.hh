@@ -59,8 +59,8 @@
    which _is_ itself protected against multiple inclusions.
 */
 
-#include "genlist.h"
-#include "mem.h"
+#include "genlist.hh"
+#include "mem.hh"
 
 #include <assert.h>
 
@@ -117,7 +117,7 @@ static inline int SPECLIST_FOO(_list_size)(const SPECLIST_LIST *tthis)
 static inline SPECLIST_TYPE *SPECLIST_FOO(_list_get)(const SPECLIST_LIST *tthis, int index)
 {
   assert(tthis != NULL);
-  return genlist_get((const genlist *)tthis, index);
+  return (SPECLIST_TYPE *)genlist_get((const genlist *)tthis, index);
 }
 
 static inline void SPECLIST_FOO(_list_append)(SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)

@@ -37,10 +37,10 @@
 
 #include <assert.h>
 
-#include "log.h"
-#include "shared.h"             /* TRUE, FALSE */
+#include "log.hh"
+#include "shared.hh"             /* TRUE, FALSE */
 
-#include "rand.h"
+#include "rand.hh"
 
 
 /* A global random state:

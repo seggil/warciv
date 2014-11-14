@@ -18,7 +18,7 @@
    See comments in hash.c.
 ***************************************************************************/
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"            /* bool type */
 
 struct hash_table;
 
@@ -85,7 +85,7 @@ bool hash_set_no_shrink(struct hash_table *h,
 #define hash_maybe_shrink(htab) hash_maybe_resize((htab), FALSE)
 void hash_maybe_resize (struct hash_table *h, bool expandingp);
 
-#include "iterator.h"
+#include "iterator.hh"
 
 struct hash_iter;
 size_t hash_iter_sizeof(void);

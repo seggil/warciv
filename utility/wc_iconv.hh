@@ -15,7 +15,7 @@
 
 #include <stdio.h>
 
-#include "shared.h"
+#include "shared.hh"
 
 #define WC_DEFAULT_DATA_ENCODING "UTF-8"
 

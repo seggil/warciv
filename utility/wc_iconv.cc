@@ -33,11 +33,11 @@
 extern const char *my_locale_charset (void);
 #endif
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "support.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
 
 static bool is_init = FALSE;
 static char convert_buffer[4096];
@@ -219,7 +219,7 @@ static char *convert_string(const char *text,
     char *myresult;
 
     if (alloc) {
-      buf = wc_malloc(to_len);
+      buf = (char*)wc_malloc(to_len);
     }
 
     myresult = buf;

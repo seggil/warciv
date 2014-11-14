@@ -17,10 +17,10 @@
 
 #include <string.h>
 
-#include "shared.h"             /* TRUE, FALSE */
-#include "support.h"            /* my_is* */
+#include "shared.hh"             /* TRUE, FALSE */
+#include "support.hh"            /* my_is* */
 
-#include "capability.h"
+#include "capability.hh"
 
 #define GET_TOKEN(start, end)   \
   {                                                                     \

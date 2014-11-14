@@ -37,10 +37,10 @@ sbuffer: ("string buffer")
 #include <assert.h>
 #include <string.h>
 
-#include "mem.h"
-#include "shared.h"
+#include "mem.hh"
+#include "shared.hh"
 
-#include "sbuffer.h"
+#include "sbuffer.hh"
 
 /* default buffer size: */
 #define SBUF_DEFAULT_SIZE (64*1024)
@@ -172,7 +172,7 @@ char *sbuf_strdup(struct sbuffer *sb, const char *str)
     sbuf_expand(sb);
     assert(size <= (sb->size - sb->offset));
   }
-  ret = ADD_TO_POINTER(sb->buffer, sb->offset);
+  ret = (char*)ADD_TO_POINTER(sb->buffer, sb->offset);
   memcpy(ret, str, size);       /* includes null-terminator */
   sb->offset += size;
   return ret;

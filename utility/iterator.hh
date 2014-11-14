@@ -13,7 +13,7 @@
 #ifndef WC_UTILITY_ITERATOR_H
 #define WC_UTILITY_ITERATOR_H
 
-#include "shared.h"     /* bool type. */
+#include "shared.hh"    /* bool type. */
 
 /***********************************************************************
   Iterator base class. "Derived" iterators must have this struct as

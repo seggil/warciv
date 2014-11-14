@@ -98,14 +98,14 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "shared.h" /* ARRAY_SIZE */
-#include "support.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh" /* ARRAY_SIZE */
+#include "support.hh"
 
-#include "hash.h"
+#include "hash.hh"
 
 #define FULL_RATIO 0.75         /* consider expanding when above this */
 #define MIN_RATIO 0.24          /* shrink when below this */
@@ -325,7 +325,7 @@ int hash_fcmp_ptr_int(const void *vkey1, const void *vkey2)
 **************************************************************************/
 unsigned int hash_fval_string2 (const void *vkey, unsigned int num_buckets)
 {
-  return (SuperFastHash (vkey, strlen (vkey) + 1) % num_buckets);
+  return (SuperFastHash ((const char*)vkey, strlen ((const char*)vkey) + 1) % num_buckets);
 }
 
 /**************************************************************************

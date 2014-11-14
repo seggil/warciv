@@ -43,7 +43,7 @@
 #include <assert.h>
 #include <string.h>             /* for memcpy */
 
-#include "mem.h"
+#include "mem.hh"
 
 #ifndef SPECVEC_TAG
 #error Must define a SPECVEC_TAG to use this header
@@ -78,7 +78,7 @@ static inline void SPECVEC_FOO(_vector_reserve) (SPECVEC_VECTOR *tthis,
   if (size > tthis->size_alloc) {
     int new_size = MAX(size, tthis->size_alloc * 2);
 
-    tthis->p = wc_realloc(tthis->p, new_size * sizeof(*tthis->p));
+    tthis->p = (SPECVEC_TYPE *)wc_realloc(tthis->p, new_size * sizeof(*tthis->p));
     tthis->size_alloc = new_size;
   }
   tthis->size = size;

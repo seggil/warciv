@@ -13,7 +13,7 @@
 #ifndef WC_UTILITY_PQUEUE_H
 #define WC_UTILITY_PQUEUE_H
 
-#include "shared.h"
+#include "shared.hh"
 
 typedef unsigned short pq_data_t;
 struct pqueue;

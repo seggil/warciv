@@ -71,14 +71,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "astring.h"
-#include "ioz.h"
-#include "log.h"
-#include "mem.h"
-#include "shared.h"             /* TRUE, FALSE */
-#include "support.h"
+#include "astring.hh"
+#include "ioz.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh"             /* TRUE, FALSE */
+#include "support.hh"
 
-#include "inputfile.h"
+#include "inputfile.hh"
 
 #define INF_DEBUG_FOUND     FALSE
 #define INF_DEBUG_NOT_FOUND FALSE
@@ -243,7 +243,7 @@ struct inputfile *inf_from_stream(fz_FILE * stream, datafilename_fn_t datafn)
   struct inputfile *inf;
 
   assert(stream != NULL);
-  inf = wc_malloc(sizeof(*inf));
+  inf = (struct inputfile *)wc_malloc(sizeof(*inf));
   init_zeros(inf);
 
   inf->filename = NULL;

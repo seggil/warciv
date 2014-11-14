@@ -40,9 +40,9 @@
 # include <winsock2.h>
 #endif
 
-#include "ioz.h"
-#include "shared.h"             /* bool type */
-#include "tadns.h"
+#include "ioz.hh"
+#include "shared.hh"        /* bool type */
+#include "tadns.hh"
 
 #ifdef FD_ZERO
 #define MY_FD_ZERO FD_ZERO

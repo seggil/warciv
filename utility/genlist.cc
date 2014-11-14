@@ -18,11 +18,11 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
 
-#include "genlist.h"
+#include "genlist.hh"
 
 #define INIT_MAGIC 0xA1B1C1D1
 
@@ -53,7 +53,7 @@ static genlist_link *find_genlist_position(const genlist *pgenlist, int pos);
 ************************************************************************/
 genlist *genlist_new(void)
 {
-  genlist *pgenlist = wc_malloc(sizeof(*pgenlist));
+  genlist *pgenlist = (genlist *)wc_malloc(sizeof(*pgenlist));
 
   pgenlist->nelements = 0;
   pgenlist->head_link = NULL;
@@ -178,7 +178,7 @@ void genlist_insert(genlist *pgenlist, void *data, int pos)
 {
   if (pgenlist->nelements == 0) { /*list is empty, ignore pos */
 
-    genlist_link *plink = wc_malloc(sizeof(*plink));
+    genlist_link *plink = (genlist_link *)wc_malloc(sizeof(*plink));
 
     plink->dataptr = data;
     plink->next = NULL;
@@ -188,7 +188,7 @@ void genlist_insert(genlist *pgenlist, void *data, int pos)
     pgenlist->tail_link = plink;
 
   } else {
-    genlist_link *plink = wc_malloc(sizeof(*plink));
+    genlist_link *plink = (genlist_link *)wc_malloc(sizeof(*plink));
     plink->dataptr = data;
 
     if (pos == 0) {

@@ -19,7 +19,7 @@
 #  include "../config.h"
 #endif
 
-#include "md5.h"
+#include "md5.hh"
 
 #include <sys/types.h>
 
@@ -321,7 +321,7 @@ void md5_process_bytes(const void *buffer, size_t len, struct md5_ctx *ctx)
 void md5_process_block(const void *buffer, size_t len, struct md5_ctx *ctx)
 {
   md5_uint32 correct_words[16];
-  const md5_uint32 *words = buffer;
+  const md5_uint32 *words = (const md5_uint32 *)buffer;
   size_t nwords = len / sizeof(md5_uint32);
   const md5_uint32 *endp = words + nwords;
   md5_uint32 A = ctx->A;

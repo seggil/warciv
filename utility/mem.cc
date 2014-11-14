@@ -24,11 +24,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "shared.h"             /* TRUE, FALSE */
+#include "wc_intl.hh"
+#include "log.hh"
+#include "shared.hh"           /* TRUE, FALSE */
 
-#include "mem.h"
+#include "mem.hh"
 
 /**********************************************************************
  Do whatever we should do when malloc fails.
@@ -129,7 +129,7 @@ void *wc_real_calloc(size_t nelem, size_t elsize,
 char *real_mystrdup(const char *str,
                     const char *called_as, int line, const char *file)
 {
-  char *dest = wc_real_malloc(strlen(str)+1, called_as, line, file);
+  char *dest = (char*)wc_real_malloc(strlen(str)+1, called_as, line, file);
 
   /* no need to check whether dest is non-NULL! */
   strcpy(dest, str);

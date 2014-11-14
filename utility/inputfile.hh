@@ -19,8 +19,8 @@
 #ifndef WC_UTILITY_INPUTFILE_H
 #define WC_UTILITY_INPUTFILE_H
 
-#include "ioz.h"
-#include "shared.h"             /* bool type */
+#include "ioz.hh"
+#include "shared.hh"            /* bool type */
 
 struct inputfile;               /* opaque */
 

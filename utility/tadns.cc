@@ -53,16 +53,16 @@
 # include <limits.h>
 #endif
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "netintf.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "netintf.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "tadns.h"
+#include "tadns.hh"
 
 #define DNS_MAX           1025      /* Maximum host name */
 #define DNS_PACKET_LEN    2048 /* Buffer size for DNS packet */
@@ -89,7 +89,7 @@ struct query {
   int refcount;
   time_t expire;                /* Time when this query expire */
   uint16_t tid;                 /* UDP DNS transaction ID, big endian */
-  uint16_t qtype;               /* Query type */
+  enum dns_query_type qtype;               /* Query type */
   char name[DNS_MAX];           /* Host name */
   dns_callback_t callback;      /* User callback routine */
   void *userdata;               /* Application context */
@@ -233,7 +233,7 @@ struct dns *dns_new(void)
   int rcvbufsiz = 64 * 1024;
   uint32_t seed;
 
-  dns = wc_calloc(1, sizeof(struct dns));
+  dns = (struct dns*)wc_calloc(1, sizeof(struct dns));
   dns->sock = -1;
 
   dns->sock = socket(PF_INET, SOCK_DGRAM, 0);
@@ -346,7 +346,7 @@ static struct query *find_cached_query(struct dns *dns,
   } hash_kv_iterate_end;
 #endif
 
-  q = hash_lookup_data(dns->cache, name);
+  q = (query*)hash_lookup_data(dns->cache, name);
   freelog(LOG_DEBUG, "fcq %sfound query=%p", q ? "" : "NOT ", q);
   return q;
 }
@@ -356,7 +356,7 @@ static struct query *find_cached_query(struct dns *dns,
 **************************************************************************/
 static struct query *find_active_query(struct dns *dns, uint16_t tid)
 {
-  return hash_lookup_data(dns->active, UINT16_T_TO_PTR(tid));
+  return (query*)hash_lookup_data(dns->active, UINT16_T_TO_PTR(tid));
 }
 
 /**************************************************************************
@@ -364,14 +364,14 @@ static struct query *find_active_query(struct dns *dns, uint16_t tid)
 **************************************************************************/
 void dns_cancel(struct dns *dns, const void *userdata)
 {
-  struct query *query;
+  struct query *query_;
 
   freelog(LOG_DEBUG, "dns_cancel dns=%p userdata=%p", dns, userdata);
 
   hash_values_iterate(dns->active, value) {
-    query = value;
-    if (query->userdata == userdata) {
-      destroy_query(dns, query);
+    query_ = (query *)value;
+    if (query_->userdata == userdata) {
+      destroy_query(dns, query_);
       break;
     }
   } hash_values_iterate_end;
@@ -380,15 +380,15 @@ void dns_cancel(struct dns *dns, const void *userdata)
 /**************************************************************************
   ...
 **************************************************************************/
-static void call_user(struct dns *dns, struct query *query)
+static void call_user(struct dns *dns, struct query *query_)
 {
   freelog(LOG_DEBUG, "cu call_user query %p tid=%x name=\"%s\"",
-          query, query->tid, query->name);
+          query_, query_->tid, query_->name);
 
-  assert(query->callback != NULL);
+  assert(query_->callback != NULL);
 
-  (*query->callback) (query->addr, query->addrlen,
-                      query->name, query->qtype, query->userdata);
+  (*query_->callback) (query_->addr, query_->addrlen,
+                       query_->name, query_->qtype, query_->userdata);
 
   freelog(LOG_DEBUG, "cu returned from callback");
 }
@@ -696,14 +696,14 @@ void dns_queue(struct dns *dns,
   }
 
   /* Allocate new query */
-  query = wc_calloc(1, sizeof(struct query));
+  query = (struct query*)wc_calloc(1, sizeof(struct query));
 
   freelog(LOG_DEBUG, "dq new query %p", query);
 
   query->guard = QUERY_MEMORY_GUARD;
   query->callback = callback;
   query->userdata = userdata;
-  query->qtype = (uint16_t) qtype;
+  query->qtype = qtype;
   hv = hash_fval_uint16_t(UINT16_T_TO_PTR(dns->tid), 0xffff);
   query->tid = (uint16_t) hv;
   dns->tid = query->tid;
@@ -820,7 +820,7 @@ void dns_check_expired(struct dns *dns)
 
   /* Cleanup expired active queries */
   hash_values_iterate(dns->active, value) {
-    query = value;
+    query = (struct query*)value;
     if (query->expire < now) {
       freelog(LOG_DEBUG, "dce active query timeout tid=%x expire=%lu",
               query->tid, query->expire);

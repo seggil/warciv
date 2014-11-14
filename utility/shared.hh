@@ -239,7 +239,7 @@ struct datafile {
 
 #define SPECLIST_TAG datafile
 #define SPECLIST_TYPE struct datafile
-#include "speclist.h"
+#include "speclist.hh"
 #define datafile_list_iterate(list, pnode) \
   TYPED_LIST_ITERATE(struct datafile, list, pnode)
 #define datafile_list_iterate_end LIST_ITERATE_END
@@ -247,7 +247,7 @@ struct datafile {
 /* A list of strings (i.e. 'char *'). */
 #define SPECLIST_TAG string
 #define SPECLIST_TYPE char
-#include "speclist.h"
+#include "speclist.hh"
 #define string_list_iterate(alist, pitem)\
   TYPED_LIST_ITERATE(char, alist, pitem)
 #define string_list_iterate_end  LIST_ITERATE_END

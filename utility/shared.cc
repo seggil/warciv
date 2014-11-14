@@ -45,15 +45,15 @@
 # include <lmcons.h>     /* UNLEN */
 #endif
 
-#include "astring.h"
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "iterator.h"
-#include "log.h"
-#include "mem.h"
-#include "support.h"
+#include "astring.hh"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "iterator.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "shared.h"
+#include "shared.hh"
 
 #ifndef PATH_SEPARATOR
 #if defined _WIN32 || defined __WIN32__ || defined __EMX__ || defined __DJGPP__
@@ -121,7 +121,7 @@ char *create_centered_string(const char *s)
   if(maxlen<curlen)
     maxlen=curlen;
 
-  r=rn=wc_malloc(nlines*(maxlen+1));
+  r = rn = (char*)wc_malloc(nlines*(maxlen+1));
 
   curlen=0;
   for(cp0=cp=s; *cp != '\0'; cp++) {
@@ -289,7 +289,7 @@ int get_tokens_full(const char *str,
       }
     }
 
-    tokens[token] = wc_malloc(len + 1);
+    tokens[token] = (char*)wc_malloc(len + 1);
     (void) mystrlcpy(tokens[token], str, len + 1);      /* adds the '\0' */
 
     token++;
@@ -895,7 +895,7 @@ static const char **get_data_dirs(int *num_dirs)
           i = 0;
         } else {
           int len = strlen(home) + i;      /* +1 -1 */
-          char *tmp = wc_malloc(len);
+          char *tmp = (char*)wc_malloc(len);
 
           my_snprintf(tmp, len, "%s%s", home, tok + 1);
           tok = tmp;
@@ -908,7 +908,7 @@ static const char **get_data_dirs(int *num_dirs)
       /* We could check whether the directory exists and
        * is readable etc?  Don't currently. */
       num++;
-      dirs = wc_realloc(dirs, num * sizeof(char*));
+      dirs = (const char**)wc_realloc(dirs, num * sizeof(char*));
       dirs[num - 1] = mystrdup(tok);
       freelog(LOG_VERBOSE, "Data path component (%d): %s", num - 1, tok);
       if (i == -1) {
@@ -921,7 +921,7 @@ static const char **get_data_dirs(int *num_dirs)
   } while(tok);
 
   /* NULL-terminate the list. */
-  dirs = wc_realloc(dirs, (num + 1) * sizeof(char*));
+  dirs = (const char**)wc_realloc(dirs, (num + 1) * sizeof(char*));
   dirs[num] = NULL;
 
   free(path2);
@@ -988,7 +988,7 @@ const char **datafilelist(const char* suffix)
            constant ammortized overhead. */
         if (num_matches >= list_size) {
           list_size = list_size > 0 ? list_size * 2 : 10;
-          file_list = wc_realloc(file_list, list_size * sizeof(*file_list));
+          file_list = (char**)wc_realloc(file_list, list_size * sizeof(*file_list));
         }
 
         /* Clip the suffix. */
@@ -1009,20 +1009,20 @@ const char **datafilelist(const char* suffix)
   /* Remove duplicates (easy since it's sorted). */
   i = j = 0;
   while (j < num_matches) {
-    char *this = file_list[j];
+    char *this_ = file_list[j];
 
-    for (j++; j < num_matches && strcmp(this, file_list[j]) == 0; j++) {
+    for (j++; j < num_matches && strcmp(this_, file_list[j]) == 0; j++) {
       free(file_list[j]);
     }
 
-    file_list[i] = this;
+    file_list[i] = this_;
 
     i++;
   }
   num_matches = i;
 
   /* NULL-terminate the whole thing. */
-  file_list = wc_realloc(file_list, (num_matches + 1) * sizeof(*file_list));
+  file_list = (char**)wc_realloc(file_list, (num_matches + 1) * sizeof(*file_list));
   file_list[num_matches] = NULL;
 
   return (const char **)file_list;
@@ -1176,11 +1176,11 @@ struct datafile_list *datafilelist_infix(const char *subpath,
         char *fullname;
         int len = strlen(path) + strlen(filename) + 2;
 
-        fullname = wc_malloc(len);
+        fullname = (char*)wc_malloc(len);
         my_snprintf(fullname, len, "%s/%s", path, filename);
 
         if (stat(fullname, &buf) == 0) {
-          file = wc_malloc(sizeof(struct datafile));
+          file = (struct datafile *)wc_malloc(sizeof(struct datafile));
 
           /* Clip the suffix. */
           *ptr = '\0';
@@ -1207,7 +1207,7 @@ struct datafile_list *datafilelist_infix(const char *subpath,
   datafile_list_sort(res, compare_file_name_ptrs);
 
   if (nodups) {
-    char *name = "";
+    char *name = (char*)"";
 
     datafile_list_iterate(res, pfile) {
       if (compare_strings(name, pfile->name) != 0) {
@@ -1346,7 +1346,7 @@ void init_nls(void)
       }
       len++;
       free(grouping);
-      grouping = wc_malloc(len);
+      grouping = (char*)wc_malloc(len);
       memcpy(grouping, lc->grouping, len);
     }
     free(grouping_sep);
@@ -1525,7 +1525,7 @@ char *get_multicast_group(void)
 {
   static bool init = FALSE;
   static char *group = NULL;
-  static char *default_multicast_group = "225.0.0.1";
+  static char *default_multicast_group = (char*)"225.0.0.1";
 
   if (!init) {
     char *env = getenv("WARCIV_MULTICAST_GROUP");
@@ -1703,7 +1703,8 @@ static char *string_duplicate(const char *string)
 **************************************************************************/
 struct string_vector *string_vector_new(void)
 {
-  struct string_vector *psv = wc_malloc(sizeof(struct string_vector));
+  struct string_vector *psv = (struct string_vector *)
+      wc_malloc(sizeof(struct string_vector));
 
   psv->vec = NULL;
   psv->size = 0;
@@ -1732,10 +1733,10 @@ void string_vector_reserve(struct string_vector *psv, size_t reserve)
     return;
   } else if (!psv->vec) {
     /* Initial reserve */
-    psv->vec = wc_calloc(reserve, sizeof(char *));
+    psv->vec = (char**)wc_calloc(reserve, sizeof(char *));
   } else if (reserve > psv->size) {
     /* Expand the vector. */
-    psv->vec = wc_realloc(psv->vec, reserve * sizeof(char *));
+    psv->vec = (char**)wc_realloc(psv->vec, reserve * sizeof(char *));
     memset(psv->vec + psv->size, 0, (reserve - psv->size) * sizeof(char *));
   } else {
     /* Shrink the vector: free the extra strings. */
@@ -1744,7 +1745,7 @@ void string_vector_reserve(struct string_vector *psv, size_t reserve)
     for (i = psv->size - 1; i >= reserve; i--) {
       string_free(psv->vec[i]);
     }
-    psv->vec = wc_realloc(psv->vec, reserve * sizeof(char *));
+    psv->vec = (char**)wc_realloc(psv->vec, reserve * sizeof(char *));
   }
   psv->size = reserve;
 }

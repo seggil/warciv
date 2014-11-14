@@ -17,7 +17,7 @@
 
 #include <string.h>
 
-#include "wc_intl.h"
+#include "wc_intl.hh"
 
 /**********************************************************************
 Some strings are ambiguous for translation.  For example, "Game" is

@@ -42,12 +42,12 @@
 #include <zlib.h>
 #endif
 
-#include "log.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "ioz.h"
+#include "ioz.hh"
 
 struct fz_FILE_s {
   enum fz_method method;
@@ -144,7 +144,7 @@ fz_FILE *fz_from_stream(FILE *stream)
     return NULL;
   }
 
-  fp = wc_malloc(sizeof(*fp));
+  fp = (fz_FILE *)wc_malloc(sizeof(*fp));
   fp->method = FZ_PLAIN;
   fp->u.plain = stream;
   return fp;

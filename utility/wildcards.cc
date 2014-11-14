@@ -52,7 +52,7 @@
 #  include "../config.h"
 #endif
 
-#include "wildcards.h"
+#include "wildcards.hh"
 
 static int set (char **wildcard, char **test);
 /* Scans a set of characters and returns 0 if the set mismatches at this */

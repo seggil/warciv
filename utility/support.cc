@@ -84,12 +84,12 @@
 # include <windows.h>
 #endif
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "mem.h"
-#include "netintf.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "mem.hh"
+#include "netintf.hh"
 
-#include "support.h"
+#include "support.hh"
 
 /***************************************************************
   Compare strings like strcmp(), but ignoring case.
@@ -282,7 +282,7 @@ void myusleep(unsigned long usec)
  In particular note that n==0 is prohibited (eg, since there
  must at least be room for a nul); could consider other options.
 ***********************************************************************/
-size_t mystrlcpy(char *dest, const char *src, size_t n)
+size_t mystrlcpy(char *dest, char const *src, size_t n)
 {
   assert(dest != NULL);
   assert(src != NULL);
@@ -304,7 +304,7 @@ size_t mystrlcpy(char *dest, const char *src, size_t n)
 /**********************************************************************
  ...
 ***********************************************************************/
-size_t mystrlcat(char *dest, const char *src, size_t n)
+size_t mystrlcat(char *dest, char const *src, size_t n)
 {
   assert(dest != NULL);
   assert(src != NULL);
@@ -313,7 +313,9 @@ size_t mystrlcat(char *dest, const char *src, size_t n)
   return strlcat(dest, src, n);
 #else
   {
-    size_t num_to_copy, len_dest, len_src;
+    size_t num_to_copy;
+    size_t len_dest;
+    size_t len_src;
 
     len_dest = strlen(dest);
     assert(len_dest<n);
@@ -390,7 +392,9 @@ size_t mystrlcat(char *dest, const char *src, size_t n)
 #define VSNP_BUF_SIZE (64*1024)
 int my_vsnprintf(char *str, size_t n, const char *format, va_list ap)
 {
+#ifdef HAVE_WORKING_VSNPRINTF
   int r;
+#endif
 
   /* This may be overzealous, but I suspect any triggering of these to
    * be bugs.  */
@@ -417,7 +421,7 @@ int my_vsnprintf(char *str, size_t n, const char *format, va_list ap)
     size_t len;
 
     if (!buf) {
-      buf = malloc(VSNP_BUF_SIZE);
+      buf = (char*)malloc(VSNP_BUF_SIZE);
 
       if (!buf) {
         fprintf(stderr, "Could not allocate %i bytes for vsnprintf() "
@@ -426,9 +430,9 @@ int my_vsnprintf(char *str, size_t n, const char *format, va_list ap)
       }
     }
 #ifdef HAVE_VSNPRINTF
-    r = vsnprintf(buf, n, format, ap);
+    /* r = */ vsnprintf(buf, n, format, ap);
 #else
-    r = vsprintf(buf, format, ap);
+    /* r = */ vsprintf(buf, format, ap);
 #endif
     buf[VSNP_BUF_SIZE - 1] = '\0';
     len = strlen(buf);

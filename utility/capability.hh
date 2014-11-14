@@ -14,7 +14,7 @@
 #ifndef WC_UTILITY_CAPABILITY_H
 #define WC_UTILITY_CAPABILITY_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"           /* bool type */
 
 bool has_capability(const char *cap, const char *capstr);
 bool has_capabilities(const char *us, const char *them);

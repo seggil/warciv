@@ -23,9 +23,9 @@
 
 #include <assert.h>
 
-#include "mem.h"
+#include "mem.hh"
 
-#include "pqueue.h"
+#include "pqueue.hh"
 
 struct pqueue {
   int size;                     /* number of occupied cells */
@@ -45,10 +45,10 @@ struct pqueue {
 ***********************************************************************/
 struct pqueue *pq_create(int initial_size)
 {
-  struct pqueue *q = wc_malloc(sizeof(struct pqueue));
+  struct pqueue *q = (struct pqueue *)wc_malloc(sizeof(struct pqueue));
 
-  q->cells = wc_malloc(sizeof(pq_data_t) * initial_size);
-  q->priorities = wc_malloc(sizeof(int) * initial_size);
+  q->cells = (pq_data_t*)wc_malloc(sizeof(pq_data_t) * initial_size);
+  q->priorities = (int*)wc_malloc(sizeof(int) * initial_size);
   q->avail = initial_size;
   q->step = initial_size;
   q->size = 1;
@@ -79,8 +79,8 @@ void pq_insert(struct pqueue *q, pq_data_t datum, int datum_priority)
   if (q->size >= q->avail) {
     int newsize = q->size + q->step;
 
-    q->cells = wc_realloc(q->cells, sizeof(pq_data_t) * newsize);
-    q->priorities = wc_realloc(q->priorities, sizeof(int) * newsize);
+    q->cells = (pq_data_t*)wc_realloc(q->cells, sizeof(pq_data_t) * newsize);
+    q->priorities = (int*)wc_realloc(q->priorities, sizeof(int) * newsize);
     q->avail = newsize;
   }
 

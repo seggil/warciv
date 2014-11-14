@@ -56,12 +56,12 @@
 # include <sys/timeb.h>
 #endif
 
-#include "log.h"
-#include "mem.h"
-#include "shared.h"             /* TRUE, FALSE */
-#include "support.h"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh"          /* TRUE, FALSE */
+#include "support.hh"
 
-#include "timing.h"
+#include "timing.hh"
 
 #ifndef CLOCKS_PER_SEC
 #ifdef CLOCKS_PER_SECOND

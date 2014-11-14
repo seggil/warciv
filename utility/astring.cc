@@ -45,10 +45,10 @@
 #include <assert.h>
 #include <stdarg.h>
 
-#include "mem.h"
-#include "support.h"            /* my_vsnprintf, mystrlcat */
+#include "mem.hh"
+#include "support.hh"            /* my_vsnprintf, mystrlcat */
 
-#include "astring.h"
+#include "astring.hh"
 
 /**********************************************************************
   Initialize the struct.

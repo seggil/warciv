@@ -19,16 +19,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
 #include "time.h"
 
-#include "log.h"
+#include "log.hh"
 
-char *loglevelstr[5] = {"FATAL","ERROR","NORMAL","VERBOSE","DEBUG"};
+char const *loglevelstr[5] = {"FATAL","ERROR","NORMAL","VERBOSE","DEBUG"};
 
 static const char *log_filename;
 static log_callback_fn log_callback;
@@ -132,7 +132,7 @@ int log_parse_level_str(const char *level_str)
   }
   i = 0;
   do {
-    char *d = strchr(tok, ',');
+    char *d = (char*)strchr(tok, ',');
 
     logd_files[i].min = logd_files[i].max = 0;
     if (d) {

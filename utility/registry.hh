@@ -13,8 +13,8 @@
 #ifndef WC_UTILITY_REGISTRY_H
 #define WC_UTILITY_REGISTRY_H
 
-#include "ioz.h"
-#include "shared.h"             /* bool type and wc__attribute */
+#include "ioz.hh"
+#include "shared.hh"           /* bool type and wc__attribute */
 
 struct sbuffer;
 struct hash_data;

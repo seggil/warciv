@@ -16,7 +16,7 @@
 #ifndef WC_UTILITY_TIMING_H
 #define WC_UTILITY_TIMING_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"            /* bool type */
 
 enum timer_timetype {
   TIMER_CPU,                    /* time spent by the CPU */

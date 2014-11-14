@@ -21,9 +21,9 @@
 
 #include <stdio.h>              /* FILE */
 
-#include "shared.h"             /* wc__attribute */
+#include "shared.hh"            /* wc__attribute */
 
-struct fz_FILE_s;                 /* opaque */
+struct fz_FILE_s;               /* opaque */
 typedef struct fz_FILE_s fz_FILE;
 
 /* (possibly) supported methods (depending on config.h) */
