@@ -10,8 +10,8 @@
 #ifndef WC_CLIENT_PACKHAND_GEN_H
 #define WC_CLIENT_PACKHAND_GEN_H
 
-#include "packets.h"
-#include "shared.h"
+#include "packets.hh"
+#include "shared.hh"
 
 bool client_handle_packet(enum packet_type type, void *packet);
 

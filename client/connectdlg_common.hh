@@ -13,7 +13,7 @@ Freeciv - Copyright (C) 2003 - The Freeciv Project
 #ifndef WC_CLIENT_CONNECTDLG_COMMON_H
 #define WC_CLIENT_CONNECTDLG_COMMON_H
 
-#include "shared.h"
+#include "shared.hh"
 
 #if defined(HAVE_WORKING_FORK) || defined(WIN32_NATIVE)
 # define CLIENT_CAN_LAUNCH_SERVER

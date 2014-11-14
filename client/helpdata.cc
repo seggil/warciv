@@ -24,25 +24,25 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "astring.h"
-#include "wc_intl.h"
-#include "genlist.h"
-#include "log.h"
-#include "mem.h"
-#include "registry.h"
-#include "support.h"
+#include "astring.hh"
+#include "wc_intl.hh"
+#include "genlist.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "registry.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "map.h"
-#include "packets.h"
-#include "unit.h"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "unit.hh"
 
-#include "civclient.h"
-#include "clinet.h"
+#include "civclient.hh"
+#include "clinet.hh"
 
-#include "helpdata.h"
+#include "helpdata.hh"
 
 static const char * const help_type_names[] = {
   "(Any)", "(Text)", "Units", "Improvements", "Wonders",
@@ -53,7 +53,7 @@ static const char * const help_type_names[] = {
 
 #define SPECLIST_TAG help
 #define SPECLIST_TYPE struct help_item
-#include "speclist.h"
+#include "speclist.hh"
 
 #define help_list_iterate(helplist, phelp) \
     TYPED_LIST_ITERATE(struct help_item, helplist, phelp)
@@ -144,10 +144,10 @@ static struct help_item *new_help_item(int type)
 {
   struct help_item *pitem;
 
-  pitem = wc_malloc(sizeof(struct help_item));
+  pitem = static_cast<help_item*>(wc_malloc(sizeof(struct help_item)));
   pitem->topic = NULL;
   pitem->text = NULL;
-  pitem->type = type;
+  pitem->type = (help_page_type)type;
   return pitem;
 }
 
@@ -225,7 +225,7 @@ void boot_help_texts(void)
       }
       for(i=2; help_type_names[i]; i++) {
         if(strcmp(gen_str, help_type_names[i])==0) {
-          current_type = i;
+          current_type = (help_page_type)i;
           break;
         }
       }
@@ -471,7 +471,7 @@ const struct help_item *help_iter_next(void)
   const struct help_item *pitem;
 
   check_help_nodes_init();
-  pitem = ITERATOR_PTR(help_nodes_iterator);
+  pitem = static_cast<const struct help_item *>(ITERATOR_PTR(help_nodes_iterator));
   if (pitem) {
     ITERATOR_NEXT(help_nodes_iterator);
   }
@@ -506,6 +506,13 @@ const struct help_item *help_iter_next(void)
 
   user_text, if non-NULL, will be appended to the text.
 **************************************************************************/
+#define req_append(s)                                    \
+      (req_buf[0] != '\0'                                \
+       ? my_snprintf(req_buf + strlen(req_buf),          \
+                     sizeof(req_buf) - strlen(req_buf),  \
+                     ", %s", (s))                        \
+       : sz_strlcpy(req_buf, (s)))
+
 char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
                         const char *user_text)
 {
@@ -550,25 +557,40 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
     if (improvement_exists(impr) && b->bldg_req == which) {
       char req_buf[1024] = "";
       int i;
-
-#define req_append(s)                                    \
-      (req_buf[0] != '\0'                                \
-       ? my_snprintf(req_buf + strlen(req_buf),          \
-                     sizeof(req_buf) - strlen(req_buf),  \
-                     ", %s", (s))                        \
-       : sz_strlcpy(req_buf, (s)))
+      const char *tech_name = get_tech_name(get_player_ptr(), b->tech_req);
+      const char *terrain_name;
+      const char *special_name;
 
       if (b->tech_req != A_NONE) {
-        req_append(get_tech_name(get_player_ptr(), b->tech_req));
+        if (req_buf[0] != '\0')
+          my_snprintf(req_buf + strlen(req_buf),
+                      sizeof(req_buf) - strlen(req_buf),
+                      ", %s", tech_name);
+        else
+          sz_strlcpy(req_buf, tech_name);
+        //req_append(get_tech_name(get_player_ptr(), b->tech_req));
       }
 
       for (i = 0; b->terr_gate[i] != T_NONE; i++) {
-        req_append(get_terrain_name(b->terr_gate[i]));
+        terrain_name = get_terrain_name(b->terr_gate[i]);
+        if (req_buf[0] != '\0')
+          my_snprintf(req_buf + strlen(req_buf),
+                      sizeof(req_buf) - strlen(req_buf),
+                      ", %s", terrain_name);
+        else
+          sz_strlcpy(req_buf, terrain_name);
+        //req_append(get_terrain_name(b->terr_gate[i]));
       }
       for (i = 0; b->spec_gate[i] != S_NO_SPECIAL; i++) {
-        req_append(get_special_name(b->spec_gate[i]));
+        special_name = get_special_name(b->spec_gate[i]);
+        if (req_buf[0] != '\0')
+          my_snprintf(req_buf + strlen(req_buf),
+                      sizeof(req_buf) - strlen(req_buf),
+                      ", %s", special_name);
+        else
+          sz_strlcpy(req_buf, special_name);
+        //req_append(get_special_name(b->spec_gate[i]));
       }
-#undef req_append
 
       if (req_buf[0] != '\0') {
         my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
@@ -602,6 +624,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
   wordwrap_string(buf, 68);
   return buf;
 }
+#undef req_append
 
 #define techs_with_flag_iterate(flag, tech_id)  \
 {                                               \

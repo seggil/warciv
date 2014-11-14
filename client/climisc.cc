@@ -27,38 +27,38 @@ used throughout the client.
 #include <string.h>
 #include <time.h>
 
-#include "city.h"
-#include "diptreaty.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "hash.h"
-#include "log.h"
-#include "map.h"
-#include "packets.h"
-#include "shared.h"
-#include "spaceship.h"
-#include "support.h"
+#include "city.hh"
+#include "diptreaty.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "shared.hh"
+#include "spaceship.hh"
+#include "support.hh"
 
-#include "include/chatline_g.h"
-#include "include/citydlg_g.h"
-#include "include/cityrep_g.h"
-#include "civclient.h"
-#include "climap.h"
-#include "clinet.h"
-#include "control.h"
-#include "include/dialogs_g.h"
-#include "mapctrl_common.h"
-#include "include/mapview_g.h"
-#include "messagewin_common.h"
-#include "multiselect.h"
-#include "packhand.h"
-#include "include/pages_g.h"
-#include "plrdlg_common.h"
-#include "repodlgs_common.h"
-#include "tilespec.h"
-#include "trade.h"
+#include "include/chatline_g.hh"
+#include "include/citydlg_g.hh"
+#include "include/cityrep_g.hh"
+#include "civclient.hh"
+#include "climap.hh"
+#include "clinet.hh"
+#include "control.hh"
+#include "include/dialogs_g.hh"
+#include "mapctrl_common.hh"
+#include "include/mapview_g.hh"
+#include "messagewin_common.hh"
+#include "multiselect.hh"
+#include "packhand.hh"
+#include "include/pages_g.hh"
+#include "plrdlg_common.hh"
+#include "repodlgs_common.hh"
+#include "tilespec.hh"
+#include "trade.hh"
 
-#include "climisc.h"
+#include "climisc.hh"
 
 
 static struct hash_table *an_continent_counter_table = NULL;
@@ -82,7 +82,7 @@ struct map_link {
 
 #define SPECLIST_TAG map_link
 #define SPECLIST_TYPE struct map_link
-#include "speclist.h"
+#include "speclist.hh"
 #define map_link_list_iterate(pml) \
   TYPED_LIST_ITERATE(struct map_link, link_marks, pml)
 #define map_link_list_iterate_end LIST_ITERATE_END
@@ -742,7 +742,7 @@ void name_and_sort_items(int *pcids, int num_cids, struct item *items,
     struct item *pitem = &items[i];
     const char *name;
 
-    pitem->cid = pcids[i];
+    pitem->cid_ = pcids[i];
 
     if (is_unit) {
       name = get_unit_name(id);
@@ -1220,10 +1220,10 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
     return strlen(ad->original_name) + 1;
   }
 
-  pcontinent_counter = hash_lookup_data(an_continent_counter_table,
-                                        INT_TO_PTR(ad->continent_id));
+  pcontinent_counter = (int*)hash_lookup_data(an_continent_counter_table,
+                                              INT_TO_PTR(ad->continent_id));
   if (!pcontinent_counter) {
-    pcontinent_counter = wc_malloc(sizeof(int));
+    pcontinent_counter = (int*)wc_malloc(sizeof(int));
     *pcontinent_counter = 0;
     hash_insert(an_continent_counter_table, INT_TO_PTR(ad->continent_id),
                 pcontinent_counter);
@@ -1345,9 +1345,10 @@ static int an_generate_city_name(char *buf, int buflen,
     return 0;
   }
 
-  ad = hash_lookup_data(an_city_autoname_data_table, INT_TO_PTR(pcity->common.id));
+  ad = static_cast<autoname_data*>(
+           hash_lookup_data(an_city_autoname_data_table, INT_TO_PTR(pcity->common.id)));
   if (!ad) {
-    ad = wc_malloc(sizeof(struct autoname_data));
+    ad = static_cast<autoname_data*>(wc_malloc(sizeof(struct autoname_data)));
     freelog(LOG_DEBUG, "agcn   new ad %p", ad);
     //printf("%s   new ad %p\n", __FILE__, ad);
     sz_strlcpy(ad->original_name, pcity->common.name);
@@ -1671,7 +1672,7 @@ static struct map_link *find_link_mark(enum tag_link_types type, int id)
 ***********************************************************************/
 static struct map_link *map_link_new(enum tag_link_types type, int id)
 {
-  struct map_link *pml = wc_malloc(sizeof(struct map_link));
+  struct map_link *pml = static_cast<map_link*>(wc_malloc(sizeof(struct map_link)));
 
   pml->type = type;
   pml->id = id;
@@ -1978,7 +1979,7 @@ void voteinfo_queue_add(int vote_no,
     return;
   }
 
-  vi = wc_calloc(1, sizeof(struct voteinfo));
+  vi = static_cast<voteinfo*>(wc_calloc(1, sizeof(struct voteinfo)));
   vi->vote_no = vote_no;
   sz_strlcpy(vi->user, user);
   sz_strlcpy(vi->desc, desc);

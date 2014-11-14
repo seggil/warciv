@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_CHATLINE_COMMON_H
 #define WC_CLIENT_CHATLINE_COMMON_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"          /* bool type */
 
-#include "wc_types.h"           /* city_t, tile and unit */
+#include "wc_types.hh"        /* city_t, tile and unit */
 
 void send_chat(const char *message);
 

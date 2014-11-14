@@ -14,8 +14,8 @@
 #ifndef WC_CLIENT_CLIMAP_H
 #define WC_CLIENT_CLIMAP_H
 
-#include "map.h"                /* enum direction8 */
-#include "terrain.h"            /* enum known_type */
+#include "map.hh"                /* enum direction8 */
+#include "terrain.hh"            /* enum known_type */
 
 #define map_exists() (map.info.xsize != 0)
 

@@ -19,33 +19,33 @@
 #include <stdio.h>
 #include <memory.h>
 
-#include "wc_intl.h"
-#include "hash.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "support.h"
-#include "unit.h"
+#include "wc_intl.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "support.hh"
+#include "unit.hh"
 
-#include "audio.h"
-#include "include/chatline_g.h"
-#include "include/citydlg_g.h"
-#include "civclient.h"
-#include "climap.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "include/dialogs_g.h"
-#include "goto.h"
-#include "include/gui_main_g.h"
-#include "include/mapctrl_g.h"
-#include "include/mapview_g.h"
-#include "include/menu_g.h"
-#include "multiselect.h"
-#include "options.h"
-#include "tilespec.h"
-#include "trade.h"
+#include "audio.hh"
+#include "include/chatline_g.hh"
+#include "include/citydlg_g.hh"
+#include "civclient.hh"
+#include "climap.hh"
+#include "climisc.hh"
+#include "clinet.hh"
+#include "include/dialogs_g.hh"
+#include "goto.hh"
+#include "include/gui_main_g.hh"
+#include "include/mapctrl_g.hh"
+#include "include/mapview_g.hh"
+#include "include/menu_g.hh"
+#include "multiselect.hh"
+#include "options.hh"
+#include "tilespec.hh"
+#include "trade.hh"
 
-#include "control.h"
+#include "control.hh"
 
 bool moveandattack_state;
 bool autowakeup_state;
@@ -591,7 +591,7 @@ void process_caravan_arrival(unit_t *punit)
   }
 
   if (punit) {
-    p_id = wc_malloc(sizeof(int));
+    p_id = (int*)wc_malloc(sizeof(int));
     *p_id = punit->id;
     genlist_insert(arrival_queue, p_id, -1);
   }
@@ -605,7 +605,7 @@ void process_caravan_arrival(unit_t *punit)
   while (genlist_size(arrival_queue) > 0) {
     int id;
 
-    p_id = genlist_get(arrival_queue, 0);
+    p_id = (int*)genlist_get(arrival_queue, 0);
     genlist_unlink(arrival_queue, p_id);
     id = *p_id;
     free(p_id);
@@ -661,7 +661,7 @@ void process_diplomat_arrival(unit_t *pdiplomat, int victim_id)
   }
 
   if (pdiplomat && victim_id != 0) {
-    p_ids = wc_malloc(2 * sizeof(int));
+    p_ids = (int*)wc_malloc(2 * sizeof(int));
     p_ids[0] = pdiplomat->id;
     p_ids[1] = victim_id;
     genlist_insert(arrival_queue, p_ids, -1);
@@ -680,7 +680,7 @@ void process_diplomat_arrival(unit_t *pdiplomat, int victim_id)
     unit_t *punit;
     bool dipl_unit_ok, dipl_city_ok;
 
-    p_ids = genlist_get(arrival_queue, 0);
+    p_ids = (int*)genlist_get(arrival_queue, 0);
     genlist_unlink(arrival_queue, p_ids);
     diplomat_id = p_ids[0];
     victim_id = p_ids[1];
@@ -1122,7 +1122,8 @@ void request_unit_build_city_random_name (unit_t* punit )
     dsend_packet_city_name_suggestion_req(&aconnection, punit->id);
     /* the reply will trigger a dialog to name the new city */
   } else {
-    if (!(name = malloc((5) * sizeof(char)))) {
+    name = (char*)malloc((5) * sizeof(char));
+    if ( ! name ) {
       freelog(LOG_ERROR, "malloc failed in function request_unit_build_city_random_name");
     }
     random_nmb=rand() % 9999;
@@ -1145,7 +1146,7 @@ void request_move_unit_direction(unit_t *punit, int dir)
   tile_t *dest_tile;
 
   /* Catches attempts to move off map */
-  dest_tile = mapstep(punit->tile, dir);
+  dest_tile = mapstep(punit->tile, (direction8)dir);
   if (!dest_tile) {
     return;
   }
@@ -1434,16 +1435,18 @@ void request_unit_pillage(unit_t *punit)
   enum tile_special_type psworking =
          get_unit_tile_pillage_set(punit->tile);
   enum tile_special_type what =
-         get_preferred_pillage(pspresent & (~psworking));
-  enum tile_special_type would =
-         what | map_get_infrastructure_prerequisite(what);
+         get_preferred_pillage( static_cast<tile_special_type>(
+             (int)pspresent & (int)(~psworking)));
+  enum tile_special_type would = static_cast<tile_special_type>(
+         (int)what | (int)map_get_infrastructure_prerequisite(what));
 
   if (punit->activity != ACTIVITY_PILLAGE &&
       can_unit_do_activity(punit, ACTIVITY_PILLAGE)) {
     if ((game.ruleset_game.pillage_select)
         && ((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
       punit->is_new = FALSE;
-      popup_pillage_dialog(punit, (pspresent & (~psworking)));
+      popup_pillage_dialog(punit,
+                           static_cast<tile_special_type>((int)pspresent & (int)(~psworking)));
     } else {
       punit->is_new = FALSE;
       request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, what);
@@ -3085,6 +3088,7 @@ void put_last_unit_focus(void)
 **************************************************************************/
 void key_cycle_player_colors_modes(void)
 {
-  player_colors_mode = (player_colors_mode + 1) % PLAYER_COLORS_MODES_NUM;
+  player_colors_mode = static_cast<player_colors_modes>(
+                           (player_colors_mode + 1) % PLAYER_COLORS_MODES_NUM);
   player_colors_mode_changed();
 }

@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_PACKHAND_H
 #define WC_CLIENT_PACKHAND_H
 
-#include "map.h"
+#include "map.hh"
 
-#include "packhand_gen.h"
+#include "packhand_gen.hh"
 
 void notify_about_incoming_packet(connection_t *pconn,
                                    int packet_type, int size);

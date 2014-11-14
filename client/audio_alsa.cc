@@ -18,11 +18,11 @@
 #include <audiofile.h>
 #include <alsa/asoundlib.h>
 
-#include "support.h"
-#include "log.h"
-#include "audio.h"
+#include "support.hh"
+#include "log.hh"
+#include "audio.hh"
 
-#include "audio_alsa.h"
+#include "audio_alsa.hh"
 
 static snd_pcm_t *sound_handle = NULL;
 static snd_async_handler_t *ah;

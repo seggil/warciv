@@ -18,61 +18,61 @@
 #include <assert.h>
 #include <string.h>
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "support.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "capstr.h"
-#include "events.h"
-#include "game.h"
-#include "idex.h"
-#include "government.h"
-#include "map.h"
-#include "nation.h"
-#include "packets.h"
-#include "player.h"
-#include "spaceship.h"
-#include "traderoute.h"
-#include "unit.h"
-#include "worklist.h"
+#include "capstr.hh"
+#include "events.hh"
+#include "game.hh"
+#include "idex.hh"
+#include "government.hh"
+#include "map.hh"
+#include "nation.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "spaceship.hh"
+#include "traderoute.hh"
+#include "unit.hh"
+#include "worklist.hh"
 
-#include "attribute.h"
-#include "audio.h"
-#include "civclient.h"
-#include "climap.h"
-#include "climisc.h"
-#include "clinet.h"             /* aconnection */
-#include "connectdlg_common.h"
-#include "control.h"
-#include "include/dialogs_g.h"
-#include "goto.h"               /* client_goto_init() */
-#include "helpdata.h"           /* boot_help_texts() */
-#include "multiselect.h"
-#include "options.h"
-#include "tilespec.h"
-#include "trade.h"
+#include "attribute.hh"
+#include "audio.hh"
+#include "civclient.hh"
+#include "climap.hh"
+#include "climisc.hh"
+#include "clinet.hh"             /* aconnection */
+#include "connectdlg_common.hh"
+#include "control.hh"
+#include "include/dialogs_g.hh"
+#include "goto.hh"              /* client_goto_init() */
+#include "helpdata.hh"          /* boot_help_texts() */
+#include "multiselect.hh"
+#include "options.hh"
+#include "tilespec.hh"
+#include "trade.hh"
 
-#include "agents/agents.h"
-#include "agents/cma_core.h"
+#include "agents/agents.hh"
+#include "agents/cma_core.hh"
 
-#include "include/chatline_g.h"
-#include "include/citydlg_g.h"
-#include "include/cityrep_g.h"
-#include "include/connectdlg_g.h"
-#include "include/inteldlg_g.h"
-#include "include/gui_main_g.h"
-#include "include/mapctrl_g.h"          /* popup_newcity_dialog() */
-#include "include/mapview_g.h"
-#include "include/menu_g.h"
-#include "include/messagewin_g.h"
-#include "include/pages_g.h"
-#include "include/plrdlg_g.h"
-#include "include/repodlgs_g.h"
-#include "include/spaceshipdlg_g.h"
+#include "include/chatline_g.hh"
+#include "include/citydlg_g.hh"
+#include "include/cityrep_g.hh"
+#include "include/connectdlg_g.hh"
+#include "include/inteldlg_g.hh"
+#include "include/gui_main_g.hh"
+#include "include/mapctrl_g.hh"          /* popup_newcity_dialog() */
+#include "include/mapview_g.hh"
+#include "include/menu_g.hh"
+#include "include/messagewin_g.hh"
+#include "include/pages_g.hh"
+#include "include/plrdlg_g.hh"
+#include "include/repodlgs_g.hh"
+#include "include/spaceshipdlg_g.hh"
 
-#include "packhand.h"
+#include "packhand.hh"
 
 static void handle_city_packet_common(city_t *pcity, bool is_new,
                                       bool popup, bool investigate);
@@ -131,8 +131,8 @@ static unit_t * unpackage_unit(struct packet_unit_info *packet)  /* 49 */
   if (punit->has_orders) {
     int i;
 
-    punit->orders.list
-      = wc_malloc(punit->orders.length * sizeof(*punit->orders.list));
+    punit->orders.list = static_cast<unit_order*>(
+        wc_malloc(punit->orders.length * sizeof(*punit->orders.list)));
     for (i = 0; i < punit->orders.length; i++) {
       punit->orders.list[i].order = packet->orders[i];
       punit->orders.list[i].dir = packet->orders_dirs[i];
@@ -157,7 +157,7 @@ static unit_t *unpackage_short_unit(struct packet_unit_short_info *packet)
   punit->tile = map_pos_to_tile(packet->x, packet->y);
   punit->veteran = packet->veteran;
   punit->hp = packet->hp;
-  punit->activity = packet->activity;
+  punit->activity = (unit_activity)packet->activity;
   punit->occupy = (packet->occupied ? 1 : 0);
   if (packet->transported) {
     punit->transported_by = packet->transported_by;
@@ -412,7 +412,7 @@ void handle_game_state(int value) /* 12 sc */
     popdown_races_dialog();
   }
 
-  set_client_state(value);
+  set_client_state((client_states)value);
 
   if (get_client_state() == CLIENT_GAME_RUNNING_STATE) {
     refresh_overview_canvas();
@@ -455,8 +455,8 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
   bool popup;
   bool update_descriptions = FALSE;
   bool name_changed = FALSE;
-  enum city_update needs_update =
-      UPDATE_TITLE | UPDATE_INFORMATION | UPDATE_CITIZENS | UPDATE_HAPPINESS;
+  enum city_update needs_update = static_cast<city_update>
+      (UPDATE_TITLE | UPDATE_INFORMATION | UPDATE_CITIZENS | UPDATE_HAPPINESS);
   unit_t *pfocus_unit = get_unit_in_focus();
   tile_t *ptile;
 
@@ -620,7 +620,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
         || pcity->common.currently_building != packet->currently_building
         || pcity->common.shield_surplus != packet->shield_surplus
         || pcity->common.shield_stock != packet->shield_stock) {
-      needs_update |= UPDATE_BUILDING;
+      needs_update = static_cast<city_update>(needs_update | UPDATE_BUILDING);
       if (draw_city_productions) {
         update_descriptions = TRUE;
       }
@@ -681,7 +681,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
         /* This one has been removed */
         update_trade_route_line(ptr); /* Should be delayed */
         game_trade_route_remove(ptr);
-        needs_update |= UPDATE_TRADE;
+        needs_update = static_cast<city_update>(needs_update| UPDATE_TRADE);
       }
     } established_trade_routes_iterate_end;
     /* Check new trade routes */
@@ -703,7 +703,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
         ptr->value = packet->trade_value[i];
         ptr->status = TR_ESTABLISHED;
         update_trade_route_line(ptr);
-        needs_update |= UPDATE_TRADE;
+        needs_update = static_cast<city_update>(needs_update| UPDATE_TRADE);
       }
     }
   }
@@ -741,7 +741,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
   }
   if (!are_worklists_equal(&pcity->common.worklist, &packet->worklist)) {
     copy_worklist(&pcity->common.worklist, &packet->worklist);
-    needs_update |= UPDATE_WORKLIST;
+    needs_update = static_cast<city_update>(needs_update | UPDATE_WORKLIST);
   }
   pcity->common.did_buy = packet->did_buy;
   pcity->common.did_sell = packet->did_sell;
@@ -767,7 +767,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
     }
     if (is_valid_city_coords(x, y)) {
       if (pcity->common.city_map[x][y] != packet->city_map[i]) {
-        needs_update |= UPDATE_MAP;
+        needs_update = static_cast<city_update>(needs_update | UPDATE_MAP);
       }
       set_worker_city(pcity, x, y, packet->city_map[i]);
     }
@@ -781,7 +781,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
                 && packet->improvements[i] == '0'))) {
       audio_play_sound(get_improvement_type(i)->soundtag,
                        get_improvement_type(i)->soundtag_alt);
-      needs_update |= UPDATE_IMPROVEMENTS;
+      needs_update = static_cast<city_update>(needs_update | UPDATE_IMPROVEMENTS);
     }
     update_improvement_from_packet(pcity, i, packet->improvements[i] == '1',
                                    &need_effect_update);
@@ -1219,11 +1219,11 @@ void handle_page_msg(char *message, enum event_type event) /* 84 sc */
     if (lines) {
       *(lines++) = '\0';
     } else {
-      lines = "";
+      lines = (char*)"";
     }
   } else {
-    headline = "";
-    lines = "";
+    headline = (char*)"";
+    lines = (char*)"";
   }
 
   if (!get_player_ptr()
@@ -1492,7 +1492,8 @@ static bool handle_unit_packet_common(unit_t *packet_unit)
       homecity = find_city_by_id(punit->homecity);
       if (homecity) {
         unit_list_prepend(homecity->common.units_supported, punit);
-        homecity_needs_update |= UPDATE_SUPPORTED_UNITS;
+        homecity_needs_update = static_cast<city_update>
+            (homecity_needs_update | UPDATE_SUPPORTED_UNITS);
       }
     }
 
@@ -1550,7 +1551,7 @@ static bool handle_unit_packet_common(unit_t *packet_unit)
         }
 
         if (pcity->common.id == punit->homecity) {
-          homecity_needs_update |= UPDATE_PRESENT_UNITS;
+          homecity_needs_update = static_cast<enum city_update>(homecity_needs_update | UPDATE_PRESENT_UNITS);
         } else {
           refresh_city_dialog(pcity, UPDATE_PRESENT_UNITS);
         }
@@ -1567,7 +1568,7 @@ static bool handle_unit_packet_common(unit_t *packet_unit)
         }
 
         if (pcity->common.id == punit->homecity) {
-          homecity_needs_update |= UPDATE_PRESENT_UNITS;
+          homecity_needs_update = static_cast<enum city_update>(homecity_needs_update | UPDATE_PRESENT_UNITS);
         } else {
           refresh_city_dialog(pcity, UPDATE_PRESENT_UNITS);
         }
@@ -1596,24 +1597,28 @@ static bool handle_unit_packet_common(unit_t *packet_unit)
 
     if (punit->unhappiness != packet_unit->unhappiness) {
       punit->unhappiness = packet_unit->unhappiness;
-      homecity_needs_update |= UPDATE_HAPPINESS | UPDATE_SUPPORTED_UNITS;
+      homecity_needs_update = static_cast<enum city_update>
+          (homecity_needs_update | UPDATE_HAPPINESS | UPDATE_SUPPORTED_UNITS);
     }
     if (punit->upkeep != packet_unit->upkeep) {
       punit->upkeep = packet_unit->upkeep;
-      homecity_needs_update |= UPDATE_INFORMATION | UPDATE_SUPPORTED_UNITS;
+      homecity_needs_update = static_cast<city_update>
+          (homecity_needs_update | UPDATE_INFORMATION | UPDATE_SUPPORTED_UNITS);
     }
     if (punit->upkeep_food != packet_unit->upkeep_food) {
       punit->upkeep_food = packet_unit->upkeep_food;
-      homecity_needs_update |= UPDATE_INFORMATION | UPDATE_SUPPORTED_UNITS;
+      homecity_needs_update = static_cast<enum city_update>
+          (homecity_needs_update | UPDATE_INFORMATION | UPDATE_SUPPORTED_UNITS);
     }
     if (punit->upkeep_gold != packet_unit->upkeep_gold) {
       punit->upkeep_gold = packet_unit->upkeep_gold;
-      homecity_needs_update |= UPDATE_INFORMATION | UPDATE_SUPPORTED_UNITS;
+      homecity_needs_update = static_cast<city_update>
+          (homecity_needs_update | UPDATE_INFORMATION | UPDATE_SUPPORTED_UNITS);
     }
     if (repaint_unit) {
       city_t *pcity = map_get_city(punit->tile);
 
-      homecity_needs_update |= UPDATE_SUPPORTED_UNITS;
+      homecity_needs_update = static_cast<city_update>(homecity_needs_update | UPDATE_SUPPORTED_UNITS);
       if (pcity) {
         refresh_city_dialog(pcity, UPDATE_PRESENT_UNITS);
       }
@@ -2026,7 +2031,7 @@ static bool read_player_info_techs(player_t *pplayer,
 
   tech_type_iterate(i) {
     enum tech_state oldstate = pplayer->research.inventions[i].state;
-    enum tech_state newstate = inventions[i] - '0';
+    enum tech_state newstate = static_cast<tech_state>(inventions[i] - '0');
 
     pplayer->research.inventions[i].state = newstate;
     if (newstate != oldstate
@@ -2228,7 +2233,7 @@ void handle_player_info(struct packet_player_info *pinfo) /* 39 sc */
   pplayer->nturns_idle = pinfo->nturns_idle;
   pplayer->is_alive = pinfo->is_alive;
 
-  pplayer->ai.barbarian_type = pinfo->barbarian_type;
+  pplayer->ai.barbarian_type = (barbarian_type)pinfo->barbarian_type;
   pplayer->revolution_finishes = pinfo->revolution_finishes;
   if (pplayer->ai.control != pinfo->ai)  {
     pplayer->ai.control = pinfo->ai;
@@ -2317,7 +2322,7 @@ void handle_conn_info(struct packet_conn_info *pinfo) /* 86 sc */
       freelog(LOG_VERBOSE, "Server reports new connection %d %s",
               pinfo->id, pinfo->username);
 
-      pconn = wc_calloc(1, sizeof(connection_t));
+      pconn = static_cast<connection_t*>(wc_calloc(1, sizeof(connection_t)));
       pconn->buffer = NULL;
       pconn->send_buffer = NULL;
       pconn->ping_time = -1.0;
@@ -2574,7 +2579,7 @@ void handle_spaceship_info(struct packet_spaceship_info *p) /* 95 sc */
   printf("travel_time=%f\n", p->travel_time);
 # endif
 
-  ship->state        = p->sship_state;
+  ship->state        = (spaceship_state)p->sship_state;
   ship->structurals  = p->structurals;
   ship->components   = p->components;
   ship->modules      = p->modules;
@@ -2663,7 +2668,7 @@ void handle_tile_info(struct packet_tile_info *packet) /* 14 sc */
   if (ptile->u.client.known != packet->known) {
     known_changed = TRUE;
   }
-  ptile->u.client.known = packet->known;
+  ptile->u.client.known = (known_type)packet->known;
 
   if (packet->spec_sprite[0] != '\0') {
     if (!ptile->spec_sprite
@@ -2831,9 +2836,10 @@ void handle_select_races(void) /* 114 sc */
 
     /* Then clear the nations used.  They are filled by a
      * PACKET_NATION_UNAVAILABLE packet that follows. */
-    nations_used = wc_realloc(nations_used,
+    nations_used = static_cast<bool*>(
+                   wc_realloc(nations_used,
                               game.ruleset_control.playable_nation_count
-                              * sizeof(nations_used));
+                              * sizeof(nations_used)));
     memset(nations_used, 0,
            game.ruleset_control.playable_nation_count * sizeof(nations_used));
 
@@ -2989,7 +2995,7 @@ void handle_ruleset_unit(struct packet_ruleset_unit *p) /* 96 sc */
   sz_strlcpy(u->sound_fight, p->sound_fight);
   sz_strlcpy(u->sound_fight_alt, p->sound_fight_alt);
 
-  u->move_type          = p->move_type;
+  u->move_type          = (unit_move_type)p->move_type;
   u->build_cost         = p->build_cost;
   u->pop_cost           = p->pop_cost;
   u->attack_strength    = p->attack_strength;
@@ -3159,18 +3165,33 @@ void handle_ruleset_building(struct packet_ruleset_building *p) /* 104 sc */
   sz_strlcpy(b->soundtag, p->soundtag);
   sz_strlcpy(b->soundtag_alt, p->soundtag_alt);
 
-#define T(elem,count,last) \
-  b->elem = wc_malloc(sizeof(*b->elem) * (p->count + 1)); \
-  for (i = 0; i < p->count; i++) { \
-    b->elem[i] = p->elem[i]; \
-  } \
-  b->elem[p->count] = last;
+  //T(terr_gate, terr_gate_count, T_NONE);
+  b->terr_gate = (Terrain_type_id*)wc_malloc(sizeof(*b->terr_gate) * (p->terr_gate_count + 1));
+  for (i = 0; i < p->terr_gate_count; i++) {
+    b->terr_gate[i] = p->terr_gate[i];
+  }
+  b->terr_gate[p->terr_gate_count] = T_NONE;
 
-  T(terr_gate, terr_gate_count, T_NONE);
-  T(spec_gate, spec_gate_count, S_NO_SPECIAL);
-  T(equiv_dupl, equiv_dupl_count, B_LAST);
-  T(equiv_repl, equiv_repl_count, B_LAST);
-#undef T
+  //T(spec_gate, spec_gate_count, S_NO_SPECIAL);
+  b->spec_gate = (enum tile_special_type *)wc_malloc(sizeof(*b->spec_gate) * (p->spec_gate_count + 1));
+  for (i = 0; i < p->spec_gate_count; i++) {
+    b->spec_gate[i] = p->spec_gate[i];
+  }
+  b->spec_gate[p->spec_gate_count] = S_NO_SPECIAL;
+
+  //T(equiv_dupl, equiv_dupl_count, B_LAST);
+  b->equiv_dupl = (Impr_Type_id *)wc_malloc(sizeof(*b->equiv_dupl) * (p->equiv_dupl_count + 1));
+  for (i = 0; i < p->equiv_dupl_count; i++) {
+    b->equiv_dupl[i] = p->equiv_dupl[i];
+  }
+  b->equiv_dupl[p->equiv_dupl_count] = B_LAST;
+
+  //T(equiv_repl, equiv_repl_count, B_LAST);
+  b->equiv_repl = (Impr_Type_id *)wc_malloc(sizeof(*b->equiv_repl) * (p->equiv_repl_count + 1));
+  for (i = 0; i < p->equiv_repl_count; i++) {
+    b->equiv_repl[i] = p->equiv_repl[i];
+  }
+  b->equiv_repl[p->equiv_repl_count] = B_LAST;
 
 #ifdef DEBUG
   if(p->id == game.ruleset_control.num_impr_types-1) {
@@ -3350,7 +3371,7 @@ void handle_ruleset_government(struct packet_ruleset_government *p) /* 100 sc */
   sz_strlcpy(gov->graphic_str, p->graphic_str);
   sz_strlcpy(gov->graphic_alt, p->graphic_alt);
 
-  gov->ruler_titles = wc_calloc(gov->num_ruler_titles,
+  gov->ruler_titles = (ruler_title*)wc_calloc(gov->num_ruler_titles,
                                 sizeof(struct ruler_title));
 
   gov->helptext = mystrdup(p->helptext);
@@ -3595,7 +3616,7 @@ void handle_ruleset_nation(struct packet_ruleset_nation *p) /* 102 sc */
   sz_strlcpy(pl->flag_graphic_str, p->graphic_str);
   sz_strlcpy(pl->flag_graphic_alt, p->graphic_alt);
   pl->leader_count = p->leader_count;
-  pl->leaders = wc_malloc(sizeof(*pl->leaders) * pl->leader_count);
+  pl->leaders = (leader*)wc_malloc(sizeof(*pl->leaders) * pl->leader_count);
   for (i = 0; i < pl->leader_count; i++) {
     pl->leaders[i].name = mystrdup(p->leader_name[i]);
     pl->leaders[i].is_male = p->leader_sex[i];
@@ -4030,9 +4051,9 @@ void set_reports_thaw_request(int request_id)
   }
 
   reports_thaw_requests_size++;
-  reports_thaw_requests =
+  reports_thaw_requests = static_cast<int*>(
       wc_realloc(reports_thaw_requests,
-                 reports_thaw_requests_size * sizeof(int));
+                 reports_thaw_requests_size * sizeof(int)));
   reports_thaw_requests[reports_thaw_requests_size - 1] = request_id;
 }
 

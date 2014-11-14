@@ -13,10 +13,10 @@
 #ifndef WC_CLIENT_CIVCLIENT_H
 #define WC_CLIENT_CIVCLIENT_H
 
-#include "game.h"               /* enum client_states */
-#include "packets.h"            /* enum report_type */
-#include "shared.h"             /* MAX_LEN_NAME */
-#include "version.h"
+#include "game.hh"               /* enum client_states */
+#include "packets.hh"            /* enum report_type */
+#include "shared.hh"             /* MAX_LEN_NAME */
+#include "version.hh"
 
 /*
  * Every TIMER_INTERVAL milliseconds real_timer_callback is

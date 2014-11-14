@@ -19,16 +19,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "city.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "map.h"
-#include "support.h"
+#include "city.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "map.hh"
+#include "support.hh"
 
-#include "agents/cma_fec.h"
-#include "options.h"
+#include "agents/cma_fec.hh"
+#include "options.hh"
 
-#include "cityrepdata.h"
+#include "cityrepdata.hh"
 
 /************************************************************************
  cr_entry = return an entry (one column for one city) for the city report

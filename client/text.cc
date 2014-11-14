@@ -19,22 +19,22 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "map.h"
-#include "combat.h"
-#include "government.h"
+#include "city.hh"
+#include "map.hh"
+#include "combat.hh"
+#include "government.hh"
 
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "control.h"
-#include "goto.h"
-#include "multiselect.h"
-#include "text.h"
+#include "civclient.hh"
+#include "climisc.hh"
+#include "clinet.hh"
+#include "control.hh"
+#include "goto.hh"
+#include "multiselect.hh"
+#include "text.hh"
 
 /*
  * An individual add(_line) string has to fit into GROW_TMP_SIZE. One buffer
@@ -63,7 +63,7 @@ wc__attribute((__format__(__printf__, 3, 4)));
   static size_t out_size = 0;   \
   if (!out) {                   \
     out_size = START_SIZE;      \
-    out = wc_malloc(out_size);  \
+    out = (char*)wc_malloc(out_size);  \
   }                             \
   out[0] = '\0';
 
@@ -110,7 +110,7 @@ static void grow_printf(char **buffer, size_t *buffer_size,
             (unsigned long)*buffer_size, (unsigned long)new_size, buf);
 
     *buffer_size = new_size;
-    *buffer = wc_realloc(*buffer, *buffer_size);
+    *buffer = (char*)wc_realloc(*buffer, *buffer_size);
   }
   mystrlcat(*buffer, buf, *buffer_size);
 }
@@ -454,18 +454,18 @@ const char *concat_tile_activity_text(tile_t *ptile)
   } unit_list_iterate_end;
 
   for (i = 0; i < ACTIVITY_LAST; i++) {
-    if (is_build_or_clean_activity(i) && activity_units[i] > 0) {
+    if (is_build_or_clean_activity((unit_activity)i) && activity_units[i] > 0) {
       if (num_activities > 0) {
         add("/");
       }
-      remains = map_activity_time(i, ptile) - activity_total[i];
+      remains = map_activity_time((unit_activity)i, ptile) - activity_total[i];
       if (remains > 0) {
         turns = 1 + (remains + activity_units[i] - 1) / activity_units[i];
       } else {
         /* activity will be finished this turn */
         turns = 1;
       }
-      add("%s(%d)", get_activity_text(i), turns);
+      add("%s(%d)", get_activity_text((unit_activity)i), turns);
       num_activities++;
     }
   }
@@ -638,7 +638,7 @@ const char *get_unit_info_label_text2(unit_t *punit)
 
     add_line("%s", map_get_tile_info_text(punit->tile));
     if (infrastructure) {
-      add_line("%s", map_get_infrastructure_text(infrastructure));
+      add_line("%s", map_get_infrastructure_text((tile_special_type)infrastructure));
     } else {
       add_line(" ");
     }

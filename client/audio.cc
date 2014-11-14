@@ -20,32 +20,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
 
 #ifdef AMIGA
-#include "audio_amiga.h"
+#include "audio_amiga.hh"
 #endif
 #ifdef ESD
-#include "audio_esd.h"
+#include "audio_esd.hh"
 #endif
-#include "audio_none.h"
+#include "audio_none.hh"
 #ifdef SDL
-#include "audio_sdl.h"
+#include "audio_sdl.hh"
 #endif
 #ifdef WINMM
-#include "audio_winmm.h"
+#include "audio_winmm.hh"
 #endif
 #ifdef ALSA
-#include "audio_alsa.h"
+#include "audio_alsa.hh"
 #endif
 
-#include "audio.h"
+#include "audio.hh"
 
 #define MAX_NUM_PLUGINS         4
 #define SNDSPEC_SUFFIX          ".soundspec"
@@ -364,7 +364,7 @@ static bool audio_play_tag(const char *tag, bool repeat)
 **************************************************************************/
 void audio_play_sound(const char *const tag, char *const alt_tag)
 {
-  char *pretty_alt_tag = alt_tag ? alt_tag : "(null)";
+  char const *pretty_alt_tag = alt_tag ? alt_tag : "(null)";
 
   assert(tag != NULL);
 
@@ -382,7 +382,7 @@ void audio_play_sound(const char *const tag, char *const alt_tag)
 **************************************************************************/
 void audio_play_music(const char *const tag, char *const alt_tag)
 {
-  char *pretty_alt_tag = alt_tag ? alt_tag : "(null)";
+  char const *pretty_alt_tag = alt_tag ? alt_tag : "(null)";
 
   assert(tag != NULL);
 
@@ -481,6 +481,6 @@ void audio_set_volume(int volume)
 **************************************************************************/
 void audio_change_volume(struct client_option *option)
 {
-  audio_set_volume(*option->u.integer.pvalue);
+  audio_set_volume(*option->u.integer_o.pvalue);
 }
 #endif /* AUDIO_VOLUME */

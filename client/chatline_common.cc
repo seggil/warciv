@@ -19,22 +19,22 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "astring.h"
-#include "log.h"
-#include "packets.h"
-#include "support.h"
+#include "astring.hh"
+#include "log.hh"
+#include "packets.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "map.h"
-#include "unit.h"
+#include "city.hh"
+#include "map.hh"
+#include "unit.hh"
 
-#include "civclient.h"
-#include "clinet.h"
-#include "options.h"
+#include "civclient.hh"
+#include "clinet.hh"
+#include "options.hh"
 
-#include "include/chatline_g.h"
+#include "include/chatline_g.hh"
 
-#include "chatline_common.h"
+#include "chatline_common.hh"
 
 /* Stored up buffer of lines for the chatline */
 struct remaining {
@@ -42,7 +42,7 @@ struct remaining {
   int conn_id;
 };
 #define SPECLIST_TAG remaining
-#include "speclist.h"
+#include "speclist.hh"
 #define remaining_list_iterate(rlist, pline) \
   TYPED_LIST_ITERATE(struct remaining, rlist, pline)
 #define remaining_list_iterate_end LIST_ITERATE_END
@@ -220,7 +220,7 @@ void append_output_window_full(const char *astring, int conn_id)
   if (frozen_level == 0) {
     real_append_output_window(astring, conn_id);
   } else {
-    struct remaining *premain = wc_malloc(sizeof(*premain));
+    struct remaining *premain = static_cast<remaining*>(wc_malloc(sizeof(*premain)));
 
     remaining_list_append(remains, premain);
     premain->text = mystrdup(astring);

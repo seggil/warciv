@@ -17,23 +17,23 @@
 
 #include <assert.h>
 
-#include "wc_intl.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "connection.h"
-#include "game.h"
-#include "government.h"
-#include "player.h"
-#include "unit.h"
+#include "city.hh"
+#include "connection.hh"
+#include "game.hh"
+#include "government.hh"
+#include "player.hh"
+#include "unit.hh"
 
-#include "civclient.h"
-#include "climisc.h"
-#include "text.h"
+#include "civclient.hh"
+#include "climisc.hh"
+#include "text.hh"
 
-#include "include/plrdlg_g.h"
+#include "include/plrdlg_g.hh"
 
-#include "plrdlg_common.h"
+#include "plrdlg_common.hh"
 
 static int frozen_level = 0;
 

@@ -14,8 +14,8 @@
 #ifndef WC_CLIENT_TRADE_H
 #define WC_CLIENT_TRADE_H
 
-#include "city.h"
-#include "unit.h"
+#include "city.hh"
+#include "unit.hh"
 
 void trade_init(void);
 void trade_free(void);

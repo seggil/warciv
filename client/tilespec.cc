@@ -26,35 +26,35 @@
 #include <stdlib.h>             /* exit */
 #include <string.h>
 
-#include "astring.h"
-#include "capability.h"
-#include "wc_intl.h"
-#include "game.h" /* for fill_xxx */
-#include "government.h"
-#include "hash.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "nation.h"
-#include "player.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
-#include "unit.h"
+#include "astring.hh"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "game.hh" /* for fill_xxx */
+#include "government.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "nation.hh"
+#include "player.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "unit.hh"
 
-#include "include/dialogs_g.h"
-#include "include/graphics_g.h"
-#include "include/mapview_g.h"  /* for update_map_canvas_visible */
-#include "include/plrdlg_g.h"
+#include "include/dialogs_g.hh"
+#include "include/graphics_g.hh"
+#include "include/mapview_g.hh"  /* for update_map_canvas_visible */
+#include "include/plrdlg_g.hh"
 
-#include "civclient.h"          /* for get_client_state() */
-#include "climap.h"             /* for tile_get_known() */
-#include "clinet.h"
-#include "control.h"            /* for fill_xxx */
-#include "multiselect.h"
-#include "options.h"            /* for fill_xxx */
+#include "civclient.hh"         /* for get_client_state() */
+#include "climap.hh"            /* for tile_get_known() */
+#include "clinet.hh"
+#include "control.hh"           /* for fill_xxx */
+#include "multiselect.hh"
+#include "options.hh"           /* for fill_xxx */
 
-#include "tilespec.h"
+#include "tilespec.hh"
 
 #define TILESPEC_SUFFIX ".tilespec"
 
@@ -126,7 +126,7 @@ struct specfile;
 
 #define SPECLIST_TAG specfile
 #define SPECLIST_TYPE struct specfile
-#include "speclist.h"
+#include "speclist.hh"
 
 #define specfile_list_iterate(list, pitem) \
     TYPED_LIST_ITERATE(struct specfile, list, pitem)
@@ -135,7 +135,7 @@ struct specfile;
 struct small_sprite;
 #define SPECLIST_TAG small_sprite
 #define SPECLIST_TYPE struct small_sprite
-#include "speclist.h"
+#include "speclist.hh"
 
 #define small_sprite_list_iterate(list, pitem) \
     TYPED_LIST_ITERATE(struct small_sprite, list, pitem)
@@ -322,7 +322,7 @@ static char *tilespec_fullname(const char *tileset_name)
     sz_strlcpy(default_tileset_name, tileset_name);
   }
 
-  fname = wc_malloc(strlen(tileset_name) + strlen(TILESPEC_SUFFIX) + 1);
+  fname = (char*)wc_malloc(strlen(tileset_name) + strlen(TILESPEC_SUFFIX) + 1);
   sprintf(fname, "%s%s", tileset_name, TILESPEC_SUFFIX);
 
   dname = datafilename(fname);
@@ -400,7 +400,7 @@ static void tilespec_free_toplevel(void)
   while (hash_num_entries(terrain_hash) > 0) {
     const struct terrain_drawing_data *draw;
 
-    draw = hash_value_by_number(terrain_hash, 0);
+    draw = static_cast<const terrain_drawing_data*>(hash_value_by_number(terrain_hash, 0));
     hash_delete_entry(terrain_hash, draw->name);
     free(draw->name);
     if (draw->mine_tag) {
@@ -647,7 +647,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
 
     j = -1;
     while (section_file_lookup(file, "%s.tiles%d.tag", gridnames[i], ++j)) {
-      struct small_sprite *ss = wc_malloc(sizeof(*ss));
+      struct small_sprite *ss = (small_sprite *)wc_malloc(sizeof(*ss));
       int row, column;
       int x1, y1;
       char **tags;
@@ -697,7 +697,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
   /* Load "extra" sprites.  Each sprite is one file. */
   i = -1;
   while (secfile_lookup_str_default(file, NULL, "extra.sprites%d.tag", ++i)) {
-    struct small_sprite *ss = wc_malloc(sizeof(*ss));
+    struct small_sprite *ss = static_cast<small_sprite *>(wc_malloc(sizeof(*ss)));
     char **tags;
     char *filename;
     int num_tags, k;
@@ -742,8 +742,8 @@ static char *tilespec_gfx_filename(const char *gfx_filename)
 
   while((gfx_current_fileext = *gfx_fileexts++))
   {
-    char *full_name =
-       wc_malloc(strlen(gfx_filename) + strlen(gfx_current_fileext) + 2);
+    char *full_name = static_cast<char*>(
+       wc_malloc(strlen(gfx_filename) + strlen(gfx_current_fileext) + 2));
     char *real_full_name;
 
     sprintf(full_name,"%s.%s",gfx_filename,gfx_current_fileext);
@@ -873,7 +873,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
                                          "tilespec.roadstyle");
   fogstyle = secfile_lookup_int_default(file, 0,
                                         "tilespec.fogstyle");
-  darkness_style = secfile_lookup_int(file, "tilespec.darkness_style");
+  darkness_style = (darkness_style_e)secfile_lookup_int(file, "tilespec.darkness_style");
   if (darkness_style < DARKNESS_NONE
       || darkness_style > DARKNESS_CARD_FULL
       || (darkness_style == DARKNESS_ISORECT
@@ -936,7 +936,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
   terrain_hash = hash_new(hash_fval_string, hash_fcmp_string);
 
   for (i = 0; i < num_terrains; i++) {
-    struct terrain_drawing_data *terr = wc_malloc(sizeof(*terr));
+    struct terrain_drawing_data *terr = (terrain_drawing_data*)wc_malloc(sizeof(*terr));
     char *cell_type;
     int l, j;
 
@@ -1068,7 +1068,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
   specfiles = specfile_list_new();
   small_sprites = small_sprite_list_new();
   for (i = 0; i < num_spec_files; i++) {
-    struct specfile *sf = wc_malloc(sizeof(*sf));
+    struct specfile *sf = (specfile*)wc_malloc(sizeof(*sf));
 
     freelog(LOG_DEBUG, "spec file %s", spec_filenames[i]);
 
@@ -1192,7 +1192,7 @@ void tilespec_setup_specialist_types(void)
 {
   /* Load the specialist sprite graphics. */
   specialist_type_iterate(i) {
-    struct citizen_type c = {.type = CITIZEN_SPECIALIST, .spec_type = i};
+    struct citizen_type c = {.type = CITIZEN_SPECIALIST, .spec_type = (Specialist_type_id)i};
     const char *name = get_citizen_name(c);
     char buffer[512];
     int j;
@@ -1222,7 +1222,7 @@ static void tilespec_setup_citizen_types(void)
 
   /* Load the citizen sprite graphics. */
   for (i = 0; i < NUM_TILES_CITIZEN; i++) {
-    struct citizen_type c = {.type = i};
+    struct citizen_type c = {.type = (citizen_type_type)i};
     const char *name = get_citizen_name(c);
 
     if (i == CITIZEN_SPECIALIST) {
@@ -1381,8 +1381,8 @@ static void tilespec_lookup_sprite_tags(void)
   if (num_tiles_explode_unit==0) {
     sprites.explode.unit = NULL;
   } else {
-    sprites.explode.unit = wc_calloc(num_tiles_explode_unit,
-                                     sizeof(struct Sprite *));
+    sprites.explode.unit = (Sprite**)wc_calloc(num_tiles_explode_unit,
+                                               sizeof(struct Sprite *));
 
     for (i = 0; i < num_tiles_explode_unit; i++) {
       my_snprintf(buffer, sizeof(buffer), "explode.unit_%d", i);
@@ -1647,9 +1647,9 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
     return;
   }
 
-  draw = hash_lookup_data(terrain_hash, tt->graphic_str);
+  draw = (terrain_drawing_data*)hash_lookup_data(terrain_hash, tt->graphic_str);
   if (!draw) {
-    draw = hash_lookup_data(terrain_hash, tt->graphic_alt);
+    draw = (terrain_drawing_data*)hash_lookup_data(terrain_hash, tt->graphic_alt);
     if (!draw) {
       freelog(LOG_FATAL, "No graphics %s or %s for %s terrain.",
               tt->graphic_str, tt->graphic_alt, tt->terrain_name);
@@ -1700,13 +1700,13 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
           /* FIXME: should use exp() or expi() here. */
           const int number = NUM_CORNER_DIRS * count * count * count;
 
-          draw->layer[l].cells
-            = wc_malloc(number * sizeof(*draw->layer[l].cells));
+          draw->layer[l].cells = (Sprite**)
+              wc_malloc(number * sizeof(*draw->layer[l].cells));
 
           for (i = 0; i < number; i++) {
             int value = i / NUM_CORNER_DIRS;
-            enum direction4 dir = i % NUM_CORNER_DIRS;
-            const char dirs[4] = "udrl"; /* Matches direction4 ordering */
+            enum direction4 dir = (direction4)(i % NUM_CORNER_DIRS);
+            const char dirs[4] = { 'u', 'd', 'r', 'l'}; /* Matches direction4 ordering */
 
             switch (draw->layer[l].match_style) {
             case MATCH_NONE:
@@ -1726,7 +1726,7 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
               {
                 int n = 0, s = 0, e = 0, w = 0;
                 int v1, v2, v3;
-                int this = draw->layer[l].match_type;
+                int this_ = draw->layer[l].match_type;
                 struct Sprite *sprite;
 
                 v1 = value % count;
@@ -1740,25 +1740,25 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
                 /* Assume merged cells.  This should be a separate option. */
                 switch (dir) {
                 case DIR4_NORTH:
-                  s = this;
+                  s = this_;
                   w = v1;
                   n = v2;
                   e = v3;
                   break;
                 case DIR4_EAST:
-                  w = this;
+                  w = this_;
                   n = v1;
                   e = v2;
                   s = v3;
                   break;
                 case DIR4_SOUTH:
-                  n = this;
+                  n = this_;
                   e = v1;
                   s = v2;
                   w = v3;
                   break;
                 case DIR4_WEST:
-                  e = this;
+                  e = this_;
                   s = v1;
                   w = v2;
                   n = v3;
@@ -1806,7 +1806,7 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
     const int offsets[4][2] = {
       {W / 2, 0}, {0, H / 2}, {W / 2, H / 2}, {0, 0}
     };
-    enum direction4 dir;
+    int /* enum direction4 */ dir;
 
     for (dir = 0; dir < 4; dir++) {
       assert(sprite_vector_size(&draw->layer[0].base) > 0);
@@ -1817,7 +1817,7 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
     }
   }
 
-  for (i=0; i<2; i++) {
+  for (i = 0; i < 2; i++) {
     const char *name = (i != 0) ? tt->special_2_name : tt->special_1_name;
     if (name[0] != '\0') {
       draw->special[i]
@@ -1863,7 +1863,7 @@ void tilespec_setup_nation_flag(int id)
   struct nation_type *nation = get_nation_by_idx(id);
   char *tags[] = {nation->flag_graphic_str,
                   nation->flag_graphic_alt,
-                  "f.unknown", NULL};
+                  (char*)"f.unknown", NULL};
   int i;
 
   nation->flag_sprite = NULL;
@@ -1976,14 +1976,14 @@ static void build_tile_data(tile_t *ptile,
                             Terrain_type_id *ter_type_near,
                             enum tile_special_type *tspecial_near)
 {
-  enum direction8 dir;
+  int /*enum direction8*/ dir;
 
   *tspecial = map_get_special(ptile);
   *ter_type = map_get_terrain(ptile);
 
   /* Loop over all adjacent tiles.  We should have an iterator for this. */
   for (dir = 0; dir < 8; dir++) {
-    tile_t *tile1 = mapstep(ptile, dir);
+    tile_t *tile1 = mapstep(ptile, (direction8)dir);
 
     if (tile1 && tile_get_known(tile1) != TILE_UNKNOWN) {
       tspecial_near[dir] = map_get_special(tile1);
@@ -2222,7 +2222,7 @@ static int fill_road_rail_sprite_array(struct drawn_sprite *sprs,
   struct drawn_sprite *saved_sprs = sprs;
   bool road, road_near[8], rail, rail_near[8];
   bool draw_road[8], draw_single_road, draw_rail[8], draw_single_rail;
-  enum direction8 dir;
+  int /* enum direction8 */ dir;
 
   if (!draw_roads_rails) {
     /* Don't draw anything. */
@@ -2458,7 +2458,7 @@ static int fill_blending_sprite_array(struct drawn_sprite *sprs,
   Terrain_type_id ttype = map_get_terrain(ptile);
 
   if (is_isometric && sprites.terrain[ttype]->is_blended) {
-    enum direction4 dir;
+    int dir;
     const int W = NORMAL_TILE_WIDTH, H = NORMAL_TILE_HEIGHT;
     const int offsets[4][2] = {
       {W/2, 0}, {0, H / 2}, {W / 2, H / 2}, {0, 0}
@@ -2470,7 +2470,7 @@ static int fill_blending_sprite_array(struct drawn_sprite *sprs,
      * get the "unknown" dither along the edge of the map.
      */
     for (dir = 0; dir < 4; dir++) {
-      tile_t *tile1 = mapstep(ptile, DIR4_TO_DIR8[dir]);
+      tile_t *tile1 = mapstep(ptile, (direction8)DIR4_TO_DIR8[dir]);
       Terrain_type_id other = ttype_near[DIR4_TO_DIR8[dir]];
 
       if (!tile1
@@ -2569,7 +2569,7 @@ static int fill_terrain_sprite_array(struct drawn_sprite *sprs,
         for (i = 0; i < NUM_CORNER_DIRS; i++) {
           const int count = draw->layer[l].match_count;
           int array_index = 0;
-          enum direction8 dir = dir_ccw(DIR4_TO_DIR8[i]);
+          enum direction8 dir = dir_ccw((direction8)DIR4_TO_DIR8[i]);
           int x = (is_isometric ? iso_offsets[i][0] : noniso_offsets[i][0]);
           int y = (is_isometric ? iso_offsets[i][1] : noniso_offsets[i][1]);
           int m[3] = {MATCH(dir_ccw(dir)), MATCH(dir), MATCH(dir_cw(dir))};
@@ -2626,7 +2626,7 @@ static int fill_terrain_sprite_array(struct drawn_sprite *sprs,
           const int W = NORMAL_TILE_WIDTH, H = NORMAL_TILE_HEIGHT;
           int offsets[4][2] = {{W / 2, 0}, {0, H / 2}, {W / 2, H / 2}, {0, 0}};
 
-          if (UNKNOWN(DIR4_TO_DIR8[i])) {
+          if (UNKNOWN((direction8)DIR4_TO_DIR8[i])) {
             ADD_SPRITE(sprites.tx.darkness[i], DRAW_NORMAL, TRUE,
                        offsets[i][0], offsets[i][1]);
           }
@@ -2950,13 +2950,13 @@ void tilespec_alloc_city_tiles(int count)
   int i;
 
   if (is_isometric)
-    sprites.city.tile_wall = wc_calloc( count, sizeof(struct Sprite**) );
-  sprites.city.tile = wc_calloc( count, sizeof(struct Sprite**) );
+    sprites.city.tile_wall = (Sprite***)wc_calloc( count, sizeof(struct Sprite**) );
+  sprites.city.tile = (Sprite***)wc_calloc( count, sizeof(struct Sprite**) );
 
   for (i=0; i<count; i++) {
     if (is_isometric)
-      sprites.city.tile_wall[i] = wc_calloc(MAX_CITY_TILES+2, sizeof(struct Sprite*));
-    sprites.city.tile[i] = wc_calloc(MAX_CITY_TILES+2, sizeof(struct Sprite*));
+      sprites.city.tile_wall[i] = (Sprite**)wc_calloc(MAX_CITY_TILES+2, sizeof(struct Sprite*));
+    sprites.city.tile[i] = (Sprite**)wc_calloc(MAX_CITY_TILES+2, sizeof(struct Sprite*));
   }
 }
 
@@ -3008,7 +3008,7 @@ static void classic_player_colors_init(void)
   int i;
 
   for (i = 0; i < ARRAY_SIZE(player_color); i++) {
-    player_color[i] = COLOR_STD_RACE0 + (i % PLAYER_COLORS_NUM);
+    player_color[i] = static_cast<color_std>(COLOR_STD_RACE0 + (i % PLAYER_COLORS_NUM));
   }
 }
 
@@ -3102,8 +3102,8 @@ static void team_player_colors_init(void)
     if (pteam->member_count > 0) {
       players_iterate(pplayer) {
         if (pplayer->team == pteam->id) {
-          player_color[pplayer->player_no] =
-            COLOR_STD_RACE0 + (n % PLAYER_COLORS_NUM);
+          player_color[pplayer->player_no] = static_cast<color_std>(
+            COLOR_STD_RACE0 + (n % PLAYER_COLORS_NUM));
         }
       } players_iterate_end;
       n++;
@@ -3113,7 +3113,8 @@ static void team_player_colors_init(void)
   /* Other colors */
   for (i = 0; i < ARRAY_SIZE(player_color); i++) {
     if (i >= game.info.nplayers || game.players[i].team == TEAM_NONE) {
-      player_color[i] = COLOR_STD_RACE0 + (n % PLAYER_COLORS_NUM);
+      player_color[i] = static_cast<color_std>(
+          COLOR_STD_RACE0 + (n % PLAYER_COLORS_NUM));
       n++;
     }
   }
@@ -3290,8 +3291,10 @@ static void unload_all_sprites(void )
   int i, entries = hash_num_entries(sprite_hash);
 
   for (i = 0; i < entries; i++) {
-    const char *tag_name = hash_key_by_number(sprite_hash, i);
-    struct small_sprite *ss = hash_lookup_data(sprite_hash, tag_name);
+    const char *tag_name = static_cast<const char *>(
+        hash_key_by_number(sprite_hash, i));
+    struct small_sprite *ss = static_cast<struct small_sprite *>(
+        hash_lookup_data(sprite_hash, tag_name));
 
     while (ss->ref_count > 0) {
       unload_sprite(tag_name);
@@ -3311,7 +3314,7 @@ void tilespec_free_tiles(void)
   unload_all_sprites();
 
   for (i = 0; i < entries; i++) {
-    const char *key = hash_key_by_number(sprite_hash, 0);
+    const char *key = (const char *)hash_key_by_number(sprite_hash, 0);
 
     hash_delete_entry(sprite_hash, key);
     free((void *) key);
@@ -3355,7 +3358,7 @@ struct Sprite *get_citizen_sprite(struct citizen_type type,
                                   int citizen_index,
                                   const city_t *pcity)
 {
-  struct ns_citizen_graphic *graphic;
+  struct named_sprites::ns_citizen_graphic *graphic;
 
   if (type.type == CITIZEN_SPECIALIST) {
     graphic = &sprites.specialist[type.spec_type];
@@ -3374,7 +3377,8 @@ struct Sprite *get_citizen_sprite(struct citizen_type type,
 struct Sprite *load_sprite(const char *tag_name)
 {
   /* Lookup information about where the sprite is found. */
-  struct small_sprite *ss = hash_lookup_data(sprite_hash, tag_name);
+  struct small_sprite *ss = static_cast<struct small_sprite *>(
+      hash_lookup_data(sprite_hash, tag_name));
 
   freelog(LOG_DEBUG, "load_sprite(tag='%s')", tag_name);
   if (!ss) {
@@ -3423,7 +3427,8 @@ struct Sprite *load_sprite(const char *tag_name)
 **************************************************************************/
 void unload_sprite(const char *tag_name)
 {
-  struct small_sprite *ss = hash_lookup_data(sprite_hash, tag_name);
+  struct small_sprite *ss = static_cast<struct small_sprite *>(
+      hash_lookup_data(sprite_hash, tag_name));
 
   assert(ss);
   assert(ss->ref_count >= 1);
@@ -3447,7 +3452,8 @@ void unload_sprite(const char *tag_name)
 bool sprite_exists(const char *tag_name)
 {
   /* Lookup information about where the sprite is found. */
-  struct small_sprite *ss = hash_lookup_data(sprite_hash, tag_name);
+  struct small_sprite *ss = static_cast<struct small_sprite *>(
+      hash_lookup_data(sprite_hash, tag_name));
 
   return (ss != NULL);
 }

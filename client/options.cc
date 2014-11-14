@@ -19,30 +19,30 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "iterator.h"
-#include "log.h"
-#include "mem.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
-#include "version.h"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "iterator.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "version.hh"
 
-#include "audio.h"
-#include "include/chatline_g.h"
-#include "cityrepdata.h"
-#include "civclient.h"
-#include "clinet.h"
-#include "agents/cma_fec.h"
-#include "control.h"
-#include "mapview_common.h"
-#include "multiselect.h"
-#include "plrdlg_common.h"
-#include "tilespec.h"
+#include "audio.hh"
+#include "include/chatline_g.hh"
+#include "cityrepdata.hh"
+#include "civclient.hh"
+#include "clinet.hh"
+#include "agents/cma_fec.hh"
+#include "control.hh"
+#include "mapview_common.hh"
+#include "multiselect.hh"
+#include "plrdlg_common.hh"
+#include "tilespec.hh"
 
-#include "options.h"
+#include "options.hh"
 
 /* The following function are define in gui/gamedlgs. */
 void fullscreen_mode_callback(struct client_option *poption);
@@ -312,7 +312,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .category = ocat,                                                      \
   .type = CLIENT_OPTION_TYPE_INTEGER,                                    \
   {                                                                      \
-    .integer = {                                                         \
+    .integer_o = {                                                       \
       .pvalue = &oname,                                                  \
       .def = odef,                                                       \
       .min = omin,                                                       \
@@ -329,7 +329,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .category = ocat,                                           \
   .type = CLIENT_OPTION_TYPE_BOOLEAN,                         \
   {                                                           \
-    .boolean = {                                              \
+    .boolean_o = {                                            \
       .pvalue = &oname,                                       \
       .def = odef,                                            \
     }                                                         \
@@ -444,7 +444,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .category = ocat,                                                         \
   .type = CLIENT_OPTION_TYPE_VOLUME,                                        \
   {                                                                         \
-    .integer = {                                                            \
+    .integer_o = {                                                          \
       .pvalue = &oname,                                                     \
       .def = odef,                                                          \
       .min = omin,                                                          \
@@ -778,7 +778,6 @@ struct client_option client_options[] = {
                     AUDIO_VOLUME_MAX,
                     audio_change_volume),
 #endif /* AUDIO_VOLUME */
-
   GEN_STR_OPTION(chat_time_format,
                  N_("Time format for chat messages"),
                  N_("All chat window messages will be prefixed by this "
@@ -893,7 +892,7 @@ struct client_option client_options[] = {
                         " %c: the continent number.\n"
                         " %C: the continent number as a string.\n"
                         " %n: the city numero on this continent.\n"
-                        " %n: the city numero on this continent as a string.\n"
+                        " %N: the city numero on this continent as a string.\n"
                         " %g: a global numero.\n"
                         " %G: a global numero as a string."),
                      CLIENT_OPTION_CATEGORY_GAMEPLAY,
@@ -1115,7 +1114,6 @@ struct client_option client_options[] = {
                     delayed_goto_auto_filter_change,
                     delayed_goto_get_auto_name,
                     NULL),
-
 #ifndef ASYNC_TRADE_PLANNING
   GEN_INT_OPTION(trade_time_limit,
                  N_("Time limit for trade planning calculation (seconds)"),
@@ -1167,7 +1165,7 @@ struct client_option client_options[] = {
                      "probably leave it disabled."),
                   CLIENT_OPTION_CATEGORY_NETWORK,
                   FALSE,
-                  NULL),
+                  NULL)
 };
 
 #undef GEN_INT_OPTION
@@ -1382,7 +1380,7 @@ static int compar_message_texts(const void *i1, const void *i2)
   int j1 = *(const int*)i1;
   int j2 = *(const int*)i2;
 
-  return mystrcasecmp(get_message_text(j1), get_message_text(j2));
+  return mystrcasecmp(get_message_text((event_type)j1), get_message_text((event_type)j2));
 }
 
 /****************************************************************
@@ -1459,13 +1457,13 @@ void client_options_init(void)
   client_options_iterate(op) {
     switch (op->type) {
     case CLIENT_OPTION_TYPE_BOOLEAN:
-      *op->u.boolean.pvalue = op->u.boolean.def;
+      *op->u.boolean_o.pvalue = op->u.boolean_o.def;
       continue;
     case CLIENT_OPTION_TYPE_INTEGER:
     case CLIENT_OPTION_TYPE_VOLUME:
-      assert(op->u.integer.def >= op->u.integer.min);
-      assert(op->u.integer.def <= op->u.integer.max);
-      *op->u.integer.pvalue = op->u.integer.def;
+      assert(op->u.integer_o.def >= op->u.integer_o.min);
+      assert(op->u.integer_o.def <= op->u.integer_o.max);
+      *op->u.integer_o.pvalue = op->u.integer_o.def;
       continue;
     case CLIENT_OPTION_TYPE_STRING:
     case CLIENT_OPTION_TYPE_PASSWORD:
@@ -1637,10 +1635,10 @@ int load_option_int(struct section_file *file,
 
   value = secfile_lookup_int_default(file, def, "client.%s", op->name);
 
-  if (value < op->u.integer.min || value > op->u.integer.max) {
+  if (value < op->u.integer_o.min || value > op->u.integer_o.max) {
     freelog(LOG_ERROR,
             "The value %d for option '%s' is out of scale [%d, %d].",
-            value, op->name, op->u.integer.min, op->u.integer.max);
+            value, op->name, op->u.integer_o.min, op->u.integer_o.max);
     return def;
   }
 
@@ -1770,11 +1768,11 @@ void load_general_options(void)
   client_options_iterate(op) {
     switch (op->type) {
     case CLIENT_OPTION_TYPE_BOOLEAN:
-      *op->u.boolean.pvalue = load_option_bool(&sf, op, op->u.boolean.def);
+      *op->u.boolean_o.pvalue = load_option_bool(&sf, op, op->u.boolean_o.def);
       break;
     case CLIENT_OPTION_TYPE_INTEGER:
     case CLIENT_OPTION_TYPE_VOLUME:
-      *op->u.integer.pvalue = load_option_int(&sf, op, op->u.integer.def);
+      *op->u.integer_o.pvalue = load_option_int(&sf, op, op->u.integer_o.def);
       break;
     case CLIENT_OPTION_TYPE_STRING:
     case CLIENT_OPTION_TYPE_PASSWORD:
@@ -1871,11 +1869,11 @@ void save_options(void)
   client_options_iterate(op) {
     switch (op->type) {
     case CLIENT_OPTION_TYPE_BOOLEAN:
-      secfile_insert_bool(&sf, *op->u.boolean.pvalue, "client.%s", op->name);
+      secfile_insert_bool(&sf, *op->u.boolean_o.pvalue, "client.%s", op->name);
       break;
     case CLIENT_OPTION_TYPE_INTEGER:
     case CLIENT_OPTION_TYPE_VOLUME:
-      secfile_insert_int(&sf, *op->u.integer.pvalue, "client.%s", op->name);
+      secfile_insert_int(&sf, *op->u.integer_o.pvalue, "client.%s", op->name);
       break;
     case CLIENT_OPTION_TYPE_STRING:
     case CLIENT_OPTION_TYPE_PASSWORD:
@@ -1926,7 +1924,7 @@ void save_options(void)
 
   for (i = 0; i < E_LAST; i++) {
     secfile_insert_int_comment(&sf, messages_where[i],
-                               get_message_text(i),
+                               get_message_text((event_type)i),
                                "client.message_where_%02d", i);
   }
 
@@ -2054,7 +2052,7 @@ void load_global_worklist(struct section_file *file, const char *path,
   pwl->is_valid = FALSE;
   strcpy(pwl->name, secfile_lookup_str_default(file, "", "%s.name", prefix));
   for (i = 0; i < MAX_LEN_WORKLIST; i++) {
-    pwl->wlefs[i] =
+    pwl->wlefs[i] = (worklist_elem_flag)
       secfile_lookup_int_default(file, WEF_END, "%s.wlef%d", prefix, i);
     pwl->wlids[i] =
       secfile_lookup_int_default(file, 0, "%s.wlid%d", prefix, i);

@@ -28,57 +28,57 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "netintf.h"
-#include "rand.h"
-#include "support.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "netintf.hh"
+#include "rand.hh"
+#include "support.hh"
 
-#include "capstr.h"
-#include "dataio.h"
-#include "game.h"
-#include "diptreaty.h"
-#include "idex.h"
-#include "map.h"
-#include "packets.h"
-#include "version.h"
+#include "capstr.hh"
+#include "dataio.hh"
+#include "game.hh"
+#include "diptreaty.hh"
+#include "idex.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "version.hh"
 
-#include "attribute.h"
-#include "audio.h"
-#include "cityrepdata.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "agents/cma_core.h"           /* kludge */
-#include "connectdlg_common.h"  /* client_kill_server() */
-#include "control.h"
-#include "goto.h"
-#include "helpdata.h"           /* boot_help_texts() */
-#include "multiselect.h"
-#include "options.h"
-#include "packhand.h"
-#include "tilespec.h"
-#include "trade.h"
+#include "attribute.hh"
+#include "audio.hh"
+#include "cityrepdata.hh"
+#include "climisc.hh"
+#include "clinet.hh"
+#include "agents/cma_core.hh"     /* kludge */
+#include "connectdlg_common.hh"  /* client_kill_server() */
+#include "control.hh"
+#include "goto.hh"
+#include "helpdata.hh"           /* boot_help_texts() */
+#include "multiselect.hh"
+#include "options.hh"
+#include "packhand.hh"
+#include "tilespec.hh"
+#include "trade.hh"
 
-#include "agents/agents.h"
+#include "agents/agents.hh"
 
-#include "include/chatline_g.h"
-#include "include/citydlg_g.h"
-#include "include/connectdlg_g.h"
-#include "include/dialogs_g.h"
-#include "include/diplodlg_g.h"
-#include "include/graphics_g.h"
-#include "include/gui_main_g.h"
-#include "include/mapctrl_g.h"
-#include "include/mapview_g.h"
-#include "include/menu_g.h"
-#include "include/messagewin_g.h"
-#include "include/pages_g.h"
-#include "include/plrdlg_g.h"
-#include "include/repodlgs_g.h"
+#include "include/chatline_g.hh"
+#include "include/citydlg_g.hh"
+#include "include/connectdlg_g.hh"
+#include "include/dialogs_g.hh"
+#include "include/diplodlg_g.hh"
+#include "include/graphics_g.hh"
+#include "include/gui_main_g.hh"
+#include "include/mapctrl_g.hh"
+#include "include/mapview_g.hh"
+#include "include/menu_g.hh"
+#include "include/messagewin_g.hh"
+#include "include/pages_g.hh"
+#include "include/plrdlg_g.hh"
+#include "include/repodlgs_g.hh"
 
-#include "civclient.h"
+#include "civclient.hh"
 
 
 /* The address and port of the server we are
@@ -462,7 +462,7 @@ void ui_exit(void)
 **************************************************************************/
 void handle_packet_input(void *packet, int opcode)
 {
-  if (!client_handle_packet(opcode, packet)) {
+  if (!client_handle_packet(static_cast<packet_type>(opcode), packet)) {
     freelog(LOG_ERROR,
             "Received unknown packet (opcode %d) from server!",
             opcode);

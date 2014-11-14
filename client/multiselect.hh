@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_MULTISELECT_H
 #define WC_CLIENT_MULTISELECT_H
 
-#include "shared.h"
-#include "unit.h"
-#include "unittype.h"
+#include "shared.hh"
+#include "unit.hh"
+#include "unittype.hh"
 
 /**********************************************************************
   This file contains:
@@ -202,7 +202,7 @@ struct delayed_goto_data {
 
 #define SPECLIST_TAG delayed_goto_data
 #define SPECLIST_TYPE struct delayed_goto_data
-#include "speclist.h"
+#include "speclist.hh"
 #define delayed_goto_data_list_iterate(alist, pitem)            \
   TYPED_LIST_ITERATE(struct delayed_goto_data, alist, pitem)
 #define delayed_goto_data_list_iterate_end LIST_ITERATE_END

@@ -21,12 +21,12 @@
 #include <windows.h>
 #include <mmsystem.h>
 
-#include "fcintl.h"
-#include "support.h"
+#include "fcintl.hh"
+#include "support.hh"
 
-#include "audio.h"
+#include "audio.hh"
 
-#include "audio_winmm.h"
+#include "audio_winmm.hh"
 
 /**************************************************************************
   Stop music

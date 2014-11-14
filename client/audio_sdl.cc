@@ -20,12 +20,12 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
 
-#include "log.h"
-#include "support.h"
+#include "log.hh"
+#include "support.hh"
 
-#include "audio.h"
+#include "audio.hh"
 
-#include "audio_sdl.h"
+#include "audio_sdl.hh"
 
 struct sample {
   Mix_Chunk *wave;

@@ -20,13 +20,13 @@
 
 #include <esd.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "audio.h"
+#include "audio.hh"
 
-#include "audio_esd.h"
+#include "audio_esd.hh"
 
 #define MAX_SAMPLES 8
 

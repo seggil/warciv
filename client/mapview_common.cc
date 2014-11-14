@@ -17,29 +17,29 @@
 
 #include <assert.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "map.h"
-#include "rand.h"
-#include "support.h"
-#include "timing.h"
-#include "traderoute.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "map.hh"
+#include "rand.hh"
+#include "support.hh"
+#include "timing.hh"
+#include "traderoute.hh"
 
-#include "include/graphics_g.h"
-#include "include/mapctrl_g.h"
-#include "include/mapview_g.h"
+#include "include/graphics_g.hh"
+#include "include/mapctrl_g.hh"
+#include "include/mapview_g.hh"
 
-#include "civclient.h"
-#include "climap.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "control.h"
-#include "goto.h"
-#include "include/gui_main_g.h"
-#include "mapview_common.h"
-#include "include/pages_g.h"
-#include "tilespec.h"
-#include "trade.h"
+#include "civclient.hh"
+#include "climap.hh"
+#include "climisc.hh"
+#include "clinet.hh"
+#include "control.hh"
+#include "goto.hh"
+#include "include/gui_main_g.hh"
+#include "mapview_common.hh"
+#include "include/pages_g.hh"
+#include "tilespec.hh"
+#include "trade.hh"  
 
 struct mapview_canvas mapview_canvas;
 struct overview_s overview;
@@ -505,12 +505,12 @@ static void base_set_mapview_origin(int gui_x0, int gui_y0)
 
     if (update_y1 > update_y0) {
       draw_map_canvas(0, update_y0 - gui_y0, width, update_y1 - update_y0,
-                      DRAW_SPRITES | DRAW_DECORATION);
+                      static_cast<draw_elements>(DRAW_SPRITES | DRAW_DECORATION));
     }
     if (update_x1 > update_x0) {
       draw_map_canvas(update_x0 - gui_x0, common_y0 - gui_y0,
                       update_x1 - update_x0, common_y1 - common_y0,
-                      DRAW_SPRITES | DRAW_DECORATION);
+                      static_cast<draw_elements>(DRAW_SPRITES | DRAW_DECORATION));
     }
   } else {
     update_map_canvas(0, 0, mapview_canvas.store_width,
@@ -1265,7 +1265,7 @@ static bool get_tile_boundaries(enum direction8 dir,
 void put_red_frame_tile(struct canvas *pcanvas,
                         int canvas_x, int canvas_y)
 {
-  enum direction8 dir;
+  int /* enum direction8 */ dir;
 
   for (dir = 0; dir < 8; dir++) {
     int start_x, start_y, end_x, end_y;
@@ -1280,7 +1280,7 @@ void put_red_frame_tile(struct canvas *pcanvas,
      * top of everything else, we don't have to worry about overlapping
      * tiles covering them up even in iso-view.  (See comments in
      * city_dialog_redraw_map and tile_draw_borders.) */
-    if (get_tile_boundaries(dir, 1, 1,
+    if (get_tile_boundaries((direction8)dir, 1, 1,
                             &start_x, &start_y, &end_x, &end_y)) {
       canvas_put_line(pcanvas, COLOR_STD_RED, LINE_NORMAL,
                       canvas_x + start_x, canvas_y + start_y,
@@ -1295,7 +1295,7 @@ void put_red_frame_tile(struct canvas *pcanvas,
 ****************************************************************************/
 static bool clear_nuke_graphic(void *data)
 {
-  struct nuke_graphic_info *ngi = data;
+  struct nuke_graphic_info *ngi = static_cast<nuke_graphic_info *>(data);
   if (!ngi) {
     return FALSE;
   }
@@ -1340,7 +1340,7 @@ void put_nuke_mushroom_pixmaps(tile_t *ptile)
 
   if (clear_nuke_tid == 0) {
     struct nuke_graphic_info *ngi;
-    ngi = wc_calloc(1, sizeof(*ngi));
+    ngi = static_cast<nuke_graphic_info*>(wc_calloc(1, sizeof(*ngi)));
     ngi->x = canvas_x;
     ngi->y = canvas_y;
     ngi->width = width;
@@ -1452,7 +1452,7 @@ static void tile_draw_map_grid(struct canvas *pcanvas,
                                tile_t *ptile,
                                int canvas_x, int canvas_y)
 {
-  enum direction8 dir;
+  int /* enum direction8 */ dir;
 
   if (!draw_map_grid) {
     return;
@@ -1461,10 +1461,10 @@ static void tile_draw_map_grid(struct canvas *pcanvas,
   for (dir = 0; dir < 8; dir++) {
     int start_x, start_y, end_x, end_y;
 
-    if (get_tile_boundaries(dir, 0, 1,
+    if (get_tile_boundaries((direction8)dir, 0, 1,
                             &start_x, &start_y, &end_x, &end_y)) {
       canvas_put_line(pcanvas,
-                      get_grid_color(ptile, dir),
+                      get_grid_color(ptile, (direction8)dir),
                       LINE_NORMAL,
                       canvas_x + start_x, canvas_y + start_y,
                       end_x - start_x, end_y - start_y);
@@ -1511,7 +1511,7 @@ static void tile_draw_selection(struct canvas *pcanvas,
                                 int canvas_x, int canvas_y, bool citymode)
 {
   const int inset = (is_isometric ? 0 : 1);
-  enum direction8 dir;
+  int /* enum direction8 */ dir;
 
   if (citymode) {
     return;
@@ -1527,12 +1527,12 @@ static void tile_draw_selection(struct canvas *pcanvas,
      * In iso-view the inset doesn't work perfectly (see comments about
      * this elsewhere) so we draw without an inset.  This may cover up the
      * map grid if it is drawn. */
-    if (get_tile_boundaries(dir, inset, 1,
+    if (get_tile_boundaries((direction8)dir, inset, 1,
                             &start_x, &start_y, &end_x, &end_y))
     {
       if (ptile->u.client.hilite == HILITE_CITY
           || (is_isometric
-              && (adjc_tile = mapstep(ptile, dir))
+              && (adjc_tile = mapstep(ptile, (direction8)dir))
               && adjc_tile->u.client.hilite == HILITE_CITY))
       {
         canvas_put_line(pcanvas, COLOR_STD_YELLOW, LINE_NORMAL,
@@ -1766,12 +1766,12 @@ void update_map_canvas(int canvas_x, int canvas_y,
       break;
     case MUT_DRAW:
       draw_map_canvas(canvas_x, canvas_y, witdh, height,
-                      DRAW_SPRITES | DRAW_DECORATION);
+                      static_cast<draw_elements>(DRAW_SPRITES | DRAW_DECORATION));
       dirty_rect(canvas_x, canvas_y, witdh, height);
       break;
     case MUT_WRITE:
       draw_map_canvas(canvas_x, canvas_y, witdh, height,
-                      DRAW_SPRITES | DRAW_DECORATION);
+                      static_cast<draw_elements>(DRAW_SPRITES | DRAW_DECORATION));
       flush_rectangle(canvas_x, canvas_y, witdh, height);
       redraw_selection_rectangle();
       gui_flush();

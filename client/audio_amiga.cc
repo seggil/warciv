@@ -25,13 +25,13 @@
 #include <proto/datatypes.h>
 #include <proto/intuition.h>
 
-#include "log.h"
-#include "support.h"
+#include "log.hh"
+#include "support.hh"
 
-#include "audio.h"
-#include "gui_main_g.h"
+#include "audio.hh"
+#include "include/gui_main_g.hh"
 
-#include "audio_amiga.h"
+#include "audio_amiga.hh"
 
 #define MAX_SAMPLES 8
 

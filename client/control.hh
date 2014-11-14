@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_CONTROL_H
 #define WC_CLIENT_CONTROL_H
 
-#include "packets.h"
+#include "packets.hh"
 
-#include "multiselect.h"
+#include "multiselect.hh"
 
 enum cursor_hover_state {
   HOVER_NONE = 0,

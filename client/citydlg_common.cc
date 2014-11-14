@@ -17,22 +17,22 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "city.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "include/citydlg_g.h"
-#include "include/mapview_g.h"
+#include "include/citydlg_g.hh"
 
-#include "citydlg_common.h"
-#include "civclient.h"          /* for can_client_issue_orders() */
-#include "climap.h"
-#include "clinet.h"
-#include "control.h"
-#include "mapview_common.h"
-#include "options.h"            /* for concise_city_production */
-#include "tilespec.h"           /* for is_isometric */
+#include "civclient.hh"         /* for can_client_issue_orders() */
+#include "climap.hh"
+#include "clinet.hh"
+#include "control.hh"
+#include "citydlg_common.hh"
+#include "tilespec.hh"           /* for is_isometric */
+#include "mapview_common.hh"
+#include "options.hh"           /* for concise_city_production */
+#include "include/mapview_g.hh"
 
 static int citydlg_width, citydlg_height;
 
@@ -408,7 +408,7 @@ void get_city_citizen_types(city_t *pcity, int index,
   specialist_type_iterate(sp) {
     for (n = 0; n < pcity->common.specialists[sp]; n++, i++) {
       citizens[i].type = CITIZEN_SPECIALIST;
-      citizens[i].spec_type = sp;
+      citizens[i].spec_type = static_cast<Specialist_type_id>(sp);
     }
   } specialist_type_iterate_end;
 
@@ -421,7 +421,8 @@ void get_city_citizen_types(city_t *pcity, int index,
 void city_rotate_specialist(city_t *pcity, int citizen_index)
 {
   struct citizen_type citizens[MAX_CITY_SIZE];
-  Specialist_type_id from, to;
+  Specialist_type_id from;
+  int to;
 
   if (citizen_index < 0 || citizen_index >= pcity->common.pop_size) {
     return;
@@ -440,10 +441,10 @@ void city_rotate_specialist(city_t *pcity, int citizen_index)
   assert(to >= 0 && to < SP_COUNT);
   do {
     to = (to + 1) % SP_COUNT;
-  } while (to != from && !city_can_use_specialist(pcity, to));
+  } while (to != from && !city_can_use_specialist(pcity, static_cast<Specialist_type_id>(to)));
 
-  if (from != to) {
-    city_change_specialist(pcity, from, to);
+  if (from != static_cast<Specialist_type_id>(to)) {
+    city_change_specialist(pcity, from, static_cast<Specialist_type_id>(to));
   }
 }
 

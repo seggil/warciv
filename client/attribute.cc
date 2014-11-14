@@ -17,19 +17,19 @@
 
 #include <assert.h>
 
-#include "wc_intl.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
+#include "wc_intl.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
 
-#include "dataio.h"
-#include "game.h"
-#include "packets.h"
+#include "dataio.hh"
+#include "game.hh"
+#include "packets.hh"
 
-#include "civclient.h"
-#include "clinet.h"
+#include "civclient.hh"
+#include "clinet.hh"
 
-#include "attribute.h"
+#include "attribute.hh"
 
 #define ATTRIBUTE_LOG_LEVEL     LOG_DEBUG
 
@@ -126,7 +126,7 @@ static enum attribute_serial serialize_hash( struct hash_table *hash,
   int *value_lengths;
   struct data_out dout;
 
-  value_lengths = wc_malloc(sizeof(int) * entries);
+  value_lengths = (int*)wc_malloc(sizeof(int) * entries);
 
   /*
    * Step 1: loop through all keys and fill value_lengths
@@ -172,7 +172,7 @@ static enum attribute_serial serialize_hash( struct hash_table *hash,
    * Step 5: fill out the body
    */
   for (i = 0; i < entries; i++) {
-    const struct attr_key *pkey = hash_key_by_number(hash, i);
+    const struct attr_key *pkey = static_cast<const struct attr_key*>(hash_key_by_number(hash, i));
     const void *pvalue = hash_value_by_number(hash, i);
 
     dio_put_uint32(&dout, value_lengths[i]);
@@ -251,7 +251,7 @@ static enum attribute_serial unserialize_hash( struct hash_table *hash,
           (unsigned int) data_length);
 
   for (i = 0; i < entries; i++) {
-    struct attr_key *pkey = wc_malloc(sizeof(*pkey));
+    struct attr_key *pkey = static_cast<attr_key*>(wc_malloc(sizeof(*pkey)));
     void *pvalue;
     int value_length;
     struct data_out dout;
@@ -392,7 +392,7 @@ void attribute_set(int key, int id, int x, int y, size_t data_length,
 
   assert(attribute_hash != NULL);
 
-  pkey = wc_malloc(sizeof(struct attr_key));
+  pkey = static_cast<attr_key*>(wc_malloc(sizeof(struct attr_key)));
   pkey->key = key;
   pkey->id = id;
   pkey->x = x;

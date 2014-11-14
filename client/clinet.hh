@@ -72,7 +72,7 @@ struct server {
 
 #define SPECLIST_TAG server
 #define SPECLIST_TYPE struct server
-#include "speclist.h"
+#include "speclist.hh"
 
 #define server_list_iterate(serverlist, pserver) \
   TYPED_LIST_ITERATE(struct server, serverlist, pserver)

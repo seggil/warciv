@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_PLRDLG_COMMON_H
 #define WC_CLIENT_PLRDLG_COMMON_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"         /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 void plrdlg_freeze(void);
 void plrdlg_thaw(void);

@@ -19,27 +19,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "game.h"
-#include "player.h"
-#include "unit.h"
+#include "city.hh"
+#include "game.hh"
+#include "player.hh"
+#include "unit.hh"
 
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "control.h"
-#include "goto.h"
-#include "multiselect.h"
+#include "civclient.hh"
+#include "climisc.hh"
+#include "clinet.hh"
+#include "control.hh"
+#include "goto.hh"
+#include "multiselect.hh"
 
-#include "include/chatline_g.h"
-#include "include/mapview_g.h"
-#include "include/menu_g.h"
+#include "include/chatline_g.hh"
+#include "include/mapview_g.hh"
+#include "include/menu_g.hh"
 
 /**********************************************************************
   Filters...
@@ -519,7 +519,7 @@ struct scity {
 
 #define SPECLIST_TAG scity
 #define SPECLIST_TYPE struct scity
-#include "speclist.h"
+#include "speclist.hh"
 #define scity_list_iterate(alist,pitem) \
   TYPED_LIST_ITERATE(struct scity, alist, pitem)
 #define scity_list_iterate_end LIST_ITERATE_END
@@ -599,7 +599,7 @@ void multi_select_spread(void)
               && get_city_bonus(pcity, EFFECT_TYPE_AIRLIFT) == 0)) {
         continue;
       }
-      pscity = wc_malloc(sizeof(struct scity));
+      pscity = static_cast<scity*>(wc_malloc(sizeof(struct scity)));
       pscity->tdv = pscity->rdv = pscity->tav = pscity->rav = 0;
       pscity->pcity = pcity;
       pscity->ulist = unit_list_new();
@@ -787,11 +787,11 @@ void delayed_goto_add_unit(int dg, int id, int type, tile_t *ptile)
 {
   dgassert(dg);
 
-  struct delayed_goto_data *dgd
-    = wc_malloc(sizeof(struct delayed_goto_data));
+  struct delayed_goto_data *dgd = static_cast<delayed_goto_data*>(
+      wc_malloc(sizeof(struct delayed_goto_data)));
 
   dgd->id = id;
-  dgd->type = type;
+  dgd->type = static_cast<delayed_goto_type>(type);
   dgd->ptile = ptile;
   delayed_goto_data_list_append(delayed_goto_list[dg].dglist, dgd);
   delayed_goto_list[dg].pplayer = get_tile_player(ptile);
@@ -1377,7 +1377,8 @@ void request_execute_delayed_goto(tile_t *ptile, int dg)
       case DGT_PILLAGE:
         /*Road/Rail pillage */
         send_goto_unit(punit, dgd->ptile);
-        request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, S_ROAD | S_RAILROAD);
+        request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE,
+                                           static_cast<tile_special_type>(S_ROAD | S_RAILROAD));
         punit->is_new = FALSE;
         break;
       case DGT_ROAD:

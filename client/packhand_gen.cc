@@ -13,10 +13,10 @@
 #endif
 #include <stdio.h>
 
-#include "packets.h"
-#include "log.h"
+#include "packets.hh"
+#include "log.hh"
 
-#include "packhand_gen.h"
+#include "packhand_gen.hh"
 
 bool client_handle_packet(enum packet_type type, void *packet)
 {
@@ -81,19 +81,19 @@ bool client_handle_packet(enum packet_type type, void *packet)
     return TRUE;
 
   case PACKET_ENDGAME_REPORT:      /* 13 sc */
-    handle_endgame_report(packet); /* packhand */
+    handle_endgame_report((packet_endgame_report*)packet); /* packhand */
     return TRUE;
 
   case PACKET_TILE_INFO:      /* 14 sc */
-    handle_tile_info(packet); /* packhand */
+    handle_tile_info((packet_tile_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_GAME_INFO:      /* 15 sc */
-    handle_game_info(packet); /* packhand */
+    handle_game_info((packet_game_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_MAP_INFO:      /* 16 sc */
-    handle_map_info(packet); /* packhand */
+    handle_map_info((packet_map_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_NUKE_TILE_INFO: /* 17 sc */
@@ -119,11 +119,11 @@ bool client_handle_packet(enum packet_type type, void *packet)
     return TRUE;
 
   case PACKET_CITY_INFO:      /* 21 sc */
-    handle_city_info(packet); /* packhand */
+    handle_city_info((packet_city_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_CITY_SHORT_INFO:      /* 22 sc */
-    handle_city_short_info(packet); /* packhand */
+    handle_city_short_info((packet_city_short_info*)packet); /* packhand */
     return TRUE;
 
   /* PACKET_CITY_SELL 23;cs */
@@ -165,7 +165,7 @@ bool client_handle_packet(enum packet_type type, void *packet)
     return TRUE;
 
   case PACKET_PLAYER_INFO:      /* 39 sc */
-    handle_player_info(packet); /* packhand */
+    handle_player_info((packet_player_info*)packet); /* packhand */
     return TRUE;
 
   /* PACKET_PLAYER_TURN_DONE 40;cs */
@@ -177,7 +177,7 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_PLAYER_ATTRIBUTE_BLOCK=46;cs */
 
   case PACKET_PLAYER_ATTRIBUTE_CHUNK:      /* 47 cs, sc */
-    handle_player_attribute_chunk(packet); /* packhand */
+    handle_player_attribute_chunk((packet_player_attribute_chunk*)packet); /* packhand */
     return TRUE;
 
   case PACKET_UNIT_REMOVE: /* 48 sc */
@@ -186,11 +186,11 @@ bool client_handle_packet(enum packet_type type, void *packet)
     return TRUE;
 
   case PACKET_UNIT_INFO:      /* 49 sc */
-    handle_unit_info(packet); /* packhand */
+    handle_unit_info((packet_unit_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_UNIT_SHORT_INFO:      /* 50 sc */
-    handle_unit_short_info(packet); /* packhand */
+    handle_unit_short_info((packet_unit_short_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_UNIT_COMBAT_INFO: /* 51 sc */
@@ -291,11 +291,11 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_REPORT_REQ=85;cs */
 
   case PACKET_CONN_INFO:      /* 86 sc */
-    handle_conn_info(packet); /* packhand */
+    handle_conn_info((packet_conn_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_CONN_PING_INFO:      /* 87 sc */
-    handle_conn_ping_info(packet); /* packhand */
+    handle_conn_ping_info((packet_conn_ping_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_CONN_PING: /* 88 sc */
@@ -322,51 +322,51 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_SPACESHIP_PLACE=94;cs */
 
   case PACKET_SPACESHIP_INFO:      /* 95 sc */
-    handle_spaceship_info(packet); /* packhand */
+    handle_spaceship_info((packet_spaceship_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_UNIT:      /* 96 sc */
-    handle_ruleset_unit(packet); /* packhand */
+    handle_ruleset_unit((packet_ruleset_unit*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_GAME:      /* 97 sc */
-    handle_ruleset_game(packet); /* packhand */
+    handle_ruleset_game((packet_ruleset_game*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_GOVERNMENT_RULER_TITLE:      /* 98 sc */
-    handle_ruleset_government_ruler_title(packet); /* packhand */
+    handle_ruleset_government_ruler_title((packet_ruleset_government_ruler_title*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_TECH:      /* 99 sc */
-    handle_ruleset_tech(packet); /* packhand */
+    handle_ruleset_tech((packet_ruleset_tech*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_GOVERNMENT:      /* 100 sc */
-    handle_ruleset_government(packet); /* packhand */
+    handle_ruleset_government((packet_ruleset_government*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_TERRAIN_CONTROL:      /* 101 sc */
-    handle_ruleset_terrain_control(packet); /* packhand */
+    handle_ruleset_terrain_control((packet_ruleset_terrain_control*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_NATION:      /* 102 sc */
-    handle_ruleset_nation(packet); /* packhand */
+    handle_ruleset_nation((packet_ruleset_nation*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_CITY:      /* 103 sc */
-    handle_ruleset_city(packet); /* packhand */
+    handle_ruleset_city((packet_ruleset_city*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_BUILDING:      /* 104 sc */
-    handle_ruleset_building(packet); /* packhand */
+    handle_ruleset_building((packet_ruleset_building*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_TERRAIN:      /* 105 sc */
-    handle_ruleset_terrain(packet); /* packhand */
+    handle_ruleset_terrain((packet_ruleset_terrain*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_CONTROL:      /* 106 sc */
-    handle_ruleset_control(packet); /* packhand */
+    handle_ruleset_control((packet_ruleset_control*)packet); /* packhand */
     return TRUE;
 
   /* PACKET_UNIT_LOAD=107;cs */
@@ -380,15 +380,15 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* 110 */
 
   case PACKET_GAME_LOAD:      /* 111 sc */
-    handle_game_load(packet); /* gui-gtk-2.0/pages.c */
+    handle_game_load((packet_game_load*)packet); /* gui-gtk-2.0/pages.c */
     return TRUE;
 
   case PACKET_OPTIONS_SETTABLE_CONTROL:      /* 112 sc */
-    handle_options_settable_control(packet); /* client/repodlgs_common.c */
+    handle_options_settable_control((packet_options_settable_control*)packet); /* client/repodlgs_common.c */
     return TRUE;
 
   case PACKET_OPTIONS_SETTABLE:      /* 113 sc */
-    handle_options_settable(packet); /* client/repodlgs_common.c */
+    handle_options_settable((packet_options_settable*)packet); /* client/repodlgs_common.c */
     return TRUE;
 
   case PACKET_SELECT_RACES: /* 114 sc */
@@ -402,23 +402,23 @@ bool client_handle_packet(enum packet_type type, void *packet)
 /* 119 */
 
   case PACKET_RULESET_CACHE_GROUP:      /* 120 sc */
-    handle_ruleset_cache_group(packet); /* packhand */
+    handle_ruleset_cache_group((packet_ruleset_cache_group*)packet); /* packhand */
     return TRUE;
 
   case PACKET_RULESET_CACHE_EFFECT:      /* 121 sc */
-    handle_ruleset_cache_effect(packet); /* packhand */
+    handle_ruleset_cache_effect((packet_ruleset_cache_effect*)packet); /* packhand */
     return TRUE;
 
   case PACKET_TRADEROUTE_INFO:      /* 122 sc */
-    handle_traderoute_info(packet); /* packhand */
+    handle_traderoute_info((packet_traderoute_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_EXTGAME_INFO:      /* 123 sc */
-    handle_extgame_info(packet); /* packhand */
+    handle_extgame_info((packet_extgame_info*)packet); /* packhand */
     return TRUE;
 
   case PACKET_VOTE_NEW:      /* 124 sc */
-    handle_vote_new(packet); /* packhand */
+    handle_vote_new((packet_vote_new*)packet); /* packhand */
     return TRUE;
 
   case PACKET_VOTE_UPDATE: /* 125 sc */
@@ -454,7 +454,7 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* PACKET_UNIT_TRADE_ROUTE=132 */
 
   case PACKET_TRADE_ROUTE_INFO:      /* 133 sc */
-    handle_trade_route_info(packet); /* client/trade.c */
+    handle_trade_route_info((packet_trade_route_info*)packet); /* client/trade.c */
     return TRUE;
 
   /* 134 */
@@ -477,7 +477,7 @@ bool client_handle_packet(enum packet_type type, void *packet)
   /* 144 */
 
   case PACKET_CITY_MANAGER_PARAM:      /* 145 cs sc */
-    handle_city_manager_param(packet); /* packhand */
+    handle_city_manager_param((packet_city_manager_param*)packet); /* packhand */
     return TRUE;
 
   case PACKET_CITY_NO_MANAGER_PARAM: /* 146 cs sc */

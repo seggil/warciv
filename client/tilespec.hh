@@ -18,29 +18,31 @@
 #ifndef WC_CLIENT_TILESPEC_H
 #define WC_CLIENT_TILESPEC_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
-#include "citydlg_common.h"     /* enum citizen_type */
-#include "include/colors_g.h"
-#include "options.h"
+#include "citydlg_common.hh"    /* enum citizen_type */
+#include "include/colors_g.hh"
+#include "options.hh"
 
 struct Sprite;                  /* opaque; gui-dep */
 
-struct drawn_sprite {
-  enum ds_type {
-    DRAWN_SPRITE,       /* Draw a sprite. */
-    DRAWN_GRID,         /* Draw the map grid now. */
-    DRAWN_BG            /* Draw a solid BG. */
-  } type;
-
-  union ds_data {
-    struct ds_sprite {
-      enum ds_sprite_style {
+enum ds_sprite_style {
         /* Only applicable in iso-view.  "Full" sprites overlap into the top
          * half-tile of UNIT_TILE_HEIGHT. */
         DRAW_NORMAL,
         DRAW_FULL
-      } style;
+};
+enum ds_type {
+  DRAWN_SPRITE,       /* Draw a sprite. */
+  DRAWN_GRID,         /* Draw the map grid now. */
+  DRAWN_BG            /* Draw a solid BG. */
+};
+
+struct drawn_sprite {
+  enum ds_type type;
+  union ds_data {
+    struct ds_sprite {
+      enum ds_sprite_style style;
       bool foggable;    /* Set to FALSE for sprites that are never fogged. */
       struct Sprite *sprite;
       int offset_x, offset_y;   /* offset from tile origin */
@@ -125,7 +127,7 @@ enum cell_type {
 /* Create the sprite_vector type. */
 #define SPECVEC_TAG sprite
 #define SPECVEC_TYPE struct Sprite *
-#include "specvec.h"
+#include "specvec.hh"
 
 struct terrain_drawing_data {
   char *name;

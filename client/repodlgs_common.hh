@@ -14,10 +14,10 @@
 #ifndef WC_CLIENT_REPODLGS_COMMON_H
 #define WC_CLIENT_REPODLGS_COMMON_H
 
-#include "improvement.h"
-#include "unittype.h"
+#include "improvement.hh"
+#include "unittype.hh"
 
-#include "citydlg_common.h" /* for city request functions */
+#include "citydlg_common.hh" /* for city request functions */
 
 struct improvement_entry
 {

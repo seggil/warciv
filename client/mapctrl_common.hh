@@ -14,10 +14,10 @@
 #ifndef WC_CLIENT_MAPCTRL_COMMON_H
 #define WC_CLIENT_MAPCTRL_COMMON_H
 
-#include "map.h"                /* enum direction8 */
-#include "shared.h"             /* bool type */
+#include "map.hh"               /* enum direction8 */
+#include "shared.hh"            /* bool type */
 
-#include "control.h"            /* quickselect_type */
+#include "control.hh"           /* quickselect_type */
 
 extern bool rbutton_down;
 extern bool rectangle_active;

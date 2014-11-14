@@ -17,21 +17,21 @@
 
 #include <assert.h>
 
-#include "wc_intl.h"
-#include "mem.h"                /* free */
-#include "support.h"            /* my_snprintf */
+#include "wc_intl.hh"
+#include "mem.hh"                /* free */
+#include "support.hh"            /* my_snprintf */
 
-#include "game.h"
-#include "government.h"
-#include "map.h"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
 
-#include "include/repodlgs_g.h"
+#include "include/repodlgs_g.hh"
 
-#include "civclient.h"          /* can_client_issue_orders */
-#include "clinet.h"
-#include "control.h"
-#include "repodlgs_common.h"
-#include "packhand_gen.h"
+#include "civclient.hh"         /* can_client_issue_orders */
+#include "clinet.hh"
+#include "control.hh"
+#include "repodlgs_common.hh"
+#include "packhand_gen.hh"
 
 struct options_settable *settable_options;
 int num_settable_options;
@@ -245,7 +245,7 @@ void handle_options_settable_control( /* 112 sc */
 # endif
   settable_options_free();
 
-  options_categories = wc_malloc(packet->ncategories * sizeof(char *));
+  options_categories = (char**)wc_malloc(packet->ncategories * sizeof(char *));
   num_options_categories = packet->ncategories;
 
   for (i = 0; i < num_options_categories; i++) {
@@ -257,7 +257,7 @@ void handle_options_settable_control( /* 112 sc */
     return;
   }
 
-  settable_options = wc_malloc(packet->nids * sizeof(struct options_settable));
+  settable_options = (options_settable*)wc_malloc(packet->nids * sizeof(struct options_settable));
   num_settable_options = packet->nids;
 
   for (i = 0; i < num_settable_options; i++) {

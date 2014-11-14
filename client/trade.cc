@@ -14,35 +14,35 @@
 #  include "../config.h"
 #endif
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "connection.h"
-#include "game.h"
-#include "player.h"
-#include "traderoute.h"
-#include "unit.h"
+#include "city.hh"
+#include "connection.hh"
+#include "game.hh"
+#include "player.hh"
+#include "traderoute.hh"
+#include "unit.hh"
 
-#include "chatline_common.h" /* append_output_window()      */
-#include "civclient.h"
-#include "clinet.h"          /* aconnection                 */
-#include "climisc.h"
-#include "control.h"         /* request_new_unit_activity() */
-#include "goto.h"            /* request_orders_cleared()    */
-#include "mapview_common.h"  /* update_map_canvas_visible() */
-#include "multiselect.h"     /* multi_select_iterate()      */
-#include "options.h"
-#include "packhand_gen.h"
+#include "chatline_common.hh" /* append_output_window()      */
+#include "civclient.hh"
+#include "clinet.hh"          /* aconnection                 */
+#include "climisc.hh"
+#include "control.hh"         /* request_new_unit_activity() */
+#include "goto.hh"            /* request_orders_cleared()    */
+#include "mapview_common.hh"  /* update_map_canvas_visible() */
+#include "multiselect.hh"     /* multi_select_iterate()      */
+#include "options.hh"
+#include "packhand_gen.hh"
 
-#include "include/citydlg_g.h"       /* refresh_city_dialog()       */
-#include "include/dialogs_g.h"
-#include "include/mapview_g.h"       /* canvas_put_sprite_full()    */
-#include "include/menu_g.h"          /* update_auto_caravan_menu()  */
+#include "include/citydlg_g.hh"       /* refresh_city_dialog()       */
+#include "include/dialogs_g.hh"
+#include "include/mapview_g.hh"       /* canvas_put_sprite_full()    */
+#include "include/menu_g.hh"          /* update_auto_caravan_menu()  */
 
-#include "trade.h"
+#include "trade.hh"
 
 struct delayed_trade_route {
   int city1;
@@ -52,7 +52,7 @@ struct delayed_trade_route {
 
 #define SPECLIST_TAG delayed_trade_route
 #define SPECLIST_TYPE struct delayed_trade_route
-#include "speclist.h"
+#include "speclist.hh"
 
 #define delayed_trade_routes_iterate(pdtr) \
   TYPED_LIST_ITERATE(struct delayed_trade_route, delayed_trade_routes, pdtr)
@@ -152,7 +152,7 @@ void handle_trade_route_info(struct packet_trade_route_info *packet) /* 133 sc *
   ptr->pcity1 = pcity1; /* pcity1 and pcity2 could have been swapped */
   ptr->pcity2 = pcity2; /* pcity1 and pcity2 could have been swapped */
   ptr->punit = find_unit_by_id(packet->unit_id); /* find_unit_by_id(0) = NULL */
-  ptr->status = packet->status;
+  ptr->status = (trade_route_status)packet->status;
 
   if (pold_unit && ptr->punit != pold_unit) {
     pold_unit->ptr = NULL;
@@ -325,7 +325,7 @@ void clear_trade_planning(bool include_in_route)
             || (!include_in_route && ptr->status == TR_PLANNED)) {
           struct trade_route tr = *ptr;
 
-          ptr->status &= ~TR_PLANNED;
+          ptr->status = static_cast<trade_route_status>(ptr->status & ~TR_PLANNED);
           if (ptr->status == TR_NONE) {
             game_trade_route_remove(ptr);
           }
@@ -813,7 +813,7 @@ void request_unit_trade_route(unit_t *punit, city_t *pcity)
   /* Do it, waiting all units have been allocated */
   ptr->punit = punit;
   if (ptr->status & TR_IN_ROUTE) {
-    ptr->status ^= TR_IN_ROUTE;
+    ptr->status = static_cast<trade_route_status>(ptr->status ^ TR_IN_ROUTE);
   }
 
   turns = calculate_trade_move_turns(ptr);
@@ -863,7 +863,7 @@ void request_trade_route(city_t *pcity)
     city_list_iterate(get_player_ptr()->cities, pcity) {
       trade_route_list_iterate(pcity->common.trade_routes, ptr) {
         if (ptr->status <= TR_PLANNED && ptr->punit) {
-          ptr->status |= TR_IN_ROUTE;
+          ptr->status = static_cast<trade_route_status>(ptr->status | TR_IN_ROUTE);
           ptr->punit->ptr = ptr;
 
           execute_trade_orders(ptr->punit);
@@ -1002,7 +1002,7 @@ struct toggle_worker {
 
 #define SPECLIST_TAG toggle_worker
 #define SPECLIST_TYPE struct toggle_worker
-#include "speclist.h"
+#include "speclist.hh"
 
 /* Recursive iteration. */
 #define toggle_worker_list_iterate(list, ptw) \
@@ -1015,7 +1015,8 @@ struct toggle_worker {
 static struct toggle_worker *toggle_worker_new(city_t *pcity,
                                                int cx, int cy)
 {
-  struct toggle_worker *ptw = wc_malloc(sizeof(struct toggle_worker));
+  struct toggle_worker *ptw = static_cast<struct toggle_worker *>(
+      wc_malloc(sizeof(struct toggle_worker)));
 
   ptw->pcity = pcity;
   ptw->cx = cx;
@@ -1380,7 +1381,8 @@ void delayed_trade_routes_add(int city, int trade[OLD_NUM_TRADEROUTES],
 
   for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
     if (trade[i] != 0) {
-      pdtr = wc_malloc(sizeof(struct delayed_trade_route));
+      pdtr = static_cast<delayed_trade_route*>(
+          wc_malloc(sizeof(struct delayed_trade_route)));
 
       pdtr->city1 = city;
       pdtr->city2 = trade[i];

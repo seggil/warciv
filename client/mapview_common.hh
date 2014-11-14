@@ -14,14 +14,14 @@
 #ifndef WC_CLIENT_MAPVIEW_COMMON_H
 #define WC_CLIENT_MAPVIEW_COMMON_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"         /* bool type */
 
-#include "wc_types.h"
-#include "map.h"
+#include "wc_types.hh"
+#include "map.hh"
 
-#include "include/colors_g.h"
+#include "include/colors_g.hh"
 
-#include "tilespec.h"
+#include "tilespec.hh"
 
 enum map_update_type {
   MUT_NORMAL, /* Mark the zone to be re-drawn and copied to screen later */

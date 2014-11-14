@@ -15,12 +15,12 @@
 # include "../config.h"
 #endif
 
-#include "map.h"
-#include "shared.h"
+#include "map.hh"
+#include "shared.hh"
 
-#include "tilespec.h"           /* is_isometric */
+#include "tilespec.hh"       /* is_isometric */
 
-#include "climap.h"
+#include "climap.hh"
 
 /************************************************************************
  A tile's "known" field is used by the server to store whether _each_
@@ -34,7 +34,10 @@
 *************************************************************************/
 enum known_type tile_get_known(const tile_t *ptile)
 {
-  return ptile ? ptile->u.client.known : 0;
+  if (ptile)
+    return ptile->u.client.known;
+  else
+    return static_cast<known_type>(0);
 }
 
 /**************************************************************************

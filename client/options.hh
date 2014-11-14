@@ -13,13 +13,13 @@
 #ifndef WC_CLIENT_OPTIONS_H
 #define WC_CLIENT_OPTIONS_H
 
-#include "events.h"
-#include "registry.h"
-#include "shared.h"             /* bool type */
-#include "traderoute.h"         /* ASYNC_TRADE_PLANNING */
-#include "worklist.h"           /* MAX_NUM_WORKLISTS */
+#include "events.hh"
+#include "registry.hh"
+#include "shared.hh"            /* bool type */
+#include "traderoute.hh"        /* ASYNC_TRADE_PLANNING */
+#include "worklist.hh"          /* MAX_NUM_WORKLISTS */
 
-#include "multiselect.h"        /* filter type */
+#include "multiselect.hh"       /* filter type */
 
 enum client_option_category {
   CLIENT_OPTION_CATEGORY_GRAPHICS,
@@ -54,9 +54,9 @@ enum player_colors_modes {
 };
 
 struct client_option {
-  const char const *name;
-  const char const *description;
-  const char const *help_text;
+  char const *name;
+  char const *description;
+  char const *help_text;
   const enum client_option_category category;
   const enum client_option_type type;
 
@@ -64,13 +64,13 @@ struct client_option {
     struct client_option_boolean {
       bool *const pvalue;
       const bool def;
-    } boolean;
+    } boolean_o;
     struct client_option_integer {
       int *const pvalue;
       const int def;
       const int min;
       const int max;
-    } integer;
+    } integer_o;
     struct client_option_string {
       char *const pvalue;
       const size_t size;
@@ -186,7 +186,7 @@ extern bool prevent_duplicate_notify_tabs;
 extern bool small_display_layout;
 extern bool enable_chat_logging;
 extern char chat_log_directory[MAX_LEN_PATH];
-enum player_colors_modes player_colors_mode;
+extern enum player_colors_modes player_colors_mode;
 #ifndef ASYNC_TRADE_PLANNING
 extern int trade_time_limit;
 #endif  /* ASYNC_TRADE_PLANNING */

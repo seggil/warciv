@@ -16,22 +16,23 @@
 
 #include <stddef.h>             /* size_t */
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"            /* bool type */
 
-#include "city.h"               /* Specialist_type_id */
-#include "wc_types.h"
+#include "city.hh"              /* Specialist_type_id */
+#include "wc_types.hh"
 
 struct canvas;
+enum citizen_type_type {
+  CITIZEN_SPECIALIST,
+  CITIZEN_CONTENT,
+  CITIZEN_HAPPY,
+  CITIZEN_UNHAPPY,
+  CITIZEN_ANGRY,
+  CITIZEN_LAST
+};
 
 struct citizen_type {
-  enum citizen_type_type {
-    CITIZEN_SPECIALIST,
-    CITIZEN_CONTENT,
-    CITIZEN_HAPPY,
-    CITIZEN_UNHAPPY,
-    CITIZEN_ANGRY,
-    CITIZEN_LAST
-  } type;
+  enum citizen_type_type type;
   Specialist_type_id spec_type;
 };
 

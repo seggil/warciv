@@ -17,12 +17,12 @@
 
 #include <string.h>
 
-#include "support.h"
+#include "support.hh"
 
-#include "audio.h"
-#include "include/gui_main_g.h"
+#include "audio.hh"
+#include "include/gui_main_g.hh"
 
-#include "audio_none.h"
+#include "audio_none.hh"
 
 /**************************************************************************
   Clean up

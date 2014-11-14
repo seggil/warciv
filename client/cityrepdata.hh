@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_CITYREPDATA_H
 #define WC_CLIENT_CITYREPDATA_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"        /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 /* Number of city report columns: have to set this manually now... */
 #define NUM_CREPORT_COLS 33

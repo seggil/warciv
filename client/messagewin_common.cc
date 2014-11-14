@@ -18,22 +18,22 @@
 #include <assert.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "map.h"
-#include "mem.h"
+#include "wc_intl.hh"
+#include "map.hh"
+#include "mem.hh"
 
-#include "include/citydlg_g.h"
-#include "civclient.h"
-#include "clinet.h"
-#include "include/mapview_g.h"
-#include "include/messagewin_g.h"
-#include "options.h"
+#include "include/citydlg_g.hh"
+#include "civclient.hh"
+#include "clinet.hh"
+#include "include/mapview_g.hh"
+#include "include/messagewin_g.hh"
+#include "options.hh"
 
-#include "messagewin_common.h"
+#include "messagewin_common.hh"
 
 static int frozen_level = 0;
 static bool change = FALSE;
-static struct message *messages = NULL;
+static struct message_s *messages = NULL;
 static int messages_total = 0;
 static int messages_alloc = 0;
 
@@ -117,14 +117,14 @@ void add_notify_window(char *message, tile_t *ptile,
   const char *game_prefix2 = _("Game: ");
   size_t gp_len1 = strlen(game_prefix1);
   size_t gp_len2 = strlen(game_prefix2);
-  char *s = wc_malloc(MAX(strlen(message), min_msg_len) + 1);
+  char *s = (char*)wc_malloc(MAX(strlen(message), min_msg_len) + 1);
   int i, nspc;
 
   change = TRUE;
 
   if (messages_total + 2 > messages_alloc) {
     messages_alloc = messages_total + 32;
-    messages = wc_realloc(messages, messages_alloc * sizeof(*messages));
+    messages = static_cast<message_s*>(wc_realloc(messages, messages_alloc * sizeof(*messages)));
   }
 
   if (strncmp(message, game_prefix1, gp_len1) == 0) {
@@ -167,7 +167,7 @@ void add_notify_window(char *message, tile_t *ptile,
 /**************************************************************************
  Returns the pointer to a message.
 **************************************************************************/
-struct message *get_message(int message_index)
+struct message_s *get_message(int message_index)
 {
   assert(message_index >= 0 && message_index < messages_total);
   return &messages[message_index];

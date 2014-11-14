@@ -13,10 +13,10 @@
 #ifndef WC_CLIENT_CLIMISC_H
 #define WC_CLIENT_CLIMISC_H
 
-#include "shared.h"             /* MAX_LEN_NAME */
+#include "shared.hh"          /* MAX_LEN_NAME */
 
-#include "wc_types.h"
-#include "events.h"
+#include "wc_types.hh"
+#include "events.hh"
 
 struct Clause;
 
@@ -88,7 +88,7 @@ bool city_building_present(city_t *pcity, cid cid);
 bool city_can_sell_impr(city_t *pcity, cid cid);
 
 struct item {
-  cid cid;
+  cid cid_;
   char descr[MAX_LEN_NAME + 40];
 
   /* Privately used for sorting */
@@ -201,7 +201,7 @@ void voteinfo_queue_next(void);
 /* Define struct voteinfo_list type. */
 #define SPECLIST_TAG voteinfo
 #define SPECLIST_TYPE struct voteinfo
-#include "speclist.h"
+#include "speclist.hh"
 #define voteinfo_list_iterate(alist, pitem)\
   TYPED_LIST_ITERATE(struct voteinfo, alist, pitem)
 #define voteinfo_list_iterate_end  LIST_ITERATE_END

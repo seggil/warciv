@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_GOTO_H
 #define WC_CLIENT_GOTO_H
 
-#include "map.h"
+#include "map.hh"
 
-#include "aicore/path_finding.h"
+#include "aicore/path_finding.hh"
 
 void init_client_goto(void);
 void free_client_goto(void);

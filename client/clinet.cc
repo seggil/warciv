@@ -70,38 +70,38 @@
 #  include <ws2tcpip.h>
 #endif
 
-#include "capability.h"
-#include "capstr.h"
-#include "dataio.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "netintf.h"
-#include "packets.h"
-#include "registry.h"
-#include "support.h"
-#include "version.h"
+#include "capability.hh"
+#include "capstr.hh"
+#include "dataio.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "netintf.hh"
+#include "packets.hh"
+#include "registry.hh"
+#include "support.hh"
+#include "version.hh"
 
-#include "agents/agents.h"
-#include "attribute.h"
-#include "include/chatline_g.h"
-#include "civclient.h"
-#include "climisc.h"
-#include "connectdlg_common.h"
-#include "include/connectdlg_g.h"
-#include "include/dialogs_g.h"          /* popdown_races_dialog() */
-#include "include/gui_main_g.h"         /* add_net_input(), remove_net_input() */
-#include "include/menu_g.h"
-#include "include/messagewin_g.h"
-#include "options.h"
-#include "packhand.h"
-#include "include/pages_g.h"
-#include "include/plrdlg_g.h"
-#include "include/repodlgs_g.h"
+#include "agents/agents.hh"
+#include "attribute.hh"
+#include "include/chatline_g.hh"
+#include "civclient.hh"
+#include "climisc.hh"
+#include "connectdlg_common.hh"
+#include "include/connectdlg_g.hh"
+#include "include/dialogs_g.hh"          /* popdown_races_dialog() */
+#include "include/gui_main_g.hh"         /* add_net_input(), remove_net_input() */
+#include "include/menu_g.hh"
+#include "include/messagewin_g.hh"
+#include "options.hh"
+#include "packhand.hh"
+#include "include/pages_g.hh"
+#include "include/plrdlg_g.hh"
+#include "include/repodlgs_g.hh"
 
-#include "clinet.h"
+#include "clinet.hh"
 
 connection_t aconnection;
 static int socklan;
@@ -641,8 +641,8 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
     pserver->nplayers = atoi(nplayers);
 
     if (pserver->nplayers > 0) {
-      pserver->players =
-        wc_malloc(pserver->nplayers * sizeof(*pserver->players));
+      pserver->players = static_cast<server::server_players*>(
+        wc_malloc(pserver->nplayers * sizeof(*pserver->players)));
     } else {
       pserver->players = NULL;
     }
@@ -675,7 +675,8 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
 
     pserver->nvars = j;
     if (pserver->nvars > 0) {
-      pserver->vars = wc_calloc(pserver->nvars, sizeof(*pserver->vars));
+      pserver->vars = static_cast<server::server_vars*>(
+          wc_calloc(pserver->nvars, sizeof(*pserver->vars)));
     } else {
       pserver->vars = NULL;
     }
@@ -778,7 +779,7 @@ static struct server_list *parse_metaserver_http_data(fz_FILE * f,
 **************************************************************************/
 static void destroy_async_slist_ctx(void *data)
 {
-  struct async_slist_ctx *ctx = data;
+  struct async_slist_ctx *ctx = static_cast<async_slist_ctx *>(data);
 
   freelog(LOG_DEBUG, "dasc destroy_async_slist_ctx data=%p", ctx);
 
@@ -867,7 +868,7 @@ static void process_metaserver_response(struct async_slist_ctx *ctx)
     return;
   }
 
-  newbuf = wc_malloc(sizeof(ctx->buf));
+  newbuf = (char*)wc_malloc(sizeof(ctx->buf));
   newsize = ctx->buflen;
 
   /* Prevent \" sequences in files which would produce problem for secfile_lookup
@@ -908,7 +909,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
   char *buf;
   int nb = 0, count = 0, rem = 0;
   static const int READSZ = 4096;
-  struct async_slist_ctx *ctx = data;
+  struct async_slist_ctx *ctx = static_cast<async_slist_ctx*>(data);
   long err_no = 0;
 
   assert(data != NULL);
@@ -1000,7 +1001,7 @@ FINISHED_READING_DATA:
 static bool metaserver_write_cb(int sock, int flags, void *data)
 {
   int nb = 0;
-  struct async_slist_ctx *ctx = data;
+  struct async_slist_ctx *ctx = static_cast<async_slist_ctx*>(data);
   long err_no = 0;
 
   assert(ctx != NULL);
@@ -1070,7 +1071,7 @@ static bool metaserver_name_lookup_callback(union my_sockaddr *addr_result,
                                             void *data)
 {
   int sock, res, len;
-  struct async_slist_ctx *ctx = data;
+  struct async_slist_ctx *ctx = static_cast<async_slist_ctx*>(data);
   struct sockaddr *addr;
   long err_no;
 
@@ -1154,7 +1155,8 @@ void *cancel_async_server_list_request(int id)
   check_init_async_tables();
 
   freelog(LOG_DEBUG, "caslr deleting id=%d from aslr table", id);
-  ctx = hash_delete_entry(async_slist_req_table, INT_TO_PTR(id));
+  ctx = static_cast<async_slist_ctx*>(
+            hash_delete_entry(async_slist_req_table, INT_TO_PTR(id)));
 
   if (!ctx) {
     freelog(LOG_DEBUG, "caslr id=%d not in table!", id);
@@ -1220,7 +1222,7 @@ int create_server_list_async(char *errbuf, int n_errbuf,
     return -1;
   }
 
-  ctx = wc_calloc(1, sizeof(struct async_slist_ctx));
+  ctx = static_cast<async_slist_ctx*>(wc_calloc(1, sizeof(struct async_slist_ctx)));
   freelog(LOG_DEBUG, "csla new async_slist_ctx %p", ctx);
   ctx->guard = ASYNC_SLIST_CTX_MEMORY_GUARD;
 

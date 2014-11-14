@@ -18,9 +18,9 @@
 #define AUDIO_VOLUME
 #endif
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"            /* bool type */
 
-#include "options.h"            /* struct client_option */
+#include "options.hh"           /* struct client_option */
 
 #define MAX_AUDIO_NAME_LEN              20
 #define MAX_AUDIO_DESCR_LEN             200

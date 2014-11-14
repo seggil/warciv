@@ -18,19 +18,19 @@
 #include <assert.h>
 #include <string.h>
 
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "aicore/pf_tools.h"
-#include "unit.h"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "aicore/pf_tools.hh"
+#include "unit.hh"
 
-#include "civclient.h"
-#include "clinet.h"
-#include "control.h"
-#include "include/mapview_g.h"
+#include "civclient.hh"
+#include "clinet.hh"
+#include "control.hh"
+#include "include/mapview_g.hh"
 
-#include "goto.h"
+#include "goto.hh"
 
 #define PATH_LOG_LEVEL          LOG_DEBUG
 #define PACKET_LOG_LEVEL        LOG_DEBUG
@@ -67,7 +67,7 @@ static struct goto_map_s {
   int unit_id;                  /* The unit of the goto map */
   struct path_part *parts;
   int num_parts;
-  struct pf_parameter template;
+  struct pf_parameter template_;
 } goto_map;
 
 #define DRAWN(ptile, dir) (goto_map.tiles[(ptile)->index].drawn[dir])
@@ -93,8 +93,9 @@ void init_client_goto(void)
     free_client_goto();
   }
 
-  goto_map.tiles = wc_malloc(map.info.xsize * map.info.ysize
-                             * sizeof(*goto_map.tiles));
+  goto_map.tiles = static_cast<goto_map_s::goto_map_tiles*>(
+                   wc_malloc(map.info.xsize * map.info.ysize
+                             * sizeof(*goto_map.tiles)));
   goto_map.parts = NULL;
   goto_map.num_parts = 0;
   goto_map.unit_id = -1;
@@ -197,7 +198,7 @@ static void update_last_part(tile_t *ptile)
   p->end_moves_left = pf_last_position(p->path)->moves_left;
 
   if (hover_state == HOVER_CONNECT) {
-    int move_rate = goto_map.template.move_rate;
+    int move_rate = goto_map.template_.move_rate;
     int moves = pf_last_position(p->path)->total_MC;
 
     p->time = moves / move_rate;
@@ -238,10 +239,10 @@ static void reset_last_part(void)
 static void add_part(void)
 {
   struct path_part *p;
-  struct pf_parameter parameter = goto_map.template;
+  struct pf_parameter parameter = goto_map.template_;
 
   goto_map.num_parts++;
-  goto_map.parts =
+  goto_map.parts = (path_part*)
       wc_realloc(goto_map.parts,
                  goto_map.num_parts * sizeof(*goto_map.parts));
   p = &goto_map.parts[goto_map.num_parts - 1];
@@ -717,7 +718,7 @@ void enter_goto_state(unit_t *punit)
   goto_map.unit_id = punit->id;
   assert(goto_map.num_parts == 0);
 
-  fill_client_goto_parameter(punit, &goto_map.template);
+  fill_client_goto_parameter(punit, &goto_map.template_);
 
   add_part();
   is_active = TRUE;
@@ -843,12 +844,12 @@ static void send_path_orders(unit_t *punit, struct pf_path *path,
 
     if (same_pos(new_tile, old_tile)) {
       p.orders[i] = ORDER_FULL_MP;
-      p.dir[i] = -1;
+      p.dir[i] = (direction8)-1;
       freelog(PACKET_LOG_LEVEL, "  packet[%d] = wait: %d,%d",
               i, TILE_XY(old_tile));
     } else {
       p.orders[i] = ORDER_MOVE;
-      p.dir[i] = get_direction_for_step(old_tile, new_tile);
+      p.dir[i] = (direction8)get_direction_for_step(old_tile, new_tile);
       p.activity[i] = ACTIVITY_LAST;
       freelog(PACKET_LOG_LEVEL, "  packet[%d] = move %s: %d,%d => %d,%d",
               i, dir_get_name(p.dir[i]),
@@ -860,7 +861,7 @@ static void send_path_orders(unit_t *punit, struct pf_path *path,
 
   if (final_activity != ACTIVITY_LAST) {
     p.orders[i] = ORDER_ACTIVITY;
-    p.dir[i] = -1;
+    p.dir[i] = (direction8)-1;
     p.activity[i] = final_activity;
     p.length++;
   }
@@ -888,7 +889,7 @@ void send_patrol_route(unit_t *punit)
 {
   int i;
   struct pf_path *path = NULL, *return_path;
-  struct pf_parameter parameter = goto_map.template;
+  struct pf_parameter parameter = goto_map.template_;
   struct path_finding_map *map;
 
   assert(is_active);
@@ -981,7 +982,7 @@ void send_connect_route(unit_t *punit, enum unit_activity activity)
       assert(!same_pos(new_tile, old_tile));
 
       p.orders[p.length] = ORDER_MOVE;
-      p.dir[p.length] = get_direction_for_step(old_tile, new_tile);
+      p.dir[p.length] = (direction8)get_direction_for_step(old_tile, new_tile);
       p.length++;
 
       old_tile = new_tile;
@@ -1056,7 +1057,7 @@ static unsigned char *get_drawn_char(tile_t *ptile, enum direction8 dir)
 
   if (dir >= 4) {
     ptile = tile1;
-    dir = DIR_REVERSE(dir);
+    dir = (direction8)DIR_REVERSE(dir);
   }
 
   return &DRAWN(ptile, dir);
@@ -1114,11 +1115,11 @@ static void decrement_drawn(tile_t *src_tile, enum direction8 dir)
 ****************************************************************************/
 bool is_drawn_line(tile_t *ptile, int dir)
 {
-  if (!mapstep(ptile, dir)) {
+  if (!mapstep(ptile, (direction8)dir)) {
     return 0;
   }
 
-  return (*get_drawn_char(ptile, dir) != 0);
+  return (*get_drawn_char(ptile, (direction8)dir) != 0);
 }
 
 /**************************************************************************

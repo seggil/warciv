@@ -14,7 +14,7 @@
 #ifndef WC_CLIENT_TEXT_H
 #define WC_CLIENT_TEXT_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 struct player_spaceship;
 

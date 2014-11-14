@@ -37,23 +37,23 @@ Freeciv - Copyright (C) 2004 - The Freeciv Project
 #include <sys/wait.h>
 #endif
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "netintf.h"
-#include "rand.h"
-#include "registry.h"
-#include "support.h"
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "packhand_gen.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "netintf.hh"
+#include "rand.hh"
+#include "registry.hh"
+#include "support.hh"
+#include "civclient.hh"
+#include "climisc.hh"
+#include "clinet.hh"
+#include "packhand_gen.hh"
 
-#include "chatline_common.h"
-#include "include/connectdlg_g.h"
-#include "connectdlg_common.h"
-#include "tilespec.h"
+#include "chatline_common.hh"
+#include "include/connectdlg_g.hh"
+#include "connectdlg_common.hh"
+#include "tilespec.hh"
 
 #define WAIT_BETWEEN_TRIES 100000 /* usecs */
 #define NUMBER_OF_TRIES 500
@@ -227,22 +227,22 @@ bool client_start_server(void)
 
     /* Set up the command-line parameters. */
     my_snprintf(port_buf, sizeof(port_buf), "%d", internal_server_port);
-    argv[argc++] = "civserver";
-    argv[argc++] = "-p";
+    argv[argc++] = (char*)"civserver";
+    argv[argc++] = (char*)"-p";
     argv[argc++] = port_buf;
-    argv[argc++] = "-q";
-    argv[argc++] = "1";
-    argv[argc++] = "-e";
-    argv[argc++] = "--saves";
-    argv[argc++] = "~/.warciv/saves";
+    argv[argc++] = (char*)"-q";
+    argv[argc++] = (char*)"1";
+    argv[argc++] = (char*)"-e";
+    argv[argc++] = (char*)"--saves";
+    argv[argc++] = (char*)"~/.warciv/saves";
     if (logfile) {
-      argv[argc++] = "--debug";
-      argv[argc++] = "3";
-      argv[argc++] = "--log";
+      argv[argc++] = (char*)"--debug";
+      argv[argc++] = (char*)"3";
+      argv[argc++] = (char*)"--log";
       argv[argc++] = logfile;
     }
     if (scriptfile) {
-      argv[argc++] = "--read";
+      argv[argc++] = (char*)"--read";
       argv[argc++] = scriptfile;
     }
     argv[argc] = NULL;
