@@ -13,11 +13,11 @@
 #ifndef WC_CLIENT_INCLUDE_MAPCTRL_G_H
 #define WC_CLIENT_INCLUDE_MAPCTRL_G_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"           /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
-#include "../mapctrl_common.h"
+#include "../mapctrl_common.hh"
 
 void popup_newcity_dialog(unit_t *punit, char *suggestname);
 

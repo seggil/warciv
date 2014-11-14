@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_INCLUDE_MESSAGEWIN_G_H
 #define WC_CLIENT_INCLUDE_MESSAGEWIN_G_H
 
-#include "packets.h"
+#include "packets.hh"
 
-#include "../messagewin_common.h"
+#include "../messagewin_common.hh"
 
 void popup_meswin_dialog(void);
 bool is_meswin_open(void);

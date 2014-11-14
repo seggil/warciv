@@ -13,11 +13,11 @@
 #ifndef WC_CLIENT_INCLUDE_DIALOGS_G_H
 #define WC_CLIENT_INCLUDE_DIALOGS_G_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
-#include "nation.h"             /* Nation_Type_id */
-#include "terrain.h"            /* enum tile_special_type */
+#include "wc_types.hh"
+#include "nation.hh"             /* Nation_Type_id */
+#include "terrain.hh"            /* enum tile_special_type */
 
 struct packet_nations_selected_info;
 

@@ -13,9 +13,9 @@
 #ifndef WC_CLINET_INCLUDE_CITYREP_G_H
 #define WC_CLINET_INCLUDE_CITYREP_G_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 void popup_city_report_dialog(bool make_modal);
 void city_report_dialog_update(void);

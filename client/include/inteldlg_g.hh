@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_INCLUDE_INTELDLG_G_H
 #define WC_CLIENT_INCLUDE_INTELDLG_G_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 void popup_intel_dialog(player_t *p);
 void update_intel_dialog(player_t *p);

@@ -13,10 +13,10 @@
 #ifndef WC_CLIENT_INCLUDE_REPODLGS_G_H
 #define WC_CLIENT_INCLUDE_REPODLGS_G_H
 
-#include "packets.h"
-#include "shared.h"             /* bool type */
+#include "packets.hh"
+#include "shared.hh"           /* bool type */
 
-#include "../repodlgs_common.h"
+#include "../repodlgs_common.hh"
 
 void update_report_dialogs(void);
 

@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_INCLUDE_CITYDLG_G_H
 #define WC_CLIENT_INCLUDE_CITYDLG_G_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
-#include "../citydlg_common.h"
+#include "../citydlg_common.hh"
 
 enum city_update {
   UPDATE_NOTHING         = 0,

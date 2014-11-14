@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_INCLUDE_GRAPHICS_G_H
 #define WC_CLIENT_INCLUDE_GRAPHICS_G_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"          /* bool type */
 
 bool isometric_view_supported(void);
 bool overhead_view_supported(void);

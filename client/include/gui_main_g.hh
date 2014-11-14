@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_INCLUDE_GUI_MAIN_G_H
 #define WC_CLIENT_INCLUDE_GUI_MAIN_G_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 void connection_init(void);
 void ui_main(int argc, char *argv[]);

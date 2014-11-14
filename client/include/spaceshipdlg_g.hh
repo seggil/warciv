@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_INCLUDE_SPACESHIPDLG_G_H
 #define WC_CLIENT_INCLUDE_SPACESHIPDLG_G_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 void popup_spaceship_dialog(player_t *pplayer);
 void popdown_spaceship_dialog(player_t *pplayer);

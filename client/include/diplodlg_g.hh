@@ -13,9 +13,9 @@
 #ifndef WC_CLIENT_INCLUDE_DIPLODLG_G_H
 #define WC_CLIENT_INCLUDE_DIPLODLG_G_H
 
-#include "shared.h"
+#include "shared.hh"
 
-#include "diptreaty.h"
+#include "diptreaty.hh"
 
 void handle_diplomacy_init_meeting(int counterpart, int initiated_from);
 void handle_diplomacy_cancel_meeting(int counterpart, int initiated_from);

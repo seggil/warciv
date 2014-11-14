@@ -13,11 +13,11 @@
 #ifndef WC_CLIENT_INCLUDE_MAPVIEW_G_H
 #define WC_CLIENT_INCLUDE_MAPVIEW_G_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"            /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
-#include "../mapview_common.h"
+#include "../mapview_common.hh"
 
 struct Sprite;
 

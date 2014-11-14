@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_INCLUDE_CHATLINE_G_H
 #define WC_CLIENT_INCLUDE_CHATLINE_G_H
 
-#include "../chatline_common.h"
+#include "../chatline_common.hh"
 
 void real_append_output_window(const char *astring, int conn_id);
 void log_output_window(void);
