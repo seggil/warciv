@@ -13,11 +13,11 @@
 #ifndef WC_COMMON_UNIT_H
 #define WC_COMMON_UNIT_H
 
-#include "mem.h"                /* unit_list_iterate_safe */
+#include "mem.hh"                /* unit_list_iterate_safe */
 
-#include "wc_types.h"
-#include "terrain.h"            /* enum tile_special_type */
-#include "unittype.h"
+#include "wc_types.hh"
+#include "terrain.hh"            /* enum tile_special_type */
+#include "unittype.hh"
 
 struct unit_order;
 
@@ -184,7 +184,7 @@ struct unit_s {
 /* get 'struct unit_list' and related functions: */
 #define SPECLIST_TAG unit
 #define SPECLIST_TYPE struct unit_s
-#include "speclist.h"
+#include "speclist.hh"
 
 #define unit_list_iterate(unitlist, punit) \
     TYPED_LIST_ITERATE(struct unit_s, unitlist, punit)

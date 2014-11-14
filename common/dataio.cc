@@ -43,16 +43,16 @@
 #include <winsock2.h>
 #endif
 
-#include "capability.h"
-#include "events.h"
-#include "log.h"
-#include "mem.h"
-#include "player.h"
-#include "support.h"
-#include "tech.h"
-#include "worklist.h"
+#include "capability.hh"
+#include "events.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "player.hh"
+#include "support.hh"
+#include "tech.hh"
+#include "worklist.hh"
 
-#include "dataio.h"
+#include "dataio.hh"
 
 /**************************************************************************
 ...
@@ -557,7 +557,7 @@ void dio_get_string(struct data_in *din, char *dest, size_t max_dest_size)
   }
 
   remaining = dio_input_remaining(din);
-  c = ADD_TO_POINTER(din->src, din->current);
+  c = (char*)ADD_TO_POINTER(din->src, din->current);
 
   /* avoid using strlen (or strcpy) on an (unsigned char*)  --dwp */
   for (offset = 0; offset < remaining && c[offset] != '\0'; offset++) {
@@ -684,7 +684,7 @@ void dio_get_uint8_vec8(struct data_in *din, int **values, int stop_value)
 
   dio_get_uint8(din, &count);
   if (values) {
-    *values = wc_calloc((count + 1), sizeof(**values));
+    *values = (int*)wc_calloc((count + 1), sizeof(**values));
   }
   for (inx = 0; inx < count; inx++) {
     dio_get_uint8(din, values ? &((*values)[inx]) : NULL);
@@ -703,7 +703,7 @@ void dio_get_uint16_vec8(struct data_in *din, int **values, int stop_value)
 
   dio_get_uint8(din, &count);
   if (values) {
-    *values = wc_calloc((count + 1), sizeof(**values));
+    *values = (int*)wc_calloc((count + 1), sizeof(**values));
   }
   for (inx = 0; inx < count; inx++) {
     dio_get_uint16(din, values ? &((*values)[inx]) : NULL);
@@ -721,7 +721,7 @@ void dio_get_diplstate(struct data_in *din, struct player_diplstate *pds)
   int type = 0;
 
   dio_get_uint8(din, &type);
-  pds->type = type;
+  pds->type = static_cast<diplstate_type>(type);
   dio_get_uint16(din, &pds->turns_left);
   dio_get_uint16(din, &pds->contact_turns_left);
   dio_get_uint8(din, &pds->has_reason_to_cancel);

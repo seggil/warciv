@@ -18,7 +18,7 @@
    id values to unit and city pointers.
 ***************************************************************************/
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 void idex_init(void);
 void idex_free(void);

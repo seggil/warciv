@@ -37,18 +37,18 @@
 #  include <winsock2.h>
 #endif
 
-#include "wc_intl.h"
-#include "game.h"               /* game.all_connections */
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "netintf.h"
-#include "packets.h"
-#include "support.h"            /* mystr(n)casecmp */
-#include "timing.h"
-#include "wildcards.h"
+#include "wc_intl.hh"
+#include "game.hh"               /* game.all_connections */
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "netintf.hh"
+#include "packets.hh"
+#include "support.hh"            /* mystr(n)casecmp */
+#include "timing.hh"
+#include "wildcards.hh"
 
-#include "connection.h"
+#include "connection.hh"
 
 /* String used for connection.addr and related cases to indicate
  * blank/unknown/not-applicable address:
@@ -57,7 +57,7 @@ const char blank_addr_str[] = "---.---.---.---";
 
 /* NB Must match enum conn_pattern_type
    in common/connection.h */
-char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES] = {
+char const *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES] = {
   "address",
   "hostname",
   "username"
@@ -94,12 +94,12 @@ const char *cmdlevel_name(enum cmdlevel_id lvl)
 **************************************************************************/
 enum cmdlevel_id cmdlevel_named(const char *token)
 {
-  enum cmdlevel_id i;
+  int/* enum cmdlevel_id */ i;
   size_t len = strlen(token);
 
-  for (i = 0; i < ALLOW_NUM; i++) {
+  for (i = 0; i < static_cast<int>(ALLOW_NUM); i++) {
     if (strncmp(levelnames[i], token, len) == 0) {
-      return i;
+      return static_cast<cmdlevel_id>(i);
     }
   }
 
@@ -649,11 +649,11 @@ void free_compression_queue(connection_t *pconn)
 **************************************************************************/
 static void init_packet_hashs(connection_t *pconn)
 {
-  enum packet_type i;
+  int/* enum packet_type */ i;
 
-  pconn->phs.sent = wc_malloc(sizeof(*pconn->phs.sent) * PACKET_LAST);
-  pconn->phs.received = wc_malloc(sizeof(*pconn->phs.received) * PACKET_LAST);
-  pconn->phs.variant = wc_malloc(sizeof(*pconn->phs.variant) * PACKET_LAST);
+  pconn->phs.sent = (struct hash_table **)wc_malloc(sizeof(*pconn->phs.sent) * PACKET_LAST);
+  pconn->phs.received = (struct hash_table **)wc_malloc(sizeof(*pconn->phs.received) * PACKET_LAST);
+  pconn->phs.variant = (int*)wc_malloc(sizeof(*pconn->phs.variant) * PACKET_LAST);
 
   for (i = 0; i < PACKET_LAST; i++) {
     pconn->phs.sent[i] = NULL;
@@ -868,7 +868,7 @@ struct conn_pattern *conn_pattern_new(const char *pattern,
 
   assert(pattern != NULL);
 
-  cp = wc_malloc(sizeof(struct conn_pattern));
+  cp = (struct conn_pattern*)wc_malloc(sizeof(struct conn_pattern));
   cp->pattern = mystrdup(pattern);
   cp->type = type;
 

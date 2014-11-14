@@ -18,14 +18,14 @@
 #include <assert.h>
 #include <math.h>
 
-#include "city.h"
-#include "game.h"
-#include "log.h"
-#include "map.h"
-#include "packets.h"
-#include "unit.h"
+#include "city.hh"
+#include "game.hh"
+#include "log.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "unit.hh"
 
-#include "combat.h"
+#include "combat.hh"
 
 /***********************************************************************
   Checks if player is restricted diplomatically from attacking the tile.

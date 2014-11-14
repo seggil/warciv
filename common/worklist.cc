@@ -17,11 +17,11 @@
 
 #include <string.h>
 
-#include "city.h"
-#include "mem.h"
-#include "unit.h"
+#include "city.hh"
+#include "mem.hh"
+#include "unit.hh"
 
-#include "worklist.h"
+#include "worklist.hh"
 
 /****************************************************************
   Initialize a worklist to be empty and have a default name.

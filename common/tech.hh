@@ -13,10 +13,10 @@
 #ifndef WC_COMMON_TECH_H
 #define WC_COMMON_TECH_H
 
-#include "shared.h"
+#include "shared.hh"
 
-#include "wc_types.h"
-#include "nation.h" /* Nation_Type_id */
+#include "wc_types.hh"
+#include "nation.hh" /* Nation_Type_id */
 
 typedef int Tech_Type_id;
 /*

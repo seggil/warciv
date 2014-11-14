@@ -13,13 +13,13 @@
 #ifndef WC_COMMON_EFFECTS_H
 #define WC_COMMON_EFFECTS_H
 
-#include "shared.h"             /* bool */
+#include "shared.hh"            /* bool */
 
-#include "connection.h"
-#include "wc_types.h"
-#include "tech.h"
-#include "terrain.h"
-#include "city.h"
+#include "connection.hh"
+#include "wc_types.hh"
+#include "tech.hh"
+#include "terrain.hh"
+#include "city.hh"
 
 /* Range of effects (used in equiv_range and effect.range fields)
  * These must correspond to effect_range_names[] in improvement.c. */
@@ -128,7 +128,7 @@ const char *effect_type_name(enum effect_type effect_type);
 /* A building_vector is an array of building types. */
 #define SPECVEC_TAG building
 #define SPECVEC_TYPE Impr_Type_id
-#include "specvec.h"
+#include "specvec.hh"
 #define building_vector_iterate(vector, pbldg) \
   TYPED_VECTOR_ITERATE(Impr_Type_id, vector, pbldg)
 #define building_vector_iterate_end  VECTOR_ITERATE_END
@@ -136,7 +136,7 @@ const char *effect_type_name(enum effect_type effect_type);
 /* An effect_type_vector is an array of effect types. */
 #define SPECVEC_TAG effect_type
 #define SPECVEC_TYPE enum effect_type
-#include "specvec.h"
+#include "specvec.hh"
 #define effect_type_vector_iterate(vector, ptype) \
   TYPED_VECTOR_ITERATE(enum effect_type, vector, ptype)
 #define effect_type_vector_iterate_end VECTOR_ITERATE_END
@@ -195,7 +195,7 @@ struct effect {
 /* An effect_vector is an array of effects. */
 #define SPECLIST_TAG effect
 #define SPECLIST_TYPE struct effect
-#include "speclist.h"
+#include "speclist.hh"
 #define effect_list_iterate(effect_list, peffect) \
   TYPED_LIST_ITERATE(struct effect, effect_list, peffect)
 #define effect_list_iterate_end LIST_ITERATE_END
@@ -208,7 +208,7 @@ struct effect_source {
 };
 #define SPECVEC_TAG effect_source
 #define SPECVEC_TYPE struct effect_source
-#include "specvec.h"
+#include "specvec.hh"
 #define effect_source_vector_iterate(vector, psource) \
   TYPED_VECTOR_ITERATE(struct effect_source, vector, psource)
 #define effect_source_vector_iterate_end VECTOR_ITERATE_END

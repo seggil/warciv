@@ -13,7 +13,7 @@
 #ifndef WC_COMMON_SPACESHIP_H
 #define WC_COMMON_SPACESHIP_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"           /* bool type */
 
 /**********************************************************************
 First, some ascii art showing the spaceship and relevant parts,

@@ -18,20 +18,20 @@
 #include <assert.h>
 #include <string.h>
 
-#include "astring.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
+#include "astring.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "player.h"
-#include "tech.h"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "player.hh"
+#include "tech.hh"
 
-#include "unittype.h"
+#include "unittype.hh"
 
 struct unit_type unit_types[U_LAST];
 /* the unit_types array is now setup in:
@@ -405,17 +405,17 @@ Unit_Type_id find_unit_type_by_name_orig(const char *name_orig)
 **************************************************************************/
 enum unit_move_type unit_move_type_from_str(const char *s)
 {
-  enum unit_move_type i;
+  int i;
 
   /* a compile-time check would be nicer, but this will do: */
   assert(ARRAY_SIZE(move_type_names) == (AIR_MOVING - LAND_MOVING + 1));
 
-  for(i=LAND_MOVING; i<=AIR_MOVING; i++) {
+  for( i = LAND_MOVING; i <= AIR_MOVING; i++) {
     if (mystrcasecmp(move_type_names[i-LAND_MOVING], s)==0) {
-      return i;
+      return static_cast<unit_move_type>(i);
     }
   }
-  return 0;
+  return static_cast<unit_move_type>(0);
 }
 
 /**************************************************************************
@@ -424,13 +424,13 @@ enum unit_move_type unit_move_type_from_str(const char *s)
 **************************************************************************/
 Unit_Class_id unit_class_from_str(const char *s)
 {
-  Unit_Class_id i;
+  int i;
 
   assert(ARRAY_SIZE(unit_class_names) == UCL_LAST);
 
-  for (i = 0; i < UCL_LAST; i++) {
+  for ( i = 0; i < UCL_LAST; i++) {
     if (mystrcasecmp(unit_class_names[i], s)==0) {
-      return i;
+      return static_cast<Unit_Class_id>(i);
     }
   }
   return UCL_LAST;
@@ -442,13 +442,13 @@ Unit_Class_id unit_class_from_str(const char *s)
 **************************************************************************/
 enum unit_flag_id unit_flag_from_str(const char *s)
 {
-  enum unit_flag_id i;
+  int i;
 
   assert(ARRAY_SIZE(flag_names) == F_LAST);
 
-  for(i=0; i<F_LAST; i++) {
+  for (i = 0; i < F_LAST; i++) {
     if (mystrcasecmp(flag_names[i], s)==0) {
-      return i;
+      return static_cast<unit_flag_id>(i);
     }
   }
   return F_LAST;
@@ -460,13 +460,13 @@ enum unit_flag_id unit_flag_from_str(const char *s)
 **************************************************************************/
 enum unit_role_id unit_role_from_str(const char *s)
 {
-  enum unit_role_id i;
+  int i;
 
   assert(ARRAY_SIZE(role_names) == (L_LAST - L_FIRST));
 
   for(i=L_FIRST; i<L_LAST; i++) {
     if (mystrcasecmp(role_names[i-L_FIRST], s)==0) {
-      return i;
+      return static_cast<unit_role_id>(i);
     }
   }
   return L_LAST;
@@ -580,7 +580,8 @@ static void precalc_one(int i, bool (*func_has)(Unit_Type_id, int))
   } unit_type_iterate_end;
 
   if(n_with_role[i] > 0) {
-    with_role[i] = wc_malloc(n_with_role[i]*sizeof(Unit_Type_id));
+    with_role[i] = static_cast<Unit_Type_id*>(
+        wc_malloc(n_with_role[i]*sizeof(Unit_Type_id)));
     j = 0;
     unit_type_iterate(u) {
       if(unit_type_exists(u) && func_has(u, i)) {

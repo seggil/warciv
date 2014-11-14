@@ -19,21 +19,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "distribute.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "distribute.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "game.h"
-#include "government.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "traderoute.h"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "traderoute.hh"
 
-#include "aicore/cm.h"
+#include "aicore/cm.hh"
 
-#include "city.h"
+#include "city.hh"
 
 #include <math.h>
 
@@ -146,7 +146,8 @@ static int cmp(int v1, int v2)
 ***************************************************************************/
 int compare_iter_index(const void *a, const void *b)
 {
-  const struct iter_index *index1 = a, *index2 = b;
+  const struct iter_index *index1 = (const struct iter_index *)a;
+  const struct iter_index *index2 = (const struct iter_index *)b;
   int value;
 
   value = cmp(index1->dist, index2->dist);
@@ -179,7 +180,7 @@ void generate_city_map_indices(void)
   } city_map_iterate_end;
 
   /* Realloc is used because this function may be called multiple times. */
-  array = wc_realloc(array, CITY_TILES * sizeof(*array));
+  array = (struct iter_index *)wc_realloc(array, CITY_TILES * sizeof(*array));
 
   for (dx = -CITY_MAP_RADIUS; dx <= CITY_MAP_RADIUS; dx++) {
     for (dy = -CITY_MAP_RADIUS; dy <= CITY_MAP_RADIUS; dy++) {
@@ -753,7 +754,11 @@ static int base_get_food_tile(const tile_t *ptile,
   const enum tile_special_type spec_t = map_get_special(ptile);
   const Terrain_type_id tile_type_ = ptile->terrain;
   struct tile_type *type = get_tile_type(tile_type_);
-  tile_t tile;
+  tile_t tile = {
+    0,0, 0,0, 0, tile_type_, spec_t, 0/* nullptr */, 0/* nullptr */, 0,
+    {0,0,0,0, 0,0,0,0}, 0/* nullptr */, 0/* nullptr */, 0/* nullptr */,
+    { TILE_UNKNOWN, HILITE_NONE}
+  };
   int f;
   const bool auto_water = (pcity && is_city_center(city_x, city_y)
                            && tile_type_ == type->irrigation_result
@@ -765,10 +770,15 @@ static int base_get_food_tile(const tile_t *ptile,
 
   if (auto_water) {
     /* The center tile is auto-irrigated. */
-    tile.special |= S_IRRIGATION;
+    tile.special = static_cast<tile_special_type>(
+                       static_cast<int>(S_IRRIGATION) | static_cast<int>(tile.special)
+                   );
 
     if (player_knows_techs_with_flag(city_owner(pcity), TF_FARMLAND)) {
-      tile.special |= S_FARMLAND;
+      tile.special = static_cast<tile_special_type>(
+                       static_cast<int>(S_FARMLAND) | static_cast<int>(tile.special)
+                     );
+
     }
   }
 
@@ -2455,7 +2465,7 @@ const char *specialists_string(const int *specialists)
   static char buf[5 * SP_COUNT];
 
   specialist_type_iterate(sp) {
-    char *separator = (len == 0) ? "" : "/";
+    char const *separator = (len == 0) ? "" : "/";
 
     my_snprintf(buf + len, sizeof(buf) - len,
                 "%s%d", separator, specialists[sp]);
@@ -2538,7 +2548,7 @@ void city_styles_alloc(int num)
   // idiosyncracy, visualization is not suppose to be server dependant
   // server provides datas and allow client customization
   // we are adding city_style "none"
-  city_styles = wc_calloc(num, sizeof(struct citystyle));
+  city_styles = (struct citystyle*)wc_calloc(num, sizeof(struct citystyle));
   game.ruleset_control.style_count = num;
   // see client/packethand.c, handle_ruleset_control()
 }
@@ -2586,7 +2596,7 @@ city_t *create_city_virtual(player_t *pplayer, tile_t *ptile,
 {
   city_t *pcity;
 
-  pcity = wc_malloc(struct_city_size());
+  pcity = (city_t*)wc_malloc(struct_city_size());
 
   pcity->common.id = 0;
   pcity->common.owner = pplayer->player_no;

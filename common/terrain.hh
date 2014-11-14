@@ -13,9 +13,9 @@
 #ifndef WC_COMMON_TERRAIN_H
 #define WC_COMMON_TERRAIN_H
 
-#include "shared.h"
+#include "shared.hh"
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 enum special_river_move {
   RMV_NORMAL=0, RMV_FAST_STRICT=1, RMV_FAST_RELAXED=2, RMV_FAST_ALWAYS=3
@@ -54,13 +54,15 @@ enum tile_special_type {
   | S_FALLOUT)
 
 #define S_INFRASTRUCTURE_MASK \
-  (S_ROAD                   \
-   | S_RAILROAD             \
-   | S_IRRIGATION           \
-   | S_FARMLAND             \
-   | S_MINE                 \
-   | S_FORTRESS             \
-   | S_AIRBASE)
+  static_cast<tile_special_type>    \
+   ( static_cast<int>(S_ROAD)       \
+   | static_cast<int>(S_RAILROAD)   \
+   | static_cast<int>(S_IRRIGATION) \
+   | static_cast<int>(S_FARMLAND)   \
+   | static_cast<int>(S_MINE)       \
+   | static_cast<int>(S_FORTRESS)   \
+   | static_cast<int>(S_AIRBASE)    \
+   )
 
 #define T_NONE (-3) /* A special tag meaning no terrain type. */
 #define T_ANY (-2) /* A special tag that matches "any" terrain type. */

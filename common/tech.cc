@@ -20,15 +20,15 @@
 #include <string.h>
 #include <math.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "mem.h"                /* free */
-#include "player.h"
-#include "shared.h"             /* ARRAY_SIZE */
-#include "support.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "mem.hh"                /* free */
+#include "player.hh"
+#include "shared.hh"             /* ARRAY_SIZE */
+#include "support.hh"
 
-#include "tech.h"
+#include "tech.hh"
 
 struct advance advances[A_LAST];
 /* the advances array is now setup in:
@@ -196,7 +196,7 @@ bool tech_is_available(player_t *pplayer, Tech_Type_id id)
 **************************************************************************/
 void update_research(player_t *pplayer)
 {
-  enum tech_flag_id flag;
+  int /* enum tech_flag_id */ flag;
   int researchable = 0;
 
   tech_type_iterate(i) {
@@ -231,7 +231,7 @@ void update_research(player_t *pplayer)
     pplayer->research.num_known_tech_with_flag[flag] = 0;
 
     tech_type_iterate(i) {
-      if (get_invention(pplayer, i) == TECH_KNOWN && tech_flag(i, flag)) {
+      if (get_invention(pplayer, i) == TECH_KNOWN && tech_flag(i, static_cast<tech_flag_id>(flag))) {
         pplayer->research.num_known_tech_with_flag[flag]++;
       }
     } tech_type_iterate_end;
@@ -336,13 +336,13 @@ bool tech_flag(Tech_Type_id tech, enum tech_flag_id flag)
 **************************************************************************/
 enum tech_flag_id tech_flag_from_str(const char *s)
 {
-  enum tech_flag_id i;
+  int /* enum tech_flag_id */ i;
 
   assert(ARRAY_SIZE(flag_names) == TF_LAST);
 
-  for(i=0; i<TF_LAST; i++) {
+  for (i = 0; i < TF_LAST; i++) {
     if (mystrcasecmp(flag_names[i], s)==0) {
-      return i;
+      return static_cast<tech_flag_id>(i);
     }
   }
   return TF_LAST;

@@ -13,11 +13,11 @@
 #ifndef WC_COMMON_CITY_H
 #define WC_COMMON_CITY_H
 
-#include "wc_types.h"
-#include "improvement.h"
+#include "wc_types.hh"
+#include "improvement.hh"
 //#include "packets.h"
-#include "unit.h"               /* struct unit_list */
-#include "worklist.h"
+#include "unit.hh"               /* struct unit_list */
+#include "worklist.hh"
 
 typedef enum city_unit_option_e {
   /* The first 4 are whether to auto-attack versus each unit move_type
@@ -349,7 +349,7 @@ extern struct citystyle *city_styles;
 #define SPECLIST_TAG city
 #undef  SPECLIST_TYPE
 #define SPECLIST_TYPEDEF city_t
-#include "speclist.h"
+#include "speclist.hh"
 #undef SPECLIST_TYPEDEF
 
 #define city_list_iterate(citylist, pcity) \

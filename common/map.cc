@@ -18,18 +18,18 @@
 #include <assert.h>
 #include <string.h>             /* strlen */
 
-#include "city.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "game.h"
-#include "mem.h"
-#include "packets.h"
-#include "rand.h"
-#include "shared.h"
-#include "support.h"
-#include "unit.h"
+#include "city.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "game.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "rand.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "unit.hh"
 
-#include "map.h"
+#include "map.hh"
 
 /* the very map */
 struct civ_map map;
@@ -80,9 +80,17 @@ static const char *tile_special_type_names[] =
 ****************************************************************************/
 enum tile_special_type get_tile_infrastructure_set(const tile_t *ptile)
 {
-  return (ptile->special
-          & (S_ROAD | S_RAILROAD | S_IRRIGATION | S_FARMLAND | S_MINE
-             | S_FORTRESS | S_AIRBASE));
+  return static_cast<tile_special_type>(
+             static_cast<int>(ptile->special)
+             & (  static_cast<int>(S_ROAD)
+                | static_cast<int>(S_RAILROAD)
+                | static_cast<int>(S_IRRIGATION)
+                | static_cast<int>(S_FARMLAND)
+                | static_cast<int>(S_MINE)
+                | static_cast<int>(S_FORTRESS)
+                | static_cast<int>(S_AIRBASE)
+               )
+         );
 }
 
 /***************************************************************
@@ -268,7 +276,7 @@ static void generate_map_indices(void)
                : (nat_center_y + map.info.ysize - 1));
   tiles = (nat_max_x - nat_min_x + 1) * (nat_max_y - nat_min_y + 1);
 
-  array = wc_realloc(array, tiles * sizeof(*array));
+  array = (struct iter_index *)wc_realloc(array, tiles * sizeof(*array));
 
   for (nat_x = nat_min_x; nat_x <= nat_max_x; nat_x++) {
     for (nat_y = nat_min_y; nat_y <= nat_max_y; nat_y++) {
@@ -317,7 +325,7 @@ static void generate_map_indices(void)
 ****************************************************************************/
 void map_init_topology(bool set_sizes)
 {
-  enum direction8 dir;
+  int/* enum direction8 */ dir;
 
   if (is_server && !set_sizes) {
     /* Set map.size based on map.info.xsize and map.info.ysize. */
@@ -336,12 +344,12 @@ void map_init_topology(bool set_sizes)
 
   map.num_valid_dirs = map.num_cardinal_dirs = 0;
   for (dir = 0; dir < 8; dir++) {
-    if (is_valid_dir(dir)) {
-      map.valid_dirs[map.num_valid_dirs] = dir;
+    if (is_valid_dir(static_cast<direction8>(dir))) {
+      map.valid_dirs[map.num_valid_dirs] = static_cast<direction8>(dir);
       map.num_valid_dirs++;
     }
-    if (is_cardinal_dir(dir)) {
-      map.cardinal_dirs[map.num_cardinal_dirs] = dir;
+    if (is_cardinal_dir(static_cast<direction8>(dir))) {
+      map.cardinal_dirs[map.num_cardinal_dirs] = static_cast<direction8>(dir);
       map.num_cardinal_dirs++;
     }
   }
@@ -503,7 +511,7 @@ void map_allocate(void)
           map.board, map.info.xsize, map.info.ysize);
 
   assert(map.board == NULL);
-  map.board = wc_malloc(map.info.xsize * map.info.ysize * sizeof(tile_t));
+  map.board = (tile_s*)wc_malloc(map.info.xsize * map.info.ysize * sizeof(tile_t));
   whole_map_iterate(ptile) {
     int index, nat_x, nat_y, map_x, map_y;
 
@@ -553,11 +561,11 @@ void map_free(void)
 enum tile_special_type get_special_by_name(const char * name)
 {
   int i;
-  enum tile_special_type st = 1;
+  int st = 1;
 
   for (i = 0; i < ARRAY_SIZE(tile_special_type_names); i++) {
     if (0 == strcmp(name, tile_special_type_names[i]))
-      return st;
+      return static_cast<tile_special_type>(st);
 
     st <<= 1;
   }
@@ -571,12 +579,13 @@ enum tile_special_type get_special_by_name(const char * name)
 const char *get_special_name(enum tile_special_type type)
 {
   int i;
+  int shift = static_cast<int>(type);
 
   for (i = 0; i < ARRAY_SIZE(tile_special_type_names); i++) {
-    if ((type & 0x1) == 1) {
+    if ((shift & 0x1) == 1) {
       return _(tile_special_type_names[i]);
     }
-    type >>= 1;
+    shift >>= 1;
   }
 
   return NULL;
@@ -817,10 +826,10 @@ enum tile_special_type map_get_infrastructure_prerequisite(enum tile_special_typ
   enum tile_special_type prereq = S_NO_SPECIAL;
 
   if (contains_special(spe, S_RAILROAD)) {
-    prereq |= S_ROAD;
+    prereq = S_ROAD;
   }
   if (contains_special(spe, S_FARMLAND)) {
-    prereq |= S_IRRIGATION;
+    prereq = static_cast<tile_special_type>(static_cast<int>(prereq) | static_cast<int>(S_IRRIGATION));
   }
 
   return prereq;
@@ -982,7 +991,8 @@ static void clear_infrastructure(tile_t *ptile)
 ***************************************************************/
 static void clear_dirtiness(tile_t *ptile)
 {
-  map_clear_special(ptile, S_POLLUTION | S_FALLOUT);
+  map_clear_special(ptile, static_cast<tile_special_type>
+      (static_cast<int>(S_POLLUTION) | static_cast<int>(S_FALLOUT)));
 }
 
 /***************************************************************
@@ -1068,7 +1078,8 @@ void change_terrain(tile_t *ptile, Terrain_type_id type)
     map_clear_special(ptile, S_MINE);
 
   if (get_tile_type(type)->irrigation_result != type)
-    map_clear_special(ptile, S_FARMLAND | S_IRRIGATION);
+    map_clear_special(ptile, static_cast<tile_special_type>
+        (static_cast<int>(S_FARMLAND) | static_cast<int>(S_IRRIGATION)));
 }
 
 /***************************************************************
@@ -1368,9 +1379,10 @@ bool tile_has_special(const tile_t *ptile,
 bool contains_special(enum tile_special_type set,
                       enum tile_special_type to_test_for)
 {
-  enum tile_special_type masked = set & to_test_for;
+  enum tile_special_type masked = static_cast<tile_special_type>
+          (static_cast<int>(set) & static_cast<int>(to_test_for));
 
-  assert(0 == (int) S_NO_SPECIAL);
+  assert(0 == static_cast<int>(S_NO_SPECIAL));
 
   /*
    * contains_special should only be called with one S_* in
@@ -1386,7 +1398,8 @@ bool contains_special(enum tile_special_type set,
 ***************************************************************/
 void map_set_special(tile_t *ptile, enum tile_special_type spe)
 {
-  ptile->special |= spe;
+   ptile->special = static_cast<tile_special_type>
+       (static_cast<int>(ptile->special) | static_cast<int>(spe));
 
   if (contains_special(spe, S_ROAD) || contains_special(spe, S_RAILROAD)) {
     reset_move_costs(ptile);
@@ -1398,7 +1411,8 @@ void map_set_special(tile_t *ptile, enum tile_special_type spe)
 ***************************************************************/
 void map_clear_special(tile_t *ptile, enum tile_special_type spe)
 {
-  ptile->special &= ~spe;
+  ptile->special = static_cast<tile_special_type>
+      (static_cast<int>(ptile->special) & static_cast<int>(~spe));
 
   if (contains_special(spe, S_ROAD) || contains_special(spe, S_RAILROAD)) {
     reset_move_costs(ptile);
@@ -1711,7 +1725,7 @@ enum direction8 dir_cw(enum direction8 dir)
     return DIR8_NORTH;
   default:
     assert(0);
-    return -1;
+    return static_cast<direction8>(-1);
   }
 }
 
@@ -1740,7 +1754,7 @@ enum direction8 dir_ccw(enum direction8 dir)
     return DIR8_WEST;
   default:
     assert(0);
-    return -1;
+    return static_cast<direction8>(-1);
   }
 }
 
@@ -1837,7 +1851,8 @@ int get_direction_for_step(const tile_t *start_tile,
 bool is_move_cardinal(const tile_t *start_tile,
                       const tile_t *end_tile)
 {
-  return is_cardinal_dir(get_direction_for_step(start_tile, end_tile));
+  return is_cardinal_dir( static_cast<direction8>(
+             get_direction_for_step(start_tile, end_tile)));
 }
 
 /****************************************************************************

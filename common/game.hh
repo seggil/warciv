@@ -19,13 +19,13 @@
 #  include <sys/time.h>
 #endif
 
-#include "shared.h"
+#include "shared.hh"
 
-#include "connection.h"         /* struct connection_list */
-#include "wc_types.h"
-#include "improvement.h"        /* Impr_Status */
-#include "packets.h"
-#include "player.h"
+#include "connection.hh"         /* struct connection_list */
+#include "wc_types.hh"
+#include "improvement.hh"        /* Impr_Status */
+#include "packets.hh"
+#include "player.hh"
 
 #define OVERFLIGHT_NOTHING  1
 #define OVERFLIGHT_FRIGHTEN 2

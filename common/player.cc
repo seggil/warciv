@@ -17,22 +17,22 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "hash.h"
-#include "idex.h"
-#include "improvement.h"
-#include "map.h"
-#include "mem.h"
-#include "rand.h"
-#include "shared.h"
-#include "support.h"
-#include "tech.h"
-#include "unit.h"
+#include "city.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "hash.hh"
+#include "idex.hh"
+#include "improvement.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "tech.hh"
+#include "unit.hh"
 
-#include "player.h"
+#include "player.hh"
 
 /* Must match enum player_results in player.h */
 static const char *player_result_strings[PR_NUM_PLAYER_RESULTS] = {
@@ -150,8 +150,11 @@ void player_init(player_t *_player)
   _player->island_improv = NULL;
 
   if (map.num_continents > 0 && game.ruleset_control.num_impr_types > 0) {
-    _player->island_improv = wc_malloc((map.num_continents + 1)
-        * game.ruleset_control.num_impr_types * sizeof(Impr_Status));
+    _player->island_improv = static_cast<Impr_Status*>(
+        wc_malloc((map.num_continents + 1)
+        * game.ruleset_control.num_impr_types
+        * sizeof(Impr_Status))
+        );
     for (i = 1; i <= map.num_continents; i++) {
       improvement_status_init(&_player->island_improv[i
                                   * game.ruleset_control.num_impr_types],
@@ -948,9 +951,9 @@ void player_set_turns_played(player_t *_player, const char *username,
     return;
   }
 
-  tp = hash_lookup_data(h, username);
+  tp = static_cast<turns_played_info*>(hash_lookup_data(h, username));
   if (!tp) {
-    tp = wc_malloc(sizeof(*tp));
+    tp = static_cast<turns_played_info*>(wc_malloc(sizeof(*tp)));
     sz_strlcpy(tp->username, username);
     hash_insert(h, tp->username, tp);
   }
@@ -987,7 +990,7 @@ int player_get_turns_played(const player_t *_player, const char *username)
     return 0;
   }
 
-  tp = hash_lookup_data(h, username);
+  tp = static_cast<turns_played_info*>(hash_lookup_data(h, username));
   return tp ? tp->turns : 0;
 }
 

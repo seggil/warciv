@@ -16,13 +16,13 @@
 #include <assert.h>
 #include <math.h>
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
-#include "packets.h"
-#include "player.h"
-#include "terrain.h"
-#include "unit.h"
-#include "city.h"
+#include "packets.hh"
+#include "player.hh"
+#include "terrain.hh"
+#include "unit.hh"
+#include "city.hh"
 
 /*
  * The value of MOVE_COST_FOR_VALID_SEA_STEP has no particular
@@ -79,7 +79,7 @@ struct tile_s {
 #define SPECLIST_TAG tile
 #define SPECLIST_TYPE tile_t
 #define SPECLIST_NO_COPY
-#include "speclist.h"
+#include "speclist.hh"
 #define tile_list_iterate(alist, pitem) \
   TYPED_LIST_ITERATE(tile_t, alist, pitem)
 #define tile_list_iterate_end  LIST_ITERATE_END

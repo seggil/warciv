@@ -13,8 +13,8 @@
 #ifndef WC_COMMON_COMBAT_H
 #define WC_COMMON_COMBAT_H
 
-#include "wc_types.h"
-#include "unittype.h"
+#include "wc_types.hh"
+#include "unittype.hh"
 
 /*
  * attack_strength and defense_strength are multiplied by POWER_FACTOR
@@ -57,4 +57,5 @@ unit_t *get_defender(unit_t *attacker, const tile_t *ptile);
 unit_t *get_attacker(unit_t *defender, const tile_t *ptile);
 
 bool is_stack_vulnerable(const tile_t *ptile);
+
 #endif /* WC_COMMON_COMBAT_H */

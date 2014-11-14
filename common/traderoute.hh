@@ -14,7 +14,7 @@
 #ifndef WC_COMMON_TRADE_ROUTE_H
 #define WC_COMMON_TRADE_ROUTE_H
 
-#include "map.h"        /* struct tile_list */
+#include "map.hh"        /* struct tile_list */
 
 enum trade_route_status {
   TR_NONE        = 0,
@@ -38,7 +38,7 @@ struct trade_route {
 
 #define SPECLIST_TAG trade_route
 #define SPECLIST_TYPE struct trade_route
-#include "speclist.h"
+#include "speclist.hh"
 
 #define trade_route_list_iterate(traderoutelist, ptr) \
   TYPED_LIST_ITERATE(struct trade_route, traderoutelist, ptr)

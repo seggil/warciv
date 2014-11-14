@@ -21,16 +21,16 @@
 
 #include <assert.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "mem.h"
-#include "player.h"
-#include "support.h"
-#include "tech.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "player.hh"
+#include "support.hh"
+#include "tech.hh"
 
-#include "nation.h"
+#include "nation.hh"
 
 static struct nation_type *nations = NULL;
 static struct team teams[MAX_NUM_TEAMS];

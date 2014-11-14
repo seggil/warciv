@@ -15,13 +15,13 @@
 
 /* City Improvements, including Wonders.  (Alternatively "Buildings".) */
 
-#include "shared.h"             /* MAX_LEN_NAME */
+#include "shared.hh"             /* MAX_LEN_NAME */
 
 //#include "effects.h"
-#include "wc_types.h"
-#include "tech.h"               /* Tech_Type_id */
-#include "terrain.h"            /* Terrain_type_id etc */
-#include "unittype.h"           /* Unit_Class_id, Unit_Type_id */
+#include "wc_types.hh"
+#include "tech.hh"               /* Tech_Type_id */
+#include "terrain.hh"            /* Terrain_type_id etc */
+#include "unittype.hh"           /* Unit_Class_id, Unit_Type_id */
 
 /* B_LAST is a value which is guaranteed to be larger than all
  * actual Impr_Type_id values.  It is used as a flag value;

@@ -17,16 +17,16 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "game.h"
-#include "log.h"
-#include "mem.h"
-#include "player.h"
-#include "shared.h"
-#include "support.h"
-#include "tech.h"
+#include "city.hh"
+#include "game.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "tech.hh"
 
-#include "government.h"
+#include "government.hh"
 
 /* TODO:
  * o Update and turn on government evaluation code.
@@ -74,13 +74,13 @@ static const char *flag_names[] = {
 ***************************************************************/
 enum government_flag_id government_flag_from_str(const char *s)
 {
-  enum government_flag_id i;
+  int i;
 
   assert(ARRAY_SIZE(flag_names) == G_LAST_FLAG);
 
   for(i=G_FIRST_FLAG; i<G_LAST_FLAG; i++) {
     if (mystrcasecmp(flag_names[i], s)==0) {
-      return i;
+      return static_cast<government_flag_id>(i);
     }
   }
   return G_LAST_FLAG;
@@ -263,9 +263,9 @@ void set_ruler_title(struct government *gov, int nation,
   struct ruler_title *title;
 
   gov->num_ruler_titles++;
-  gov->ruler_titles =
-    wc_realloc(gov->ruler_titles,
-      gov->num_ruler_titles*sizeof(struct ruler_title));
+  gov->ruler_titles = (struct ruler_title *)
+      wc_realloc(gov->ruler_titles,
+                 gov->num_ruler_titles*sizeof(struct ruler_title));
   title = &(gov->ruler_titles[gov->num_ruler_titles-1]);
 
   title->nation = nation;
@@ -284,7 +284,7 @@ void governments_alloc(int num)
 {
   int index;
 
-  governments = wc_calloc(num, sizeof(struct government));
+  governments = (struct government*)wc_calloc(num, sizeof(struct government));
   game.ruleset_control.government_count = num;
 
   for (index = 0; index < num; index++) {

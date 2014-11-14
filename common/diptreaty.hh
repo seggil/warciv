@@ -13,7 +13,7 @@
 #ifndef WC_COMMON_DIPTREATY_H
 #define WC_COMMON_DIPTREATY_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"           /* bool type */
 
 enum clause_type { CLAUSE_ADVANCE, CLAUSE_GOLD, CLAUSE_MAP,
                    CLAUSE_SEAMAP, CLAUSE_CITY,
@@ -33,7 +33,7 @@ struct Clause {
 
 #define SPECLIST_TAG clause
 #define SPECLIST_TYPE struct Clause
-#include "speclist.h"
+#include "speclist.hh"
 
 #define clause_list_iterate(clauselist, pclause) \
     TYPED_LIST_ITERATE(struct Clause, clauselist, pclause)

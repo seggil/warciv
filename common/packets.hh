@@ -16,16 +16,16 @@
 struct connection_s;
 struct data_in;
 
-#include "connection.h"         /* struct connection_s, MAX_LEN_* */
-#include "diptreaty.h"
-#include "events.h"
-#include "improvement.h"
-#include "player.h"
-#include "shared.h"             /* MAX_LEN_NAME, MAX_LEN_ADDR */
-#include "spaceship.h"
-#include "unittype.h"
-#include "worklist.h"
-#include "effects.h"
+#include "connection.hh"         /* struct connection_s, MAX_LEN_* */
+#include "diptreaty.hh"
+#include "events.hh"
+#include "improvement.hh"
+#include "player.hh"
+#include "shared.hh"             /* MAX_LEN_NAME, MAX_LEN_ADDR */
+#include "spaceship.hh"
+#include "unittype.hh"
+#include "worklist.hh"
+#include "effects.hh"
 
 #define MAX_LEN_USERNAME        10        /* see below */
 #define MAX_LEN_MSG             1536
@@ -71,7 +71,7 @@ enum authentication_type {
   AUTH_NEWUSER_RETRY  /* inform the client to try a different [new] password */
 };
 
-#include "packets_gen.h"
+#include "packets_gen.hh"
 
 void *get_packet_from_connection(connection_t *pconn, enum packet_type *ptype, bool *presult);
 void remove_packet_from_buffer(struct socket_packet_buffer *buffer);
@@ -111,7 +111,7 @@ void post_send_packet_game_state(connection_t *pconn,
 
 #define RECEIVE_PACKET_START(type, result) \
   struct data_in din; \
-  struct type *result = wc_malloc(sizeof(*result)); \
+  struct type *result = (struct type*)wc_malloc(sizeof(*result)); \
   \
   dio_input_init(&din, pconn->buffer->data, 2); \
   { \

@@ -18,21 +18,21 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "support.h"
-#include "shared.h" /* ARRAY_SIZE */
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
+#include "shared.hh" /* ARRAY_SIZE */
 
-#include "city.h"
-#include "effects.h"
-#include "game.h"
-#include "government.h"
-#include "improvement.h"
-#include "map.h"
-#include "packets.h"
-#include "player.h"
-#include "tech.h"
+#include "city.hh"
+#include "effects.hh"
+#include "game.hh"
+#include "government.hh"
+#include "improvement.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "tech.hh"
 
 /* Names of effect ranges.
  * (These must correspond to enum effect_range_id in effects.h.)
@@ -139,13 +139,13 @@ static const char *effect_type_names[EFFECT_TYPE_LAST] = {
 **************************************************************************/
 enum effect_range effect_range_from_str(const char *str)
 {
-  enum effect_range effect_range;
+  int i;
 
   assert(ARRAY_SIZE(effect_range_names) == EFFECT_RANGE_LAST);
 
-  for (effect_range = 0; effect_range < EFFECT_RANGE_LAST; effect_range++) {
-    if (0 == mystrcasecmp(effect_range_names[effect_range], str)) {
-      return effect_range;
+  for (i = 0; i < EFFECT_RANGE_LAST; i++) {
+    if (0 == mystrcasecmp(effect_range_names[i], str)) {
+      return static_cast<effect_range>(i);
     }
   }
 
@@ -173,13 +173,13 @@ const char *effect_range_name(enum effect_range effect_range)
 **************************************************************************/
 enum effect_type effect_type_from_str(const char *str)
 {
-  enum effect_type effect_type;
+  int i;
 
   assert(ARRAY_SIZE(effect_type_names) == EFFECT_TYPE_LAST);
 
-  for (effect_type = 0; effect_type < EFFECT_TYPE_LAST; effect_type++) {
-    if (0 == mystrcasecmp(effect_type_names[effect_type], str)) {
-      return effect_type;
+  for (i = 0; i < EFFECT_TYPE_LAST; i++) {
+    if (0 == mystrcasecmp(effect_type_names[i], str)) {
+      return static_cast<effect_type>(i);
     }
   }
 
@@ -291,7 +291,7 @@ struct effect_group_element {
 
 #define SPECLIST_TAG effect_group_element
 #define SPECLIST_TYPE struct effect_group_element
-#include "speclist.h"
+#include "speclist.hh"
 
 #define effect_group_element_list_iterate(list, elt) \
   TYPED_LIST_ITERATE(struct effect_group_element, list, elt)
@@ -305,7 +305,7 @@ struct effect_group {
 
 #define SPECLIST_TAG effect_group
 #define SPECLIST_TYPE struct effect_group
-#include "speclist.h"
+#include "speclist.hh"
 
 #define effect_group_list_iterate(list, pgroup) \
   TYPED_LIST_ITERATE(struct effect_group, list, pgroup)
@@ -366,13 +366,13 @@ struct effect_type_vector *get_building_effect_types(Impr_Type_id id)
 **************************************************************************/
 enum effect_req_type effect_req_type_from_str(const char *str)
 {
-  enum effect_req_type req_type;
+  int req_type;
 
   assert(ARRAY_SIZE(req_type_names) == REQ_LAST);
 
   for (req_type = 0; req_type < ARRAY_SIZE(req_type_names); req_type++) {
     if (0 == mystrcasecmp(req_type_names[req_type], str)) {
-      return req_type;
+      return static_cast<effect_req_type>(req_type);
     }
   }
 
@@ -387,7 +387,7 @@ struct effect_group *effect_group_new(const char *name)
   struct effect_group *group;
 
   /* Create the group. */
-  group = wc_malloc(sizeof(*group));
+  group = (struct effect_group *)wc_malloc(sizeof(*group));
   group->name = mystrdup(name);
   group->id = next_group_id++;
   group->elements = effect_group_element_list_new();
@@ -408,7 +408,7 @@ void effect_group_add_element(struct effect_group *group,
   struct effect_group_element *elt;
 
   /* Create the element. */
-  elt = wc_malloc(sizeof(*elt));
+  elt = (struct effect_group_element *)wc_malloc(sizeof(*elt));
   elt->source_building = source_building;
   elt->range = range;
   elt->survives = survives;
@@ -455,7 +455,7 @@ void ruleset_cache_init(void)
   }
 
   for (i = 0; i < ARRAY_SIZE(ruleset_cache.effects); i++) {
-    building_vector_init(get_buildings_with_effect(i));
+    building_vector_init(get_buildings_with_effect(static_cast<effect_type>(i)));
 
     for (j = 0; j < ARRAY_SIZE(ruleset_cache.effects[i].buckets); j++) {
       ruleset_cache.effects[i].buckets[j] = effect_list_new();
@@ -480,14 +480,14 @@ void ruleset_cache_free(void)
   }
 
   for (i = 0; i < ARRAY_SIZE(ruleset_cache.effects); i++) {
-    building_vector_free(get_buildings_with_effect(i));
+    building_vector_free(get_buildings_with_effect(static_cast<effect_type>(i)));
 
     for (j = 0; j < ARRAY_SIZE(ruleset_cache.effects[i].buckets); j++) {
-      effect_list_iterate(get_building_effects(j, i), peffect) {
+      effect_list_iterate(get_building_effects(j, static_cast<effect_type>(i)), peffect) {
         /* Allocated in ruleset_cache_add. */
         free(peffect);
       } effect_list_iterate_end;
-      effect_list_free(get_building_effects(j, i));
+      effect_list_free(get_building_effects(j, static_cast<effect_type>(i)));
     }
   }
 
@@ -575,7 +575,7 @@ void ruleset_cache_add(Impr_Type_id source, enum effect_type effect_type,
   struct effect *peffect;
 
   /* Create the effect. */
-  peffect = wc_malloc(sizeof(*peffect));
+  peffect = (struct effect *)wc_malloc(sizeof(*peffect));
   peffect->range = range;
   peffect->survives = survives;
   peffect->value = eff_value;
@@ -595,7 +595,7 @@ void ruleset_cache_add(Impr_Type_id source, enum effect_type effect_type,
     peffect->req.value.building = req_value;
     break;
   case REQ_SPECIAL:
-    peffect->req.value.special = req_value;
+    peffect->req.value.special = static_cast<tile_special_type>(req_value);
     break;
   case REQ_TERRAIN:
     peffect->req.value.terrain = req_value;
@@ -686,16 +686,16 @@ static void send_ruleset_cache_groups(struct connection_list *dest)
 static void send_ruleset_cache_effects(struct connection_list *dest)
 {
   struct packet_ruleset_cache_effect packet;
-  enum effect_type effect_type;
+  int i;
 
-  for (effect_type = 0; effect_type < EFFECT_TYPE_LAST; effect_type++) {
-    packet.effect_type = effect_type;
+  for (i = 0; i < EFFECT_TYPE_LAST; i++) {
+    packet.effect_type = static_cast<effect_type>(i);
 
-    building_vector_iterate(get_buildings_with_effect(effect_type),
+    building_vector_iterate(get_buildings_with_effect(static_cast<effect_type>(i)),
                             building) {
       packet.id = *building;
 
-      effect_list_iterate(get_building_effects(*building, effect_type),
+      effect_list_iterate(get_building_effects(*building, static_cast<effect_type>(i)),
                           peffect) {
         packet.range = peffect->range;
         packet.survives = peffect->survives;

@@ -17,13 +17,13 @@
 
 #include <assert.h>
 
-#include "game.h"
-#include "map.h"
-#include "mem.h"                /* free */
-#include "rand.h"
-#include "shared.h"
-#include "support.h"
-#include "terrain.h"
+#include "game.hh"
+#include "map.hh"
+#include "mem.hh"                /* free */
+#include "rand.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "terrain.hh"
 
 static struct tile_type tile_types[MAX_NUM_TERRAINS];
 
@@ -75,7 +75,7 @@ const char *get_terrain_name(Terrain_type_id type)
 ****************************************************************************/
 enum terrain_tag_id terrain_tag_from_str(const char *s)
 {
-  enum terrain_tag_id tag;
+  int /* enum terrain_tag_id */ tag;
   const char *tag_names[] = {
     /* Must match terrain tags in terrain.h. */
     "NoBarbs",
@@ -92,7 +92,7 @@ enum terrain_tag_id terrain_tag_from_str(const char *s)
 
   for (tag = TER_FIRST; tag < TER_LAST; tag++) {
     if (mystrcasecmp(tag_names[tag], s) == 0) {
-      return tag;
+      return static_cast<terrain_tag_id>(tag);
     }
   }
 

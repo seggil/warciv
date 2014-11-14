@@ -37,18 +37,18 @@
 #  include <winsock2.h>
 #endif
 
-#include "capability.h"
-#include "dataio.h"
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "hash.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "support.h"
+#include "capability.hh"
+#include "dataio.hh"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "packets.h"
+#include "packets.hh"
 
 #ifdef USE_COMPRESSION
 #include <zlib.h>
@@ -106,7 +106,7 @@ int send_packet_data(connection_t *pconn, unsigned char *data, int len)
   int result = 0;
 
   freelog(BASIC_PACKET_LOG_LEVEL, "sending packet type=%s(%d) len=%d",
-          get_packet_name(data[2]), data[2], len);
+          get_packet_name(static_cast<packet_type>(data[2])), data[2], len);
 
   if (!is_server) {
     pconn->u.client.last_request_id_used =
@@ -157,11 +157,11 @@ int send_packet_data(connection_t *pconn, unsigned char *data, int len)
       byte_vector_reserve(&pconn->compression.queue, old_size + len);
       memcpy(pconn->compression.queue.p + old_size, data, len);
       freelog(COMPRESS2_LOG_LEVEL, "COMPRESS: putting %s into the queue",
-              get_packet_name(packet_type));
+              get_packet_name(static_cast<enum packet_type>(packet_type)));
     } else {
       stat_size_alone += size;
       freelog(COMPRESS_LOG_LEVEL, "COMPRESS: sending %s alone (%d bytes total)",
-              get_packet_name(packet_type), stat_size_alone);
+              get_packet_name(static_cast<enum packet_type>(packet_type)), stat_size_alone);
       send_connection_data(pconn, data, len);
     }
 
@@ -394,8 +394,8 @@ void *get_packet_from_connection(connection_t *pconn,
     struct socket_packet_buffer *buffer = pconn->buffer;
 
     error =
-        uncompress(decompressed, &decompressed_size,
-                   ADD_TO_POINTER(buffer->data, header_size),
+        uncompress(static_cast<Bytef*>(decompressed), &decompressed_size,
+                   static_cast<Bytef*>(ADD_TO_POINTER(buffer->data, header_size)),
                    compressed_size);
     if (error != Z_OK) {
       freelog(LOG_ERROR, "Uncompressing of the packet stream failed. "
@@ -414,7 +414,7 @@ void *get_packet_from_connection(connection_t *pconn,
 
     if (buffer->ndata + decompressed_size > buffer->nsize) {
       buffer->nsize += decompressed_size;
-      buffer->data = wc_realloc(buffer->data, buffer->nsize);
+      buffer->data = (unsigned char*)wc_realloc(buffer->data, buffer->nsize);
     }
 
     /*

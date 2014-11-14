@@ -13,10 +13,10 @@
 #ifndef WC_COMMON_NATION_H
 #define WC_COMMON_NATION_H
 
-#include "shared.h"             /* MAX_LEN_NAME */
+#include "shared.hh"             /* MAX_LEN_NAME */
 
-#include "wc_types.h"
-#include "terrain.h"            /* T_COUNT */
+#include "wc_types.hh"
+#include "terrain.hh"            /* T_COUNT */
 
 #define MAX_NUM_TECH_GOALS 10
 

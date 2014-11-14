@@ -15,14 +15,14 @@
 #  include "../config.h"
 #endif
 
-#include "wc_intl.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "version.h"
+#include "version.hh"
 
 #ifdef SVNREV
-#  include "wc_svnrev_gen.h"
+#  include "wc_svnrev_gen.hh"
 #endif /* SVNREV */
 
 

@@ -17,19 +17,19 @@
 
 #include <assert.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "player.h"
-#include "shared.h"
-#include "support.h"
-#include "tech.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "tech.hh"
 
-#include "city.h"
-#include "unit.h"
+#include "city.hh"
+#include "unit.hh"
 
 /***************************************************************
 This function calculates the move rate of the unit taking into
@@ -1104,8 +1104,9 @@ enum tile_special_type get_unit_tile_pillage_set(const tile_t *ptile)
   enum tile_special_type tgt_ret = S_NO_SPECIAL;
 
   unit_list_iterate(ptile->units, punit)
-    if(punit->activity==ACTIVITY_PILLAGE)
-      tgt_ret |= punit->activity_target;
+    if (punit->activity == ACTIVITY_PILLAGE)
+      tgt_ret = static_cast<tile_special_type>(
+          static_cast<int>(tgt_ret) | static_cast<int>(punit->activity_target));
   unit_list_iterate_end;
   return tgt_ret;
 }
@@ -1759,7 +1760,7 @@ bool is_build_or_clean_activity(enum unit_activity activity)
 unit_t *create_unit_virtual(player_t *pplayer, city_t *pcity,
                             Unit_Type_id type, int veteran_level)
 {
-  unit_t *punit = wc_calloc(1, sizeof(unit_t));
+  unit_t *punit = static_cast<unit_t*>(wc_calloc(1, sizeof(unit_t)));
 
   punit->type = type;
   punit->owner = pplayer->player_no;

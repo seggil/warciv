@@ -17,27 +17,27 @@
 
 #include <assert.h>
 
-#include "capstr.h"
-#include "city.h"
-#include "aicore/cm.h"
-#include "connection.h"
-#include "wc_intl.h"
-#include "government.h"
-#include "idex.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "nation.h"
-#include "packets.h"
-#include "player.h"
-#include "shared.h"
-#include "spaceship.h"
-#include "support.h"
-#include "tech.h"
-#include "traderoute.h"
-#include "unit.h"
+#include "capstr.hh"
+#include "city.hh"
+#include "aicore/cm.hh"
+#include "connection.hh"
+#include "wc_intl.hh"
+#include "government.hh"
+#include "idex.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "nation.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "spaceship.hh"
+#include "support.hh"
+#include "tech.hh"
+#include "traderoute.hh"
+#include "unit.hh"
 
-#include "game.h"
+#include "game.hh"
 
 void dealloc_id(int id);
 struct civ_game game;
@@ -801,7 +801,7 @@ enum game_types game_get_type_from_string(const char *s)
 #else
     if (0 == mystrcasecmp(s, game_type_strings[i])) {
 #endif /* ENABLE_NLS */
-      return i;
+      return static_cast<game_types>(i);
     }
   }
   return GAME_TYPE_NUM;

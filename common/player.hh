@@ -13,14 +13,14 @@
 #ifndef WC_COMMON_PLAYER_H
 #define WC_COMMON_PLAYER_H
 
-#include "connection.h"
-#include "wc_types.h"
-#include "improvement.h"        /* Impr_Status */
-#include "nation.h"
-#include "shared.h"
-#include "spaceship.h"
-#include "tech.h"
-#include "unit.h"
+#include "connection.hh"
+#include "wc_types.hh"
+#include "improvement.hh"        /* Impr_Status */
+#include "nation.hh"
+#include "shared.hh"
+#include "spaceship.hh"
+#include "tech.hh"
+#include "unit.hh"
 
 #define PLAYER_DEFAULT_TAX_RATE 0
 #define PLAYER_DEFAULT_SCIENCE_RATE 100

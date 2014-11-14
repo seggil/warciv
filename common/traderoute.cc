@@ -26,16 +26,16 @@
 #  endif /* WIN32_NATIVE */
 #endif /* HAVE_UCONTEXT_H */
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "game.h"
-#include "aicore/pf_tools.h"
+#include "city.hh"
+#include "game.hh"
+#include "aicore/pf_tools.hh"
 
-#include "traderoute.h"
+#include "traderoute.hh"
 
 /**************************************************************************
   Create a default parameter for caravans.
@@ -156,7 +156,7 @@ static struct trade_route *trade_route_new(city_t *pcity1,
                                            unit_t *punit,
                                            enum trade_route_status status)
 {
-  struct trade_route *p_tr = wc_malloc(sizeof(struct trade_route));
+  struct trade_route *p_tr = static_cast<trade_route*>(wc_malloc(sizeof(struct trade_route)));
 
   p_tr->pcity1 = pcity1;
   p_tr->pcity2 = pcity2;
@@ -305,12 +305,12 @@ static bool add_move_orders(unit_t *punit, struct unit_order *porders,
     if (ppath->positions[i].tile == ppath->positions[i - 1].tile) {
       /* Shouldn't occur often! This is for air caravans :) */
       porders[*length].order = ORDER_FULL_MP;
-      porders[*length].dir = -1;
+      porders[*length].dir = static_cast<direction8>(-1);
     } else {
       porders[*length].order = ORDER_MOVE;
-      porders[*length].dir =
+      porders[*length].dir = static_cast<direction8>(
           get_direction_for_step(ppath->positions[i - 1].tile,
-                                 ppath->positions[i].tile);
+                                 ppath->positions[i].tile));
     }
     porders[*length].activity = ACTIVITY_LAST;
     (*length)++;
@@ -356,7 +356,7 @@ struct unit_order *make_unit_orders(struct trade_route *p_tr, int *length)
   }
 
   /* Make a dynamic structure to return */
-  porders = wc_malloc(*length * sizeof(struct unit_order));
+  porders = static_cast<unit_order*>(wc_malloc(*length * sizeof(struct unit_order)));
   for (i = 0; i < *length; i++) {
     porders[i] = orders[i];
   }
@@ -414,7 +414,7 @@ struct trade_planning_calculation {
 
 #define SPECLIST_TAG tp_calc
 #define SPECLIST_TYPE struct trade_planning_calculation
-#include "speclist.h"
+#include "speclist.hh"
 
 /* The list of all trade planning calculations */
 static struct tp_calc_list *tp_calculations = NULL;
@@ -502,7 +502,7 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
     pc1->free_slots = game.traderoute_info.maxtraderoutes
       - get_real_trade_route_number(pc1->pcity);
     pc1->trade_routes_num = 0;
-    pc1->trade_routes = wc_malloc(size * sizeof(bool));
+    pc1->trade_routes = static_cast<bool*>(wc_malloc(size * sizeof(bool)));
     memset(pc1->trade_routes, FALSE, size * sizeof(bool));
 
     /* Check for earlier cities in the list */
@@ -775,13 +775,16 @@ struct trade_planning_calculation *trade_planning_calculation_new(
   int i, j;
 
   /* Initialize */
-  pcalc = wc_malloc(sizeof(struct trade_planning_calculation));
+  pcalc = static_cast<trade_planning_calculation*>(
+              wc_malloc(sizeof(struct trade_planning_calculation)));
   pcalc->size = city_list_size(pclist);
-  pcalc->tcities = wc_malloc(pcalc->size * sizeof(struct trade_city));
-  pcalc->ctlist = wc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
-                            * sizeof(struct trade_route *) / 2);
-  pcalc->btlist = wc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
-                            * sizeof(struct trade_route *) / 2);
+  pcalc->tcities = static_cast<trade_city*>(wc_malloc(pcalc->size * sizeof(struct trade_city)));
+  pcalc->ctlist = static_cast<trade_route**>(
+                      wc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
+                                * sizeof(struct trade_route *) / 2));
+  pcalc->btlist = static_cast<trade_route**>(
+                      wc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
+                                * sizeof(struct trade_route *) / 2));
 #ifdef ASYNC_TRADE_PLANNING
   pcalc->state = TPC_INTERRUPTED;
 #ifdef WIN32_NATIVE
@@ -818,9 +821,10 @@ struct trade_planning_calculation *trade_planning_calculation_new(
     tcity1->free_slots = game.traderoute_info.maxtraderoutes
                          - get_real_trade_route_number(pcity);
     tcity1->trade_routes_num = 0;
-    tcity1->trade_routes =
-        wc_malloc(pcalc->size * sizeof(struct trade_route *));
-    tcity1->distance = wc_malloc(pcalc->size * sizeof(int));
+    tcity1->trade_routes = static_cast<trade_route**>(
+        wc_malloc(pcalc->size * sizeof(struct trade_route *)));
+    tcity1->distance = static_cast<int*>(
+        wc_malloc(pcalc->size * sizeof(int)));
 
     map = NULL;
     /* Check if a trade route is possible with the lower index cities */
@@ -1035,7 +1039,8 @@ struct trade_route_list *trade_planning_calculation_get_trade_routes(
   int i;
 
   for (i = 0; i < pcalc->btconf.trade_routes_num; i++) {
-    struct trade_route *p_tr = wc_malloc(sizeof(struct trade_route));
+    struct trade_route *p_tr = static_cast<trade_route*>(
+        wc_malloc(sizeof(struct trade_route)));
 
     *p_tr = *pcalc->btlist[i];
     trade_route_list_append(trade_planning, p_tr);

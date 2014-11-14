@@ -13,7 +13,7 @@
 #ifndef WC_COMMON_WORKLIST_H
 #define WC_COMMON_WORKLIST_H
 
-#include "shared.h"             /* MAX_LEN_NAME */
+#include "shared.hh"             /* MAX_LEN_NAME */
 
 #define MAX_LEN_WORKLIST 16
 #define MAX_NUM_WORKLISTS 16

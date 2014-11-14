@@ -13,9 +13,9 @@
 #ifndef WC_COMMON_UNITTYPE_H
 #define WC_COMMON_UNITTYPE_H
 
-#include "shared.h"
+#include "shared.hh"
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 struct Sprite;                  /* opaque; client-gui specific */
 

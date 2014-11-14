@@ -30,9 +30,9 @@
   Includes cmdlevel stuff, which is connection-based.
 ***************************************************************************/
 
-#include "shared.h"             /* MAX_LEN_ADDR, bool type */
+#include "shared.hh"           /* MAX_LEN_ADDR, bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 struct hash_table;
 struct timer_list;
@@ -105,7 +105,7 @@ enum exit_state {
 struct connection_s;
 #define SPECLIST_TAG connection
 #define SPECLIST_TYPE struct connection_s
-#include "speclist.h"
+#include "speclist.hh"
 
 #define connection_list_iterate(connlist, pconn) \
     TYPED_LIST_ITERATE(struct connection_s, connlist, pconn)
@@ -129,7 +129,7 @@ struct socket_packet_buffer {
 
 #define SPECVEC_TAG byte
 #define SPECVEC_TYPE unsigned char
-#include "specvec.h"
+#include "specvec.hh"
 
 enum conn_pattern_type {
   CPT_ADDRESS = 0,
@@ -144,7 +144,7 @@ struct conn_pattern {
   int type;
 };
 
-extern char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES];
+extern char const *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES];
 
 /***********************************************************
   The connection struct represents a single client or server
@@ -339,7 +339,7 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection_s *pconn);
 
 #define SPECLIST_TAG ignore
 #define SPECLIST_TYPE struct conn_pattern
-#include "speclist.h"
+#include "speclist.hh"
 #define ignore_list_iterate(alist, ap) \
     TYPED_LIST_ITERATE(struct conn_pattern, alist, ap)
 #define ignore_list_iterate_end  LIST_ITERATE_END

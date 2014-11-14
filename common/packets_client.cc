@@ -5,18 +5,18 @@
 #include <assert.h>
 #include <string.h>
 
-#include "capability.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "support.h"
+#include "capability.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "capstr.h"
-#include "connection.h"
-#include "dataio.h"
-#include "game.h"
+#include "capstr.hh"
+#include "connection.hh"
+#include "dataio.hh"
+#include "game.hh"
 
-#include "packets.h"
+#include "packets.hh"
 
 /* in packets_gen.c also */
 static unsigned int hash_const(const void *vkey, unsigned int num_buckets)
@@ -426,7 +426,7 @@ receive_packet_authentication_req_100(
     *hash = hash_new(hash_packet_authentication_req_100,
                      cmp_packet_authentication_req_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_authentication_req*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -441,7 +441,7 @@ receive_packet_authentication_req_100(
 #   ifdef REPLAY_2
     printf(" type=%u", readin);
 #   endif
-    real_packet->type = readin;
+    real_packet->type = static_cast<authentication_type>(readin);
   }
   if (BV_ISSET(fields, 1)) {
     dio_get_string(&din, real_packet->message, sizeof(real_packet->message));
@@ -452,7 +452,7 @@ receive_packet_authentication_req_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_authentication_req*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -531,10 +531,10 @@ static int send_packet_authentication_reply_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_authentication_reply*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_authentication_reply*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -694,7 +694,7 @@ receive_packet_nation_unavailable_100(
     *hash = hash_new(hash_packet_nation_unavailable_100,
                      cmp_packet_nation_unavailable_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_nation_unavailable*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -714,7 +714,7 @@ receive_packet_nation_unavailable_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_nation_unavailable*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -792,10 +792,10 @@ static int send_packet_nation_select_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_nation_select_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_nation_select_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -1003,7 +1003,7 @@ receive_packet_game_state_100(
     *hash = hash_new(hash_packet_game_state_100,
                      cmp_packet_game_state_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_game_state*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -1021,7 +1021,7 @@ receive_packet_game_state_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_game_state*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -1100,7 +1100,7 @@ receive_packet_endgame_report_100(
     *hash = hash_new(hash_packet_endgame_report_100,
                      cmp_packet_endgame_report_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_endgame_report*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -1397,7 +1397,7 @@ receive_packet_endgame_report_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_endgame_report*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -1506,7 +1506,7 @@ receive_packet_tile_info_100(
     *hash = hash_new(hash_packet_tile_info_100,
                      cmp_packet_tile_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_tile_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -1542,7 +1542,7 @@ receive_packet_tile_info_100(
     int readin;
 
     dio_get_uint16(&din, &readin);
-    real_packet->special = readin;
+    real_packet->special = static_cast<tile_special_type>(readin);
 #   ifdef REPLAY_2
     printf(" special=%u", readin);
 #   endif
@@ -1574,7 +1574,7 @@ receive_packet_tile_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_tile_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -1651,7 +1651,7 @@ receive_packet_game_info_100(
     *hash = hash_new(hash_packet_game_info_100,
                      cmp_packet_game_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_game_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -1965,7 +1965,7 @@ receive_packet_game_info_100(
   printf("\n");
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_game_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -2042,7 +2042,7 @@ receive_packet_map_info_100(
     *hash = hash_new(hash_packet_map_info_100,
                      cmp_packet_map_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_map_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -2080,7 +2080,7 @@ receive_packet_map_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_map_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -2157,7 +2157,7 @@ receive_packet_nuke_tile_info_100(
     *hash = hash_new(hash_packet_nuke_tile_info_100,
                      cmp_packet_nuke_tile_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_nuke_tile_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -2186,7 +2186,7 @@ receive_packet_nuke_tile_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_nuke_tile_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -2263,7 +2263,7 @@ receive_packet_chat_msg_100(
     *hash = hash_new(hash_packet_chat_msg_100,
                      cmp_packet_chat_msg_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_chat_msg*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -2299,7 +2299,7 @@ receive_packet_chat_msg_100(
     int readin;
 
     dio_get_sint16(&din, &readin);
-    real_packet->event = readin;
+    real_packet->event = static_cast<event_type>(readin);
 #   ifdef REPLAY_2
     printf(" event=%d", readin);
 #   endif
@@ -2316,7 +2316,7 @@ receive_packet_chat_msg_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_chat_msg*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -2395,10 +2395,10 @@ static int send_packet_chat_msg_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_chat_msg_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_chat_msg_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -2514,7 +2514,7 @@ receive_packet_city_remove_100(
     *hash = hash_new(hash_packet_city_remove_100,
                      cmp_packet_city_remove_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_city_remove*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -2534,7 +2534,7 @@ receive_packet_city_remove_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_city_remove*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -2635,7 +2635,7 @@ receive_packet_city_info_100(
     *hash = hash_new(hash_packet_city_info_100,
                      cmp_packet_city_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_city_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -3048,7 +3048,7 @@ receive_packet_city_info_100(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->city_map[i] = readin;
+      real_packet->city_map[i] = static_cast<city_tile_type>(readin);
 #     ifdef REPLAY_2
       printf("%u", readin);
 #     endif
@@ -3118,7 +3118,7 @@ receive_packet_city_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_city_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -3181,7 +3181,7 @@ receive_packet_city_info_101(
     *hash = hash_new(hash_packet_city_info_101,
                      cmp_packet_city_info_101);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_city_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -3594,7 +3594,7 @@ receive_packet_city_info_101(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->city_map[i] = readin;
+      real_packet->city_map[i] = static_cast<city_tile_type>(readin);
 #     ifdef REPLAY_2
       printf("%u", readin);
 #     endif
@@ -3646,7 +3646,7 @@ receive_packet_city_info_101(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_city_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -3760,7 +3760,7 @@ receive_packet_city_short_info_100(
     *hash = hash_new(hash_packet_city_short_info_100,
                      cmp_packet_city_short_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_city_short_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -3851,7 +3851,7 @@ receive_packet_city_short_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_city_short_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -3929,10 +3929,10 @@ static int send_packet_city_sell_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_sell*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_sell*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4065,10 +4065,10 @@ static int send_packet_city_buy_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_buy*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_buy*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4185,10 +4185,10 @@ static int send_packet_city_change_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_change*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_change*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4327,10 +4327,10 @@ static int send_packet_city_worklist_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_worklist*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_worklist*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4475,10 +4475,10 @@ static int send_packet_city_make_specialist_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_make_specialist*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_make_specialist*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4625,10 +4625,10 @@ static int send_packet_city_make_worker_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_make_worker*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_make_worker*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4775,10 +4775,10 @@ static int send_packet_city_change_specialist_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_change_specialist*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_change_specialist*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -4924,10 +4924,10 @@ static int send_packet_city_rename_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_rename*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_rename*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -5060,10 +5060,10 @@ static int send_packet_city_options_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_options_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_options_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -5196,10 +5196,10 @@ static int send_packet_city_refresh_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_refresh*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_refresh*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -5316,10 +5316,10 @@ static int send_packet_city_incite_inq_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_incite_inq*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_incite_inq*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -5435,7 +5435,7 @@ receive_packet_city_incite_info_100(
     *hash = hash_new(hash_packet_city_incite_info_100,
                      cmp_packet_city_incite_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_city_incite_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -5464,7 +5464,7 @@ receive_packet_city_incite_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_city_incite_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -5542,10 +5542,10 @@ static int send_packet_city_name_suggestion_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_name_suggestion_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_name_suggestion_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -5661,7 +5661,7 @@ receive_packet_city_name_suggestion_info_100(
     *hash = hash_new(hash_packet_city_name_suggestion_info_100,
                      cmp_packet_city_name_suggestion_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_city_name_suggestion_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -5687,7 +5687,7 @@ receive_packet_city_name_suggestion_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_city_name_suggestion_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -5764,7 +5764,7 @@ receive_packet_city_sabotage_list_100(
     *hash = hash_new(hash_packet_city_sabotage_list_100,
                      cmp_packet_city_sabotage_list_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_city_sabotage_list*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -5809,7 +5809,7 @@ receive_packet_city_sabotage_list_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_city_sabotage_list*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -5886,7 +5886,7 @@ receive_packet_player_remove_100(
     *hash = hash_new(hash_packet_player_remove_100,
                      cmp_packet_player_remove_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_player_remove*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -5906,7 +5906,7 @@ receive_packet_player_remove_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_player_remove*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -6006,7 +6006,7 @@ receive_packet_player_info_100(
     *hash = hash_new(hash_packet_player_info_100,
                      cmp_packet_player_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_player_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -6309,7 +6309,7 @@ receive_packet_player_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_player_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -6366,7 +6366,7 @@ receive_packet_player_info_101(
     *hash = hash_new(hash_packet_player_info_101,
                      cmp_packet_player_info_101);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_player_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -6664,7 +6664,7 @@ receive_packet_player_info_101(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_player_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -6721,7 +6721,7 @@ receive_packet_player_info_102(
     *hash = hash_new(hash_packet_player_info_102,
                      cmp_packet_player_info_102);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_player_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -7022,7 +7022,7 @@ receive_packet_player_info_102(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_player_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -7079,7 +7079,7 @@ receive_packet_player_info_103(
     *hash = hash_new(hash_packet_player_info_103,
                      cmp_packet_player_info_103);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_player_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -7363,7 +7363,7 @@ receive_packet_player_info_103(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_player_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -7532,10 +7532,10 @@ static int send_packet_player_rates_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_player_rates*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_player_rates*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -7683,10 +7683,10 @@ static int send_packet_player_change_government_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_player_change_government*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_player_change_government*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -7805,10 +7805,10 @@ static int send_packet_player_research_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_player_research*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_player_research*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -7924,10 +7924,10 @@ static int send_packet_player_tech_goal_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_player_tech_goal*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_player_tech_goal*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -8092,7 +8092,7 @@ receive_packet_unit_remove_100(
     *hash = hash_new(hash_packet_unit_remove_100,
                      cmp_packet_unit_remove_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_unit_remove*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -8112,7 +8112,7 @@ receive_packet_unit_remove_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_unit_remove*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -8213,7 +8213,7 @@ receive_packet_unit_info_100(
     *hash = hash_new(hash_packet_unit_info_100,
                      cmp_packet_unit_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_unit_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -8434,7 +8434,7 @@ receive_packet_unit_info_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->activity = readin;
+    real_packet->activity = static_cast<unit_activity>(readin);
 #   ifdef REPLAY_2
     printf(" activity=%u", readin);
 #   endif
@@ -8443,7 +8443,7 @@ receive_packet_unit_info_100(
     int readin;
 
     dio_get_uint16(&din, &readin);
-    real_packet->activity_target = readin;
+    real_packet->activity_target = static_cast<tile_special_type>(readin);
 #   ifdef REPLAY_2
     printf(" activity_target=%u", readin);
 #   endif
@@ -8495,7 +8495,7 @@ receive_packet_unit_info_100(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->orders[i] = readin;
+      real_packet->orders[i] = static_cast<unit_orders>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif
@@ -8515,7 +8515,7 @@ receive_packet_unit_info_100(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->orders_dirs[i] = readin;
+      real_packet->orders_dirs[i] = static_cast<direction8>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif
@@ -8535,7 +8535,7 @@ receive_packet_unit_info_100(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->orders_activities[i] = readin;
+      real_packet->orders_activities[i] = static_cast<unit_activity>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif
@@ -8547,7 +8547,7 @@ receive_packet_unit_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_unit_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -8607,7 +8607,7 @@ receive_packet_unit_info_101(
     *hash = hash_new(hash_packet_unit_info_101,
                      cmp_packet_unit_info_101);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_unit_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -8810,7 +8810,7 @@ receive_packet_unit_info_101(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->activity = readin;
+    real_packet->activity = static_cast<unit_activity>(readin);
 #   ifdef REPLAY_2
     printf(" activity=%u", readin);
 #   endif
@@ -8819,7 +8819,7 @@ receive_packet_unit_info_101(
     int readin;
 
     dio_get_uint16(&din, &readin);
-    real_packet->activity_target = readin;
+    real_packet->activity_target = static_cast<tile_special_type>(readin);
 #   ifdef REPLAY_2
     printf(" activity_target=%u", readin);
 #   endif
@@ -8871,7 +8871,7 @@ receive_packet_unit_info_101(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->orders[i] = readin;
+      real_packet->orders[i] = static_cast<unit_orders>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif
@@ -8891,7 +8891,7 @@ receive_packet_unit_info_101(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->orders_dirs[i] = readin;
+      real_packet->orders_dirs[i] = static_cast<direction8>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif
@@ -8911,7 +8911,7 @@ receive_packet_unit_info_101(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->orders_activities[i] = readin;
+      real_packet->orders_activities[i] = static_cast<unit_activity>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif
@@ -8923,7 +8923,7 @@ receive_packet_unit_info_101(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_unit_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9034,7 +9034,7 @@ receive_packet_unit_short_info_100(
     *hash = hash_new(hash_packet_unit_short_info_100,
                      cmp_packet_unit_short_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_unit_short_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -9163,7 +9163,7 @@ receive_packet_unit_short_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_unit_short_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9240,7 +9240,7 @@ receive_packet_unit_combat_info_100(
     *hash = hash_new(hash_packet_unit_combat_info_100,
                      cmp_packet_unit_combat_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_unit_combat_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -9289,7 +9289,7 @@ receive_packet_unit_combat_info_100(
   printf(" make_winner_veteran=%u\n", real_packet->make_winner_veteran);
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_unit_combat_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -9367,10 +9367,10 @@ static int send_packet_unit_move_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_move*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_move*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9514,10 +9514,10 @@ static int send_packet_unit_build_city_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_build_city*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_build_city*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9650,10 +9650,10 @@ static int send_packet_unit_disband_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_disband*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_disband*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9770,10 +9770,10 @@ static int send_packet_unit_change_homecity_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_change_homecity*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_change_homecity*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -9903,10 +9903,10 @@ static int send_packet_unit_establish_trade_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_establish_trade*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_establish_trade*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10023,10 +10023,10 @@ static int send_packet_unit_help_build_wonder_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_help_build_wonder*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_help_build_wonder*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10140,10 +10140,10 @@ static int send_packet_unit_goto_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_goto*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_goto*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10289,10 +10289,10 @@ static int send_packet_unit_orders_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_orders*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_orders*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10541,10 +10541,10 @@ static int send_packet_unit_auto_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_auto*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_auto*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10661,10 +10661,10 @@ static int send_packet_unit_unload_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_unload*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_unload*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10796,10 +10796,10 @@ static int send_packet_unit_upgrade_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_upgrade*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_upgrade*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -10915,10 +10915,10 @@ static int send_packet_unit_nuke_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_nuke*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_nuke*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -11035,10 +11035,10 @@ static int send_packet_unit_paradrop_to_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_paradrop_to*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_paradrop_to*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -11184,10 +11184,10 @@ static int send_packet_unit_airlift_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_airlift*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_airlift*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -11321,10 +11321,10 @@ static int send_packet_unit_bribe_inq_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_bribe_inq*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_bribe_inq*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -11440,7 +11440,7 @@ receive_packet_unit_bribe_info_100(
     *hash = hash_new(hash_packet_unit_bribe_info_100,
                      cmp_packet_unit_bribe_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_unit_bribe_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -11469,7 +11469,7 @@ receive_packet_unit_bribe_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_unit_bribe_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -11547,10 +11547,10 @@ static int send_packet_unit_type_upgrade_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_type_upgrade*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_type_upgrade*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -11667,10 +11667,10 @@ static int send_packet_unit_diplomat_action_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_diplomat_action*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_diplomat_action*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -11830,7 +11830,7 @@ receive_packet_unit_diplomat_popup_dialog_100(
     *hash = hash_new(hash_packet_unit_diplomat_popup_dialog_100,
                      cmp_packet_unit_diplomat_popup_dialog_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_unit_diplomat_popup_dialog*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -11859,7 +11859,7 @@ receive_packet_unit_diplomat_popup_dialog_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_unit_diplomat_popup_dialog*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -11937,10 +11937,10 @@ static int send_packet_unit_change_activity_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_change_activity*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_change_activity*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12087,10 +12087,10 @@ static int send_packet_diplomacy_init_meeting_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_diplomacy_init_meeting_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_diplomacy_init_meeting_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12208,7 +12208,7 @@ receive_packet_diplomacy_init_meeting_100(
     *hash = hash_new(hash_packet_diplomacy_init_meeting_100,
                      cmp_packet_diplomacy_init_meeting_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_diplomacy_init_meeting*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -12237,7 +12237,7 @@ receive_packet_diplomacy_init_meeting_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_diplomacy_init_meeting*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -12315,10 +12315,10 @@ static int send_packet_diplomacy_cancel_meeting_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_diplomacy_cancel_meeting_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_diplomacy_cancel_meeting_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12436,7 +12436,7 @@ receive_packet_diplomacy_cancel_meeting_100(
     *hash = hash_new(hash_packet_diplomacy_cancel_meeting_100,
                      cmp_packet_diplomacy_cancel_meeting_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_diplomacy_cancel_meeting*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -12465,7 +12465,7 @@ receive_packet_diplomacy_cancel_meeting_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_diplomacy_cancel_meeting*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -12543,10 +12543,10 @@ static int send_packet_diplomacy_create_clause_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_diplomacy_create_clause_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_diplomacy_create_clause_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12706,7 +12706,7 @@ receive_packet_diplomacy_create_clause_100(
     *hash = hash_new(hash_packet_diplomacy_create_clause_100,
                      cmp_packet_diplomacy_create_clause_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_diplomacy_create_clause*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -12736,7 +12736,7 @@ receive_packet_diplomacy_create_clause_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->type = readin;
+    real_packet->type = static_cast<clause_type>(readin);
 #   ifdef REPLAY_2
     printf(" type=%u", readin);
 #   endif
@@ -12753,7 +12753,7 @@ receive_packet_diplomacy_create_clause_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_diplomacy_create_clause*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -12831,10 +12831,10 @@ static int send_packet_diplomacy_remove_clause_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_diplomacy_remove_clause_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_diplomacy_remove_clause_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -12994,7 +12994,7 @@ receive_packet_diplomacy_remove_clause_100(
     *hash = hash_new(hash_packet_diplomacy_remove_clause_100,
                      cmp_packet_diplomacy_remove_clause_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_diplomacy_remove_clause*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -13024,7 +13024,7 @@ receive_packet_diplomacy_remove_clause_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->type = readin;
+    real_packet->type = static_cast<clause_type>(readin);
 #   ifdef REPLAY_2
     printf(" type=%u", readin);
 #   endif
@@ -13041,7 +13041,7 @@ receive_packet_diplomacy_remove_clause_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_diplomacy_remove_clause*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13119,10 +13119,10 @@ static int send_packet_diplomacy_accept_treaty_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_diplomacy_accept_treaty_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_diplomacy_accept_treaty_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -13240,7 +13240,7 @@ receive_packet_diplomacy_accept_treaty_100(
     *hash = hash_new(hash_packet_diplomacy_accept_treaty_100,
                      cmp_packet_diplomacy_accept_treaty_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_diplomacy_accept_treaty*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -13267,7 +13267,7 @@ receive_packet_diplomacy_accept_treaty_100(
   printf(" other_accepted=%u\n", real_packet->other_accepted);
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_diplomacy_accept_treaty*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13345,10 +13345,10 @@ static int send_packet_diplomacy_cancel_pact_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_diplomacy_cancel_pact*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_diplomacy_cancel_pact*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -13480,7 +13480,7 @@ receive_packet_page_msg_100(
     *hash = hash_new(hash_packet_page_msg_100,
                      cmp_packet_page_msg_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_page_msg*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -13498,7 +13498,7 @@ receive_packet_page_msg_100(
     int readin;
 
     dio_get_sint16(&din, &readin);
-    real_packet->event = readin;
+    real_packet->event = static_cast<event_type>(readin);
 #   ifdef REPLAY_2
     printf(" event=%u\n", readin);
   } else {
@@ -13506,7 +13506,7 @@ receive_packet_page_msg_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_page_msg*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13584,10 +13584,10 @@ static int send_packet_report_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_report_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_report_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -13727,7 +13727,7 @@ receive_packet_conn_info_100(
     *hash = hash_new(hash_packet_conn_info_100,
                      cmp_packet_conn_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_conn_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -13767,7 +13767,7 @@ receive_packet_conn_info_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->access_level = readin;
+    real_packet->access_level = static_cast<cmdlevel_id>(readin);
 #   ifdef REPLAY_2
     printf(" access_level=%u", readin);
 #   endif
@@ -13793,7 +13793,7 @@ receive_packet_conn_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_conn_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13870,7 +13870,7 @@ receive_packet_conn_ping_info_100(
     *hash = hash_new(hash_packet_conn_ping_info_100,
                      cmp_packet_conn_ping_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_conn_ping_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -13934,7 +13934,7 @@ receive_packet_conn_ping_info_100(
   printf("\n");
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_conn_ping_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -13970,7 +13970,7 @@ receive_packet_conn_ping_info_101(
     *hash = hash_new(hash_packet_conn_ping_info_101,
                      cmp_packet_conn_ping_info_101);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_conn_ping_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -14031,7 +14031,7 @@ receive_packet_conn_ping_info_101(
   printf("\n");
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_conn_ping_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -14328,7 +14328,7 @@ receive_packet_new_year_100(
     *hash = hash_new(hash_packet_new_year_100,
                      cmp_packet_new_year_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_new_year*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -14357,7 +14357,7 @@ receive_packet_new_year_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_new_year*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -14483,10 +14483,10 @@ static int send_packet_spaceship_place_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_spaceship_place*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_spaceship_place*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -14639,7 +14639,7 @@ receive_packet_spaceship_info_100(
     *hash = hash_new(hash_packet_spaceship_info_100,
                      cmp_packet_spaceship_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_spaceship_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -14820,7 +14820,7 @@ receive_packet_spaceship_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_spaceship_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -14897,7 +14897,7 @@ receive_packet_ruleset_unit_100(
     *hash = hash_new(hash_packet_ruleset_unit_100,
                      cmp_packet_ruleset_unit_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_unit*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -15234,7 +15234,7 @@ receive_packet_ruleset_unit_100(
 #  endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_unit*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -15311,7 +15311,7 @@ receive_packet_ruleset_game_100(
     *hash = hash_new(hash_packet_ruleset_game_100,
                      cmp_packet_ruleset_game_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_game*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -15602,7 +15602,7 @@ receive_packet_ruleset_game_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_game*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -15680,7 +15680,7 @@ receive_packet_ruleset_government_ruler_title_100(
     *hash = hash_new(hash_packet_ruleset_government_ruler_title_100,
                      cmp_packet_ruleset_government_ruler_title_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_government_ruler_title*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -15730,7 +15730,7 @@ receive_packet_ruleset_government_ruler_title_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_government_ruler_title*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -15807,7 +15807,7 @@ receive_packet_ruleset_tech_100(
     *hash = hash_new(hash_packet_ruleset_tech_100,
                      cmp_packet_ruleset_tech_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_tech*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -15903,7 +15903,7 @@ receive_packet_ruleset_tech_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_tech*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -15980,7 +15980,7 @@ receive_packet_ruleset_government_100(
     *hash = hash_new(hash_packet_ruleset_government_100,
                      cmp_packet_ruleset_government_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_government*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -16384,7 +16384,7 @@ receive_packet_ruleset_government_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_government*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -16461,7 +16461,7 @@ receive_packet_ruleset_terrain_control_100(
     *hash = hash_new(hash_packet_ruleset_terrain_control_100,
                      cmp_packet_ruleset_terrain_control_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_terrain_control*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -16511,7 +16511,7 @@ receive_packet_ruleset_terrain_control_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->river_move_mode = readin;
+    real_packet->river_move_mode = static_cast<special_river_move>(readin);
 #   ifdef REPLAY_2
     printf(" river_move_mode=%u", readin);
 #   endif
@@ -16651,7 +16651,7 @@ receive_packet_ruleset_terrain_control_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_terrain_control*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -16728,7 +16728,7 @@ receive_packet_ruleset_nation_100(
     *hash = hash_new(hash_packet_ruleset_nation_100,
                      cmp_packet_ruleset_nation_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_nation*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -16854,7 +16854,7 @@ receive_packet_ruleset_nation_100(
   printf("\n");
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_nation*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -16931,7 +16931,7 @@ receive_packet_ruleset_city_100(
     *hash = hash_new(hash_packet_ruleset_city_100,
                      cmp_packet_ruleset_city_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_city*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -17000,7 +17000,7 @@ receive_packet_ruleset_city_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_city*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17077,7 +17077,7 @@ receive_packet_ruleset_building_100(
     *hash = hash_new(hash_packet_ruleset_building_100,
                      cmp_packet_ruleset_building_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_building*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -17160,7 +17160,7 @@ receive_packet_ruleset_building_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->equiv_range = readin;
+    real_packet->equiv_range = static_cast<impr_range>(readin);
 #   ifdef REPLAY_2
     printf(" equiv_range=%u", readin);
 #   endif
@@ -17264,7 +17264,7 @@ receive_packet_ruleset_building_100(
       int readin;
 
       dio_get_uint16(&din, &readin);
-      real_packet->spec_gate[i] = readin;
+      real_packet->spec_gate[i] = static_cast<tile_special_type>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif
@@ -17329,7 +17329,7 @@ receive_packet_ruleset_building_100(
   printf("\n");
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_building*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17406,7 +17406,7 @@ receive_packet_ruleset_terrain_100(
     *hash = hash_new(hash_packet_ruleset_terrain_100,
                      cmp_packet_ruleset_terrain_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_terrain*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -17740,7 +17740,7 @@ receive_packet_ruleset_terrain_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_terrain*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -17817,7 +17817,7 @@ receive_packet_ruleset_control_100(
     *hash = hash_new(hash_packet_ruleset_control_100,
                      cmp_packet_ruleset_control_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_control*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -18042,7 +18042,7 @@ receive_packet_ruleset_control_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_control*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18120,10 +18120,10 @@ static int send_packet_unit_load_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_load*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_load*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18256,10 +18256,10 @@ static int send_packet_single_want_hack_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_single_want_hack_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_single_want_hack_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18326,10 +18326,10 @@ static int send_packet_single_want_hack_req_101(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_single_want_hack_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_single_want_hack_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -18449,7 +18449,7 @@ receive_packet_single_want_hack_reply_100(
     *hash = hash_new(hash_packet_single_want_hack_reply_100,
                      cmp_packet_single_want_hack_reply_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_single_want_hack_reply*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -18462,7 +18462,7 @@ receive_packet_single_want_hack_reply_100(
   printf(" you_have_hack=%u\n", real_packet->you_have_hack);
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_single_want_hack_reply*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18540,7 +18540,7 @@ receive_packet_game_load_100(
     *hash = hash_new(hash_packet_game_load_100,
                      cmp_packet_game_load_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_game_load*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -18676,7 +18676,7 @@ receive_packet_game_load_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_game_load*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18753,7 +18753,7 @@ receive_packet_options_settable_control_100(
     *hash = hash_new(hash_packet_options_settable_control_100,
                      cmp_packet_options_settable_control_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_options_settable_control*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -18801,7 +18801,7 @@ receive_packet_options_settable_control_100(
   printf("\n");
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_options_settable_control*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -18878,7 +18878,7 @@ receive_packet_options_settable_100(
     *hash = hash_new(hash_packet_options_settable_100,
                      cmp_packet_options_settable_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_options_settable*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -18917,7 +18917,7 @@ receive_packet_options_settable_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->type = readin;
+    real_packet->type = static_cast<sset_type>(readin);
 #   ifdef REPLAY_2
     printf(" type=%u", readin);
 #   endif
@@ -18982,7 +18982,7 @@ receive_packet_options_settable_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_options_settable*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19117,7 +19117,7 @@ receive_packet_ruleset_cache_group_100(
     *hash = hash_new(hash_packet_ruleset_cache_group_100,
                      cmp_packet_ruleset_cache_group_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_cache_group*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -19174,7 +19174,7 @@ receive_packet_ruleset_cache_group_100(
       int readin;
 
       dio_get_uint8(&din, &readin);
-      real_packet->ranges[i] = readin;
+      real_packet->ranges[i] = static_cast<effect_range>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif
@@ -19201,7 +19201,7 @@ receive_packet_ruleset_cache_group_100(
   printf("\n");
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_cache_group*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19278,7 +19278,7 @@ receive_packet_ruleset_cache_effect_100(
     *hash = hash_new(hash_packet_ruleset_cache_effect_100,
                      cmp_packet_ruleset_cache_effect_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_ruleset_cache_effect*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -19299,7 +19299,7 @@ receive_packet_ruleset_cache_effect_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->effect_type = readin;
+    real_packet->effect_type = static_cast<effect_type>(readin);
 #   ifdef REPLAY_2
     printf(" effect_type=%u", readin);
 #   endif
@@ -19308,7 +19308,7 @@ receive_packet_ruleset_cache_effect_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->range = readin;
+    real_packet->range = static_cast<effect_range>(readin);
 #   ifdef REPLAY_2
     printf(" range=%u", readin);
 #   endif
@@ -19331,7 +19331,7 @@ receive_packet_ruleset_cache_effect_100(
     int readin;
 
     dio_get_uint8(&din, &readin);
-    real_packet->req_type = readin;
+    real_packet->req_type = static_cast<effect_req_type>(readin);
 #   ifdef REPLAY_2
     printf(" req_type=%u", readin);
 #   endif
@@ -19358,7 +19358,7 @@ receive_packet_ruleset_cache_effect_100(
   printf("\n");
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_ruleset_cache_effect*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19435,7 +19435,7 @@ receive_packet_traderoute_info_100(
     *hash = hash_new(hash_packet_traderoute_info_100,
                      cmp_packet_traderoute_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_traderoute_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -19491,7 +19491,7 @@ receive_packet_traderoute_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_traderoute_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19527,7 +19527,7 @@ receive_packet_traderoute_info_101(
     *hash = hash_new(hash_packet_traderoute_info_101,
                      cmp_packet_traderoute_info_101);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_traderoute_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -19574,7 +19574,7 @@ receive_packet_traderoute_info_101(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_traderoute_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19664,7 +19664,7 @@ receive_packet_extgame_info_100(
     *hash = hash_new(hash_packet_extgame_info_100,
                      cmp_packet_extgame_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_extgame_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -19757,7 +19757,7 @@ receive_packet_extgame_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_extgame_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19793,7 +19793,7 @@ receive_packet_extgame_info_101(
     *hash = hash_new(hash_packet_extgame_info_101,
                      cmp_packet_extgame_info_101);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_extgame_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -19865,7 +19865,7 @@ receive_packet_extgame_info_101(
   printf(" nuclearwinteron =%u\n", real_packet->nuclearwinteron);
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_extgame_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -19955,7 +19955,7 @@ receive_packet_vote_new_100(
     *hash = hash_new(hash_packet_vote_new_100,
                      cmp_packet_vote_new_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_vote_new*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -20007,7 +20007,7 @@ receive_packet_vote_new_100(
   printf(" is_poll=%u\n", real_packet->is_poll);
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_vote_new*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20084,7 +20084,7 @@ receive_packet_vote_update_100(
     *hash = hash_new(hash_packet_vote_update_100,
                      cmp_packet_vote_update_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_vote_update*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -20140,7 +20140,7 @@ receive_packet_vote_update_100(
 # endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_vote_update*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20217,7 +20217,7 @@ receive_packet_vote_remove_100(
     *hash = hash_new(hash_packet_vote_remove_100,
                      cmp_packet_vote_remove_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_vote_remove*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -20237,7 +20237,7 @@ receive_packet_vote_remove_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_vote_remove*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20314,7 +20314,7 @@ receive_packet_vote_resolve_100(
     *hash = hash_new(hash_packet_vote_resolve_100,
                      cmp_packet_vote_resolve_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_vote_resolve*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -20336,7 +20336,7 @@ receive_packet_vote_resolve_100(
   printf(" passed=%u", real_packet->passed);
 # endif
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_vote_resolve*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -20414,10 +20414,10 @@ static int send_packet_vote_submit_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_vote_submit*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_vote_submit*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20538,10 +20538,10 @@ static int send_packet_trade_route_plan_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_trade_route_plan*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_trade_route_plan*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20674,10 +20674,10 @@ static int send_packet_trade_route_remove_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_trade_route_remove*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_trade_route_remove*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20807,10 +20807,10 @@ static int send_packet_unit_trade_route_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_trade_route*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_trade_route*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -20955,7 +20955,7 @@ receive_packet_trade_route_info_100(
     *hash = hash_new(hash_packet_trade_route_info_100,
                      cmp_packet_trade_route_info_100);
   }
-  old = hash_delete_entry(*hash, real_packet);
+  old = static_cast<packet_trade_route_info*>(hash_delete_entry(*hash, real_packet));
 
   if (old) {
     *real_packet = *old;
@@ -21002,7 +21002,7 @@ receive_packet_trade_route_info_100(
 #   endif
   }
 
-  clone = wc_malloc(sizeof(*clone));
+  clone = static_cast<packet_trade_route_info*>(wc_malloc(sizeof(*clone)));
   *clone = *real_packet;
   if (old) {
     free(old);
@@ -21188,10 +21188,10 @@ static int send_packet_city_set_rally_point_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_set_rally_point*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_set_rally_point*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21337,10 +21337,10 @@ static int send_packet_city_clear_rally_point_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_city_clear_rally_point*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_city_clear_rally_point*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21458,10 +21458,10 @@ static int send_packet_unit_air_patrol_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_air_patrol*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_air_patrol*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21607,10 +21607,10 @@ static int send_packet_unit_air_patrol_stop_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_unit_air_patrol_stop*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_unit_air_patrol_stop*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }
@@ -21734,10 +21734,10 @@ static int send_packet_player_info_req_100(
   }
   BV_CLR_ALL(fields);
 
-  old = hash_lookup_data(*hash, real_packet);
+  old = static_cast<packet_player_info_req*>(hash_lookup_data(*hash, real_packet));
   old_from_hash = (old != NULL);
   if (!old) {
-    old = wc_malloc(sizeof(*old));
+    old = static_cast<packet_player_info_req*>(wc_malloc(sizeof(*old)));
     memset(old, 0, sizeof(*old));
     force_send_of_unchanged = TRUE;
   }

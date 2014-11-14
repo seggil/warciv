@@ -14,7 +14,7 @@
 #ifndef WC_COMMON_WC_TYPES_H
 #define WC_COMMON_WC_TYPES_H
 
-#include "shared.h"     /* bool type */
+#include "shared.hh"     /* bool type */
 
 /* This file serves to reduce the cross-inclusion of header files which
  * occurs when a type which is defined in one file is needed for a fuction
@@ -22,7 +22,6 @@
 
 typedef signed short Continent_id;
 typedef int Terrain_type_id;
-typedef enum specialist_type Specialist_type_id;
 typedef int Impr_Type_id;
 
 struct city_s;
@@ -111,6 +110,7 @@ enum specialist_type {
   SP_TAXMAN,
   SP_COUNT
 };
+typedef enum specialist_type Specialist_type_id;
 
 /* Changing this requires updating CITY_TILES and network capabilities. */
 #define CITY_MAP_RADIUS 2

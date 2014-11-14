@@ -15,12 +15,12 @@
 #include "../config.h"
 #endif
 
-#include "game.h"
-#include "log.h"
-#include "mem.h"
-#include "player.h"
+#include "game.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "player.hh"
 
-#include "diptreaty.h"
+#include "diptreaty.hh"
 
 /**************************************************************************
   Returns TRUE iff pplayer could do diplomancy in the game at all.
@@ -81,7 +81,7 @@ bool could_intel_with_player(player_t *pplayer, player_t *aplayer)
 *****************************************************************/
 struct Treaty *treaty_new(player_t *plr0, player_t *plr1)
 {
-  struct Treaty *ptreaty = wc_malloc(sizeof(struct Treaty));
+  struct Treaty *ptreaty = (struct Treaty *)wc_malloc(sizeof(struct Treaty));
 
   ptreaty->plr0 = plr0;
   ptreaty->plr1 = plr1;

@@ -15,9 +15,9 @@
 #include "../config.h"
 #endif
 
-#include "shared.h"             /* TRUE, FALSE */
+#include "shared.hh"             /* TRUE, FALSE */
 
-#include "spaceship.h"
+#include "spaceship.hh"
 
 const struct sship_part_info structurals_info[NUM_SS_STRUCTURALS] = {
   {19, 13, -1},                 /* -1 means none required */

@@ -17,16 +17,16 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "game.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "shared.h" /* ARRAY_SIZE */
-#include "support.h"
-#include "tech.h"
+#include "city.hh"
+#include "game.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "shared.hh" /* ARRAY_SIZE */
+#include "support.hh"
+#include "tech.hh"
 
-#include "improvement.h"
+#include "improvement.hh"
 
 /* Names of impr ranges.
  * (These must correspond to enum impr_range_id in improvement.h.)
@@ -54,13 +54,13 @@ struct impr_type improvement_types[B_LAST];
 **************************************************************************/
 enum impr_range impr_range_from_str(const char *str)
 {
-  enum impr_range ret_id;
+  int ret_id;
 
   assert(ARRAY_SIZE(impr_range_names) == IMPR_RANGE_LAST);
 
   for (ret_id = 0; ret_id < IMPR_RANGE_LAST; ret_id++) {
     if (0 == mystrcasecmp(impr_range_names[ret_id], str)) {
-      return ret_id;
+      return static_cast<impr_range>(ret_id);
     }
   }
 
@@ -271,7 +271,7 @@ static void fill_ranges_improv_lists(Impr_Status *equiv_list[IMPR_RANGE_LAST],
                                      player_t *pplayer)
 {
   Continent_id cont = 0;
-  enum impr_range i;
+  int/* enum impr_range */ i;
 
   for (i = IMPR_RANGE_NONE; i < IMPR_RANGE_LAST; i++) {
     equiv_list[i] = NULL;
@@ -302,7 +302,7 @@ static void fill_ranges_improv_lists(Impr_Status *equiv_list[IMPR_RANGE_LAST],
 bool improvement_redundant(player_t *pplayer, const city_t *pcity,
                            Impr_Type_id id, bool want_to_build)
 {
-  enum impr_range i;
+  int/* enum impr_range */ i;
   Impr_Status *equiv_list[IMPR_RANGE_LAST];
   Impr_Type_id *ept;
 
@@ -477,7 +477,7 @@ void allot_island_improvs(void)
   int i;
 
   players_iterate(pplayer) {
-    pplayer->island_improv = wc_realloc(pplayer->island_improv,
+    pplayer->island_improv = (Impr_Status*)wc_realloc(pplayer->island_improv,
                                         (map.num_continents + 1)
                                         * game.ruleset_control.num_impr_types
                                         * sizeof(Impr_Status));

@@ -34,12 +34,12 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "hash.h"
-#include "log.h"
-#include "unit.h"
+#include "city.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "unit.hh"
 
-#include "idex.h"
+#include "idex.hh"
 
 
 #ifndef IDEX_DIE

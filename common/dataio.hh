@@ -13,7 +13,7 @@
 #ifndef WC_COMMON_DATAIO_H
 #define WC_COMMON_DATAIO_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"           /* bool type */
 
 struct worklist;
 struct player_diplstate;
