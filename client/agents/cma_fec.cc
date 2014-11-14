@@ -23,16 +23,16 @@
 #include <assert.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "mem.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "agents.h"
-#include "../attribute.h"
+#include "agents.hh"
+#include "../attribute.hh"
 
-#include "cma_fec.h"
+#include "cma_fec.hh"
 
 #define RESULT_COLUMNS          10
 #define BUFFER_SIZE             100
@@ -45,7 +45,7 @@ struct cma_preset {
 
 #define SPECLIST_TAG preset
 #define SPECLIST_TYPE struct cma_preset
-#include "speclist.h"
+#include "speclist.hh"
 
 #define preset_list_iterate(presetlist, ppreset) \
     TYPED_LIST_ITERATE(struct cma_preset, presetlist, ppreset)
@@ -127,7 +127,7 @@ void cmafec_get_fe_parameter(city_t *pcity, struct cm_parameter *dest)
 **************************************************************************/
 void cmafec_preset_add(const char *descr_name, struct cm_parameter *pparam)
 {
-  struct cma_preset *ppreset = wc_malloc(sizeof(struct cma_preset));
+  struct cma_preset *ppreset = (cma_preset*)wc_malloc(sizeof(struct cma_preset));
 
   if (!preset_list) {
     preset_list = preset_list_new();
@@ -135,7 +135,7 @@ void cmafec_preset_add(const char *descr_name, struct cm_parameter *pparam)
 
   /*cm_copy_parameter(&ppreset->parameter, pparam);*/
   memcpy(&ppreset->parameter, pparam, sizeof(struct cm_parameter));
-  ppreset->descr = wc_malloc(MAX_LEN_PRESET_NAME);
+  ppreset->descr = (char*)wc_malloc(MAX_LEN_PRESET_NAME);
   (void) mystrlcpy(ppreset->descr, descr_name, MAX_LEN_PRESET_NAME);
   preset_list_prepend(preset_list, ppreset);
 

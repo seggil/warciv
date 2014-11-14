@@ -14,9 +14,9 @@
 #ifndef WC_CLIENT_AGENTS_AGENTS_H
 #define WC_CLIENT_AGENTS_AGENTS_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"            /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 /*
  * Besides callback for convenience client/agents/agents also

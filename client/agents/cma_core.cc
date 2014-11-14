@@ -22,31 +22,31 @@
 #include <unistd.h>
 #endif
 
-#include "city.h"
-#include "dataio.h"
-#include "events.h"
-#include "wc_intl.h"
-#include "government.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "packets.h"
-#include "shared.h"             /* for MIN() */
-#include "support.h"
-#include "timing.h"
+#include "city.hh"
+#include "dataio.hh"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "government.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "shared.hh"         /* for MIN() */
+#include "support.hh"
+#include "timing.hh"
 
-#include "agents.h"
-#include "../attribute.h"
-#include "../include/chatline_g.h"
-#include "../include/citydlg_g.h"
-#include "../include/cityrep_g.h"
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "../include/messagewin_g.h"
-#include "../packhand.h"
+#include "agents.hh"
+#include "../attribute.hh"
+#include "../include/chatline_g.hh"
+#include "../include/citydlg_g.hh"
+#include "../include/cityrep_g.hh"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "../include/messagewin_g.hh"
+#include "../packhand.hh"
 
-#include "cma_core.h"
+#include "cma_core.hh"
 
 /*
  * The citizen management agent(CMA) is an agent. The CMA will subscribe
@@ -98,7 +98,7 @@ static bool results_are_equal(city_t *pcity,
                              const struct cm_result *const result1,
                              const struct cm_result *const result2)
 {
-  enum cm_stat stat;
+  int stat;
 
   //T(disorder);
   if (result1->disorder != result2->disorder) {
@@ -188,7 +188,7 @@ static bool check_city(int city_id, struct cm_parameter *parameter)
   struct cm_parameter *dummy;
 
   if (!parameter) {
-    dummy = wc_malloc( sizeof(struct cm_parameter));
+    dummy = (cm_parameter*)wc_malloc( sizeof(struct cm_parameter));
     if ( dummy == 0) {
       printf("in %s, malloc failled\n", __FUNCTION__);
       exit(1);
@@ -219,7 +219,8 @@ static bool check_city(int city_id, struct cm_parameter *parameter)
 static bool apply_result_on_server(city_t *pcity,
                                    const struct cm_result *const result)
 {
-  int first_request_id = 0, last_request_id = 0, i, sp;
+  int first_request_id = 0, last_request_id = 0;
+  int i, sp;
   struct cm_result current_state;
   bool success;
 
@@ -267,7 +268,7 @@ static bool apply_result_on_server(city_t *pcity,
     for (i = 0; i < pcity->common.specialists[sp] - result->specialists[sp]; i++) {
       freelog(APPLY_RESULT_LOG_LEVEL, "Change specialist from %d to %d.",
               sp, SP_ELVIS);
-      last_request_id = city_change_specialist(pcity, sp, SP_ELVIS);
+      last_request_id = city_change_specialist(pcity, (Specialist_type_id)sp, SP_ELVIS);
       if (first_request_id == 0) {
         first_request_id = last_request_id;
       }
@@ -298,7 +299,7 @@ static bool apply_result_on_server(city_t *pcity,
     for (i = 0; i < result->specialists[sp] - pcity->common.specialists[sp]; i++) {
       freelog(APPLY_RESULT_LOG_LEVEL, "Changing specialist from %d to %d.",
               SP_ELVIS, sp);
-      last_request_id = city_change_specialist(pcity, SP_ELVIS, sp);
+      last_request_id = city_change_specialist(pcity, SP_ELVIS, (Specialist_type_id)sp);
       if (first_request_id == 0) {
         first_request_id = last_request_id;
       }

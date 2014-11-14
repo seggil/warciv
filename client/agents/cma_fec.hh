@@ -14,7 +14,7 @@
 #ifndef WC_CLINET_AGENTS_CMAFEC_H
 #define WC_CLINET_AGENTS_CMAFEC_H
 
-#include "cma_core.h"
+#include "cma_core.hh"
 
 void cmafec_init(void);
 void cmafec_free(void);

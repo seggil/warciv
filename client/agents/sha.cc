@@ -15,14 +15,14 @@
 # include "../../config.h"
 #endif
 
-#include "log.h"
-#include "game.h"
-#include "map.h"
-#include "support.h"
+#include "log.hh"
+#include "game.hh"
+#include "map.hh"
+#include "support.hh"
 
-#include "agents.h"
+#include "agents.hh"
 
-#include "sha.h"
+#include "sha.hh"
 
 /**************************************************************************
 This is the simple historian agent.
@@ -97,7 +97,7 @@ void simple_historian_init(void)
 {
   struct agent_s self;
 
-  previous_tiles = wc_malloc(MAX_MAP_INDEX * sizeof(*previous_tiles));
+  previous_tiles = (tile_t*)wc_malloc(MAX_MAP_INDEX * sizeof(*previous_tiles));
   memset(previous_tiles, 0, MAX_MAP_INDEX * sizeof(*previous_tiles));
 
   previous_units = unit_list_new();

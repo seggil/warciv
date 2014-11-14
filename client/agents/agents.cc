@@ -19,21 +19,21 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "capability.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "timing.h"
-#include "connection.h"
+#include "capability.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "timing.hh"
+#include "connection.hh"
 
-#include "../civclient.h"
-#include "../clinet.h"
-#include "cma_core.h"
-#include "cma_fec.h"
-#include "../include/mapctrl_g.h"
-#include "sha.h"
+#include "../civclient.hh"
+#include "../clinet.hh"
+#include "cma_core.hh"
+#include "cma_fec.hh"
+#include "../include/mapctrl_g.hh"
+#include "sha.hh"
 
-#include "agents.h"
+#include "agents.hh"
 
 #define DEBUG_REQUEST_IDS               FALSE
 #define DEBUG_TODO_LISTS                FALSE
@@ -42,19 +42,31 @@
 #define DEBUG_FREEZE                    FALSE
 #define MAX_AGENTS                      10
 
-struct agents_entries_s;
+
+struct agents_entries_s {
+  struct agent_s agent;
+  int first_outstanding_request_id;
+  int last_outstanding_request_id;
+  struct agents_stats {
+    struct timer *network_wall_timer;
+    int wait_at_network;
+    int wait_at_network_requests;
+  } stats;
+};
+
+enum act { ACT_NEW_TURN, ACT_UNIT, ACT_CITY, ACT_TILE };
 
 struct agent_call_s {
   struct agents_entries_s *agent;
   // Agent Call Type(ACT)
-  enum act { ACT_NEW_TURN, ACT_UNIT, ACT_CITY, ACT_TILE } type;
+  enum act type;
   enum callback_type cb_type;
   int arg;
 };
 
 #define SPECLIST_TAG agent_call
 #define SPECLIST_TYPE struct agent_call_s
-#include "speclist.h"
+#include "speclist.hh"
 
 #define agent_call_list_iterate(agent_call_list, pcall) \
     TYPED_LIST_ITERATE(struct agent_call_s, agent_call_list, pcall)
@@ -66,16 +78,7 @@ struct agent_call_s {
  */
 static struct agents_s {
   int entries_used;
-  struct agents_entries_s {
-    struct agent_s agent;
-    int first_outstanding_request_id;
-    int last_outstanding_request_id;
-    struct agents_stats {
-      struct timer *network_wall_timer;
-      int wait_at_network;
-      int wait_at_network_requests;
-    } stats;
-  } entries[MAX_AGENTS];
+  struct agents_entries_s entries[MAX_AGENTS];
   struct agent_call_list *calls;
 } agents;
 
@@ -142,7 +145,7 @@ static void enqueue_call(struct agents_entries_s *agent,
   }
   va_end(ap);
 
-  pcall2 = wc_malloc(sizeof(struct agent_call_s));
+  pcall2 = static_cast<agent_call_s*>(wc_malloc(sizeof(struct agent_call_s)));
 
   pcall2->agent = agent;
   pcall2->type = type;
