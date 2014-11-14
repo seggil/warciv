@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_PLRDLG_H
 #define WC_CLIENT_GUI_PLRDLG_H
 
-#include "../include/plrdlg_g.h"
+#include "../include/plrdlg_g.hh"
 
 void raise_players_dialog(void);
 void popdown_players_dialog(void);

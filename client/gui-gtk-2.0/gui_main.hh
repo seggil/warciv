@@ -15,8 +15,8 @@
 
 #include <gtk/gtk.h>
 
-#include "gtkpixcomm.h"
-#include "../include/gui_main_g.h"
+#include "gtkpixcomm.hh"
+#include "../include/gui_main_g.hh"
 
 enum canvas_type {
   CANVAS_PIXMAP,

@@ -15,7 +15,7 @@
 # include "../../config.h"
 #endif
 
-#include "my_cell_renderer_color.h"
+#include "my_cell_renderer_color.hh"
 
 /* Adapted from http://scentric.net/tutorial/ */
 
@@ -47,7 +47,7 @@ static void my_cell_renderer_color_render(GtkCellRenderer *cell,
                                           GdkRectangle *background_area,
                                           GdkRectangle *cell_area,
                                           GdkRectangle *expose_area,
-                                          guint flags);
+                                          GtkCellRendererState flags);
 enum {
   PROP_COLOR = 1,
   PROP_XSIZE,
@@ -83,7 +83,7 @@ GType my_cell_renderer_color_get_type(void)
     /* Derive from GtkCellRenderer */
     cell_color_type = g_type_register_static(GTK_TYPE_CELL_RENDERER,
                                              "MyCellRendererColor",
-                                             &info, 0);
+                                             &info, (GTypeFlags)0);
   }
 
   return cell_color_type;
@@ -128,18 +128,18 @@ static void my_cell_renderer_color_class_init(MyCellRendererColorClass *klass)
   pspec = g_param_spec_pointer("color",
                                "Color",
                                "The color to display (a pointer to GdkColor)",
-                               G_PARAM_READWRITE);
-  g_object_class_install_property(object_class, PROP_COLOR, pspec);
+                               (GParamFlags)G_PARAM_READWRITE);
+  g_object_class_install_property(object_class, PROP_COLOR, (GParamSpec*)pspec);
 
   pspec = g_param_spec_int("xsize", "Xsize",
                            "Size in the x direction",
-                           0, 1000, 24, G_PARAM_READWRITE);
-  g_object_class_install_property(object_class, PROP_XSIZE, pspec);
+                           0, 1000, 24, (GParamFlags)G_PARAM_READWRITE);
+  g_object_class_install_property(object_class, PROP_XSIZE, (GParamSpec*)pspec);
 
   pspec = g_param_spec_int("ysize", "Ysize",
                            "Size in the y direction",
-                           0, 1000, 16, G_PARAM_READWRITE);
-  g_object_class_install_property (object_class, PROP_YSIZE, pspec);
+                           0, 1000, 16, (GParamFlags)G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, PROP_YSIZE, (GParamSpec*)pspec);
 }
 
 /**************************************************************************
@@ -195,7 +195,7 @@ static void my_cell_renderer_color_set_property(GObject *object,
 
   switch (param_id) {
   case PROP_COLOR:
-    color = g_value_get_pointer (value);
+    color = (GdkColor*)g_value_get_pointer (value);
     if (color != NULL) {
       cell->color = gdk_color_copy (color);
     } else {
@@ -219,7 +219,7 @@ static void my_cell_renderer_color_set_property(GObject *object,
 **************************************************************************/
 GtkCellRenderer *my_cell_renderer_color_new(void)
 {
-  return g_object_new(TYPE_MY_CELL_RENDERER_COLOR, NULL);
+  return (GtkCellRenderer*)g_object_new(TYPE_MY_CELL_RENDERER_COLOR, NULL);
 }
 
 /**************************************************************************
@@ -270,7 +270,7 @@ static void my_cell_renderer_color_render(GtkCellRenderer *cellrend,
                                           GdkRectangle *background_area,
                                           GdkRectangle *cell_area,
                                           GdkRectangle *expose_area,
-                                          guint flags)
+                                          GtkCellRendererState flags)
 {
   MyCellRendererColor *cell = MY_CELL_RENDERER_COLOR(cellrend);
   gint width, height;

@@ -29,7 +29,7 @@
 
 
 #include <gtk/gtkmisc.h>
-#include "graphics.h"
+#include "graphics.hh"
 
 
 G_BEGIN_DECLS

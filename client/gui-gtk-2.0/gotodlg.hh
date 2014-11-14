@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_GOTODLG_H
 #define WC_CLIENT_GUI_GOTODLG_H
 
-#include "../include/gotodlg_g.h"
+#include "../include/gotodlg_g.hh"
 
 void popup_goto_dialog_action(void);
 

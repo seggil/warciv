@@ -15,8 +15,8 @@
 
 #include <gtk/gtk.h>
 
-#include "../include/chatline_g.h"
-#include "map.h"
+#include "../include/chatline_g.hh"
+#include "map.hh"
 
 #define MAX_CHATLINE_HISTORY 20
 
@@ -66,7 +66,7 @@ struct tag_pattern {
 
 #define SPECLIST_TAG tag_pattern
 #define SPECLIST_TYPE struct tag_pattern
-#include "speclist.h"
+#include "speclist.hh"
 #define tag_pattern_list_iterate(alist, pitem)\
   TYPED_LIST_ITERATE(struct tag_pattern, alist, pitem)
 #define tag_pattern_list_iterate_end  LIST_ITERATE_END

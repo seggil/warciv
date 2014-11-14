@@ -22,26 +22,26 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "map.h"
-#include "packets.h"
-#include "player.h"
-#include "support.h"
-#include "unit.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "support.hh"
+#include "unit.hh"
 
-#include "../clinet.h"
-#include "../civclient.h"
-#include "../control.h"
-#include "dialogs.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "../multiselect.h"
-#include "../options.h"
+#include "../clinet.hh"
+#include "../civclient.hh"
+#include "../control.hh"
+#include "dialogs.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapview.hh"
+#include "../multiselect.hh"
+#include "../options.hh"
 
-#include "gotodlg.h"
+#include "gotodlg.hh"
 
 static GtkWidget *dshell;
 static GtkWidget *view;
@@ -120,15 +120,15 @@ static void create_goto_dialog(void)
   GtkTreeViewColumn *col;
 
   dshell = gtk_dialog_new_with_buttons(_("Goto/Airlift Unit"),
-    NULL,
-    0,
-    GTK_STOCK_CANCEL,
-    GTK_RESPONSE_CANCEL,
-    _("Air_lift"),
-    CMD_AIRLIFT,
-    ("_Goto"),
-    CMD_GOTO,
-    NULL);
+                                       NULL,
+                                       GtkDialogFlags(0),
+                                       GTK_STOCK_CANCEL,
+                                       GTK_RESPONSE_CANCEL,
+                                       _("Air_lift"),
+                                       CMD_AIRLIFT,
+                                       ("_Goto"),
+                                       CMD_GOTO,
+                                       NULL);
   setup_dialog(dshell, toplevel);
   gtk_window_set_position(GTK_WINDOW(dshell), GTK_WIN_POS_MOUSE);
   gtk_dialog_set_default_response(GTK_DIALOG(dshell), CMD_GOTO);
@@ -169,13 +169,13 @@ static void create_goto_dialog(void)
     GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
   gtk_widget_set_size_request(sw, -1, 200);
 
-  label = g_object_new(GTK_TYPE_LABEL,
-    "use-underline", TRUE,
-    "mnemonic-widget", view,
-    "label", _("Ci_ties:"),
-    "xalign", 0.0,
-    "yalign", 0.5,
-    NULL);
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+                       "use-underline", TRUE,
+                       "mnemonic-widget", view,
+                       "label", _("Ci_ties:"),
+                       "xalign", 0.0,
+                       "yalign", 0.5,
+                       NULL);
   gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);

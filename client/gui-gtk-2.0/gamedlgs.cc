@@ -22,36 +22,36 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "wc_intl.h"
-#include "iterator.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "iterator.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "events.h"
-#include "game.h"
-#include "government.h"
-#include "packets.h"
-#include "player.h"
+#include "events.hh"
+#include "game.hh"
+#include "government.hh"
+#include "packets.hh"
+#include "player.hh"
 
-#include "chatline.h"
-#include "cityrep.h"
-#include "../civclient.h"
-#include "../clinet.h"
-#include "dialogs.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "../mapview_common.h"
-#include "../include/menu_g.h"
-#include "messagedlg.h"
-#include "messagewin.h"
-#include "../options.h"
-#include "../include/plrdlg_g.h"
-#include "wldlg.h"
+#include "chatline.hh"
+#include "cityrep.hh"
+#include "../civclient.hh"
+#include "../clinet.hh"
+#include "dialogs.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapview.hh"
+#include "../mapview_common.hh"
+#include "../include/menu_g.hh"
+#include "messagedlg.hh"
+#include "messagewin.hh"
+#include "../options.hh"
+#include "../include/plrdlg_g.hh"
+#include "wldlg.hh"
 
-#include "ratesdlg.h"
-#include "optiondlg.h"
+#include "ratesdlg.hh"
+#include "optiondlg.hh"
 
 /******************************************************************/
 static GtkWidget *rates_dialog_shell;
@@ -231,7 +231,7 @@ static GtkWidget *create_rates_dialog(void)
   GtkWidget *scale;
 
   shell = gtk_dialog_new_with_buttons(_("Select tax, luxury and science rates"),
-                                      NULL, 0,
+                                      NULL, (GtkDialogFlags)0,
                                       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                       GTK_STOCK_OK, GTK_RESPONSE_OK,
                                       NULL);
@@ -390,7 +390,7 @@ struct extra_option {
 
 #define SPECLIST_TAG extra_option
 #define SPECLIST_TYPE struct extra_option
-#include "speclist.h"
+#include "speclist.hh"
 #define extra_options_iterate(poption) \
   TYPED_LIST_ITERATE(struct extra_option, extra_options, poption)
 #define extra_options_iterate_end  LIST_ITERATE_END
@@ -404,7 +404,7 @@ static struct extra_option_list *extra_options;
 void fullscreen_mode_callback(struct client_option *poption)
 {
   assert(poption->type == CLIENT_OPTION_TYPE_BOOLEAN);
-  if (*poption->u.boolean.pvalue) {
+  if (*poption->u.boolean_o.pvalue) {
     gtk_window_fullscreen(GTK_WINDOW(toplevel));
   } else {
     gtk_window_unfullscreen(GTK_WINDOW(toplevel));
@@ -417,7 +417,7 @@ void fullscreen_mode_callback(struct client_option *poption)
 void map_scrollbars_callback(struct client_option *poption)
 {
   assert(poption->type == CLIENT_OPTION_TYPE_BOOLEAN);
-  if (*poption->u.boolean.pvalue) {
+  if (*poption->u.boolean_o.pvalue) {
     gtk_widget_show(map_horizontal_scrollbar);
     gtk_widget_show(map_vertical_scrollbar);
   } else {
@@ -440,7 +440,7 @@ void mapview_redraw_callback(struct client_option *poption)
 void split_message_window_callback(struct client_option *poption)
 {
   assert(poption->type == CLIENT_OPTION_TYPE_BOOLEAN);
-  if (*poption->u.boolean.pvalue) {
+  if (*poption->u.boolean_o.pvalue) {
     gtk_widget_show(get_split_message_window());
   } else {
     gtk_widget_hide(get_split_message_window());
@@ -558,7 +558,8 @@ static void extra_option_new(GtkWidget *widget, GtkWidget *parent_box,
                              void (*reload_callback)(GtkWidget *,
                                                      struct section_file *))
 {
-  struct extra_option *op = wc_malloc(sizeof(struct extra_option));
+  struct extra_option *op = (struct extra_option *)
+      wc_malloc(sizeof(struct extra_option));
   GtkWidget *ebox, *frame;
 
   assert(NULL != widget);
@@ -628,7 +629,7 @@ static void append_callback(GtkMenuItem *menuitem, gpointer data)
   struct client_option *op = (struct client_option *) data;
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(op->gui_data));
   GtkListStore *store = GTK_LIST_STORE(model);
-  GtkTreePath *path = g_object_get_data(G_OBJECT(op->gui_data), "path");
+  GtkTreePath *path = (GtkTreePath *)g_object_get_data(G_OBJECT(op->gui_data), "path");
   GtkTreeIter iter;
 
   if (path) {
@@ -653,7 +654,7 @@ static void insert_callback(GtkMenuItem *menuitem, gpointer data)
   struct client_option *op = (struct client_option *) data;
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(op->gui_data));
   GtkListStore *store = GTK_LIST_STORE(model);
-  GtkTreePath *path = g_object_get_data(G_OBJECT(op->gui_data), "path");
+  GtkTreePath *path = (GtkTreePath *)g_object_get_data(G_OBJECT(op->gui_data), "path");
   GtkTreeIter iter, niter;
 
   if (!path) {
@@ -679,7 +680,7 @@ static void remove_callback(GtkMenuItem *menuitem, gpointer data)
   struct client_option *op = (struct client_option *) data;
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(op->gui_data));
   GtkListStore *store = GTK_LIST_STORE(model);
-  GtkTreePath *path = g_object_get_data(op->gui_data, "path");
+  GtkTreePath *path = (GtkTreePath*)g_object_get_data((GObject*)op->gui_data, "path");
   GtkTreeIter iter;
 
   if (!path) {
@@ -697,7 +698,7 @@ static void remove_callback(GtkMenuItem *menuitem, gpointer data)
 static void edit_callback(GtkMenuItem *menuitem, gpointer data)
 {
   struct client_option *op = (struct client_option *) data;
-  GtkTreePath *path = g_object_get_data(op->gui_data, "path");
+  GtkTreePath *path = (GtkTreePath*)g_object_get_data((GObject*)op->gui_data, "path");
 
   if (!path) {
     return;
@@ -718,7 +719,7 @@ static void move_up_callback(GtkMenuItem *menuitem, gpointer data)
   struct client_option *op = (struct client_option *) data;
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(op->gui_data));
   GtkListStore *store = GTK_LIST_STORE(model);
-  GtkTreePath *path = g_object_get_data(op->gui_data, "path");
+  GtkTreePath *path = (GtkTreePath*)g_object_get_data((GObject*)op->gui_data, "path");
   GtkTreeIter iter, prev;
 
   if (!path) {
@@ -741,7 +742,7 @@ static void move_down_callback(GtkMenuItem *menuitem, gpointer data)
   struct client_option *op = (struct client_option *) data;
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(op->gui_data));
   GtkListStore *store = GTK_LIST_STORE(model);
-  GtkTreePath *path = g_object_get_data(op->gui_data, "path");
+  GtkTreePath *path = (GtkTreePath*)g_object_get_data((GObject*)op->gui_data, "path");
   GtkTreeIter iter, next;
 
   if (!path) {
@@ -967,8 +968,8 @@ static void apply_option_change(struct client_option *op)
   case CLIENT_OPTION_TYPE_BOOLEAN:
     {
       bool new_value = GTK_TOGGLE_BUTTON(op->gui_data)->active;
-      if (*op->u.boolean.pvalue != new_value) {
-        *op->u.boolean.pvalue = new_value;
+      if (*op->u.boolean_o.pvalue != new_value) {
+        *op->u.boolean_o.pvalue = new_value;
         if (op->change_callback) {
           (op->change_callback)(op);
         }
@@ -979,8 +980,8 @@ static void apply_option_change(struct client_option *op)
     {
       int new_value =
           gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(op->gui_data));
-      if (*op->u.integer.pvalue != new_value) {
-        *op->u.integer.pvalue = new_value;
+      if (*op->u.integer_o.pvalue != new_value) {
+        *op->u.integer_o.pvalue = new_value;
         if (op->change_callback) {
           (op->change_callback)(op);
         }
@@ -1045,8 +1046,8 @@ static void apply_option_change(struct client_option *op)
 #else
           gtk_range_get_value(GTK_RANGE(op->gui_data));
 #endif /* GTK_SCALE_BUTTON */
-      if (*op->u.integer.pvalue != new_value) {
-        *op->u.integer.pvalue = new_value;
+      if (*op->u.integer_o.pvalue != new_value) {
+        *op->u.integer_o.pvalue = new_value;
         if (op->change_callback) {
           (op->change_callback)(op);
         }
@@ -1078,11 +1079,11 @@ static void refresh_option(struct client_option *op)
   switch (op->type) {
   case CLIENT_OPTION_TYPE_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(op->gui_data),
-                                 *op->u.boolean.pvalue);
+                                 *op->u.boolean_o.pvalue);
     break;
   case CLIENT_OPTION_TYPE_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(op->gui_data),
-                              *op->u.integer.pvalue);
+                              *op->u.integer_o.pvalue);
     break;
   case CLIENT_OPTION_TYPE_STRING:
   case CLIENT_OPTION_TYPE_PASSWORD:
@@ -1117,7 +1118,7 @@ static void refresh_option(struct client_option *op)
   case CLIENT_OPTION_TYPE_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(op->gui_data),
-                               *op->u.integer.pvalue);
+                               *op->u.integer_o.pvalue);
 #else
     gtk_range_set_value(GTK_RANGE(op->gui_data), *op->u.integer.pvalue);
 #endif /* GTK_SCALE_BUTTON */
@@ -1147,11 +1148,11 @@ static void reset_option(struct client_option *op)
   switch (op->type) {
   case CLIENT_OPTION_TYPE_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(op->gui_data),
-                                 op->u.boolean.def);
+                                 op->u.boolean_o.def);
     break;
   case CLIENT_OPTION_TYPE_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(op->gui_data),
-                              op->u.integer.def);
+                              op->u.integer_o.def);
     break;
   case CLIENT_OPTION_TYPE_STRING:
   case CLIENT_OPTION_TYPE_PASSWORD:
@@ -1187,7 +1188,7 @@ static void reset_option(struct client_option *op)
   case CLIENT_OPTION_TYPE_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(op->gui_data),
-                               op->u.integer.def);
+                               op->u.integer_o.def);
 #else
     gtk_range_set_value(GTK_RANGE(op->gui_data), op->u.integer.def);
 #endif /* GTK_SCALE_BUTTON */
@@ -1217,11 +1218,11 @@ static void reload_option(struct section_file *sf, struct client_option *op)
   switch (op->type) {
   case CLIENT_OPTION_TYPE_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(op->gui_data),
-                                 load_option_bool(sf, op, *op->u.boolean.pvalue));
+                                 load_option_bool(sf, op, *op->u.boolean_o.pvalue));
     break;
   case CLIENT_OPTION_TYPE_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(op->gui_data),
-                              load_option_int(sf, op, *op->u.integer.pvalue));
+                              load_option_int(sf, op, *op->u.integer_o.pvalue));
     break;
   case CLIENT_OPTION_TYPE_STRING:
   case CLIENT_OPTION_TYPE_PASSWORD:
@@ -1275,7 +1276,7 @@ static void reload_option(struct section_file *sf, struct client_option *op)
   case CLIENT_OPTION_TYPE_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(op->gui_data),
-                               load_option_int(sf, op, *op->u.integer.pvalue));
+                               load_option_int(sf, op, *op->u.integer_o.pvalue));
 #else
     gtk_range_set_value(GTK_RANGE(op->gui_data),
                         load_option_int(sf, op, *op->u.integer.pvalue));
@@ -1487,7 +1488,7 @@ static void create_option_dialog(void)
 
   tips = gtk_tooltips_new();
   option_dialog_shell =
-      gtk_dialog_new_with_buttons(_("Set local options"), NULL, 0,
+      gtk_dialog_new_with_buttons(_("Set local options"), NULL, GtkDialogFlags(0),
                                   GTK_STOCK_REFRESH, RESPONSE_REFRESH,
                                   _("Reset"), RESPONSE_RESET,
                                   _("Reload"), RESPONSE_RELOAD,
@@ -1513,7 +1514,9 @@ static void create_option_dialog(void)
                                    GTK_POLICY_AUTOMATIC,
                                    GTK_POLICY_AUTOMATIC);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), sw,
-                             gtk_label_new(get_option_category_name(i)));
+                             gtk_label_new(
+                                 get_option_category_name(
+                                     (client_option_category)i)));
     vbox[i] = gtk_vbox_new(FALSE, 2);
     gtk_container_set_border_width(GTK_CONTAINER(vbox[i]), 6);
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox[i]);
@@ -1560,9 +1563,9 @@ static void create_option_dialog(void)
       op->gui_data = gtk_check_button_new();
       break;
     case CLIENT_OPTION_TYPE_INTEGER:
-      op->gui_data = gtk_spin_button_new_with_range(op->u.integer.min,
-                         op->u.integer.max,
-                         MAX((op->u.integer.max - op->u.integer.min) / 50, 1));
+      op->gui_data = gtk_spin_button_new_with_range(op->u.integer_o.min,
+                         op->u.integer_o.max,
+                         MAX((op->u.integer_o.max - op->u.integer_o.min) / 50, 1));
       break;
     case CLIENT_OPTION_TYPE_STRING:
     case CLIENT_OPTION_TYPE_PASSWORD:
@@ -1578,7 +1581,7 @@ static void create_option_dialog(void)
         if (op->type == CLIENT_OPTION_TYPE_PASSWORD) {
           gtk_entry_set_visibility(GTK_ENTRY(op->gui_data), FALSE);
         }
-        gtk_widget_set_size_request(op->gui_data, 300, -1);
+        gtk_widget_set_size_request((GtkWidget*)op->gui_data, 300, -1);
       }
       break;
     case CLIENT_OPTION_TYPE_STRING_VEC:
@@ -1599,7 +1602,7 @@ static void create_option_dialog(void)
         gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(op->gui_data),
                                                     -1, NULL, renderer,
                                                     "text", 0, NULL);
-        gtk_widget_set_size_request(op->gui_data, 300, -1);
+        gtk_widget_set_size_request((GtkWidget*)op->gui_data, 300, -1);
 
         g_signal_connect(G_OBJECT(op->gui_data),
                          "button-press-event",
@@ -1661,10 +1664,10 @@ static void create_option_dialog(void)
         GtkObject *adjustment;
 
         op->gui_data = gtk_volume_button_new();
-        adjustment = gtk_adjustment_new(*op->u.integer.pvalue,
-                         op->u.integer.min,
-                         op->u.integer.max,
-                         MAX((op->u.integer.max - op->u.integer.min) / 50, 1),
+        adjustment = gtk_adjustment_new(*op->u.integer_o.pvalue,
+                         op->u.integer_o.min,
+                         op->u.integer_o.max,
+                         MAX((op->u.integer_o.max - op->u.integer_o.min) / 50, 1),
                          0, 1);
         gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(op->gui_data),
                                         GTK_ADJUSTMENT(adjustment));
@@ -1680,7 +1683,7 @@ static void create_option_dialog(void)
       break;
     }
     if (op->gui_data) {
-      gtk_box_pack_end(GTK_BOX(hbox), op->gui_data, FALSE, FALSE, 0);
+      gtk_box_pack_end(GTK_BOX(hbox), (GtkWidget*)op->gui_data, FALSE, FALSE, 0);
     } else {
       die("Couldn't create a line for option '%s'.", op->name);
     }

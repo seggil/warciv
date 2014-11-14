@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_MESSAGEWIN_H
 #define WC_CLIENT_GUI_MESSAGEWIN_H
 
-#include "../include/messagewin_g.h"
+#include "../include/messagewin_g.hh"
 
 void raise_meswin_dialog(void);
 void popdown_meswin_dialog(void);

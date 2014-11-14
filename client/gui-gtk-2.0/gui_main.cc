@@ -33,43 +33,43 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "dataio.h"
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
-#include "version.h"
+#include "dataio.hh"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "version.hh"
 
-#include "chatline.h"
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "colors.h"
-#include "connectdlg.h"
-#include "../control.h"
-#include "dialogs.h"
-#include "gotodlg.h"
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "../helpdata.h"                   /* boot_help_texts() */
-#include "mapctrl.h"
-#include "mapview.h"
-#include "menu.h"
-#include "messagewin.h"
-#include "../multiselect.h"
-#include "netintf.h"
-#include "optiondlg.h"
-#include "../options.h"
-#include "pages.h"
-#include "spaceshipdlg.h"
-#include "resources.h"
-#include "../tilespec.h"
+#include "chatline.hh"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "colors.hh"
+#include "connectdlg.hh"
+#include "../control.hh"
+#include "dialogs.hh"
+#include "gotodlg.hh"
+#include "graphics.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "../helpdata.hh"    /* boot_help_texts() */
+#include "mapctrl.hh"
+#include "mapview.hh"
+#include "menu.hh"
+#include "messagewin.hh"
+#include "../multiselect.hh"
+#include "netintf.hh"
+#include "optiondlg.hh"
+#include "../options.hh"
+#include "pages.hh"
+#include "spaceshipdlg.hh"
+#include "resources.hh"
+#include "../tilespec.hh"
 
 
 #include "../include/warciv.ico"
@@ -316,12 +316,12 @@ gboolean inputline_handler(GtkWidget *w, GdkEventKey *ev)
     if (history_pos >= 0) {
       data = genlist_get(history_list, history_pos);
     } else {
-      data = "";
+      data = (char*)"";
     }
   }
 
   if (data) {
-    gtk_entry_set_text(GTK_ENTRY(w), data);
+    gtk_entry_set_text(GTK_ENTRY(w), (const gchar*)data);
     gtk_editable_set_position(GTK_EDITABLE(w), -1);
   }
   return keypress;
@@ -1025,8 +1025,8 @@ static void tearoff_destroy(GtkWidget *w, gpointer data)
   GtkWidget *p, *b, *box;
 
   box = GTK_WIDGET(data);
-  p = g_object_get_data(G_OBJECT(w), "parent");
-  b = g_object_get_data(G_OBJECT(w), "toggle");
+  p = (GtkWidget*)g_object_get_data(G_OBJECT(w), "parent");
+  b = (GtkWidget*)g_object_get_data(G_OBJECT(w), "toggle");
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b), FALSE);
 
   gtk_widget_hide(w);
@@ -1602,16 +1602,17 @@ static void setup_widgets(void)
 
   frame = gtk_frame_new(NULL);
   gtk_table_attach(GTK_TABLE(table), frame, 0, 1, 0, 1,
-                   GTK_EXPAND|GTK_SHRINK|GTK_FILL,
-                   GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND|GTK_SHRINK|GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND|GTK_SHRINK|GTK_FILL),
+                   0, 0);
 
   map_canvas = gtk_drawing_area_new();
   GTK_WIDGET_SET_FLAGS(map_canvas, GTK_CAN_FOCUS);
 
   for (i = 0; i < 5; i++) {
-    gtk_widget_modify_bg(GTK_WIDGET(overview_canvas), i,
+    gtk_widget_modify_bg(GTK_WIDGET(overview_canvas), GtkStateType(i),
                          colors_standard[COLOR_STD_BLACK]);
-    gtk_widget_modify_bg(GTK_WIDGET(map_canvas), i,
+    gtk_widget_modify_bg(GTK_WIDGET(map_canvas), GtkStateType(i),
                          colors_standard[COLOR_STD_BLACK]);
   }
 
@@ -1626,11 +1627,13 @@ static void setup_widgets(void)
 
   map_horizontal_scrollbar = gtk_hscrollbar_new(NULL);
   gtk_table_attach(GTK_TABLE(table), map_horizontal_scrollbar, 0, 1, 1, 2,
-                   GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND|GTK_SHRINK|GTK_FILL),
+                   (GtkAttachOptions)0, 0, 0);
 
   map_vertical_scrollbar = gtk_vscrollbar_new(NULL);
   gtk_table_attach(GTK_TABLE(table), map_vertical_scrollbar, 1, 2, 0, 1,
-                   0, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
+                   (GtkAttachOptions)0,
+                   (GtkAttachOptions)(GTK_EXPAND|GTK_SHRINK|GTK_FILL), 0, 0);
 
   g_signal_connect(map_canvas, "expose_event",
                    G_CALLBACK(map_canvas_expose), NULL);
@@ -1783,7 +1786,7 @@ void connection_init(void)
 {
   gchar *s;
 
-  init_character_encodings("UTF-8", FALSE);
+  init_character_encodings((char*)"UTF-8", FALSE);
 
   log_set_callback(log_callback_utf8);
 
@@ -1869,7 +1872,7 @@ void ui_main(int argc, char **argv)
   display_color_type = get_visual();
   init_color_system();
 
-  icon_bitmap = gdk_bitmap_create_from_data(root_window, warciv_bits,
+  icon_bitmap = gdk_bitmap_create_from_data(root_window, (const gchar*)warciv_bits,
                                             warciv_width, warciv_height);
   gdk_window_set_icon(root_window, NULL, icon_bitmap, icon_bitmap);
 
@@ -1924,11 +1927,11 @@ void ui_main(int argc, char **argv)
   {
     char d1[] = {0x03, 0x0c, 0x03, 0x0c};
     char d2[] = {0x08, 0x02, 0x08, 0x02};
-    char d3[] = {0xAA, 0x55, 0xAA, 0x55};
+    unsigned char d3[] = {0xAA, 0x55, 0xAA, 0x55};
 
     gray50 = gdk_bitmap_create_from_data(root_window, d1, 4, 4);
     gray25 = gdk_bitmap_create_from_data(root_window, d2, 4, 4);
-    black50 = gdk_bitmap_create_from_data(root_window, d3, 4, 4);
+    black50 = gdk_bitmap_create_from_data(root_window, (const gchar*)d3, 4, 4);
   }
 
   {
@@ -2235,7 +2238,7 @@ static void set_wait_for_writable_socket(connection_t *pconn,
 {
   static bool previous_state = FALSE;
   GIOChannel *gioc;
-  GIOCondition cond = 0;
+  GIOCondition cond = (GIOCondition)0;
 
   assert(pconn == &aconnection);
 
@@ -2252,8 +2255,12 @@ static void set_wait_for_writable_socket(connection_t *pconn,
   gioc = g_io_channel_unix_new(aconnection.sock);
 #endif
   /* gilles: socket_writable is always false */
-  cond = G_IO_IN | G_IO_PRI | (socket_writable ? G_IO_OUT : 0) | G_IO_ERR |
-    G_IO_HUP | G_IO_NVAL;
+  if (socket_writable)
+    cond = (GIOCondition)(G_IO_IN | G_IO_PRI | G_IO_OUT | G_IO_ERR |
+      G_IO_HUP | G_IO_NVAL);
+  else
+    cond = (GIOCondition)(G_IO_IN | G_IO_PRI | 0 | G_IO_ERR |
+      G_IO_HUP | G_IO_NVAL);
   input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
                                  get_net_input, &aconnection.sock,
                                  NULL);
@@ -2285,7 +2292,7 @@ int add_timer_callback(int millisecond_interval,
 void add_net_input(int sock)
 {
   GIOChannel *gioc;
-  GIOCondition cond = 0;
+  GIOCondition cond = (GIOCondition)0;
 
   //printf("%s\n", __FUNCTION__);
 #ifdef WIN32_NATIVE
@@ -2293,7 +2300,7 @@ void add_net_input(int sock)
 #else
   gioc = g_io_channel_unix_new(sock);
 #endif
-  cond = G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP | G_IO_NVAL;
+  cond = (GIOCondition)(G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP | G_IO_NVAL);
   input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
                                  get_net_input, GINT_TO_POINTER(sock), NULL);
   aconnection.u.client.notify_of_writable_data = set_wait_for_writable_socket;
@@ -2306,7 +2313,7 @@ static gboolean gioc_input_ready(GIOChannel *source,
                                  GIOCondition cond,
                                  gpointer data)
 {
-  struct net_input_ctx *ctx = data;
+  struct net_input_ctx *ctx = (struct net_input_ctx *)data;
   int flags = 0;
   gboolean keep;
 
@@ -2344,7 +2351,7 @@ static gboolean gioc_input_ready(GIOChannel *source,
 **************************************************************************/
 static void destroy_net_input_ctx(gpointer data)
 {
-  struct net_input_ctx *ctx = data;
+  struct net_input_ctx *ctx = (struct net_input_ctx *)data;
 
   freelog(LOG_DEBUG, "%s %p (socket=%d)",
           __FUNCTION__, data, ctx->sock);
@@ -2380,7 +2387,7 @@ int add_net_input_callback(int sock,
                            data_free_func_t datafree)
 {
   int id;
-  GIOCondition cond = 0;
+  GIOCondition cond = (GIOCondition)0;
   struct net_input_ctx *ctx;
   GIOChannel *gioc;
 
@@ -2389,20 +2396,20 @@ int add_net_input_callback(int sock,
           __FUNCTION__, sock, flags, cb, data, datafree);
 
   if (flags & INPUT_READ) {
-    cond |= G_IO_IN;
+    cond = (GIOCondition)(cond | G_IO_IN);
   }
   if (flags & INPUT_WRITE) {
-    cond |= G_IO_OUT;
+    cond = (GIOCondition)(cond | G_IO_OUT);
   }
 
   if (flags & INPUT_ERROR) {
-    cond |= G_IO_ERR;
+    cond = (GIOCondition)(cond | G_IO_ERR);
   }
   if (flags & INPUT_CLOSED) {
-    cond |= G_IO_HUP;
+    cond = (GIOCondition)(cond | G_IO_HUP);
   }
 
-  ctx = wc_calloc(1, sizeof (struct net_input_ctx));
+  ctx = (net_input_ctx*)wc_calloc(1, sizeof (struct net_input_ctx));
   ctx->guard = NET_INPUT_CTX_MEMORY_GUARD;
 
   freelog(LOG_DEBUG, "%s new net_input_ctx %p", __FUNCTION__, ctx);
@@ -2474,7 +2481,7 @@ void popup_quit_dialog(void)
 
   if (!dialog) {
     dialog = gtk_message_dialog_new(NULL,
-                                    0,
+                                    (GtkDialogFlags)0,
                                     GTK_MESSAGE_WARNING,
                                     GTK_BUTTONS_YES_NO,
                                     _("Are you sure you want to quit?"));
@@ -2528,7 +2535,7 @@ static void voteinfo_bar_do_vote_callback(GtkWidget *w, gpointer userdata)
   enum client_vote_type vote;
   struct voteinfo *vi;
 
-  vote = GPOINTER_TO_INT(userdata);
+  vote = (client_vote_type)GPOINTER_TO_INT(userdata);
   vi = voteinfo_queue_get_current(NULL);
 
   if (vi == NULL) {
@@ -2556,7 +2563,7 @@ struct voteinfo_bar *create_voteinfo_bar(void)
   struct voteinfo_bar *vib;
   const int BUTTON_HEIGHT = 12;
 
-  vib = wc_calloc(1, sizeof(struct voteinfo_bar));
+  vib = (voteinfo_bar*)wc_calloc(1, sizeof(struct voteinfo_bar));
 
   hbox = gtk_hbox_new(FALSE, 4);
   vib->box = hbox;

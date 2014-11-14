@@ -15,6 +15,6 @@
 
 #include <gtk/gtk.h>
 
-#include "../include/diplodlg_g.h"
+#include "../include/diplodlg_g.hh"
 
 #endif  /* WC_CLIENT_GUI_DIPLODLG_H */

@@ -15,6 +15,6 @@
 
 #include <gtk/gtk.h>
 
-#include "../include/spaceshipdlg_g.h"
+#include "../include/spaceshipdlg_g.hh"
 
 #endif  /* WC_CLIENT_GUI_SPACESHIPDLG_H */

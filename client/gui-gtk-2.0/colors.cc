@@ -19,13 +19,13 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
 
-#include "gui_main.h"
+#include "gui_main.hh"
 
-#include "colors.h"
+#include "colors.hh"
 
 static struct rgbtriple {
   int r, g, b;
@@ -74,7 +74,7 @@ static void alloc_standard_colors (void)
   colormap = gdk_screen_get_default_colormap(screen);
 
   for (i = 0; i<COLOR_STD_LAST; i++) {
-    colors_standard[i]       = wc_malloc(sizeof(GdkColor));
+    colors_standard[i] = (GdkColor*)wc_malloc(sizeof(GdkColor));
 
     colors_standard[i]->red  = colors_standard_rgb[i].r<<8;
     colors_standard[i]->green= colors_standard_rgb[i].g<<8;

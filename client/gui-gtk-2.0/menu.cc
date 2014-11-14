@@ -17,45 +17,45 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "packets.h"
-#include "government.h"
-#include "unittype.h"
-#include "traderoute.h"
+#include "packets.hh"
+#include "government.hh"
+#include "unittype.hh"
+#include "traderoute.hh"
 
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "../connectdlg_common.h"
-#include "../multiselect.h"
-#include "../options.h"
-#include "../trade.h"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "../connectdlg_common.hh"
+#include "../multiselect.hh"
+#include "../options.hh"
+#include "../trade.hh"
 
-#include "chatline.h"
-#include "cityrep.h"
-#include "dialogs.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapctrl.h"
-#include "messagewin.h"
-#include "optiondlg.h"
-#include "pages.h"
-#include "plrdlg.h"
-#include "repodlgs.h"
-#include "style.h"
-#include "wldlg.h"
+#include "chatline.hh"
+#include "cityrep.hh"
+#include "dialogs.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapctrl.hh"
+#include "messagewin.hh"
+#include "optiondlg.hh"
+#include "pages.hh"
+#include "plrdlg.hh"
+#include "repodlgs.hh"
+#include "style.hh"
+#include "wldlg.hh"
 
-#include "../include/finddlg_g.h"
-#include "../include/gotodlg_g.h"
-#include "../include/helpdlg_g.h"
-#include "../include/mapview_g.h"
-#include "../include/ratesdlg_g.h"
-#include "../include/spaceshipdlg_g.h"
+#include "../include/finddlg_g.hh"
+#include "../include/gotodlg_g.hh"
+#include "../include/helpdlg_g.hh"
+#include "../include/mapview_g.hh"
+#include "../include/ratesdlg_g.hh"
+#include "../include/spaceshipdlg_g.hh"
 
-#include "menu.h"
+#include "menu.hh"
 
 /* Use it to manage buf size for char variables */
 #define LOG_MENU LOG_VERBOSE
@@ -459,7 +459,7 @@ static void callback_game_leave(GtkAction *action, gpointer user_data)
   if (is_server_running()) {
     GtkWidget* dialog =
       gtk_message_dialog_new(NULL,
-                             0,
+                             (GtkDialogFlags)0,
                              GTK_MESSAGE_WARNING,
                              GTK_BUTTONS_OK_CANCEL,
                              _("Leaving a local game will end it!"));
@@ -512,7 +512,7 @@ static void take_screenshot(void)
   }
 
   len = strlen(homedir) + 64;
-  filepath = wc_malloc(len);
+  filepath = (gchar*)wc_malloc(len);
   my_snprintf(filepath, len, "%s%scivclient000.png",
               homedir, G_DIR_SEPARATOR_S);
   p = strrchr(filepath, '0') - 2;
@@ -2348,7 +2348,7 @@ static void callback_delayed_goto_place(GtkAction *unusedaction,
                                         GtkRadioAction *action,
                                         gpointer user_data)
 {
-  delayed_goto_place = gtk_radio_action_get_current_value(action);
+  delayed_goto_place = (place_value)gtk_radio_action_get_current_value(action);
 }
 
 /****************************************************************
@@ -2358,7 +2358,7 @@ static void callback_delayed_goto_utype(GtkAction *unusedaction,
                                         GtkRadioAction *action,
                                         gpointer user_data)
 {
-  delayed_goto_utype = gtk_radio_action_get_current_value(action);
+  delayed_goto_utype = (utype_value)gtk_radio_action_get_current_value(action);
 }
 
 /****************************************************************
@@ -2424,7 +2424,7 @@ static void update_delayed_goto_automatic_filter_menu(int dg)
   assert(dg >= 0 && dg < DELAYED_GOTO_NUM);
 
   filter = delayed_goto_list[dg].automatic_execution;
-  for (i = 1; (str = delayed_goto_get_auto_name(i)); i <<= 1) {
+  for (i = 1; (str = delayed_goto_get_auto_name((automatic_execution)i)); i <<= 1) {
     my_snprintf(buf, sizeof(buf), "DELAYED_GOTO%d_AUTO%d", dg, i);
     menu_toggle_set_active(toggle_action_group_delayed_goto_automatic[dg],
                            buf, filter & i);
@@ -2443,13 +2443,13 @@ static void callback_menu_delayed_goto_automatic(GtkToggleAction *action,
 
   assert(dg >= 0 && dg < DELAYED_GOTO_NUM);
 
-  for (i = 1; (str = delayed_goto_get_auto_name(i)); i <<= 1) {
+  for (i = 1; (str = delayed_goto_get_auto_name((automatic_execution)i)); i <<= 1) {
     my_snprintf(buf, sizeof(buf), "DELAYED_GOTO%d_AUTO%d", dg, i);
     if (0 == strcmp(buf, gtk_action_get_name(GTK_ACTION(action)))) {
       if (BOOL(delayed_goto_list[dg].automatic_execution & i)
           ^ gtk_toggle_action_get_active(action)
           && delayed_goto_auto_filter_change(
-                 &delayed_goto_list[dg].automatic_execution, i)) {
+                 &delayed_goto_list[dg].automatic_execution, (automatic_execution)i)) {
         update_delayed_goto_automatic_filter_menu(dg);
       }
     }
@@ -2471,7 +2471,7 @@ static const char *load_menu_delayed_goto_automatic(const char *actionname,
   assert(dg >= 0 && dg < DELAYED_GOTO_NUM);
 
   retbuf[0] = '\0';
-  for (i = 1, j = 0; (str = delayed_goto_get_auto_name(i)); i <<= 1, j++) {
+  for (i = 1, j = 0; (str = delayed_goto_get_auto_name((automatic_execution)i)); i <<= 1, j++) {
     my_snprintf(name[j], sizeof(name[j]), "DELAYED_GOTO%d_AUTO%d", dg, i);
     cat_snprintf(retbuf, sizeof(retbuf),
                  "<menuitem action=\"%s\" />\n", name[j]);
@@ -4740,7 +4740,7 @@ static void callback_multi_selection_utype(GtkAction *unusedaction,
                                            GtkRadioAction *action,
                                            gpointer user_data)
 {
-  multi_select_utype = gtk_radio_action_get_current_value(action);
+  multi_select_utype = (utype_value)gtk_radio_action_get_current_value(action);
 }
 
 /****************************************************************
@@ -4750,7 +4750,7 @@ static void callback_multi_selection_place(GtkAction *unusedaction,
                                            GtkRadioAction *action,
                                            gpointer user_data)
 {
-  multi_select_place = gtk_radio_action_get_current_value(action);
+  multi_select_place = (place_value)gtk_radio_action_get_current_value(action);
 }
 
 /****************************************************************
@@ -5311,8 +5311,8 @@ static void callback_miscellaneous_diplomat_city(GtkAction *unusedaction,
                                                  GtkRadioAction *action,
                                                  gpointer user_data)
 {
-  default_diplomat_city_action
-      = gtk_radio_action_get_current_value(action);
+  default_diplomat_city_action = (default_diplomat_city_actions)
+        gtk_radio_action_get_current_value(action);
 }
 
 /****************************************************************
@@ -5322,8 +5322,8 @@ static void callback_miscellaneous_diplomat_unit(GtkAction *unusedaction,
                                                  GtkRadioAction *action,
                                                  gpointer user_data)
 {
-  default_diplomat_unit_action
-      = gtk_radio_action_get_current_value(action);
+  default_diplomat_unit_action = (default_diplomat_unit_actions)
+        gtk_radio_action_get_current_value(action);
 }
 
 /****************************************************************
@@ -5333,7 +5333,8 @@ static void callback_miscellaneous_caravan(GtkAction *unusedaction,
                                            GtkRadioAction *action,
                                            gpointer user_data)
 {
-  default_caravan_action = gtk_radio_action_get_current_value(action);
+  default_caravan_action = static_cast<default_caravan_unit_actions>(
+      gtk_radio_action_get_current_value(action));
 }
 
 /****************************************************************
@@ -5343,7 +5344,7 @@ static void callback_miscellaneous_unit(GtkAction *unusedaction,
                                         GtkRadioAction *action,
                                         gpointer user_data)
 {
-  default_action_type = gtk_radio_action_get_current_value(action);
+  default_action_type = (new_unit_action)gtk_radio_action_get_current_value(action);
 }
 
 

@@ -24,31 +24,30 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "packets.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "packets.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "../chatline_common.h"
-#include "cityrep.h"
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "../control.h"
-#include "dialogs.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "helpdlg.h"
-#include "../mapview_common.h"
-#include "../options.h"
-#include "../packhand_gen.h"
-#include "../control.h"
-#include "../text.h"
+#include "../chatline_common.hh"
+#include "cityrep.hh"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "../control.hh"
+#include "dialogs.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "helpdlg.hh"
+#include "../mapview_common.hh"
+#include "../options.hh"
+#include "../packhand_gen.hh"
+#include "../text.hh"
 
-#include "../repodlgs_common.h"
-#include "repodlgs.h"
+#include "../repodlgs_common.hh"
+#include "repodlgs.hh"
 
 /******************************************************************/
 
@@ -842,10 +841,10 @@ static void economy_command_callback(struct gui_dialog *dlg, int response)
     if (response == ECONOMY_SELL_ALL) {
       shell = gtk_message_dialog_new(
           NULL,
-          GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT,
+          (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
           GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
           _("Do you really wish to sell your %s?\n"),
-          get_improvement_name(i));
+          get_improvement_name((GtkDialogFlags)i));
       setup_dialog(shell, gui_dialog_get_toplevel(dlg));
       gtk_window_set_title(GTK_WINDOW(shell), _("Sell Improvements"));
 
@@ -1204,7 +1203,7 @@ static void activeunits_command_callback(struct gui_dialog *dlg, int response)
 
     shell = gtk_message_dialog_new(
           NULL,
-          GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT,
+          (GtkDialogFlags)(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
           GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
           _("Upgrade as many %s to %s as possible for %d gold each?\n"
             "Treasury contains %d gold."),
@@ -1510,7 +1509,7 @@ static void create_settable_options_dialog(void)
 
   tips = gtk_tooltips_new();
   settable_options_dialog_shell = gtk_dialog_new_with_buttons(_("Game Options"),
-      NULL, 0,
+      NULL, (GtkDialogFlags)0,
       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
       GTK_STOCK_OK, GTK_RESPONSE_OK,
       NULL);
@@ -1527,7 +1526,7 @@ static void create_settable_options_dialog(void)
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(win)->vbox), book, TRUE, TRUE, 2);
 
   /* create a number of notebook pages for each category */
-  vbox = wc_malloc(num_options_categories * sizeof(GtkWidget *));
+  vbox = (GtkWidget**)wc_malloc(num_options_categories * sizeof(GtkWidget *));
 
   for (i = 0; i < num_options_categories; i++) {
     sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1613,7 +1612,7 @@ static void create_settable_options_dialog(void)
     /* set up a linked list so we can work our way through the widgets */
     gtk_widget_set_name(ent, settable_options[i].name);
     g_object_set_data(G_OBJECT(ent), "prev", prev_widget);
-    g_object_set_data(G_OBJECT(ent), "changed", FALSE);
+    g_object_set_data(G_OBJECT(ent), "changed", NULL);
     prev_widget = ent;
   }
 

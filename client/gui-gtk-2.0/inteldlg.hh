@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_INTELDLG_H
 #define WC_CLIENT_GUI_INTELDLG_H
 
-#include "../include/inteldlg_g.h"
+#include "../include/inteldlg_g.hh"
 
 /* nothing to add */
 

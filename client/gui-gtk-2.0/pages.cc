@@ -22,31 +22,31 @@
 
 #include <gtk/gtk.h>
 
-#include "dataio.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "mem.h"
-#include "netintf.h"            /* adns_is_available */
-#include "shared.h"
-#include "support.h"
-#include "version.h"
+#include "dataio.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "netintf.hh"            /* adns_is_available */
+#include "shared.hh"
+#include "support.hh"
+#include "version.hh"
 
-#include "chatline.h"
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "colors.h"
-#include "connectdlg.h"
-#include "../connectdlg_common.h"
-#include "dialogs.h"
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "optiondlg.h"
-#include "../packhand.h"
-#include "pages.h"
-#include "style.h"
+#include "chatline.hh"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "colors.hh"
+#include "connectdlg.hh"
+#include "../connectdlg_common.hh"
+#include "dialogs.hh"
+#include "graphics.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "optiondlg.hh"
+#include "../packhand.hh"
+#include "pages.hh"
+#include "style.hh"
 
 
 GtkWidget *start_message_area;
@@ -288,7 +288,7 @@ static GtkWidget *network_confirm_password_label, *network_confirm_password;
 **************************************************************************/
 static int get_real_player_number(struct server *pserver)
 {
-  struct server_players *pplayer;
+  struct server::server_players *pplayer;
   int i;
   int nplayers = 0;
 
@@ -802,8 +802,8 @@ static void network_activate_callback(GtkTreeView *view,
 static void meta_player_tree_store_append(struct server *pserver,
                                           const char *type)
 {
-  struct server_players *pplayer;
-  struct server_players *pobserver;
+  struct server::server_players *pplayer;
+  struct server::server_players *pobserver;
   GtkTreeIter parent, iter;
   int i, j;
   size_t name_len;
@@ -843,7 +843,7 @@ static void meta_player_tree_store_append(struct server *pserver,
 static void
 meta_player_tree_store_append_global_observers(struct server *pserver)
 {
-  struct server_players *pobserver;
+  struct server::server_players *pobserver;
   GtkTreeIter parent, iter;
   int i;
   bool first = TRUE;
@@ -873,7 +873,7 @@ meta_player_tree_store_append_global_observers(struct server *pserver)
 **************************************************************************/
 static void meta_player_tree_store_append_detached_conn(struct server *pserver)
 {
-  struct server_players *pdetached;
+  struct server::server_players *pdetached;
   GtkTreeIter parent, iter;
   int i;
   bool first = TRUE;
@@ -1235,12 +1235,14 @@ GtkWidget *create_network_page(void)
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
 
   network_host = gtk_entry_new();
-  g_signal_connect(network_host, "activate",
+  g_signal_connect((GtkWidget*)network_host, "activate",
       G_CALLBACK(connect_callback), NULL);
   gtk_table_attach(GTK_TABLE(table), network_host, 1, 2, 0, 1,
-                   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   0, 0);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", network_host,
                        "label", _("_Host:"),
@@ -1253,9 +1255,11 @@ GtkWidget *create_network_page(void)
   g_signal_connect(network_port, "activate",
       G_CALLBACK(connect_callback), NULL);
   gtk_table_attach(GTK_TABLE(table), network_port, 1, 2, 1, 2,
-                   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   0, 0);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", network_port,
                        "label", _("_Port:"),
@@ -1268,9 +1272,11 @@ GtkWidget *create_network_page(void)
   g_signal_connect(network_login, "activate",
       G_CALLBACK(connect_callback), NULL);
   gtk_table_attach(GTK_TABLE(table), network_login, 1, 2, 3, 4,
-                   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   0, 0);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", network_login,
                        "label", _("_Login:"),
@@ -1284,9 +1290,10 @@ GtkWidget *create_network_page(void)
       G_CALLBACK(connect_callback), NULL);
   gtk_entry_set_visibility(GTK_ENTRY(network_password), FALSE);
   gtk_table_attach(GTK_TABLE(table), network_password, 1, 2, 4, 5,
-                   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL), 0, 0);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", network_password,
                        "label", _("Pass_word:"),
@@ -1300,9 +1307,10 @@ GtkWidget *create_network_page(void)
       G_CALLBACK(connect_callback), NULL);
   gtk_entry_set_visibility(GTK_ENTRY(network_confirm_password), FALSE);
   gtk_table_attach(GTK_TABLE(table), network_confirm_password, 1, 2, 5, 6,
-                   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL), 0, 0);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", network_confirm_password,
                        "label", _("Conf_irm Password:"),
@@ -1469,7 +1477,7 @@ GtkWidget *create_start_page(void)
 
   gtk_table_attach_defaults(GTK_TABLE(table), spin, 1, 2, 0, 1);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", spin,
                        "label", _("Number of Players (including AI):"),
@@ -1490,7 +1498,7 @@ GtkWidget *create_start_page(void)
   gtk_option_menu_set_menu(GTK_OPTION_MENU(option), menu);
   gtk_table_attach_defaults(GTK_TABLE(table), option, 1, 2, 1, 2);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", option,
                        "label", _("AI Skill Level:"),
@@ -1765,10 +1773,10 @@ GtkWidget *create_load_page(void)
   sbox = gtk_vbox_new(FALSE, 2);
   gtk_container_add(GTK_CONTAINER(align), sbox);
 
-  label = g_object_new(GTK_TYPE_LABEL,
-    "use-underline", TRUE,
-    "mnemonic-widget", view,
-    "label", _("Choose Saved Game to _Load:"),
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+                       "use-underline", TRUE,
+                       "mnemonic-widget", view,
+                       "label", _("Choose Saved Game to _Load:"),
                        "xalign", 0.0, "yalign", 0.5, NULL);
   gtk_box_pack_start(GTK_BOX(sbox), label, FALSE, FALSE, 0);
 
@@ -1891,10 +1899,10 @@ GtkWidget *create_scenario_page(void)
   sbox = gtk_vbox_new(FALSE, 2);
   gtk_container_add(GTK_CONTAINER(align), sbox);
 
-  label = g_object_new(GTK_TYPE_LABEL,
-    "use-underline", TRUE,
-    "mnemonic-widget", view,
-    "label", _("Choose a _Scenario:"),
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+                       "use-underline", TRUE,
+                       "mnemonic-widget", view,
+                       "label", _("Choose a _Scenario:"),
                        "xalign", 0.0, "yalign", 0.5, NULL);
   gtk_box_pack_start(GTK_BOX(sbox), label, FALSE, FALSE, 0);
 
@@ -2071,7 +2079,7 @@ GtkWidget *create_nation_page(void)
   g_signal_connect(view, "row_activated",
                    G_CALLBACK(nation_start_callback), NULL);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", view,
                        "label", _("Choose a _nation to play:"),
@@ -2270,7 +2278,7 @@ enum client_pages get_client_page(void)
 **************************************************************************/
 static void set_page_callback(GtkWidget *w, gpointer data)
 {
-  set_client_page(GPOINTER_TO_UINT(data));
+  set_client_page((client_pages)GPOINTER_TO_UINT(data));
 }
 
 /**************************************************************************
@@ -2388,7 +2396,7 @@ static void create_save_dialog(void)
 
   shell = gtk_dialog_new_with_buttons(_("Save Game"),
                                       NULL,
-                                      0,
+                                      (GtkDialogFlags)0,
                                       _("_Browse..."),
                                       SAVE_BROWSE,
                                       GTK_STOCK_DELETE,
@@ -2423,7 +2431,7 @@ static void create_save_dialog(void)
   sbox = gtk_vbox_new(FALSE, 2);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(shell)->vbox), sbox, TRUE, TRUE, 0);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", view,
                        "label", _("Saved _Games:"),
@@ -2447,7 +2455,7 @@ static void create_save_dialog(void)
   save_entry = entry;
   g_signal_connect(entry, "activate", G_CALLBACK(save_entry_callback), NULL);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", entry,
                        "label", _("Save _Filename:"),

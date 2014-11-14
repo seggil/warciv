@@ -15,7 +15,7 @@
 
 #include <gtk/gtk.h>
 
-#include "../include/menu_g.h"
+#include "../include/menu_g.hh"
 
 void setup_menus(GtkWidget *window, GtkWidget **menubar);
 

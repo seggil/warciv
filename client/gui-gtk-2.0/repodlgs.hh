@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_REPODLGS_H
 #define WC_CLIENT_GUI_REPODLGS_H
 
-#include "../include/repodlgs_g.h"
+#include "../include/repodlgs_g.hh"
 
 void raise_science_dialog(void);
 void popdown_science_dialog(void);

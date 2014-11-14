@@ -14,7 +14,7 @@
 #define WC_CLIENT_GUI_HAPPINESS_H
 
 #include <gtk/gtk.h>
-#include "citydlg.h"
+#include "citydlg.hh"
 
 GtkWidget *get_top_happiness_display(city_t *pcity);
 void close_happiness_dialog(city_t *pcity);

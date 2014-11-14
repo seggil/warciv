@@ -17,21 +17,21 @@
 
 #include <gtk/gtk.h>
 
-#include "city.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "mem.h"
-#include "support.h"
+#include "city.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "../text.h"
-#include "../tilespec.h"
+#include "../text.hh"
+#include "../tilespec.hh"
 
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "happiness.h"
-#include "mapview.h"
+#include "graphics.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "happiness.hh"
+#include "mapview.hh"
 
 /* semi-arbitrary number that controls the width of the happiness widget */
 #define HAPPINESS_PIX_WIDTH 23
@@ -54,7 +54,7 @@ struct happiness_dialog {
 
 #define SPECLIST_TAG dialog
 #define SPECLIST_TYPE struct happiness_dialog
-#include "speclist.h"
+#include "speclist.hh"
 
 #define dialog_list_iterate(dialoglist, pdialog) \
     TYPED_LIST_ITERATE(struct happiness_dialog, dialoglist, pdialog)
@@ -103,7 +103,7 @@ static struct happiness_dialog *create_happiness_dialog(city_t *pcity)
   struct happiness_dialog *pdialog;
   GtkWidget *vbox;
 
-  pdialog = wc_malloc(sizeof(struct happiness_dialog));
+  pdialog = (struct happiness_dialog*)wc_malloc(sizeof(struct happiness_dialog));
   pdialog->pcity = pcity;
 
   pdialog->shell = gtk_vbox_new(FALSE, 0);

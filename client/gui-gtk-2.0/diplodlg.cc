@@ -20,27 +20,27 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "player.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "chatline.h"
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "diptreaty.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "../options.h"
+#include "chatline.hh"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "diptreaty.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapview.hh"
+#include "../options.hh"
 
-#include "diplodlg.h"
+#include "diplodlg.hh"
 
 #define MAX_NUM_CLAUSES 64
 
@@ -60,7 +60,7 @@ struct Diplomacy_dialog {
 
 #define SPECLIST_TAG dialog
 #define SPECLIST_TYPE struct Diplomacy_dialog
-#include "speclist.h"
+#include "speclist.hh"
 
 #define dialog_list_iterate(dialoglist, pdialog) \
     TYPED_LIST_ITERATE(struct Diplomacy_dialog, dialoglist, pdialog)
@@ -246,7 +246,7 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
 
   if (plr == plr1) {
     plr1  = plr0;
-    plr0  = plr;
+    plr0  = (player_t*)plr;
   }
 
 
@@ -323,7 +323,7 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
     city_t **city_list_ptrs;
 
     if (n > 0) {
-      city_list_ptrs = wc_malloc(sizeof(city_t *) * n);
+      city_list_ptrs = (city_t**)wc_malloc(sizeof(city_t *) * n);
     } else {
       city_list_ptrs = NULL;
     }
@@ -490,14 +490,14 @@ static struct Diplomacy_dialog *create_diplomacy_dialog(player_t *plr0,
   struct Diplomacy_dialog *pdialog;
   char buf[256];
 
-  pdialog = wc_malloc(sizeof(*pdialog));
+  pdialog = (struct Diplomacy_dialog*)wc_malloc(sizeof(*pdialog));
 
   dialog_list_prepend(dialog_list, pdialog);
   pdialog->treaty = treaty_new(plr0, plr1);
 
   shell = gtk_dialog_new_with_buttons(_("Diplomacy meeting"),
                                       NULL,
-                                      0,
+                                      (GtkDialogFlags)0,
                                       NULL);
   pdialog->shell = shell;
   setup_dialog(shell, toplevel);
@@ -534,13 +534,13 @@ static struct Diplomacy_dialog *create_diplomacy_dialog(player_t *plr0,
                                  GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(sw), view);
 
-  label = g_object_new(GTK_TYPE_LABEL,
-    "use-underline", TRUE,
-    "mnemonic-widget", view,
-    "label", _("C_lauses:"),
-    "xalign", 0.0,
-    "yalign", 0.5,
-    NULL);
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+                       "use-underline", TRUE,
+                       "mnemonic-widget", view,
+                       "label", _("C_lauses:"),
+                       "xalign", 0.0,
+                       "yalign", 0.5,
+                       NULL);
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 2);
   gtk_widget_show_all(vbox);
@@ -581,13 +581,13 @@ static struct Diplomacy_dialog *create_diplomacy_dialog(player_t *plr0,
   g_signal_connect_after(spin, "activate",
                          G_CALLBACK(diplo_dialog_returnkey), pdialog);
 
-  label = g_object_new(GTK_TYPE_LABEL,
-    "use-underline", TRUE,
-    "mnemonic-widget", spin,
-    "label", _("_Gold:"),
-    "xalign", 0.0,
-    "yalign", 0.5,
-    NULL);
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+                       "use-underline", TRUE,
+                       "mnemonic-widget", spin,
+                       "label", _("_Gold:"),
+                       "xalign", 0.0,
+                       "yalign", 0.5,
+                       NULL);
   gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
   menubar = gtk_menu_bar_new();
@@ -637,13 +637,13 @@ static struct Diplomacy_dialog *create_diplomacy_dialog(player_t *plr0,
   g_signal_connect_after(spin, "activate",
                          G_CALLBACK(diplo_dialog_returnkey), pdialog);
 
-  label = g_object_new(GTK_TYPE_LABEL,
-    "use-underline", TRUE,
-    "mnemonic-widget", spin,
-    "label", _("_Gold:"),
-    "xalign", 0.0,
-    "yalign", 0.5,
-    NULL);
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+                       "use-underline", TRUE,
+                       "mnemonic-widget", spin,
+                       "label", _("_Gold:"),
+                       "xalign", 0.0,
+                       "yalign", 0.5,
+                       NULL);
   gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
   menubar = gtk_menu_bar_new();
@@ -804,7 +804,7 @@ static void diplomacy_dialog_add_pact_clause(GtkWidget *w, gpointer data,
   dsend_packet_diplomacy_create_clause_req(&aconnection,
                                            pdialog->treaty->plr1->player_no,
                                            pdialog->treaty->plr0->player_no,
-                                           type, 0);
+                                           (clause_type)type, 0);
 }
 
 /****************************************************************

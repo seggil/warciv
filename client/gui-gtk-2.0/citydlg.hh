@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_CITYDLG_H
 #define WC_CLIENT_GUI_CITYDLG_H
 
-#include "../include/citydlg_g.h"
+#include "../include/citydlg_g.hh"
 
 void reset_city_dialogs(void);
 

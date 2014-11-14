@@ -26,25 +26,25 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "packets.h"
-#include "support.h"
-#include "version.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "packets.hh"
+#include "support.hh"
+#include "version.hh"
 
-#include "../civclient.h"
-#include "chatline.h"
-#include "../clinet.h"
-#include "colors.h"
-#include "../connectdlg_common.h"
-#include "dialogs.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "../options.h"
-#include "../packhand.h"
-#include "../tilespec.h"
+#include "../civclient.hh"
+#include "chatline.hh"
+#include "../clinet.hh"
+#include "colors.hh"
+#include "../connectdlg_common.hh"
+#include "dialogs.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "../options.hh"
+#include "../packhand.hh"
+#include "../tilespec.hh"
 
-#include "connectdlg.h"
+#include "connectdlg.hh"
 
 
 /**************************************************************************

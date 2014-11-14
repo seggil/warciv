@@ -15,7 +15,7 @@
 
 #include <gtk/gtk.h>
 
-#include "../include/pages_g.h"
+#include "../include/pages_g.hh"
 
 extern GtkWidget *start_message_area;
 extern GtkListStore *conn_model;

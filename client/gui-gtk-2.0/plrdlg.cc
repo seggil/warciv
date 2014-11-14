@@ -23,32 +23,32 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "packets.h"
-#include "diptreaty.h"
-#include "nation.h"
-#include "player.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "packets.hh"
+#include "diptreaty.hh"
+#include "nation.hh"
+#include "player.hh"
+#include "support.hh"
 
-#include "chatline.h"
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "../connectdlg_common.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "inteldlg.h"
-#include "spaceshipdlg.h"
-#include "../tilespec.h"
-#include "colors.h"
-#include "graphics.h"
-#include "../options.h"
-#include "../text.h"
+#include "chatline.hh"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "../connectdlg_common.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "inteldlg.hh"
+#include "spaceshipdlg.hh"
+#include "../tilespec.hh"
+#include "colors.hh"
+#include "graphics.hh"
+#include "../options.hh"
+#include "../text.hh"
 
-#include "my_cell_renderer_color.h"
-#include "plrdlg.h"
+#include "my_cell_renderer_color.hh"
+#include "plrdlg.hh"
 
 static struct gui_dialog *players_dialog_shell;
 static GtkWidget *players_list;
@@ -251,7 +251,7 @@ static void create_store(void)
 **************************************************************************/
 static void toggle_view(GtkCheckMenuItem* item, gpointer data)
 {
-  struct player_dlg_column* pcol = data;
+  struct player_dlg_column* pcol = (player_dlg_column*)data;
 
   pcol->show = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
   update_views();

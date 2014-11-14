@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_RATESDLG_H
 #define WC_CLIENT_GUI_RATESDLG_H
 
-#include "../include/ratesdlg_g.h"
+#include "../include/ratesdlg_g.hh"
 
 /* nothing to add */
 

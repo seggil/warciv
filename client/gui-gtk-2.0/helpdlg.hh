@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_HELPDLG_H
 #define WC_CLIENT_GUI_HELPDLG_H
 
-#include "../include/helpdlg_g.h"
+#include "../include/helpdlg_g.hh"
 
 /* nothing else */
 

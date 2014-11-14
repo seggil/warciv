@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_CITYREP_H
 #define WC_CLIENT_GUI_CITYREP_H
 
-#include "../include/cityrep_g.h"
+#include "../include/cityrep_g.hh"
 
 void raise_city_report_dialog(void);
 void popdown_city_report_dialog(void);

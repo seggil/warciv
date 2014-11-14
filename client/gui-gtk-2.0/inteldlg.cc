@@ -20,22 +20,22 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "packets.h"
-#include "player.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "../civclient.h"
-#include "../clinet.h"  /* aconnection, server_has_extglobalinfo */
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "../options.h"
+#include "../civclient.hh"
+#include "../clinet.hh"  /* aconnection, server_has_extglobalinfo */
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapview.hh"
+#include "../options.hh"
 
-#include "inteldlg.h"
+#include "inteldlg.hh"
 
 /******************************************************************/
 static const char *table_text[] = {
@@ -76,7 +76,7 @@ struct intel_dialog {
 
 #define SPECLIST_TAG dialog
 #define SPECLIST_TYPE struct intel_dialog
-#include "speclist.h"
+#include "speclist.hh"
 
 #define dialog_list_iterate(dialoglist, pdialog) \
     TYPED_LIST_ITERATE(struct intel_dialog, dialoglist, pdialog)
@@ -152,12 +152,12 @@ static struct intel_dialog *create_intel_dialog(player_t *p)
 
   int i;
 
-  pdialog = wc_malloc(sizeof(*pdialog));
+  pdialog = (struct intel_dialog*)wc_malloc(sizeof(*pdialog));
   pdialog->pplayer = p;
 
   shell = gtk_dialog_new_with_buttons(NULL,
       NULL,
-      0,
+      (GtkDialogFlags)0,
       GTK_STOCK_CLOSE,
       GTK_RESPONSE_CLOSE,
       NULL);
@@ -193,13 +193,16 @@ static struct intel_dialog *create_intel_dialog(player_t *p)
       label = gtk_label_new(_(table_text[i]));
       gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
       gtk_table_attach(GTK_TABLE(table), label,
-          0, 1, i, i+1, GTK_FILL, GTK_FILL|GTK_EXPAND, 0, 0);
+                       0, 1, i, i+1, GTK_FILL,
+                       (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), 0, 0);
 
       label = gtk_label_new(NULL);
       pdialog->table_labels[i] = label;
       gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
       gtk_table_attach(GTK_TABLE(table), label,
-          1, 2, i, i+1, GTK_FILL, GTK_FILL|GTK_EXPAND, 0, 0);
+                       1, 2, i, i+1,
+                       GTK_FILL,
+                       (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), 0, 0);
     } else {
       pdialog->table_labels[i] = NULL;
       gtk_table_set_row_spacing(GTK_TABLE(table), i, 12);
@@ -305,7 +308,7 @@ void update_intel_dialog(player_t *p)
 
       gtk_tree_store_append(pdialog->diplstates, &it, NULL);
       g_value_init(&v, G_TYPE_STRING);
-      g_value_set_static_string(&v, diplstate_text(i));
+      g_value_set_static_string(&v, diplstate_text((diplstate_type)i));
       gtk_tree_store_set_value(pdialog->diplstates, &it, 0, &v);
       g_value_unset(&v);
       diplstates[i] = it;

@@ -15,12 +15,12 @@
 
 #include <gtk/gtk.h>
 
-#include "registry.h"
-#include "worklist.h"
-#include "improvement.h"
-#include "unittype.h"
+#include "registry.hh"
+#include "worklist.hh"
+#include "improvement.hh"
+#include "unittype.hh"
 
-#include "../climisc.h"
+#include "../climisc.hh"
 
 /* the global worklist view. */
 void apply_global_worklists(GtkWidget *widget);

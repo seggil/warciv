@@ -22,33 +22,33 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "tech.h"
-#include "unit.h"
-#include "map.h"
-#include "version.h"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "tech.hh"
+#include "unit.hh"
+#include "map.hh"
+#include "version.hh"
 
-#include "../climisc.h"
-#include "../clinet.h"
-#include "../civclient.h"
-#include "../helpdata.h"
-#include "../options.h"
-#include "../tilespec.h"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "../civclient.hh"
+#include "../helpdata.hh"
+#include "../options.hh"
+#include "../tilespec.hh"
 
-#include "colors.h"
-#include "gtkpixcomm.h"
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
+#include "colors.hh"
+#include "gtkpixcomm.hh"
+#include "graphics.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
 
-#include "helpdlg.h"
+#include "helpdlg.hh"
 
 #define TECH_TREE_DEPTH         20
 
@@ -297,7 +297,7 @@ static void help_hyperlink_callback(GtkWidget *w)
   enum help_page_type type;
 
   s=gtk_label_get_text(GTK_LABEL(w));
-  type=GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(w), "page_type"));
+  type = (help_page_type)GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(w), "page_type"));
 
   /* May be able to skip, or may need to modify, advances[A_NONE].name
      below, depending on which i18n is done elsewhere.
@@ -432,7 +432,7 @@ static void create_help_dialog(void)
 
   help_dialog_shell = gtk_dialog_new_with_buttons(_("Warciv Help Browser"),
                                                   NULL,
-                                                  0,
+                                                  (GtkDialogFlags)0,
                                                   GTK_STOCK_GO_BACK,
                                                   1,
                                                   GTK_STOCK_GO_FORWARD,
@@ -1299,7 +1299,7 @@ static void help_command_callback(GtkWidget *w, gint response_id)
     if (help_history_pos > 0) {
       help_history_pos--;
 
-      pitem = g_ptr_array_index(help_history, help_history_pos);
+      pitem = (const struct help_item*)g_ptr_array_index(help_history, help_history_pos);
       path = help_item_path(pitem);
       help_item_zoom(path);
       help_update_dialog(pitem);
@@ -1309,7 +1309,7 @@ static void help_command_callback(GtkWidget *w, gint response_id)
     if (help_history_pos < help_history->len - 1) {
       help_history_pos++;
 
-      pitem = g_ptr_array_index(help_history, help_history_pos);
+      pitem = (const struct help_item*)g_ptr_array_index(help_history, help_history_pos);
       path = help_item_path(pitem);
       help_item_zoom(path);
       help_update_dialog(pitem);

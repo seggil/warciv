@@ -24,36 +24,36 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "support.h"
-#include "timing.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "support.hh"
+#include "timing.hh"
 
-#include "game.h"
-#include "government.h" /* government_graphic() */
-#include "map.h"
-#include "player.h"
+#include "game.hh"
+#include "government.hh"  /* government_graphic() */
+#include "map.hh"
+#include "player.hh"
 
-#include "../civclient.h"
-#include "../climap.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "colors.h"
-#include "../control.h" /* get_unit_in_focus() */
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapctrl.h"
-#include "../multiselect.h"
-#include "../options.h"
-#include "../tilespec.h"
-#include "../text.h"
-#include "wldlg.h"
+#include "../civclient.hh"
+#include "../climap.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "colors.hh"
+#include "../control.hh"  /* get_unit_in_focus() */
+#include "graphics.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapctrl.hh"
+#include "../multiselect.hh"
+#include "../options.hh"
+#include "../tilespec.hh"
+#include "../text.hh"
+#include "wldlg.hh"
 
-#include "citydlg.h" /* For reset_city_dialogs() */
-#include "mapview.h"
+#include "citydlg.hh" /* For reset_city_dialogs() */
+#include "mapview.hh"
 
 #define map_canvas_store (mapview_canvas.store->v.pixmap)
 #define LOG_UPDATE_QUEUE LOG_DEBUG
@@ -364,7 +364,7 @@ void map_size_changed(void)
 **************************************************************************/
 struct canvas *canvas_create(int width, int height)
 {
-  struct canvas *result = wc_malloc(sizeof(*result));
+  struct canvas *result = (struct canvas*)wc_malloc(sizeof(*result));
 
   result->type = CANVAS_PIXMAP;
   result->v.pixmap = gdk_pixmap_new(root_window, width, height, -1);

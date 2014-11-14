@@ -37,8 +37,8 @@
 # include "../../config.h"
 #endif
 
-#include "gui_main.h"
-#include "gtkpixcomm.h"
+#include "gui_main.hh"
+#include "gtkpixcomm.hh"
 
 
 static void     gtk_pixcomm_class_init (GtkPixcommClass *klass);
@@ -89,7 +89,7 @@ gtk_pixcomm_get_type(void)
     };
 
     pixcomm_type = g_type_register_static(GTK_TYPE_MISC, "GtkPixcomm",
-                                          &pixcomm_info, 0);
+                                          &pixcomm_info, (GTypeFlags)0);
   }
 
   return pixcomm_type;
@@ -101,7 +101,7 @@ gtk_pixcomm_class_init(GtkPixcommClass *klass)
   GtkObjectClass *object_class = GTK_OBJECT_CLASS(klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
 
-  parent_class = g_type_class_peek_parent(klass);
+  parent_class = (GtkMiscClass*)g_type_class_peek_parent(klass);
 
   object_class->destroy = gtk_pixcomm_destroy;
   widget_class->expose_event = gtk_pixcomm_expose;
@@ -140,7 +140,7 @@ gtk_pixcomm_new(gint width, gint height)
 {
   GtkPixcomm *p;
 
-  p = g_object_new(gtk_pixcomm_get_type(), NULL);
+  p = (GtkPixcomm*)g_object_new(gtk_pixcomm_get_type(), NULL);
   p->w = width; p->h = height;
 
   p->actions = g_array_new(FALSE, FALSE, sizeof(struct op));

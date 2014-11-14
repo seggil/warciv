@@ -23,35 +23,35 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "city.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "packets.h"
-#include "shared.h"
-#include "support.h"
-#include "unit.h"
-#include "worklist.h"
+#include "city.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "packets.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "unit.hh"
+#include "worklist.hh"
 
-#include "chatline.h"
-#include "../citydlg_common.h"
-#include "../cityrepdata.h"
-#include "../civclient.h"
-#include "../clinet.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "mapctrl.h"    /* is_city_hilited() */
-#include "../mapview_common.h"
-#include "menu.h"
-#include "optiondlg.h"
-#include "../options.h"
-#include "repodlgs.h"
-#include "../climisc.h"
+#include "chatline.hh"
+#include "../citydlg_common.hh"
+#include "../cityrepdata.hh"
+#include "../civclient.hh"
+#include "../clinet.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapview.hh"
+#include "mapctrl.hh"    /* is_city_hilited() */
+#include "../mapview_common.hh"
+#include "menu.hh"
+#include "optiondlg.hh"
+#include "../options.hh"
+#include "repodlgs.hh"
+#include "../climisc.hh"
 
-#include "../agents/cma_fec.h"
+#include "../agents/cma_fec.hh"
 
-#include "citydlg.h"
-#include "cityrep.h"
+#include "citydlg.hh"
+#include "cityrep.hh"
 
 #define NEG_VAL(x)  ((x)<0 ? (x) : (-x))
 
@@ -279,7 +279,7 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
     row[i] = buf[i];
   }
 
-  g_object_set_data(G_OBJECT(menu), "warciv_test_func", test_func);
+  g_object_set_data(G_OBJECT(menu), "warciv_test_func", (gpointer)test_func);
   g_object_set_data(G_OBJECT(menu), "warciv_city_operation",
                     GINT_TO_POINTER(city_operation));
 
@@ -288,7 +288,7 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
   }
 
   for (item = 0; item < cids_used; item++) {
-    cid cid = items[item].cid;
+    cid cid = items[item].cid_;
     GtkWidget *menu_item, *hbox, *label;
     char txt[256];
 
@@ -325,7 +325,7 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
 
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
     g_signal_connect(menu_item, "activate", callback,
-                     GINT_TO_POINTER(items[item].cid));
+                     GINT_TO_POINTER(items[item].cid_));
   }
 
   for (i = 0; i < 3; i++) {
@@ -450,8 +450,8 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
 {
   cid cid = GPOINTER_TO_INT(data);
   GObject *parent = G_OBJECT(w->parent);
-  TestCityFunc test_func = g_object_get_data(parent, "warciv_test_func");
-  enum city_operation_type city_operation =
+  TestCityFunc test_func = (TestCityFunc)g_object_get_data(parent, "warciv_test_func");
+  enum city_operation_type city_operation = (enum city_operation_type)
     GPOINTER_TO_INT(g_object_get_data(parent, "warciv_city_operation"));
 
   /* if this is not a city operation: */
@@ -465,7 +465,7 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
       gpointer res;
 
       itree_get(&it, 0, &res, -1);
-      pcity = res;
+      pcity = (city_t*)res;
 
       if (test_func(pcity, cid)) {
         itree_select(city_selection, &it);
@@ -545,7 +545,7 @@ static void cma_iterate(GtkTreeModel *model, GtkTreePath *path,
   gpointer res;
 
   gtk_tree_model_get(GTK_TREE_MODEL(city_model), it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
 
   if (idx == CMA_NONE) {
     cma_release_city(pcity);
@@ -579,7 +579,7 @@ static void select_cma_callback(GtkWidget * w, gpointer data)
       gpointer res;
 
       itree_get(&it, 0, &res, -1);
-      pcity = res;
+      pcity = (city_t*)res;
       controlled = cma_is_city_under_agent(pcity, &parameter);
       select = FALSE;
 
@@ -760,7 +760,7 @@ static void city_report_update_views(void)
 *****************************************************************/
 static void toggle_view(GtkCheckMenuItem *item, gpointer data)
 {
-  struct city_report_spec *spec = data;
+  struct city_report_spec *spec = (struct city_report_spec *)data;
 
   spec->show ^= 1;
   city_report_update_views();
@@ -858,7 +858,7 @@ static void cityrep_cell_data_func(GtkTreeViewColumn *col,
   n = GPOINTER_TO_INT(data);
 
   gtk_tree_model_get_value(model, it, 0, &value);
-  pcity = g_value_get_pointer(&value);
+  pcity = (city_t*)g_value_get_pointer(&value);
   g_value_unset(&value);
 
   sp = &city_report_specs[n];
@@ -887,10 +887,10 @@ static gint cityrep_sort_func(GtkTreeModel *model,
   n = GPOINTER_TO_INT(data);
 
   gtk_tree_model_get_value(model, a, 0, &value);
-  pcity1 = g_value_get_pointer(&value);
+  pcity1 = (city_t*)g_value_get_pointer(&value);
   g_value_unset(&value);
   gtk_tree_model_get_value(model, b, 0, &value);
-  pcity2 = g_value_get_pointer(&value);
+  pcity2 = (city_t*)g_value_get_pointer(&value);
   g_value_unset(&value);
 
   sp = &city_report_specs[n];
@@ -1065,7 +1065,7 @@ static void city_select_coastal_callback(GtkMenuItem *item, gpointer data)
     gpointer res;
 
     itree_get(&it, 0, &res, -1);
-    pcity = res;
+    pcity = (city_t*)res;
 
     if (is_ocean_near_tile(pcity->common.tile)) {
       itree_select(city_selection, &it);
@@ -1084,13 +1084,13 @@ static void same_island_iterate(GtkTreeModel *model, GtkTreePath *path,
   gpointer res;
 
   gtk_tree_model_get(model, iter, 0, &res, -1);
-  selectedcity = res;
+  selectedcity = (city_t*)res;
 
   for (itree_begin(model, &it); !itree_end(&it); itree_next(&it)) {
     city_t *pcity;
 
     itree_get(&it, 0, &res, -1);
-    pcity = res;
+    pcity = (city_t*)res;
 
     if (map_get_continent(pcity->common.tile)
         == map_get_continent(selectedcity->common.tile)) {
@@ -1112,7 +1112,7 @@ static void city_select_same_island_callback(GtkMenuItem *item, gpointer data)
 *****************************************************************/
 static void city_select_building_callback(GtkMenuItem *item, gpointer data)
 {
-  enum production_class_type which = GPOINTER_TO_INT(data);
+  enum production_class_type which = (enum production_class_type)GPOINTER_TO_INT(data);
   ITree it;
   GtkTreeModel *model = GTK_TREE_MODEL(city_model);
 
@@ -1123,7 +1123,7 @@ static void city_select_building_callback(GtkMenuItem *item, gpointer data)
     gpointer res;
 
     itree_get(&it, 0, &res, -1);
-    pcity = res;
+    pcity = (city_t*)res;
 
     if ( (which == TYPE_UNIT && pcity->common.is_building_unit)
          || (which == TYPE_NORMAL_IMPROVEMENT && !pcity->common.is_building_unit
@@ -1146,7 +1146,7 @@ static void autoarrange_workers_iterate(GtkTreeModel *model, GtkTreePath *path,
   struct cm_parameter parameter;
 
   gtk_tree_model_get (model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
 
   if (cma_is_city_under_agent(pcity, &parameter)) {
     cma_put_city_under_agent(pcity, &parameter);
@@ -1168,7 +1168,7 @@ static void clear_worklist_iterate (GtkTreeModel *model,
   gpointer res;
   city_t *pcity;
   gtk_tree_model_get (model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
   city_clear_worklist (pcity);
 }
 
@@ -1185,7 +1185,7 @@ static void remove_cur_prod_iterate(GtkTreeModel *model,
   struct worklist wl;
 
   gtk_tree_model_get(model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
 
   if (worklist_is_empty(&pcity->common.worklist)) {
     return;
@@ -1214,7 +1214,7 @@ static void worklist_change_worklist_iterate(GtkTreeModel *model,
   }
 
   gtk_tree_model_get(model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
 
   copy_worklist(&wl, pwl);
   city_worklist_check(pcity, &wl);
@@ -1282,7 +1282,7 @@ static void worklist_last_worklist_iterate(GtkTreeModel *model,
   }
 
   gtk_tree_model_get(model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
   worklist_insert_worklist(&wl, &pcity->common.worklist, pwl, -1);
   city_set_worklist(pcity, &wl);
 }
@@ -1317,7 +1317,7 @@ static void worklist_first_worklist_iterate(GtkTreeModel *model,
   }
 
   gtk_tree_model_get(model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
 
   copy_worklist(&temp, &pcity->common.worklist);
   old_id = pcity->common.currently_building;
@@ -1362,7 +1362,7 @@ static void worklist_next_worklist_iterate(GtkTreeModel *model,
   }
 
   gtk_tree_model_get(model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
 
   worklist_insert_worklist(&wl, &pcity->common.worklist, pwl, 0);
   city_set_worklist(pcity, &wl);
@@ -1389,7 +1389,7 @@ static void buy_iterate(GtkTreeModel *model, GtkTreePath *path,
 
   gtk_tree_model_get(model, it, 0, &res, -1);
 
-  cityrep_buy(res);
+  cityrep_buy((city_t*)res);
 }
 
 /****************************************************************
@@ -1402,7 +1402,7 @@ static void center_iterate(GtkTreeModel *model, GtkTreePath *path,
   gpointer res;
 
   gtk_tree_model_get(model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
   center_tile_mapcanvas(pcity->common.tile);
 }
 
@@ -1416,7 +1416,7 @@ static void popup_iterate(GtkTreeModel *model, GtkTreePath *path,
   gpointer res;
 
   gtk_tree_model_get(model, it, 0, &res, -1);
-  pcity = res;
+  pcity = (city_t*)res;
 
   if (center_when_popup_city) {
     center_tile_mapcanvas(pcity->common.tile);
@@ -2051,10 +2051,10 @@ static void update_total_buy_cost(void)
   rows = gtk_tree_selection_get_selected_rows(sel, &model);
 
   for (p = rows; p != NULL; p = p->next) {
-    path = p->data;
+    path = (GtkTreePath*)p->data;
     if (gtk_tree_model_get_iter(model, &iter, path)) {
       gtk_tree_model_get(model, &iter, 0, &res, -1);
-      pcity = res;
+      pcity = (city_t*)res;
       if (pcity != NULL) {
         /* Make sure the city still exists. */
         pcity = find_city_by_id(pcity->common.id);
@@ -2129,7 +2129,7 @@ void hilite_cities_from_canvas(void)
     gpointer res;
 
     itree_get(&it, 0, &res, -1);
-    pcity = res;
+    pcity = (city_t*)res;
 
     if (is_city_hilited(pcity))  {
       itree_select(city_selection, &it);

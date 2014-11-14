@@ -23,15 +23,15 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "wc_intl.h"
-#include "mem.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "colors.h"
-#include "../options.h"
-#include "gui_main.h"
+#include "colors.hh"
+#include "../options.hh"
+#include "gui_main.hh"
 
-#include "gui_stuff.h"
+#include "gui_stuff.hh"
 
 
 static GList *dialog_list;
@@ -313,7 +313,7 @@ static void gui_dialog_destroy_handler(GtkWidget *w, struct gui_dialog *dlg)
 static gint gui_dialog_delete_handler(GtkWidget *widget,
                                       GdkEventAny *ev, gpointer data)
 {
-  struct gui_dialog *dlg = data;
+  struct gui_dialog *dlg = (struct gui_dialog*)data;
 
   /* emit response signal. */
   gui_dialog_response(dlg, GTK_RESPONSE_DELETE_EVENT);
@@ -328,7 +328,7 @@ static gint gui_dialog_delete_handler(GtkWidget *widget,
 static gboolean gui_dialog_key_press_handler(GtkWidget *w, GdkEventKey *ev,
                                              gpointer data)
 {
-  struct gui_dialog *dlg = data;
+  struct gui_dialog *dlg = (gui_dialog*)data;
 
   if (ev->keyval == GDK_Escape
         || ((ev->state & GDK_CONTROL_MASK) && ev->keyval == GDK_w)) {
@@ -355,7 +355,8 @@ static void gui_dialog_switch_page_handler(GtkNotebook *notebook,
   if (n == num) {
     GtkRcStyle *rc_style = gtk_widget_get_modifier_style(dlg->v.tab.label);
 
-    rc_style->color_flags[GTK_STATE_ACTIVE] &= ~GTK_RC_FG;
+    rc_style->color_flags[GTK_STATE_ACTIVE] = static_cast<GtkRcFlags>(
+        rc_style->color_flags[GTK_STATE_ACTIVE] & ~GTK_RC_FG);
     gtk_widget_modify_style(dlg->v.tab.label, rc_style);
   }
 }
@@ -392,10 +393,10 @@ void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
   screen = gdk_screen_get_default();
   gtksettings = gtk_settings_get_for_screen(screen);
 
-  dlg = wc_malloc(sizeof(*dlg));
+  dlg = (struct gui_dialog*)wc_malloc(sizeof(*dlg));
 
   for (p = dialog_list; p != NULL; p = p->next) {
-    struct gui_dialog *odlg = p->data;
+    struct gui_dialog *odlg = (gui_dialog *)p->data;
 
     if (position >= 0 && odlg->position >= position) {
       break;
@@ -519,7 +520,7 @@ void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
   }
 
   for (p = dialog_list; p != NULL; p = p->next, pos++) {
-    struct gui_dialog *odlg = p->data;
+    struct gui_dialog *odlg = (struct gui_dialog*)p->data;
     if (odlg == NULL || odlg->type != GUI_DIALOG_TAB
         || GTK_NOTEBOOK(odlg->v.tab.notebook) != notebook) {
       continue;
@@ -534,7 +535,7 @@ void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
 **************************************************************************/
 static void action_widget_activated(GtkWidget *button, GtkWidget *vbox)
 {
-  struct gui_dialog *dlg =
+  struct gui_dialog *dlg = (struct gui_dialog*)
     g_object_get_data(G_OBJECT(vbox), "gui-dialog-data");
   gpointer arg2 =
     g_object_get_data(G_OBJECT(button), "gui-dialog-response-data");
@@ -608,7 +609,7 @@ void gui_dialog_set_default_response(struct gui_dialog *dlg, int response)
   children = gtk_container_get_children(GTK_CONTAINER(dlg->action_area));
 
   for (list = children; list; list = g_list_next(list)) {
-    GtkWidget *button = list->data;
+    GtkWidget *button = (GtkWidget*)list->data;
     gpointer data = g_object_get_data(G_OBJECT(button),
         "gui-dialog-response-data");
 
@@ -632,7 +633,7 @@ void gui_dialog_set_response_sensitive(struct gui_dialog *dlg,
   children = gtk_container_get_children(GTK_CONTAINER(dlg->action_area));
 
   for (list = children; list; list = g_list_next(list)) {
-    GtkWidget *button = list->data;
+    GtkWidget *button = (GtkWidget*)list->data;
     gpointer data = g_object_get_data(G_OBJECT(button),
         "gui-dialog-response-data");
 
@@ -667,7 +668,7 @@ void gui_dialog_show_all(struct gui_dialog *dlg)
     children = gtk_container_get_children(GTK_CONTAINER(dlg->action_area));
 
     for (list = children; list; list = g_list_next(list)) {
-      GtkWidget *button = list->data;
+      GtkWidget *button = (GtkWidget*)list->data;
       gpointer data = g_object_get_data(G_OBJECT(button),
           "gui-dialog-response-data");
       int response = GPOINTER_TO_INT(data);
@@ -859,7 +860,7 @@ struct gui_dialog *find_gui_dialog_by_title(const char *title)
   struct gui_dialog *dlg;
 
   for (p = dialog_list; p != NULL; p = p->next) {
-    dlg = p->data;
+    dlg = (struct gui_dialog*)p->data;
     if (0 == strcmp(title, gui_dialog_get_title(dlg))) {
       return dlg;
     }

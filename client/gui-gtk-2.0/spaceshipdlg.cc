@@ -20,34 +20,34 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "player.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "../civclient.h"
-#include "../clinet.h"
-#include "colors.h"
-#include "dialogs.h"
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "helpdlg.h"
-#include "inputdlg.h"
-#include "mapctrl.h"
-#include "mapview.h"
-#include "../options.h"
-#include "repodlgs.h"
-#include "spaceship.h"
-#include "../tilespec.h"
-#include "../climisc.h"
-#include "../text.h"
+#include "../civclient.hh"
+#include "../clinet.hh"
+#include "colors.hh"
+#include "dialogs.hh"
+#include "graphics.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "helpdlg.hh"
+#include "inputdlg.hh"
+#include "mapctrl.hh"
+#include "mapview.hh"
+#include "../options.hh"
+#include "repodlgs.hh"
+#include "spaceship.hh"
+#include "../tilespec.hh"
+#include "../climisc.hh"
+#include "../text.hh"
 
-#include "spaceshipdlg.h"
+#include "spaceshipdlg.hh"
 
 struct spaceship_dialog {
   player_t *pplayer;
@@ -59,7 +59,7 @@ struct spaceship_dialog {
 
 #define SPECLIST_TAG dialog
 #define SPECLIST_TYPE struct spaceship_dialog
-#include "speclist.h"
+#include "speclist.hh"
 
 #define dialog_list_iterate(dialoglist, pdialog) \
     TYPED_LIST_ITERATE(struct spaceship_dialog, dialoglist, pdialog)
@@ -197,7 +197,7 @@ struct spaceship_dialog *create_spaceship_dialog(player_t *pplayer)
   struct spaceship_dialog *pdialog;
   GtkWidget *hbox, *frame;
 
-  pdialog=wc_malloc(sizeof(struct spaceship_dialog));
+  pdialog = (spaceship_dialog*)wc_malloc(sizeof(struct spaceship_dialog));
   pdialog->pplayer=pplayer;
 
   gui_dialog_new(&pdialog->shell, GTK_NOTEBOOK(top_notebook));

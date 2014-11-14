@@ -16,16 +16,16 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "support.hh"
 
-#include "gui_main.h"
-#include "../chatline_common.h"
+#include "gui_main.hh"
+#include "../chatline_common.hh"
 
-#include "gui_stuff.h"
-#include "resources.h"
+#include "gui_stuff.hh"
+#include "resources.hh"
 
-#include "style.h"
+#include "style.hh"
 
 static GtkWidget *style_config_shell = NULL;
 
@@ -131,7 +131,7 @@ static struct styleconf styleconf[] = {
 **************************************************************************/
 static void change_style(GtkFontButton *widget, gpointer data)
 {
-  struct styleconf *tstyleconf = data;
+  struct styleconf *tstyleconf= (struct styleconf*)data;
 
   tstyleconf->style->font_desc =
     pango_font_description_from_string(gtk_font_button_get_font_name(widget));
@@ -250,8 +250,8 @@ static void undo_callback(GtkWidget *w,
 
   style_iterate(sset)
   {
-    hbox = g_object_get_data(G_OBJECT(dialog), sset->stylename);
-    sel = g_object_get_data(G_OBJECT(hbox), "fontname");
+    hbox = (GtkWidget*)g_object_get_data(G_OBJECT(dialog), sset->stylename);
+    sel = (GtkWidget*)g_object_get_data(G_OBJECT(hbox), "fontname");
     tmp = pango_font_description_to_string(sset->style->font_desc);
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(sel), tmp);
     g_free(tmp);
@@ -394,13 +394,13 @@ static GtkWidget *create_style_config_shell(void)
   gtk_box_pack_start(GTK_BOX(vbox), vbox2, TRUE, TRUE, 0);
 
   hbox = gtk_hbox_new(TRUE, 10);
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", NULL,
                        "label", _("Label") ,
                        "xalign", 0.5, "yalign", 0.5, NULL);
   gtk_box_pack_start(GTK_BOX(hbox), label , TRUE, TRUE, 0);
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", NULL,
                        "label", _("Font") ,
@@ -417,7 +417,7 @@ static GtkWidget *create_style_config_shell(void)
 
     g_object_set_data(G_OBJECT (dialog), sset->stylename, hbox);
 
-    label = g_object_new(GTK_TYPE_LABEL,
+    label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                          "use-underline", TRUE,
                          "mnemonic-widget", NULL,
                          "label", _(sset->styletitle) ,

@@ -22,31 +22,31 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "registry.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "registry.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "game.h"
-#include "packets.h"
-#include "worklist.h"
+#include "city.hh"
+#include "game.hh"
+#include "packets.hh"
+#include "worklist.hh"
 
-#include "../citydlg_common.h"
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "../options.h"
-#include "../tilespec.h"
+#include "../citydlg_common.hh"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "../options.hh"
+#include "../tilespec.hh"
 
-#include "citydlg.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "helpdlg.h"
-#include "inputdlg.h"
+#include "citydlg.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "helpdlg.hh"
+#include "inputdlg.hh"
 
-#include "wldlg.h"
+#include "wldlg.hh"
 
 enum {
   WLC_NAME,
@@ -317,7 +317,7 @@ GtkWidget *create_worklists_report(void)
   vbox = gtk_vbox_new(FALSE, 0);
 
   /* Create the temporary worklists */
-  temp_worklists = wc_malloc(sizeof(global_worklists));
+  temp_worklists = (struct worklist *)wc_malloc(sizeof(global_worklists));
   memcpy(temp_worklists, global_worklists, sizeof(global_worklists));
   g_object_set_data(G_OBJECT(vbox), "worklists", temp_worklists);
   g_signal_connect(vbox, "destroy",
@@ -347,7 +347,7 @@ GtkWidget *create_worklists_report(void)
 
   gtk_widget_set_size_request(sw, -1, 100);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", view,
                        "label", _("_Worklists:"),
@@ -447,7 +447,7 @@ enum {
 };
 
 static GtkTargetEntry wl_dnd_targets[] = {
-  { "GTK_TREE_MODEL_ROW", GTK_TARGET_SAME_APP, TARGET_GTK_TREE_MODEL_ROW },
+  { (gchar*)"GTK_TREE_MODEL_ROW", GTK_TARGET_SAME_APP, TARGET_GTK_TREE_MODEL_ROW },
 };
 
 
@@ -471,7 +471,7 @@ static GtkWidget *get_worklist(struct worklist *pwl)
     gpointer ret;
 
     ret = g_hash_table_lookup(hash, pwl);
-    return ret;
+    return (GtkWidget*)ret;
   } else {
     return NULL;
   }
@@ -561,7 +561,7 @@ static void worklist_destroy(GtkWidget *editor, gpointer data)
 {
   struct worklist_data *ptr;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
 
   if (ptr->pwl) {
     delete_worklist(ptr->pwl);
@@ -650,7 +650,7 @@ static void clear_callback (GtkWidget *w, gpointer data)
   GtkTreeModel *dst_model;
   GtkTreeIter it;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
   dst_model = GTK_TREE_MODEL (ptr->dst);
 
   /* If the worklist is empty, do nothing. */
@@ -678,7 +678,7 @@ static void help_callback(GtkWidget *w, gpointer data)
   GtkTreeModel *model;
   GtkTreeIter it;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
   selection = ptr->src_selection;
 
   if (gtk_tree_selection_get_selected(selection, &model, &it)) {
@@ -712,7 +712,7 @@ static void change_callback(GtkWidget *w, gpointer data)
   GtkTreeModel *model;
   GtkTreeIter it;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
   selection = ptr->src_selection;
 
   if (gtk_tree_selection_get_selected(selection, &model, &it)) {
@@ -731,7 +731,7 @@ static void future_callback(GtkToggleButton *toggle, gpointer data)
 {
   struct worklist_data *ptr;
 
-  ptr = data;
+  ptr = (struct worklist_data*)data;
   ptr->future = !ptr->future;
 
   refresh_worklist(ptr->editor);
@@ -873,7 +873,7 @@ static void src_row_callback(GtkTreeView *view, GtkTreePath *path,
   GtkTreeIter src_it, dst_it;
   gint i, ncols;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
 
   if (!GTK_WIDGET_IS_SENSITIVE(ptr->dst_view)) {
     return;
@@ -906,7 +906,7 @@ static void dst_row_callback(GtkTreeView *view, GtkTreePath *path,
   GtkTreeModel *dst_model;
   GtkTreeIter it;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
   dst_model = GTK_TREE_MODEL(ptr->dst);
 
   gtk_tree_model_get_iter(dst_model, &it, path);
@@ -923,7 +923,7 @@ static gboolean src_key_press_callback(GtkWidget *w, GdkEventKey *ev,
 {
   struct worklist_data *ptr;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
 
   if (!GTK_WIDGET_IS_SENSITIVE(ptr->dst_view)) {
     return FALSE;
@@ -949,7 +949,7 @@ static gboolean dst_key_press_callback(GtkWidget *w, GdkEventKey *ev,
   GtkTreeModel *model;
   struct worklist_data *ptr;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
   model = GTK_TREE_MODEL(ptr->dst);
 
   if (ev->keyval == GDK_Delete) {
@@ -997,7 +997,7 @@ static void src_selection_callback(GtkTreeSelection *selection, gpointer data)
 {
   struct worklist_data *ptr;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
 
   /* update widget sensitivity. */
   if (gtk_tree_selection_get_selected(selection, NULL, NULL)) {
@@ -1028,7 +1028,7 @@ static void dst_selection_callback(GtkTreeSelection *selection, gpointer data)
 {
   struct worklist_data *ptr;
 
-  ptr = data;
+  ptr = (struct worklist_data *)data;
 
   /* update widget sensitivity. */
   if (gtk_tree_selection_count_selected_rows(selection) > 0) {
@@ -1208,7 +1208,7 @@ GtkWidget *create_worklist(void)
   struct worklist_data *ptr;
 
 
-  ptr = wc_malloc(sizeof(*ptr));
+  ptr = (struct worklist_data *)wc_malloc(sizeof(*ptr));
 
   src_store = gtk_list_store_new(1, G_TYPE_INT);
   dst_store = gtk_list_store_new(1, G_TYPE_INT);
@@ -1239,7 +1239,8 @@ GtkWidget *create_worklist(void)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
                                  GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_table_attach(GTK_TABLE(table), sw, 3, 5, 1, 2,
-                   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL), 0, 0);
 
   src_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(src_store));
   g_object_unref(src_store);
@@ -1249,7 +1250,7 @@ GtkWidget *create_worklist(void)
   populate_view(GTK_TREE_VIEW(src_view), &ptr->pcity, &ptr->src_col);
   gtk_container_add(GTK_CONTAINER(sw), src_view);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", src_view,
                        "label", _("Source _Tasks:"),
@@ -1259,7 +1260,7 @@ GtkWidget *create_worklist(void)
 
   check = gtk_check_button_new_with_mnemonic(_("Show _Future Targets"));
   gtk_table_attach(GTK_TABLE(table), check, 4, 5, 0, 1,
-                   0, GTK_FILL, 0, 0);
+                   (GtkAttachOptions)0, GTK_FILL, 0, 0);
   g_signal_connect(check, "toggled", G_CALLBACK(future_callback), ptr);
 
 
@@ -1271,7 +1272,7 @@ GtkWidget *create_worklist(void)
   ptr->prepend_cmd = button;
   gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
   gtk_table_attach(GTK_TABLE(table2), button, 0, 1, 0, 1,
-      0, GTK_EXPAND|GTK_FILL, 0, 24);
+                   (GtkAttachOptions)0, (GtkAttachOptions)(GTK_EXPAND | GTK_FILL), 0, 24);
 
   arrow = gtk_arrow_new(GTK_ARROW_LEFT, GTK_SHADOW_NONE);
   gtk_container_add(GTK_CONTAINER(button), arrow);
@@ -1282,7 +1283,8 @@ GtkWidget *create_worklist(void)
   button = gtk_button_new();
   ptr->up_cmd = button;
   gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-  gtk_table_attach(GTK_TABLE(table2), button, 0, 1, 1, 2, 0, 0, 0, 0);
+  gtk_table_attach(GTK_TABLE(table2), button, 0, 1, 1, 2,
+                   (GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0);
 
   arrow = gtk_arrow_new(GTK_ARROW_UP, GTK_SHADOW_NONE);
   gtk_container_add(GTK_CONTAINER(button), arrow);
@@ -1293,7 +1295,8 @@ GtkWidget *create_worklist(void)
   button = gtk_button_new();
   ptr->down_cmd = button;
   gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-  gtk_table_attach(GTK_TABLE(table2), button, 0, 1, 2, 3, 0, 0, 0, 0);
+  gtk_table_attach(GTK_TABLE(table2), button, 0, 1, 2, 3,
+                   (GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0);
 
   arrow = gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_IN);
   gtk_container_add(GTK_CONTAINER(button), arrow);
@@ -1305,7 +1308,8 @@ GtkWidget *create_worklist(void)
   ptr->append_cmd = button;
   gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
   gtk_table_attach(GTK_TABLE(table2), button, 0, 1, 3, 4,
-      0, GTK_EXPAND|GTK_FILL, 0, 24);
+                   (GtkAttachOptions)0,
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL), 0, 24);
 
   arrow = gtk_arrow_new(GTK_ARROW_LEFT, GTK_SHADOW_NONE);
   gtk_container_add(GTK_CONTAINER(button), arrow);
@@ -1320,7 +1324,8 @@ GtkWidget *create_worklist(void)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
                                  GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_table_attach(GTK_TABLE(table), sw, 0, 2, 1, 2,
-                   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND | GTK_FILL), 0, 0);
 
   dst_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dst_store));
   g_object_unref(dst_store);
@@ -1330,7 +1335,7 @@ GtkWidget *create_worklist(void)
   populate_view(GTK_TREE_VIEW(dst_view), &ptr->pcity, &ptr->dst_col);
   gtk_container_add(GTK_CONTAINER(sw), dst_view);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", dst_view,
                        "label", _("Target _Worklist:"),
@@ -1422,7 +1427,7 @@ void reset_worklist(GtkWidget *editor, struct worklist *pwl, city_t *pcity)
 {
   struct worklist_data *ptr;
 
-  ptr = g_object_get_data(G_OBJECT(editor), "data");
+  ptr = (struct worklist_data *)g_object_get_data(G_OBJECT(editor), "data");
 
   ptr->pwl = pwl;
   ptr->pcity = pcity;
@@ -1470,7 +1475,7 @@ void refresh_worklist(GtkWidget *editor)
   GtkTreeModel *model;
   gboolean exists;
 
-  ptr = g_object_get_data(G_OBJECT(editor), "data");
+  ptr = (struct worklist_data *)g_object_get_data(G_OBJECT(editor), "data");
   pwl = ptr->pwl;
 
   if (!pwl) {
@@ -1492,9 +1497,9 @@ void refresh_worklist(GtkWidget *editor)
   path = NULL;
   for (i = 0; i < cids_used; i++) {
     gtk_list_store_append(ptr->src, &it);
-    gtk_list_store_set(ptr->src, &it, 0, (gint) items[i].cid, -1);
+    gtk_list_store_set(ptr->src, &it, 0, (gint) items[i].cid_, -1);
 
-    if (selected && items[i].cid == id) {
+    if (selected && items[i].cid_ == id) {
       path = gtk_tree_model_get_path(GTK_TREE_MODEL(ptr->src), &it);
     }
   }

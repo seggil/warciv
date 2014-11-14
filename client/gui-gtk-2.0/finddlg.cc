@@ -21,17 +21,17 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "player.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "player.hh"
 
-#include "dialogs.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "../options.h"
+#include "dialogs.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapview.hh"
+#include "../options.hh"
 
-#include "finddlg.h"
+#include "finddlg.hh"
 
 static struct gui_dialog *find_dialog_shell;
 static GtkWidget *find_view;
@@ -99,11 +99,11 @@ void popup_find_dialog(void)
         GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
     gtk_container_add(GTK_CONTAINER(sw), find_view);
 
-    label = g_object_new(GTK_TYPE_LABEL,
-        "use-underline", TRUE,
-        "mnemonic-widget", find_view,
-        "label", _("Ci_ties:"),
-        "xalign", 0.0, "yalign", 0.5, NULL);
+    label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+                         "use-underline", TRUE,
+                         "mnemonic-widget", find_view,
+                         "label", _("Ci_ties:"),
+                         "xalign", 0.0, "yalign", 0.5, NULL);
     gtk_box_pack_start(GTK_BOX(find_dialog_shell->vbox), label,
         FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(find_dialog_shell->vbox), sw,

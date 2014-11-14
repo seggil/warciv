@@ -21,24 +21,24 @@
 
 #include <gtk/gtk.h>
 
-#include "gtkpixcomm.h"
+#include "gtkpixcomm.hh"
 
-#include "game.h"
-#include "log.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
-#include "unit.h"
-#include "version.h"
+#include "game.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "unit.hh"
+#include "version.hh"
 
-#include "../climisc.h"
-#include "colors.h"
-#include "gui_main.h"
-#include "../include/mapview_g.h"
-#include "../options.h"
-#include "../tilespec.h"
+#include "../climisc.hh"
+#include "colors.hh"
+#include "gui_main.hh"
+#include "../include/mapview_g.hh"
+#include "../options.hh"
+#include "../tilespec.hh"
 
-#include "graphics.h"
+#include "graphics.hh"
 
 #include "../include/goto_cursor.xbm"
 #include "../include/goto_cursor_mask.xbm"
@@ -219,7 +219,7 @@ struct Sprite *crop_sprite(struct Sprite *source,
     }
   }
 
-  mysprite = wc_malloc(sizeof(wc_Sprite));
+  mysprite = (wc_Sprite *)wc_malloc(sizeof(wc_Sprite));
 
   mysprite->pixmap= mypixmap;
   mysprite->fogged = NULL;
@@ -256,10 +256,10 @@ void load_cursors(void)
   black = colors_standard[COLOR_STD_BLACK];
 
   /* goto */
-  pixmap = gdk_bitmap_create_from_data(root_window, goto_cursor_bits,
+  pixmap = gdk_bitmap_create_from_data(root_window, (const char*)goto_cursor_bits,
                                        goto_cursor_width,
                                        goto_cursor_height);
-  mask   = gdk_bitmap_create_from_data(root_window, goto_cursor_mask_bits,
+  mask   = gdk_bitmap_create_from_data(root_window, (const char*)goto_cursor_mask_bits,
                                        goto_cursor_mask_width,
                                        goto_cursor_mask_height);
   goto_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
@@ -270,10 +270,10 @@ void load_cursors(void)
   g_object_unref(mask);
 
   /* drop */
-  pixmap = gdk_bitmap_create_from_data(root_window, drop_cursor_bits,
+  pixmap = gdk_bitmap_create_from_data(root_window, (const char*)drop_cursor_bits,
                                        drop_cursor_width,
                                        drop_cursor_height);
-  mask   = gdk_bitmap_create_from_data(root_window, drop_cursor_mask_bits,
+  mask   = gdk_bitmap_create_from_data(root_window, (const char*)drop_cursor_mask_bits,
                                        drop_cursor_mask_width,
                                        drop_cursor_mask_height);
   drop_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
@@ -284,10 +284,10 @@ void load_cursors(void)
   g_object_unref(mask);
 
   /* nuke */
-  pixmap = gdk_bitmap_create_from_data(root_window, nuke_cursor_bits,
+  pixmap = gdk_bitmap_create_from_data(root_window, (const char*)nuke_cursor_bits,
                                        nuke_cursor_width,
                                        nuke_cursor_height);
-  mask   = gdk_bitmap_create_from_data(root_window, nuke_cursor_mask_bits,
+  mask   = gdk_bitmap_create_from_data(root_window, (const char*)nuke_cursor_mask_bits,
                                        nuke_cursor_mask_width,
                                        nuke_cursor_mask_height);
   nuke_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
@@ -297,10 +297,10 @@ void load_cursors(void)
   g_object_unref(mask);
 
   /* patrol */
-  pixmap = gdk_bitmap_create_from_data(root_window, patrol_cursor_bits,
+  pixmap = gdk_bitmap_create_from_data(root_window, (const char*)patrol_cursor_bits,
                                        patrol_cursor_width,
                                        patrol_cursor_height);
-  mask   = gdk_bitmap_create_from_data(root_window, patrol_cursor_mask_bits,
+  mask   = gdk_bitmap_create_from_data(root_window, (const char*)patrol_cursor_mask_bits,
                                        patrol_cursor_mask_width,
                                        patrol_cursor_mask_height);
   patrol_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
@@ -310,10 +310,10 @@ void load_cursors(void)
   g_object_unref(mask);
 
   /* airlift source */
-  pixmap = gdk_bitmap_create_from_data(root_window, source_cursor_bits,
+  pixmap = gdk_bitmap_create_from_data(root_window, (const char*)source_cursor_bits,
                                        source_cursor_width,
                                        source_cursor_height);
-  mask   = gdk_bitmap_create_from_data(root_window, source_cursor_mask_bits,
+  mask   = gdk_bitmap_create_from_data(root_window, (const char*)source_cursor_mask_bits,
                                        source_cursor_mask_width,
                                        source_cursor_mask_height);
   source_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
@@ -324,10 +324,10 @@ void load_cursors(void)
   g_object_unref(mask);
 
   /* airlift destination */
-  pixmap = gdk_bitmap_create_from_data(root_window, dest_cursor_bits,
+  pixmap = gdk_bitmap_create_from_data(root_window, (const char*)dest_cursor_bits,
                                        dest_cursor_width,
                                        dest_cursor_height);
-  mask   = gdk_bitmap_create_from_data(root_window, dest_cursor_mask_bits,
+  mask   = gdk_bitmap_create_from_data(root_window, (const char*)dest_cursor_mask_bits,
                                        dest_cursor_mask_width,
                                        dest_cursor_mask_height);
   dest_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
@@ -338,10 +338,10 @@ void load_cursors(void)
   g_object_unref(mask);
 
   /*trade */
-  pixmap = gdk_bitmap_create_from_data(root_window, trade_cursor_bits,
+  pixmap = gdk_bitmap_create_from_data(root_window, (const char*)trade_cursor_bits,
                                        trade_cursor_width,
                                        trade_cursor_height);
-  mask   = gdk_bitmap_create_from_data(root_window, trade_cursor_mask_bits,
+  mask   = gdk_bitmap_create_from_data(root_window, (const char*)trade_cursor_mask_bits,
                                        trade_cursor_mask_width,
                                        trade_cursor_mask_height);
   trade_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
@@ -386,7 +386,7 @@ struct Sprite *load_gfxfile(const char *filename)
 {
   GdkPixbuf  *im;
   GdkPixbuf  *pixbuf3;
-  wc_Sprite     *mysprite;
+  wc_Sprite  *mysprite;
   int         w;
   int         h;
   GError      *pixbuf_error = NULL;
@@ -405,7 +405,7 @@ struct Sprite *load_gfxfile(const char *filename)
     exit(EXIT_FAILURE);
   }
 
-  mysprite = wc_calloc(1, sizeof(struct Sprite));
+  mysprite = (wc_Sprite*)wc_calloc(1, sizeof(struct Sprite));
 
   w = gdk_pixbuf_get_width(im);
   h = gdk_pixbuf_get_height(im);
@@ -534,7 +534,7 @@ void free_intro_radar_sprites(void)
 wc_Sprite* sprite_scale(wc_Sprite *src, int new_w, int new_h)
 {
   GdkPixbuf *original, *im;
-  wc_Sprite    *mysprite;
+  wc_Sprite *mysprite;
   GdkColormap *colormap;
   GdkScreen *screen;
 
@@ -544,7 +544,7 @@ wc_Sprite* sprite_scale(wc_Sprite *src, int new_w, int new_h)
   original = sprite_get_pixbuf(src);
   im = gdk_pixbuf_scale_simple(original, new_w, new_h, GDK_INTERP_BILINEAR);
 
-  mysprite = wc_malloc(sizeof(struct Sprite));
+  mysprite = (wc_Sprite*)wc_malloc(sizeof(struct Sprite));
 
   gdk_pixbuf_render_pixmap_and_mask_for_colormap(im, colormap,
                                                  &mysprite->pixmap,

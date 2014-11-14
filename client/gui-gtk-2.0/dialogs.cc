@@ -25,42 +25,42 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "wc_intl.h"
-#include "iterator.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "iterator.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "support.hh"
 
-#include "game.h"
-#include "government.h"
-#include "map.h"
-#include "packets.h"
-#include "player.h"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "player.hh"
 
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "../connectdlg_common.h"
-#include "../control.h"
-#include "../goto.h"
-#include "../multiselect.h"
-#include "../options.h"
-#include "../packhand.h"
-#include "../tilespec.h"
-#include "../trade.h"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "../connectdlg_common.hh"
+#include "../control.hh"
+#include "../goto.hh"
+#include "../multiselect.hh"
+#include "../options.hh"
+#include "../packhand.hh"
+#include "../tilespec.hh"
+#include "../trade.hh"
 
-#include "chatline.h"
-#include "citydlg.h"
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "menu.h"
-#include "optiondlg.h"
-#include "wldlg.h"
+#include "chatline.hh"
+#include "citydlg.hh"
+#include "graphics.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapview.hh"
+#include "menu.hh"
+#include "optiondlg.hh"
+#include "wldlg.hh"
 
-#include "dialogs.h"
+#include "dialogs.hh"
 
 /******************************************************************/
 GtkWidget *message_dialog_start(GtkWindow *parent, const gchar *name,
@@ -191,7 +191,7 @@ void popup_notify_dialog(const char *caption, const char *headline,
 static void notify_goto_response(GtkWidget *w, gint response)
 {
   city_t *pcity = NULL;
-  tile_t *ptile = g_object_get_data(G_OBJECT(w), "tile");
+  tile_t *ptile = (tile_t*)g_object_get_data(G_OBJECT(w), "tile");
 
   switch (response) {
   case 1:
@@ -224,7 +224,7 @@ void popup_notify_goto_dialog(const char *headline, const char *lines,
 
   shell = gtk_dialog_new_with_buttons(headline,
         NULL,
-        0,
+        GtkDialogFlags(0),
         NULL);
   setup_dialog(shell, toplevel);
   gtk_dialog_set_default_response(GTK_DIALOG(shell), GTK_RESPONSE_CLOSE);
@@ -302,18 +302,18 @@ void popup_bribe_dialog(unit_t *punit, int cost)
     gtk_window_present(GTK_WINDOW(shell));
     return;
   } else if (get_player_ptr()->economic.gold >= cost) {
-    shell = gtk_message_dialog_new(NULL, 0,
-      GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-      _("Bribe unit for %d gold?\nTreasury contains %d gold."),
-      cost, get_player_ptr()->economic.gold);
+    shell = gtk_message_dialog_new(NULL, (GtkDialogFlags)0,
+        GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+        _("Bribe unit for %d gold?\nTreasury contains %d gold."),
+        cost, get_player_ptr()->economic.gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Bribe Enemy Unit"));
     setup_dialog(shell, toplevel);
   } else {
     shell = gtk_message_dialog_new(NULL,
-      0,
-      GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
-      _("Bribing the unit costs %d gold.\nTreasury contains %d gold."),
-      cost, get_player_ptr()->economic.gold);
+        (GtkDialogFlags)0,
+        GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
+        _("Bribing the unit costs %d gold.\nTreasury contains %d gold."),
+        cost, get_player_ptr()->economic.gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Traitors Demand Too Much!"));
     setup_dialog(shell, toplevel);
   }
@@ -446,13 +446,13 @@ static void create_advances_list(player_t *pplayer,
   GtkTreeViewColumn *col;
 
   spy_tech_shell = gtk_dialog_new_with_buttons(_("Steal Technology"),
-    NULL,
-    0,
-    GTK_STOCK_CANCEL,
-    GTK_RESPONSE_CANCEL,
-    _("_Steal"),
-    GTK_RESPONSE_ACCEPT,
-    NULL);
+      NULL,
+      (GtkDialogFlags)0,
+      GTK_STOCK_CANCEL,
+      GTK_RESPONSE_CANCEL,
+      _("_Steal"),
+      GTK_RESPONSE_ACCEPT,
+      NULL);
   setup_dialog(spy_tech_shell, toplevel);
   gtk_window_set_position(GTK_WINDOW(spy_tech_shell), GTK_WIN_POS_MOUSE);
 
@@ -476,13 +476,13 @@ static void create_advances_list(player_t *pplayer,
                                                  "text", 0, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 
-  label = g_object_new(GTK_TYPE_LABEL,
-    "use-underline", TRUE,
-    "mnemonic-widget", view,
-    "label", _("_Advances:"),
-    "xalign", 0.0,
-    "yalign", 0.5,
-    NULL);
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+      "use-underline", TRUE,
+      "mnemonic-widget", view,
+      "label", _("_Advances:"),
+      "xalign", 0.0,
+      "yalign", 0.5,
+      NULL);
   gtk_container_add(GTK_CONTAINER(vbox), label);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -590,13 +590,13 @@ static void create_improvements_list(player_t *pplayer,
   GtkTreeIter it;
 
   spy_sabotage_shell = gtk_dialog_new_with_buttons(_("Sabotage Improvements"),
-    NULL,
-    0,
-    GTK_STOCK_CANCEL,
-    GTK_RESPONSE_CANCEL,
-    _("_Sabotage"),
-    GTK_RESPONSE_ACCEPT,
-    NULL);
+      NULL,
+      (GtkDialogFlags)0,
+      GTK_STOCK_CANCEL,
+      GTK_RESPONSE_CANCEL,
+      _("_Sabotage"),
+      GTK_RESPONSE_ACCEPT,
+      NULL);
   setup_dialog(spy_sabotage_shell, toplevel);
   gtk_window_set_position(GTK_WINDOW(spy_sabotage_shell), GTK_WIN_POS_MOUSE);
 
@@ -620,13 +620,13 @@ static void create_improvements_list(player_t *pplayer,
                                                  "text", 0, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 
-  label = g_object_new(GTK_TYPE_LABEL,
-    "use-underline", TRUE,
-    "mnemonic-widget", view,
-    "label", _("_Improvements:"),
-    "xalign", 0.0,
-    "yalign", 0.5,
-    NULL);
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
+      "use-underline", TRUE,
+      "mnemonic-widget", view,
+      "label", _("_Improvements:"),
+      "xalign", 0.0,
+      "yalign", 0.5,
+      NULL);
   gtk_container_add(GTK_CONTAINER(vbox), label);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
@@ -749,14 +749,14 @@ void popup_incite_dialog(city_t *pcity, int cost)
   GtkWidget *shell;
 
   if (cost == INCITE_IMPOSSIBLE_COST) {
-    shell = gtk_message_dialog_new(NULL, 0,
+    shell = gtk_message_dialog_new(NULL, (GtkDialogFlags)0,
                                    GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
                                    _("You can't incite a revolt in %s."),
                                    pcity->common.name);
     gtk_window_set_title(GTK_WINDOW(shell), _("City can't be incited!"));
     setup_dialog(shell, toplevel);
   } else if (gold >= cost) {
-    shell = gtk_message_dialog_new(NULL, 0,
+    shell = gtk_message_dialog_new(NULL, (GtkDialogFlags)0,
                                    GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
                                    _("Incite a revolt for %d gold?\n"
                                      "Treasury contains %d gold."),
@@ -764,7 +764,7 @@ void popup_incite_dialog(city_t *pcity, int cost)
     gtk_window_set_title(GTK_WINDOW(shell), _("Incite a Revolt!"));
     setup_dialog(shell, toplevel);
   } else {
-    shell = gtk_message_dialog_new(NULL, 0,
+    shell = gtk_message_dialog_new(NULL, (GtkDialogFlags)0,
                                    GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
                                    _("Inciting a revolt costs %d gold.\n"
                                      "Treasury contains %d gold."),
@@ -1047,7 +1047,7 @@ void popup_revolution_dialog(int government)
   if (get_player_ptr()->revolution_finishes == -1) {
     if (!shell) {
       shell = gtk_message_dialog_new(NULL,
-          0,
+          (GtkDialogFlags)0,
           GTK_MESSAGE_WARNING,
           GTK_BUTTONS_YES_NO,
           _("You say you wanna revolution?"));
@@ -1077,7 +1077,7 @@ static void pillage_callback(GtkWidget *w, gpointer data)
     if (punit) {
       request_new_unit_activity_targeted(punit,
                                          ACTIVITY_PILLAGE,
-                                         GPOINTER_TO_INT(data));
+                                         (tile_special_type)GPOINTER_TO_INT(data));
     }
   }
 }
@@ -1112,7 +1112,8 @@ void popup_pillage_dialog(unit_t *punit,
       message_dialog_add(shl, map_get_infrastructure_text(what),
                          G_CALLBACK(pillage_callback), GINT_TO_POINTER(what));
 
-      may_pillage &= (~(what | map_get_infrastructure_prerequisite(what)));
+      may_pillage = static_cast<tile_special_type>(
+          may_pillage & (~(what | map_get_infrastructure_prerequisite(what))));
     }
 
     message_dialog_add(shl, GTK_STOCK_CANCEL, 0, 0);
@@ -1135,7 +1136,7 @@ void message_dialog_button_set_sensitive(GtkWidget *shl, int button,
 
   my_snprintf(button_name, sizeof(button_name), "button%d", button);
 
-  b = g_object_get_data(G_OBJECT(shl), button_name);
+  b = (GtkWidget*)g_object_get_data(G_OBJECT(shl), button_name);
   gtk_widget_set_sensitive(b, state);
 }
 
@@ -1200,7 +1201,7 @@ void message_dialog_add(GtkWidget *dshell, const gchar *label,
   char name[512];
   int nbuttons;
 
-  bbox = g_object_get_data(G_OBJECT(dshell), "bbox");
+  bbox = (GtkWidget*)g_object_get_data(G_OBJECT(dshell), "bbox");
   nbuttons = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(dshell), "nbuttons"));
   g_object_set_data(G_OBJECT(dshell), "nbuttons", GINT_TO_POINTER(nbuttons+1));
 
@@ -1225,7 +1226,7 @@ void message_dialog_end(GtkWidget *dshell)
 {
   GtkWidget *bbox;
 
-  bbox = g_object_get_data(G_OBJECT(dshell), "bbox");
+  bbox = (GtkWidget*)g_object_get_data(G_OBJECT(dshell), "bbox");
 
   gtk_widget_show_all(bbox);
   gtk_widget_show(dshell);
@@ -1515,9 +1516,9 @@ void popup_unit_select_dialog(tile_t *ptile)
 
 
     shell = gtk_dialog_new_with_buttons(_("Unit selection"),
-      NULL,
-      0,
-      NULL);
+        NULL,
+        (GtkDialogFlags)0,
+        NULL);
     unit_select_dialog_shell = shell;
     setup_dialog(shell, toplevel);
     g_signal_connect(shell, "destroy",
@@ -1778,7 +1779,7 @@ static void create_races_dialog(void)
   /* Leader. */
   races_leader = gtk_combo_box_entry_new_text();
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
       "use-underline", TRUE,
       "mnemonic-widget", races_leader,
       "label", _("_Leader:"),
@@ -1818,10 +1819,10 @@ static void create_races_dialog(void)
                                  GTK_POLICY_NEVER);
   gtk_container_add(GTK_CONTAINER(sw), list);
   gtk_table_attach(GTK_TABLE(table), sw, 1, 3, 2, 4,
-                   GTK_EXPAND|GTK_FILL,
-                   GTK_EXPAND|GTK_FILL, 0, 0);
+                   (GtkAttachOptions)(GTK_EXPAND|GTK_FILL),
+                   (GtkAttachOptions)(GTK_EXPAND|GTK_FILL), 0, 0);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget*)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", list,
                        "label", _("_City Styles:"),
@@ -2243,7 +2244,7 @@ static void nuke_children(gpointer data, gpointer user_data)
 {
   if (data != user_data) {
     if (GTK_IS_WINDOW(data) && GTK_WINDOW(data)->type == GTK_WINDOW_TOPLEVEL) {
-      gtk_widget_destroy(data);
+      gtk_widget_destroy((GtkWidget*)data);
     }
   }
 }
@@ -2340,7 +2341,8 @@ void popup_trade_planning_calculation_info(void)
   GtkWidget *vbox, *bar;
 
   trade_planning_calculation_info =
-      gtk_dialog_new_with_buttons(_("Trade planning calculation"), NULL, 0,
+      gtk_dialog_new_with_buttons(_("Trade planning calculation"), NULL,
+                                  GtkDialogFlags(0),
                                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                   GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
   setup_dialog(trade_planning_calculation_info, toplevel);
@@ -2487,7 +2489,7 @@ void popup_disband_unit(const unit_t *punit)
     return;
   }
 
-  dialog = gtk_message_dialog_new(NULL, 0,
+  dialog = gtk_message_dialog_new(NULL, (GtkDialogFlags)0,
                                   GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
                                   _("Are you sure to want to disband this %s?"),
                                   unit_name(punit->type));
@@ -2528,7 +2530,7 @@ void popup_disband_units_focus(void)
     list = g_list_append(list, GINT_TO_POINTER(punit->id));
   } multi_select_iterate_end;
 
-  dialog = gtk_message_dialog_new(NULL, 0,
+  dialog = gtk_message_dialog_new(NULL, (GtkDialogFlags)0,
                                   GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
                                   _("Are you sure to want to disband "
                                     "those %d units?"), g_list_length(list));

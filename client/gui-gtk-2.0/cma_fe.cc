@@ -20,31 +20,31 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "mem.h"
-#include "support.h"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "mem.hh"
+#include "support.hh"
 
-#include "../include/chatline_g.h"
-#include "../include/citydlg_g.h"
-#include "../civclient.h"
-#include "../agents/cma_fec.h"
-#include "../include/messagewin_g.h"
+#include "../include/chatline_g.hh"
+#include "../include/citydlg_g.hh"
+#include "../civclient.hh"
+#include "../agents/cma_fec.hh"
+#include "../include/messagewin_g.hh"
 
-#include "cityrep.h"
-#include "dialogs.h"
-#include "gui_stuff.h"
-#include "helpdlg.h"
-#include "inputdlg.h"
+#include "cityrep.hh"
+#include "dialogs.hh"
+#include "gui_stuff.hh"
+#include "helpdlg.hh"
+#include "inputdlg.hh"
 
-#include "cma_fe.h"
+#include "cma_fe.hh"
 
 #define BUFFER_SIZE             64
 
 #define SPECLIST_TAG dialog
 #define SPECLIST_TYPE struct cma_dialog
-#include "speclist.h"
+#include "speclist.hh"
 
 #define dialog_list_iterate(dialoglist, pdialog) \
     TYPED_LIST_ITERATE(struct cma_dialog, dialoglist, pdialog)
@@ -208,7 +208,7 @@ struct cma_dialog *create_cma_dialog(city_t *pcity)
   GtkTreeViewColumn *column;
 
   cmafec_get_fe_parameter(pcity, &param);
-  pdialog = wc_malloc(sizeof(struct cma_dialog));
+  pdialog = (struct cma_dialog *)wc_malloc(sizeof(struct cma_dialog));
   pdialog->pcity = pcity;
   pdialog->shell = gtk_vbox_new(FALSE, 8);
   gtk_container_set_border_width(GTK_CONTAINER(pdialog->shell), 8);
@@ -257,7 +257,7 @@ struct cma_dialog *create_cma_dialog(city_t *pcity)
   gtk_tree_view_column_set_cell_data_func(column, rend, cell_data_func,
       pdialog, NULL);
 
-  label = g_object_new(GTK_TYPE_LABEL,
+  label = (GtkWidget *)g_object_new(GTK_TYPE_LABEL,
                        "use-underline", TRUE,
                        "mnemonic-widget", view,
                        "label", _("_Presets:"),
@@ -315,7 +315,7 @@ struct cma_dialog *create_cma_dialog(city_t *pcity)
   gtk_table_attach_defaults(GTK_TABLE(table), label, 2, 3, 0, 1);
 
   for (i = 0; i < CM_NUM_STATS; i++) {
-    label = gtk_label_new(cm_get_stat_name(i));
+    label = (GtkWidget*)gtk_label_new(cm_get_stat_name((cm_stat)i));
     gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, i + 1, i + 2);
     gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
@@ -446,7 +446,7 @@ void refresh_cma_dialog(city_t *pcity, enum cma_refresh refresh)
 
   g_signal_handlers_disconnect_matched(pdialog->active_command,
       G_SIGNAL_MATCH_FUNC,
-      0, 0, NULL, cma_active_callback, NULL);
+      0, 0, NULL, (gpointer)cma_active_callback, NULL);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pdialog->active_command),
       controlled);
   g_signal_connect(pdialog->active_command, "clicked",

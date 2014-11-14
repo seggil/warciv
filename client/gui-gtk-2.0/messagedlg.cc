@@ -17,16 +17,16 @@
 
 #include <gtk/gtk.h>
 
-#include "events.h"
-#include "wc_intl.h"
-#include "registry.h"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "registry.hh"
 
-#include "colors.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "../options.h"
+#include "colors.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "../options.hh"
 
-#include "messagedlg.h"
+#include "messagedlg.hh"
 
 enum {
   COL_OUT,
@@ -58,7 +58,7 @@ static void apply_message_option(GtkTreeModel *model, GtkTreeIter *iter)
 **************************************************************************/
 void apply_message_options(GtkWidget *widget)
 {
-  GtkTreeModel *model = g_object_get_data(G_OBJECT(widget), "model");
+  GtkTreeModel *model = (GtkTreeModel*)g_object_get_data(G_OBJECT(widget), "model");
   GtkTreeIter iter;
 
   if (gtk_tree_model_get_iter_first(model, &iter)) {
@@ -87,7 +87,7 @@ static void refresh_message_option(GtkTreeModel *model, GtkTreeIter *iter)
 **************************************************************************/
 void refresh_message_options(GtkWidget *widget)
 {
-  GtkTreeModel *model = g_object_get_data(G_OBJECT(widget), "model");
+  GtkTreeModel *model = (GtkTreeModel*)g_object_get_data(G_OBJECT(widget), "model");
   GtkTreeIter iter;
 
   if (gtk_tree_model_get_iter_first(model, &iter)) {
@@ -105,7 +105,7 @@ static void reset_message_option(GtkTreeModel *model, GtkTreeIter *iter)
   int i, event, value;
 
   gtk_tree_model_get(model, iter, COL_EVENT, &event, -1);
-  value = get_default_messages_where(event);
+  value = get_default_messages_where((event_type)event);
   for (i = COL_OUT; i <= COL_POP; i++) {
     gtk_list_store_set(GTK_LIST_STORE(model), iter, i, value & (1 << i), -1);
   }
@@ -116,7 +116,7 @@ static void reset_message_option(GtkTreeModel *model, GtkTreeIter *iter)
 **************************************************************************/
 void reset_message_options(GtkWidget *widget)
 {
-  GtkTreeModel *model = g_object_get_data(G_OBJECT(widget), "model");
+  GtkTreeModel *model = (GtkTreeModel*)g_object_get_data(G_OBJECT(widget), "model");
   GtkTreeIter iter;
 
   if (gtk_tree_model_get_iter_first(model, &iter)) {
@@ -149,7 +149,7 @@ static void reload_message_option(GtkTreeModel *model, GtkTreeIter *iter,
 **************************************************************************/
 void reload_message_options(GtkWidget *widget, struct section_file *sf)
 {
-  GtkTreeModel *model = g_object_get_data(G_OBJECT(widget), "model");
+  GtkTreeModel *model = (GtkTreeModel*)g_object_get_data(G_OBJECT(widget), "model");
   GtkTreeIter iter;
 
   if (gtk_tree_model_get_iter_first(model, &iter)) {
@@ -207,7 +207,7 @@ static gboolean search_iter(GtkTreeModel *model, GtkTreeIter *iter, int event)
 static void refresh_message_option_callback(GtkMenuItem *menuitem,
                                             gpointer data)
 {
-  GtkTreeModel *model = g_object_get_data(G_OBJECT(menuitem), "model");
+  GtkTreeModel *model = (GtkTreeModel*)g_object_get_data(G_OBJECT(menuitem), "model");
   GtkTreeIter iter;
 
   if (search_iter(model, &iter, GPOINTER_TO_INT(data))) {
@@ -220,7 +220,7 @@ static void refresh_message_option_callback(GtkMenuItem *menuitem,
 *************************************************************************/
 static void reset_message_option_callback(GtkMenuItem *menuitem, gpointer data)
 {
-  GtkTreeModel *model = g_object_get_data(G_OBJECT(menuitem), "model");
+  GtkTreeModel *model = (GtkTreeModel *)g_object_get_data(G_OBJECT(menuitem), "model");
   GtkTreeIter iter;
 
   if (search_iter(model, &iter, GPOINTER_TO_INT(data))) {
@@ -233,7 +233,7 @@ static void reset_message_option_callback(GtkMenuItem *menuitem, gpointer data)
 *************************************************************************/
 static void reload_message_option_callback(GtkMenuItem *menuitem, gpointer data)
 {
-  GtkTreeModel *model = g_object_get_data(G_OBJECT(menuitem), "model");
+  GtkTreeModel *model = (GtkTreeModel*)g_object_get_data(G_OBJECT(menuitem), "model");
   GtkTreeIter iter;
   struct section_file sf;
 
@@ -250,7 +250,7 @@ static void reload_message_option_callback(GtkMenuItem *menuitem, gpointer data)
 *************************************************************************/
 static void apply_message_option_callback(GtkMenuItem *menuitem, gpointer data)
 {
-  GtkTreeModel *model = g_object_get_data(G_OBJECT(menuitem), "model");
+  GtkTreeModel *model = (GtkTreeModel*)g_object_get_data(G_OBJECT(menuitem), "model");
   GtkTreeIter iter;
 
   if (search_iter(model, &iter, GPOINTER_TO_INT(data))) {
@@ -366,7 +366,7 @@ GtkWidget *create_messages_configuration(void)
     gtk_list_store_append(model, &it);
 
     g_value_init(&value, G_TYPE_STRING);
-    g_value_set_static_string(&value, get_message_text(sorted_events[i]));
+    g_value_set_static_string(&value, get_message_text((event_type)sorted_events[i]));
     gtk_list_store_set_value(model, &it, COL_NAME, &value);
     g_value_unset(&value);
 

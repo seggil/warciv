@@ -23,26 +23,26 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "packets.h"
-#include "support.h"
-#include "registry.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "support.hh"
+#include "registry.hh"
 
-#include "../audio.h"
-#include "../civclient.h"
-#include "../climisc.h"
-#include "../clinet.h"
-#include "../control.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "../options.h"
+#include "../audio.hh"
+#include "../civclient.hh"
+#include "../climisc.hh"
+#include "../clinet.hh"
+#include "../control.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "../options.hh"
 
-#include "chatline.h"
-#include "colors.h"
-#include "my_cell_renderer_color.h"
-#include "pages.h"
+#include "chatline.hh"
+#include "colors.hh"
+#include "my_cell_renderer_color.hh"
+#include "pages.hh"
 
 genlist *history_list = NULL;
 int history_pos;
@@ -57,7 +57,7 @@ struct match_result {
 
 #define SPECLIST_TAG match_result
 #define SPECLIST_TYPE struct match_result
-#include "speclist.h"
+#include "speclist.hh"
 #define match_result_list_iterate(alist, pitem)\
   TYPED_LIST_ITERATE(struct match_result, alist, pitem)
 #define match_result_list_iterate_end  LIST_ITERATE_END
@@ -218,7 +218,7 @@ follow_if_link(GtkWidget   *text_view,
 
   tags = gtk_text_iter_get_tags(iter);
   for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
-    GtkTextTag *tag = tagp->data;
+    GtkTextTag *tag = (_GtkTextTag*)tagp->data;
     data = g_object_get_data(G_OBJECT(tag), "link_type");
     if (!data)
       continue;
@@ -276,7 +276,7 @@ follow_if_link(GtkWidget   *text_view,
 
     assert(id >= 0 && ptile != NULL);
 
-    restore_link_mark(link_type, id);
+    restore_link_mark((tag_link_types)link_type, id);
     center_tile_mapcanvas(ptile);
     gtk_widget_grab_focus(GTK_WIDGET(map_canvas));
   }
@@ -356,7 +356,7 @@ set_cursor_if_appropriate(GtkTextView    *text_view,
 
   tags = gtk_text_iter_get_tags(&iter);
   for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
-    GtkTextTag *tag = tagp->data;
+    GtkTextTag *tag = (GtkTextTag*)tagp->data;
     data = g_object_get_data(G_OBJECT(tag), "link_type");
     link_type = GPOINTER_TO_INT(data);
 
@@ -812,7 +812,7 @@ static void scroll_if_necessary(GtkTextView *w,
 void real_append_output_window(const char *astring, int conn_id)
 {
   bool previous_matched = FALSE, switch_next = FALSE, do_stop = FALSE;
-  char *jump_target = "";
+  char *jump_target = (char*)"";
   struct match_result_list *matches;
   char *text;
   const char *end_utf8;
@@ -860,7 +860,7 @@ void real_append_output_window(const char *astring, int conn_id)
                    : strcmp(ptagpat->tag_name, jump_target))) {
         continue;
       }
-      jump_target = "";
+      jump_target = (char*)"";
     }
 
     if (switch_next) {
@@ -990,7 +990,7 @@ struct tag_pattern *tag_pattern_new(const char *name, const char *pattern,
   assert(pattern != NULL);
   assert(jump_target != NULL);
 
-  ptagpat = wc_calloc(1, sizeof(struct tag_pattern));
+  ptagpat = (struct tag_pattern *)wc_calloc(1, sizeof(struct tag_pattern));
 
   ptagpat->tag_name = mystrdup(name);
   ptagpat->pattern = mystrdup(pattern);
@@ -1308,13 +1308,14 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
 {
   bool res = FALSE;
   struct match_result *pmres = NULL;
-  int textlen = strlen(text), patlen = strlen(ptagpat->pattern);
+  int textlen = strlen(text);
+  int patlen = strlen(ptagpat->pattern);
   const char *curpos, *p;
 
   if (!ptagpat->pattern[0]) {
     res = !(ptagpat->flags & TPF_NEGATE);
     if (res) {
-      pmres = wc_malloc(sizeof(struct match_result));
+      pmres = (struct match_result *)wc_malloc(sizeof(struct match_result));
       pmres->start = 0;
       pmres->end = textlen;
       match_result_list_append(matches, pmres);
@@ -1333,7 +1334,7 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
     }
     res = TRUE;
 
-    pmres = wc_malloc(sizeof(struct match_result));
+    pmres = (struct match_result *)wc_malloc(sizeof(struct match_result));
     match_result_list_append(matches, pmres);
     if (ptagpat->flags & TPF_APPLY_TO_MATCH) {
       pmres->start = g_utf8_pointer_to_offset(text, p);
@@ -1351,7 +1352,7 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
 
   res = (ptagpat->flags & TPF_NEGATE) ? !res : res;
   if (res && match_result_list_size(matches) == 0) {
-    pmres = wc_malloc(sizeof(struct match_result));
+    pmres = (struct match_result *)wc_malloc(sizeof(struct match_result));
     pmres->start = 0;
     pmres->end = textlen;
     match_result_list_append(matches, pmres);
@@ -1603,7 +1604,7 @@ struct tag_pattern_list *
 
   tpl = tag_pattern_list_new();
   for (i = 0; i < num; i++) {
-    ptagpat = wc_malloc(sizeof(struct tag_pattern));
+    ptagpat = (struct tag_pattern *)wc_malloc(sizeof(struct tag_pattern));
     ptagpat->tag_name = mystrdup(
         secfile_lookup_str(file, "chatline.tagpat%d.tag_name", i));
     ptagpat->pattern = mystrdup(
@@ -1776,8 +1777,8 @@ void apply_chatline_config(GtkWidget *widget)
   GHashTable *tags_to_delete;
   gpointer key, value;
 
-  tags_to_delete = g_object_get_data(G_OBJECT(widget), "tags_to_delete");
-  tmptagpats = g_object_get_data(G_OBJECT(widget), "tmptagpats");
+  tags_to_delete = (GHashTable *)g_object_get_data(G_OBJECT(widget), "tags_to_delete");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(widget), "tmptagpats");
 
   tag_pattern_list_free_data(tagpats);
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
@@ -1808,14 +1809,14 @@ void refresh_chatline_config(GtkWidget *widget)
   GtkTreeModel *model;
   GtkTreeIter iter;
 
-  tmptagpats = g_object_get_data(G_OBJECT(widget), "tmptagpats");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(widget), "tmptagpats");
   if (tmptagpats) {
     tag_pattern_list_free_all(tmptagpats);
   }
   tmptagpats = tag_pattern_list_clone(tagpats);
   g_object_set_data(G_OBJECT(widget), "tmptagpats", tmptagpats);
 
-  model = g_object_get_data(G_OBJECT(widget), "model");
+  model = (GtkTreeModel *)g_object_get_data(G_OBJECT(widget), "model");
   gtk_list_store_clear(GTK_LIST_STORE(model));
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
@@ -1832,14 +1833,14 @@ void reset_chatline_config(GtkWidget *widget)
   GtkTreeModel *model;
   GtkTreeIter iter;
 
-  tmptagpats = g_object_get_data(G_OBJECT(widget), "tmptagpats");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(widget), "tmptagpats");
   if (tmptagpats) {
     tag_pattern_list_free_all(tmptagpats);
   }
   tmptagpats = create_default_tag_patterns();
   g_object_set_data(G_OBJECT(widget), "tmptagpats", tmptagpats);
 
-  model = g_object_get_data(G_OBJECT(widget), "model");
+  model = (GtkTreeModel *)g_object_get_data(G_OBJECT(widget), "model");
   gtk_list_store_clear(GTK_LIST_STORE(model));
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
@@ -1858,14 +1859,14 @@ void reload_chatline_config(GtkWidget *widget, struct section_file *sf)
   GtkTreeIter iter;
 
   if (version == COLORS_FORMAT_VERSION) {
-    tmptagpats = g_object_get_data(G_OBJECT(widget), "tmptagpats");
+    tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(widget), "tmptagpats");
     if (tmptagpats) {
       tag_pattern_list_free_all(tmptagpats);
     }
     tmptagpats = secfile_load_message_buffer_tag_patterns(sf);
     g_object_set_data(G_OBJECT(widget), "tmptagpats", tmptagpats);
 
-    model = g_object_get_data(G_OBJECT(widget), "model");
+    model = (GtkTreeModel *)g_object_get_data(G_OBJECT(widget), "model");
     gtk_list_store_clear(GTK_LIST_STORE(model));
     tag_pattern_list_iterate(tmptagpats, ptagpat) {
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
@@ -1882,12 +1883,12 @@ static void destroy_callback(GtkWidget *w, gpointer user_data)
   struct tag_pattern_list *tmptagpats;
   GHashTable *tags_to_delete;
 
-  tmptagpats = g_object_get_data(G_OBJECT(w), "tmptagpats");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(w), "tmptagpats");
   if (tmptagpats) {
     tag_pattern_list_free_all(tmptagpats);
   }
 
-  tags_to_delete = g_object_get_data(G_OBJECT(w), "tags_to_delete");
+  tags_to_delete = (GHashTable *)g_object_get_data(G_OBJECT(w), "tags_to_delete");
   if (tags_to_delete) {
     g_hash_table_destroy(tags_to_delete);
   }
@@ -1931,7 +1932,7 @@ static void flag_toggled(GtkCellRendererToggle *cell, gchar *path_str,
   GtkTreeModel *model;
   int col_idx = GPOINTER_TO_INT(data);
   int flag = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cell), "flag"));
-  model = g_object_get_data(G_OBJECT(cell), "model");
+  model = (GtkTreeModel *)g_object_get_data(G_OBJECT(cell), "model");
   toggle_pattern_flag(flag, model, path_str, col_idx);
 }
 
@@ -1954,7 +1955,7 @@ static void notify_user_error(GtkWidget *msglabel, char *msg)
 static void cell_edited(GtkCellRendererText *cell, const gchar *path_string,
                         const gchar *new_text, gpointer data)
 {
-  GtkTreeModel *model = data;
+  GtkTreeModel *model = (GtkTreeModel *)data;
   GtkTreePath *path = gtk_tree_path_new_from_string(path_string);
   GtkTreeIter iter;
   struct tag_pattern *ptagpat;
@@ -1992,11 +1993,11 @@ static GtkWidget *create_my_color_selection_dialog(const char *title)
 {
   GtkWidget *dialog, *colorsel;
 
-  dialog = gtk_dialog_new_with_buttons(title, NULL, 0,
-                                        "_No Color", GTK_RESPONSE_REJECT,
-                                        "_Cancel", GTK_RESPONSE_CANCEL,
-                                        "_OK", GTK_RESPONSE_OK,
-                                        NULL);
+  dialog = gtk_dialog_new_with_buttons(title, NULL, (GtkDialogFlags)0,
+                                       "_No Color", GTK_RESPONSE_REJECT,
+                                       "_Cancel", GTK_RESPONSE_CANCEL,
+                                       "_OK", GTK_RESPONSE_OK,
+                                       NULL);
   colorsel = gtk_color_selection_new();
   gtk_color_selection_set_has_opacity_control(
       GTK_COLOR_SELECTION(colorsel), FALSE);
@@ -2175,19 +2176,19 @@ void tag_pattern_list_free_all(struct tag_pattern_list *tpl)
 **************************************************************************/
 struct tag_pattern *tag_pattern_clone(struct tag_pattern *old)
 {
-  struct tag_pattern *new = wc_malloc(sizeof(struct tag_pattern));
+  struct tag_pattern *tag = (struct tag_pattern *)wc_malloc(sizeof(struct tag_pattern));
 
-  new->tag_name = mystrdup(old->tag_name);
-  new->pattern = mystrdup(old->pattern);
-  new->jump_target = mystrdup(old->jump_target);
-  new->sound_tag = mystrdup(old->sound_tag);
-  new->flags = old->flags;
-  new->foreground_color = old->foreground_color != NULL
+  tag->tag_name = mystrdup(old->tag_name);
+  tag->pattern = mystrdup(old->pattern);
+  tag->jump_target = mystrdup(old->jump_target);
+  tag->sound_tag = mystrdup(old->sound_tag);
+  tag->flags = old->flags;
+  tag->foreground_color = old->foreground_color != NULL
       ? gdk_color_copy(old->foreground_color) : NULL;
-  new->background_color = old->background_color != NULL
+  tag->background_color = old->background_color != NULL
       ? gdk_color_copy(old->background_color) : NULL;
 
-  return new;
+  return tag;
 }
 /**************************************************************************
   ...
@@ -2205,9 +2206,9 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
   GtkTreeRowReference *rowref;
   int *new_order, len, i, limit, tmp;
 
-  tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
-  model = g_object_get_data(G_OBJECT(dialog), "model");
-  treeview = g_object_get_data(G_OBJECT(dialog), "treeview");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(dialog), "tmptagpats");
+  model = (GtkTreeModel *)g_object_get_data(G_OBJECT(dialog), "model");
+  treeview = (GtkTreeView *)g_object_get_data(G_OBJECT(dialog), "treeview");
   selection = gtk_tree_view_get_selection(treeview);
 
   rows = gtk_tree_selection_get_selected_rows(selection, NULL);
@@ -2215,14 +2216,14 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
     return;
 
   for (p = rows; p != NULL; p = g_list_next(p)) {
-    rowref = gtk_tree_row_reference_new(model, p->data);
+    rowref = gtk_tree_row_reference_new(model, (GtkTreePath*)p->data);
     rowrefs = g_list_append(rowrefs, rowref);
   }
   g_list_foreach(rows,(GFunc) gtk_tree_path_free, NULL);
   g_list_free(rows);
 
   len = tag_pattern_list_size(tmptagpats);
-  new_order = wc_malloc(sizeof(int) * len);
+  new_order = (int*)wc_malloc(sizeof(int) * len);
   for (i=0; i<len; i++)
     new_order[i] = i;
 
@@ -2245,7 +2246,7 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
     new_order[i] = tmp;
   }
 
-  tpv = wc_malloc(sizeof(struct tag_pattern *) * len);
+  tpv = (struct tag_pattern **)wc_malloc(sizeof(struct tag_pattern *) * len);
   i = 0;
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     tpv[new_order[i++]] = ptagpat;
@@ -2300,10 +2301,10 @@ static void add_tag_pattern(struct tag_pattern *ptagpat,
   int i;
   GtkTreeIter iter;
 
-  treeview = g_object_get_data(G_OBJECT(dialog), "treeview");
+  treeview = (GtkTreeView *)g_object_get_data(G_OBJECT(dialog), "treeview");
   selection = gtk_tree_view_get_selection(treeview);
-  tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
-  model = g_object_get_data(G_OBJECT(dialog), "model");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(dialog), "tmptagpats");
+  model = (GtkTreeModel *)g_object_get_data(G_OBJECT(dialog), "model");
 
   rows = gtk_tree_selection_get_selected_rows(selection, NULL);
   if (g_list_length(rows) > 0) {
@@ -2333,7 +2334,7 @@ static void add_control_callback(GtkWidget *w, gpointer user_data)
 
   dialog = (GtkWidget *) user_data;
 
-  entry = g_object_get_data(G_OBJECT(dialog), "entry");
+  entry = (GtkWidget *)g_object_get_data(G_OBJECT(dialog), "entry");
 
   newname = gtk_entry_get_text(GTK_ENTRY(entry));
   ptagpat = tag_pattern_new(newname, "pattern",
@@ -2354,8 +2355,8 @@ static void add_callback(GtkWidget *w, gpointer user_data)
 
   dialog = (GtkWidget *) user_data;
 
-  tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
-  entry = g_object_get_data(G_OBJECT(dialog), "entry");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(dialog), "tmptagpats");
+  entry = (GtkWidget *)g_object_get_data(G_OBJECT(dialog), "entry");
 
   newname = gtk_entry_get_text(GTK_ENTRY(entry));
   if (newname[0] == '\0') {
@@ -2395,17 +2396,17 @@ static void clear_callback(GtkWidget *w, gpointer user_data)
   GtkTreeModel *model;
   GHashTable *tags_to_delete = NULL;
 
-  tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
-  tags_to_delete = g_object_get_data(G_OBJECT(dialog), "tags_to_delete");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(dialog), "tmptagpats");
+  tags_to_delete = (GHashTable *)g_object_get_data(G_OBJECT(dialog), "tags_to_delete");
 
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     g_hash_table_replace(tags_to_delete, mystrdup(ptagpat->tag_name), NULL);
   } tag_pattern_list_iterate_end;
 
-  tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   tag_pattern_list_free_data(tmptagpats);
 
-  model = g_object_get_data(G_OBJECT(dialog), "model");
+  model = (GtkTreeModel *)g_object_get_data(G_OBJECT(dialog), "model");
   gtk_list_store_clear(GTK_LIST_STORE(model));
 }
 
@@ -2427,10 +2428,10 @@ static void delete_callback(GtkWidget *w, gpointer user_data)
   GList *rows = NULL, *rowrefs = NULL, *p;
   GtkTreeRowReference *rowref;
 
-  tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
-  tags_to_delete = g_object_get_data(G_OBJECT(dialog), "tags_to_delete");
-  model = g_object_get_data(G_OBJECT(dialog), "model");
-  treeview = g_object_get_data(G_OBJECT(dialog), "treeview");
+  tmptagpats = (struct tag_pattern_list *)g_object_get_data(G_OBJECT(dialog), "tmptagpats");
+  tags_to_delete = (GHashTable *)g_object_get_data(G_OBJECT(dialog), "tags_to_delete");
+  model = (GtkTreeModel *)g_object_get_data(G_OBJECT(dialog), "model");
+  treeview = (GtkTreeView *)g_object_get_data(G_OBJECT(dialog), "treeview");
 
   selection = gtk_tree_view_get_selection(treeview);
 
@@ -2439,7 +2440,7 @@ static void delete_callback(GtkWidget *w, gpointer user_data)
     return;
 
   for (p = rows; p != NULL; p = g_list_next(p)) {
-    rowref = gtk_tree_row_reference_new(model, p->data);
+    rowref = (GtkTreeRowReference *)gtk_tree_row_reference_new(model, (GtkTreePath*)p->data);
     rowrefs = g_list_append(rowrefs, rowref);
   }
   g_list_foreach(rows,(GFunc) gtk_tree_path_free, NULL);
@@ -2500,7 +2501,7 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
   gtk_tree_path_free(path);
 
   if (tag_pattern_is_control_only(ptagpat)) {
-    notify_user_error(error_label,
+    notify_user_error((GtkWidget *)error_label,
                       _("This type of pattern may not have colors."));
     return FALSE;
   }

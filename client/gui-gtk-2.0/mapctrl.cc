@@ -18,35 +18,35 @@
 #include <assert.h>
 #include <gtk/gtk.h>
 
-#include "city.h"
-#include "combat.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "map.h"
-#include "player.h"
-#include "support.h"
-#include "unit.h"
+#include "city.hh"
+#include "combat.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "map.hh"
+#include "player.hh"
+#include "support.hh"
+#include "unit.hh"
 
-#include "chatline.h"
-#include "citydlg.h"
-#include "../civclient.h"
-#include "../climap.h"
-#include "../clinet.h"
-#include "../climisc.h"
-#include "colors.h"
-#include "../control.h"
-#include "dialogs.h"
-#include "graphics.h"
-#include "gui_main.h"
-#include "inputdlg.h"
-#include "mapview.h"
-#include "menu.h"
-#include "../multiselect.h"
-#include "../tilespec.h"
-#include "../agents/cma_core.h"
-#include "../text.h"
+#include "chatline.hh"
+#include "citydlg.hh"
+#include "../civclient.hh"
+#include "../climap.hh"
+#include "../clinet.hh"
+#include "../climisc.hh"
+#include "colors.hh"
+#include "../control.hh"
+#include "dialogs.hh"
+#include "graphics.hh"
+#include "gui_main.hh"
+#include "inputdlg.hh"
+#include "mapview.hh"
+#include "menu.hh"
+#include "../multiselect.hh"
+#include "../tilespec.hh"
+#include "../agents/cma_core.hh"
+#include "../text.hh"
 
-#include "mapctrl.h"
+#include "mapctrl.hh"
 
 /* Color to use to display the workers */
 int city_workers_color=COLOR_STD_WHITE;
@@ -73,7 +73,7 @@ static gboolean popit_button_release(GtkWidget *w, GdkEventButton *event)
 static void popupinfo_positioning_callback(GtkWidget *w, GtkAllocation *alloc,
                                            gpointer data)
 {
-  struct tmousepos *mousepos = data;
+  struct tmousepos *mousepos = (struct tmousepos*)data;
   gint x, y;
   tile_t *ptile;
 

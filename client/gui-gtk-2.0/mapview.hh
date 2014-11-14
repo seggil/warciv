@@ -15,13 +15,13 @@
 
 #include <gtk/gtk.h>
 
-#include "gtkpixcomm.h"
+#include "gtkpixcomm.hh"
 
-#include "../citydlg_common.h"
-#include "../include/mapview_g.h"
-#include "../mapview_common.h"
+#include "../citydlg_common.hh"
+#include "../include/mapview_g.hh"
+#include "../mapview_common.hh"
 
-#include "graphics.h"
+#include "graphics.hh"
 
 GdkPixmap *get_thumb_pixmap(int onoff);
 

@@ -13,7 +13,7 @@
 #ifndef WC_CLIENT_GUI_FINDDLG_H
 #define WC_CLIENT_GUI_FINDDLG_H
 
-# include "../include/finddlg_g.h"
+# include "../include/finddlg_g.hh"
 
 /* nothing to add */
 

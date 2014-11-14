@@ -16,7 +16,7 @@
 
 #include <gtk/gtk.h>
 
-#include "../agents/cma_core.h"
+#include "../agents/cma_core.hh"
 
 enum cma_refresh {
   REFRESH_ALL,

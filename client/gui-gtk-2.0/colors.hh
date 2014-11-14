@@ -15,7 +15,7 @@
 
 #include <gtk/gtk.h>
 
-#include "../include/colors_g.h"
+#include "../include/colors_g.hh"
 
 extern GdkColor *colors_standard[COLOR_STD_LAST];
 GdkColor *color_from_str(const char *str);

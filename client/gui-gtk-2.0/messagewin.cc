@@ -21,23 +21,23 @@
 
 #include <gtk/gtk.h>
 
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "player.h"
-#include "chatline.h"
-#include "citydlg.h"
-#include "../clinet.h"
-#include "colors.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "../options.h"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "chatline.hh"
+#include "citydlg.hh"
+#include "../clinet.hh"
+#include "colors.hh"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
+#include "mapview.hh"
+#include "../options.hh"
 
-#include "messagewin.h"
+#include "messagewin.hh"
 
 static struct gui_dialog *meswin_shell;
 static GtkListStore *meswin_store;
@@ -277,7 +277,7 @@ static void meswin_selection_callback(GtkTreeSelection *selection,
   gint row = gtk_tree_selection_get_row(selection);
 
   if (row != -1) {
-    struct message *message = get_message(row);
+    struct message_s *message = get_message(row);
 
     gui_dialog_set_response_sensitive(meswin_shell, CMD_GOTO,
         message->location_ok);
@@ -295,7 +295,7 @@ static void meswin_row_activated_callback(GtkTreeView *view,
                                           gpointer data)
 {
   gint row = gtk_tree_path_get_indices(path)[0];
-  struct message *message = get_message(row);
+  struct message_s *message = get_message(row);
 
   meswin_double_click(row);
   meswin_visited_item(row);

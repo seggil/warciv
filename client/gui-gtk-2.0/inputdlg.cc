@@ -19,12 +19,12 @@
 
 #include <gtk/gtk.h>
 
-#include "wc_intl.h"
+#include "wc_intl.hh"
 
-#include "gui_main.h"
-#include "gui_stuff.h"
+#include "gui_main.hh"
+#include "gui_stuff.hh"
 
-#include "inputdlg.h"
+#include "inputdlg.hh"
 
 /****************************************************************
 ...
@@ -34,8 +34,8 @@ const char *input_dialog_get_input(GtkWidget *button)
   const char *dp;
   GtkWidget *winput;
 
-  winput=g_object_get_data(G_OBJECT(button->parent->parent->parent),
-        "iinput");
+  winput = (GtkWidget*)g_object_get_data(G_OBJECT(button->parent->parent->parent),
+                                         "iinput");
 
   dp=gtk_entry_get_text(GTK_ENTRY(winput));
 
