@@ -15,16 +15,16 @@
 #  include "../config.h"
 #endif
 
-#include "log.h"
-#include "mem.h"
-#include "pqueue.h"
+#include "log.hh"
+#include "mem.hh"
+#include "pqueue.hh"
 
-#include "city.h"
-#include "map.h"
+#include "city.hh"
+#include "map.hh"
 
-#include "gotohand.h"
+#include "gotohand.hh"
 
-#include "airgoto.h"
+#include "airgoto.hh"
 
 /* These are used for airplane GOTOs with waypoints */
 #define MAXFUEL 100
@@ -112,7 +112,7 @@ static void add_refuel_point(tile_t *ptile,
     refuels.alloc_size += ALLOC_STEP;
     /* If refuels.alloc_size was zero (on the first call),
      * then refuels.points is NULL and realloc will actually malloc */
-    refuels.points = wc_realloc(refuels.points,
+    refuels.points = (refuel*)wc_realloc(refuels.points,
                                 refuels.alloc_size * sizeof(struct refuel));
     /* This memory, because refuels is static, is never freed.
      * It is just reused. */

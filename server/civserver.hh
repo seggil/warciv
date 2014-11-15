@@ -13,6 +13,6 @@
 #ifndef WC_SERVER_CIVSERVER_H
 #define WC_SERVER_CIVSERVER_H
 
-#include "version.h"
+#include "version.hh"
 
 #endif  /* WC_SERVER_CIVSERVER_H */

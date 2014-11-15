@@ -13,8 +13,8 @@
 #ifndef WC_SERVER_SETTLERS_H
 #define WC_SERVER_SETTLERS_H
 
-#include "wc_types.h"
-#include "map.h"
+#include "wc_types.hh"
+#include "map.hh"
 
 void auto_settlers_init(void);
 void auto_settlers_player(player_t *pplayer);

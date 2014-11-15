@@ -13,10 +13,10 @@
 #ifndef WC_SERVER_SRV_MAIN_H
 #define WC_SERVER_SRV_MAIN_H
 
-#include "wc_types.h"
-#include "game.h"
-#include "packets.h"
-#include "connection.h"
+#include "wc_types.hh"
+#include "game.hh"
+#include "packets.hh"
+#include "connection.hh"
 
 BV_DEFINE(bv_draw, MAX_NUM_PLAYERS);
 
@@ -41,7 +41,7 @@ struct server_arguments {
   char *gamelog_filename;
   char load_filename[512]; /* FIXME: may not be long enough? use MAX_PATH? */
   char *script_filename;
-  char *saves_pathname;
+  char const *saves_pathname;
   char serverid[256];
   /* save a ppm of the map? */
   bool save_ppm;
@@ -115,7 +115,7 @@ extern bool force_end_of_sniff;
 /* May be NULL, in which case the default welcome message is used. */
 extern char *welcome_message;
 
-Nation_Type_id select_random_nation(const char* class);
+Nation_Type_id select_random_nation(const char* class_);
 void send_select_nation(player_t *pplayer);
 void mark_nation_as_used(Nation_Type_id nation);
 

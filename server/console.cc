@@ -23,14 +23,14 @@
 #  include <readline/readline.h>
 #endif
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "srv_main.h"
+#include "srv_main.hh"
 
-#include "console.h"
+#include "console.hh"
 
 static bool console_show_prompt = FALSE;
 static bool console_prompt_is_showing = FALSE;
@@ -48,9 +48,9 @@ This must match the log_callback_fn typedef signature.
 static void con_handle_log(int level, const char *message)
 {
   if(console_rfcstyle) {
-    con_write(C_LOG_BASE+level, "%s", message);
+    con_write((rfc_status)(C_LOG_BASE+level), "%s", message);
   } else {
-    con_write(C_LOG_BASE+level, "%d: %s", level, message);
+    con_write((rfc_status)(C_LOG_BASE+level), "%d: %s", level, message);
   }
 }
 

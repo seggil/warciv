@@ -13,12 +13,12 @@
 #ifndef WC_SERVER_MAPHAND_H
 #define WC_SERVER_MAPHAND_H
 
-#include "wc_types.h"
-#include "map.h"
-#include "packets.h"
-#include "terrain.h"
+#include "wc_types.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "terrain.hh"
 
-#include "hand_gen.h"
+#include "hand_gen.hh"
 
 enum ocean_land_change { OLC_NONE, OLC_OCEAN_TO_LAND, OLC_LAND_TO_OCEAN };
 

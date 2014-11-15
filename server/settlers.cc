@@ -19,34 +19,34 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "log.h"
-#include "mem.h"
-#include "support.h"
-#include "timing.h"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
+#include "timing.hh"
 
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "map.h"
-#include "packets.h"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
+#include "packets.hh"
 
-#include "aicore/citymap.h"
+#include "aicore/citymap.hh"
 
-#include "citytools.h"
-#include "gotohand.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "gotohand.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "aicity.h"
-#include "aidata.h"
-#include "ailog.h"
-#include "aisettler.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "aicity.hh"
+#include "aidata.hh"
+#include "ailog.hh"
+#include "aisettler.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "settlers.h"
+#include "settlers.hh"
 
 BV_DEFINE(nearness, MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
 static nearness *territory;
@@ -141,8 +141,8 @@ void init_settlers(void)
 {
   /* (Re)allocate map arrays.  Note that the server may run more than one
    * game so the realloc() is necessary. */
-  territory = wc_realloc(territory,
-                         map.info.xsize * map.info.ysize * sizeof(*territory));
+  territory = (nearness*)wc_realloc(territory,
+                   map.info.xsize * map.info.ysize * sizeof(*territory));
 }
 
 /**************************************************************************
@@ -660,11 +660,11 @@ static int ai_calc_road(city_t *pcity, player_t *pplayer,
     /* HACK: calling map_set_special here will have side effects, so we
      * have to set it manually. */
     assert((ptile->special & S_ROAD) == 0);
-    ptile->special |= S_ROAD;
+    ptile->special = static_cast<tile_special_type>(ptile->special | S_ROAD);
 
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
 
-    ptile->special &= ~S_ROAD;
+    ptile->special = static_cast<tile_special_type>(ptile->special & ~S_ROAD);
 
     return goodness;
   } else {
@@ -702,7 +702,8 @@ static int ai_calc_railroad(city_t *pcity, player_t *pplayer,
 
     /* HACK: calling map_set_special here will have side effects, so we
      * have to set it manually. */
-    ptile->special |= (S_ROAD | S_RAILROAD);
+    ptile->special = static_cast<tile_special_type>(
+        ptile->special | (S_ROAD | S_RAILROAD));
 
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
 

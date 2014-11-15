@@ -15,15 +15,15 @@
 #  include "../config.h"
 #endif
 
-#include "wc_intl.h"
+#include "wc_intl.hh"
 
-#include "connection.h"
+#include "connection.hh"
 
-#include "srv_main.h"
-#include "stdinhand.h"
-#include "vote.h"
+#include "srv_main.hh"
+#include "stdinhand.hh"
+#include "vote.hh"
 
-#include "commands.h"
+#include "commands.hh"
 
 /* Commands must match the values in enum command_id. */
 const struct command commands[] = {

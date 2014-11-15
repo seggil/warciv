@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_DATABASE_H
 #define WC_SERVER_DATABASE_H
 
-#include "shared.h"
+#include "shared.hh"
 
 void database_init(void);
 void database_free(void);

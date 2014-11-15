@@ -20,41 +20,41 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "capability.h"
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "map.h"
-#include "traderoute.h"
-#include "unit.h"
-#include "version.h"
+#include "capability.hh"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
+#include "traderoute.hh"
+#include "unit.hh"
+#include "version.hh"
 
-#include "aicity.h"
-#include "aidata.h"
-#include "aiunit.h"
+#include "aicity.hh"
+#include "aidata.hh"
+#include "aiunit.hh"
 
-#include "cityturn.h"
-#include "connecthand.h" /* server_assign_random_nation */
-#include "diplhand.h"
-#include "generator/mapgen.h"
-#include "maphand.h"
-#include "meta.h"
-#include "plrhand.h"
-#include "ruleset.h"
-#include "load_save_aux.h"
-#include "game_save.h"
-#include "srv_main.h"
-#include "stdinhand.h"
-#include "tradehand.h"
-#include "load_save_aux.h"
+#include "cityturn.hh"
+#include "connecthand.hh" /* server_assign_random_nation */
+#include "diplhand.hh"
+#include "generator/mapgen.hh"
+#include "maphand.hh"
+#include "meta.hh"
+#include "plrhand.hh"
+#include "ruleset.hh"
+#include "load_save_aux.hh"
+#include "game_save.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
+#include "tradehand.hh"
+#include "load_save_aux.hh"
 
 /*
  * This loops over the entire map to save data. It collects all the data of
@@ -188,7 +188,7 @@ free().
 ***************************************************************/
 static char *quote_block(const void *const data, int length)
 {
-  char *buffer = wc_malloc(length * 3 + 10);
+  char *buffer = (char*)wc_malloc(length * 3 + 10);
   size_t offset;
   int i;
 

@@ -13,10 +13,10 @@
 #ifndef WC_SERVER_CITYTOOLS_H
 #define WC_SERVER_CITYTOOLS_H
 
-#include "city.h"
-#include "events.h"
-#include "nation.h"             /* for struct city_name */
-#include "packets.h"
+#include "city.hh"
+#include "events.hh"
+#include "nation.hh"          /* for struct city_name */
+#include "packets.hh"
 
 #define FOOD_WEIGHTING 10
 #define SHIELD_WEIGHTING 10

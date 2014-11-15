@@ -18,19 +18,19 @@
 #include <assert.h>
 #include <string.h>
 
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "packets.h"
-#include "shared.h"
-#include "spaceship.h"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "packets.hh"
+#include "shared.hh"
+#include "spaceship.hh"
 
-#include "gamelog.h"
-#include "plrhand.h"
-#include "srv_main.h"
+#include "gamelog.hh"
+#include "plrhand.hh"
+#include "srv_main.hh"
 
-#include "spacerace.h"
+#include "spacerace.hh"
 
 
 /**********************************************************************

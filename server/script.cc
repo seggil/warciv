@@ -15,17 +15,19 @@
 #  include "../config.h"
 #endif
 
+extern "C" {
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
+}
 
-#include "log.h"
-#include "shared.h"
-#include "support.h"
+#include "log.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "connection.h"
+#include "connection.hh"
 
-#include "script.h"
+#include "script.hh"
 
 
 #define W_CONN_CLASS "warciv wrapped connection"
@@ -207,7 +209,7 @@ static int push_w_conn(lua_State *L, connection_t *pconn)
 {
   struct w_conn *wc;
 
-  wc = lua_newuserdata(L, sizeof(*wc));
+  wc = (struct w_conn *)lua_newuserdata(L, sizeof(*wc));
   luaL_getmetatable(L, W_CONN_CLASS);
   lua_setmetatable(L, -2);
 

@@ -28,51 +28,53 @@
 #  include <zlib.h>
 #endif
 
+extern "C" {
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
+}
 
 #ifdef HAVE_MYSQL
 #  include "lua/mysql/ls_mysql.h"
 #endif
 
-#include "wc_intl.h"
-#include "hash.h"
-#include "log.h"
-#include "md5.h"
-#include "rand.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
-#include "timing.h"
+#include "wc_intl.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "md5.hh"
+#include "rand.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "timing.hh"
+#include "capstr.hh"
+#include "city.hh"
 
-#include "capstr.h"
-#include "city.h"
-#include "connection.h"
-#include "government.h"
-#include "map.h"
-#include "packets.h"
+#include "connection.hh"
+#include "government.hh"
+#include "map.hh"
+#include "packets.hh"
 
-#include "connecthand.h"
-#include "meta.h"
-#include "plrhand.h"
-#include "score.h"
-#include "script.h"
-#include "sernet.h"
-#include "settings.h"
-#include "srv_main.h"
+#include "connecthand.hh"
+#include "meta.hh"
+#include "plrhand.hh"
+#include "score.hh"
+#include "script.hh"
+#include "sernet.hh"
+#include "settings.hh"
+#include "srv_main.hh"
 
-#include "database.h"
+#include "database.hh"
 
 struct wcdb_params wcdb = {
 
   /* Where our mysql database is located and how to get to it. */
-  .host = "localhost",
-  .user = "warciv",
-  .password = "password",
+  /* .host = */ "localhost",
+  /* .user = */ "warciv",
+  /* .password = */ "password",
 
   /* The database where our tables are located. */
-  .dbname = "warciv"
+  /* .dbname = */ "warciv"
 };
 
 #define AUTH_TABLE      "auth"

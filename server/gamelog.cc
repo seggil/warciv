@@ -20,19 +20,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "support.hh"
+#include "city.hh"
+#include "government.hh"
+#include "map.hh"
 
-#include "city.h"
-#include "government.h"
-#include "map.h"
-#include "score.h"
-#include "srv_main.h"
+#include "score.hh"
+#include "srv_main.hh"
 
-#include "gamelog.h"
-#include "stdinhand.h"
+#include "gamelog.hh"
+#include "stdinhand.hh"
 
 int gamelog_level;              /* also accessed from stdinhand.c */
 static char *gamelog_filename;
@@ -341,11 +341,13 @@ void gamelog(int level, ...)
 
     my_snprintf(buf, sizeof(buf),
                 "<n1>%d</n1><n2>%d</n2><type>%s</type>",
-                pplayer->player_no, pplayer2->player_no,  diplstate_text(num));
+                pplayer->player_no, pplayer2->player_no,
+                diplstate_text((diplstate_type)num));
     cat_snprintf(buf, sizeof(buf),
                 "<m>The diplomatic state between the %s and the %s is %s</m>",
                 get_nation_name_plural(pplayer->nation),
-                get_nation_name_plural(pplayer2->nation), diplstate_text(num));
+                get_nation_name_plural(pplayer2->nation),
+                diplstate_text((diplstate_type)num));
     gamelog_put_prefix(buf, sizeof(buf), "dipl");
     break;
   case GAMELOG_TECH:
@@ -570,7 +572,7 @@ void gamelog(int level, ...)
     /* this is big, so it's special */
     {
       int nat_x, nat_y, i = 0;
-      char *mapline = wc_malloc(((map.info.xsize + 1) * map.info.ysize) + 1);
+      char *mapline = (char*)wc_malloc(((map.info.xsize + 1) * map.info.ysize) + 1);
 
       for (nat_y = 0; nat_y < map.info.ysize; nat_y++) {
         for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {

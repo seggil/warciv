@@ -33,26 +33,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "timing.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "timing.hh"
 
-#include "city.h"
-#include "combat.h"
-#include "events.h"
-#include "game.h"
-#include "map.h"
-#include "player.h"
-#include "unit.h"
+#include "city.hh"
+#include "combat.hh"
+#include "events.hh"
+#include "game.hh"
+#include "map.hh"
+#include "player.hh"
+#include "unit.hh"
 
-#include "gotohand.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "srv_main.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "gotohand.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "srv_main.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "autoattack.h"
+#include "autoattack.hh"
 
 
 /**************************************************************************

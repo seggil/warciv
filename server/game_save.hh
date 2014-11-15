@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_GAME_SAVE_H
 #define WC_SERVER_GAME_SAVE_H
 
-#include "registry.h"
+#include "registry.hh"
 
 #define REQUIERED_GAME_VERSION 10900
 

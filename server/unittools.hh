@@ -13,11 +13,11 @@
 #ifndef WC_SERVER_UNITTOOLS_H
 #define WC_SERVER_UNITTOOLS_H
 
-#include "wc_types.h"
-#include "packets.h"            /* enum unit_info_use */
-#include "unit.h"
+#include "wc_types.hh"
+#include "packets.hh"            /* enum unit_info_use */
+#include "unit.hh"
 
-#include "gotohand.h"
+#include "gotohand.hh"
 
 /* battle related */
 int find_a_unit_type(int role, int role_tech);

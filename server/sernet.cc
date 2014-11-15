@@ -73,35 +73,35 @@
 #  include <ws2tcpip.h>
 #endif
 
-#include "version.h"
-#include "wc_iconv.h"
+#include "version.hh"
+#include "wc_iconv.hh"
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "netintf.h"
-#include "shared.h"
-#include "support.h"
-#include "timing.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "netintf.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "timing.hh"
 
-#include "dataio.h"
-#include "events.h"
-#include "map.h"
-#include "packets.h"
+#include "dataio.hh"
+#include "events.hh"
+#include "map.hh"
+#include "packets.hh"
 
-#include "connecthand.h"
-#include "console.h"
-#include "database.h"
-#include "meta.h"
-#include "plrhand.h"
-#include "settings.h"
-#include "srv_main.h"
-#include "stdinhand.h"
-#include "vote.h"
+#include "connecthand.hh"
+#include "console.hh"
+#include "database.hh"
+#include "meta.hh"
+#include "plrhand.hh"
+#include "settings.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
+#include "vote.hh"
 
-#include "sernet.h"
+#include "sernet.hh"
 
 static connection_t connections[MAX_NUM_CONNECTIONS];
 
@@ -133,7 +133,7 @@ static int socklan;
 
 #define SPECLIST_TAG timer
 #define SPECLIST_TYPE struct timer
-#include "speclist.h"
+#include "speclist.hh"
 
 #define PROCESSING_TIME_STATISTICS 0
 
@@ -590,7 +590,7 @@ int sniff_packets(void)
   if (!no_input && !readline_initialized) {
     char *home_dir = user_home_dir();
     if (home_dir) {
-      history_file = wc_malloc(strlen(home_dir) + 1
+      history_file = (char*)wc_malloc(strlen(home_dir) + 1
                                + strlen(HISTORY_FILENAME) + 1);
       if (history_file) {
         strcpy(history_file, home_dir);
@@ -1055,7 +1055,7 @@ static const char *makeup_connection_name(int *id)
 static bool reverse_lookup_cb(const unsigned char *addr,
                               int addrlen, void *data)
 {
-  connection_t *pconn = data;
+  connection_t *pconn = (connection_t *)data;
   const char *hostname = (const char *) addr;
 
   assert(pconn != NULL);

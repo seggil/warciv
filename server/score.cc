@@ -19,25 +19,25 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "shared.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "game.h"
-#include "improvement.h"
-#include "map.h"
-#include "player.h"
-#include "terrain.h"
-#include "unit.h"
+#include "city.hh"
+#include "game.hh"
+#include "improvement.hh"
+#include "map.hh"
+#include "player.hh"
+#include "terrain.hh"
+#include "unit.hh"
 
-#include "database.h"
-#include "plrhand.h"
-#include "srv_main.h"
+#include "database.hh"
+#include "plrhand.hh"
+#include "srv_main.hh"
 
-#include "score.h"
+#include "score.hh"
 
 /* Avoid having to recalculate civ scores all the time. */
 static int score_cache[MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS];
@@ -167,19 +167,19 @@ static void build_landarea_map_new(struct claim_map *pcmap)
   int nbytes;
 
   nbytes = map.info.xsize * map.info.ysize * sizeof(struct claim_cell);
-  pcmap->claims = wc_malloc(nbytes);
+  pcmap->claims = (claim_cell*)wc_malloc(nbytes);
   memset(pcmap->claims, 0, nbytes);
 
   nbytes = game.info.nplayers * sizeof(int);
-  pcmap->player_landarea = wc_malloc(nbytes);
+  pcmap->player_landarea = (int*)wc_malloc(nbytes);
   memset(pcmap->player_landarea, 0, nbytes);
 
   nbytes = game.info.nplayers * sizeof(int);
-  pcmap->player_owndarea = wc_malloc(nbytes);
+  pcmap->player_owndarea = (int*)wc_malloc(nbytes);
   memset(pcmap->player_owndarea, 0, nbytes);
 
   nbytes = 2 * map.info.xsize * map.info.ysize * sizeof(*pcmap->edges);
-  pcmap->edges = wc_malloc(nbytes);
+  pcmap->edges = (tile_t**)wc_malloc(nbytes);
 
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
@@ -1150,7 +1150,7 @@ static void calculate_fractional_ranking(void *base,
 {
   int i, j, k;
   float ranksum, frac_rank;
-  char *a = base;
+  char *a = (char*)base;
 
   freelog(LOG_DEBUG, "calculate_fractional_ranking base=%p nmemb=%d "
           "size=%d", base, nmemb, (int) size);

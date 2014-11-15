@@ -5,32 +5,32 @@
 
 #include <assert.h>
 #include <ctype.h>
-#include "wc_intl.h"
-#include "log.h"
-#include "game_load.h"
-#include "load_save_aux.h"
-#include "rand.h"
-#include "support.h"
-#include "capability.h"
-#include "city.h"
-#include "government.h"
-#include "idex.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "game_load.hh"
+#include "load_save_aux.hh"
+#include "rand.hh"
+#include "support.hh"
+#include "capability.hh"
+#include "city.hh"
+#include "government.hh"
+#include "map.hh"
+#include "idex.hh"
 
-#include "aidata.h"
+#include "aidata.hh"
 
-#include "cityturn.h"
-#include "citytools.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "meta.h"
-#include "spacerace.h"
-#include "score.h"
-#include "srv_main.h"
-#include "map.h"
-#include "ruleset.h"
-#include "stdinhand.h"
-#include "tradehand.h"
-#include "unittools.h"
+#include "cityturn.hh"
+#include "citytools.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "meta.hh"
+#include "spacerace.hh"
+#include "score.hh"
+#include "srv_main.hh"
+#include "ruleset.hh"
+#include "stdinhand.hh"
+#include "tradehand.hh"
+#include "unittools.hh"
 
 /*
  * This loops over the entire map to load data. It inputs a line of data
@@ -107,7 +107,7 @@ checking so it's done as a function.
 ***************************************************************/
 static int ascii_hex2bin(char ch, int halfbyte)
 {
-  char *pch;
+  char const *pch;
 
   if (ch == ' ') {
     /*
@@ -196,11 +196,12 @@ static enum direction8 char2dir(char dir)
   }
 
   /* This can happen if the savegame is invalid. */
-  return DIR8_LAST;
+  return (enum direction8)DIR8_LAST;
 }
 
 /****************************************************************************
   Returns a character identifier for an activity.  See also char2activity.
+  used letter "aefgilmoprstuwxy?"
 ****************************************************************************/
 char activity2char(enum unit_activity activity)
 {
@@ -253,13 +254,13 @@ char activity2char(enum unit_activity activity)
 ****************************************************************************/
 static enum unit_activity char2activity(char activity)
 {
-  enum unit_activity a;
+  int /* enum unit_activity */ a;
 
   for (a = 0; a < ACTIVITY_LAST; a++) {
-    char achar = activity2char(a);
+    char achar = activity2char((enum unit_activity)a);
 
     if (activity == achar || activity == toupper(achar)) {
-      return a;
+      return (enum unit_activity)a;
     }
   }
 
@@ -510,7 +511,7 @@ static void worklist_load(struct section_file *file,
       (void) section_file_lookup(file, efpath, plrno, wlinx, i);
       (void) section_file_lookup(file, idpath, plrno, wlinx, i);
     } else {
-      pwl->wlefs[i] =
+      pwl->wlefs[i] = (worklist_elem_flag)
         secfile_lookup_int_default(file, WEF_END, efpath, plrno, wlinx, i);
       name = secfile_lookup_str_default(file, NULL, namepath, plrno, wlinx, i);
 
@@ -626,7 +627,8 @@ static void load_player_units(player_t *plr, int plrno,
     punit->moves_left
       = secfile_lookup_int(file, "player%d.u%d.moves", plrno, i);
     punit->fuel = secfile_lookup_int(file, "player%d.u%d.fuel", plrno, i);
-    activity = secfile_lookup_int(file, "player%d.u%d.activity", plrno, i);
+    activity = (unit_activity)
+        secfile_lookup_int(file, "player%d.u%d.activity", plrno, i);
     if (activity == ACTIVITY_PATROL_UNUSED) {
       /* Previously ACTIVITY_PATROL and ACTIVITY_GOTO were used for
        * client-side goto.  Now client-side goto is handled by setting
@@ -646,8 +648,8 @@ static void load_player_units(player_t *plr, int plrno,
     punit->activity_count = secfile_lookup_int(file,
                                                "player%d.u%d.activity_count",
                                                plrno, i);
-    punit->activity_target
-      = secfile_lookup_int_default(file, (int) S_NO_SPECIAL,
+    punit->activity_target = (tile_special_type)
+        secfile_lookup_int_default(file, (int) S_NO_SPECIAL,
                                    "player%d.u%d.activity_target", plrno, i);
 
     punit->done_moving = secfile_lookup_bool_default(file,
@@ -730,7 +732,7 @@ static void load_player_units(player_t *plr, int plrno,
       if (len > 0) {
         char *orders_buf, *dir_buf, *act_buf;
 
-        punit->orders.list = wc_malloc(len * sizeof(*(punit->orders.list)));
+        punit->orders.list = (unit_order*)wc_malloc(len * sizeof(*(punit->orders.list)));
         punit->orders.length = len;
         punit->orders.index = secfile_lookup_int_default(file, 0,
                         "player%d.u%d.orders_index", plrno, i);
@@ -906,7 +908,7 @@ static void map_startpos_load(struct section_file *file)
 
 
   {
-    struct start_position start_positions[savegame_start_positions];
+    struct civ_map::civ_map_server::start_position start_positions[savegame_start_positions];
 
     for (i = j = 0; i < savegame_start_positions; i++) {
       char *nation = secfile_lookup_str_default(file, NULL, "map.r%dsnation",
@@ -936,9 +938,10 @@ static void map_startpos_load(struct section_file *file)
     }
     map.server.num_start_positions = j;
     if (map.server.num_start_positions > 0) {
-      map.server.start_positions = wc_realloc(map.server.start_positions,
-                                       map.server.num_start_positions
-                                       * sizeof(*map.server.start_positions));
+      map.server.start_positions = (civ_map::civ_map_server::start_position*)
+          wc_realloc(map.server.start_positions,
+                     map.server.num_start_positions
+                     * sizeof(civ_map::civ_map_server::start_position));
       for (i = 0; i < j; i++) {
         map.server.start_positions[i] = start_positions[i];
       }
@@ -978,16 +981,16 @@ static void map_load(struct section_file *file)
   /* get 4-bit segments of 16-bit "special" field. */
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str(file, "map.l%03d", nat_y),
-                ptile->special = ascii_hex2bin(ch, 0));
+                ptile->special = (tile_special_type)ascii_hex2bin(ch, 0));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str(file, "map.u%03d", nat_y),
-                ptile->special |= ascii_hex2bin(ch, 1));
+                ptile->special = (tile_special_type)(ptile->special | ascii_hex2bin(ch, 1)));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str_default(file, NULL, "map.n%03d", nat_y),
-                ptile->special |= ascii_hex2bin(ch, 2));
+                ptile->special = (tile_special_type)(ptile->special | ascii_hex2bin(ch, 2)));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str_default(file, NULL, "map.f%03d", nat_y),
-                ptile->special |= ascii_hex2bin(ch, 3));
+                ptile->special = (tile_special_type)(ptile->special | ascii_hex2bin(ch, 3)));
 
   if (secfile_lookup_bool_default(file, TRUE, "game.save_known")) {
 
@@ -1040,7 +1043,8 @@ static void map_rivers_overlay_load(struct section_file *file)
      and extract the rivers overlay from them. */
   LOAD_MAP_DATA(ch, line, ptile,
                 secfile_lookup_str_default(file, NULL, "map.n%03d", line),
-                ptile->special |= (ascii_hex2bin(ch, 2) & S_RIVER));
+                ptile->special = (tile_special_type)
+                    (ptile->special | (ascii_hex2bin(ch, 2) & S_RIVER)));
   map.server.have_rivers_overlay = TRUE;
 }
 
@@ -1167,8 +1171,8 @@ static void player_load(player_t *plr, int plrno,
   server_player_init(plr, TRUE);
   ai = ai_data_get(plr);
 
-  plr->ai.barbarian_type = secfile_lookup_int_default(file, 0, "player%d.ai.is_barbarian",
-                                                    plrno);
+  plr->ai.barbarian_type = (barbarian_type)
+      secfile_lookup_int_default(file, 0, "player%d.ai.is_barbarian", plrno);
   if (is_barbarian(plr)) game.server.nbarbarians++;
 
   sz_strlcpy(plr->name, secfile_lookup_str(file, "player%d.name", plrno));
@@ -1266,7 +1270,7 @@ static void player_load(player_t *plr, int plrno,
   p = secfile_lookup_str_default(file, NULL, "player%d.city_style_by_name",
                                  plrno);
   if (!p) {
-    char* old_order[4] = {"European", "Classical", "Tropical", "Asian"};
+    char const * old_order[4] = {"European", "Classical", "Tropical", "Asian"};
     c_s = secfile_lookup_int_default(file, 0, "player%d.city_style", plrno);
     if (c_s < 0 || c_s > 3) {
       c_s = 0;
@@ -1416,7 +1420,7 @@ static void player_load(player_t *plr, int plrno,
   plr->reputation=secfile_lookup_int_default(file, GAME_DEFAULT_REPUTATION,
                                              "player%d.reputation", plrno);
   for (i=0; i < game.info.nplayers; i++) {
-    plr->diplstates[i].type =
+    plr->diplstates[i].type = (diplstate_type)
       secfile_lookup_int_default(file, DIPLSTATE_WAR,
                                  "player%d.diplstate%d.type", plrno, i);
     plr->diplstates[i].turns_left =
@@ -1472,7 +1476,7 @@ static void player_load(player_t *plr, int plrno,
 
     my_snprintf(prefix, sizeof(prefix), "player%d.spaceship", plrno);
     spaceship_init(ship);
-    ship->state = secfile_lookup_int(file, "%s.state", prefix);
+    ship->state = (spaceship_state)secfile_lookup_int(file, "%s.state", prefix);
 
     if (ship->state != SSHIP_NONE) {
       ship->structurals = secfile_lookup_int(file, "%s.structurals", prefix);
@@ -1555,7 +1559,7 @@ static void player_load(player_t *plr, int plrno,
           /* Mean that the other city is loaded.
            * If it's not the case, do nothing. */
           ptr = game_trade_route_add(pcity, pother_city);
-          ptr->status =
+          ptr->status = (trade_route_status)
             secfile_lookup_int(file, "player%d.c%dw.wc_trade_route%d_status",
                                plrno, i, j);
         }
@@ -1844,7 +1848,7 @@ static void player_load(player_t *plr, int plrno,
 
     quoted_length = secfile_lookup_int
         (file, "player%d.attribute_v2_block_length_quoted", plrno);
-    quoted = wc_malloc(quoted_length + 1);
+    quoted = (char*)wc_malloc(quoted_length + 1);
     quoted[0] = '\0';
 
     parts =
@@ -1963,17 +1967,21 @@ static void player_map_load(player_t *plr, int plrno,
                   secfile_lookup_str(file, "player%d.map_l%03d",
                                      plrno, nat_y),
                   map_get_player_tile(ptile, plr)->special =
-                  ascii_hex2bin(ch, 0));
+                      static_cast<tile_special_type>(ascii_hex2bin(ch, 0)));
     LOAD_MAP_DATA(ch, nat_y, ptile,
                   secfile_lookup_str(file, "player%d.map_u%03d",
                                      plrno, nat_y),
-                  map_get_player_tile(ptile, plr)->special |=
-                  ascii_hex2bin(ch, 1));
+                  map_get_player_tile(ptile, plr)->special =
+                      static_cast<tile_special_type>(
+                          map_get_player_tile(ptile, plr)->special
+                          | ascii_hex2bin(ch, 1)));
     LOAD_MAP_DATA(ch, nat_y, ptile,
                   secfile_lookup_str_default
                   (file, NULL, "player%d.map_n%03d", plrno, nat_y),
-                  map_get_player_tile(ptile, plr)->special |=
-                  ascii_hex2bin(ch, 2));
+                  map_get_player_tile(ptile, plr)->special =
+                      static_cast<tile_special_type>(
+                          map_get_player_tile(ptile, plr)->special
+                          | ascii_hex2bin(ch, 2)));
 
     /* get 4-bit segments of 16-bit "updated" field */
     LOAD_MAP_DATA(ch, nat_y, ptile,
@@ -2009,7 +2017,7 @@ static void player_map_load(player_t *plr, int plrno,
         nat_y = secfile_lookup_int(file, "player%d.dc%d.y", plrno, j);
         ptile = native_pos_to_tile(nat_x, nat_y);
 
-        pdcity = wc_malloc(sizeof(struct dumb_city));
+        pdcity = (dumb_city*)wc_malloc(sizeof(struct dumb_city));
         pdcity->id = secfile_lookup_int(file, "player%d.dc%d.id", plrno, j);
         sz_strlcpy(pdcity->name, secfile_lookup_str(file, "player%d.dc%d.name", plrno, j));
         pdcity->size = secfile_lookup_int(file, "player%d.dc%d.size", plrno, j);
@@ -2484,8 +2492,9 @@ void game_load(struct section_file *file)
     if (has_capability("wcdb_save", savefile_options)) {
       game.server.wcdb.id = secfile_lookup_int_default(file,
           0, "game.server_wcdb_id");
-      game.server.wcdb.type = secfile_lookup_int_default(file,
-          0, "game.server_wcdb_type");
+      game.server.wcdb.type = (game_types)
+          secfile_lookup_int_default(file,
+                                     0, "game.server_wcdb_type");
     }
 
     map.info.topology_id = secfile_lookup_int_default(file,
@@ -2799,16 +2808,19 @@ bool game_loadmap(struct section_file *file)
   /* get 4-bit segments of 16-bit "special" field. */
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str(file, "map.l%03d", nat_y),
-                ptile->special = ascii_hex2bin(ch, 0));
+                ptile->special = (tile_special_type)ascii_hex2bin(ch, 0));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str(file, "map.u%03d", nat_y),
-                ptile->special |= ascii_hex2bin(ch, 1));
+                ptile->special = static_cast<tile_special_type>(
+                    ptile->special | ascii_hex2bin(ch, 1)));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str_default(file, NULL, "map.n%03d", nat_y),
-                ptile->special |= ascii_hex2bin(ch, 2));
+                ptile->special = static_cast<tile_special_type>(
+                    ptile->special | ascii_hex2bin(ch, 2)));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str_default(file, NULL, "map.f%03d", nat_y),
-                ptile->special |= ascii_hex2bin(ch, 3));
+                ptile->special = static_cast<tile_special_type>(
+                    ptile->special | ascii_hex2bin(ch, 3)));
 
   return TRUE;
 }

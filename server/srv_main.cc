@@ -50,70 +50,70 @@
 #  include <winsock2.h>
 #endif
 
-#include "capability.h"
-#include "capstr.h"
-#include "city.h"
-#include "dataio.h"
-#include "effects.h"
-#include "events.h"
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "nation.h"
-#include "netintf.h"
-#include "packets.h"
-#include "player.h"
-#include "rand.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
-#include "tech.h"
-#include "timing.h"
-#include "version.h"
+#include "capability.hh"
+#include "capstr.hh"
+#include "city.hh"
+#include "dataio.hh"
+#include "effects.hh"
+#include "events.hh"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "nation.hh"
+#include "netintf.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "rand.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "tech.hh"
+#include "timing.hh"
+#include "version.hh"
 
-#include "autoattack.h"
-#include "barbarian.h"
-#include "cityhand.h"
-#include "citytools.h"
-#include "cityturn.h"
-#include "connecthand.h"
-#include "console.h"
-#include "database.h"
-#include "diplhand.h"
-#include "gamehand.h"
-#include "gamelog.h"
-#include "handchat.h"
-#include "maphand.h"
-#include "meta.h"
-#include "plrhand.h"
-#include "report.h"
-#include "ruleset.h"
-#include "sanitycheck.h"
-#include "game_save.h"
-#include "score.h"
-#include "sernet.h"
-#include "settings.h"
-#include "settlers.h"
-#include "spacerace.h"
-#include "stdinhand.h"
-#include "unithand.h"
-#include "unittools.h"
-#include "vote.h"
+#include "autoattack.hh"
+#include "barbarian.hh"
+#include "cityhand.hh"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "connecthand.hh"
+#include "console.hh"
+#include "database.hh"
+#include "diplhand.hh"
+#include "gamehand.hh"
+#include "gamelog.hh"
+#include "handchat.hh"
+#include "maphand.hh"
+#include "meta.hh"
+#include "plrhand.hh"
+#include "report.hh"
+#include "ruleset.hh"
+#include "sanitycheck.hh"
+#include "game_save.hh"
+#include "score.hh"
+#include "sernet.hh"
+#include "settings.hh"
+#include "settlers.hh"
+#include "spacerace.hh"
+#include "stdinhand.hh"
+#include "unithand.hh"
+#include "unittools.hh"
+#include "vote.hh"
 
-#include "advdiplomacy.h"
-#include "advmilitary.h"
-#include "aicity.h"
-#include "aidata.h"
-#include "aihand.h"
-#include "aisettler.h"
-#include "aicore/citymap.h"
+#include "advdiplomacy.hh"
+#include "advmilitary.hh"
+#include "aicity.hh"
+#include "aidata.hh"
+#include "aihand.hh"
+#include "aisettler.hh"
+#include "aicore/citymap.hh"
 
-#include "generator/mapgen.h"
+#include "generator/mapgen.hh"
 
-#include "srv_main.h"
+#include "srv_main.hh"
 
 
 static void after_game_advance_year(void);
@@ -171,7 +171,7 @@ struct bgfc {
 
 #define SPECLIST_TAG bgfc
 #define SPECLIST_TYPE struct bgfc
-#include "speclist.h"
+#include "speclist.hh"
 #define bgfc_list_iterate(alist, ap) \
     TYPED_LIST_ITERATE(struct bgfc, alist, ap)
 #define bgfc_list_iterate_end  LIST_ITERATE_END
@@ -223,7 +223,7 @@ void srv_init(void)
   srvarg.gamelog_filename = NULL;
   srvarg.load_filename[0] = '\0';
   srvarg.script_filename = NULL;
-  srvarg.saves_pathname = "";
+  srvarg.saves_pathname = (char const *)"";
 
   srvarg.quitidle = 60;
   BV_CLR_ALL(srvarg.draw);
@@ -254,7 +254,7 @@ void srv_init(void)
   has_been_srv_init = TRUE;
 
   /* init character encodings. */
-  init_character_encodings(WC_DEFAULT_DATA_ENCODING, FALSE);
+  init_character_encodings((char*)WC_DEFAULT_DATA_ENCODING, false);
 
   /* done */
   return;
@@ -1158,7 +1158,7 @@ bool handle_packet_input(connection_t *pconn, void *packet, int type)
     pplayer->current_conn = pconn;
   }
 
-  if (!server_handle_packet(type, packet, pplayer, pconn)) {
+  if (!server_handle_packet((packet_type)type, packet, pplayer, pconn)) {
     freelog(LOG_ERROR, "Received unknown packet %d from %s",
             type, conn_description(pconn));
   }
@@ -1884,7 +1884,7 @@ static void srv_loop(void)
     load_rulesets();
   }
 
-  nations_available = wc_realloc(nations_available,
+  nations_available = (bool*)wc_realloc(nations_available,
                                  game.ruleset_control.nation_count *
                                  sizeof(*nations_available));
 
@@ -2176,7 +2176,7 @@ int register_background_function(background_func bf,
     return 0;
   }
 
-  bc = wc_malloc(sizeof(*bc));
+  bc = (struct bgfc *)wc_malloc(sizeof(*bc));
   bc->bgfunc = bf;
   bc->context = context;
   bc->ctxfree = cff;

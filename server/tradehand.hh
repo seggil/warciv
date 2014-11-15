@@ -14,7 +14,7 @@
 #ifndef WC_SERVER_TRADE_HAND_H
 #define WC_SERVER_TRADE_HAND_H
 
-#include "traderoute.h"
+#include "traderoute.hh"
 
 bool connection_supports_server_trade(connection_t *pconn);
 

@@ -10,10 +10,10 @@
 #ifndef WC_SERVER_HAND_GEN_H
 #define WC_SERVER_HAND_GEN_H
 
-#include "shared.h"
+#include "shared.hh"
 
-#include "wc_types.h"
-#include "packets.h"
+#include "wc_types.hh"
+#include "packets.hh"
 
 bool server_handle_packet(enum packet_type type, void *packet,
                           player_t *pplayer, connection_t *pconn);

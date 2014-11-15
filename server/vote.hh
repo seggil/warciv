@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_VOTE_H
 #define WC_SERVER_VOTE_H
 
-#include "shared.h" /* bool */
+#include "shared.hh" /* bool */
 
 enum vote_condition_flags {
   VCF_NONE          = 0,
@@ -40,7 +40,7 @@ struct vote_cast {
 
 #define SPECLIST_TAG vote_cast
 #define SPECLIST_TYPE struct vote_cast
-#include "speclist.h"
+#include "speclist.hh"
 #define vote_cast_list_iterate(alist, pvc) \
     TYPED_LIST_ITERATE(struct vote_cast, alist, pvc)
 #define vote_cast_list_iterate_end  LIST_ITERATE_END
@@ -61,7 +61,7 @@ struct vote {
 
 #define SPECLIST_TAG vote
 #define SPECLIST_TYPE struct vote
-#include "speclist.h"
+#include "speclist.hh"
 #define vote_list_iterate(alist, pvote) \
     TYPED_LIST_ITERATE(struct vote, alist, pvote)
 #define vote_list_iterate_end  LIST_ITERATE_END

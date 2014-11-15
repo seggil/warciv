@@ -13,9 +13,9 @@
 #ifndef WC_SERVER_SETTINGS_H
 #define WC_SERVER_SETTINGS_H
 
-#include "shared.h"
+#include "shared.hh"
 
-#include "game.h"
+#include "game.hh"
 
 /* The following classes determine what can be changed when.
  * Actually, some of them have the same "changeability", but

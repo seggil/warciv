@@ -19,21 +19,21 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "packets.h"
-#include "player.h"
-#include "shared.h"
-#include "support.h"
-#include "timing.h"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "timing.hh"
 
-#include "console.h"
-#include "plrhand.h"
-#include "srv_main.h"
-#include "stdinhand.h"
+#include "console.hh"
+#include "plrhand.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
 
-#include "handchat.h"
+#include "handchat.hh"
 
 #define MAX_LEN_CHAT_NAME (2*MAX_LEN_NAME+10)   /* for form_chat_name() names */
 

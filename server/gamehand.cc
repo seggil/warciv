@@ -18,28 +18,28 @@
 #include <assert.h>
 #include <stdio.h> /* for remove() */
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "events.h"
-#include "improvement.h"
-#include "map.h"
-#include "packets.h"
+#include "city.hh"
+#include "events.hh"
+#include "improvement.hh"
+#include "map.hh"
+#include "packets.hh"
 
-#include "connecthand.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "unittools.h"
+#include "connecthand.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "unittools.hh"
 
-#include "gamehand.h"
-#include "srv_main.h"
+#include "gamehand.hh"
+#include "srv_main.hh"
 
 #define CHALLENGE_ROOT "challenge"
 
@@ -595,8 +595,8 @@ void init_new_game(void)
 
   /* Loop over all players, creating their initial units... */
   players_iterate(pplayer) {
-    struct start_position pos
-      = map.server.start_positions[start_pos[pplayer->player_no]];
+    struct civ_map::civ_map_server::start_position pos =
+        map.server.start_positions[start_pos[pplayer->player_no]];
 
     /* Place the first unit. */
     place_starting_unit(pos.tile, pplayer, game.server.start_units[0]);
@@ -606,8 +606,8 @@ void init_new_game(void)
   players_iterate(pplayer) {
     int i, x, y;
     tile_t *ptile;
-    struct start_position p
-      = map.server.start_positions[start_pos[pplayer->player_no]];
+    struct civ_map::civ_map_server::start_position p =
+        map.server.start_positions[start_pos[pplayer->player_no]];
 
     assert(!is_ocean(map_get_terrain(p.tile)));
 

@@ -13,9 +13,9 @@
 #ifndef WC_SERVER_AIRGOTO_H
 #define WC_SERVER_AIRGOTO_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 struct refuel;
 

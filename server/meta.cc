@@ -45,26 +45,26 @@
 #  include <winsock2.h>
 #endif
 
-#include "astring.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "netintf.h"
-#include "support.h"
-#include "timing.h"
+#include "astring.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "netintf.hh"
+#include "support.hh"
+#include "timing.hh"
 
-#include "capstr.h"
-#include "connection.h"
-#include "dataio.h"
-#include "map.h"
-#include "version.h"
+#include "capstr.hh"
+#include "connection.hh"
+#include "dataio.hh"
+#include "map.hh"
+#include "version.hh"
 
-#include "civserver.h"
-#include "console.h"
-#include "srv_main.h"
-#include "stdinhand.h"
+#include "civserver.hh"
+#include "console.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
 
-#include "meta.h"
+#include "meta.hh"
 
 static bool server_is_open = FALSE;
 static int metaname_lookup_id;
@@ -424,7 +424,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
 
   len = astr_size(&headers) + astr_size(&content);
   *pbuflen = len;
-  ret = wc_malloc(len);
+  ret = (char*)wc_malloc(len);
   memcpy(ret, astr_get_data(&headers), astr_size(&headers));
   memcpy(ret + astr_size(&headers), astr_get_data(&content),
          astr_size(&content));

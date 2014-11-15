@@ -14,9 +14,9 @@
 #ifndef WC_SERVER_BARBARIAN_H
 #define WC_SERVER_BARBARIAN_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 #define MIN_UNREST_DIST   5
 #define MAX_UNREST_DIST   8

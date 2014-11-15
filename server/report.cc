@@ -19,23 +19,23 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "events.h"
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "mem.h"
-#include "packets.h"
-#include "player.h"
-#include "rand.h"
-#include "support.h"
-#include "version.h"
+#include "events.hh"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "rand.hh"
+#include "support.hh"
+#include "version.hh"
 
-#include "citytools.h"
-#include "plrhand.h"
-#include "report.h"
-#include "score.h"
+#include "citytools.hh"
+#include "plrhand.hh"
+#include "report.hh"
+#include "score.hh"
 
 static void page_conn_etype(struct connection_list *dest, const char *caption,
                             const char *headline, const char *lines,
@@ -901,7 +901,7 @@ static void log_civ_score(void)
    * old tags is critical.
    */
   static const struct {
-    char *name;
+    char const *name;
     int (*get_value) (player_t *);
   } score_tags[] = {
     {"pop",             get_pop},
@@ -1090,7 +1090,7 @@ void make_history_report(void)
   old = get_myrand_state();
   mysrand(time(NULL));
   time_to_report = myrand(6) + 5;
-  report = myrand(HISTORIAN_LAST + 1);
+  report = (enum historian_type)myrand(HISTORIAN_LAST + 1);
   set_myrand_state(old);
 
   historian_generic(report);
@@ -1270,7 +1270,7 @@ void report_game_rankings(struct connection_list *dest)
                    pteam ? get_team_name(pteam->id)
                          : groupings[i].players[0]->name,
                    groupings[i].rank + 1.0, groupings[i].score,
-                   result_name(groupings[i].result));
+                   result_name((player_results)groupings[i].result));
     }
     page_conn(dest, _("Team Standings:"), head_line, buffer);
   }
@@ -1286,7 +1286,7 @@ void report_game_rankings(struct connection_list *dest)
         cat_snprintf(buffer, sizeof(buffer), "%-16s %-16s %10.1f %10d %10s\n",
                      pplayer->name, username, pplayer->rank + 1.0,
                      get_civ_score(pplayer),
-                     result_name(pplayer->result));
+                     result_name((player_results)pplayer->result));
       }
     }
     page_conn(dest, _("Player Standings:"), head_line, buffer);

@@ -20,42 +20,42 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "city.h"
-#include "idex.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "shared.h"
-#include "support.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "city.hh"
+#include "idex.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "events.h"
-#include "government.h"
-#include "map.h"
-#include "player.h"
-#include "tech.h"
-#include "traderoute.h"
-#include "unit.h"
+#include "events.hh"
+#include "government.hh"
+#include "map.hh"
+#include "player.hh"
+#include "tech.hh"
+#include "traderoute.hh"
+#include "unit.hh"
 
-#include "barbarian.h"
-#include "cityturn.h"
-#include "gamelog.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "sanitycheck.h"
-#include "sernet.h"
-#include "settlers.h"
-#include "spacerace.h"
-#include "srv_main.h"
-#include "tradehand.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "barbarian.hh"
+#include "cityturn.hh"
+#include "gamelog.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "sanitycheck.hh"
+#include "sernet.hh"
+#include "settlers.hh"
+#include "spacerace.hh"
+#include "srv_main.hh"
+#include "tradehand.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "aicity.h"
-#include "aiunit.h"
+#include "aicity.hh"
+#include "aiunit.hh"
 
-#include "citytools.h"
+#include "citytools.hh"
 
 static int evaluate_city_name_priority(tile_t *ptile,
                                        struct city_name *city_name,
@@ -1708,7 +1708,7 @@ bool update_dumb_city(player_t *pplayer, city_t *pcity)
   }
     if (!plrtile->city)
     {
-    pdcity = plrtile->city = wc_malloc(sizeof(struct dumb_city));
+    pdcity = plrtile->city = (dumb_city*)wc_malloc(sizeof(struct dumb_city));
     plrtile->city->id = pcity->common.id;
   }
     if (pdcity->id != pcity->common.id)

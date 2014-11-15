@@ -20,39 +20,39 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "city.h"
-#include "combat.h"
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "player.h"
-#include "rand.h"
-#include "shared.h"
-#include "unit.h"
+#include "city.hh"
+#include "combat.hh"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "rand.hh"
+#include "shared.hh"
+#include "unit.hh"
 
-#include "barbarian.h"
-#include "citytools.h"
-#include "cityturn.h"
-#include "diplomats.h"
-#include "gamelog.h"
-#include "gotohand.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "settlers.h"
-#include "spacerace.h"
-#include "srv_main.h"
-#include "tradehand.h"
-#include "unittools.h"
+#include "barbarian.hh"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "diplomats.hh"
+#include "gamelog.hh"
+#include "gotohand.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "settlers.hh"
+#include "spacerace.hh"
+#include "srv_main.hh"
+#include "tradehand.hh"
+#include "unittools.hh"
 
-#include "aiexplorer.h"
-#include "aitools.h"
+#include "aiexplorer.hh"
+#include "aitools.hh"
 
-#include "unithand.h"
-#include "autoattack.h"
+#include "unithand.hh"
+#include "autoattack.hh"
 
 static void city_add_or_build_error(player_t *pplayer,
                                     unit_t *punit,
@@ -591,7 +591,8 @@ void handle_unit_move(player_t *pplayer, int unit_id, int x, int y)
 **************************************************************************/
 static void see_combat(unit_t *pattacker, unit_t *pdefender)
 {
-  struct packet_unit_short_info unit_att_short_packet, unit_def_short_packet;
+  struct packet_unit_short_info unit_att_short_packet;
+  struct packet_unit_short_info unit_def_short_packet;
 
   /*
    * Special case for attacking/defending:
@@ -604,10 +605,12 @@ static void see_combat(unit_t *pattacker, unit_t *pdefender)
    * Note these packets must be sent out before unit_versus_unit is called,
    * so that the original unit stats (HP) will be sent.
    */
-  package_short_unit(pattacker, &unit_att_short_packet, FALSE,
-                     UNIT_INFO_IDENTITY, 0);
-  package_short_unit(pdefender, &unit_def_short_packet, FALSE,
-                     UNIT_INFO_IDENTITY, 0);
+  package_short_unit(pattacker, &unit_att_short_packet,
+                     UNIT_INFO_IDENTITY,
+                     0/*FIXME*/, false);
+  package_short_unit(pdefender, &unit_def_short_packet,
+                     UNIT_INFO_IDENTITY,
+                     0/*FIXME*/, false);
   players_iterate(other_player) {
     if (map_is_known_and_seen(pattacker->tile, other_player)
         || map_is_known_and_seen(pdefender->tile, other_player)) {
@@ -1550,8 +1553,8 @@ void handle_unit_orders(player_t *pplayer,
   punit->orders.index = 0;
   punit->orders.repeat = packet->repeat;
   punit->orders.vigilant = packet->vigilant;
-  punit->orders.list
-    = wc_malloc(packet->length * sizeof(*(punit->orders.list)));
+  punit->orders.list = (unit_order*)
+      wc_malloc(packet->length * sizeof(*(punit->orders.list)));
   for (i = 0; i < packet->length; i++) {
     punit->orders.list[i].order = packet->orders[i];
     punit->orders.list[i].dir = packet->dir[i];

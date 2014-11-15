@@ -14,10 +14,10 @@
 #ifndef WC_SERVER_CITYTURN_H
 #define WC_SERVER_CITYTURN_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
-#include "aicore/cm.h"
+#include "wc_types.hh"
+#include "aicore/cm.hh"
 
 void city_refresh(city_t *pcity);          /* call if city has changed */
 void global_city_refresh(player_t *pplayer); /* tax/govt changed */

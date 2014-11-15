@@ -18,32 +18,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "diptreaty.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "player.h"
-#include "unit.h"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "diptreaty.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "unit.hh"
 
-#include "citytools.h"
-#include "cityturn.h"
-#include "gamelog.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "settlers.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "gamelog.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "settlers.hh"
+#include "unittools.hh"
 
-#include "advdiplomacy.h"
+#include "advdiplomacy.hh"
 
-#include "diplhand.h"
+#include "diplhand.hh"
 
 #define SPECLIST_TAG treaty
 #define SPECLIST_TYPE struct Treaty
-#include "speclist.h"
+#include "speclist.hh"
 
 #define treaty_list_iterate(list, p) \
     TYPED_LIST_ITERATE(struct Treaty, list, p)

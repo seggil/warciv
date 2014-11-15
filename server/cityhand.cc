@@ -20,25 +20,25 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "city.h"
-#include "events.h"
-#include "wc_intl.h"
-#include "idex.h"
-#include "log.h"
-#include "game.h"
-#include "map.h"
-#include "player.h"
-#include "rand.h"
-#include "support.h"
-#include "unit.h"
-#include "worklist.h"
+#include "city.hh"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "idex.hh"
+#include "log.hh"
+#include "game.hh"
+#include "map.hh"
+#include "player.hh"
+#include "rand.hh"
+#include "support.hh"
+#include "unit.hh"
+#include "worklist.hh"
 
-#include "citytools.h"
-#include "cityturn.h"
-#include "plrhand.h"
-#include "sanitycheck.h"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "plrhand.hh"
+#include "sanitycheck.hh"
 
-#include "cityhand.h"
+#include "cityhand.hh"
 
 /**************************************************************************
   Send city_name_suggestion packet back to requesting conn, with

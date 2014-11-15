@@ -13,9 +13,9 @@
 #ifndef WC_SERVER_CONNECTHAND_H
 #define WC_SERVER_CONNECTHAND_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 enum action_type {
   ACTION_BAN = 0,
@@ -44,14 +44,14 @@ int user_action_as_str(struct user_action *pua,
 
 #define SPECLIST_TAG user_action
 #define SPECLIST_TYPE struct user_action
-#include "speclist.h"
+#include "speclist.hh"
 
 #define user_action_list_iterate(alist, pitem) \
     TYPED_LIST_ITERATE (struct user_action, alist, pitem)
 #define user_action_list_iterate_end LIST_ITERATE_END
 
 extern struct user_action_list *on_connect_user_actions;
-extern char *user_action_type_strs[NUM_ACTION_TYPES];
+extern char const *user_action_type_strs[NUM_ACTION_TYPES];
 
 struct packet_authentication_reply;
 struct packet_login_request;

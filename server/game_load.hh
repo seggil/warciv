@@ -1,7 +1,7 @@
 #ifndef WC_SERVER_GAME_LOAD_H
 #define WC_SERVER_GAME_LOAD_H
 
-#include "registry.h"
+#include "registry.hh"
 
 #define REQUIERED_GAME_VERSION 10900
 

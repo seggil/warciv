@@ -17,25 +17,25 @@
 
 #include <stdio.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "rand.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "rand.hh"
 
-#include "events.h"
-#include "game.h"
-#include "government.h"
-#include "player.h"
+#include "events.hh"
+#include "game.hh"
+#include "government.hh"
+#include "player.hh"
 
-#include "citytools.h"
-#include "cityturn.h"
-#include "diplhand.h"
-#include "gamelog.h"
-#include "gotohand.h"
-#include "plrhand.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "diplhand.hh"
+#include "gamelog.hh"
+#include "gotohand.hh"
+#include "plrhand.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "diplomats.h"
+#include "diplomats.hh"
 
 
 /****************************************************************************/

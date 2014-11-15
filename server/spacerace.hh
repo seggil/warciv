@@ -13,8 +13,8 @@
 #ifndef WC_SERVER_SPACERACE_H
 #define WC_SERVER_SPACERACE_H
 
-#include "wc_types.h"
-#include "packets.h"
+#include "wc_types.hh"
+#include "packets.hh"
 
 struct player_spaceship;
 

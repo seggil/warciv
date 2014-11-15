@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_GOTOHAND_H
 #define WC_SERVER_GOTOHAND_H
 
-#include "map.h"                /* MAP_MAX_ */
+#include "map.hh"      /* MAP_MAX_ */
 
 /*
  * The below GOTO result values are ordered by priority, e.g. if unit

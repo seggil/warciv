@@ -12,9 +12,9 @@
 #  include "../config.h"
 #endif
 
-#include "packets.h"
+#include "packets.hh"
 
-#include "hand_gen.h"
+#include "hand_gen.hh"
 
 bool server_handle_packet(enum packet_type type, void *packet,
                           player_t *pplayer, connection_t *pconn)
@@ -136,7 +136,7 @@ bool server_handle_packet(enum packet_type type, void *packet,
     return TRUE;
 
   case PACKET_PLAYER_ATTRIBUTE_CHUNK:
-    handle_player_attribute_chunk(pplayer, packet);
+    handle_player_attribute_chunk(pplayer, (packet_player_attribute_chunk*)packet);
     return TRUE;
 
   case PACKET_UNIT_MOVE:
@@ -181,7 +181,7 @@ bool server_handle_packet(enum packet_type type, void *packet,
     return TRUE;
 
   case PACKET_UNIT_ORDERS:
-    handle_unit_orders(pplayer, packet);
+    handle_unit_orders(pplayer, (packet_unit_orders*)packet);
     return TRUE;
 
   case PACKET_UNIT_AUTO:
@@ -355,7 +355,7 @@ bool server_handle_packet(enum packet_type type, void *packet,
     return TRUE;
 
   case PACKET_CITY_MANAGER_PARAM:
-    handle_city_manager_param(pplayer, packet);
+    handle_city_manager_param(pplayer, (packet_city_manager_param*)packet);
     return TRUE;
 
   case PACKET_CITY_NO_MANAGER_PARAM:

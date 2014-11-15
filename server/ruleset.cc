@@ -20,27 +20,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "capability.h"
-#include "city.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "nation.h"
-#include "packets.h"
-#include "registry.h"
-#include "shared.h"
-#include "support.h"
-#include "tech.h"
-#include "unit.h"
+#include "capability.hh"
+#include "city.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "nation.hh"
+#include "packets.hh"
+#include "registry.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "tech.hh"
+#include "unit.hh"
 
-#include "citytools.h"
+#include "citytools.hh"
 
-#include "aiunit.h"             /* update_simple_ai_types */
+#include "aiunit.hh"             /* update_simple_ai_types */
 
-#include "ruleset.h"
+#include "ruleset.hh"
 
 
 /* Our ruleset capability strings. */
@@ -961,7 +961,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
            u->name, sval, filename);
       exit(EXIT_FAILURE);
     }
-    u->move_type = ival;
+    u->move_type = (unit_move_type)ival;
 
     sz_strlcpy(u->sound_move,
                secfile_lookup_str_default(file, "-", "%s.sound_move",
@@ -1285,7 +1285,7 @@ static void load_ruleset_buildings(struct section_file *file)
     b->bldg_req = lookup_impr_type(file, sec[i], "bldg_req", FALSE, filename, b->name);
 
     list = secfile_lookup_str_vec(file, &count, "%s.terr_gate", sec[i]);
-    b->terr_gate = wc_malloc((count + 1) * sizeof(b->terr_gate[0]));
+    b->terr_gate = (Terrain_type_id*)wc_malloc((count + 1) * sizeof(b->terr_gate[0]));
     k = 0;
     for (j = 0; j < count; j++) {
       b->terr_gate[k] = get_terrain_by_name(list[j]);
@@ -1301,7 +1301,7 @@ static void load_ruleset_buildings(struct section_file *file)
     free(list);
 
     list = secfile_lookup_str_vec(file, &count, "%s.spec_gate", sec[i]);
-    b->spec_gate = wc_malloc((count + 1) * sizeof(b->spec_gate[0]));
+    b->spec_gate = (tile_special_type*)wc_malloc((count + 1) * sizeof(b->spec_gate[0]));
     k = 0;
     for (j = 0; j < count; j++) {
       b->spec_gate[k] = get_special_by_name(list[j]);
@@ -1326,7 +1326,7 @@ static void load_ruleset_buildings(struct section_file *file)
     }
 
     list = secfile_lookup_str_vec(file, &count, "%s.equiv_dupl", sec[i]);
-    b->equiv_dupl = wc_malloc((count + 1) * sizeof(b->equiv_dupl[0]));
+    b->equiv_dupl = (Impr_Type_id*)wc_malloc((count + 1) * sizeof(b->equiv_dupl[0]));
     k = 0;
     for (j = 0; j < count; j++) {
       b->equiv_dupl[k] = find_improvement_by_name(list[j]);
@@ -1342,7 +1342,7 @@ static void load_ruleset_buildings(struct section_file *file)
     free(list);
 
     list = secfile_lookup_str_vec(file, &count, "%s.equiv_repl", sec[i]);
-    b->equiv_repl = wc_malloc((count + 1) * sizeof(b->equiv_repl[0]));
+    b->equiv_repl = (Impr_Type_id*)wc_malloc((count + 1) * sizeof(b->equiv_repl[0]));
     k = 0;
     for (j = 0; j < count; j++) {
       b->equiv_repl[k] = find_improvement_by_name(list[j]);
@@ -1618,8 +1618,8 @@ static void load_ruleset_terrain(struct section_file *file)
   terrain_control.land_channel_requirement_pct
     = secfile_lookup_int_default(file, 9,
                                  "parameters.land_channel_requirement_pct");
-  terrain_control.river_move_mode =
-    secfile_lookup_int_default(file, RMV_FAST_STRICT, "parameters.river_move_mode");
+  terrain_control.river_move_mode = (special_river_move)
+      secfile_lookup_int_default(file, RMV_FAST_STRICT, "parameters.river_move_mode");
   terrain_control.river_defense_bonus =
     secfile_lookup_int_default(file, 50, "parameters.river_defense_bonus");
   terrain_control.river_trade_incr =
@@ -1983,7 +1983,7 @@ static void load_ruleset_governments(struct section_file *file)
     struct ruler_title *title;
 
     g->num_ruler_titles = 1;
-    g->ruler_titles = wc_calloc(1, sizeof(struct ruler_title));
+    g->ruler_titles = (ruler_title*)wc_calloc(1, sizeof(struct ruler_title));
     title = &(g->ruler_titles[0]);
 
     title->nation = DEFAULT_TITLE;
@@ -2151,7 +2151,7 @@ static struct city_name* load_city_name_list(struct section_file *file,
    * all the name data.  The array is NULL-terminated by
    * having a NULL name at the end.
    */
-  city_names = wc_calloc(dim + 1, sizeof(struct city_name));
+  city_names = (city_name*)wc_calloc(dim + 1, sizeof(struct city_name));
   city_names[dim].name = NULL;
 
   /*
@@ -2298,7 +2298,7 @@ static void load_ruleset_nations(struct section_file *file)
       exit(EXIT_FAILURE);
     }
     pl->leader_count = dim;
-    pl->leaders = wc_malloc(sizeof(*pl->leaders) * pl->leader_count);
+    pl->leaders = (leader*)wc_malloc(sizeof(*pl->leaders) * pl->leader_count);
     for(j = 0; j < dim; j++) {
       pl->leaders[j].name = mystrdup(leaders[j]);
       if (check_name(leaders[j])) {
@@ -2402,7 +2402,7 @@ static void load_ruleset_nations(struct section_file *file)
 
     civilwar_nations = secfile_lookup_str_vec(file, &dim,
                                               "%s.civilwar_nations", sec[i]);
-    pl->civilwar_nations = wc_malloc(sizeof(Nation_Type_id) * (dim + 1));
+    pl->civilwar_nations = (Nation_Type_id*)wc_malloc(sizeof(Nation_Type_id) * (dim + 1));
 
     for (j = 0, k = 0; k < dim; j++, k++) {
       /* HACK: At this time, all the names are untranslated and the name_orig
@@ -2537,7 +2537,7 @@ static void load_ruleset_nations(struct section_file *file)
     }
 
     assert(sizeof(parents[0]) == sizeof(*pl->parent_nations));
-    pl->parent_nations = wc_malloc((count + 1) * sizeof(parents[0]));
+    pl->parent_nations = (Nation_Type_id*)wc_malloc((count + 1) * sizeof(parents[0]));
     memcpy(pl->parent_nations, parents, count * sizeof(parents[0]));
     pl->parent_nations[count] = NO_NATION_SELECTED;
   }

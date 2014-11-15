@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_SERNET_H
 #define WC_SERVER_SERNET_H
 
-#include "connection.h"
+#include "connection.hh"
 
 #define DEFAULT_SOCK_PORT 5555
 #define BUF_SIZE 512

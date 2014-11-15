@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_GAMEHAND_H
 #define WC_SERVER_GAMEHAND_H
 
-#include "connection.h"
+#include "connection.hh"
 
 struct section_file;
 

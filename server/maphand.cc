@@ -17,27 +17,27 @@
 
 #include <assert.h>
 
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "nation.h"
-#include "packets.h"
-#include "rand.h"
-#include "support.h"
-#include "unit.h"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "nation.hh"
+#include "packets.hh"
+#include "rand.hh"
+#include "support.hh"
+#include "unit.hh"
 
-#include "citytools.h"
-#include "cityturn.h"
-#include "plrhand.h"           /* notify_player */
-#include "sernet.h"
-#include "srv_main.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "plrhand.hh"           /* notify_player */
+#include "sernet.hh"
+#include "srv_main.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "maphand.h"
+#include "maphand.hh"
 
 #define MAXIMUM_CLAIMED_OCEAN_SIZE (20)
 
@@ -214,26 +214,27 @@ void global_warming(int effect)
 
   k = map_num_tiles();
   while(effect > 0 && (k--) > 0) {
-    Terrain_type_id old, new;
+    Terrain_type_id old;
+    Terrain_type_id new_;
     tile_t *ptile;
 
     ptile = rand_map_pos();
     old = map_get_terrain(ptile);
     if (is_terrain_ecologically_wet(ptile)) {
-      new = get_tile_type(old)->warmer_wetter_result;
+      new_ = get_tile_type(old)->warmer_wetter_result;
     } else {
-      new = get_tile_type(old)->warmer_drier_result;
+      new_ = get_tile_type(old)->warmer_drier_result;
     }
-    if (new != T_NONE && old != new) {
+    if (new_ != T_NONE && old != new_) {
       effect--;
-      change_terrain(ptile, new);
+      change_terrain(ptile, new_);
       update_tile_knowledge(ptile);
       unit_list_iterate(ptile->units, punit) {
         if (!can_unit_continue_current_activity(punit)) {
           handle_unit_activity_request(punit, ACTIVITY_IDLE);
         }
       } unit_list_iterate_end;
-    } else if (old == new) {
+    } else if (old == new_) {
       /* This counts toward warming although nothing is changed. */
       effect--;
     }
@@ -256,26 +257,26 @@ void nuclear_winter(int effect)
 
   k = map_num_tiles();
   while(effect > 0 && (k--) > 0) {
-    Terrain_type_id old, new;
+    Terrain_type_id old, new_;
     tile_t *ptile;
 
     ptile = rand_map_pos();
     old = map_get_terrain(ptile);
     if (is_terrain_ecologically_wet(ptile)) {
-      new = get_tile_type(old)->cooler_wetter_result;
+      new_ = get_tile_type(old)->cooler_wetter_result;
     } else {
-      new = get_tile_type(old)->cooler_drier_result;
+      new_ = get_tile_type(old)->cooler_drier_result;
     }
-    if (new != T_NONE && old != new) {
+    if (new_ != T_NONE && old != new_) {
       effect--;
-      change_terrain(ptile, new);
+      change_terrain(ptile, new_);
       update_tile_knowledge(ptile);
       unit_list_iterate(ptile->units, punit) {
         if (!can_unit_continue_current_activity(punit)) {
           handle_unit_activity_request(punit, ACTIVITY_IDLE);
         }
       } unit_list_iterate_end;
-    } else if (old == new) {
+    } else if (old == new_) {
       /* This counts toward winter although nothing is changed. */
       effect--;
     }
@@ -1037,7 +1038,8 @@ new_bg_map_know_and_see_all_context(player_t *pplayer)
 {
   struct bg_map_know_and_see_all_context *context;
 
-  context = wc_calloc(1, sizeof(*context));
+  context = static_cast<struct bg_map_know_and_see_all_context *>(
+      wc_calloc(1, sizeof(*context)));
   context->player = pplayer;
 
   return context;
@@ -1048,7 +1050,8 @@ new_bg_map_know_and_see_all_context(player_t *pplayer)
 **************************************************************************/
 static void free_bg_map_know_and_see_all_context(void *vc)
 {
-  struct bg_map_know_and_see_all_context *context = vc;
+  struct bg_map_know_and_see_all_context *context =
+      static_cast<struct bg_map_know_and_see_all_context *>(vc);
 
   free(context);
 }
@@ -1080,7 +1083,8 @@ static bool can_send_more(struct connection_list *dest)
 **************************************************************************/
 static bool bg_map_know_and_see_all_one_iter(void *vc)
 {
-  struct bg_map_know_and_see_all_context *context = vc;
+  struct bg_map_know_and_see_all_context *context =
+      static_cast<struct bg_map_know_and_see_all_context *>(vc);
   player_t *pplayer;
   tile_t *ptile;
   bool rv;
@@ -1157,7 +1161,7 @@ void show_map_to_all(void)
 ****************************************************************/
 void player_map_allocate(player_t *pplayer)
 {
-  pplayer->private_map =
+  pplayer->private_map = (player_tile*)
     wc_malloc(map.info.xsize * map.info.ysize * sizeof(struct player_tile));
   whole_map_iterate(ptile) {
     player_tile_init(ptile, pplayer);
@@ -1320,7 +1324,7 @@ static void really_give_tile_info_from_player_to_player(player_t *pfrom,
       /* Set and send new city info */
       if (from_tile->city) {
         if (!dest_tile->city) {
-          dest_tile->city = wc_malloc(sizeof(struct dumb_city));
+          dest_tile->city = (dumb_city*)wc_malloc(sizeof(struct dumb_city));
         }
         *dest_tile->city = *from_tile->city;
         send_city_info_at_tile(pdest, pdest->connections, NULL, ptile);

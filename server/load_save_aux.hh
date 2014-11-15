@@ -1,7 +1,7 @@
 #ifndef WC_SERVER_LOAD_SAVED_H
 #define WC_SERVER_LOAD_SAVED_H
 
-#include "unit.h"   /* Unit_Type_id, enum unit_activity */
+#include "unit.hh"   /* Unit_Type_id, enum unit_activity */
 
 extern const char hex_chars[];
 extern const char* old_impr_types[];

@@ -33,19 +33,19 @@
 #  include <windows.h>
 #endif
 
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "shared.h"
-#include "support.h"
-#include "version.h"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "version.hh"
 
-#include "console.h"
-#include "meta.h"
-#include "sernet.h"
-#include "srv_main.h"
+#include "console.hh"
+#include "meta.hh"
+#include "sernet.hh"
+#include "srv_main.hh"
 
-#include "civserver.h"
+#include "civserver.hh"
 
 #ifdef GENERATING_MAC
 static void Mac_options(int argc);  /* don't need argv */

@@ -14,25 +14,25 @@
 #  include "../config.h"
 #endif
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "log.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "log.hh"
 
-#include "city.h"
-#include "connection.h"
-#include "game.h"
-#include "traderoute.h"
-#include "player.h"
-#include "unit.h"
+#include "city.hh"
+#include "connection.hh"
+#include "game.hh"
+#include "traderoute.hh"
+#include "player.hh"
+#include "unit.hh"
 
-#include "citytools.h"
-#include "cityturn.h"
-#include "plrhand.h"
-#include "srv_main.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "plrhand.hh"
+#include "srv_main.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "tradehand.h"
+#include "tradehand.hh"
 
 /****************************************************************************
   Returns TRUE iff this connection is able to handle the server trade packets.
@@ -553,7 +553,7 @@ void handle_unit_trade_route(player_t *pplayer, int unit_id,
   {
     /* Already arrived */
     punit->ptr = ptr;
-    ptr->status |= TR_IN_ROUTE;
+    ptr->status = static_cast<trade_route_status>(ptr->status | TR_IN_ROUTE);
     send_trade_route_info(NULL, ptr);
     unit_establish_trade_route(punit, ptr->pcity1, ptr->pcity2);
     return;
@@ -573,7 +573,7 @@ void handle_unit_trade_route(player_t *pplayer, int unit_id,
   punit->orders.vigilant = FALSE; /* Maybe should be TRUE */
   punit->ptr = ptr;
   punit->has_orders = TRUE;
-  ptr->status |= TR_IN_ROUTE;
+  ptr->status = static_cast<trade_route_status>(ptr->status | TR_IN_ROUTE);
 
   send_unit_info(NULL, punit);
   send_trade_route_info(NULL, ptr);

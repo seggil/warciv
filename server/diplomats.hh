@@ -13,10 +13,10 @@
 #ifndef WC_SERVER_DIPLOMATS_H
 #define WC_SERVER_DIPLOMATS_H
 
-#include "wc_types.h"
-#include "unit.h"               /* Unit_Type_id, enum unit_activity */
+#include "wc_types.hh"
+#include "unit.hh"               /* Unit_Type_id, enum unit_activity */
 
-#include "gotohand.h"           /* enum goto_move_restriction */
+#include "gotohand.hh"           /* enum goto_move_restriction */
 
 void diplomat_embassy(player_t *pplayer, unit_t *pdiplomat,
                           city_t *pcity);

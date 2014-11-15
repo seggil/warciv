@@ -20,46 +20,46 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "shared.h"
-#include "support.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "combat.h"
-#include "events.h"
-#include "government.h"
-#include "idex.h"
-#include "map.h"
-#include "packets.h"
-#include "player.h"
-#include "traderoute.h"
-#include "unit.h"
+#include "city.hh"
+#include "combat.hh"
+#include "events.hh"
+#include "government.hh"
+#include "idex.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "traderoute.hh"
+#include "unit.hh"
 
-#include "autoattack.h"
-#include "barbarian.h"
-#include "citytools.h"
-#include "cityturn.h"
-#include "diplhand.h"
-#include "gamehand.h"
-#include "gamelog.h"
-#include "gotohand.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "sernet.h"
-#include "settlers.h"
-#include "srv_main.h"
-#include "tradehand.h"
-#include "unithand.h"
+#include "autoattack.hh"
+#include "barbarian.hh"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "diplhand.hh"
+#include "gamehand.hh"
+#include "gamelog.hh"
+#include "gotohand.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "sernet.hh"
+#include "settlers.hh"
+#include "srv_main.hh"
+#include "tradehand.hh"
+#include "unithand.hh"
 
-#include "aiexplorer.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "aiexplorer.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "unittools.h"
+#include "unittools.hh"
 
 
 static void unit_restore_hitpoints(player_t *pplayer, unit_t *punit);
@@ -3096,7 +3096,7 @@ bool execute_orders(unit_t *punit)
 
     if (punit->orders.vigilant && maybe_cancel_patrol_due_to_enemy(punit)) {
       /* "Patrol" orders are stopped if an enemy is near. */
-      cancel_orders(punit, "  stopping because of nearby enemy");
+      cancel_orders(punit, (char*)"  stopping because of nearby enemy");
       notify_player_ex(pplayer, punit->tile, E_UNIT_ORDERS,
                        _("Game: Orders for %s aborted as there "
                          "are units nearby."),
@@ -3145,7 +3145,7 @@ bool execute_orders(unit_t *punit)
     case ORDER_ACTIVITY:
       activity = order.activity;
       if (!can_unit_do_activity(punit, activity)) {
-        cancel_orders(punit, "  orders canceled because of failed activity");
+        cancel_orders(punit, (char*)"  orders canceled because of failed activity");
         notify_player_ex(pplayer, punit->tile, E_UNIT_ORDERS,
                          _("Game: Orders for %s aborted since they "
                            "give an invalid activity."),
@@ -3159,7 +3159,7 @@ bool execute_orders(unit_t *punit)
     case ORDER_MOVE:
       /* Move unit */
       if (!(dst_tile = mapstep(punit->tile, order.dir))) {
-        cancel_orders(punit, "  move order sent us to invalid location");
+        cancel_orders(punit, (char*)"  move order sent us to invalid location");
         notify_player_ex(pplayer, punit->tile, E_UNIT_ORDERS,
                          _("Game: Orders for %s aborted since they "
                            "give an invalid location."),
@@ -3169,7 +3169,7 @@ bool execute_orders(unit_t *punit)
 
       if (!last_order
           && maybe_cancel_goto_due_to_enemy(punit, dst_tile)) {
-        cancel_orders(punit, "  orders canceled because of enemy");
+        cancel_orders(punit, (char*)"  orders canceled because of enemy");
         notify_player_ex(pplayer, punit->tile, E_UNIT_ORDERS,
                          _("Game: Orders for %s aborted as there "
                            "are units in the way."),
@@ -3195,7 +3195,7 @@ bool execute_orders(unit_t *punit)
 
       if (!res && punit->moves_left > 0) {
         /* Movement failed (ZOC, etc.) */
-        cancel_orders(punit, "  attempt to move failed.");
+        cancel_orders(punit, (char*)"  attempt to move failed.");
         notify_player_ex(pplayer, punit->tile, E_UNIT_ORDERS,
                          _("Game: Orders for %s aborted because of "
                            "failed move."),
@@ -3219,7 +3219,7 @@ bool execute_orders(unit_t *punit)
           punit->orders.index = 0;
           punit->orders.repeat = FALSE;
           punit->orders.vigilant = FALSE;
-          punit->orders.list = wc_malloc(sizeof(order));
+          punit->orders.list = (unit_order*)wc_malloc(sizeof(order));
           punit->orders.list[0] = order;
         }
         send_unit_info(NULL, punit);
@@ -3228,7 +3228,7 @@ bool execute_orders(unit_t *punit)
 
       break;
     case ORDER_LAST:
-      cancel_orders(punit, "  client sent invalid order!");
+      cancel_orders(punit, (char*)"  client sent invalid order!");
       notify_player_ex(pplayer, punit->tile, E_UNIT_ORDERS,
                        _("Game: Your %s has invalid orders."),
                        unit_name(punit->type));

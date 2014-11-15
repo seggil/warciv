@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_REPORT_H
 #define WC_SERVER_PLRHAND_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
 void page_conn(struct connection_list *dest, const char *caption, const char *headline,
                const char *lines);

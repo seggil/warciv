@@ -15,7 +15,7 @@
 
 #define ALLIESCHAT_COMMAND_PREFIX '.'
 
-#include "connection.h"
+#include "connection.hh"
 
 void handle_chat_msg_req(connection_t *pconn, char *message);
 bool conn_is_ignored(connection_t *pconn, connection_t *dest);

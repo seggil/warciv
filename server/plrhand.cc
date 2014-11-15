@@ -18,42 +18,42 @@
 #include <assert.h>
 #include <stdarg.h>
 
-#include "events.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "packets.h"
-#include "diptreaty.h"
-#include "government.h"
-#include "player.h"
-#include "rand.h"
-#include "shared.h"
-#include "support.h"
-#include "tech.h"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "diptreaty.hh"
+#include "government.hh"
+#include "player.hh"
+#include "rand.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "tech.hh"
 
-#include "citytools.h"
-#include "cityturn.h"
-#include "connecthand.h"
-#include "diplhand.h"
-#include "gamehand.h"
-#include "gamelog.h"
-#include "maphand.h"
-#include "sernet.h"
-#include "settlers.h"
-#include "srv_main.h"
-#include "stdinhand.h"
-#include "unittools.h"
-#include "spaceship.h"
-#include "spacerace.h"
-#include "unittools.h"
-#include "vote.h"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "connecthand.hh"
+#include "diplhand.hh"
+#include "gamehand.hh"
+#include "gamelog.hh"
+#include "maphand.hh"
+#include "sernet.hh"
+#include "settlers.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
+#include "unittools.hh"
+#include "spaceship.hh"
+#include "spacerace.hh"
+#include "unittools.hh"
+#include "vote.hh"
 
-#include "advmilitary.h"
-#include "aidata.h"
-#include "aihand.h"
-#include "aitech.h"
+#include "advmilitary.hh"
+#include "aidata.hh"
+#include "aihand.hh"
+#include "aitech.hh"
 
-#include "plrhand.h"
+#include "plrhand.hh"
 
 static void package_player_common(player_t *plr,
                                   struct packet_player_info *packet);
@@ -2008,7 +2008,7 @@ static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
    * 0: not available
    * 1: available
    * 2: preferred choice */
-  nations_used = wc_calloc(game.ruleset_control.playable_nation_count, sizeof(int));
+  nations_used = (int*)wc_calloc(game.ruleset_control.playable_nation_count, sizeof(int));
 
   for (i = 0; i < game.ruleset_control.playable_nation_count; i++) {
     nations_used[i] = 1; /* Available (for now) */

@@ -15,20 +15,20 @@
 #  include "../config.h"
 #endif
 
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "connection.h"
-#include "map.h"
+#include "connection.hh"
+#include "map.hh"
 
-#include "commands.h"
-#include "gamelog.h"
-#include "report.h"
-#include "settings.h"
-#include "srv_main.h"
-#include "stdinhand.h"
-#include "vote.h"
+#include "commands.hh"
+#include "gamelog.hh"
+#include "report.hh"
+#include "settings.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
+#include "vote.hh"
 
 /* Category names must match the values in enum sset_category. */
 const char *sset_category_names[] = {N_("Geological"),
@@ -1596,11 +1596,11 @@ enum cmdlevel_id sset_access_level(int idx)
     if (pset->pregame_level < 0) {
       return command_access_level(CMD_SET);
     }
-    return pset->pregame_level;
+    return (enum cmdlevel_id)pset->pregame_level;
   }
 
   if (pset->game_level < 0) {
     return command_access_level(CMD_SET);
   }
-  return pset->game_level;
+  return (enum cmdlevel_id)pset->game_level;
 }

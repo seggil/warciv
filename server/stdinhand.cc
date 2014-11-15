@@ -30,57 +30,57 @@
 #  endif
 #endif
 
-#include "astring.h"
-#include "capability.h"
-#include "wc_iconv.h"
-#include "wc_intl.h"
-#include "hash.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "registry.h"
-#include "shared.h" /* wc__attribute, bool type, etc. */
-#include "support.h"
-#include "timing.h"
+#include "astring.hh"
+#include "capability.hh"
+#include "wc_iconv.hh"
+#include "wc_intl.hh"
+#include "hash.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "registry.hh"
+#include "shared.hh" /* wc__attribute, bool type, etc. */
+#include "support.hh"
+#include "timing.hh"
 
-#include "capstr.h"
-#include "city.h"
-#include "events.h"
-#include "game.h"
-#include "map.h"
-#include "packets.h"
-#include "player.h"
-#include "version.h"
+#include "capstr.hh"
+#include "city.hh"
+#include "events.hh"
+#include "game.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "version.hh"
 
-#include "commands.h"
-#include "connecthand.h"
-#include "console.h"
-#include "database.h"
-#include "diplhand.h"
-#include "gamehand.h"
-#include "gamelog.h"
-#include "handchat.h"
-#include "generator/mapgen.h"
-#include "maphand.h"
-#include "meta.h"
-#include "plrhand.h"
-#include "report.h"
-#include "ruleset.h"
-#include "sanitycheck.h"
-#include "game_save.h"
-#include "score.h"
-#include "sernet.h"
-#include "settings.h"
-#include "srv_main.h"
-#include "unittools.h"
-#include "vote.h"
+#include "commands.hh"
+#include "connecthand.hh"
+#include "console.hh"
+#include "database.hh"
+#include "diplhand.hh"
+#include "gamehand.hh"
+#include "gamelog.hh"
+#include "handchat.hh"
+#include "generator/mapgen.hh"
+#include "maphand.hh"
+#include "meta.hh"
+#include "plrhand.hh"
+#include "report.hh"
+#include "ruleset.hh"
+#include "sanitycheck.hh"
+#include "game_save.hh"
+#include "score.hh"
+#include "sernet.hh"
+#include "settings.hh"
+#include "srv_main.hh"
+#include "unittools.hh"
+#include "vote.hh"
 
-#include "advmilitary.h" /* assess_danger_player() */
-#include "ailog.h"
+#include "advmilitary.hh" /* assess_danger_player() */
+#include "ailog.hh"
 
-#include "stdinhand.h"
+#include "stdinhand.hh"
 /* Import */
-#include "stdinhand_info.h"
+#include "stdinhand_info.hh"
 
 static bool cut_client_connection(connection_t *caller, char *name,
                                   bool check);
@@ -239,9 +239,9 @@ static enum command_id command_named(const char *token,
   result = match_prefix(cmdname_accessor, CMD_NUM, 0,
                         mystrncasecmp, token, &ind);
   if (result < M_PRE_AMBIGUOUS) {
-    return ind;
+    return (command_id)ind;
   } else if (result == M_PRE_AMBIGUOUS) {
-    return accept_ambiguity ? ind : CMD_AMBIGUOUS;
+    return accept_ambiguity ? (command_id)ind : CMD_AMBIGUOUS;
   } else {
     return CMD_UNRECOGNIZED;
   }
@@ -813,7 +813,7 @@ bool require_command(connection_t *caller, char *arg, bool check)
   /* detach all bad connections without this capability */
   connection_list_iterate(game.game_connections, pconn) {
     if (!pconn->observer && !can_control_a_player(pconn, TRUE)) {
-      detach_command(pconn, "", FALSE);
+      detach_command(pconn, (char*)"", false);
     }
   } connection_list_iterate_end;
 
@@ -827,7 +827,7 @@ static struct kickinfo *kickinfo_new(connection_t *pconn)
 {
   struct kickinfo *ki;
 
-  ki = wc_calloc(1, sizeof(*ki));
+  ki = (kickinfo*)wc_calloc(1, sizeof(*ki));
   ki->time_of_kick = time(NULL);
   sz_strlcpy(ki->addr, pconn->u.server.ipaddr);
   sz_strlcpy(ki->user, pconn->username);
@@ -874,13 +874,13 @@ static void kick_table_remove(const connection_t *pconn)
   struct kickinfo *ki;
 
   if (kick_table_by_addr) {
-    ki = hash_delete_entry(kick_table_by_addr, pconn->u.server.ipaddr);
+    ki = (kickinfo*)hash_delete_entry(kick_table_by_addr, pconn->u.server.ipaddr);
     if (ki) {
       free(ki);
     }
   }
   if (kick_table_by_user) {
-    ki = hash_delete_entry(kick_table_by_user, pconn->username);
+    ki = (kickinfo*)hash_delete_entry(kick_table_by_user, pconn->username);
     if (ki) {
       free(ki);
     }
@@ -903,8 +903,8 @@ bool conn_is_kicked(const connection_t *pconn, int *time_remaining)
     return FALSE;
   }
 
-  ki_addr = hash_lookup_data(kick_table_by_addr, pconn->u.server.ipaddr);
-  ki_user = hash_lookup_data(kick_table_by_user, pconn->username);
+  ki_addr = (kickinfo*)hash_lookup_data(kick_table_by_addr, pconn->u.server.ipaddr);
+  ki_user = (kickinfo*)hash_lookup_data(kick_table_by_user, pconn->username);
 
   if (!ki_addr && !ki_user) {
     return FALSE;
@@ -1032,11 +1032,11 @@ static bool welcome_file_command(connection_t *caller,
     return FALSE;
   }
   if (len == 0) {
-    buf = wc_malloc(1);
+    buf = (char*)wc_malloc(1);
     buf[0] = '\0';
   } else {
     int nb;
-    buf = wc_malloc(len + 1);
+    buf = (char*)wc_malloc(len + 1);
     nb = fread(buf, 1, len, f);
     if (ferror(f) || nb != len) {
       cmd_reply(CMD_WELCOME_FILE, caller, C_GENFAIL,
@@ -1088,13 +1088,15 @@ static bool do_meta_set_command(connection_t *caller,
 
   if (buf[0] == '\0') {
     if (cmd_id == CMD_METAMESSAGE) {
-      cmd_reply(cmd_id, caller, C_COMMENT,
-                _("Metamessage is \"%s\"."), get_meta_message_string());
+      cmd_reply((command_id)cmd_id, caller, C_COMMENT,
+                _("Metamessage is \"%s\"."),
+                get_meta_message_string());
     } else if (cmd_id == CMD_METATOPIC) {
-      cmd_reply(cmd_id, caller, C_COMMENT,
-                _("Metatopic is \"%s\"."), get_meta_topic_string());
+      cmd_reply((command_id)cmd_id, caller, C_COMMENT,
+                _("Metatopic is \"%s\"."),
+                get_meta_topic_string());
     } else if (cmd_id == CMD_METAPATCHES) {
-      cmd_reply(cmd_id, caller, C_COMMENT,
+      cmd_reply((command_id)cmd_id, caller, C_COMMENT,
                 _("Metaserver patches string is \"%s\"."),
                 get_meta_patches_string());
     }
@@ -1136,7 +1138,7 @@ static bool do_meta_set_command(connection_t *caller,
       notify_conn(NULL, _("Server: Metatopic set to '%s'."), buf);
     }
   } else if (cmd_id == CMD_METAPATCHES) {
-    cmd_reply(cmd_id, caller, C_OK,
+    cmd_reply((command_id)cmd_id, caller, C_OK,
               _("Metaserver patches string set to '%s'."), buf);
   }
 
@@ -1781,7 +1783,7 @@ static bool cmdlevel_command(connection_t *caller, char *str,
     for (i = 0; i < ALLOW_NUM; i++) {
       cat_snprintf(buf, sizeof(buf), "%s'%s'%s",
                    i == ALLOW_NUM - 1 ? _("or ") : "",
-                   cmdlevel_name(i), i == ALLOW_NUM - 1 ? "." : ", ");
+                   cmdlevel_name((cmdlevel_id)i), i == ALLOW_NUM - 1 ? "." : ", ");
     }
     cmd_reply(CMD_CMDLEVEL, caller, C_SYNTAX, "%s", buf);
     goto end;
@@ -2047,7 +2049,7 @@ static char **create_team_names(int n)
     return NULL;
   }
 
-  team_names = wc_malloc(n * sizeof(char *));
+  team_names = (char**)wc_malloc(n * sizeof(char *));
 
   sfilename = datafilename(DEFAULT_TEAM_NAMES_FILE);
   if (sfilename && section_file_load_nodup(&sfile, sfilename)) {
@@ -2191,7 +2193,7 @@ static bool unmute_command(connection_t *caller, char *str, bool check)
   }
 
   /* Cannot fail, since conn_is_muted returned true. */
-  mi = hash_lookup_data(mute_table, pconn->u.server.ipaddr);
+  mi = (muteinfo*)hash_lookup_data(mute_table, pconn->u.server.ipaddr);
   assert(mi != NULL);
   unmute_conn_by_mi(mi);
 
@@ -2262,7 +2264,7 @@ static bool mute_command(connection_t *caller, char *str, bool check)
     return TRUE;
   }
 
-  mi = wc_malloc(sizeof(struct muteinfo));
+  mi = (muteinfo*)wc_malloc(sizeof(struct muteinfo));
   mi->turns_left = nturns;
   mi->conn_id = pconn->id;
   mi->addr = mystrdup(pconn->u.server.ipaddr);
@@ -2472,11 +2474,11 @@ Find option level number by name.
 **************************************************************************/
 static enum sset_level lookup_option_level(const char *name)
 {
-  enum sset_level i;
+  int i;
 
   for (i = SSET_ALL; i < SSET_NUM_LEVELS; i++) {
     if (0 == mystrcasecmp(name, sset_level_names[i])) {
-      return i;
+      return (enum sset_level)i;
     }
   }
 
@@ -2531,31 +2533,31 @@ static void show_help_option(connection_t *caller,
             _("Status: %s"), (sset_is_changeable(id)
                               ? _("changeable") : _("fixed")));
   if (op->pregame_level >= 0) {
-    cmd_reply(help_cmd, caller, C_COMMENT,
+    cmd_reply((command_id)help_cmd, caller, C_COMMENT,
               _("Pregame access level: %s"),
-              cmdlevel_name(op->pregame_level));
+              cmdlevel_name((cmdlevel_id)op->pregame_level));
   }
   if (op->game_level >= 0) {
-    cmd_reply(help_cmd, caller, C_COMMENT,
+    cmd_reply((command_id)help_cmd, caller, C_COMMENT,
               _("Game access level: %s"),
-              cmdlevel_name(op->game_level));
+              cmdlevel_name((cmdlevel_id)op->game_level));
   }
   if (may_view_option(caller, id)) {
     switch (op->type) {
     case SSET_BOOL:
-      cmd_reply(help_cmd, caller, C_COMMENT,
+      cmd_reply((command_id)help_cmd, caller, C_COMMENT,
                 _("Value: %d, Minimum: 0, Default: %d, Maximum: 1"),
                 (*(op->bool_value)) ? 1 : 0,
                 op->bool_default_value ? 1 : 0);
       break;
     case SSET_INT:
-      cmd_reply(help_cmd, caller, C_COMMENT,
+      cmd_reply((command_id)help_cmd, caller, C_COMMENT,
                 _("Value: %d, Minimum: %d, Default: %d, Maximum: %d"),
                 *(op->int_value), op->int_min_value, op->int_default_value,
                 op->int_max_value);
       break;
     case SSET_STRING:
-      cmd_reply(help_cmd, caller, C_COMMENT,
+      cmd_reply((command_id)help_cmd, caller, C_COMMENT,
                 _("Value: \"%s\", Default: \"%s\""), op->string_value,
                 op->string_default_value);
       break;
@@ -4132,7 +4134,7 @@ static void setup_observer(connection_t *pconn,
     player_t *new_pplayer;
     /* if a pconn->player is removed, we'll lose pplayer */
     sz_strlcpy(name, pplayer ? pplayer->name : "");
-    detach_command(pconn, "", FALSE);
+    detach_command(pconn, (char*)"", false);
     /* find pplayer again, the pointer might have been changed */
     new_pplayer = find_player_by_name(name);
     if (new_pplayer != pplayer) {
@@ -4174,7 +4176,7 @@ static void setup_observer(connection_t *pconn,
       send_player_info(NULL, NULL);
     } else {
       hash_keys_iterate(affected_players, aplayer) {
-        send_player_info(aplayer, NULL);
+        send_player_info((player_t*)aplayer, NULL);
       } hash_keys_iterate_end;
     }
     send_all_info(pconn->self);
@@ -4193,7 +4195,7 @@ static void setup_observer(connection_t *pconn,
       send_player_info(NULL, NULL);
     } else {
       hash_keys_iterate(affected_players, aplayer) {
-        send_player_info(aplayer, NULL);
+        send_player_info((player_t*)aplayer, NULL);
       } hash_keys_iterate_end;
     }
     send_packet_thaw_hint(pconn);
@@ -4330,7 +4332,7 @@ static bool take_command(connection_t *caller, char *str, bool check)
 
     /* if a pconn->player is removed, we'll lose pplayer */
     sz_strlcpy(name, pplayer->name);
-    detach_command(pconn, "", FALSE);
+    detach_command(pconn, (char*)"", false);
     /* find pplayer again, the pointer might have been changed */
     pplayer = find_player_by_name(name);
   }
@@ -4604,7 +4606,7 @@ static bool attach_command(connection_t *caller, char *name, bool check)
   }
 
   if (pconn->player || pconn->observer) {
-    detach_command(pconn, "", FALSE);
+    detach_command(pconn, (char*)"", FALSE);
   }
 
   if (attach_connection_to_player(pconn, NULL)) {
@@ -7481,7 +7483,7 @@ bool loadactionlist_command(connection_t * caller,
   }
 
   if (!filename || !filename[0]) {
-    filename = DEFAULT_ACTION_LIST_FILE;
+    filename = (char*)DEFAULT_ACTION_LIST_FILE;
   }
 
   action_list = load_action_list(filename);
@@ -7510,7 +7512,7 @@ bool saveactionlist_command(connection_t * caller,
   int ret;
 
   if (!filename || filename[0] == '\0') {
-    filename = DEFAULT_ACTION_LIST_FILE;
+    filename = (char*)DEFAULT_ACTION_LIST_FILE;
   }
   ret = save_action_list(filename);
   if (ret == -1) {
@@ -7928,7 +7930,7 @@ static void show_help_command(connection_t *caller,
 static void show_help_command_list(connection_t *caller,
                                    enum command_id help_cmd)
 {
-  enum command_id i;
+  int /* enum command_id */ i;
   char buf[MAX_LEN_CONSOLE_LINE];
   int j;
 
@@ -7939,7 +7941,7 @@ static void show_help_command_list(connection_t *caller,
 
   buf[0] = '\0';
   for (i = 0, j = 0; i < CMD_NUM; i++) {
-    if (may_use(caller, i)) {
+    if (may_use(caller, (enum command_id)i)) {
       cat_snprintf(buf, sizeof(buf), "%-19s", commands[i].name);
       if ((++j % 4) == 0) {
         cmd_reply(help_cmd, caller, C_COMMENT, "%s", buf);
@@ -7958,7 +7960,7 @@ static void show_help_command_list(connection_t *caller,
 
     buf[0] = '\0';
     for (i = 0, j = 0; i < CMD_NUM; i++) {
-      enum cmdlevel_id level = command_access_level(i);
+      enum cmdlevel_id level = command_access_level((enum command_id)i);
 
       if (level == ALLOW_CTRL) {
         cat_snprintf(buf, sizeof(buf), "%-19s", commands[i].name);
@@ -8080,7 +8082,7 @@ static bool show_help(connection_t *caller, char *arg)
   /* other cases should be above */
   assert(match_result < M_PRE_AMBIGUOUS);
   if (ind < CMD_NUM) {
-    show_help_command(caller, CMD_HELP, ind);
+    show_help_command(caller, CMD_HELP, (command_id)ind);
     return TRUE;
   }
   ind -= CMD_NUM;
@@ -8094,7 +8096,7 @@ static bool show_help(connection_t *caller, char *arg)
   }
   ind -= HELP_GENERAL_NUM;
   if (ind < SETTINGS_NUM) {
-    show_help_option(caller, CMD_HELP, ind);
+    show_help_option(caller, CMD_HELP, (command_id)ind);
     return TRUE;
   }
   /* should have finished by now */
@@ -8818,7 +8820,7 @@ Extra accessor function since cmdlevel_name() takes enum argument, not int.
 **************************************************************************/
 static const char *cmdlevel_arg1_accessor(int idx)
 {
-  return cmdlevel_name(idx);
+  return (const char *)cmdlevel_name((cmdlevel_id)idx);
 }
 static char *cmdlevel_arg1_generator(const char *text, int state)
 {

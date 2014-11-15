@@ -15,10 +15,10 @@
 
 #define REPUTATION_LOSS_NUKE (GAME_MAX_REPUTATION * 0.03)
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
-#include "hand_gen.h"
-#include "connection.h"
+#include "hand_gen.hh"
+#include "connection.hh"
 
 struct Treaty;
 struct packet_diplomacy_info;

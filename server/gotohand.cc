@@ -20,24 +20,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
 
-#include "city.h"
-#include "combat.h"
-#include "game.h"
-#include "map.h"
+#include "city.hh"
+#include "combat.hh"
+#include "game.hh"
+#include "map.hh"
 
-#include "airgoto.h"
-#include "maphand.h"
-#include "settlers.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "airgoto.hh"
+#include "maphand.hh"
+#include "settlers.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "aitools.h"
+#include "aitools.hh"
 
-#include "gotohand.h"
+#include "gotohand.hh"
 
 struct move_cost_map warmap;
 
@@ -123,7 +123,8 @@ static struct mappos_array *get_empty_array(void)
 {
   struct mappos_array *parray;
   if (!mappos_arrays[array_count])
-    mappos_arrays[array_count] = wc_malloc(sizeof(struct mappos_array));
+    mappos_arrays[array_count] = (mappos_array*)
+        wc_malloc(sizeof(struct mappos_array));
   parray = mappos_arrays[array_count++];
   parray->first_pos = 0;
   parray->last_pos = -1;
@@ -197,11 +198,11 @@ Reset the movecosts of the warmap.
 static void init_warmap(tile_t *orig_tile, enum unit_move_type move_type)
 {
   if (warmap.size != MAX_MAP_INDEX) {
-    warmap.cost = wc_realloc(warmap.cost,
+    warmap.cost = (unsigned char*)wc_realloc(warmap.cost,
                              MAX_MAP_INDEX * sizeof(*warmap.cost));
-    warmap.seacost = wc_realloc(warmap.seacost,
+    warmap.seacost = (unsigned char*)wc_realloc(warmap.seacost,
                                 MAX_MAP_INDEX * sizeof(*warmap.seacost));
-    warmap.vector = wc_realloc(warmap.vector,
+    warmap.vector = (unsigned char*)wc_realloc(warmap.vector,
                                MAX_MAP_INDEX * sizeof(*warmap.vector));
     warmap.size = MAX_MAP_INDEX;
   }
@@ -843,7 +844,7 @@ static bool find_the_shortest_path(unit_t *punit,
         WARMAP_VECTOR(tile1) |= 1 << DIR_REVERSE(dir);
         BV_CLR(LOCAL_VECTOR(ptile), dir); /* avoid repetition */
         freelog(LOG_DEBUG, "PATH-SEGMENT: %s from (%d, %d) to (%d, %d)",
-                dir_get_name(DIR_REVERSE(dir)),
+                dir_get_name((direction8)DIR_REVERSE(dir)),
                 TILE_XY(tile1), TILE_XY(ptile));
       }
     } adjc_dir_iterate_end;
@@ -1352,8 +1353,8 @@ enum goto_result do_unit_goto(unit_t *punit,
         return GR_FAILED;
       }
 
-      freelog(LOG_DEBUG, "Going %s", dir_get_name(dir));
-      ptile = mapstep(punit->tile, dir);
+      freelog(LOG_DEBUG, "Going %s", dir_get_name((direction8)dir));
+      ptile = mapstep(punit->tile, (direction8)dir);
 
       penemy = is_enemy_unit_tile(ptile, unit_owner(punit));
       assert(punit->moves_left > 0);
@@ -1529,7 +1530,7 @@ int air_can_move_between(int moves, tile_t *src_tile,
     int dir = straightest_direction(ptile, dest_tile);
     tile_t *new_tile;
 
-    if (!(new_tile = mapstep(ptile, dir))
+    if (!(new_tile = mapstep(ptile, (direction8)dir))
         || !airspace_looks_safe(new_tile, pplayer)) {
       break;
     }

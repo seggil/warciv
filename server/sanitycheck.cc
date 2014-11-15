@@ -17,18 +17,18 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "game.h"
-#include "log.h"
-#include "map.h"
-#include "player.h"
-#include "terrain.h"
-#include "unit.h"
+#include "city.hh"
+#include "game.hh"
+#include "log.hh"
+#include "map.hh"
+#include "player.hh"
+#include "terrain.hh"
+#include "unit.hh"
 
-#include "citytools.h"
-#include "maphand.h"
-#include "sanitycheck.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "maphand.hh"
+#include "sanitycheck.hh"
+#include "unittools.hh"
 
 #ifdef SANITY_CHECKING
 

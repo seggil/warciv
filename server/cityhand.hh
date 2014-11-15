@@ -13,9 +13,9 @@
 #ifndef WC_AI_CITYHAND_H
 #define WC_AI_CITYHAND_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
-#include "hand_gen.h"
+#include "hand_gen.hh"
 
 void really_handle_city_sell(player_t *pplayer, city_t *pcity,
                              Impr_Type_id id);

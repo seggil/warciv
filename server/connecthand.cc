@@ -18,46 +18,46 @@
 #include <string.h>
 #include <time.h>
 
-#include "capability.h"
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "shared.h"
-#include "support.h"
-#include "wildcards.h"
+#include "capability.hh"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "wildcards.hh"
 
-#include "capstr.h"
-#include "events.h"
-#include "packets.h"
-#include "player.h"
-#include "version.h"
+#include "capstr.hh"
+#include "events.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "version.hh"
 
-#include "citytools.h"
-#include "database.h"
-#include "diplhand.h"
-#include "gamehand.h"
-#include "gamelog.h"
-#include "handchat.h"
-#include "maphand.h"
-#include "meta.h"
-#include "plrhand.h"
-#include "report.h"
-#include "ruleset.h"
-#include "sernet.h"
-#include "srv_main.h"
-#include "stdinhand.h"
-#include "stdinhand_info.h"
-#include "tradehand.h"
-#include "unittools.h"
-#include "vote.h"
+#include "citytools.hh"
+#include "database.hh"
+#include "diplhand.hh"
+#include "gamehand.hh"
+#include "gamelog.hh"
+#include "handchat.hh"
+#include "maphand.hh"
+#include "meta.hh"
+#include "plrhand.hh"
+#include "report.hh"
+#include "ruleset.hh"
+#include "sernet.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
+#include "stdinhand_info.hh"
+#include "tradehand.hh"
+#include "unittools.hh"
+#include "vote.hh"
 
-#include "connecthand.h"
+#include "connecthand.hh"
 
 struct user_action_list *on_connect_user_actions = NULL;
 
 /* NB Must match enum action_type in connecthand.h */
-char *user_action_type_strs[NUM_ACTION_TYPES] = {
+char const *user_action_type_strs[NUM_ACTION_TYPES] = {
   "ban",
   "none",
   "observer",
@@ -377,8 +377,8 @@ void establish_new_connection(connection_t *pconn)
        space for all the expansions, at worst it will result
        in a truncated message. */
     int maxlen = strlen(welcome_message)
-        + 64 * strchrcount(welcome_message, '%') + 1;
-    char *buf = wc_malloc(maxlen), *line, *p;
+                 + 64 * strchrcount(welcome_message, '%') + 1;
+    char *buf = (char*)wc_malloc(maxlen), *line, *p;
     generate_welcome_message(buf, maxlen, welcome_message);
 
     /* Send the welcome message line by line. This way we don't
@@ -994,9 +994,9 @@ struct user_action *user_action_new(const char *pattern, int type,
   assert(0 <= type && type < NUM_CONN_PATTERN_TYPES);
   assert(0 <= action && action < NUM_ACTION_TYPES);
 
-  pua = wc_malloc(sizeof(struct user_action));
+  pua = static_cast<struct user_action *>(wc_malloc(sizeof(struct user_action)));
   pua->conpat = conn_pattern_new(pattern, type);
-  pua->action = action;
+  pua->action = (action_type)action;
 
   return pua;
 }

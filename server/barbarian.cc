@@ -25,33 +25,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "rand.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "rand.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "events.h"
-#include "game.h"
-#include "government.h"
-#include "map.h"
-#include "nation.h"
-#include "tech.h"
-#include "terrain.h"
+#include "city.hh"
+#include "events.hh"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
+#include "nation.hh"
+#include "tech.hh"
+#include "terrain.hh"
 
-#include "gamehand.h"
-#include "gamelog.h"
-#include "maphand.h"
-#include "plrhand.h"
-#include "srv_main.h"
-#include "stdinhand.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "gamehand.hh"
+#include "gamelog.hh"
+#include "maphand.hh"
+#include "plrhand.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "aidata.h"
-#include "aitools.h"
+#include "aidata.hh"
+#include "aitools.hh"
 
-#include "barbarian.h"
+#include "barbarian.hh"
 
 /*
  IDEAS:

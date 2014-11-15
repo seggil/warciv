@@ -13,10 +13,10 @@
 #ifndef WC_SERVER_UNITHAND_H
 #define WC_SERVER_UNITHAND_H
 
-#include "packets.h"
-#include "unit.h"
+#include "packets.hh"
+#include "unit.hh"
 
-#include "hand_gen.h"
+#include "hand_gen.hh"
 
 bool handle_unit_move_request(unit_t *punit, tile_t *ptile,
                              bool igzoc, bool move_diplomat_city);

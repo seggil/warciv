@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_CONSOLE_H
 #define WC_SERVER_CONSOLE_H
 
-#include "shared.h"             /* bool type and wc__attribute */
+#include "shared.hh"             /* bool type and wc__attribute */
 
 #define MAX_LEN_CONSOLE_LINE 512        /* closing \0 included */
 

@@ -13,7 +13,7 @@
 #ifndef WC_SERVER_SANITYCHECK_H
 #define WC_SERVER_SANITYCHECK_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 #if ( (defined(IS_BETA_VERSION) || defined(IS_DEVEL_VERSION)) \
       && !defined(NDEBUG) ) \

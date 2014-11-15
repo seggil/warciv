@@ -17,23 +17,23 @@
 
 #include <math.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "support.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "support.hh"
 
-#include "capability.h"
-#include "connection.h"
-#include "packets.h"
-#include "player.h"
+#include "capability.hh"
+#include "connection.hh"
+#include "packets.hh"
+#include "player.hh"
 
-#include "commands.h"
-#include "console.h"
-#include "gamehand.h"
-#include "plrhand.h"
-#include "settings.h"
-#include "srv_main.h"
-#include "stdinhand.h"
-#include "vote.h"
+#include "commands.hh"
+#include "console.hh"
+#include "gamehand.hh"
+#include "plrhand.hh"
+#include "settings.hh"
+#include "srv_main.hh"
+#include "stdinhand.hh"
+#include "vote.hh"
 
 struct vote_list *vote_list = NULL;
 int vote_number_sequence = 0;
@@ -368,7 +368,7 @@ struct vote *vote_new(connection_t *caller,
   }
 
   /* Make a new vote */
-  pvote = wc_malloc(sizeof(struct vote));
+  pvote = (vote*)wc_malloc(sizeof(struct vote));
   pvote->caller_id = caller ? caller->id : 0;
   pvote->command_id = command_id;
 
@@ -638,7 +638,7 @@ static struct vote_cast *vote_cast_new(struct vote *pvote)
 {
   assert(vote_list != NULL);
 
-  struct vote_cast *pvc = wc_malloc(sizeof(struct vote_cast));
+  struct vote_cast *pvc = (struct vote_cast *)wc_malloc(sizeof(struct vote_cast));
 
   pvc->conn_id = -1;
   pvc->vote_cast = VOTE_ABSTAIN;

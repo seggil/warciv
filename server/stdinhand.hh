@@ -13,8 +13,8 @@
 #ifndef WC_SERVER_STDINHAND_H
 #define WC_SERVER_STDINHAND_H
 
-#include "wc_types.h"
-#include "connection.h"         /* enum cmdlevel_id */
+#include "wc_types.hh"
+#include "connection.hh"         /* enum cmdlevel_id */
 
 #define SERVER_COMMAND_PREFIX '/'
   /* the character to mark chatlines as server commands */

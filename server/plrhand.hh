@@ -15,13 +15,13 @@
 
 #include <stdarg.h>
 
-#include "shared.h"             /* wc__attribute */
+#include "shared.hh"             /* wc__attribute */
 
-#include "events.h"
-#include "wc_types.h"
-#include "packets.h"
+#include "events.hh"
+#include "wc_types.hh"
+#include "packets.hh"
 
-#include "hand_gen.h"
+#include "hand_gen.hh"
 
 struct section_file;
 
