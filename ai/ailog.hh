@@ -13,7 +13,7 @@
 #ifndef WC_AI_AILOG_H
 #define WC_AI_AILOG_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 //#include "gotohand.h"           /* enum goto_result */
 

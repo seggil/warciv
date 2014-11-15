@@ -15,21 +15,21 @@
 # include "../config.h"
 #endif
 
-#include "log.h"
+#include "log.hh"
 
-#include "city.h"
-#include "player.h"
-#include "unit.h"
+#include "city.hh"
+#include "player.hh"
+#include "unit.hh"
 
-#include "aicore/path_finding.h"
-#include "aicore/pf_tools.h"
+#include "aicore/path_finding.hh"
+#include "aicore/pf_tools.hh"
 
-#include "maphand.h"
+#include "maphand.hh"
 
-#include "ailog.h"
-#include "aitools.h"
+#include "ailog.hh"
+#include "aitools.hh"
 
-#include "aiexplorer.h"
+#include "aiexplorer.hh"
 
 
 /**************************************************************************

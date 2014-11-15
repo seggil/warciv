@@ -13,9 +13,9 @@
 #ifndef WC_AI_AIEXPLORER_H
 #define WC_AI_AIEXPLORER_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"           /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 /*
  * Handle eXplore mode of a unit (explorers are always in eXplore mode

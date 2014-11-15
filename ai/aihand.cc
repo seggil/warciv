@@ -17,35 +17,35 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "map.h"
-#include "packets.h"
-#include "player.h"
-#include "shared.h"
-#include "unit.h"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "unit.hh"
 
-#include "aicore/cm.h"
+#include "aicore/cm.hh"
 
-#include "citytools.h"
-#include "cityturn.h"
-#include "plrhand.h"
-#include "settlers.h" /* amortize */
-#include "spacerace.h"
-#include "unithand.h"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "plrhand.hh"
+#include "settlers.hh" /* amortize */
+#include "spacerace.hh"
+#include "unithand.hh"
 
-#include "advmilitary.h"
-#include "advspace.h"
-#include "aicity.h"
-#include "aidata.h"
-#include "ailog.h"
-#include "aitech.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "advmilitary.hh"
+#include "advspace.hh"
+#include "aicity.hh"
+#include "aidata.hh"
+#include "ailog.hh"
+#include "aitech.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "aihand.h"
+#include "aihand.hh"
 
 /****************************************************************************
   A man builds a city

@@ -13,10 +13,10 @@
 #ifndef WC_AI_AICITY_H
 #define WC_AI_AICITY_H
 
-#include "wc_types.h"
-#include "unit.h"               /* enum unit_move_type */
-#include "city.h"
-#include "aidata.h"
+#include "wc_types.hh"
+#include "unit.hh"            /* enum unit_move_type */
+#include "city.hh"
+#include "aidata.hh"
 
 struct ai_choice;
 

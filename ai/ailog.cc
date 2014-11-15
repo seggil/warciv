@@ -17,19 +17,19 @@
 
 #include <stdarg.h>
 
-#include "log.h"
-#include "shared.h"
-#include "support.h"
+#include "log.hh"
+#include "shared.hh"
+#include "support.hh"
 
-#include "city.h"
-#include "game.h"
-#include "unit.h"
+#include "city.hh"
+#include "game.hh"
+#include "unit.hh"
 
-#include "gotohand.h"
-#include "plrhand.h"
+#include "gotohand.hh"
+#include "plrhand.hh"
 
-#include "aidata.h"
-#include "ailog.h"
+#include "aidata.hh"
+#include "ailog.hh"
 
 /* General AI logging functions */
 

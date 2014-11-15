@@ -13,8 +13,8 @@
 #ifndef WC_AI_ADVMILITARY_H
 #define WC_AI_ADVMILITARY_H
 
-#include "wc_types.h"
-#include "unittype.h"
+#include "wc_types.hh"
+#include "unittype.hh"
 
 struct ai_choice;
 

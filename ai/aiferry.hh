@@ -13,9 +13,9 @@
 #ifndef WC_AI_AIFERRY_H
 #define WC_AI_AIFERRY_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 struct pf_path;
 

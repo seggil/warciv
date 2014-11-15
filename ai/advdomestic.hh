@@ -13,7 +13,7 @@
 #ifndef WC_AI_ADVDOMESTIC_H
 #define WC_AI_ADVDOMESTIC_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 struct ai_choice;
 

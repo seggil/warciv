@@ -15,32 +15,32 @@
 #  include "../config.h"
 #endif
 
-#include "city.h"
-#include "aicore/aisupport.h"
-#include "effects.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "unit.h"
+#include "city.hh"
+#include "aicore/aisupport.hh"
+#include "effects.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "unit.hh"
 
-#include "citytools.h"
-#include "diplhand.h"
-#include "maphand.h"
-#include "settlers.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "diplhand.hh"
+#include "maphand.hh"
+#include "settlers.hh"
+#include "unittools.hh"
 
-#include "advdiplomacy.h"
-#include "advmilitary.h"
-#include "aicity.h"
-#include "aiferry.h"
-#include "aihand.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "advdiplomacy.hh"
+#include "advmilitary.hh"
+#include "aicity.hh"
+#include "aiferry.hh"
+#include "aihand.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "aidata.h"
+#include "aidata.hh"
 
 static struct ai_data aidata[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
 
@@ -178,11 +178,11 @@ void ai_data_turn_init(player_t *pplayer)
 
   ai->num_continents    = map.num_continents;
   ai->num_oceans        = map.server.num_oceans;
-  ai->threats.continent = wc_calloc(ai->num_continents + 1, sizeof(bool));
+  ai->threats.continent = (bool*)wc_calloc(ai->num_continents + 1, sizeof(bool));
   ai->threats.invasions = FALSE;
   ai->threats.air       = FALSE;
   ai->threats.nuclear   = 0; /* none */
-  ai->threats.ocean     = wc_calloc(ai->num_oceans + 1, sizeof(bool));
+  ai->threats.ocean     = (bool*)wc_calloc(ai->num_oceans + 1, sizeof(bool));
   ai->threats.igwall    = FALSE;
 
   players_iterate(aplayer) {
@@ -264,8 +264,8 @@ void ai_data_turn_init(player_t *pplayer)
 
   ai->explore.land_done = TRUE;
   ai->explore.sea_done = TRUE;
-  ai->explore.continent = wc_calloc(ai->num_continents + 1, sizeof(bool));
-  ai->explore.ocean = wc_calloc(ai->num_oceans + 1, sizeof(bool));
+  ai->explore.continent = (bool*)wc_calloc(ai->num_continents + 1, sizeof(bool));
+  ai->explore.ocean = (bool*)wc_calloc(ai->num_oceans + 1, sizeof(bool));
   whole_map_iterate(ptile) {
     Continent_id continent = map_get_continent(ptile);
 
@@ -299,8 +299,8 @@ void ai_data_turn_init(player_t *pplayer)
 
   /*** Statistics ***/
 
-  ai->stats.workers = wc_calloc(ai->num_continents + 1, sizeof(int));
-  ai->stats.cities = wc_calloc(ai->num_continents + 1, sizeof(int));
+  ai->stats.workers = (int*)wc_calloc(ai->num_continents + 1, sizeof(int));
+  ai->stats.cities = (int*)wc_calloc(ai->num_continents + 1, sizeof(int));
   ai->stats.average_production = 0;
   city_list_iterate(pplayer->cities, pcity) {
     ai->stats.cities[(int)map_get_continent(pcity->common.tile)]++;
@@ -485,7 +485,7 @@ void ai_data_init(player_t *pplayer)
   int i;
 
   ai->govt_reeval = 0;
-  ai->government_want = wc_realloc(ai->government_want,
+  ai->government_want = (int*)wc_realloc(ai->government_want,
                                    ((game.ruleset_control.government_count + 1)
                                     * sizeof(*ai->government_want)));
   memset(ai->government_want, 0, (game.ruleset_control.government_count + 1)

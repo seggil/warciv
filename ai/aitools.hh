@@ -13,11 +13,11 @@
 #ifndef WC_AI_AITOOLS_H
 #define WC_AI_AITOOLS_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"            /* bool type */
 
-#include "wc_types.h"
-#include "unit.h"               /* enum ai_unit_task */
-#include "unittype.h"           /* Unit_Type_id */
+#include "wc_types.hh"
+#include "unit.hh"              /* enum ai_unit_task */
+#include "unittype.hh"          /* Unit_Type_id */
 
 struct ai_choice;
 struct pf_path;

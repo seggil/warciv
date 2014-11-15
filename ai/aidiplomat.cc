@@ -17,39 +17,39 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "combat.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "packets.h"
-#include "aicore/path_finding.h"
-#include "aicore/pf_tools.h"
-#include "player.h"
-#include "shared.h"
-#include "timing.h"
-#include "unit.h"
+#include "city.hh"
+#include "combat.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "aicore/path_finding.hh"
+#include "aicore/pf_tools.hh"
+#include "player.hh"
+#include "shared.hh"
+#include "timing.hh"
+#include "unit.hh"
 
-#include "barbarian.h"
-#include "citytools.h"
-#include "cityturn.h"
-#include "diplomats.h"
-#include "maphand.h"
-#include "settlers.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "barbarian.hh"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "diplomats.hh"
+#include "maphand.hh"
+#include "settlers.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "advmilitary.h"
-#include "aicity.h"
-#include "aidata.h"
-#include "aihand.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "advmilitary.hh"
+#include "aicity.hh"
+#include "aidata.hh"
+#include "aihand.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "aidiplomat.h"
+#include "aidiplomat.hh"
 
 #define LOG_DIPLOMAT LOG_DEBUG
 #define LOG_DIPLOMAT_BUILD LOG_DEBUG
@@ -500,7 +500,7 @@ static bool ai_diplomat_bribe_nearby(player_t *pplayer,
       tile_t *ptile;
       struct pf_path *path;
 
-      ptile = mapstep(pos.tile, DIR_REVERSE(pos.dir_to_here));
+      ptile = mapstep(pos.tile, (direction8)DIR_REVERSE(pos.dir_to_here));
       path = pf_get_path(map, ptile);
       if (!path || !ai_unit_execute_path(punit, path)
           || punit->moves_left <= 0) {

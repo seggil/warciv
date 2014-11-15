@@ -17,27 +17,27 @@
 
 #include <string.h>
 
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "map.h"
-#include "mem.h"
-#include "unit.h"
-#include "unittype.h"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "unit.hh"
+#include "unittype.hh"
 
-#include "citytools.h"
-#include "settlers.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "settlers.hh"
+#include "unittools.hh"
 
-#include "advmilitary.h"
-#include "aicity.h"
-#include "aidata.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "advmilitary.hh"
+#include "aicity.hh"
+#include "aidata.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "advdomestic.h"
+#include "advdomestic.hh"
 
 /***************************************************************************
  * Evaluate the need for units (like caravans) that aid wonder construction.

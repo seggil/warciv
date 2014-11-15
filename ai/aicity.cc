@@ -18,40 +18,40 @@
 #include <assert.h>
 #include <string.h>
 
-#include "city.h"
-#include "combat.h"
-#include "effects.h"
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "map.h"
-#include "packets.h"
-#include "player.h"
-#include "rand.h"
-#include "shared.h"
-#include "support.h"
-#include "unit.h"
+#include "city.hh"
+#include "combat.hh"
+#include "effects.hh"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "map.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "rand.hh"
+#include "shared.hh"
+#include "support.hh"
+#include "unit.hh"
 
-#include "cityhand.h"
-#include "citytools.h"
-#include "cityturn.h"
-#include "gotohand.h"
-#include "plrhand.h"
-#include "settlers.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "cityhand.hh"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "gotohand.hh"
+#include "plrhand.hh"
+#include "settlers.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "advdomestic.h"
-#include "advmilitary.h"
-#include "aidata.h"
-#include "aihand.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "advdomestic.hh"
+#include "advmilitary.hh"
+#include "aidata.hh"
+#include "aihand.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "aicity.h"
+#include "aicity.hh"
 
 /* Iterate over cities within a certain range around a given city
  * (city_here) that exist within a given city list. */
@@ -704,13 +704,13 @@ static void ai_city_choose_build(player_t *pplayer, struct city_s *pcity)
     ASSERT_REAL_CHOICE_TYPE(pcity->u.server.ai.choice.type);
 
     CITY_LOG(LOG_DEBUG, pcity, "wants %s with desire %d.",
-             (is_unit_choice_type(pcity->u.server.ai.choice.type) ?
+             (is_unit_choice_type((choice_type)pcity->u.server.ai.choice.type) ?
               unit_name(pcity->u.server.ai.choice.choice) :
               get_improvement_name(pcity->u.server.ai.choice.choice)),
              pcity->u.server.ai.choice.want);
 
     if (!pcity->common.is_building_unit && is_wonder(pcity->common.currently_building)
-        && (is_unit_choice_type(pcity->u.server.ai.choice.type)
+        && (is_unit_choice_type((choice_type)pcity->u.server.ai.choice.type)
             || pcity->u.server.ai.choice.choice != pcity->common.currently_building))
       notify_player_ex(NULL, pcity->common.tile, E_WONDER_STOPPED,
                        _("Game: The %s have stopped building The %s in %s."),
@@ -728,14 +728,14 @@ static void ai_city_choose_build(player_t *pplayer, struct city_s *pcity)
                        get_impr_name_ex(pcity, pcity->u.server.ai.choice.choice),
                        pcity->common.name);
       pcity->common.currently_building = pcity->u.server.ai.choice.choice;
-      pcity->common.is_building_unit = is_unit_choice_type(pcity->u.server.ai.choice.type);
+      pcity->common.is_building_unit = is_unit_choice_type((choice_type)pcity->u.server.ai.choice.type);
 
       /* Help other cities to send caravans to us */
       generate_warmap(pcity, NULL);
       establish_city_distances(pplayer, pcity);
     } else {
       pcity->common.currently_building = pcity->u.server.ai.choice.choice;
-      pcity->common.is_building_unit   = is_unit_choice_type(pcity->u.server.ai.choice.type);
+      pcity->common.is_building_unit   = is_unit_choice_type((choice_type)pcity->u.server.ai.choice.type);
     }
   }
 }

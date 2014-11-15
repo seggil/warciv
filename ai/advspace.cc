@@ -17,14 +17,14 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "government.h"
-#include "packets.h"
-#include "spaceship.h"
+#include "city.hh"
+#include "government.hh"
+#include "packets.hh"
+#include "spaceship.hh"
 
-#include "spacerace.h"
+#include "spacerace.hh"
 
-#include "advspace.h"
+#include "advspace.hh"
 
 /*
  *  This borrows heavily from autoplace code already in the client source.

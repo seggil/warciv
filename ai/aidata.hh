@@ -16,10 +16,10 @@
 /* max size of a short */
 #define MAX_NUM_ID 32767
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"             /* bool type */
 
-#include "wc_types.h"
-#include "effects.h"
+#include "wc_types.hh"
+#include "effects.hh"
 
 /*
  * This file and aidata.c contains global data structures for the AI

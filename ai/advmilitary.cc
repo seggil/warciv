@@ -18,29 +18,29 @@
 #include <assert.h>
 #include <string.h>
 
-#include "city.h"
-#include "combat.h"
-#include "game.h"
-#include "government.h"
-#include "log.h"
-#include "map.h"
+#include "city.hh"
+#include "combat.hh"
+#include "game.hh"
+#include "government.hh"
+#include "log.hh"
+#include "map.hh"
 
-#include "citytools.h"
-#include "cityturn.h"
-#include "gotohand.h"           /* warmap has been redeployed */
-#include "settlers.h"
+#include "citytools.hh"
+#include "cityturn.hh"
+#include "gotohand.hh"        /* warmap has been redeployed */
+#include "settlers.hh"
 
-#include "aiair.h"
-#include "aicity.h"
-#include "aidata.h"
-#include "aidiplomat.h"
-#include "aihand.h"
-#include "aihunt.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "aiair.hh"
+#include "aicity.hh"
+#include "aidata.hh"
+#include "aidiplomat.hh"
+#include "aihand.hh"
+#include "aihunt.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "advmilitary.h"
+#include "advmilitary.hh"
 
 static unsigned int assess_danger(city_t *pcity);
 
@@ -1180,7 +1180,7 @@ static void adjust_ai_unit_choice(city_t *pcity,
   Impr_Type_id id;
 
   /* Sanity */
-  if (!is_unit_choice_type(choice->type)) return;
+  if (!is_unit_choice_type((choice_type)choice->type)) return;
   if (unit_type_flag(choice->choice, F_NONMIL)) return;
   if (do_make_unit_veteran(pcity, choice->choice)) return;
 
@@ -1397,7 +1397,7 @@ void military_advisor_choose_build(player_t *pplayer, city_t *pcity,
 
   if (choice->want <= 0) {
     CITY_LOG(LOGLEVEL_BUILD, pcity, "military advisor has no advice");
-  } else if (is_unit_choice_type(choice->type)) {
+  } else if (is_unit_choice_type((choice_type)choice->type)) {
     CITY_LOG(LOGLEVEL_BUILD, pcity, "military advisor choice: %s (want %d)",
              unit_types[choice->choice].name, choice->want);
   } else {

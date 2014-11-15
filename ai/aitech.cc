@@ -17,20 +17,20 @@
 
 #include <string.h>
 
-#include "log.h"
+#include "log.hh"
 
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "player.h"
-#include "tech.h"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "player.hh"
+#include "tech.hh"
 
-#include "plrhand.h"
+#include "plrhand.hh"
 
-#include "advmilitary.h"
-#include "aitools.h"
+#include "advmilitary.hh"
+#include "aitools.hh"
 
-#include "aitech.h"
+#include "aitech.hh"
 
 struct ai_tech_choice {
   Tech_Type_id choice;   /* The id of the most needed tech */

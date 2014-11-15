@@ -13,7 +13,7 @@
 #ifndef WC_AI_AITECH_H
 #define WC_AI_AITECH_H
 
-#include "wc_types.h"
+#include "wc_types.hh"
 
 void ai_manage_tech(player_t *pplayer);
 void ai_next_tech_goal(player_t *pplayer);

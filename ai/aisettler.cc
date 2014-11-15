@@ -19,34 +19,34 @@
 #include <string.h>
 #include <assert.h>
 
-#include "city.h"
-#include "game.h"
-#include "government.h"
-#include "map.h"
-#include "mem.h"
-#include "log.h"
-#include "packets.h"
-#include "aicore/path_finding.h"
-#include "aicore/pf_tools.h"
-#include "player.h"
-#include "support.h"
-#include "timing.h"
+#include "city.hh"
+#include "game.hh"
+#include "government.hh"
+#include "map.hh"
+#include "mem.hh"
+#include "log.hh"
+#include "packets.hh"
+#include "aicore/path_finding.hh"
+#include "aicore/pf_tools.hh"
+#include "player.hh"
+#include "support.hh"
+#include "timing.hh"
 
-#include "citytools.h"
-#include "gotohand.h"
-#include "maphand.h"
-#include "settlers.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "gotohand.hh"
+#include "maphand.hh"
+#include "settlers.hh"
+#include "unittools.hh"
 
-#include "aicity.h"
-#include "aidata.h"
-#include "aiferry.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "aiunit.h"
-#include "aicore/citymap.h"
+#include "aicity.hh"
+#include "aidata.hh"
+#include "aiferry.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
+#include "aicore/citymap.hh"
 
-#include "aisettler.h"
+#include "aisettler.hh"
 
 /* COMMENTS */
 /*
@@ -93,7 +93,7 @@
  * This is % of defense % to increase want by. */
 #define DEFENSE_EMPHASIS 20
 
-static struct {
+static struct cachemap_s {
   int sum;
   char food;
   char trade;
@@ -441,7 +441,8 @@ static void city_desirability(player_t *pplayer, struct ai_data *ai,
 **************************************************************************/
 void ai_settler_init(player_t *pplayer)
 {
-  cachemap = wc_realloc(cachemap, MAX_MAP_INDEX * sizeof(*cachemap));
+  cachemap = (struct cachemap_s*)
+      wc_realloc(cachemap, MAX_MAP_INDEX * sizeof(*cachemap));
   memset(cachemap, -1, MAX_MAP_INDEX * sizeof(*cachemap));
 }
 

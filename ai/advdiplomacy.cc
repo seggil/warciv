@@ -18,35 +18,35 @@
 #include <assert.h>
 #include <string.h>
 
-#include "city.h"
-#include "aicore/aisupport.h"
-#include "diptreaty.h"
-#include "events.h"
-#include "wc_intl.h"
-#include "game.h"
-#include "log.h"
-#include "mem.h"
-#include "packets.h"
-#include "player.h"
-#include "rand.h"
-#include "nation.h"
-#include "shared.h"
-#include "spaceship.h"
-#include "support.h"
-#include "tech.h"
+#include "city.hh"
+#include "aicore/aisupport.hh"
+#include "diptreaty.hh"
+#include "events.hh"
+#include "wc_intl.hh"
+#include "game.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "packets.hh"
+#include "player.hh"
+#include "rand.hh"
+#include "nation.hh"
+#include "shared.hh"
+#include "spaceship.hh"
+#include "support.hh"
+#include "tech.hh"
 
-#include "citytools.h"
-#include "diplhand.h"
-#include "plrhand.h"
-#include "maphand.h"
-#include "settlers.h"  /* amortize */
+#include "citytools.hh"
+#include "diplhand.hh"
+#include "plrhand.hh"
+#include "maphand.hh"
+#include "settlers.hh"  /* amortize */
 
-#include "aidata.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "advmilitary.h"
+#include "aidata.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "advmilitary.hh"
 
-#include "advdiplomacy.h"
+#include "advdiplomacy.hh"
 
 /*
 

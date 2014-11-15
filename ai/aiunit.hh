@@ -13,9 +13,9 @@
 #ifndef WC_AI_AIUNIT_H
 #define WC_AI_AIUNIT_H
 
-#include "combat.h"
-#include "wc_types.h"
-#include "unittype.h"
+#include "combat.hh"
+#include "wc_types.hh"
+#include "unittype.hh"
 
 /*
  * To prevent integer overflows the product "power * hp * firepower"

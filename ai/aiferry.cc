@@ -15,26 +15,26 @@
 #  include "../config.h"
 #endif
 
-#include "log.h"
+#include "log.hh"
 
-#include "city.h"
-#include "game.h"
-#include "unit.h"
+#include "city.hh"
+#include "game.hh"
+#include "unit.hh"
 
-#include "aicore/path_finding.h"
-#include "aicore/pf_tools.h"
+#include "aicore/path_finding.hh"
+#include "aicore/pf_tools.hh"
 
-#include "hand_gen.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "hand_gen.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "aidata.h"
-#include "aiexplorer.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "aidata.hh"
+#include "aiexplorer.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "aiferry.h"
+#include "aiferry.hh"
 
 
 /* =================== constants with special meaning =================== */

@@ -17,25 +17,25 @@
 
 #include <assert.h>
 
-#include "log.h"
+#include "log.hh"
 
-#include "game.h"
-#include "combat.h"
-#include "map.h"
-#include "player.h"
-#include "unit.h"
+#include "game.hh"
+#include "combat.hh"
+#include "map.hh"
+#include "player.hh"
+#include "unit.hh"
 
-#include "airgoto.h"
-#include "citytools.h"
-#include "gotohand.h"
-#include "maphand.h"
-#include "unithand.h"
-#include "unittools.h"
+#include "airgoto.hh"
+#include "citytools.hh"
+#include "gotohand.hh"
+#include "maphand.hh"
+#include "unithand.hh"
+#include "unittools.hh"
 
-#include "aitools.h"
-#include "aiunit.h"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "aiair.h"
+#include "aiair.hh"
 
 /**************************************************************************
  * Looks for nearest airbase for punit.

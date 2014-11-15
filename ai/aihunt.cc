@@ -17,25 +17,25 @@
 
 #include <assert.h>
 
-#include "city.h"
-#include "combat.h"
-#include "game.h"
-#include "map.h"
-#include "log.h"
-#include "aicore/pf_tools.h"
-#include "player.h"
-#include "unit.h"
+#include "city.hh"
+#include "combat.hh"
+#include "game.hh"
+#include "map.hh"
+#include "log.hh"
+#include "aicore/pf_tools.hh"
+#include "player.hh"
+#include "unit.hh"
 
-#include "citytools.h"
-#include "settlers.h"
-#include "unittools.h"
+#include "citytools.hh"
+#include "settlers.hh"
+#include "unittools.hh"
 
-#include "aidata.h"
-#include "ailog.h"
-#include "aitools.h"
-#include "aiunit.h"
+#include "aidata.hh"
+#include "ailog.hh"
+#include "aitools.hh"
+#include "aiunit.hh"
 
-#include "aihunt.h"
+#include "aihunt.hh"
 
 /**************************************************************************
   We don't need a hunter in this city if we already have one. Return

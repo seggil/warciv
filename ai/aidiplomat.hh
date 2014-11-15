@@ -13,10 +13,10 @@
 #ifndef WC_AI_AIDIPLOMAT_H
 #define WC_AI_AIDIPLOMAT_H
 
-#include "shared.h"             /* bool type */
+#include "shared.hh"           /* bool type */
 
-#include "wc_types.h"
-#include "city.h"               /* struct ai_choice */
+#include "wc_types.hh"
+#include "city.hh"             /* struct ai_choice */
 
 void ai_manage_diplomat(player_t *pplayer, unit_t *punit);
 void ai_choose_diplomat_defensive(player_t *pplayer,
