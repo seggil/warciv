@@ -14,12 +14,12 @@
 #  include "../../config.h"
 #endif
 
-#include "map.h"
-#include "rand.h"
+#include "map.hh"
+#include "rand.hh"
 
-#include "height_map.h"
-#include "mapgen_topology.h"
-#include "utilities.h"
+#include "height_map.hh"
+#include "mapgen_topology.hh"
+#include "utilities.hh"
 
 int *height_map = NULL;
 int hmap_shore_level = 0, hmap_mountain_level = 0;
@@ -72,7 +72,7 @@ void renormalize_hmap_poles(void)
 void make_random_hmap(int smooth)
 {
   int i = 0;
-  height_map = wc_malloc (sizeof(int) * MAX_MAP_INDEX);
+  height_map = (int*)wc_malloc (sizeof(int) * MAX_MAP_INDEX);
 
   INITIALIZE_ARRAY(height_map, MAX_MAP_INDEX, myrand(1000 * smooth) );
 
@@ -185,7 +185,7 @@ void make_pseudofractal1_hmap(int extra_div)
   /* edges are avoided more strongly as this increases */
   int avoidedge = (100 - map.server.landpercent) * step / 100 + step / 3;
 
-  height_map = wc_malloc(sizeof(int) * MAX_MAP_INDEX);
+  height_map = (int*)wc_malloc(sizeof(int) * MAX_MAP_INDEX);
 
  /* initialize map */
   INITIALIZE_ARRAY(height_map, MAX_MAP_INDEX, 0);

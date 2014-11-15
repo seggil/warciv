@@ -21,28 +21,28 @@
 #include <string.h>
 #include <time.h>
 
-#include "wc_intl.h"
-#include "log.h"
-#include "mem.h"
-#include "rand.h"
-#include "shared.h"
+#include "wc_intl.hh"
+#include "log.hh"
+#include "mem.hh"
+#include "rand.hh"
+#include "shared.hh"
 
-#include "city.h"
-#include "game.h"
-#include "map.h"
-#include "nation.h"
-#include "player.h"
+#include "city.hh"
+#include "game.hh"
+#include "map.hh"
+#include "nation.hh"
+#include "player.hh"
 
-#include "../maphand.h" /* assign_continent_numbers(), MAP_NCONT */
-#include "../srv_main.h"
+#include "../maphand.hh" /* assign_continent_numbers(), MAP_NCONT */
+#include "../srv_main.hh"
 
-#include "height_map.h"
-#include "mapgen.h"
-#include "mapgen_topology.h"
-#include "../plrhand.h"
-#include "startpos.h"
-#include "temperature_map.h"
-#include "utilities.h"
+#include "height_map.hh"
+#include "mapgen.hh"
+#include "mapgen_topology.hh"
+#include "../plrhand.hh"
+#include "startpos.hh"
+#include "temperature_map.hh"
+#include "utilities.hh"
 
 
 /* Old-style terrain enumeration: deprecated. */
@@ -163,7 +163,7 @@ struct DataFilter {
 ****************************************************************************/
 static bool condition_filter(const tile_t *ptile, const void *data)
 {
-  const struct DataFilter *filter = data;
+  const struct DataFilter *filter = (const struct DataFilter *)data;
 
   return  not_placed(ptile)
        && tmap_is(ptile, filter->tc)
@@ -822,7 +822,7 @@ static void make_rivers(void)
   create_placed_map(); /* needed bu rand_map_characteristic */
   set_all_ocean_tiles_placed();
 
-  river_map = wc_malloc(sizeof(int) * MAX_MAP_INDEX);
+  river_map = (int*)wc_malloc(sizeof(int) * MAX_MAP_INDEX);
 
   /* The main loop in this function. */
   while (current_riverlength < desirable_riverlength
@@ -1168,13 +1168,13 @@ void map_fractal_generate(bool autosize)
     switch (map.server.generator) {
     case 0:
     case 1:
-      mode = map.server.startpos;
+      mode = (enum start_mode)map.server.startpos;
       break;
     case 2:
       if (map.server.startpos == 0) {
         mode = MT_ALL;
       } else {
-        mode = map.server.startpos;
+        mode = (enum start_mode)map.server.startpos;
       }
       break;
     case 3:
@@ -1766,7 +1766,7 @@ static bool make_island(int islemass, int starters,
 **************************************************************************/
 static void initworld(struct gen234_state *pstate)
 {
-  height_map = wc_malloc(sizeof(int) * map.info.ysize * map.info.xsize);
+  height_map = (int*)wc_malloc(sizeof(int) * map.info.ysize * map.info.xsize);
   create_placed_map(); /* land tiles which aren't placed yet */
   create_tmap(FALSE);
 
@@ -2453,10 +2453,10 @@ static bool mapgenerator67(bool make_roads)
     notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
                 map.server.generator);
     map.server.generator = 3;
-    return FALSE;
+    return false;
   }
 
-  height_map = wc_malloc(sizeof(int) * map.info.xsize * map.info.ysize);
+  height_map = (int*)wc_malloc(sizeof(int) * map.info.xsize * map.info.ysize);
 
   freelog(LOG_VERBOSE, "Creating temporary ocean");
   /* initialize everything to temp ocean */
@@ -2488,7 +2488,8 @@ static bool mapgenerator67(bool make_roads)
   }
 
   map.num_continents = 1;
-  map.server.start_positions = wc_realloc(map.server.start_positions,
+  map.server.start_positions = (civ_map::civ_map_server::start_position*)
+                        wc_realloc(map.server.start_positions,
                                    game.info.nplayers
                                    * sizeof(*map.server.start_positions));
   map.server.num_start_positions = game.info.nplayers;
@@ -2777,9 +2778,9 @@ bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island);
 void startpos_init(void)
 {
   map.server.num_start_positions = 0;
-  map.server.start_positions =
+  map.server.start_positions = static_cast<civ_map::civ_map_server::start_position*>(
       wc_realloc(map.server.start_positions,
-                 game.info.nplayers * sizeof(*map.server.start_positions));
+                 game.info.nplayers * sizeof(*map.server.start_positions)));
 }
 
 /*************************************************************************
@@ -2840,11 +2841,12 @@ void normalize_coord(struct gen8_map *pmap, int *x, int *y)
 *************************************************************************/
 struct gen8_tile **create_tiles_buffer(int xsize, int ysize)
 {
-  struct gen8_tile **buffer = wc_malloc(sizeof(struct gen8_tile *) * xsize);
+  struct gen8_tile **buffer = static_cast<gen8_tile**>(
+      wc_malloc(sizeof(struct gen8_tile **) * xsize));
   int x, y;
 
   for (x = 0; x < xsize; x++) {
-    buffer[x] = wc_malloc(sizeof(struct gen8_tile) * ysize);
+    buffer[x] = (gen8_tile*)wc_malloc(sizeof(struct gen8_tile) * ysize);
     for (y = 0; y < ysize; y++) {
       buffer[x][y].type = TYPE_UNASSIGNED;
       buffer[x][y].start_pos = 0;
@@ -2874,7 +2876,8 @@ void free_tiles_buffer(struct gen8_tile **buffer, int xsize)
 *************************************************************************/
 struct gen8_map *create_map(int xsize, int ysize)
 {
-  struct gen8_map *pmap = wc_malloc(sizeof(struct gen8_map));
+  struct gen8_map *pmap = static_cast<gen8_map*>(
+      wc_malloc(sizeof(struct gen8_map)));
 
   pmap->xsize = xsize;
   pmap->ysize = ysize;
@@ -2998,8 +3001,8 @@ struct gen8_map *create_fair_island(int size, int startpos)
 
   /* Create an island of one tile */
   temp = create_map(size * 2 + 5, size * 2 + 5);
-  x = wc_malloc(sizeof(int) * temp->xsize * temp->ysize);
-  y = wc_malloc(sizeof(int) * temp->xsize * temp->ysize);
+  x = (int*)wc_malloc(sizeof(int) * temp->xsize * temp->ysize);
+  y = (int*)wc_malloc(sizeof(int) * temp->xsize * temp->ysize);
   xmin = xmax = x[0] = size + 2;
   ymin = ymax = y[0] = size + 2;
   temp->tiles[x[0]][y[0]].type = TYPE_LAND;

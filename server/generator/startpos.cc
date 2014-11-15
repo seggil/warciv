@@ -14,19 +14,19 @@
 #  include "../../config.h"
 #endif
 
-#include "log.h"
-#include "wc_intl.h"
+#include "log.hh"
+#include "wc_intl.hh"
 
-#include "city.h"
-#include "game.h"
-#include "map.h"
+#include "city.hh"
+#include "game.hh"
+#include "map.hh"
 
-#include "../maphand.h"
+#include "../maphand.hh"
 
-#include "mapgen_topology.h"
-#include "startpos.h"
-#include "temperature_map.h"
-#include "utilities.h"
+#include "mapgen_topology.hh"
+#include "startpos.hh"
+#include "temperature_map.hh"
+#include "utilities.hh"
 
 struct islands_data_type {
   Continent_id id;
@@ -97,7 +97,8 @@ struct start_filter_data {
 **************************************************************************/
 static bool is_valid_start_pos(const tile_t *ptile, const void *dataptr)
 {
-  const struct start_filter_data *pdata = dataptr;
+  const struct start_filter_data *pdata = static_cast<const struct start_filter_data *>(
+      dataptr);
   int i;
   struct islands_data_type *island;
   int cont_size, cont = map_get_continent(ptile);
@@ -146,7 +147,8 @@ static bool is_valid_start_pos(const tile_t *ptile, const void *dataptr)
  *************************************************************************/
 static int compare_islands(const void *A_, const void *B_)
 {
-  const struct islands_data_type *A = A_, *B = B_;
+  const struct islands_data_type *A = (const struct islands_data_type *)A_;
+  const struct islands_data_type *B = (const struct islands_data_type *)B_;
 
   return B->goodies - A->goodies;
 }
@@ -158,8 +160,8 @@ static void initialize_isle_data(void)
 {
   int nr;
 
-  islands = wc_malloc((map.num_continents + 1) * sizeof(*islands));
-  islands_index = wc_malloc((map.num_continents + 1)
+  islands = (islands_data_type*)wc_malloc((map.num_continents + 1) * sizeof(*islands));
+  islands_index = (int*)wc_malloc((map.num_continents + 1)
                             * sizeof(*islands_index));
 
   /* islands[0] is unused. */
@@ -358,7 +360,8 @@ bool create_start_positions(enum start_mode mode)
   assert(game.info.nplayers <= data.count + sum);
 
   /* now search for the best place and set start_positions */
-  map.server.start_positions = wc_realloc(map.server.start_positions,
+  map.server.start_positions = (civ_map::civ_map_server::start_position*)
+                               wc_realloc(map.server.start_positions,
                                           game.info.nplayers
                                           * sizeof(*map.server.start_positions));
   while (data.count < game.info.nplayers) {

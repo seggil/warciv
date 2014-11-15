@@ -14,10 +14,10 @@
 #  include "../../config.h"
 #endif
 
-#include "city.h"
-#include "map.h"
+#include "city.hh"
+#include "map.hh"
 
-#include "utilities.h"
+#include "utilities.hh"
 
 /****************************************************************************
  Map that contains, according to circumstances, information on whether
@@ -39,8 +39,8 @@ bool placed_map_is_initialized(void)
 void create_placed_map(void)
 {
   assert(!placed_map_is_initialized());
-  placed_map = wc_malloc (sizeof(bool) * MAX_MAP_INDEX);
-  INITIALIZE_ARRAY(placed_map, MAX_MAP_INDEX, FALSE );
+  placed_map = (bool*)wc_malloc (sizeof(bool) * MAX_MAP_INDEX);
+  INITIALIZE_ARRAY(placed_map, MAX_MAP_INDEX, false );
 }
 
 /****************************************************************************

@@ -15,12 +15,12 @@
 #  include "../../config.h"
 #endif
 
-#include "map.h"
+#include "map.hh"
 
-#include "height_map.h"
-#include "temperature_map.h"
-#include "mapgen_topology.h"
-#include "utilities.h"
+#include "height_map.hh"
+#include "temperature_map.hh"
+#include "mapgen_topology.hh"
+#include "utilities.hh"
 
 static int *temperature_map;
 
@@ -80,7 +80,7 @@ void create_tmap(bool real)
     return;
   }
 
-  temperature_map = wc_malloc(sizeof(int) * MAX_MAP_INDEX);
+  temperature_map = (int*)wc_malloc(sizeof(int) * MAX_MAP_INDEX);
   whole_map_iterate(ptile) {
 
      /* the base temperature is equal to base map_colatitude */

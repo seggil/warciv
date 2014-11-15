@@ -14,15 +14,15 @@
 #  include "../../config.h"
 #endif
 
-#include "wc_intl.h"
-#include "log.h"
+#include "wc_intl.hh"
+#include "log.hh"
 
-#include "game.h"
-#include "map.h"
+#include "game.hh"
+#include "map.hh"
 
-#include "../plrhand.h"
+#include "../plrhand.hh"
 
-#include "mapgen_topology.h"
+#include "mapgen_topology.hh"
 
 int ice_base_colatitude = 0 ;
 double req_size;
