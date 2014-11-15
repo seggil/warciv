@@ -428,7 +428,7 @@ dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h sys/time.h sys/types.h unistd.h sys/utsname.h \
-                 stdbool.h sys/file.h libintl.h ucontext.h)
+                 stdbool.h sys/file.h libintl.h ucontext.h locale.h)
 dnl Avoid including the unix emulation layer if we build mingw executables
 dnl There would be type conflicts between winsock and bsd/unix includes
 if test "x$MINGW32" != "xyes"; then
