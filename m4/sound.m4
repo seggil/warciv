@@ -7,17 +7,17 @@ AC_DEFUN([WC_CHECK_SOUND],[
  AC_ARG_ENABLE(sdl-mixer,
    AS_HELP_STRING([--disable-sdl-mixer],
                   [Do not try to use the SDL mixer]),
-   USE_SOUND=no, USE_SOUND_SDL=yes)
+   USE_SOUND=no, USE_SOUND_SDL=no)
 
  AC_ARG_ENABLE(alsa,
    AS_HELP_STRING([--disable-alsa],
                   [Do not try to use ALSA]),
-   USE_SOUND=no, USE_SOUND_ALSA=yes)
+   USE_SOUND=no, USE_SOUND_ALSA=no)
 
  AC_ARG_ENABLE(winmm,
    AS_HELP_STRING([--disable-winmm],
                   [Do not try to use WinMM for sound]),
-   USE_SOUND=no, USE_SOUND_WINMM=yes)
+   USE_SOUND=no, USE_SOUND_WINMM=no)
 
  if test "x$USE_SOUND_ESD" = "xyes"; then
   dnl Add esound support to client
