@@ -6,7 +6,7 @@ PACKAGE=warciv
 AC_INIT(warciv, 2.3.4)
 AC_PREREQ(2.55)
 dnl Initialize with some random file to ensure the source is here.
-AC_CONFIG_SRCDIR([common/game.c])
+AC_CONFIG_SRCDIR([common/game.cc])
 AC_CONFIG_AUX_DIR(bootstrap) # This can't be quoted or automake will fail
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR(m4)
@@ -659,5 +659,8 @@ AC_CONFIG_FILES([Makefile
 AC_CONFIG_FILES([civ:bootstrap/civ.in], [chmod +x civ])
 AC_CONFIG_FILES([ser:bootstrap/ser.in], [chmod +x ser])
 AC_CONFIG_COMMANDS([default],[[ chmod +x bootstrap/undep.sh ; bootstrap/undep.sh ]],[[]])
+AC_SUBST([AM_CXXFLAGS])
+AC_SUBST([AM_LDFLAGS])
+AC_SUBST([CXX])
 AC_OUTPUT
 
