@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+# include "../../config.hh"
 #endif
 
 #include "my_cell_renderer_color.hh"
