@@ -31,7 +31,7 @@ sbuffer: ("string buffer")
 ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#  include "../config.h"
+#  include "../config.hh"
 #endif
 
 #include <assert.h>

@@ -14,8 +14,8 @@
 #define WC_UTILITY_WC_INTL_H
 
 #ifdef HAVE_CONFIG_H
-#  ifndef WC_CONFIG_H             /* this should be defined in config.h */
-#    error Files including fcintl.h should also include config.h directly
+#  ifndef WC_CONFIG_H            /* this should be defined in config.hh */
+#    error Files including fcintl.h should also include config.hh directly
 #  endif
 #endif
 

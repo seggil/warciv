@@ -21,12 +21,12 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#  include "../config.h"
+#  include "../config.hh"
 #endif
 
 #ifdef WIN32_NATIVE
 
-#include "win32-ucontext.h"
+#include "win32-ucontext.hh"
 
 int getcontext(ucontext_t *ucp)
 {

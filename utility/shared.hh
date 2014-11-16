@@ -18,7 +18,7 @@
 #include <time.h>               /* time_t */
 
 #ifdef HAVE_CONFIG_H
-#  ifndef WC_CONFIG_H            /* this should be defined in config.h */
+#  ifndef WC_CONFIG_H            /* this should be defined in config.hh */
 #    error Files including wc_intl.h should also include config.h directly
 #  endif
 #endif
@@ -57,7 +57,7 @@ typedef unsigned int wc_bool;
 
 
 /* Note: the capability string is now in capstr.c --dwp */
-/* Version stuff is now in version.h --dwp */
+/* Version stuff is now in version.hh --dwp */
 
 #define WEBSITE_URL "http://gna.org/projects/freeciv-warclient"
 

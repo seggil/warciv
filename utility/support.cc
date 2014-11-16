@@ -27,7 +27,7 @@
    finds a function and defines HAVE_FOO does not necessarily say
    whether or not there is a _prototype_ for the function available.)
 
-   - We don't have to include config.h in support.h, but can instead
+   - We don't have to include config.hh in support.hh, but can instead
    restrict it to this .c file.
 
    - We can add some extra stuff to these functions if we want.
@@ -38,7 +38,7 @@
 **********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#  include "../config.h"
+#  include "../config.hh"
 #endif
 
 #include <assert.h>

@@ -31,7 +31,7 @@
    1. General principle of data hiding and encapsulation
 
    2. Means we don't have to include config.h and possibly system
-      specific header files in timing.h.  Such stuff is confined
+      specific header files in timing.hh.  Such stuff is confined
       inside timing.c.
 
   However there is a disadvantage: any code using a timer must do
@@ -41,7 +41,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#  include "../config.h"
+#  include "../config.hh"
 #endif
 
 #include <assert.h>
