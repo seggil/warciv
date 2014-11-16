@@ -15,21 +15,21 @@
 
 #ifdef HAVE_CONFIG_H
 # ifdef LOCAL_LUA_CONF
-#  include "../../../config.h"
+#  include "../../../config.hh"
 # endif
 #endif
 
 #ifdef HAVE_MKSTEMP
-#define LUA_USE_MKSTEMP
+# define LUA_USE_MKSTEMP
 #endif
 #ifdef HAVE_ISATTY
-#define LUA_USE_ISATTY
+# define LUA_USE_ISATTY
 #endif
 #ifdef HAVE_POPEN
-#define LUA_USE_POPEN
+# define LUA_USE_POPEN
 #endif
 #ifdef HAVE__LONGJMP
-#define LUA_USE_ULONGJMP
+# define LUA_USE_ULONGJMP
 #endif
 
 #endif /* WC_SERVER_LUA_SRC_LOCALLUACONF_H */
