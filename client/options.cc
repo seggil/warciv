@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#  include "../config.h"
+#  include "../config.hh"
 #endif
 
 #include <assert.h>
@@ -1581,7 +1581,7 @@ filter filter_revert_str_accessor(const char *(*str_accessor)(filter),
 /****************************************************************
  Returns pointer to static memory containing name of option file.
  Ie, based on WARCIV_OPT env var, and home dir. (or a
- OPTION_FILE_NAME define defined in config.h)
+ OPTION_FILE_NAME define defined in config.hh)
  Or NULL if problem.
 *****************************************************************/
 const char *option_file_name(void)
