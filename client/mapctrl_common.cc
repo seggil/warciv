@@ -43,10 +43,10 @@
 #include "mapctrl_common.hh"
 
 /* Selection Rectangle */
-static int rec_anchor_x, rec_anchor_y;  /* canvas coordinates for anchor */
+static int rect_anchor_x, rect_anchor_y;  /* canvas coordinates for anchor */
 static tile_t *rec_canvas_center_tile;
-static int rec_corner_x, rec_corner_y;  /* corner to iterate from */
-static int rec_w, rec_h;                /* width, heigth in pixels */
+static int rect_corner_x, rect_corner_y;  /* corner to iterate from */
+static int rect_w, rect_h;                /* width, heigth in pixels */
 
 bool rbutton_down = FALSE;
 bool rectangle_active = FALSE;
@@ -87,12 +87,13 @@ void anchor_selection_rectangle(int canvas_x, int canvas_y)
 {
   tile_t *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
 
-  tile_to_canvas_pos(&rec_anchor_x, &rec_anchor_y, ptile);
-  rec_anchor_x += NORMAL_TILE_WIDTH / 2;
-  rec_anchor_y += NORMAL_TILE_HEIGHT / 2;
+  tile_to_canvas_pos(&rect_anchor_x, &rect_anchor_y, ptile);
+  rect_anchor_x += NORMAL_TILE_WIDTH / 2;
+  rect_anchor_y += NORMAL_TILE_HEIGHT / 2;
   /* FIXME: This may be off-by-one. */
   rec_canvas_center_tile = get_center_tile_mapcanvas();
-  rec_w = rec_h = 0;
+  rect_w = rect_h = 0;
+  printf("%s canvas_x=%d canvas_y=%d\n",__FUNCTION__, canvas_x, canvas_y);
 }
 
 /**************************************************************************
@@ -110,19 +111,19 @@ static void define_tiles_within_rectangle(void)
 {
   const int W = NORMAL_TILE_WIDTH,   half_W = W / 2;
   const int H = NORMAL_TILE_HEIGHT,  half_H = H / 2;
-  const int segments_x = abs(rec_w / half_W);
-  const int segments_y = abs(rec_h / half_H);
+  const int segments_x = abs(rect_w / half_W);
+  const int segments_y = abs(rect_h / half_H);
 
   /* Iteration direction */
-  const int inc_x = (rec_w > 0 ? half_W : -half_W);
-  const int inc_y = (rec_h > 0 ? half_H : -half_H);
+  const int inc_x = (rect_w >= 0 ? half_W : -half_W);
+  const int inc_y = (rect_h >= 0 ? half_H : -half_H);
 
   int x, y, x2, y2, xx, yy;
 
   bool first = TRUE;
-  y = rec_corner_y;
+  y = rect_corner_y;
   for (yy = 0; yy <= segments_y; yy++, y += inc_y) {
-    x = rec_corner_x;
+    x = rect_corner_x;
     for (xx = 0; xx <= segments_x; xx++, x += inc_x) {
       tile_t *ptile;
 
@@ -142,7 +143,7 @@ static void define_tiles_within_rectangle(void)
        */
       tile_to_canvas_pos(&x2, &y2, ptile);
 
-      if ((yy % 2) != 0 && ((rec_corner_x % W) ^ abs(x2 % W)) != 0) {
+      if ((yy % 2) != 0 && ((rect_corner_x % W) ^ abs(x2 % W)) != 0) {
         continue;
       }
 
@@ -184,10 +185,13 @@ static void define_tiles_within_rectangle(void)
 **************************************************************************/
 void update_selection_rectangle(int canvas_x, int canvas_y)
 {
-  const int W = NORMAL_TILE_WIDTH,    half_W = W / 2;
-  const int H = NORMAL_TILE_HEIGHT,   half_H = H / 2;
+  const int W = NORMAL_TILE_WIDTH;
+  const int H = NORMAL_TILE_HEIGHT;
+  const int half_W = W / 2;
+  const int half_H = H / 2;
   static tile_t *rec_tile = NULL;
-  int diff_x, diff_y;
+  int diff_x;
+  int diff_y;
   tile_t *center_tile;
   tile_t *ptile;
 
@@ -211,50 +215,67 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
   canvas_x += half_W;
   canvas_y += half_H;
 
-  rec_w = rec_anchor_x - canvas_x;  /* width */
-  rec_h = rec_anchor_y - canvas_y;  /* height */
+  rect_w = rect_anchor_x - canvas_x;  /* width */
+  rect_h = rect_anchor_y - canvas_y;  /* height */
 
   /* FIXME: This may be off-by-one. */
   center_tile = get_center_tile_mapcanvas();
   map_distance_vector(&diff_x, &diff_y, center_tile, rec_canvas_center_tile);
 
-  /*  Adjust width, height if mapview has recentered.
-   */
+  /*  Adjust width, height if mapview has recentered.*/
   if (diff_x != 0 || diff_y != 0) {
-
+    printf("was recentered ");
     if (is_isometric) {
-      rec_w += (diff_x - diff_y) * half_W;
-      rec_h += (diff_x + diff_y) * half_H;
+      rect_w += (diff_x - diff_y) * half_W;
+      rect_h += (diff_x + diff_y) * half_H;
 
       /* Iso wrapping */
-      if (abs(rec_w) > map.info.xsize * half_W / 2) {
-        int wx = map.info.xsize * half_W,  wy = map.info.xsize * half_H;
-        rec_w > 0 ? (rec_w -= wx, rec_h -= wy) : (rec_w += wx, rec_h += wy);
+      if (abs(rect_w) > map.info.xsize * half_W / 2) {
+        int wx = map.info.xsize * half_W;
+        int wy = map.info.ysize * half_H; /* gilles: that was xsize */
+        if (rect_w > 0 ) {
+          rect_w -= wx;
+          rect_h -= wy;
+        }
+        else {
+          rect_w += wx;
+          rect_h += wy;
+        }
       }
-
-    } else {
-      rec_w += diff_x * W;
-      rec_h += diff_y * H;
+    } else { /* not isometric*/
+      rect_w += diff_x * W;
+      rect_h += diff_y * H;
 
       /* X wrapping */
-      if (abs(rec_w) > map.info.xsize * half_W) {
+      if (abs(rect_w) > map.info.xsize * half_W) {
         int wx = map.info.xsize * W;
-        rec_w > 0 ? (rec_w -= wx) : (rec_w += wx);
+        if (rect_w >= 0)
+          rect_w -= wx;
+        else
+          rect_w += wx;
+      }
+      /* Y wrapping */
+      if (abs(rect_h) > map.info.ysize * half_H) {
+        int wy = map.info.ysize * H;
+        if (rect_w >= 0)
+          rect_h -= wy;
+        else
+          rect_h += wy;
       }
     }
   }
 
-  if (rec_w == 0 && rec_h == 0) {
-    rectangle_active = FALSE;
+  if (rect_w == 0 && rect_h == 0) {
+    //rectangle_active = FALSE;
     return;
   }
 
   /* It is currently drawn only to the screen, not backing store */
   rectangle_active = TRUE;
-  printf("%s ", __FUNCTION__);
-  draw_selection_rectangle(canvas_x, canvas_y, rec_w, rec_h);
-  rec_corner_x = canvas_x;
-  rec_corner_y = canvas_y;
+  printf("%s\n", __FUNCTION__);
+  draw_selection_rectangle(canvas_x, canvas_y, rect_w, rect_h);
+  rect_corner_x = canvas_x;
+  rect_corner_y = canvas_y;
 }
 
 /**************************************************************************
@@ -264,7 +285,7 @@ void redraw_selection_rectangle(void)
 {
 #if 0
   if (rectangle_active) {
-    draw_selection_rectangle(rec_corner_x, rec_corner_y, rec_w, rec_h);
+    draw_selection_rectangle(rect_corner_x, rect_corner_y, rect_w, rec_h);
   } else
 #endif
   if (dist_first_tile) {
