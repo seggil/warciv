@@ -159,15 +159,15 @@ struct tile_type {
 struct civ_map {
   struct packet_map_info info;
 
-  enum direction8 valid_dirs[DIR8_COUNT];
-  enum direction8 cardinal_dirs[DIR8_COUNT];
-  int num_valid_dirs;
-  int num_cardinal_dirs;
+  enum direction8    valid_dirs[DIR8_COUNT];
+  enum direction8    cardinal_dirs[DIR8_COUNT];
+  int                num_valid_dirs;
+  int                num_cardinal_dirs;
   struct iter_index *iterate_outwards_indices;
-  int num_iterate_outwards_indices;
+  int                num_iterate_outwards_indices;
 
-  int num_continents;
-  tile_t *board;
+  int                num_continents;
+  tile_t            *board;
 
   /* Specific server datas. */
   struct civ_map_server {
