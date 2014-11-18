@@ -5,8 +5,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/server -I$(top_srcdir)/utility -I$(top_srcdir)/com
 
 ## Above, note -I../intl instead of -I$(top_srcdir/intl) is deliberate.
 
-civmanual_SOURCES = \
-		civmanual.c
+civmanual_SOURCES = civmanual.cc
 
 if HAVE_MYSQL
 LUASQL_MYSQL_LIB=../server/lua/mysql/libluasql_mysql.a
