@@ -576,7 +576,7 @@ void release_goto_button(int canvas_x, int canvas_y)
 {
   tile_t *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
-  if (keyboardless_goto_active && hover_state == HOVER_GOTO && ptile) {
+  if (keyboardless_goto_active && cursor_state == CURSOR_STATE_GOTO && ptile) {
     if (multi_select_size(0) == 1) {
       do_unit_goto(ptile);
     } else {
@@ -584,7 +584,7 @@ void release_goto_button(int canvas_x, int canvas_y)
         send_goto_unit(punit, ptile);
       } multi_select_iterate_end;
     }
-    set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
+    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
     update_unit_info_label(get_unit_in_focus());
   }
   keyboardless_goto_active = FALSE;
@@ -762,9 +762,9 @@ void update_turn_done_button_state()
 **************************************************************************/
 void update_line(int canvas_x, int canvas_y)
 {
-  if ((hover_state == HOVER_GOTO
-       || hover_state == HOVER_PATROL
-       || hover_state == HOVER_CONNECT)
+  if ((cursor_state == CURSOR_STATE_GOTO
+       || cursor_state == CURSOR_STATE_PATROL
+       || cursor_state == CURSOR_STATE_CONNECT)
       && draw_goto_line) {
     tile_t *ptile, *old_tile;
 
@@ -785,9 +785,9 @@ void update_line(int canvas_x, int canvas_y)
 ****************************************************************************/
 void overview_update_line(int overview_x, int overview_y)
 {
-  if ((hover_state == HOVER_GOTO
-       || hover_state == HOVER_PATROL
-       || hover_state == HOVER_CONNECT)
+  if ((cursor_state == CURSOR_STATE_GOTO
+       || cursor_state == CURSOR_STATE_PATROL
+       || cursor_state == CURSOR_STATE_CONNECT)
       && draw_goto_line) {
     tile_t *ptile, *old_tile;
     int x, y;

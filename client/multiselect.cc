@@ -1148,7 +1148,7 @@ void add_unit_to_delayed_goto(tile_t *ptile)
   int count = 0;
   char buf[256];
 
-  if (!punit_focus || hover_state != HOVER_DELAYED_GOTO) {
+  if (!punit_focus || cursor_state != CURSOR_STATE_DELAYED_GOTO) {
     return;
   }
 
@@ -1265,9 +1265,9 @@ void request_unit_execute_delayed_goto(int dg)
   /* Check if there is a unkown tile, then ask the user to pick it first */
   delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist, dgd) {
     if (!dgd->ptile && dgd->type != DGT_BREAK) {
-      hover_state = HOVER_DELAYED_GOTO;
+      cursor_state = CURSOR_STATE_DELAYED_GOTO;
       delayed_goto_need_tile_for = dg;
-      update_hover_cursor();
+      update_hover_pointer();
       return;
     }
   } delayed_goto_data_list_iterate_end;

@@ -829,8 +829,8 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
         freelog(LOG_ERROR,"META_MASK\n");
       }
       /* Plain */
-      if (hover_state == HOVER_AIRLIFT_DEST
-          || hover_state == HOVER_DELAYED_AIRLIFT) {
+      if (cursor_state == CURSOR_STATE_AIRLIFT_DEST
+          || cursor_state == CURSOR_STATE_DELAYED_AIRLIFT) {
         switch (keyval) {
         case GDK_4:
           airlift_queue_need_city_for = 1;

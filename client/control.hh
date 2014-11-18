@@ -17,21 +17,22 @@
 
 #include "multiselect.hh"
 
-enum cursor_hover_state {
-  HOVER_NONE = 0,
-  HOVER_GOTO,
-  HOVER_DELAYED_GOTO,
-  HOVER_DELAYED_AIRLIFT,
-  HOVER_NUKE,
-  HOVER_PARADROP,
-  HOVER_CONNECT,
-  HOVER_PATROL,
-  HOVER_AIR_PATROL,
-  HOVER_AIRLIFT_SOURCE,
-  HOVER_AIRLIFT_DEST,
-  HOVER_RALLY_POINT,
-  HOVER_TRADE_CITY,
-  HOVER_TRADE_DEST
+/* previous version were using over instead of cursor */
+enum pointer_cursor_state {
+  CURSOR_STATE_NONE = 0,
+  CURSOR_STATE_GOTO,
+  CURSOR_STATE_DELAYED_GOTO,
+  CURSOR_STATE_DELAYED_AIRLIFT,
+  CURSOR_STATE_NUKE,
+  CURSOR_STATE_PARADROP,   /* 5 */
+  CURSOR_STATE_CONNECT,
+  CURSOR_STATE_PATROL,
+  CURSOR_STATE_AIR_PATROL,
+  CURSOR_STATE_AIRLIFT_SOURCE,
+  CURSOR_STATE_AIRLIFT_DEST,   /* 10 */
+  CURSOR_STATE_RALLY_POINT,
+  CURSOR_STATE_TRADE_CITY,
+  CURSOR_STATE_TRADE_DEST      /* 13 */
 };
 
 /* Selecting unit from a stack without popup. */
@@ -96,8 +97,8 @@ enum default_diplomat_city_actions {
   DDCA_KEEP_MOVING /* Must be last. */
 };
 
-extern int hover_unit; /* unit hover_state applies to */
-extern enum cursor_hover_state hover_state;
+extern int hover_unit; /* unit cursor_state applies to */
+extern enum pointer_cursor_state cursor_state;
 extern enum unit_activity connect_activity;
 extern bool draw_goto_line;
 extern bool non_ai_unit_focus;
@@ -136,7 +137,7 @@ void do_unit_connect(unit_t *punit, tile_t *ptile,
 void do_map_click(tile_t *ptile, enum quickselect_type qtype);
 void attack_after_move(unit_t *punit);
 
-void set_hover_state(unit_t *punit, enum cursor_hover_state state,
+void set_hover_state(unit_t *punit, enum pointer_cursor_state state,
                      enum unit_activity activity);
 void request_active_unit(unit_t *punit);
 void request_center_focus_unit(void);
@@ -280,7 +281,7 @@ void key_toggle_moveandattack(void);
 void key_unit_air_patrol(void);
 void key_unit_air_patrol_dest(void);
 void key_cycle_player_colors_modes(void);
-void update_hover_cursor(void);
+void update_hover_pointer(void);
 
 /* don't change this unless you also put more entries in data/Warciv */
 #define MAX_NUM_UNITS_BELOW 4

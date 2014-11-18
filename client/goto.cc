@@ -197,7 +197,7 @@ static void update_last_part(tile_t *ptile)
   p->end_tile = ptile;
   p->end_moves_left = pf_last_position(p->path)->moves_left;
 
-  if (hover_state == HOVER_CONNECT) {
+  if (cursor_state == CURSOR_STATE_CONNECT) {
     int move_rate = goto_map.template_.move_rate;
     int moves = pf_last_position(p->path)->total_MC;
 
@@ -397,7 +397,7 @@ static int get_activity_time(const tile_t *ptile,
   struct tile_type *ttype = get_tile_type(ptile->terrain);
   int activity_mc = 0;
 
-  assert(hover_state == HOVER_CONNECT);
+  assert(cursor_state == CURSOR_STATE_CONNECT);
   assert(terrain_control.may_road);
 
   switch (connect_activity) {
@@ -663,7 +663,7 @@ static void fill_client_goto_parameter(unit_t *punit,
   parameter->get_EC = get_EC;
   assert(parameter->get_TB == NULL);
   assert(parameter->get_MC != NULL);
-  if (hover_state == HOVER_CONNECT) {
+  if (cursor_state == CURSOR_STATE_CONNECT) {
     if (connect_activity == ACTIVITY_IRRIGATE) {
       parameter->get_costs = get_connect_irrig;
     } else {
@@ -882,7 +882,7 @@ void send_goto_path(unit_t *punit, struct pf_path *path,
 }
 
 /**************************************************************************
-  Send the current patrol route (i.e., the one generated via HOVER_STATE)
+  Send the current patrol route (i.e., the one generated via CURSOR_STATE_STATE)
   to the server.
 **************************************************************************/
 void send_patrol_route(unit_t *punit)
@@ -918,7 +918,7 @@ void send_patrol_route(unit_t *punit)
 }
 
 /**************************************************************************
-  Send the current connect route (i.e., the one generated via HOVER_STATE)
+  Send the current connect route (i.e., the one generated via CURSOR_STATE_STATE)
   to the server.
 **************************************************************************/
 void send_connect_route(unit_t *punit, enum unit_activity activity)
@@ -997,7 +997,7 @@ void send_connect_route(unit_t *punit, enum unit_activity activity)
 
 /**************************************************************************
   Send the current goto route (i.e., the one generated via
-  HOVER_STATE) to the server.  The route might involve more than one
+  CURSOR_STATE_STATE) to the server.  The route might involve more than one
   part if waypoints were used.  FIXME: danger paths are not supported.
 **************************************************************************/
 void send_goto_route(unit_t *punit)

@@ -228,7 +228,7 @@ gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
   if (ev->button == 1 || ev->button == 3) {
     release_goto_button(ev->x, ev->y);
   }
-  if(ev->button == 3 && (rbutton_down || hover_state != HOVER_NONE))  {
+  if(ev->button == 3 && (rbutton_down || cursor_state != CURSOR_STATE_NONE))  {
     release_right_button(ev->x, ev->y);
   }
   if (dist_first_tile) {
@@ -312,7 +312,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     }
     /* LMB in Area Selection mode. */
     else if (tiles_hilited_cities && ptile
-             && hover_state == HOVER_NONE) {
+             && cursor_state == CURSOR_STATE_NONE) {
       toggle_tile_hilite(ptile);
     }
     /* double LMB: select units of the same type. */
@@ -352,7 +352,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     else {
       unit_t *punit;
 
-      if (hover_state == HOVER_NONE
+      if (cursor_state == CURSOR_STATE_NONE
           && ptile
           && !pcity
           && unit_list_size(ptile->units) > 1
@@ -363,7 +363,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
           && (ev->type == GDK_BUTTON_PRESS)) {
         set_unit_focus(punit);
       } else {
-        if (hover_state != HOVER_NONE) {
+        if (cursor_state != CURSOR_STATE_NONE) {
           press_waited = 2;
         }
         action_button_pressed(ev->x, ev->y, SELECT_POPUP);
@@ -419,9 +419,9 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
         release_right_button(ev->x, ev->y);
         return TRUE;
       }
-      if (hover_state != HOVER_RALLY_POINT)
+      if (cursor_state != CURSOR_STATE_RALLY_POINT)
       cancel_tile_hiliting();
-      if (hover_state == HOVER_NONE) {
+      if (cursor_state == CURSOR_STATE_NONE) {
         anchor_selection_rectangle(ev->x, ev->y);
         rbutton_down = TRUE; /* causes rectangle updates */
       }
@@ -482,10 +482,10 @@ gboolean move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data)
   update_line(ev->x, ev->y);
 
   if (rbutton_down) {
-  update_rect_at_mouse_pos();
+    update_rect_at_mouse_pos();
   }
 
-  if (keyboardless_goto_button_down && hover_state == HOVER_NONE) {
+  if (keyboardless_goto_button_down && cursor_state == CURSOR_STATE_NONE) {
     maybe_activate_keyboardless_goto(ev->x, ev->y);
   }
 

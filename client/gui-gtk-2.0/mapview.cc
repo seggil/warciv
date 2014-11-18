@@ -199,30 +199,35 @@ void update_info_label(void)
 /**************************************************************************
  ...
 **************************************************************************/
-void update_hover_cursor(void)
+void update_hover_pointer(void)
 {
   unit_t *punit = get_unit_in_focus();
-  bool cond = (punit ? hover_unit == punit->id : FALSE);
+  bool cond;
   GdkCursor *cursor = NULL;
 
-  switch (hover_state) {
-  case HOVER_NONE:
+  if (punit)
+    cond = (hover_unit == punit->id);
+  else
+    cond = false;
+  switch (cursor_state) {
+  case CURSOR_STATE_NONE:
     break;
-  case HOVER_PATROL:
-  case HOVER_AIR_PATROL:
+  case CURSOR_STATE_PATROL:
+  case CURSOR_STATE_AIR_PATROL:
     if (cond) {
       cursor = patrol_cursor;
     }
     break;
-  case HOVER_GOTO:
-  case HOVER_CONNECT:
+  case CURSOR_STATE_GOTO:
+  case CURSOR_STATE_CONNECT:
     if (!cond) {
       break;
     }
-  case HOVER_RALLY_POINT:
+    /* fall through */
+  case CURSOR_STATE_RALLY_POINT:
     cursor = goto_cursor;
     break;
-  case HOVER_DELAYED_GOTO:
+  case CURSOR_STATE_DELAYED_GOTO:
     if (cond || (delayed_goto_need_tile_for >= 0
                  && delayed_goto_need_tile_for < DELAYED_GOTO_NUM)) {
       switch (delayed_goto_state) {
@@ -238,28 +243,28 @@ void update_hover_cursor(void)
       }
     }
     break;
-  case HOVER_NUKE:
+  case CURSOR_STATE_NUKE:
     if (cond) {
       cursor = nuke_cursor;
     }
     break;
-  case HOVER_PARADROP:
+  case CURSOR_STATE_PARADROP:
     if (cond) {
       cursor = drop_cursor;
     }
     break;
-  case HOVER_AIRLIFT_SOURCE:
+  case CURSOR_STATE_AIRLIFT_SOURCE:
     cursor = source_cursor;
     break;
-  case HOVER_AIRLIFT_DEST:
-  case HOVER_DELAYED_AIRLIFT:
+  case CURSOR_STATE_AIRLIFT_DEST:
+  case CURSOR_STATE_DELAYED_AIRLIFT:
     cursor = dest_cursor;
     break;
-  case HOVER_TRADE_DEST:
+  case CURSOR_STATE_TRADE_DEST:
     if (!cond) {
       break;
     }
-  case HOVER_TRADE_CITY:
+  case CURSOR_STATE_TRADE_CITY:
     cursor = trade_cursor;
     break;
   }
@@ -289,14 +294,15 @@ void update_unit_info_label(unit_t *punit)
                      get_unit_info_label_text2(punit));
 
   if (punit && hover_unit != punit->id
-      && hover_state != HOVER_NONE
-      && hover_state != HOVER_DELAYED_AIRLIFT
-      && hover_state != HOVER_AIRLIFT_SOURCE
-      && hover_state != HOVER_AIRLIFT_DEST
-      && hover_state != HOVER_RALLY_POINT) {
-    set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
+      && cursor_state != CURSOR_STATE_NONE
+      && cursor_state != CURSOR_STATE_DELAYED_AIRLIFT
+      && cursor_state != CURSOR_STATE_AIRLIFT_SOURCE
+      && cursor_state != CURSOR_STATE_AIRLIFT_DEST
+      && cursor_state != CURSOR_STATE_RALLY_POINT)
+  {
+    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
   }
-  update_hover_cursor();
+  update_hover_pointer();
   update_unit_pix_label(punit);
 }
 

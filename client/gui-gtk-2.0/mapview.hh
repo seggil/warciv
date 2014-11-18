@@ -37,6 +37,6 @@ void put_unit_gpixmap_city_overlays(unit_t *punit, GtkPixcomm *p);
 void scrollbar_jump_callback(GtkAdjustment *adj, gpointer hscrollbar);
 void update_map_canvas_scrollbars_size(void);
 
-void update_hover_cursor(void);
+void update_hover_pointer(void);
 
 #endif  /* WC_CLIENT_GUI_MAPVIEW_H */

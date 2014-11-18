@@ -519,7 +519,7 @@ static void base_set_mapview_origin(int gui_x0, int gui_y0)
 
   map_center = get_center_tile_mapcanvas();
   center_tile_overviewcanvas(map_center);
-  if (hover_state == HOVER_GOTO || hover_state == HOVER_PATROL) {
+  if (cursor_state == CURSOR_STATE_GOTO || cursor_state == CURSOR_STATE_PATROL) {
     create_line_at_mouse_pos();
   }
   if (rectangle_active) {
@@ -2070,8 +2070,8 @@ void move_unit_map_canvas(unit_t *punit,
   /* Go ahead and start the timer. */
   anim_timer = renew_timer_start(anim_timer, TIMER_USER, TIMER_ACTIVE);
 
-  if (punit->id == hover_unit && hover_state != HOVER_NONE) {
-    set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
+  if (punit->id == hover_unit && cursor_state != CURSOR_STATE_NONE) {
+    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
     update_unit_info_label(punit);
   }
 
