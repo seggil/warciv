@@ -47,7 +47,7 @@
 
 #include "control.hh"
 
-bool moveandattack_state;
+bool move_and_attack_state;
 bool autowakeup_state;
 enum default_caravan_unit_actions default_caravan_action;
 enum default_diplomat_unit_actions default_diplomat_unit_action;
@@ -59,7 +59,7 @@ bool default_action_locked;
 bool default_action_military_only;
 
 bool focus_turn = TRUE;
-static unit_t *plast = NULL;
+static unit_t *plast_unit = NULL;
 
 /* gui-dep code may adjust depending on tile size etc: */
 int num_units_below = MAX_NUM_UNITS_BELOW;
@@ -1941,7 +1941,7 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
         multi_select_iterate(TRUE, punit) {
           cursor_state = CURSOR_STATE_CONNECT;
           hover_unit = punit->id;
-          connect_activity = ca;
+          connect_activity = c_act;
           put_unit_focus(punit);
           enter_goto_state(punit);
           do_unit_connect(punit, ptile, connect_activity);
@@ -2010,7 +2010,10 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
   }
 
   /* See mapctrl_common.c */
-  keyboardless_goto_start_tile = maybe_goto ? ptile : NULL;
+  if ( maybe_goto )
+    keyboardless_goto_start_tile = ptile;
+  else
+    keyboardless_goto_start_tile = NULL;
   keyboardless_goto_button_down = maybe_goto;
   keyboardless_goto_active = FALSE;
 }
@@ -2024,10 +2027,13 @@ static unit_t *quickselect(tile_t *ptile,
                            enum quickselect_type qtype)
 {
   int listsize = unit_list_size(ptile->units);
-  unit_t *panytransporter = NULL,
-         *panymovesea  = NULL, *panysea  = NULL,
-         *panymoveland = NULL, *panyland = NULL,
-         *panymoveunit = NULL, *panyunit = NULL;
+  unit_t *panytransporter = NULL;
+  unit_t *panymovesea  = NULL;
+  unit_t *panysea  = NULL;
+  unit_t *panymoveland = NULL;
+  unit_t *panyland = NULL;
+  unit_t *panymoveunit = NULL;
+  unit_t *panyunit = NULL;
 
   assert(qtype > SELECT_POPUP);
 
@@ -2035,7 +2041,10 @@ static unit_t *quickselect(tile_t *ptile,
     return NULL;
   } else if (listsize == 1) {
     unit_t *punit = unit_list_get(ptile->units, 0);
-    return (get_player_idx() == punit->owner) ? punit : NULL;
+    if (get_player_idx() == punit->owner)
+      return punit;
+    else
+      return NULL;
   }
 
   /*  Quickselect priorities. Units with moves left
@@ -2137,9 +2146,10 @@ static unit_t *quickselect(tile_t *ptile,
 **************************************************************************/
 void attack_after_move(unit_t *punit)
 {
-  if (moveandattack_state
+  if (move_and_attack_state
       && can_unit_do_auto(punit)
-      && is_military_unit(punit)) {
+      && is_military_unit(punit))
+  {
     request_unit_auto(punit);
     request_new_unit_activity(punit, ACTIVITY_IDLE);
   }
@@ -2482,7 +2492,7 @@ void key_unit_unload_all(void)
 {
   bool cond = multi_select_size(0) > 1;
 
-  plast = NULL;
+  plast_unit = NULL;
   unit_list_iterate(multi_select_get_units_focus(), punit) {
     if ((cond && !unit_satisfies_filter(punit,
                                         multi_select_inclusive_filter,
@@ -2493,8 +2503,8 @@ void key_unit_unload_all(void)
 
     request_unit_unload_all(punit);
   } unit_list_iterate_end;
-  if (plast) {
-    set_unit_focus(plast);
+  if (plast_unit) {
+    set_unit_focus(plast_unit);
   }
 }
 
@@ -2957,10 +2967,11 @@ void key_toggle_moveandattack(void)
 {
   static char txt[255];
 
-  moveandattack_state ^= 1;
-  my_snprintf(txt, sizeof(txt), moveandattack_state
-              ? _("Warclient: Move and attack mode is on.")
-              : _("Warclient: Move and attack mode is off."));
+  move_and_attack_state ^= 1;
+  if ( move_and_attack_state )
+    my_snprintf(txt, sizeof(txt), _("Warclient: Move and attack mode is on."));
+  else
+    my_snprintf(txt, sizeof(txt), _("Warclient: Move and attack mode is off."));
   append_output_window(txt);
 }
 
@@ -3067,7 +3078,7 @@ void put_unit_focus(unit_t *punit)
 **************************************************************************/
 void lie_unit_focus_init(void)
 {
-  plast = punit_focus;
+  plast_unit = punit_focus;
 }
 
 /**************************************************************************
@@ -3075,12 +3086,12 @@ void lie_unit_focus_init(void)
 **************************************************************************/
 void put_last_unit_focus(void)
 {
-  if (!plast) {
+  if (!plast_unit) {
     return;
   }
-  punit_focus = plast;
+  punit_focus = plast_unit;
   update_unit_info_label(punit_focus);
-  plast = NULL;
+  plast_unit = NULL;
 }
 
 /**************************************************************************

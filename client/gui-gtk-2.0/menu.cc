@@ -5299,7 +5299,7 @@ static void callback_miscellaneous_toggle_wakeup(GtkToggleAction *action,
 static void callback_miscellaneous_toggle_moveandattack(GtkToggleAction *action,
                                                         gpointer user_data)
 {
-  if (moveandattack_state ^ gtk_toggle_action_get_active(action)) {
+  if (move_and_attack_state ^ gtk_toggle_action_get_active(action)) {
     key_toggle_moveandattack();
   }
 }
@@ -6930,7 +6930,7 @@ void init_menus(void)
                          autowakeup_state);
   menu_toggle_set_active(toggle_action_group_miscellaneous,
                          "MISCELLANEOUS_TOGGLE_MOVEANDATTACK",
-                         moveandattack_state);
+                         move_and_attack_state);
 
   update_miscellaneous_menu();
 

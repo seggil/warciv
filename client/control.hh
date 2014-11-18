@@ -103,7 +103,7 @@ extern enum unit_activity connect_activity;
 extern bool draw_goto_line;
 extern bool non_ai_unit_focus;
 extern bool autowakeup_state;
-extern bool moveandattack_state;
+extern bool move_and_attack_state;
 extern int lastactivatedunit;
 extern int look_into_allied_city;
 extern enum default_caravan_unit_actions default_caravan_action;

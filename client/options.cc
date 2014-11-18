@@ -905,7 +905,7 @@ struct client_option client_options[] = {
                   CLIENT_OPTION_CATEGORY_GAMEPLAY,
                   TRUE,
                   NULL),
-  GEN_BOOL_OPTION(moveandattack_state,
+  GEN_BOOL_OPTION(move_and_attack_state,
                   N_("Move and attack mode"),
                   N_("When this option is enabled, the units will try to "
                      "autoattack after every move. Note that will cancel "
