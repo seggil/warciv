@@ -420,7 +420,7 @@ gboolean button_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
         return TRUE;
       }
       if (cursor_state != CURSOR_STATE_RALLY_POINT)
-      cancel_tile_hiliting();
+        cancel_tile_hiliting();
       if (cursor_state == CURSOR_STATE_NONE) {
         anchor_selection_rectangle(ev->x, ev->y);
         rbutton_down = TRUE; /* causes rectangle updates */
@@ -445,7 +445,9 @@ void create_line_at_mouse_pos(void)
 
   gdk_window_get_pointer(map_canvas->window, &x, &y, 0);
   if (x >= 0 && y >= 0
-      && x < mapview_canvas.width && y < mapview_canvas.width) {
+      && x < mapview_canvas.width
+      && y < mapview_canvas.width)
+  {
     update_line(x, y);
   } else {
     gdk_window_get_pointer(overview_canvas->window, &x, &y, 0);
@@ -463,7 +465,8 @@ void create_line_at_mouse_pos(void)
 **************************************************************************/
 void update_rect_at_mouse_pos(void)
 {
-  int canvas_x, canvas_y;
+  int canvas_x;
+  int canvas_y;
 
   if (!rbutton_down) {
     return;

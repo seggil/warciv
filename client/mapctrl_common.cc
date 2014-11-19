@@ -765,8 +765,10 @@ void update_line(int canvas_x, int canvas_y)
   if ((cursor_state == CURSOR_STATE_GOTO
        || cursor_state == CURSOR_STATE_PATROL
        || cursor_state == CURSOR_STATE_CONNECT)
-      && draw_goto_line) {
-    tile_t *ptile, *old_tile;
+      && draw_goto_line)
+  {
+    tile_t *ptile;
+    tile_t *old_tile;
 
     ptile = canvas_pos_to_tile(canvas_x, canvas_y);
     if (!ptile) {
