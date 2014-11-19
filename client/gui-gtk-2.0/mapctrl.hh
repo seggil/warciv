@@ -21,10 +21,10 @@ struct unit;
 
 void key_city_workers(GtkWidget *w, GdkEventKey *ev);
 
-gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data);
-gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data);
-gboolean butt_down_overviewcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data);
-gboolean move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data);
+gboolean button_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data);
+gboolean button_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data);
+gboolean button_move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data);
+gboolean button_down_overviewcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data);
 gboolean move_overviewcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data);
 
 void center_on_unit(void);

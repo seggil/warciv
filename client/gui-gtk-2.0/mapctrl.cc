@@ -223,7 +223,7 @@ void set_turn_done_button_state(bool state)
  Handle 'Mouse button released'. Because of the quickselect feature,
  the release of both left and right mousebutton can launch the goto.
 **************************************************************************/
-gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
+gboolean button_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
   if (ev->button == 1 || ev->button == 3) {
     release_goto_button(ev->x, ev->y);
@@ -240,10 +240,10 @@ gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 }
 
 /**************************************************************************
- Handle all mouse button press on canvas.
+ Handle 'button_press_event': Handle all mouse button press on canvas.
  Future feature: User-configurable mouse clicks.
 **************************************************************************/
-gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
+gboolean button_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
   static int press_waited = 0;
   city_t *pcity = NULL;
@@ -475,9 +475,9 @@ void update_rect_at_mouse_pos(void)
 }
 
 /**************************************************************************
-...
+  handle motion_notify_event
 **************************************************************************/
-gboolean move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data)
+gboolean button_move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data)
 {
   update_line(ev->x, ev->y);
 
@@ -509,7 +509,7 @@ gboolean move_overviewcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data)
 /**************************************************************************
 ...
 **************************************************************************/
-gboolean butt_down_overviewcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
+gboolean button_down_overviewcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
   int xtile, ytile;
 

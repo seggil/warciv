@@ -1387,7 +1387,7 @@ static void setup_widgets(void)
   g_signal_connect(overview_canvas, "motion_notify_event",
                    G_CALLBACK(move_overviewcanvas), NULL);
   g_signal_connect(overview_canvas, "button_press_event",
-                   G_CALLBACK(butt_down_overviewcanvas), NULL);
+                   G_CALLBACK(button_down_overviewcanvas), NULL);
   gtk_box_pack_start(GTK_BOX(overview_box), overview_canvas,
                      TRUE, TRUE, 0);
 
@@ -1642,13 +1642,13 @@ static void setup_widgets(void)
                    G_CALLBACK(map_canvas_configure), NULL);
 
   g_signal_connect(map_canvas, "motion_notify_event",
-                   G_CALLBACK(move_mapcanvas), NULL);
+                   G_CALLBACK(button_move_mapcanvas), NULL);
 
   g_signal_connect(map_canvas, "button_press_event",
-                   G_CALLBACK(butt_down_mapcanvas), NULL);
+                   G_CALLBACK(button_down_mapcanvas), NULL);
 
   g_signal_connect(map_canvas, "button_release_event",
-                   G_CALLBACK(butt_release_mapcanvas), NULL);
+                   G_CALLBACK(button_release_mapcanvas), NULL);
 
   g_signal_connect(toplevel, "key_press_event",
                    G_CALLBACK(keyboard_handler), NULL);
