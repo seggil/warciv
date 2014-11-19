@@ -630,7 +630,7 @@ const char *get_unit_info_label_text2(unit_t *punit)
     int infrastructure = get_tile_infrastructure_set(punit->tile);
 
     add_line("%s", unit_activity_text(punit));
-    if (hover_unit == punit->id) {
+    if (cursor_unit == punit->id) {
       add_line(_("Turns to target: %d"), get_goto_turns());
     } else {
       add_line(" ");

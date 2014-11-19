@@ -97,7 +97,7 @@ enum default_diplomat_city_actions {
   DDCA_KEEP_MOVING /* Must be last. */
 };
 
-extern int hover_unit; /* unit cursor_state applies to */
+extern int cursor_unit; /* unit cursor_state applies to */
 extern enum pointer_cursor_state cursor_state;
 extern enum unit_activity connect_activity;
 extern bool draw_goto_line;
@@ -137,7 +137,7 @@ void do_unit_connect(unit_t *punit, tile_t *ptile,
 void do_map_click(tile_t *ptile, enum quickselect_type qtype);
 void attack_after_move(unit_t *punit);
 
-void set_hover_state(unit_t *punit, enum pointer_cursor_state state,
+void set_cursor_state(unit_t *punit, enum pointer_cursor_state state,
                      enum unit_activity activity);
 void request_active_unit(unit_t *punit);
 void request_center_focus_unit(void);
@@ -281,7 +281,7 @@ void key_toggle_moveandattack(void);
 void key_unit_air_patrol(void);
 void key_unit_air_patrol_dest(void);
 void key_cycle_player_colors_modes(void);
-void update_hover_pointer(void);
+void update_cursor_pointer(void);
 
 /* don't change this unless you also put more entries in data/Warciv */
 #define MAX_NUM_UNITS_BELOW 4

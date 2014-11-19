@@ -72,8 +72,8 @@ static unit_t *punit_focus = NULL;
  * disconnects. */
 static int previous_focus_id = -1;
 
-/* These should be set via set_hover_state() */
-int hover_unit = 0; /* id of unit cursor_state applies to */
+/* These should be set via set_cursor_state() */
+int cursor_unit = 0; /* id of unit cursor_state applies to */
 enum pointer_cursor_state cursor_state = CURSOR_STATE_NONE;
 enum unit_activity connect_activity;
 /* This may only be here until client goto is fully implemented.
@@ -104,7 +104,7 @@ void control_queues_free(void)
 {
   exit_goto_state();
   cursor_state = CURSOR_STATE_NONE;
-  hover_unit = 0;
+  cursor_unit = 0;
   multi_select_clear_all();
   delayed_goto_clear_all();
   airlift_queue_clear_all();
@@ -123,13 +123,13 @@ void control_queues_init(void)
 /**************************************************************************
 ...
 **************************************************************************/
-void set_hover_state(unit_t *punit, enum pointer_cursor_state state,
+void set_cursor_state(unit_t *punit, enum pointer_cursor_state state,
                      enum unit_activity activity)
 {
   assert(punit != NULL || state == CURSOR_STATE_NONE);
   assert(state == CURSOR_STATE_CONNECT || activity == ACTIVITY_LAST);
   draw_goto_line = TRUE;
-  hover_unit = punit ? punit->id : 0;
+  cursor_unit = punit ? punit->id : 0;
   cursor_state = state;
   connect_activity = activity;
   exit_goto_state();
@@ -294,8 +294,8 @@ void advance_unit_focus(void)
   unit_t *punit_old_focus = punit_focus;
   unit_t *candidate = find_best_focus_candidate(FALSE);
 
-  if (punit_focus && punit_focus->id == hover_unit) {
-    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+  if (punit_focus && punit_focus->id == cursor_unit) {
+    set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
   }
   if (!can_client_change_view()) {
     return;
@@ -790,7 +790,7 @@ void request_unit_goto(void)
   }
 
   if (cursor_state != CURSOR_STATE_GOTO) {
-    set_hover_state(punit, CURSOR_STATE_GOTO, ACTIVITY_LAST);
+    set_cursor_state(punit, CURSOR_STATE_GOTO, ACTIVITY_LAST);
     update_unit_info_label(punit);
     /* Not yet implemented for air units, including helicopters. */
     if (is_air_unit(punit) || is_heli_unit(punit)) {
@@ -813,7 +813,7 @@ void request_unit_delayed_goto(void)
   if (!punit_focus) {
     return;
   }
-  set_hover_state(punit_focus, CURSOR_STATE_DELAYED_GOTO, ACTIVITY_LAST);
+  set_cursor_state(punit_focus, CURSOR_STATE_DELAYED_GOTO, ACTIVITY_LAST);
   update_unit_info_label(punit_focus);
 }
 
@@ -842,8 +842,8 @@ void key_select_rally_point(void)
     append_output_window(buf);
 
     cursor_state = CURSOR_STATE_RALLY_POINT;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
   }
 }
 
@@ -853,8 +853,8 @@ void key_select_rally_point(void)
 void request_auto_airlift_destination_selection(void)
 {
   cursor_state = CURSOR_STATE_AIRLIFT_DEST;
-  hover_unit = 0;
-  update_hover_pointer();
+  cursor_unit = 0;
+  update_cursor_pointer();
 }
 
 /**************************************************************************
@@ -872,8 +872,8 @@ void request_auto_airlift_source_selection(void)
     update_airlift_menu(0);
   } else {
     cursor_state = CURSOR_STATE_AIRLIFT_SOURCE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
   }
 }
 
@@ -976,7 +976,7 @@ void request_unit_connect(enum unit_activity activity)
 
   if (cursor_state != CURSOR_STATE_CONNECT || connect_activity != activity) {
     /* Enter or change the hover connect state. */
-    set_hover_state(punit_focus, CURSOR_STATE_CONNECT, activity);
+    set_cursor_state(punit_focus, CURSOR_STATE_CONNECT, activity);
     update_unit_info_label(punit_focus);
 
     enter_goto_state(punit_focus);
@@ -1319,7 +1319,7 @@ void request_unit_nuke(unit_t *punit)
   if (punit->moves_left == 0) {
     do_unit_nuke(punit);
   } else {
-    set_hover_state(punit, CURSOR_STATE_NUKE, ACTIVITY_LAST);
+    set_cursor_state(punit, CURSOR_STATE_NUKE, ACTIVITY_LAST);
     update_unit_info_label(punit);
   }
 }
@@ -1337,7 +1337,7 @@ void request_unit_paradrop(unit_t *punit)
     return;
   }
 
-  set_hover_state(punit, CURSOR_STATE_PARADROP, ACTIVITY_LAST);
+  set_cursor_state(punit, CURSOR_STATE_PARADROP, ACTIVITY_LAST);
   update_unit_info_label(punit);
 }
 
@@ -1360,7 +1360,7 @@ void request_unit_patrol(void)
   }
 
   if (cursor_state != CURSOR_STATE_PATROL) {
-    set_hover_state(punit, CURSOR_STATE_PATROL, ACTIVITY_LAST);
+    set_cursor_state(punit, CURSOR_STATE_PATROL, ACTIVITY_LAST);
     update_unit_info_label(punit);
     /* Not yet implemented for air units, including helicopters. */
     if (is_air_unit(punit) || is_heli_unit(punit)) {
@@ -1851,24 +1851,24 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
 {
   enum unit_activity c_act = connect_activity;
   city_t *pcity = map_get_city(ptile);
-  unit_t *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
+  unit_t *punit = player_find_unit_by_id(get_player_ptr(), cursor_unit);
   bool maybe_goto = FALSE;
 
   if (ptile && cursor_state == CURSOR_STATE_TRADE_CITY) {
     add_tile_in_trade_planning(ptile, TRUE);
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
   } else if (punit && pcity && cursor_state == CURSOR_STATE_TRADE_DEST) {
     request_trade_route(pcity);
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
   } else if (ptile && cursor_state == CURSOR_STATE_AIRLIFT_SOURCE) {
     add_city_to_auto_airlift_queue(ptile, FALSE);
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
     return;
   } else if(ptile && cursor_state == CURSOR_STATE_AIRLIFT_DEST) {
     if (pcity) {
@@ -1879,8 +1879,8 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
     }
     airlift_queue_need_city_for = -1;
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
     return;
   } else if (ptile && cursor_state == CURSOR_STATE_DELAYED_GOTO) {
     if (delayed_goto_need_tile_for >= 0
@@ -1891,20 +1891,20 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
       add_unit_to_delayed_goto(ptile);
     }
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
     return;
   } else if (ptile && cursor_state == CURSOR_STATE_RALLY_POINT) {
     set_rally_point_for_selected_cities(ptile);
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
     return;
   } else if (ptile && cursor_state == CURSOR_STATE_DELAYED_AIRLIFT) {
     schedule_delayed_airlift(ptile);
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
     return;
   } else if (punit && cursor_state != CURSOR_STATE_NONE) {
     switch (cursor_state) {
@@ -1940,7 +1940,7 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
         lie_unit_focus_init();
         multi_select_iterate(TRUE, punit) {
           cursor_state = CURSOR_STATE_CONNECT;
-          hover_unit = punit->id;
+          cursor_unit = punit->id;
           connect_activity = c_act;
           put_unit_focus(punit);
           enter_goto_state(punit);
@@ -1953,7 +1953,7 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
         lie_unit_focus_init();
         multi_select_iterate(TRUE, punit) {
           cursor_state = CURSOR_STATE_PATROL;
-          hover_unit = punit->id;
+          cursor_unit = punit->id;
           put_unit_focus(punit);
           enter_goto_state(punit);
           do_unit_patrol_to(punit, ptile);
@@ -1968,7 +1968,7 @@ void do_map_click(tile_t *ptile, enum quickselect_type qtype)
       default:
         break;
     }
-    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+    set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
     update_unit_info_label(punit);
   }
   /* Bypass stack or city popup if quickselect is specified. */
@@ -2156,14 +2156,14 @@ void attack_after_move(unit_t *punit)
 }
 
 /**************************************************************************
- Finish the goto mode and let the unit which is stored in hover_unit move
+ Finish the goto mode and let the unit which is stored in cursor_unit move
  to a given location.
 **************************************************************************/
 void do_unit_goto(tile_t *ptile)
 {
-  unit_t *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
+  unit_t *punit = player_find_unit_by_id(get_player_ptr(), cursor_unit);
 
-  if (hover_unit == 0 || (cursor_state != CURSOR_STATE_GOTO)) {
+  if (cursor_unit == 0 || (cursor_state != CURSOR_STATE_GOTO)) {
     return;
   }
 
@@ -2187,7 +2187,7 @@ void do_unit_goto(tile_t *ptile)
     }
   }
 
-  set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+  set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
 }
 
 /**************************************************************************
@@ -2228,7 +2228,7 @@ void do_unit_patrol_to(unit_t *punit, tile_t *ptile)
     }
   }
 
-  set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+  set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
 }
 
 /**************************************************************************
@@ -2253,7 +2253,7 @@ void do_unit_connect(unit_t *punit, tile_t *ptile,
     }
   }
 
-  set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+  set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
 }
 
 /**************************************************************************
@@ -2272,9 +2272,9 @@ void key_cancel_action(void)
   }
 
   if (cursor_state != CURSOR_STATE_NONE && !popped) {
-    unit_t *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
+    unit_t *punit = player_find_unit_by_id(get_player_ptr(), cursor_unit);
 
-    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+    set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
     update_unit_info_label(punit);
 
     keyboardless_goto_button_down = FALSE;
@@ -2289,8 +2289,8 @@ void key_cancel_action(void)
       || cursor_state == CURSOR_STATE_TRADE_CITY
       || cursor_state == CURSOR_STATE_TRADE_DEST) {
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
   }
   delayed_goto_need_tile_for = -1;
   airlift_queue_need_city_for = -1;
@@ -2532,8 +2532,8 @@ void key_unit_delayed_goto(enum delayed_goto_type dgtype)
      * a delayed goto to non-defined tile). */
     add_unit_to_delayed_goto(NULL);
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
   } else {
     delayed_goto_state = dgtype;
     request_unit_delayed_goto();
@@ -2983,12 +2983,12 @@ void key_unit_delayed_airlift(void)
   if (cursor_state == CURSOR_STATE_DELAYED_AIRLIFT) {
     schedule_delayed_airlift(NULL);
     cursor_state = CURSOR_STATE_NONE;
-    hover_unit = 0;
+    cursor_unit = 0;
   } else {
     cursor_state = CURSOR_STATE_DELAYED_AIRLIFT;
-    hover_unit = 0;
+    cursor_unit = 0;
   }
-  update_hover_pointer();
+  update_cursor_pointer();
 }
 
 /**************************************************************************
@@ -3017,8 +3017,8 @@ void key_add_trade_city(void)
     update_auto_caravan_menu();
   } else {
     cursor_state = CURSOR_STATE_TRADE_CITY;
-    hover_unit = 0;
-    update_hover_pointer();
+    cursor_unit = 0;
+    update_cursor_pointer();
   }
 }
 
@@ -3030,7 +3030,7 @@ void key_auto_caravan_goto(void)
   if (!punit_focus) {
     return;
   }
-  set_hover_state(punit_focus, CURSOR_STATE_TRADE_DEST, ACTIVITY_LAST);
+  set_cursor_state(punit_focus, CURSOR_STATE_TRADE_DEST, ACTIVITY_LAST);
   update_unit_info_label(punit_focus);
 }
 
@@ -3060,7 +3060,7 @@ void key_unit_air_patrol_dest(void)
   if (!punit_focus) {
     return;
   }
-  set_hover_state(punit_focus, CURSOR_STATE_AIR_PATROL, ACTIVITY_LAST);
+  set_cursor_state(punit_focus, CURSOR_STATE_AIR_PATROL, ACTIVITY_LAST);
   update_unit_info_label(punit_focus);
 }
 

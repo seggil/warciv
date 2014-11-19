@@ -1267,7 +1267,7 @@ void request_unit_execute_delayed_goto(int dg)
     if (!dgd->ptile && dgd->type != DGT_BREAK) {
       cursor_state = CURSOR_STATE_DELAYED_GOTO;
       delayed_goto_need_tile_for = dg;
-      update_hover_pointer();
+      update_cursor_pointer();
       return;
     }
   } delayed_goto_data_list_iterate_end;

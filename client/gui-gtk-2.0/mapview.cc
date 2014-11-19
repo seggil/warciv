@@ -199,14 +199,14 @@ void update_info_label(void)
 /**************************************************************************
  ...
 **************************************************************************/
-void update_hover_pointer(void)
+void update_cursor_pointer(void)
 {
   unit_t *punit = get_unit_in_focus();
   bool cond;
   GdkCursor *cursor = NULL;
 
   if (punit)
-    cond = (hover_unit == punit->id);
+    cond = (cursor_unit == punit->id);
   else
     cond = false;
   switch (cursor_state) {
@@ -293,16 +293,16 @@ void update_unit_info_label(unit_t *punit)
   gtk_label_set_text(GTK_LABEL(unit_info_label),
                      get_unit_info_label_text2(punit));
 
-  if (punit && hover_unit != punit->id
+  if (punit && cursor_unit != punit->id
       && cursor_state != CURSOR_STATE_NONE
       && cursor_state != CURSOR_STATE_DELAYED_AIRLIFT
       && cursor_state != CURSOR_STATE_AIRLIFT_SOURCE
       && cursor_state != CURSOR_STATE_AIRLIFT_DEST
       && cursor_state != CURSOR_STATE_RALLY_POINT)
   {
-    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+    set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
   }
-  update_hover_pointer();
+  update_cursor_pointer();
   update_unit_pix_label(punit);
 }
 

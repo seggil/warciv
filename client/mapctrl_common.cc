@@ -584,7 +584,7 @@ void release_goto_button(int canvas_x, int canvas_y)
         send_goto_unit(punit, ptile);
       } multi_select_iterate_end;
     }
-    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+    set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
     update_unit_info_label(get_unit_in_focus());
   }
   keyboardless_goto_active = FALSE;

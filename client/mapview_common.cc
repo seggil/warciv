@@ -2070,8 +2070,8 @@ void move_unit_map_canvas(unit_t *punit,
   /* Go ahead and start the timer. */
   anim_timer = renew_timer_start(anim_timer, TIMER_USER, TIMER_ACTIVE);
 
-  if (punit->id == hover_unit && cursor_state != CURSOR_STATE_NONE) {
-    set_hover_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
+  if (punit->id == cursor_unit && cursor_state != CURSOR_STATE_NONE) {
+    set_cursor_state(NULL, CURSOR_STATE_NONE, ACTIVITY_LAST);
     update_unit_info_label(punit);
   }
 
