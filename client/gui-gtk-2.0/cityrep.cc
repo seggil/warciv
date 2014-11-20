@@ -2154,8 +2154,9 @@ void toggle_city_hilite(city_t *pcity, bool on_off)
     itree_get(&it, 1, &id, -1);
 
     if (id == pcity->common.id) {
-      on_off ?
-        itree_select(city_selection, &it):
+      if (on_off)
+        itree_select(city_selection, &it);
+      else
         itree_unselect(city_selection, &it);
       break;
     }
