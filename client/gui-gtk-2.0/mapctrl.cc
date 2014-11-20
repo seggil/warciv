@@ -415,7 +415,7 @@ gboolean button_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
        *  release it on another widget, and return to canvas
        *  to find rectangle still active.
        */
-      if (rectangle_active) {
+      if (rectangle_selection_state) {
         release_right_button(ev->x, ev->y);
         return TRUE;
       }

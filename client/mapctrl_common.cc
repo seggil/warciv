@@ -45,11 +45,13 @@
 /* Selection Rectangle */
 static int rect_anchor_x, rect_anchor_y;  /* canvas coordinates for anchor */
 static tile_t *rec_canvas_center_tile;
+static tile_t *rect_tile;
 static int rect_corner_x, rect_corner_y;  /* corner to iterate from */
 static int rect_w, rect_h;                /* width, heigth in pixels */
 
 bool rbutton_down = FALSE;
-bool rectangle_active = FALSE;
+/* 0 false; 1 see it; 2 no visual, drag RMB on only one tile */
+int rectangle_selection_state = 0;
 tile_t *dist_first_tile = NULL;
 tile_t *dist_last_tile = NULL;
 
@@ -92,6 +94,7 @@ void anchor_selection_rectangle(int canvas_x, int canvas_y)
   rect_anchor_y += NORMAL_TILE_HEIGHT / 2;
   /* FIXME: This may be off-by-one. */
   rec_canvas_center_tile = get_center_tile_mapcanvas();
+  rect_tile = ptile;
   rect_w = rect_h = 0;
   printf("%s canvas_x=%d canvas_y=%d\n",__FUNCTION__, canvas_x, canvas_y);
 }
@@ -189,7 +192,6 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
   const int H = NORMAL_TILE_HEIGHT;
   const int half_W = W / 2;
   const int half_H = H / 2;
-  static tile_t *rec_tile = NULL;
   int diff_x;
   int diff_y;
   tile_t *center_tile;
@@ -200,10 +202,12 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
   /*  Did mouse pointer move beyond the current tile's
    *  boundaries? Avoid macros; tile may be unreal!
    */
-  if (ptile == rec_tile) {
+  if (rect_w == 0 && rect_h == 0 && ptile == rect_tile) {
+    rectangle_selection_state = 2;
+    rect_tile = ptile;
     return;
   }
-  rec_tile = ptile;
+  rect_tile = ptile;
 
   /* Clear previous rectangle. */
   dirty_all();
@@ -265,14 +269,13 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
     }
   }
 
-  if (rect_w == 0 && rect_h == 0) {
-    //rectangle_active = FALSE;
-    return;
-  }
-
   /* It is currently drawn only to the screen, not backing store */
-  rectangle_active = TRUE;
   printf("%s\n", __FUNCTION__);
+  if (rect_w == 0 && rect_h == 0) {
+    rectangle_selection_state = 2;
+  } else {
+    rectangle_selection_state = 1;
+  }
   draw_selection_rectangle(canvas_x, canvas_y, rect_w, rect_h);
   rect_corner_x = canvas_x;
   rect_corner_y = canvas_y;
@@ -284,7 +287,7 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
 void redraw_selection_rectangle(void)
 {
 #if 0
-  if (rectangle_active) {
+  if (rectangle_selection_state) {
     draw_selection_rectangle(rect_corner_x, rect_corner_y, rect_w, rec_h);
   } else
 #endif
@@ -357,19 +360,28 @@ void cancel_tile_hiliting(void)
 }
 
 /**************************************************************************
- Action depends on whether the mouse pointer moved
- a tile between press and release.
+ Action depends on whether the mouse pointer moved more than
+ a tile between press/drag and release.
 **************************************************************************/
 void release_right_button(int canvas_x, int canvas_y)
 {
-  if (rectangle_active) {
+  if (rectangle_selection_state == 1) {
     define_tiles_within_rectangle();
     update_map_canvas_visible(MUT_NORMAL);
-    rectangle_active = FALSE;
+    rectangle_selection_state = 0;
+  } else if (rectangle_selection_state == 2) {
+    cancel_tile_hiliting();
+    if (rect_tile->city && rect_tile->city->common.owner == get_player_idx()) {
+      rect_tile->u.client.hilite = HILITE_CITY;
+      tiles_hilited_cities = TRUE;
+      update_map_canvas_visible(MUT_NORMAL);
+      toggle_city_hilite(rect_tile->city, TRUE);
+    }
+    rectangle_selection_state = 0;
   } else {
     recenter_button_pressed(canvas_x, canvas_y);
   }
-  rbutton_down = FALSE;
+  rbutton_down = false;
 }
 
 /**************************************************************************
@@ -388,7 +400,7 @@ void toggle_tile_hilite(tile_t *ptile)
   else if (pcity && pcity->common.owner == get_player_idx()) {
     ptile->u.client.hilite = HILITE_CITY;
     tiles_hilited_cities = TRUE;
-    toggle_city_hilite(pcity, TRUE);
+    toggle_city_hilite(pcity, TRUE); /* in city tab */
   }
   else  {
     return;

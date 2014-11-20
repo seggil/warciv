@@ -522,7 +522,7 @@ static void base_set_mapview_origin(int gui_x0, int gui_y0)
   if (cursor_state == CURSOR_STATE_GOTO || cursor_state == CURSOR_STATE_PATROL) {
     create_line_at_mouse_pos();
   }
-  if (rectangle_active) {
+  if (rectangle_selection_state) {
     update_rect_at_mouse_pos();
   }
 }

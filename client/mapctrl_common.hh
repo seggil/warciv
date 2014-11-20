@@ -20,7 +20,7 @@
 #include "control.hh"           /* quickselect_type */
 
 extern bool rbutton_down;
-extern bool rectangle_active;
+extern int  rectangle_selection_state;
 extern bool tiles_hilited_cities;
 
 extern bool keyboardless_goto_button_down;

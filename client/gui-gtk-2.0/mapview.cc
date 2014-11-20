@@ -1506,7 +1506,7 @@ void draw_selection_rectangle(int canvas_x, int canvas_y, int w, int h)
   points[4].y = canvas_y;
   gdk_draw_lines(map_canvas->window, civ_gc, points, ARRAY_SIZE(points));
 
-  rectangle_active = TRUE;
+  rectangle_selection_state = TRUE;
 }
 
 /**************************************************************************
