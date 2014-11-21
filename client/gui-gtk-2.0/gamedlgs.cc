@@ -431,7 +431,7 @@ void map_scrollbars_callback(struct client_option *poption)
 **************************************************************************/
 void mapview_redraw_callback(struct client_option *poption)
 {
-  update_map_canvas_visible(MUT_WRITE);
+  update_map_canvas_visible(MAP_UPDATE_WRITE);
 }
 
 /**************************************************************************

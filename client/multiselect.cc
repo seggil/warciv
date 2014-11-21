@@ -223,7 +223,7 @@ void multi_select_add_unit(unit_t *punit)
   }
 
   /* Blink */
-  refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
+  refresh_tile_mapcanvas(punit->tile, MAP_UPDATE_NORMAL);
 }
 
 /**********************************************************************
@@ -255,7 +255,7 @@ void multi_select_blink_update(void)
 {
   unit_list_iterate(multi_selection[0].ulist, punit) {
     if (punit->focus_status != FOCUS_DONE) {
-      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
+      refresh_tile_mapcanvas(punit->tile, MAP_UPDATE_NORMAL);
     }
   } unit_list_iterate_end;
 }
@@ -303,7 +303,7 @@ void multi_select_clear(int multi)
   if (multi == 0) {
     unit_list_iterate(multi_selection[multi].ulist, punit) {
       unit_list_unlink(multi_selection[multi].ulist, punit);
-      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
+      refresh_tile_mapcanvas(punit->tile, MAP_UPDATE_NORMAL);
     } unit_list_iterate_end;
   }
   unit_list_unlink_all(multi_selection[multi].ulist); /* to be sure about it */
@@ -350,7 +350,7 @@ void multi_select_copy(int dest, int src)
   if (dest == 0) {
     unit_list_iterate(multi_selection[dest].ulist, punit) {
       unit_list_unlink(multi_selection[dest].ulist, punit);
-      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
+      refresh_tile_mapcanvas(punit->tile, MAP_UPDATE_NORMAL);
     } unit_list_iterate_end;
   }
 
@@ -409,7 +409,7 @@ void multi_select_init_all(void)
 void multi_select_remove_unit(unit_t *punit)
 {
   unit_list_unlink(multi_selection[0].ulist, punit);
-  refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
+  refresh_tile_mapcanvas(punit->tile, MAP_UPDATE_NORMAL);
 
   if (punit == get_unit_in_focus()) {
     unit_t *pnuf = NULL;
@@ -473,7 +473,7 @@ void multi_select_set_unit(int multi, unit_t *punit)
   if (multi == 0) {
     unit_list_iterate(multi_selection[multi].ulist, punit) {
       unit_list_unlink(multi_selection[multi].ulist, punit);
-      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
+      refresh_tile_mapcanvas(punit->tile, MAP_UPDATE_NORMAL);
     } unit_list_iterate_end;
   }
 

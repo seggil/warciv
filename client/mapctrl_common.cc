@@ -331,7 +331,7 @@ void cancel_distance_tool(void)
   dist_first_tile = NULL;
   dist_last_tile = NULL;
 
-  update_map_canvas_visible(MUT_NORMAL);
+  update_map_canvas_visible(MAP_UPDATE_NORMAL);
 }
 
 /**************************************************************************
@@ -354,7 +354,7 @@ void cancel_tile_hiliting(void)
       ptile->u.client.hilite = HILITE_NONE;
     } whole_map_iterate_end;
 
-    update_map_canvas_visible(MUT_NORMAL);
+    update_map_canvas_visible(MAP_UPDATE_NORMAL);
     update_miscellaneous_menu();
   }
 }
@@ -367,14 +367,14 @@ void release_right_button(int canvas_x, int canvas_y)
 {
   if (rectangle_selection_state == 1) {
     define_tiles_within_rectangle();
-    update_map_canvas_visible(MUT_NORMAL);
+    update_map_canvas_visible(MAP_UPDATE_NORMAL);
     rectangle_selection_state = 0;
   } else if (rectangle_selection_state == 2) {
     cancel_tile_hiliting();
     if (rect_tile->city && rect_tile->city->common.owner == get_player_idx()) {
       rect_tile->u.client.hilite = HILITE_CITY;
       tiles_hilited_cities = TRUE;
-      update_map_canvas_visible(MUT_NORMAL);
+      update_map_canvas_visible(MAP_UPDATE_NORMAL);
       toggle_city_hilite(rect_tile->city, TRUE);
     }
     rectangle_selection_state = 0;
@@ -406,7 +406,7 @@ void toggle_tile_hilite(tile_t *ptile)
     return;
   }
 
-  refresh_tile_mapcanvas(ptile, MUT_NORMAL);
+  refresh_tile_mapcanvas(ptile, MAP_UPDATE_NORMAL);
 }
 
 /**************************************************************************

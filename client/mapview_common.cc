@@ -514,7 +514,7 @@ static void base_set_mapview_origin(int gui_x0, int gui_y0)
     }
   } else {
     update_map_canvas(0, 0, mapview_canvas.store_width,
-                      mapview_canvas.store_height, MUT_DRAW);
+                      mapview_canvas.store_height, MAP_UPDATE_DRAW);
   }
 
   map_center = get_center_tile_mapcanvas();
@@ -1084,7 +1084,7 @@ void toggle_city_color(struct city_s *pcity)
   tile_to_canvas_pos(&canvas_x, &canvas_y, pcity->common.tile);
   update_map_canvas(canvas_x - (width - NORMAL_TILE_WIDTH) / 2,
                     canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
-                    width, height, MUT_NORMAL);
+                    width, height, MAP_UPDATE_NORMAL);
 }
 
 /****************************************************************************
@@ -1109,7 +1109,7 @@ void toggle_unit_color(unit_t *punit)
   tile_to_canvas_pos(&canvas_x, &canvas_y, punit->tile);
   update_map_canvas(canvas_x - (width - NORMAL_TILE_WIDTH) / 2,
                     canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
-                    width, height, MUT_NORMAL);
+                    width, height, MAP_UPDATE_NORMAL);
 }
 
 /****************************************************************************
@@ -1299,7 +1299,7 @@ static bool clear_nuke_graphic(void *data)
   if (!ngi) {
     return FALSE;
   }
-  update_map_canvas(ngi->x, ngi->y, ngi->width, ngi->height, MUT_NORMAL);
+  update_map_canvas(ngi->x, ngi->y, ngi->width, ngi->height, MAP_UPDATE_NORMAL);
   free(ngi);
   clear_nuke_tid = 0;
   return FALSE;
@@ -1761,15 +1761,15 @@ void update_map_canvas(int canvas_x, int canvas_y,
                        int witdh, int height, enum map_update_type type)
 {
   switch (type) {
-    case MUT_NORMAL:
+    case MAP_UPDATE_NORMAL:
       update_queue_add_rectangle(canvas_x, canvas_y, witdh, height);
       break;
-    case MUT_DRAW:
+    case MAP_UPDATE_DRAW:
       draw_map_canvas(canvas_x, canvas_y, witdh, height,
                       static_cast<draw_elements>(DRAW_SPRITES | DRAW_DECORATION));
       dirty_rect(canvas_x, canvas_y, witdh, height);
       break;
-    case MUT_WRITE:
+    case MAP_UPDATE_WRITE:
       draw_map_canvas(canvas_x, canvas_y, witdh, height,
                       static_cast<draw_elements>(DRAW_SPRITES | DRAW_DECORATION));
       flush_rectangle(canvas_x, canvas_y, witdh, height);
@@ -1795,7 +1795,7 @@ void refresh_tile_mapcanvas(tile_t *ptile, enum map_update_type type)
 {
   int canvas_x, canvas_y;
 
-  if (type == MUT_NORMAL) {
+  if (type == MAP_UPDATE_NORMAL) {
     update_queue_add_tile(ptile);
   } else {
     if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
@@ -1830,7 +1830,7 @@ void update_city_description(struct city_s *pcity)
   (void) tile_to_canvas_pos(&canvas_x, &canvas_y, pcity->common.tile);
   update_map_canvas(canvas_x - (max_desc_width - NORMAL_TILE_WIDTH) / 2,
                     canvas_y + NORMAL_TILE_HEIGHT,
-                    max_desc_width, max_desc_height, MUT_NORMAL);
+                    max_desc_width, max_desc_height, MAP_UPDATE_NORMAL);
 }
 
 /**************************************************************************
@@ -1985,7 +1985,7 @@ void undraw_segment(tile_t *src_tile, enum direction8 dir)
                     MIN(canvas_y, canvas_y + canvas_dy),
                     ABS(canvas_dx) + NORMAL_TILE_WIDTH,
                     ABS(canvas_dy) + NORMAL_TILE_HEIGHT,
-                    MUT_DRAW);
+                    MAP_UPDATE_DRAW);
 }
 
 /****************************************************************************
@@ -2004,8 +2004,8 @@ void decrease_unit_hp_smooth(unit_t *punit0, int hp0,
   punit0->hp = hp0;
   punit1->hp = hp1;
 
-  refresh_tile_mapcanvas(punit0->tile, MUT_DRAW);
-  refresh_tile_mapcanvas(punit1->tile, MUT_DRAW);
+  refresh_tile_mapcanvas(punit0->tile, MAP_UPDATE_DRAW);
+  refresh_tile_mapcanvas(punit1->tile, MAP_UPDATE_DRAW);
   flush_dirty();
   redraw_selection_rectangle();
   gui_flush();
@@ -2015,7 +2015,7 @@ void decrease_unit_hp_smooth(unit_t *punit0, int hp0,
   if (num_tiles_explode_unit > 0
       && tile_to_canvas_pos(&canvas_x, &canvas_y, losing_unit->tile)) {
 
-    refresh_tile_mapcanvas(losing_unit->tile, MUT_DRAW);
+    refresh_tile_mapcanvas(losing_unit->tile, MAP_UPDATE_DRAW);
     canvas_copy(mapview_canvas.tmp_store, mapview_canvas.store,
                 canvas_x, canvas_y, canvas_x, canvas_y,
                 NORMAL_TILE_WIDTH, NORMAL_TILE_HEIGHT);
@@ -2047,8 +2047,8 @@ void decrease_unit_hp_smooth(unit_t *punit0, int hp0,
   }
 
   set_units_in_combat(NULL, NULL);
-  refresh_tile_mapcanvas(punit0->tile, MUT_NORMAL);
-  refresh_tile_mapcanvas(punit1->tile, MUT_NORMAL);
+  refresh_tile_mapcanvas(punit0->tile, MAP_UPDATE_NORMAL);
+  refresh_tile_mapcanvas(punit1->tile, MAP_UPDATE_NORMAL);
 }
 
 /**************************************************************************
@@ -2102,7 +2102,7 @@ void move_unit_map_canvas(unit_t *punit,
     redraw_selection_rectangle();
     gui_flush();
 
-    refresh_tile_mapcanvas(src_tile, MUT_DRAW);
+    refresh_tile_mapcanvas(src_tile, MAP_UPDATE_DRAW);
 
     do {
       int new_x, new_y;
@@ -2966,7 +2966,7 @@ bool map_canvas_resized(int width, int height)
 
   if (map_exists() && can_client_change_view()) {
     if (tile_size_changed) {
-      update_map_canvas_visible(MUT_WRITE);
+      update_map_canvas_visible(MAP_UPDATE_WRITE);
       center_tile_overviewcanvas(get_center_tile_mapcanvas());
       redrawn = TRUE;
     }
@@ -3163,7 +3163,7 @@ void update_trade_route_line(struct trade_route *ptr)
       y = lines[i].y + lines[i].height;
       h = -lines[i].height + NORMAL_TILE_WIDTH;
     }
-    update_map_canvas(x, y, w, h, MUT_NORMAL);
+    update_map_canvas(x, y, w, h, MAP_UPDATE_NORMAL);
   }
   update_city_description(ptr->pcity1);
   update_city_description(ptr->pcity2);

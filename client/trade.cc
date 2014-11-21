@@ -223,7 +223,7 @@ void add_tile_in_trade_planning(tile_t *ptile, bool allow_remove)
                   get_tile_info(ptile));
       append_output_window(buf);
       update_auto_caravan_menu();
-      refresh_tile_mapcanvas(ptile, MUT_NORMAL);
+      refresh_tile_mapcanvas(ptile, MAP_UPDATE_NORMAL);
     }
   } else if (!terrain_has_tag(map_get_terrain(ptile), TER_NO_CITIES)) {
     tile_list_append(trade_cities, ptile);
@@ -231,7 +231,7 @@ void add_tile_in_trade_planning(tile_t *ptile, bool allow_remove)
                 _("Warclient: Adding %s to the trade planning."),
                 get_tile_info(ptile));
     append_output_window(buf);
-    refresh_tile_mapcanvas(ptile, MUT_NORMAL);
+    refresh_tile_mapcanvas(ptile, MAP_UPDATE_NORMAL);
     if (allow_remove) {
       update_auto_caravan_menu();
     }
@@ -286,7 +286,7 @@ void clear_trade_city_list(void)
   tile_list_unlink_all(trade_cities);
   append_output_window(_("Warclient: Trade city list cleared."));
   update_auto_caravan_menu();
-  update_map_canvas_visible(MUT_NORMAL);
+  update_map_canvas_visible(MAP_UPDATE_NORMAL);
 }
 
 /**************************************************************************
@@ -334,7 +334,7 @@ void clear_trade_planning(bool include_in_route)
       } trade_route_list_iterate_end;
     } city_list_iterate_end;
     if (draw_city_traderoutes) {
-      update_map_canvas_visible(MUT_NORMAL);
+      update_map_canvas_visible(MAP_UPDATE_NORMAL);
     }
   }
 }
@@ -390,7 +390,7 @@ static void trade_planning_apply(const struct trade_planning_calculation *pcalc,
         ntr->status = TR_PLANNED;
       } trade_route_list_iterate_end;
       if (draw_city_traderoutes) {
-        update_map_canvas_visible(MUT_NORMAL);
+        update_map_canvas_visible(MAP_UPDATE_NORMAL);
       }
       show_free_slot_arg = NULL;
     }
@@ -873,7 +873,7 @@ void request_trade_route(city_t *pcity)
     } city_list_iterate_end;
     /* Show changes */
     if (draw_city_traderoutes) {
-      update_map_canvas_visible(MUT_NORMAL);
+      update_map_canvas_visible(MAP_UPDATE_NORMAL);
     }
   }
   connection_do_unbuffer(&aconnection);

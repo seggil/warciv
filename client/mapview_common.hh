@@ -24,9 +24,9 @@
 #include "tilespec.hh"
 
 enum map_update_type {
-  MUT_NORMAL, /* Mark the zone to be re-drawn and copied to screen later */
-  MUT_DRAW,   /* Redraw the zone and will be copied to screen later */
-  MUT_WRITE   /* Redraw and copy to screen */
+  MAP_UPDATE_NORMAL, /* Mark the zone to be re-drawn and copied to screen later */
+  MAP_UPDATE_DRAW,   /* Redraw the zone and will be copied to screen later */
+  MAP_UPDATE_WRITE   /* Redraw and copy to screen */
 };
 
 enum draw_elements {

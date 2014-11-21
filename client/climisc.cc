@@ -243,7 +243,7 @@ void client_remove_unit(unit_t *punit)
             TILE_XY(pcity->common.tile));
   }
 
-  refresh_tile_mapcanvas(ptile, MUT_NORMAL);
+  refresh_tile_mapcanvas(ptile, MAP_UPDATE_NORMAL);
 }
 
 /**************************************************************************
@@ -275,7 +275,7 @@ void client_remove_city(city_t *pcity)
   popdown_city_dialog(pcity);
   game_remove_city(pcity);
   city_report_dialog_update();
-  refresh_tile_mapcanvas(ptile, MUT_NORMAL);
+  refresh_tile_mapcanvas(ptile, MAP_UPDATE_NORMAL);
 }
 
 /**************************************************************************
@@ -1699,7 +1699,7 @@ void clear_all_link_marks(void)
     map_link_remove(pml);
   } map_link_list_iterate_end;
 
-  update_map_canvas_visible(MUT_NORMAL);
+  update_map_canvas_visible(MAP_UPDATE_NORMAL);
 }
 
 /**********************************************************************
@@ -1772,7 +1772,7 @@ void add_link_mark(enum tag_link_types type, int id)
 
   ptile = get_link_mark_tile(pml);
   if (ptile && tile_visible_mapcanvas(ptile)) {
-    refresh_tile_mapcanvas(ptile, MUT_NORMAL);
+    refresh_tile_mapcanvas(ptile, MAP_UPDATE_NORMAL);
   }
 }
 
@@ -1793,7 +1793,7 @@ void restore_link_mark(enum tag_link_types type, int id)
 
   ptile = get_link_mark_tile(pml);
   if (ptile && tile_visible_mapcanvas(ptile)) {
-    refresh_tile_mapcanvas(ptile, MUT_NORMAL);
+    refresh_tile_mapcanvas(ptile, MAP_UPDATE_NORMAL);
   }
 }
 
@@ -2157,7 +2157,7 @@ void toggle_traderoute_drawing_in_selected_cities(void)
     }
   } city_list_iterate_end;
 
-  update_map_canvas_visible(MUT_NORMAL);
+  update_map_canvas_visible(MAP_UPDATE_NORMAL);
 }
 
 /**********************************************************************

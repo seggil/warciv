@@ -213,8 +213,8 @@ static void update_last_part(tile_t *ptile)
   }
 
   /* Refresh tiles so turn information is shown. */
-  refresh_tile_mapcanvas(old_tile, MUT_NORMAL);
-  refresh_tile_mapcanvas(ptile, MUT_NORMAL);
+  refresh_tile_mapcanvas(old_tile, MAP_UPDATE_NORMAL);
+  refresh_tile_mapcanvas(ptile, MAP_UPDATE_NORMAL);
 }
 
 /**********************************************************************

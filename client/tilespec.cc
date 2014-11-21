@@ -519,7 +519,7 @@ void tilespec_reread(const char *tileset_name)
   center_tile_mapcanvas(center_tile);
   /* update_map_cavnas_visible forces a full redraw.  Otherwise with fast
    * drawing we might not get one.  Of course this is slower. */
-  update_map_canvas_visible(MUT_NORMAL);
+  update_map_canvas_visible(MAP_UPDATE_NORMAL);
   can_slide = TRUE;
 }
 
@@ -3236,7 +3236,7 @@ void player_colors_mode_changed(void)
   player_colors_init();
   update_player_colors_mode_label();
   refresh_overview_canvas();
-  update_map_canvas_visible(MUT_NORMAL);        /* for borders color */
+  update_map_canvas_visible(MAP_UPDATE_NORMAL); /* for borders color */
   update_players_dialog();                      /* for borders color */
 }
 
