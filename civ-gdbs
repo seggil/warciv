@@ -36,4 +36,4 @@ if [ "$EXE" = "" ]; then
   exit 1
 fi
 
-exec gdbserver 192.168.0.2:7000 $EXE ${1+"$@"}
+exec gdbserver 192.168.2.14:7000 $EXE ${1+"$@"}
