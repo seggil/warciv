@@ -225,6 +225,7 @@ void set_turn_done_button_state(bool state)
 **************************************************************************/
 gboolean button_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
+  printf("%s\n", __FUNCTION__);
   if (ev->button == 1 || ev->button == 3) {
     release_goto_button(ev->x, ev->y);
   }
@@ -416,7 +417,9 @@ gboolean button_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
        *  to find rectangle still active.
        */
       if (rectangle_selection_state) {
+        /* gilles: should not occur, release */
         release_right_button(ev->x, ev->y);
+        printf("$ rectangle_active can not be active, gilles debug this\n", __FUNCTION__);
         return TRUE;
       }
       if (cursor_state != CURSOR_STATE_RALLY_POINT)

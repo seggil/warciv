@@ -192,11 +192,13 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
   const int H = NORMAL_TILE_HEIGHT;
   const int half_W = W / 2;
   const int half_H = H / 2;
+  //static tile_t *rect_tile = NULL;
   int diff_x;
   int diff_y;
   tile_t *center_tile;
   tile_t *ptile;
 
+  printf("%s ", __FUNCTION__);
   ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
 
   /*  Did mouse pointer move beyond the current tile's
@@ -204,6 +206,7 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
    */
   if (rect_w == 0 && rect_h == 0 && ptile == rect_tile) {
     rectangle_selection_state = 2;
+    printf("2\n");
     rect_tile = ptile;
     return;
   }
@@ -224,7 +227,7 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
 
   /* FIXME: This may be off-by-one. */
   center_tile = get_center_tile_mapcanvas();
-  map_distance_vector(&diff_x, &diff_y, center_tile, rec_canvas_center_tile);
+  map_distance_vector(&diff_x, &diff_y, rec_canvas_center_tile, center_tile);
 
   /*  Adjust width, height if mapview has recentered.*/
   if (diff_x != 0 || diff_y != 0) {
@@ -270,11 +273,12 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
   }
 
   /* It is currently drawn only to the screen, not backing store */
-  printf("%s\n", __FUNCTION__);
   if (rect_w == 0 && rect_h == 0) {
     rectangle_selection_state = 2;
+    printf("2\n");
   } else {
     rectangle_selection_state = 1;
+    printf("1\n");
   }
   draw_selection_rectangle(canvas_x, canvas_y, rect_w, rect_h);
   rect_corner_x = canvas_x;
