@@ -39,9 +39,9 @@
 #include "mapview_common.hh"
 #include "include/pages_g.hh"
 #include "tilespec.hh"
-#include "trade.hh"  
+#include "trade.hh"
 
-struct mapview_canvas mapview_canvas;
+struct mapview_canvas_s mapview_canvas;
 struct overview_s overview;
 bool can_slide = TRUE;
 

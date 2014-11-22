@@ -34,27 +34,34 @@ enum draw_elements {
   DRAW_DECORATION = 1 << 1  /* Draw goto path, chat links, etc... */
 };
 
-struct canvas_store;            /* opaque type, real type is gui-dep */
+struct canvas_store;          /* opaque type, real type is gui-dep */
 
-struct mapview_canvas {
-  int gui_x0, gui_y0;
-  int width, height;            /* Size in pixels. */
-  int tile_width, tile_height;  /* Size in tiles. Rounded up. */
-  int store_width, store_height;
+struct mapview_canvas_s {
+  int gui_x0;
+  int gui_y0;
+  int width;
+  int height;                 /* Size in pixels. */
+  int tile_width;
+  int tile_height;            /* Size in tiles. Rounded up. */
+  int store_width;
+  int store_height;
   bool can_do_cached_drawing; /* TRUE if cached drawing is possible. */
-  struct canvas *store, *tmp_store;
+  struct canvas *store;
+  struct canvas *tmp_store;
 };
 
 /* Holds all information about the overview aka minimap. */
 struct overview_s {
   /* The following fields are controlled by mapview_common.c. */
-  int map_x0, map_y0;
-  int width, height;            /* Size in pixels. */
+  int map_x0;
+  int map_y0;
+  int width;
+  int height;            /* Size in pixels. */
   struct canvas *store;
 };
 
-extern struct mapview_canvas mapview_canvas;
-extern struct overview_s overview;
+extern struct mapview_canvas_s mapview_canvas;
+extern struct overview_s       overview;
 
 /* HACK: Callers can set this to FALSE to disable sliding.  It should be
  * reenabled afterwards. */
@@ -97,10 +104,12 @@ extern bool can_slide;
   if (_width > 0 && _height > 0) {                                          \
     int W = (is_isometric ? (NORMAL_TILE_WIDTH / 2) : NORMAL_TILE_WIDTH);   \
     int H = (is_isometric ? (NORMAL_TILE_HEIGHT / 2) : NORMAL_TILE_HEIGHT); \
-    int GRI_x0 = DIVIDE(_gui_x0, W), GRI_y0 = DIVIDE(_gui_y0, H);           \
+    int GRI_x0 = DIVIDE(_gui_x0, W);                                        \
+    int GRI_y0 = DIVIDE(_gui_y0, H);                                        \
     int GRI_x1 = DIVIDE(_gui_x0 + _width + W - 1, W);                       \
     int GRI_y1 = DIVIDE(_gui_y0 + _height + H - 1, H);                      \
-    int GRI_itr, GRI_x_itr, GRI_y_itr, _map_x, _map_y;                      \
+    int GRI_itr, GRI_x_itr, GRI_y_itr;                                      \
+    int _map_x, _map_y;                                                     \
     int count;                                                              \
     tile_t *ptile;                                                          \
                                                                             \
