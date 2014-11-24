@@ -2104,13 +2104,13 @@ void voteinfo_do_vote(int vote_no, enum client_vote_type vote)
   packet.vote_no = vi->vote_no;
 
   switch (vote) {
-  case CVT_YES:
+  case CLIENT_VOTE_YES:
     packet.value = 1;
     break;
-  case CVT_NO:
+  case CLIENT_VOTE_NO:
     packet.value = -1;
     break;
-  case CVT_ABSTAIN:
+  case CLIENT_VOTE_ABSTAIN:
     packet.value = 0;
     break;
   default:

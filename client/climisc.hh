@@ -159,10 +159,10 @@ void execute_air_patrol_orders(void);
 void do_unit_air_patrol(unit_t *punit, tile_t *ptile);
 
 enum client_vote_type {
-  CVT_NONE = 0,
-  CVT_YES,
-  CVT_NO,
-  CVT_ABSTAIN
+  CLIENT_VOTE_NONE = 0,
+  CLIENT_VOTE_YES,
+  CLIENT_VOTE_NO,
+  CLIENT_VOTE_ABSTAIN
 };
 
 struct voteinfo {

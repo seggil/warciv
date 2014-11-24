@@ -2599,7 +2599,7 @@ struct voteinfo_bar *create_voteinfo_bar(void)
   button = gtk_button_new_with_mnemonic(_("_YES"));
   g_signal_connect(button, "clicked",
                    G_CALLBACK(voteinfo_bar_do_vote_callback),
-                   GINT_TO_POINTER(CVT_YES));
+                   GINT_TO_POINTER(CLIENT_VOTE_YES));
   gtk_widget_set_size_request(button, 70, BUTTON_HEIGHT);
   gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
   evbox = gtk_event_box_new();
@@ -2620,7 +2620,7 @@ struct voteinfo_bar *create_voteinfo_bar(void)
   button = gtk_button_new_with_mnemonic(_("_NO"));
   g_signal_connect(button, "clicked",
                    G_CALLBACK(voteinfo_bar_do_vote_callback),
-                   GINT_TO_POINTER(CVT_NO));
+                   GINT_TO_POINTER(CLIENT_VOTE_NO));
   gtk_widget_set_size_request(button, 70, BUTTON_HEIGHT);
   gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
   evbox = gtk_event_box_new();
@@ -2641,7 +2641,7 @@ struct voteinfo_bar *create_voteinfo_bar(void)
   button = gtk_button_new_with_mnemonic(_("_ABSTAIN"));
   g_signal_connect(button, "clicked",
                    G_CALLBACK(voteinfo_bar_do_vote_callback),
-                   GINT_TO_POINTER(CVT_ABSTAIN));
+                   GINT_TO_POINTER(CLIENT_VOTE_ABSTAIN));
   gtk_widget_set_size_request(button, 70, BUTTON_HEIGHT);
   gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
   evbox = gtk_event_box_new();
