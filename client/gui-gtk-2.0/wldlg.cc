@@ -587,13 +587,13 @@ static void menu_item_callback(GtkMenuItem *item, struct worklist_data *ptr)
 
     for (i = 0; i < MAX_LEN_WORKLIST; i++) {
       GtkTreeIter it;
-      cid cid;
+      city_cid cid;
 
       if (pwl->wlefs[i] == WEF_END) {
         break;
       }
 
-      cid = cid_encode(pwl->wlefs[i] == WEF_UNIT, pwl->wlids[i]);
+      cid = city_cid_encode(pwl->wlefs[i] == WEF_UNIT, pwl->wlids[i]);
 
       gtk_list_store_append(ptr->dst, &it);
       gtk_list_store_set(ptr->dst, &it, 0, (gint) cid, -1);
@@ -687,8 +687,8 @@ static void help_callback(GtkWidget *w, gpointer data)
     bool is_unit;
 
     gtk_tree_model_get(model, &it, 0, &cid, -1);
-    is_unit = cid_is_unit(cid);
-    id = cid_id(cid);
+    is_unit = city_cid_is_unit(cid);
+    id = city_cid_id(cid);
 
     if (is_unit) {
       popup_help_dialog_typed(get_unit_type(id)->name, HELP_UNIT);
@@ -720,7 +720,9 @@ static void change_callback(GtkWidget *w, gpointer data)
 
     gtk_tree_model_get(model, &it, 0, &cid, -1);
 
-    city_change_production(ptr->pcity, cid_is_unit(cid), cid_id(cid));
+    city_change_production(ptr->pcity,
+                           city_cid_is_unit(cid),
+                           city_cid_id(cid));
   }
 }
 
@@ -1057,12 +1059,13 @@ static void cell_render_func(GtkTreeViewColumn *col, GtkCellRenderer *rend,
                              GtkTreeModel *model, GtkTreeIter *it,
                              gpointer data)
 {
-  gint cid, id;
+  gint cid;
+  gint id;
   bool is_unit, on_icon_column;
 
   gtk_tree_model_get(model, it, 0, &cid, -1);
-  is_unit = cid_is_unit(cid);
-  id = cid_id(cid);
+  is_unit = city_cid_is_unit(cid);
+  id = city_cid_id(cid);
   on_icon_column = GTK_IS_CELL_RENDERER_PIXBUF(rend);
 
   if (on_icon_column && show_task_icons) {
@@ -1462,8 +1465,9 @@ void refresh_worklist(GtkWidget *editor)
   struct worklist_data *ptr;
   struct worklist *pwl, queue;
 
-  cid cids[U_LAST + B_LAST];
-  int i, cids_used;
+  city_cid cids[U_LAST + B_LAST];
+  int i;
+  int city_cids_used;
   struct item items[U_LAST + B_LAST];
 
   bool selected, sens;
@@ -1491,11 +1495,11 @@ void refresh_worklist(GtkWidget *editor)
   }
   gtk_list_store_clear(ptr->src);
 
-  cids_used = collect_cids4(cids, ptr->pcity, ptr->future);
-  name_and_sort_items(cids, cids_used, items, FALSE, ptr->pcity);
+  city_cids_used = collect_city_cids4(cids, ptr->pcity, ptr->future);
+  name_and_sort_items(cids, city_cids_used, items, FALSE, ptr->pcity);
 
   path = NULL;
-  for (i = 0; i < cids_used; i++) {
+  for (i = 0; i < city_cids_used; i++) {
     gtk_list_store_append(ptr->src, &it);
     gtk_list_store_set(ptr->src, &it, 0, (gint) items[i].cid_, -1);
 
@@ -1521,13 +1525,13 @@ void refresh_worklist(GtkWidget *editor)
   }
 
   for (i = 0; i < MAX_LEN_WORKLIST; i++) {
-    cid cid;
+    city_cid cid;
 
     if (queue.wlefs[i] == WEF_END) {
       break;
     }
 
-    cid = cid_encode(queue.wlefs[i] == WEF_UNIT, queue.wlids[i]);
+    cid = city_cid_encode(queue.wlefs[i] == WEF_UNIT, queue.wlids[i]);
 
     if (!exists) {
       gtk_list_store_append(ptr->dst, &it);
@@ -1597,8 +1601,11 @@ static void commit_worklist(struct worklist_data *ptr)
       }
 
       gtk_tree_model_get(model, &it, 0, &cid, -1);
-      queue.wlefs[i] = cid_is_unit(cid) ? WEF_UNIT : WEF_IMPR;
-      queue.wlids[i] = cid_id(cid);
+      if (city_cid_is_unit(cid) )
+        queue.wlefs[i] = WEF_UNIT;
+      else
+        queue.wlefs[i] = WEF_IMPR;
+      queue.wlids[i] = city_cid_id(cid);
 
       i++;
     } while (gtk_tree_model_iter_next(model, &it));

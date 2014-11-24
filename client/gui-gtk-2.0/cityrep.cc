@@ -101,8 +101,11 @@ static void popup_first_menu(GtkMenuShell *menu, gpointer data);
 static void popup_next_menu(GtkMenuShell *menu, gpointer data);
 
 static void recreate_sell_menu(void);
-struct sell_data { int count, gold, cid; };
-
+struct sell_data {
+  int count;
+  int gold;
+  int cid;
+};
 static GtkWidget *city_center_command, *city_popup_command, *city_buy_command;
 static GtkWidget *city_change_command, *city_clear_worklist_command;
 static GtkWidget *city_remove_cur_prod_command;
@@ -228,9 +231,9 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
                                              int size)
 {
   GtkWidget *menu;
-  cid cids[U_LAST + B_LAST];
+  city_cid cids[U_LAST + B_LAST];
   struct item items[U_LAST + B_LAST];
-  int i, item, cids_used;
+  int i, item, city_cids_used;
   char *row[4];
   char buf[4][64];
 
@@ -265,15 +268,15 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
     }
 
     data = (city_t **)g_ptr_array_free(selected, FALSE);
-    cids_used = collect_cids1(cids, data, num_selected, append_units,
+    city_cids_used = collect_city_cids1(cids, data, num_selected, append_units,
                               append_wonders, TRUE, test_func);
     g_free(data);
   } else {
-    cids_used = collect_cids1(cids, NULL, 0, append_units,
+    city_cids_used = collect_city_cids1(cids, NULL, 0, append_units,
                               append_wonders, FALSE, test_func);
   }
 
-  name_and_sort_items(cids, cids_used, items, city_operation != CO_NONE, NULL);
+  name_and_sort_items(cids, city_cids_used, items, city_operation != CO_NONE, NULL);
 
   for (i = 0; i < 4; i++) {
     row[i] = buf[i];
@@ -287,13 +290,13 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
     group[i] = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
   }
 
-  for (item = 0; item < cids_used; item++) {
-    cid cid = items[item].cid_;
+  for (item = 0; item < city_cids_used; item++) {
+    city_cid cid = items[item].cid_;
     GtkWidget *menu_item, *hbox, *label;
     char txt[256];
 
-    get_city_dialog_production_row(row, sizeof(buf[0]), cid_id(cid),
-                                   cid_is_unit(cid), NULL);
+    get_city_dialog_production_row(row, sizeof(buf[0]), city_cid_id(cid),
+                                   city_cid_is_unit(cid), NULL);
 
     menu_item = gtk_menu_item_new();
     hbox = gtk_hbox_new(FALSE, 18);
@@ -334,7 +337,7 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
 
   gtk_widget_show_all(menu);
 
-  gtk_widget_set_sensitive(GTK_WIDGET(parent_item), (cids_used > 0));
+  gtk_widget_set_sensitive(GTK_WIDGET(parent_item), (city_cids_used > 0));
 }
 
 /****************************************************************
@@ -343,12 +346,14 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
 static void impr_or_unit_iterate(GtkTreeModel *model, GtkTreePath *path,
                                  GtkTreeIter *it, gpointer data)
 {
-  cid cid = GPOINTER_TO_INT(data);
+  city_cid cid = GPOINTER_TO_INT(data);
   gint id;
 
   gtk_tree_model_get(model, it, 1, &id, -1);
 
-  city_change_production(find_city_by_id(id), cid_is_unit(cid), cid_id(cid));
+  city_change_production(find_city_by_id(id),
+                         city_cid_is_unit(cid),
+                         city_cid_id(cid));
 }
 
 /****************************************************************
@@ -362,14 +367,16 @@ static void worklist_last_impr_or_unit_iterate(GtkTreeModel *model,
                                                GtkTreeIter *it,
                                                gpointer data)
 {
-  cid cid = GPOINTER_TO_INT(data);
+  city_cid cid = GPOINTER_TO_INT(data);
   gint id;
   city_t *pcity;
 
   gtk_tree_model_get(model, it, 1, &id, -1);
   pcity = find_city_by_id(id);
 
-  (void) city_queue_insert(pcity, -1, cid_is_unit(cid), cid_id(cid));
+  (void) city_queue_insert(pcity, -1,
+                           city_cid_is_unit(cid),
+                           city_cid_id(cid));
   /* perhaps should warn the user if not successful? */
 }
 
@@ -386,14 +393,16 @@ static void worklist_first_impr_or_unit_iterate(GtkTreeModel *model,
                                                 GtkTreeIter *it,
                                                 gpointer data)
 {
-  cid cid = GPOINTER_TO_INT(data);
+  city_cid cid = GPOINTER_TO_INT(data);
   gint id;
   city_t *pcity;
 
   gtk_tree_model_get(model, it, 1, &id, -1);
   pcity = find_city_by_id(id);
 
-  (void) city_queue_insert(pcity, 0, cid_is_unit(cid), cid_id(cid));
+  (void) city_queue_insert(pcity, 0,
+                           city_cid_is_unit(cid),
+                           city_cid_id(cid));
   /* perhaps should warn the user if not successful? */
 }
 
@@ -410,12 +419,14 @@ static void worklist_next_impr_or_unit_iterate(GtkTreeModel *model,
 {
   city_t *pcity;
   gint id;
-  cid cid = GPOINTER_TO_INT(data);
+  city_cid cid = GPOINTER_TO_INT(data);
 
   gtk_tree_model_get(model, it, 1, &id, -1);
   pcity = find_city_by_id(id);
 
-  (void) city_queue_insert(pcity, 1, cid_is_unit(cid), cid_id(cid));
+  (void) city_queue_insert(pcity, 1,
+                           city_cid_is_unit(cid),
+                           city_cid_id(cid));
   /* perhaps should warn the user if not successful? */
 }
 
@@ -434,7 +445,7 @@ static void sell_impr_iterate(GtkTreeModel *model,
 
   gtk_tree_model_get(model, it, 1, &id, -1);
   pcity = find_city_by_id(id);
-  impr_id = cid_id(sd->cid);
+  impr_id = city_cid_id(sd->cid);
 
   if (!pcity->common.did_sell && city_got_building(pcity, impr_id)) {
     sd->count++;
@@ -448,7 +459,7 @@ static void sell_impr_iterate(GtkTreeModel *model,
 *****************************************************************/
 static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
 {
-  cid cid = GPOINTER_TO_INT(data);
+  city_cid cid = GPOINTER_TO_INT(data);
   GObject *parent = G_OBJECT(w->parent);
   TestCityFunc test_func = (TestCityFunc)g_object_get_data(parent, "warciv_test_func");
   enum city_operation_type city_operation = (enum city_operation_type)
@@ -1959,9 +1970,9 @@ static void create_select_menu(GtkWidget *item)
 /****************************************************************
 ...
 *****************************************************************/
-static bool city_building_impr_or_unit(city_t *pcity, cid cid)
+static bool city_building_impr_or_unit(city_t *pcity, city_cid cid)
 {
-  return (cid == cid_encode_from_city(pcity));
+  return cid == city_cid_encode_from_city(pcity);
 }
 
 /****************************************************************

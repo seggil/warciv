@@ -873,9 +873,11 @@ target_drag_data_received(GtkWidget *w, GdkDragContext *context,
     GtkTreeIter it;
 
     if (gtk_tree_model_get_iter(model, &it, path)) {
-      cid cid;
+      city_cid cid;
       gtk_tree_model_get(model, &it, 0, &cid, -1);
-      city_change_production(pdialog->pcity, cid_is_unit(cid), cid_id(cid));
+      city_change_production(pdialog->pcity,
+                             city_cid_is_unit(cid),
+                             city_cid_id(cid));
       gtk_drag_finish(context, TRUE, FALSE, time);
     }
     gtk_tree_path_free(path);
@@ -1675,8 +1677,9 @@ static void city_dialog_update_building(struct city_dialog *pdialog)
 *****************************************************************/
 static void city_dialog_update_improvement_list(struct city_dialog *pdialog)
 {
-  int total, item, cids_used;
-  cid cids[U_LAST + B_LAST];
+  int total, item;
+  int city_cids_used;
+  city_cid cids[U_LAST + B_LAST];
   struct item items[U_LAST + B_LAST];
   GtkTreeModel *model;
   GtkListStore *store;
@@ -1685,18 +1688,18 @@ static void city_dialog_update_improvement_list(struct city_dialog *pdialog)
     gtk_tree_view_get_model(GTK_TREE_VIEW(pdialog->overview.improvement_list));
   store = GTK_LIST_STORE(model);
 
-  cids_used = collect_cids5(cids, pdialog->pcity);
-  name_and_sort_items(cids, cids_used, items, FALSE, pdialog->pcity);
+  city_cids_used = collect_city_cids5(cids, pdialog->pcity);
+  name_and_sort_items(cids, city_cids_used, items, FALSE, pdialog->pcity);
 
   gtk_list_store_clear(store);
 
   total = 0;
-  for (item = 0; item < cids_used; item++) {
+  for (item = 0; item < city_cids_used; item++) {
     GtkTreeIter it;
     int id, upkeep;
     struct impr_type *impr;
 
-    id = cid_id(items[item].cid_);
+    id = city_cid_id(items[item].cid_);
     impr = get_improvement_type(id);
     /* This takes effects (like Adam Smith's) into account. */
     upkeep = improvement_upkeep(pdialog->pcity, id);

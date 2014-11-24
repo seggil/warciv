@@ -560,9 +560,9 @@ void clipboard_paste_production(city_t *pcity)
 **************************************************************************/
 static void clipboard_send_production_packet(city_t *pcity)
 {
-  cid mycid = cid_encode(clipboard_is_unit, clipboard);
+  city_cid mycid = city_cid_encode(clipboard_is_unit, clipboard);
 
-  if (mycid == cid_encode_from_city(pcity)
+  if (mycid == city_cid_encode_from_city(pcity)
       || !city_can_build_impr_or_unit(pcity, mycid)) {
     return;
   }

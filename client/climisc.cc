@@ -282,10 +282,12 @@ void client_remove_city(city_t *pcity)
 Change all cities building X to building Y, if possible.  X and Y
 could be improvements or units. X and Y are compound ids.
 **************************************************************************/
-void client_change_all(cid x, cid y)
+void client_change_all(city_cid x, city_cid y)
 {
-  int fr_id = cid_id(x), to_id = cid_id(y);
-  bool fr_is_unit = cid_is_unit(x), to_is_unit = cid_is_unit(y);
+  int fr_id = city_cid_id(x);
+  int to_id = city_cid_id(y);
+  bool fr_is_unit = city_cid_is_unit(x);
+  bool to_is_unit = city_cid_is_unit(y);
   char buf[512];
   int last_request_id = 0;
 
@@ -542,7 +544,7 @@ void center_on_something(void)
 /**************************************************************************
 ...
 **************************************************************************/
-cid cid_encode(bool is_unit, int id)
+city_cid city_cid_encode(bool is_unit, int id)
 {
   return id + (is_unit ? B_LAST : 0);
 }
@@ -550,24 +552,25 @@ cid cid_encode(bool is_unit, int id)
 /**************************************************************************
 ...
 **************************************************************************/
-cid cid_encode_from_city(city_t * pcity)
+city_cid city_cid_encode_from_city(city_t * pcity)
 {
-  return cid_encode(pcity->common.is_building_unit, pcity->common.currently_building);
+  return city_cid_encode(pcity->common.is_building_unit,
+                         pcity->common.currently_building);
 }
 
 /**************************************************************************
 ...
 **************************************************************************/
-void cid_decode(cid cid, bool * is_unit, int *id)
+void city_cid_decode(city_cid cid, bool * is_unit, int *id)
 {
-  *is_unit = cid_is_unit(cid);
-  *id = cid_id(cid);
+  *is_unit = city_cid_is_unit(cid);
+  *id = city_cid_id(cid);
 }
 
 /**************************************************************************
 ...
 **************************************************************************/
-bool cid_is_unit(cid cid)
+bool city_cid_is_unit(city_cid cid)
 {
   return (cid >= B_LAST);
 }
@@ -575,9 +578,12 @@ bool cid_is_unit(cid cid)
 /**************************************************************************
 ...
 **************************************************************************/
-int cid_id(cid cid)
+int city_cid_id(city_cid cid)
 {
-  return (cid >= B_LAST) ? (cid - B_LAST) : cid;
+  if (cid >= B_LAST)
+    return cid - B_LAST;
+  else
+    return cid;
 }
 
 /**************************************************************************
@@ -635,24 +641,24 @@ int wid_id(wid wid)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_can_build_impr_or_unit(city_t * pcity, cid cid)
+bool city_can_build_impr_or_unit(city_t * pcity, city_cid cid)
 {
-  if (cid_is_unit(cid)) {
-    return can_build_unit(pcity, cid_id(cid));
+  if (city_cid_is_unit(cid)) {
+    return can_build_unit(pcity, city_cid_id(cid));
   } else {
-    return can_build_improvement(pcity, cid_id(cid));
+    return can_build_improvement(pcity, city_cid_id(cid));
   }
 }
 
 /****************************************************************
 ...
 *****************************************************************/
-bool city_can_sell_impr(city_t * pcity, cid cid)
+bool city_can_sell_impr(city_t * pcity, city_cid cid)
 {
   int id;
-  id = cid_id(cid);
+  id = city_cid_id(cid);
 
-  if (cid_is_unit(cid)) {
+  if (city_cid_is_unit(cid)) {
     return FALSE;
   }
 
@@ -663,10 +669,10 @@ bool city_can_sell_impr(city_t * pcity, cid cid)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_unit_supported(city_t * pcity, cid cid)
+bool city_unit_supported(city_t * pcity, city_cid cid)
 {
-  if (cid_is_unit(cid)) {
-    int unit_type = cid_id(cid);
+  if (city_cid_is_unit(cid)) {
+    int unit_type = city_cid_id(cid);
 
     unit_list_iterate(pcity->common.units_supported, punit) {
       if (punit->type == unit_type) {
@@ -680,10 +686,10 @@ bool city_unit_supported(city_t * pcity, cid cid)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_unit_present(city_t * pcity, cid cid)
+bool city_unit_present(city_t * pcity, city_cid cid)
 {
-  if (cid_is_unit(cid)) {
-    int unit_type = cid_id(cid);
+  if (city_cid_is_unit(cid)) {
+    int unit_type = city_cid_id(cid);
 
     unit_list_iterate(pcity->common.tile->units, punit) {
       if (punit->type == unit_type) {
@@ -697,10 +703,10 @@ bool city_unit_present(city_t * pcity, cid cid)
 /****************************************************************************
   A TestCityFunc to tell whether the item is a building and is present.
 ****************************************************************************/
-bool city_building_present(city_t * pcity, cid cid)
+bool city_building_present(city_t * pcity, city_cid cid)
 {
-  if (!cid_is_unit(cid)) {
-    int impr_type = cid_id(cid);
+  if (!city_cid_is_unit(cid)) {
+    int impr_type = city_cid_id(cid);
 
     return city_got_building(pcity, impr_type);
   }
@@ -722,8 +728,8 @@ static int my_cmp(const void *p1, const void *p2)
 }
 
 /**************************************************************************
- Takes an array of compound ids (cids). It will fill out an array of
- struct items and also sort it.
+ Takes an array of city compound ids (city_cids). It will fill out an
+ array of struct items and also sort it.
 
  section 0: normal buildings
  section 1: Capitalization
@@ -737,8 +743,8 @@ void name_and_sort_items(int *pcids, int num_cids, struct item *items,
   int i;
 
   for (i = 0; i < num_cids; i++) {
-    bool is_unit = cid_is_unit(pcids[i]);
-    int id = cid_id(pcids[i]), cost;
+    bool is_unit = city_cid_is_unit(pcids[i]);
+    int id = city_cid_id(pcids[i]), cost;
     struct item *pitem = &items[i];
     const char *name;
 
@@ -781,21 +787,21 @@ void name_and_sort_items(int *pcids, int num_cids, struct item *items,
 /**************************************************************************
 ...
 **************************************************************************/
-int collect_cids1(cid * dest_cids, city_t **selected_cities,
-                  int num_selected_cities, bool append_units,
-                  bool append_wonders, bool change_prod,
-                  bool(*test_func) (city_t *, int))
+int collect_city_cids1(city_cid *dest_cids, city_t **selected_cities,
+                       int num_selected_cities, bool append_units,
+                       bool append_wonders, bool change_prod,
+                       bool(*test_func) (city_t *, int))
 {
-  cid first = append_units ? B_LAST : 0;
-  cid last = (append_units
+  city_cid first = append_units ? B_LAST : 0;
+  city_cid last = (append_units
               ? game.ruleset_control.num_unit_types + B_LAST
               : game.ruleset_control.num_impr_types);
-  cid cid;
+  city_cid cid;
   int items_used = 0;
 
   for (cid = first; cid < last; cid++) {
     bool append = FALSE;
-    int id = cid_id(cid);
+    int id = city_cid_id(cid);
 
     if (!append_units && (append_wonders != is_wonder(id))) {
       continue;
@@ -824,47 +830,47 @@ int collect_cids1(cid * dest_cids, city_t **selected_cities,
 }
 
 /**************************************************************************
- Collect the cids of all targets (improvements and units) which are
+ Collect the city_cids of all targets (improvements and units) which are
  currently built in a city.
 **************************************************************************/
-int collect_cids2(cid * dest_cids)
+int collect_city_cids2(city_cid *dest_city_cids)
 {
   bool mapping[B_LAST + U_LAST];
-  int cids_used = 0;
-  cid cid;
+  int city_cids_used = 0;
+  city_cid cid;
 
   memset(mapping, 0, sizeof(mapping));
   city_list_iterate(get_player_ptr()->cities, pcity) {
-    mapping[cid_encode_from_city(pcity)] = TRUE;
+    mapping[city_cid_encode_from_city(pcity)] = TRUE;
   } city_list_iterate_end;
 
   for (cid = 0; cid < ARRAY_SIZE(mapping); cid++) {
     if (mapping[cid]) {
-      dest_cids[cids_used] = cid;
-      cids_used++;
+      dest_city_cids[city_cids_used] = cid;
+      city_cids_used++;
     }
   }
-  return cids_used;
+  return city_cids_used;
 }
 
 /**************************************************************************
- Collect the cids of all targets (improvements and units) which can
+ Collect the city_cids of all targets (improvements and units) which can
  be build in a city.
 **************************************************************************/
-int collect_cids3(cid * dest_cids)
+int collect_city_cids3(city_cid *dest_cids)
 {
   int cids_used = 0;
 
   impr_type_iterate(id) {
     if (can_player_build_improvement(get_player_ptr(), id)) {
-      dest_cids[cids_used] = cid_encode(FALSE, id);
+      dest_cids[cids_used] = city_cid_encode(FALSE, id);
       cids_used++;
     }
   } impr_type_iterate_end;
 
   unit_type_iterate(id) {
     if (can_player_build_unit(get_player_ptr(), id)) {
-      dest_cids[cids_used] = cid_encode(TRUE, id);
+      dest_cids[cids_used] = city_cid_encode(TRUE, id);
       cids_used++;
     }
   } unit_type_iterate_end;
@@ -873,10 +879,12 @@ int collect_cids3(cid * dest_cids)
 }
 
 /**************************************************************************
- Collect the cids of all targets which can be build by this city or
+ Collect the city_cids of all targets which can be build by this city or
  in general.
 **************************************************************************/
-int collect_cids4(cid * dest_cids, city_t *pcity, bool advanced_tech)
+int collect_city_cids4(city_cid *dest_cids,
+                       city_t *pcity,
+                       bool advanced_tech)
 {
   player_t *pplayer = get_player_ptr();
   int cids_used = 0;
@@ -916,7 +924,7 @@ int collect_cids4(cid * dest_cids, city_t *pcity, bool advanced_tech)
 
     if ((advanced_tech && can_eventually_build) ||
         (!advanced_tech && can_build)) {
-      dest_cids[cids_used] = cid_encode(FALSE, id);
+      dest_cids[cids_used] = city_cid_encode(FALSE, id);
       cids_used++;
     }
   } impr_type_iterate_end;
@@ -955,7 +963,7 @@ int collect_cids4(cid * dest_cids, city_t *pcity, bool advanced_tech)
 
     if ((advanced_tech && can_eventually_build) ||
         (!advanced_tech && can_build)) {
-      dest_cids[cids_used] = cid_encode(TRUE, id);
+      dest_cids[cids_used] = city_cid_encode(TRUE, id);
       cids_used++;
     }
   } unit_type_iterate_end;
@@ -964,16 +972,16 @@ int collect_cids4(cid * dest_cids, city_t *pcity, bool advanced_tech)
 }
 
 /**************************************************************************
- Collect the cids of all improvements which are built in the given city.
+ Collect the city_cids of all improvements which are built in the given city.
 **************************************************************************/
-int collect_cids5(cid * dest_cids, city_t *pcity)
+int collect_city_cids5(city_cid *dest_cids, city_t *pcity)
 {
   int cids_used = 0;
 
   assert(pcity != NULL);
 
   built_impr_iterate(pcity, id) {
-    dest_cids[cids_used] = cid_encode(FALSE, id);
+    dest_cids[cids_used] = city_cid_encode(FALSE, id);
     cids_used++;
   } built_impr_iterate_end;
 

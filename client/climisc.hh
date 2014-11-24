@@ -20,8 +20,6 @@
 
 struct Clause;
 
-typedef int cid;
-typedef int wid;
 
 enum tag_link_types {
   LINK_LOCATION = 1,
@@ -34,8 +32,6 @@ enum tag_link_types {
 void client_remove_player(int plrno);
 void client_remove_city(city_t *pcity);
 void client_remove_unit(unit_t *punit);
-
-void client_change_all(cid x, cid y);
 
 const char *get_embassy_status(player_t *me, player_t *them);
 const char *get_vision_status(player_t *me, player_t *them);
@@ -50,18 +46,21 @@ int client_cooling_sprite(void);
 void center_on_something(void);
 
 /*
- * A compound id (cid) can hold all objects a city can build:
+ * A city compound id (city_cid) can hold all objects a city can build:
  * improvements (with wonders) and units. This is achieved by
- * seperation the value set: a cid < B_LAST denotes a improvement
- * (including wonders). A cid >= B_LAST denotes a unit with the
- * unit_type_id of (cid - B_LAST).
+ * seperation the value set: a city_cid < B_LAST denotes a improvement
+ * (including wonders). A city_cid >= B_LAST denotes a unit with the
+ * unit_type_id of (city_cid - B_LAST).
  */
 
-cid cid_encode(bool is_unit, int id);
-cid cid_encode_from_city(city_t *pcity);
-void cid_decode(cid cid, bool *is_unit, int *id);
-bool cid_is_unit(cid cid);
-int cid_id(cid cid);
+typedef int city_cid;    /* city compound id */
+city_cid city_cid_encode(bool is_unit, int id);
+city_cid city_cid_encode_from_city(city_t *pcity);
+void     city_cid_decode(city_cid cid, bool *is_unit, int *id);
+bool     city_cid_is_unit(city_cid cid);
+int      city_cid_id(city_cid cid);
+
+void     client_change_all(city_cid x, city_cid y);
 
 /*
  * A worklist id (wid) can hold all objects which can be part of a
@@ -81,30 +80,34 @@ bool wid_is_unit(wid wid);
 bool wid_is_worklist(wid wid);
 int wid_id(wid wid);
 
-bool city_can_build_impr_or_unit(city_t *pcity, cid cid);
-bool city_unit_supported(city_t *pcity, cid cid);
-bool city_unit_present(city_t *pcity, cid cid);
-bool city_building_present(city_t *pcity, cid cid);
-bool city_can_sell_impr(city_t *pcity, cid cid);
+bool city_can_build_impr_or_unit(city_t *pcity, city_cid cid);
+bool city_unit_supported(city_t *pcity, city_cid cid);
+bool city_unit_present(city_t *pcity, city_cid cid);
+bool city_building_present(city_t *pcity, city_cid cid);
+bool city_can_sell_impr(city_t *pcity, city_cid cid);
 
 struct item {
-  cid cid_;
+  city_cid cid_;
   char descr[MAX_LEN_NAME + 40];
 
   /* Privately used for sorting */
   int section;
 };
 
-void name_and_sort_items(int *pcids, int num_cids, struct item *items,
+void name_and_sort_items(int *pcity_cids, int num_cids,
+                         struct item *items,
                          bool show_cost, city_t *pcity);
-int collect_cids1(cid * dest_cids, city_t **selected_cities,
-                 int num_selected_cities, bool append_units,
-                 bool append_wonders, bool change_prod,
-                 bool (*test_func) (city_t *, int));
-int collect_cids2(cid * dest_cids);
-int collect_cids3(cid * dest_cids);
-int collect_cids4(cid * dest_cids, city_t *pcity, bool advanced_tech);
-int collect_cids5(cid * dest_cids, city_t *pcity);
+int collect_city_cids1(city_cid * dest_city_cids,
+                       city_t **selected_cities,
+                       int num_selected_cities, bool append_units,
+                       bool append_wonders, bool change_prod,
+                       bool (*test_func) (city_t *, int));
+int collect_city_cids2(city_cid *dest_city_cids);
+int collect_city_cids3(city_cid *dest_city_cids);
+int collect_city_cids4(city_cid *dest_city_cids,
+                       city_t *pcity,
+                       bool advanced_tech);
+int collect_city_cids5(city_cid *dest_city_cids, city_t *pcity);
 
 /* the number of units in city */
 int num_present_units_in_city(city_t* pcity);
