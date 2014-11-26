@@ -589,7 +589,7 @@ int city_cid_id(city_cid cid)
 /**************************************************************************
 ...
 **************************************************************************/
-wid wid_encode(bool is_unit, bool is_worklist, int id)
+worklist_id worklist_id_encode(bool is_unit, bool is_worklist, int id)
 {
   assert(!is_unit || !is_worklist);
 
@@ -605,7 +605,7 @@ wid wid_encode(bool is_unit, bool is_worklist, int id)
 /**************************************************************************
 ...
 **************************************************************************/
-bool wid_is_unit(wid wid)
+bool worklist_id_is_unit(worklist_id wid)
 {
   assert(wid != WORKLIST_END);
 
@@ -615,7 +615,7 @@ bool wid_is_unit(wid wid)
 /**************************************************************************
 ...
 **************************************************************************/
-bool wid_is_worklist(wid wid)
+bool worklist_id_is_worklist(worklist_id wid)
 {
   assert(wid != WORKLIST_END);
 
@@ -625,7 +625,7 @@ bool wid_is_worklist(wid wid)
 /**************************************************************************
 ...
 **************************************************************************/
-int wid_id(wid wid)
+int worklist_id_id(worklist_id wid)
 {
   assert(wid != WORKLIST_END);
 

@@ -63,22 +63,23 @@ int      city_cid_id(city_cid cid);
 void     client_change_all(city_cid x, city_cid y);
 
 /*
- * A worklist id (wid) can hold all objects which can be part of a
+ * A worklist_id can hold all objects which can be part of a
  * city worklist: improvements (with wonders), units and global
  * worklists. This is achieved by seperation the value set:
- *  - (wid < B_LAST) denotes a improvement (including wonders)
- *  - (B_LAST <= wid < B_LAST + U_LAST) denotes a unit with the
- *  unit_type_id of (wid - B_LAST)
- *  - (B_LAST + U_LAST<= wid) denotes a global worklist with the id of
- *  (wid - (B_LAST + U_LAST))
+ *  - (worklist_id < B_LAST) denotes a improvement (including wonders)
+ *  - (B_LAST <= worklist_id < B_LAST + U_LAST) denotes a unit with the
+ *    unit_type_id of (worklist_id - B_LAST)
+ *  - (B_LAST + U_LAST<= worklist_id) denotes a global worklist with
+ *    the id of (worklist_id - (B_LAST + U_LAST))
  */
 
+typedef int worklist_id;
 #define WORKLIST_END (-1)
 
-wid wid_encode(bool is_unit, bool is_worklist, int id);
-bool wid_is_unit(wid wid);
-bool wid_is_worklist(wid wid);
-int wid_id(wid wid);
+worklist_id worklist_id_encode(bool is_unit, bool is_worklist, int id);
+bool worklist_id_is_unit(worklist_id wid);
+bool worklist_id_is_worklist(worklist_id wid);
+int  worklist_id_id(worklist_id wid);
 
 bool city_can_build_impr_or_unit(city_t *pcity, city_cid cid);
 bool city_unit_supported(city_t *pcity, city_cid cid);
