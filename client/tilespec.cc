@@ -94,9 +94,12 @@ static int flag_offset_x, flag_offset_y;
 #define NUM_CORNER_DIRS 4
 #define TILES_PER_CORNER 4
 
-static int num_valid_tileset_dirs, num_cardinal_tileset_dirs;
-static int num_index_valid, num_index_cardinal;
-static enum direction8 valid_tileset_dirs[8], cardinal_tileset_dirs[8];
+static int num_valid_tileset_dirs;
+static int num_cardinal_tileset_dirs;
+static int num_index_valid;
+static int num_index_cardinal;
+static enum direction8 valid_tileset_dirs[8];
+static enum direction8 cardinal_tileset_dirs[8];
 
 static struct layers_s {
   enum match_style match_style;
@@ -529,7 +532,8 @@ void tilespec_reread(const char *tileset_name)
 **************************************************************************/
 void tilespec_reread_callback(struct client_option *option)
 {
-  assert(option->type == CLIENT_OPTION_TYPE_STRING && *option->u.string.pvalue != '\0');
+  assert(option->type == CLIENT_OPTION_TYPE_STRING
+         && *option->u.string.pvalue != '\0');
   tilespec_reread(option->u.string.pvalue);
 }
 
@@ -799,6 +803,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
   duplicates_ok = has_capabilities("+duplicates_ok", file_capstr);
 
   (void) section_file_lookup(file, "tilespec.name"); /* currently unused */
+  (void) section_file_lookup(file, "tilespec.flags_directory");
 
   is_isometric = secfile_lookup_bool_default(file, FALSE, "tilespec.is_isometric");
 
@@ -1192,7 +1197,9 @@ void tilespec_setup_specialist_types(void)
 {
   /* Load the specialist sprite graphics. */
   specialist_type_iterate(i) {
-    struct citizen_type c = {.type = CITIZEN_SPECIALIST, .spec_type = (Specialist_type_id)i};
+    struct citizen_type c =
+      {.type = CITIZEN_SPECIALIST,
+       .spec_type = (Specialist_type_id)i};
     const char *name = get_citizen_name(c);
     char buffer[512];
     int j;
@@ -3142,9 +3149,14 @@ static enum color_std team_overview_tile_color(tile_t *ptile)
   if (pcity) {
     pplayer = city_owner(pcity);
 
-    return (me ? (players_on_same_team(pplayer, me)
-                  ? COLOR_STD_GREEN : COLOR_STD_RED)
-            : get_player_color(pplayer));
+    if (me) {
+      if ( players_on_same_team(pplayer, me) )
+         return COLOR_STD_GREEN;
+      else
+         return COLOR_STD_RED;
+    } else {
+      return get_player_color(pplayer);
+    }
   }
 
   /* Units */
@@ -3152,16 +3164,29 @@ static enum color_std team_overview_tile_color(tile_t *ptile)
   if (punit) {
     pplayer = unit_owner(punit);
 
-    return (me ? (players_on_same_team(pplayer, me)
-                  ? COLOR_STD_FGREEN : COLOR_STD_FRED)
-            : get_player_color(pplayer));
+    if (me) {
+      if (players_on_same_team(pplayer, me) )
+        return COLOR_STD_FGREEN;
+      else
+        return COLOR_STD_FRED;
+    } else {
+      return get_player_color(pplayer);
+    }
   }
 
   /* Terrain */
   is_fogged = (tile_get_known(ptile) == TILE_KNOWN_FOGGED && draw_fog_of_war);
-  return (is_ocean(ptile->terrain)
-          ? (is_fogged ? COLOR_STD_RACE4 : COLOR_STD_OCEAN)
-          : (is_fogged ? COLOR_STD_BACKGROUND : COLOR_STD_GROUND));
+  if is_ocean(ptile->terrain) {
+    if (is_fogged)
+      return COLOR_STD_RACE4;
+    else
+      return COLOR_STD_OCEAN;
+  } else {
+    if (is_fogged)
+      return COLOR_STD_BACKGROUND;
+    else
+      return COLOR_STD_GROUND;
+  }
 }
 
 
