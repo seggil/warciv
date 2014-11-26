@@ -3296,18 +3296,25 @@ unit_t *get_drawable_unit(tile_t *ptile, bool citymode)
     return NULL;
   }
 
-  if (!is_unit_in_multi_select(0, punit)
-      || (!multi_select_blink_all
-          && (punit->focus_status == FOCUS_DONE
-              || !(punit==get_unit_in_focus()
-                   || (multi_select_blink
-                       && unit_satisfies_filter(punit,
-                              multi_select_inclusive_filter,
-                              multi_select_exclusive_filter)))))
-      || !focus_unit_hidden) {
+  if ( ! is_unit_in_multi_select(0, punit)
+       || !focus_unit_hidden )
+  {
     return punit;
-  } else {
+  } else if (multi_select_blink_all) {
     return NULL;
+  } else if ( punit->focus_status == FOCUS_DONE) {
+    return punit;
+  } 
+  /* for unit in stack or city */
+  else if ( punit == get_unit_in_focus()
+            || (multi_select_blink
+                && unit_satisfies_filter(punit,
+                       multi_select_inclusive_filter,
+                       multi_select_exclusive_filter)))
+  {
+    return NULL;
+  } else {
+    return punit;
   }
 }
 
