@@ -164,7 +164,7 @@ struct small_sprite {
   char *file;
 
   /* Or, the sprite is in this file at the location. */
-  struct specfile *sf;
+  struct specfile *specfile_;
   int x, y, width, height;
 
   struct Sprite *sprite;
@@ -573,12 +573,13 @@ static struct Sprite *load_gfx_file(const char *gfx_filename)
 /**************************************************************************
   Ensure that the big sprite of the given spec file is loaded.
 **************************************************************************/
-static void ensure_big_sprite(struct specfile *sf)
+static void ensure_big_sprite(struct specfile *specf)
 {
-  struct section_file the_file, *file = &the_file;
+  struct section_file the_file;
+  struct section_file *file = &the_file;
   const char *gfx_filename;
 
-  if (sf->big_sprite) {
+  if (specf->big_sprite) {
     /* Looks like it's already loaded. */
     return;
   }
@@ -586,23 +587,23 @@ static void ensure_big_sprite(struct specfile *sf)
   /* Otherwise load it.  The big sprite will sometimes be freed and will have
    * to be reloaded, but most of the time it's just loaded once, the small
    * sprites are extracted, and then it's freed. */
-  if (!section_file_load(file, sf->file_name)) {
-    freelog(LOG_FATAL, _("Could not open \"%s\"."), sf->file_name);
+  if (!section_file_load(file, specf->file_name)) {
+    freelog(LOG_FATAL, _("Could not open \"%s\"."), specf->file_name);
     exit(EXIT_FAILURE);
   }
 
   if (!check_tilespec_capabilities(file, "spec",
-                                   SPEC_CAPSTR, sf->file_name)) {
+                                   SPEC_CAPSTR, specf->file_name)) {
     exit(EXIT_FAILURE);
   }
 
   gfx_filename = secfile_lookup_str(file, "file.gfx");
 
-  sf->big_sprite = load_gfx_file(gfx_filename);
+  specf->big_sprite = load_gfx_file(gfx_filename);
 
-  if (!sf->big_sprite) {
+  if (!specf->big_sprite) {
     freelog(LOG_FATAL, _("Couldn't load gfx file for the spec file %s"),
-            sf->file_name);
+            specf->file_name);
     exit(EXIT_FAILURE);
   }
   section_file_free(file);
@@ -613,18 +614,18 @@ static void ensure_big_sprite(struct specfile *sf)
   positions of the sprites in the big_sprite are saved in the
   small_sprite structs.
 **************************************************************************/
-static void scan_specfile(struct specfile *sf, bool duplicates_ok)
+static void scan_specfile(struct specfile *specf, bool duplicates_ok)
 {
   struct section_file the_file, *file = &the_file;
   char **gridnames;
   int num_grids, i;
 
-  if (!section_file_load(file, sf->file_name)) {
-    freelog(LOG_FATAL, _("Could not open \"%s\"."), sf->file_name);
+  if (!section_file_load(file, specf->file_name)) {
+    freelog(LOG_FATAL, _("Could not open \"%s\"."), specf->file_name);
     exit(EXIT_FAILURE);
   }
   if (!check_tilespec_capabilities(file, "spec",
-                                   SPEC_CAPSTR, sf->file_name)) {
+                                   SPEC_CAPSTR, specf->file_name)) {
     exit(EXIT_FAILURE);
   }
 
@@ -678,7 +679,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
       ss->y = y1;
       ss->width = dx;
       ss->height = dy;
-      ss->sf = sf;
+      ss->specfile_ = specf;
       ss->sprite = NULL;
 
       small_sprite_list_prepend(small_sprites, ss);
@@ -716,7 +717,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
 
     ss->ref_count = 0;
     ss->file = mystrdup(filename);
-    ss->sf = NULL;
+    ss->specfile_ = NULL;
     ss->sprite = NULL;
 
     small_sprite_list_prepend(small_sprites, ss);
@@ -735,7 +736,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
     free(tags);
   }
 
-  section_file_check_unused(file, sf->file_name);
+  section_file_check_unused(file, specf->file_name);
   section_file_free(file);
 }
 
@@ -1077,15 +1078,15 @@ bool tilespec_read_toplevel(const char *tileset_name)
   specfiles = specfile_list_new();
   small_sprites = small_sprite_list_new();
   for (i = 0; i < num_spec_files; i++) {
-    struct specfile *sf = (specfile*)wc_malloc(sizeof(*sf));
+    struct specfile *specf_ = (specfile*)wc_malloc(sizeof(struct specfile));
 
     freelog(LOG_DEBUG, "spec file %s", spec_filenames[i]);
 
-    sf->big_sprite = NULL;
-    sf->file_name = mystrdup(datafilename_required(spec_filenames[i]));
-    scan_specfile(sf, duplicates_ok);
+    specf_->big_sprite = NULL;
+    specf_->file_name = mystrdup(datafilename_required(spec_filenames[i]));
+    scan_specfile(specf_, duplicates_ok);
 
-    specfile_list_prepend(specfiles, sf);
+    specfile_list_prepend(specfiles, specf_);
   }
   free(spec_filenames);
 
@@ -3442,19 +3443,19 @@ struct Sprite *load_sprite(const char *tag_name)
         exit(EXIT_FAILURE);
       }
     } else {
-      int sf_w, sf_h;
+      int specf_w, specf_h;
 
-      ensure_big_sprite(ss->sf);
-      get_sprite_dimensions(ss->sf->big_sprite, &sf_w, &sf_h);
-      if (ss->x < 0 || ss->x + ss->width > sf_w
-          || ss->y < 0 || ss->y + ss->height > sf_h) {
+      ensure_big_sprite(ss->specfile_);
+      get_sprite_dimensions(ss->specfile_->big_sprite, &specf_w, &specf_h);
+      if (ss->x < 0 || ss->x + ss->width > specf_w
+          || ss->y < 0 || ss->y + ss->height > specf_h) {
         freelog(LOG_ERROR,
                 "Sprite '%s' in file '%s' isn't within the image!",
-                tag_name, ss->sf->file_name);
+                tag_name, ss->specfile_->file_name);
         return NULL;
       }
       ss->sprite =
-        crop_sprite(ss->sf->big_sprite, ss->x, ss->y, ss->width, ss->height,
+        crop_sprite(ss->specfile_->big_sprite, ss->x, ss->y, ss->width, ss->height,
                     NULL, -1, -1);
     }
   }
