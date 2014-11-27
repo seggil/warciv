@@ -231,17 +231,17 @@ void real_die(const char *file, int line, const char *format, ...)
 /**************************************************************************
 ...
 **************************************************************************/
-struct datafile {
+struct datafile_s {
   char *name;           /* descriptive file name string */
   char *fullname;       /* full absolute filename */
   time_t mtime;         /* last modification time  */
 };
 
 #define SPECLIST_TAG datafile
-#define SPECLIST_TYPE struct datafile
+#define SPECLIST_TYPE struct datafile_s
 #include "speclist.hh"
 #define datafile_list_iterate(list, pnode) \
-  TYPED_LIST_ITERATE(struct datafile, list, pnode)
+  TYPED_LIST_ITERATE(struct datafile_s, list, pnode)
 #define datafile_list_iterate_end LIST_ITERATE_END
 
 /* A list of strings (i.e. 'char *'). */

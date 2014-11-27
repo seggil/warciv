@@ -1088,8 +1088,8 @@ char *datafilename(const char *filename)
 /**************************************************************************
   Compare modification times.
 **************************************************************************/
-static int compare_file_mtime_ptrs(const struct datafile * const *ppa,
-                                   const struct datafile * const *ppb)
+static int compare_file_mtime_ptrs(const struct datafile_s * const *ppa,
+                                   const struct datafile_s * const *ppb)
 {
   return ((*ppa)->mtime < (*ppb)->mtime);
 }
@@ -1097,8 +1097,8 @@ static int compare_file_mtime_ptrs(const struct datafile * const *ppa,
 /**************************************************************************
   Compare names.
 **************************************************************************/
-static int compare_file_name_ptrs(const struct datafile * const *ppa,
-                                  const struct datafile * const *ppb)
+static int compare_file_name_ptrs(const struct datafile_s * const *ppa,
+                                  const struct datafile_s * const *ppb)
 {
   return compare_strings((*ppa)->name, (*ppb)->name);
 }
@@ -1165,7 +1165,7 @@ struct datafile_list *datafilelist_infix(const char *subpath,
 
     /* Scan all entries in the directory. */
     while ((entry = readdir(dir))) {
-      struct datafile *file;
+      struct datafile_s *file;
       char *ptr;
       /* Strdup the entry so we can safely write to it. */
       char *filename = mystrdup(entry->d_name);
@@ -1180,7 +1180,7 @@ struct datafile_list *datafilelist_infix(const char *subpath,
         my_snprintf(fullname, len, "%s/%s", path, filename);
 
         if (stat(fullname, &buf) == 0) {
-          file = (struct datafile *)wc_malloc(sizeof(struct datafile));
+          file = (struct datafile_s *)wc_malloc(sizeof(struct datafile_s));
 
           /* Clip the suffix. */
           *ptr = '\0';
