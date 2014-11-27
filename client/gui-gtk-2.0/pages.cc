@@ -59,13 +59,13 @@ static GtkListStore *load_store, *scenario_store,
 static GtkTreeStore *meta_player_tree_store;
 
 enum metaplayerlist_column_ids {
-  MPL_COL_NAME,
-  MPL_COL_USER,
-  MPL_COL_HOST,
-  MPL_COL_TYPE,
-  MPL_COL_NATION,
+  METAPLAYER_LIST_COL_NAME,
+  METAPLAYER_LIST_COL_USER,
+  METAPLAYER_LIST_COL_HOST,
+  METAPLAYER_LIST_COL_TYPE,
+  METAPLAYER_LIST_COL_NATION,
 
-  MPL_NUM_COLUMNS,
+  METAPLAYER_LIST_NUM_COLUMNS,
 };
 
 enum metavariableslist_column_ids {
@@ -813,11 +813,11 @@ static void meta_player_tree_store_append(struct server *pserver,
     if (0 == mystrcasecmp(type, pplayer->type)) {
       gtk_tree_store_append(meta_player_tree_store, &parent, NULL);
       gtk_tree_store_set(meta_player_tree_store, &parent,
-                         MPL_COL_NAME, pplayer->name,
-                         MPL_COL_USER, pplayer->user,
-                         MPL_COL_HOST, pplayer->host,
-                         MPL_COL_TYPE, pplayer->type,
-                         MPL_COL_NATION, pplayer->nation, -1);
+                         METAPLAYER_LIST_COL_NAME, pplayer->name,
+                         METAPLAYER_LIST_COL_USER, pplayer->user,
+                         METAPLAYER_LIST_COL_HOST, pplayer->host,
+                         METAPLAYER_LIST_COL_TYPE, pplayer->type,
+                         METAPLAYER_LIST_COL_NATION, pplayer->nation, -1);
       name_len = strlen(pplayer->name);
       /* Check for observers */
       for (j = 0, pobserver = pserver->players; j < pserver->nplayers;
@@ -828,9 +828,9 @@ static void meta_player_tree_store_append(struct server *pserver,
             && pobserver->name[2 + name_len] == ')') {
           gtk_tree_store_append(meta_player_tree_store, &iter, &parent);
           gtk_tree_store_set(meta_player_tree_store, &iter,
-                             MPL_COL_USER, pobserver->user,
-                             MPL_COL_HOST, pobserver->host,
-                             MPL_COL_TYPE, pobserver->type, -1);
+                             METAPLAYER_LIST_COL_USER, pobserver->user,
+                             METAPLAYER_LIST_COL_HOST, pobserver->host,
+                             METAPLAYER_LIST_COL_TYPE, pobserver->type, -1);
         }
       }
     }
@@ -855,15 +855,15 @@ meta_player_tree_store_append_global_observers(struct server *pserver)
       if (first) {
         gtk_tree_store_append(meta_player_tree_store, &parent, NULL);
         gtk_tree_store_set(meta_player_tree_store, &parent,
-                           MPL_COL_NAME, "Global observers", -1);
+                           METAPLAYER_LIST_COL_NAME, "Global observers", -1);
         first = FALSE;
       }
 
       gtk_tree_store_append(meta_player_tree_store, &iter, &parent);
       gtk_tree_store_set(meta_player_tree_store, &iter,
-                         MPL_COL_USER, pobserver->user,
-                         MPL_COL_HOST, pobserver->host,
-                         MPL_COL_TYPE, pobserver->type, -1);
+                         METAPLAYER_LIST_COL_USER, pobserver->user,
+                         METAPLAYER_LIST_COL_HOST, pobserver->host,
+                         METAPLAYER_LIST_COL_TYPE, pobserver->type, -1);
     }
   }
 }
@@ -884,15 +884,15 @@ static void meta_player_tree_store_append_detached_conn(struct server *pserver)
       if (first) {
         gtk_tree_store_append(meta_player_tree_store, &parent, NULL);
         gtk_tree_store_set(meta_player_tree_store, &parent,
-                           MPL_COL_NAME, "Detached", -1);
+                           METAPLAYER_LIST_COL_NAME, "Detached", -1);
         first = FALSE;
       }
 
       gtk_tree_store_append(meta_player_tree_store, &iter, &parent);
       gtk_tree_store_set(meta_player_tree_store, &iter,
-                         MPL_COL_USER, pdetached->user,
-                         MPL_COL_HOST, pdetached->host,
-                         MPL_COL_TYPE, pdetached->type, -1);
+                         METAPLAYER_LIST_COL_USER, pdetached->user,
+                         METAPLAYER_LIST_COL_HOST, pdetached->host,
+                         METAPLAYER_LIST_COL_TYPE, pdetached->type, -1);
     }
   }
 }
@@ -1016,7 +1016,7 @@ static GtkWidget *create_metaplayerlist_view()
   GtkCellRenderer *rend;
   GtkTreeSelection *selection;
 
-  meta_player_tree_store = gtk_tree_store_new(MPL_NUM_COLUMNS,
+  meta_player_tree_store = gtk_tree_store_new(METAPLAYER_LIST_NUM_COLUMNS,
                                               G_TYPE_STRING,    /* name */
                                               G_TYPE_STRING,    /* user */
                                               G_TYPE_STRING,    /* host */
@@ -1033,29 +1033,34 @@ static GtkWidget *create_metaplayerlist_view()
   rend = gtk_cell_renderer_text_new();
   gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
                                               _("Name"), rend,
-                                              "text", MPL_COL_NAME,
+                                              "text",
+                                              METAPLAYER_LIST_COL_NAME,
                                               NULL);
 
   rend = gtk_cell_renderer_text_new();
   gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
                                               _("User"), rend,
-                                              "text", MPL_COL_USER,
+                                              "text",
+                                              METAPLAYER_LIST_COL_USER,
                                               NULL);
 
   rend = gtk_cell_renderer_text_new();
   gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
                                               _("Host"), rend,
-                                              "text", MPL_COL_HOST, NULL);
+                                              "text",
+                                              METAPLAYER_LIST_COL_HOST, NULL);
 
   rend = gtk_cell_renderer_text_new();
   gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
                                               _("Type"), rend,
-                                              "text", MPL_COL_TYPE, NULL);
+                                              "text",
+                                              METAPLAYER_LIST_COL_TYPE, NULL);
 
   rend = gtk_cell_renderer_text_new();
   gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
                                               _("Nation"), rend,
-                                              "text", MPL_COL_NATION, NULL);
+                                              "text",
+                                              METAPLAYER_LIST_COL_NATION, NULL);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_container_set_border_width(GTK_CONTAINER(sw), 0);
