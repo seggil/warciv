@@ -106,7 +106,8 @@ void gtk_draw_shadowed_string(GdkDrawable *drawable,
 **************************************************************************/
 void load_intro_gfx(void)
 {
-  int tot, y;
+  int intro_width;
+  int y;
   char s[64];
   GdkColor face;
   GdkGC *face_gc;
@@ -129,21 +130,21 @@ void load_intro_gfx(void)
 
   /* Main graphic */
   intro_gfx_sprite = load_gfxfile(main_intro_filename);
-  tot=intro_gfx_sprite->width;
+  intro_width = intro_gfx_sprite->width;
 
   pango_layout_set_text(layout, warciv_motto(), -1);
   pango_layout_get_pixel_extents(layout, &rect, NULL);
 
-  y = intro_gfx_sprite->height-45;
+  y = intro_gfx_sprite->height - 45;
 
   gdk_gc_set_rgb_fg_color(face_gc, &face);
   gdk_draw_layout(intro_gfx_sprite->pixmap, face_gc,
-                  (tot-rect.width) / 2, y, layout);
+                  (intro_width-rect.width) / 2, y, layout);
   g_object_unref(face_gc);
 
   /* Minimap graphic */
   radar_gfx_sprite = load_gfxfile(minimap_intro_filename);
-  tot=radar_gfx_sprite->width;
+  intro_width = radar_gfx_sprite->width;
 
   my_snprintf(s, sizeof(s), "%d.%d.%d%s",
               MAJOR_VERSION, MINOR_VERSION,
@@ -156,17 +157,17 @@ void load_intro_gfx(void)
   gtk_draw_shadowed_string(radar_gfx_sprite->pixmap,
                            toplevel->style->black_gc,
                            toplevel->style->white_gc,
-                           (tot - rect.width) / 2, y,
+                           (intro_width - rect.width) / 2, y,
                            layout);
 
   pango_layout_set_text(layout, word_version(), -1);
   pango_layout_get_pixel_extents(layout, &rect, NULL);
-  y-=rect.height+3;
+  y -= rect.height+3;
 
   gtk_draw_shadowed_string(radar_gfx_sprite->pixmap,
                            toplevel->style->black_gc,
                            toplevel->style->white_gc,
-                           (tot - rect.width) / 2, y,
+                           (intro_width - rect.width) / 2, y,
                            layout);
 
   /* done */
@@ -398,10 +399,10 @@ struct Sprite *load_gfxfile(const char *filename)
 
   freelog(LOG_DEBUG, "load_gfxfile filename=\"%s\"", filename);
 
-  im = gdk_pixbuf_new_from_file(filename,&pixbuf_error);
+  im = gdk_pixbuf_new_from_file(filename, &pixbuf_error);
   if (!im) {
     freelog(LOG_FATAL, "Failed reading graphics file: %s \n"
-            "Error : %s\n", filename,pixbuf_error->message);
+            "Error : %s\n", filename, pixbuf_error->message);
     exit(EXIT_FAILURE);
   }
 
@@ -499,7 +500,7 @@ void create_overlay_unit(struct canvas *pcanvas, int i)
     case SEA_MOVING:  bg_color = COLOR_STD_OCEAN;  break;
     case HELI_MOVING: bg_color = COLOR_STD_YELLOW; break;
     case AIR_MOVING:  bg_color = COLOR_STD_CYAN;   break;
-    default:      bg_color = COLOR_STD_BLACK;  break;
+    default:          bg_color = COLOR_STD_BLACK;  break;
     }
     canvas_put_rectangle(pcanvas, bg_color, 0, 0, width, height);
   }
