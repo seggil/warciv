@@ -117,7 +117,7 @@ static gboolean races_selection_func(GtkTreeSelection *select,
                                      gboolean selected, gpointer data);
 
 static int selected_nation;
-static int selected_sex;
+static int selected_sex;        /* 0 or false is female, 1 or true is male*/
 static int selected_city_style;
 
 static int is_showing_pillage_dialog = FALSE;
