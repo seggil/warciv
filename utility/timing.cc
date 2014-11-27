@@ -30,7 +30,7 @@
 
    1. General principle of data hiding and encapsulation
 
-   2. Means we don't have to include config.h and possibly system
+   2. Means we don't have to include config.hh and possibly system
       specific header files in timing.hh.  Such stuff is confined
       inside timing.c.
 
