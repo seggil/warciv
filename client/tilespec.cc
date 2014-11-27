@@ -2516,7 +2516,8 @@ static int fill_terrain_sprite_array(struct drawn_sprite *sprs,
   }
 
   /* Skip the normal drawing process. */
-  if (ptile->spec_sprite && (sprite = load_sprite(ptile->spec_sprite))) {
+  if (ptile->spec_sprite) {
+    sprite = load_sprite(ptile->spec_sprite);
     ADD_SPRITE_SIMPLE(sprite);
     return 1;
   }
@@ -2876,7 +2877,8 @@ static void tilespec_setup_style_tile(int style, char *graphics)
 
   city_styles[style].tiles_num = 0;
 
-  for(j=0; j<32 && city_styles[style].tiles_num < MAX_CITY_TILES; j++) {
+  for(j = 0; j < 32 && city_styles[style].tiles_num < MAX_CITY_TILES; j++)
+  {
     my_snprintf(buffer, sizeof(buffer), "%s_%d", graphics, j);
     sprite2 = load_sprite(buffer);
     if (is_isometric) {
