@@ -1,16 +1,16 @@
 
 [tilespec]
 
-; Format and options of this tilespec file:
+# Format and options of this tilespec file:
 options = "+tilespec3"
 
-; A simple name for the tileset specified by this file:
+# A simple name for the tileset specified by this file:
 name = "MacroIsoTrident"
 
-; TODO: add more overall information fields on tiles, 
-; eg, description, authors, colors, etc.
+# TODO: add more overall information fields on tiles, 
+# eg, description, authors, colors, etc.
 
-; Basic tile sizes:
+# Basic tile sizes:
 normal_tile_width  = 64
 normal_tile_height = 32
 small_tile_width   = 15
@@ -18,34 +18,34 @@ small_tile_height  = 20
 
 is_isometric = 1
 
-; Use roadstyle 0 (old iso style)
+# Use roadstyle 0 (old iso style)
 roadstyle = 0
 
-; Use fogstyle  (old iso style)
+# Use fogstyle  (old iso style)
 fogstyle = 0
 
-; Use darkness style 1 (single-sprite)
+# Use darkness style 1 (single-sprite)
 darkness_style = 1
  
-; offset the flags by this amount when drawing units
+# offset the flags by this amount when drawing units
 flag_offset_x = 17
 flag_offset_y = 11
 
-; Font to use to draw city names:
+# Font to use to draw city names:
 city_names_font = "9x15bold"
 
-; Font to use to draw city productions:
+# Font to use to draw city productions:
 city_productions_font = "6x13"
 
-; These are special because they get freed and reloaded
-; as required:
+# These are special because they get freed and reloaded
+# as required:
 main_intro_file    = "misc/intro"
 minimap_intro_file = "misc/radar"
 
-; Below, the graphics spec files; must be somewhere (anywhere) in 
-; the data path. Order may be important for color allocation on 
-; low-color systems, and if there are any duplicate tags (lattermost
-; tag is used).
+# Below, the graphics spec files; must be somewhere (anywhere) in 
+# the data path. Order may be important for color allocation on 
+# low-color systems, and if there are any duplicate tags (lattermost
+# tag is used).
 files = 
   "isotrident/terrain1.spec",
   "isotrident/terrain2.spec",
@@ -55,7 +55,7 @@ files =
   "misc/flags.spec",
   "misc/buildings.spec",
   "misc/space.spec",
-;  "misc/techs.spec",
+#  "misc/techs.spec",
   "misc/treaty.spec",
   "isotrident/nuke.spec",
   "trident/explosions.spec",
@@ -63,7 +63,7 @@ files =
   "isotrident/morecities.spec"
 
 
-; Terrain info - see README.graphics
+# Terrain info - see README.graphics
 
 [layer0]
 match_style = "BOOL"

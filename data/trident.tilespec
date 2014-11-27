@@ -1,16 +1,16 @@
 
 [tilespec]
 
-; Format and options of this tilespec file:
+# Format and options of this tilespec file:
 options = "+tilespec3"
 
-; A simple name for the tileset specified by this file:
+# A simple name for the tileset specified by this file:
 name = "Trident"
 
-; TODO: add more overall information fields on tiles, 
-; eg, description, authors, colors, etc.
+# TODO: add more overall information fields on tiles, 
+# eg, description, authors, colors, etc.
 
-; Basic tile sizes:
+# Basic tile sizes:
 normal_tile_width  = 30
 normal_tile_height = 30
 small_tile_width   = 15
@@ -18,34 +18,34 @@ small_tile_height  = 20
 
 is_isometric = 0
 
-; Use roadstyle 1 (old non-iso style)
+# Use roadstyle 1 (old non-iso style)
 roadstyle = 1
 
-; Use fogstyle 1 (old non-iso style)
+# Use fogstyle 1 (old non-iso style)
 fogstyle = 0
 
-; Use darkness style 3 (15 sprites)
+# Use darkness style 3 (15 sprites)
 darkness_style = 3
  
-; offset the flags by this amount when drawing units
+# offset the flags by this amount when drawing units
 flag_offset_x = 0
 flag_offset_y = 0
 
-; Font to use to draw city names:
+# Font to use to draw city names:
 city_names_font = "9x15bold"
 
-; Font to use to draw city productions:
+# Font to use to draw city productions:
 city_productions_font = "6x13"
 
-; These are special because they get freed and reloaded
-; as required:
+# These are special because they get freed and reloaded
+# as required:
 main_intro_file    = "misc/intro"
 minimap_intro_file = "misc/radar"
 
-; Below, the graphics spec files; must be somewhere (anywhere) in 
-; the data path. Order may be important for color allocation on 
-; low-color systems, and if there are any duplicate tags (lattermost
-; tag is used).
+# Below, the graphics spec files; must be somewhere (anywhere) in 
+# the data path. Order may be important for color allocation on 
+# low-color systems, and if there are any duplicate tags (lattermost
+# tag is used).
 files = 
   "trident/tiles.spec",
   "misc/small.spec",
@@ -54,13 +54,13 @@ files =
   "trident/roads.spec",
   "misc/buildings.spec",
   "misc/space.spec",
-;  "misc/techs.spec",
+#  "misc/techs.spec",
   "misc/treaty.spec",
   "trident/cities.spec",
   "trident/explosions.spec"
 
 
-; Terrain info - see README.graphics
+# Terrain info - see README.graphics
 
 [layer0]
 match_style = "BOOL"
