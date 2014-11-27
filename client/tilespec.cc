@@ -289,15 +289,18 @@ const char **get_tileset_list(void)
 }
 
 /**********************************************************************
-  ...
+  warciv does not want isotrident for default
 ***********************************************************************/
 const char *get_default_tilespec_name(void)
 {
+    return "trident";
+#if 0
   if (isometric_view_supported()) {
     return "isotrident"; /* Do not i18n! --dwp */
   } else {
     return "trident";    /* Do not i18n! --dwp */
   }
+#endif
 }
 
 /**********************************************************************
