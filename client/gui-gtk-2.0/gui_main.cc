@@ -1330,14 +1330,16 @@ static void setup_widgets(void)
   toplevel_vpaned = paned;
 
   if (small_display_layout) {
-    /* The window is divided into two horizontal panels: overview +
-     * civinfo + unitinfo, main view + message window. */
+    /* The window is divided into two horizontal panels:
+       - overview + civinfo + unitinfo
+       - main view + message window. */
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), top_vbox, NULL);
     gtk_box_pack_end(GTK_BOX(top_vbox), hbox, TRUE, TRUE, 0);
     gtk_box_pack_end(GTK_BOX(hbox), paned, TRUE, TRUE, 0);
   } else {
-    /* The window is divided into two vertical panes: overview +
-     * + civinfo + unitinfo + main view, message window. */
+    /* The window is divided into two vertical panes:
+       - overview + civinfo + unitinfo + main view
+       - message window. */
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), paned, NULL);
     gtk_paned_pack1(GTK_PANED(paned), top_vbox, TRUE, FALSE);
     gtk_box_pack_end(GTK_BOX(top_vbox), hbox, TRUE, TRUE, 0);
@@ -1706,10 +1708,10 @@ static void setup_widgets(void)
 
   main_message_area = GTK_TEXT_VIEW(text);
 
-  set_output_window_text(_("Warciv is free software and you are welcome"
-                           " to distribute copies of it\nunder certain"
-                           " conditions; See the \"Copying\" item on"
-                           " the Help menu.\nNow.. Go give'em hell!"));
+  set_output_window_text(
+      _("Warciv is free software and you are welcome to distribute copies of it\n"
+        "under certain conditions; See the \"Copying\" item on the Help menu.\n"
+        "Now.. Go give'em hell!"));
 
   /* the chat line */
   hbox = gtk_hbox_new(FALSE, 4);
