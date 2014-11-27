@@ -216,7 +216,7 @@ static struct Sprite* lookup_sprite_tag_alt(const char *tag, const char *alt,
   Return the tileset name of the direction.  This is similar to
   dir_get_name but you shouldn't change this or all tilesets will break.
 **************************************************************************/
-static const char *dir_get_tileset_name(enum direction8 dir)
+static const char *get_name_tileset_direction8(enum direction8 dir)
 {
   switch (dir) {
   case DIR8_NORTH:
@@ -553,7 +553,8 @@ static struct Sprite *load_gfx_file(const char *gfx_filename)
     char full_name[strlen(gfx_filename) + strlen(gfx_fileext) + 2];
 
     sprintf(full_name, "%s.%s", gfx_filename, gfx_fileext);
-    if ((real_full_name = datafilename(full_name))) {
+    real_full_name = datafilename(full_name);
+    if ( real_full_name ) {
       freelog(LOG_DEBUG, "trying to load gfx file %s", real_full_name);
       s = load_gfxfile(real_full_name);
       if (s) {
@@ -1136,7 +1137,7 @@ static const char *cardinal_index_str(int idx)
     int value = (idx >> i) & 1;
 
     cat_snprintf(c, sizeof(c), "%s%d",
-                 dir_get_tileset_name(cardinal_tileset_dirs[i]), value);
+                 get_name_tileset_direction8(cardinal_tileset_dirs[i]), value);
   }
 
   return c;
@@ -1156,7 +1157,7 @@ static char *valid_index_str(int index)
     int value = (index >> i) & 1;
 
     cat_snprintf(c, sizeof(c), "%s%d",
-                 dir_get_tileset_name(valid_tileset_dirs[i]), value);
+                 get_name_tileset_direction8(valid_tileset_dirs[i]), value);
   }
 
   return c;
@@ -1305,7 +1306,7 @@ static void tilespec_lookup_sprite_tags(void)
      * one for the road/rail going off in each direction. */
     for (i = 0; i < num_valid_tileset_dirs; i++) {
       enum direction8 dir = valid_tileset_dirs[i];
-      const char *dir_name = dir_get_tileset_name(dir);
+      const char *dir_name = get_name_tileset_direction8(dir);
 
       my_snprintf(buffer, sizeof(buffer), "r.road_%s", dir_name);
       SET_SPRITE(road.dir[i], buffer);
@@ -1330,9 +1331,9 @@ static void tilespec_lookup_sprite_tags(void)
         int value = (i >> j) & 1;
 
         cat_snprintf(c, sizeof(c), "%s%d",
-                 dir_get_tileset_name(valid_tileset_dirs[2 * j]), value);
+                 get_name_tileset_direction8(valid_tileset_dirs[2 * j]), value);
         cat_snprintf(d, sizeof(d), "%s%d",
-                 dir_get_tileset_name(valid_tileset_dirs[2 * j + 1]), value);
+                 get_name_tileset_direction8(valid_tileset_dirs[2 * j + 1]), value);
       }
 
       my_snprintf(buffer, sizeof(buffer), "r.c_road_%s", c);
@@ -1366,11 +1367,11 @@ static void tilespec_lookup_sprite_tags(void)
 
       if (0 <= dir && 8 > dir && !is_cardinal_tileset_dir(dir)) {
         my_snprintf(buffer, sizeof(buffer), "r.c_road_%s",
-                    dir_get_tileset_name(dir));
+                    get_name_tileset_direction8(dir));
         SET_SPRITE_OPT(road.corner[dir], buffer);
 
         my_snprintf(buffer, sizeof(buffer), "r.c_rail_%s",
-                    dir_get_tileset_name(dir));
+                    get_name_tileset_direction8(dir));
         SET_SPRITE_OPT(rail.corner[dir], buffer);
       }
     }
@@ -1524,7 +1525,7 @@ static void tilespec_lookup_sprite_tags(void)
       enum direction8 dir = cardinal_tileset_dirs[i];
 
       my_snprintf(buffer, sizeof(buffer), "tx.darkness_%s",
-                  dir_get_tileset_name(dir));
+                  get_name_tileset_direction8(dir));
       SET_SPRITE(tx.darkness[i], buffer);
     }
     break;
