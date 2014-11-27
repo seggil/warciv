@@ -1878,8 +1878,14 @@ void tilespec_setup_nation_flag(int id)
   int i;
 
   nation->flag_sprite = NULL;
-  for (i = 0; tags[i] && !nation->flag_sprite; i++) {
-    nation->flag_sprite = load_sprite(tags[i]);
+  for (i = 0; i < 3; i++) {
+    if ( tags[i] ) {
+      nation->flag_sprite = load_sprite(tags[i]);
+      if (nation->flag_sprite)
+        break;
+    } else {
+      continue;
+    }
   }
   if (!nation->flag_sprite) {
     /* Should never get here because of the f.unknown fallback. */
