@@ -371,7 +371,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .change_callback = ocb,                                    \
 }
 
-#define GEN_STR_LIST_OPTION(oname, odesc, ohelp, ocat, odef, oacc, ocb) \
+#define GEN_STR_FROM_LIST_OPTION(oname, odesc, ohelp, ocat, odef, oacc, ocb) \
 { .name = #oname,                                                       \
   .description = odesc,                                                 \
   .help_text = ohelp,                                                   \
@@ -455,7 +455,7 @@ static const char *get_filter_value_name(enum filter_value value)
 }
 
 struct client_option client_options[] = {
-  GEN_STR_LIST_OPTION(default_tileset_name,
+  GEN_STR_FROM_LIST_OPTION(default_tileset_name,
                       N_("Tileset"),
                       N_("By changing this option you change the active "
                          "tileset. This is the same as using the -t "
@@ -739,7 +739,7 @@ struct client_option client_options[] = {
                   TRUE,
                   NULL),
 
-  GEN_STR_LIST_OPTION(default_sound_set_name,
+  GEN_STR_FROM_LIST_OPTION(default_sound_set_name,
                       N_("Default name of sound set"),
                       N_("This is the soundset that will be used.  Changing "
                          "this is the same as using the -S command-line "
@@ -747,7 +747,7 @@ struct client_option client_options[] = {
                       CLIENT_OPTION_CATEGORY_SOUND, "stdsounds",
                       get_soundset_list,
                       audio_change_soundset),
-  GEN_STR_LIST_OPTION(default_sound_plugin_name,
+  GEN_STR_FROM_LIST_OPTION(default_sound_plugin_name,
                       N_("Default sound plugin"),
                       N_("If you have a problem with sound, try changing the "
                          "sound plugin.  The new plugin won't take effect "
@@ -1172,7 +1172,7 @@ struct client_option client_options[] = {
 #undef GEN_BOOL_OPTION
 #undef GEN_STR_OPTION
 #undef GEN_PWD_OPTION
-#undef GEN_STR_LIST_OPTION
+#undef GEN_STR_FROM_LIST_OPTION
 #undef GEN_STR_VEC_OPTION
 #undef GEN_ENUM_LIST_OPTION
 #undef GEN_FILTER_OPTION
