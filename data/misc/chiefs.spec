@@ -1,6 +1,6 @@
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -22,7 +22,7 @@ dy = 45
 
 tiles = { "row", "column", "tag"
 
-; Unit hit-point bars: approx percent of hp remaining
+# Unit hit-point bars: approx percent of hp remaining
 0,  0, "unit.hp_100"
 0,  1, "unit.hp_90"
 0,  2, "unit.hp_80"
@@ -35,10 +35,10 @@ tiles = { "row", "column", "tag"
 0,  9, "unit.hp_10"
 0, 10, "unit.hp_0"
 
-; Default occupied flag
+# Default occupied flag
 0, 11, "cd.occupied"
 
-; City occupied flags
+# City occupied flags
 0, 11, "city.european_occupied"
 0, 11, "city.classical_occupied"
 0, 11, "city.industrial_occupied"

@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -23,12 +23,12 @@ dy = 30
 
 tiles = { "row", "column", "tag"
 
-; Agree/disagree thumbs:
+# Agree/disagree thumbs:
 
   0,  0, "treaty.agree_thumb_up"
   0,  1, "treaty.disagree_thumb_down"
 
-; Plus some other stuff (text/treaty graphic) which I don't
-; think is used?
+# Plus some other stuff (text/treaty graphic) which I don't
+# think is used?
 
 }

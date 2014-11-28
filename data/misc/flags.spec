@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -234,7 +234,7 @@ sprites =
 		"f.bavarian", "flags/bavarian"
 		"f.belarus", "flags/belarus"
 		"f.belgium", "flags/belgium"
-		"f.boer", "flags/boer"			; old south african
+		"f.boer", "flags/boer"			# old south african
 		"f.bosnia", "flags/bosnia"
 		"f.brasil", "flags/brasil"
 		"f.brittany", "flags/brittany"
@@ -246,13 +246,13 @@ sprites =
 		"f.cartago", "flags/cartago"
 		"f.catalan", "flags/catalan"
 		"f.chechenia", "flags/chechenia"
-		"f.cheyenne", "flags/cheyenne"		; used by Sioux
+		"f.cheyenne", "flags/cheyenne"		# used by Sioux
 		"f.chile", "flags/chile"
 		"f.china", "flags/china"
 		"f.chola", "flags/chola"
 		"f.colombia", "flags/colombia"
-		"f.columbia", "flags/colombia"	; For backward compatibility
-		"f.constantine", "flags/constantine"	; alt. Byzantine
+		"f.columbia", "flags/colombia"	# For backward compatibility
+		"f.constantine", "flags/constantine"	# alt. Byzantine
 		"f.cornwall", "flags/cornwall"
 		"f.croatia", "flags/croatia"
 		"f.cuba", "flags/cuba"
@@ -272,14 +272,14 @@ sprites =
 		"f.euskadi", "flags/euskadi"
 		"f.finland", "flags/finland"
 		"f.france", "flags/france"
-		"f.france_old", "flags/france_old"	; alt Gallic
+		"f.france_old", "flags/france_old"	# alt Gallic
 		"f.galicia", "flags/galicia"
 		"f.gaul", "flags/gaul"
 		"f.georgia", "flags/georgia"
 		"f.germany", "flags/germany"
 		"f.greece_ancient", "flags/greece_ancient"
 		"f.greece", "flags/greece"
-		"f.greenland", "flags/greenland"	; used by Inuit
+		"f.greenland", "flags/greenland"	# used by Inuit
 		"f.gupta", "flags/gupta"
 		"f.hacker", "flags/hacker"
 		"f.hawaii", "flags/hawaii"
@@ -287,7 +287,7 @@ sprites =
 		"f.himyar", "flags/himyar"
 		"f.hittite", "flags/hittite"
 		"f.hobbits", "flags/hobbits"
-		"f.holland", "flags/netherlands"	; backward compatabiliy
+		"f.holland", "flags/netherlands"	# backward compatabiliy
 		"f.hondura", "flags/hondura"
 		"f.hongkong", "flags/hongkong"
 		"f.hopi", "flags/hopi"
@@ -303,7 +303,7 @@ sprites =
 		"f.iran_ancient", "flags/iran_ancient"
 		"f.iran", "flags/iran"
 		"f.iraq", "flags/iraq"
-		"f.iraq_old", "flags/iraq_old"		; used by Babylonian
+		"f.iraq_old", "flags/iraq_old"		# used by Babylonian
 		"f.ireland", "flags/ireland"
 		"f.iroquois", "flags/iroquois"
 		"f.israel", "flags/israel"
@@ -313,7 +313,7 @@ sprites =
 		"f.kampuchea", "flags/kampuchea"
 		"f.kanem-bornu", "flags/kanem-bornu"
 		"f.kazakhstan", "flags/kazakhstan"
-		"f.keetoowah", "flags/keetoowah"	; used by Cherokee
+		"f.keetoowah", "flags/keetoowah"	# used by Cherokee
 		"f.kenya", "flags/kenya"
 		"f.khwarezm", "flags/khwarezm"
 		"f.kongo", "flags/kongo"
@@ -368,13 +368,13 @@ sprites =
 		"f.portugal", "flags/portugal"
 		"f.prussia", "flags/prussia"
 		"f.purhepecha", "flags/purhepecha"
-		"f.qing", "flags/qing"			; Manchu empire flag
+		"f.qing", "flags/qing"			# Manchu empire flag
 		"f.quebec", "flags/quebec"
 		"f.revolution", "flags/revolution"
 		"f.romania", "flags/romania"
-		"f.rome", "flags/rome"			; Roman republic flag
+		"f.rome", "flags/rome"			# Roman republic flag
 		"f.russia", "flags/russia"
-		"f.rwanda", "flags/rwanda"		; Alternate Zulu
+		"f.rwanda", "flags/rwanda"		# Alternate Zulu
 		"f.ryukyu", "flags/ryukyu"
 		"f.samogitia", "flags/samogitia"
 		"f.sapmi", "flags/sapmi"
@@ -385,13 +385,13 @@ sprites =
 		"f.slovakia", "flags/slovakia"
 		"f.slovenia", "flags/slovenia"
 		"f.south_africa", "flags/south_africa"
-		"f.southern_cross", "flags/southern_cross" ; confederate battle flag
+		"f.southern_cross", "flags/southern_cross" # confederate battle flag
 		"f.soviet", "flags/soviet"
 		"f.soviet_ukrainian", "flags/soviet_ukrainian"
 		"f.spain", "flags/spain"
 		"f.srilanka", "flags/srilanka"
 		"f.srivijaya", "flags/srivijaya"
-		"f.stpatrick", "flags/stpatrick"	; Alternate Irish 
+		"f.stpatrick", "flags/stpatrick"	# Alternate Irish 
 		"f.sudan", "flags/sudan"
 		"f.sumeria", "flags/sumeria"
 		"f.swaziland", "flags/swaziland"
@@ -417,7 +417,7 @@ sprites =
 		"f.ukraine", "flags/ukraine"
 		"f.united_kingdom", "flags/united_kingdom"
 		"f.united_nations", "flags/united_nations"
-		"f.unknown", "flags/unknown"		; hard-coded fallback
+		"f.unknown", "flags/unknown"		# hard-coded fallback
 		"f.uruguay", "flags/uruguay"
 		"f.usa", "flags/usa"
 		"f.uyghur", "flags/uyghur"

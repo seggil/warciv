@@ -1,6 +1,6 @@
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -61,12 +61,12 @@ tiles = { "row", "column", "tag"
 
   4,  0, "b.police_station"
   4,  1, "b.port_facility"
-;  4,  2, "b.space_structural"
-;  4,  3, "b.space_component"
-;  4,  4, "b.space_modules"
-;  4,  5, "b.capitalization"
-;  4,  6, ""
-;  4,  7, ""
+#  4,  2, "b.space_structural"
+#  4,  3, "b.space_component"
+#  4,  4, "b.space_modules"
+#  4,  5, "b.capitalization"
+#  4,  6, ""
+#  4,  7, ""
 
   5,  0, "b.apollo_program"
   5,  1, "b.asmiths_trading_co"

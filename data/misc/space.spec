@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -15,8 +15,8 @@ gfx = "misc/space"
 
 [grid_main]
 
-; Could use separate "grids" for the smaller components, but not
-; bothering for now.
+# Could use separate "grids" for the smaller components, but not
+# bothering for now.
 
 x_top_left = 0
 y_top_left = 0

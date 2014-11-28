@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -25,7 +25,7 @@ dy = 20
 
 tiles = { "row", "column", "tag"
 
-; Science progress indicators:
+# Science progress indicators:
 
   0,  0, "s.science_bulb_0"
   0,  1, "s.science_bulb_1"
@@ -36,7 +36,7 @@ tiles = { "row", "column", "tag"
   0,  6, "s.science_bulb_6"
   0,  7, "s.science_bulb_7"
 
-; Government icons: (see further below for fundamentalism)
+# Government icons: (see further below for fundamentalism)
 
   0,  8, "gov.anarchy"
   0,  9, "gov.despotism"
@@ -46,7 +46,7 @@ tiles = { "row", "column", "tag"
   0, 13, "gov.republic"
   0, 14, "gov.democracy"
 
-; Global warming progress indicators:
+# Global warming progress indicators:
 
   0, 15, "s.warming_sun_0"
   0, 16, "s.warming_sun_1"
@@ -57,7 +57,7 @@ tiles = { "row", "column", "tag"
   0, 21, "s.warming_sun_6"
   0, 22, "s.warming_sun_7"
 
-; Nuclear winter progress indicators:
+# Nuclear winter progress indicators:
 
   0, 34, "s.cooling_flake_0"
   0, 35, "s.cooling_flake_1"
@@ -68,13 +68,13 @@ tiles = { "row", "column", "tag"
   0, 40, "s.cooling_flake_6"
   0, 41, "s.cooling_flake_7"
 
-; Panel tax icons
+# Panel tax icons
 
   0, 23, "s.tax_luxury"
   0, 24, "s.tax_science"
   0, 25, "s.tax_gold"
 
-; Citizen icons:
+# Citizen icons:
 
   0, 23, "specialist.elvis_0"
   0, 24, "specialist.scientist_0"
@@ -89,11 +89,11 @@ tiles = { "row", "column", "tag"
   0, 32, "citizen.angry_0" 
   0, 33, "citizen.angry_1" 
 
-; Right arrow icon:
+# Right arrow icon:
 
   0, 42, "s.right_arrow"
 
-; Event Message Icons - currently unused
+# Event Message Icons - currently unused
 
   1, 0,  "ev.hutbarbarians"
   1, 0,  "ev.hutcowardlybarbs"
