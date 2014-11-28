@@ -602,9 +602,9 @@ AC_CONFIG_FILES([Makefile
           data/Makefile
 	  data/flags/Makefile
 	  data/misc/Makefile
-	  data/trident/Makefile
-	  data/seggil/Makefile
-	  data/gil-26/Makefile
+	  data/trident-26/Makefile
+	  data/trident-28/Makefile
+	  data/trident-30/Makefile
 	  data/isophex/Makefile
 	  data/isotrident/Makefile
 	  data/default/Makefile
