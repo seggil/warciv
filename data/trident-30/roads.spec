@@ -12,7 +12,7 @@ artists = "
 "
 
 [file]
-gfx = "trident/roads"
+gfx = "trident-30/roads"
 
 [grid_roads]
 

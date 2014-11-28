@@ -14,7 +14,7 @@ artists = "
 "
 
 [file]
-gfx = "trident/explosions"
+gfx = "trident-30/explosions"
 
 [grid_main]
 
