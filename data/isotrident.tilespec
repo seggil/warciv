@@ -6,7 +6,7 @@ options = "+tilespec3"
 
 # A simple name for the tileset specified by this file:
 name = "MacroIsoTrident"
-
+flags_directory = "flags"
 # TODO: add more overall information fields on tiles, 
 # eg, description, authors, colors, etc.
 
