@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -25,9 +25,9 @@ dy = 32
 pixel_border = 1
 
 tiles = { "row", "column","tag"
-; Rivers are in rivers.spec
+# Rivers are in rivers.spec
 
-;forests as overlay
+#forests as overlay
 
  4,  0, "t.forest_n0e0se0s0w0nw0"
  4,  1, "t.forest_n1e0se0s0w0nw0"
@@ -46,8 +46,8 @@ tiles = { "row", "column","tag"
  5,  6, "t.forest_n0e1se0s1w1nw0"
  5,  7, "t.forest_n1e1se0s1w1nw0"
 
- ; The below sprites are duplicates of the previous sprites,
- ; since there aren't yet graphics for the extra hex directions.
+ # The below sprites are duplicates of the previous sprites,
+ # since there aren't yet graphics for the extra hex directions.
  4,  0, "t.forest_n0e0se0s0w0nw1"
  4,  1, "t.forest_n1e0se0s0w0nw1"
  4,  2, "t.forest_n0e1se0s0w0nw1"
@@ -97,7 +97,7 @@ tiles = { "row", "column","tag"
  5,  6, "t.forest_n0e1se1s1w1nw1"
  5,  7, "t.forest_n1e1se1s1w1nw1"
 
-;mountains as overlay
+#mountains as overlay
 
  6,  0, "t.mountains_n0e0se0s0w0nw0"
  6,  1, "t.mountains_n1e0se0s0w0nw0"
@@ -116,8 +116,8 @@ tiles = { "row", "column","tag"
  7,  6, "t.mountains_n0e1se0s1w1nw0"
  7,  7, "t.mountains_n1e1se0s1w1nw0"
 
- ; The below sprites are duplicates of the previous sprites,
- ; since there aren't yet graphics for the extra hex directions.
+ # The below sprites are duplicates of the previous sprites,
+ # since there aren't yet graphics for the extra hex directions.
  6,  0, "t.mountains_n0e0se0s0w0nw1"
  6,  1, "t.mountains_n1e0se0s0w0nw1"
  6,  2, "t.mountains_n0e1se0s0w0nw1"
@@ -167,7 +167,7 @@ tiles = { "row", "column","tag"
  7,  6, "t.mountains_n0e1se1s1w1nw1"
  7,  7, "t.mountains_n1e1se1s1w1nw1"
 
-;hills as overlay
+#hills as overlay
 
  8,  0, "t.hills_n0e0se0s0w0nw0"
  8,  1, "t.hills_n1e0se0s0w0nw0"
@@ -186,8 +186,8 @@ tiles = { "row", "column","tag"
  9,  6, "t.hills_n0e1se0s1w1nw0"
  9,  7, "t.hills_n1e1se0s1w1nw0"
 
- ; The below sprites are duplicates of the previous sprites,
- ; since there aren't yet graphics for the extra hex directions.
+ # The below sprites are duplicates of the previous sprites,
+ # since there aren't yet graphics for the extra hex directions.
  8,  0, "t.hills_n0e0se0s0w0nw1"
  8,  1, "t.hills_n1e0se0s0w0nw1"
  8,  2, "t.hills_n0e1se0s0w0nw1"
@@ -237,7 +237,7 @@ tiles = { "row", "column","tag"
  9,  6, "t.hills_n0e1se1s1w1nw1"
  9,  7, "t.hills_n1e1se1s1w1nw1"
 
-;river outlets
+#river outlets
 
  10, 0, "tx.river_outlet_n"
  10, 1, "tx.river_outlet_e"

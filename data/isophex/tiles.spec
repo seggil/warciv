@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -22,7 +22,7 @@ dx = 64
 dy = 32
 
 tiles = { "row", "column", "tag"
-; Unit activity letters:  (note unit icons have just "u.")
+# Unit activity letters:  (note unit icons have just "u.")
 
   0, 18, "unit.auto_attack",
          "unit.auto_settler"
@@ -45,7 +45,7 @@ tiles = { "row", "column", "tag"
   3, 19, "unit.fallout"
   4, 19, "unit.patrol"
 
-; Unit hit-point bars: approx percent of hp remaining
+# Unit hit-point bars: approx percent of hp remaining
 
   7,  0, "unit.hp_100"
   7,  1, "unit.hp_90"
@@ -59,7 +59,7 @@ tiles = { "row", "column", "tag"
   7,  9, "unit.hp_10"
   7, 10, "unit.hp_0"
 
-; Numbers: city size:
+# Numbers: city size:
 
   5,  0, "city.size_0"
   5,  1, "city.size_1"
@@ -81,7 +81,7 @@ tiles = { "row", "column", "tag"
   5, 17, "city.size_80"
   5, 18, "city.size_90"
 
-; Numbers: city tile food/shields/trade y/g/b
+# Numbers: city tile food/shields/trade y/g/b
 
   8,  0, "city.t_food_0"
   8,  1, "city.t_food_1"
@@ -116,9 +116,9 @@ tiles = { "row", "column", "tag"
   6, 18, "city.t_trade_8"
   6, 19, "city.t_trade_9"
 
-; Unit upkeep in city dialog:
-; These should probably be handled differently and have
-; a different size...
+# Unit upkeep in city dialog:
+# These should probably be handled differently and have
+# a different size...
 
   7, 15, "upkeep.food"
   7, 16, "upkeep.food2"
@@ -126,8 +126,8 @@ tiles = { "row", "column", "tag"
   7, 18, "upkeep.unhappy2"
   7, 19, "upkeep.shield"
 
-; Nuclear explosion: this could maybe now be handled as one 
-; big graphic (?), but for now is done old way as 3 by 3:
+# Nuclear explosion: this could maybe now be handled as one 
+# big graphic (?), but for now is done old way as 3 by 3:
 
   0,  0, "explode.nuke_00"
   0,  1, "explode.nuke_01"

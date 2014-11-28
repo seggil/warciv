@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -26,8 +26,8 @@ dy = 32
 pixel_border = 1
 
 tiles = { "row", "column","tag"
-; Rivers (as special type), and whether north, south, east, west 
-; also has river or is ocean:
+# Rivers (as special type), and whether north, south, east, west 
+# also has river or is ocean:
 
  2,  0, "tx.s_river_n0e0se0s0w0nw0"
  2,  1, "tx.s_river_n1e0se0s0w0nw0"

@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -25,24 +25,24 @@ pixel_border = 1
 
 tiles = { "row", "column","tag"
 
-; terrain
+# terrain
   0,    0,  "t.desert1"
-;  0,    1,  "t.desert2"
+#  0,    1,  "t.desert2"
 
   1,    0,  "t.plains1"
-;  1,    1,  "t.plains2"
+#  1,    1,  "t.plains2"
 
   2,    0,  "t.grassland1"
-;  2,    1, "t.grassland2"
+#  2,    1, "t.grassland2"
 
   3,    0, "t.forest1"
-;  3,    1, "t.forest2"
+#  3,    1, "t.forest2"
 
   4,    0, "t.hills1"
-;  4,    1, "t.hills2"
+#  4,    1, "t.hills2"
 
   5,    0, "t.mountains1"
-;  5,    1, "t.mountains2"
+#  5,    1, "t.mountains2"
 
   6,    0, "t.tundra1"
 
@@ -54,7 +54,7 @@ tiles = { "row", "column","tag"
 
   10,   0, "t.ocean1"
 
-; Terrain special resources:
+# Terrain special resources:
 
  0,   2, "ts.oasis"
  0,   3, "ts.oil"
@@ -91,7 +91,7 @@ tiles = { "row", "column","tag"
  10,  3, "ts.whales"
  10,  5, "ts.horses"
 
-;roads
+#roads
  11, 1, "r.road_n"
  11, 2, "r.road_ne"
  11, 3, "r.road_e"
@@ -101,7 +101,7 @@ tiles = { "row", "column","tag"
  11, 7, "r.road_w"
  11, 8, "r.road_nw"
 
-;rails
+#rails
  12, 1, "r.rail_n"
  12, 2, "r.rail_ne"
  12, 3, "r.rail_e"
@@ -111,7 +111,7 @@ tiles = { "row", "column","tag"
  12, 7, "r.rail_w"
  12, 8, "r.rail_nw"
 
-;add-ons
+#add-ons
  2, 7, "tx.oil_mine" 
  4, 7, "tx.farmland"
  3, 7, "tx.irrigation"
