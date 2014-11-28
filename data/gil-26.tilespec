@@ -50,7 +50,7 @@ files =
   "gil-26/tiles.spec",
   "misc/small.spec",
   "gil-26/units.spec",
-  "misc/flags.spec",
+  "flags-26/flags-26.spec",
   "gil-26/roads.spec",
   "misc/buildings.spec",
   "misc/space.spec",
