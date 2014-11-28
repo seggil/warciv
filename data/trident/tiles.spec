@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -23,8 +23,8 @@ dy = 30
 
 tiles = { "row", "column", "tag"
 
-; Grassland, and whether terrain to north, south, east, west 
-; is more grassland:
+# Grassland, and whether terrain to north, south, east, west 
+# is more grassland:
 
   1,  0, "t.grassland_n1e1s1w1"
   1,  1, "t.grassland_n0e1s1w1"
@@ -43,8 +43,8 @@ tiles = { "row", "column", "tag"
   1, 14, "t.grassland_n1e0s0w0"
   1, 15, "t.grassland_n0e0s0w0"
 
-; Desert, and whether terrain to north, south, east, west 
-; is more desert:
+# Desert, and whether terrain to north, south, east, west 
+# is more desert:
 
   2,  0, "t.desert_n1e1s1w1"
   2,  1, "t.desert_n0e1s1w1"
@@ -63,8 +63,8 @@ tiles = { "row", "column", "tag"
   2, 14, "t.desert_n1e0s0w0"
   2, 15, "t.desert_n0e0s0w0"
 
-; Arctic, and whether terrain to north, south, east, west 
-; is more arctic:
+# Arctic, and whether terrain to north, south, east, west 
+# is more arctic:
 
   3,  0, "t.arctic_n1e1s1w1"
   3,  1, "t.arctic_n0e1s1w1"
@@ -83,8 +83,8 @@ tiles = { "row", "column", "tag"
   3, 14, "t.arctic_n1e0s0w0"
   3, 15, "t.arctic_n0e0s0w0"
 
-; Jungle, and whether terrain to north, south, east, west 
-; is more jungle:
+# Jungle, and whether terrain to north, south, east, west 
+# is more jungle:
 
   4,  0, "t.jungle_n1e1s1w1"
   4,  1, "t.jungle_n0e1s1w1"
@@ -103,8 +103,8 @@ tiles = { "row", "column", "tag"
   4, 14, "t.jungle_n1e0s0w0"
   4, 15, "t.jungle_n0e0s0w0"
 
-; Plains, and whether terrain to north, south, east, west 
-; is more plains:
+# Plains, and whether terrain to north, south, east, west 
+# is more plains:
 
   5,  0, "t.plains_n1e1s1w1"
   5,  1, "t.plains_n0e1s1w1"
@@ -123,8 +123,8 @@ tiles = { "row", "column", "tag"
   5, 14, "t.plains_n1e0s0w0"
   5, 15, "t.plains_n0e0s0w0"
 
-; Swamp, and whether terrain to north, south, east, west 
-; is more swamp:
+# Swamp, and whether terrain to north, south, east, west 
+# is more swamp:
 
   6,  0, "t.swamp_n1e1s1w1"
   6,  1, "t.swamp_n0e1s1w1"
@@ -143,8 +143,8 @@ tiles = { "row", "column", "tag"
   6, 14, "t.swamp_n1e0s0w0"
   6, 15, "t.swamp_n0e0s0w0"
 
-; Tundra, and whether terrain to north, south, east, west 
-; is more tundra:
+# Tundra, and whether terrain to north, south, east, west 
+# is more tundra:
 
   7,  0, "t.tundra_n1e1s1w1"
   7,  1, "t.tundra_n0e1s1w1"
@@ -163,8 +163,8 @@ tiles = { "row", "column", "tag"
   7, 14, "t.tundra_n1e0s0w0"
   7, 15, "t.tundra_n0e0s0w0"
 
-; Rivers (as terrain type), and whether terrain to north, south, 
-; east, west is also river terrain, or ocean:
+# Rivers (as terrain type), and whether terrain to north, south, 
+# east, west is also river terrain, or ocean:
 
   8,  0, "t.t_river_n0e0s0w0"
   8,  1, "t.t_river_n1e0s0w0"
@@ -183,8 +183,8 @@ tiles = { "row", "column", "tag"
   8, 14, "t.t_river_n0e1s1w1"
   8, 15, "t.t_river_n1e1s1w1"
 
-; Rivers (as special type), and whether north, south, east, west 
-; also has river or is ocean:
+# Rivers (as special type), and whether north, south, east, west 
+# also has river or is ocean:
 
  18,  0, "tx.s_river_n0e0s0w0"
  18,  1, "tx.s_river_n1e0s0w0"
@@ -203,8 +203,8 @@ tiles = { "row", "column", "tag"
  18, 14, "tx.s_river_n0e1s1w1"
  18, 15, "tx.s_river_n1e1s1w1"
 
-; Ocean, and whether terrain to north, south, east, west 
-; is more ocean (else shoreline)
+# Ocean, and whether terrain to north, south, east, west 
+# is more ocean (else shoreline)
 
   9,  0, "t.ocean_n1e1s1w1"
   9,  1, "t.ocean_n0e1s1w1"
@@ -223,71 +223,71 @@ tiles = { "row", "column", "tag"
   9, 14, "t.ocean_n1e0s0w0"
   9, 15, "t.ocean_n0e0s0w0"
 
-; For hills, forest and mountains don't currently have a full set,
-; re-use values but provide for future expansion; current sets
-; effectively ignore N/S terrain.
+# For hills, forest and mountains don't currently have a full set,
+# re-use values but provide for future expansion# current sets
+# effectively ignore N/S terrain.
 
-; Hills, and whether terrain to north, south, east, west 
-; is more hills.
+# Hills, and whether terrain to north, south, east, west 
+# is more hills.
 
- 10,  0, "t.hills_n0e0s0w0",  ; not-hills E and W
+ 10,  0, "t.hills_n0e0s0w0",  # not-hills E and W
          "t.hills_n0e0s1w0", 
          "t.hills_n1e0s0w0", 
          "t.hills_n1e0s1w0" 
- 10,  1, "t.hills_n0e1s0w0",  ; hills E
+ 10,  1, "t.hills_n0e1s0w0",  # hills E
          "t.hills_n0e1s1w0", 
          "t.hills_n1e1s0w0", 
          "t.hills_n1e1s1w0" 
- 10,  2, "t.hills_n0e1s0w1",  ; hills E and W
+ 10,  2, "t.hills_n0e1s0w1",  # hills E and W
          "t.hills_n0e1s1w1", 
          "t.hills_n1e1s0w1", 
          "t.hills_n1e1s1w1" 
- 10,  3, "t.hills_n0e0s0w1",  ; hills W
+ 10,  3, "t.hills_n0e0s0w1",  # hills W
          "t.hills_n0e0s1w1", 
          "t.hills_n1e0s0w1", 
          "t.hills_n1e0s1w1" 
 
-; Forest, and whether terrain to north, south, east, west 
-; is more forest.
+# Forest, and whether terrain to north, south, east, west 
+# is more forest.
 
- 10,  4, "t.forest_n0e0s0w0",  ; not-forest E and W
+ 10,  4, "t.forest_n0e0s0w0",  # not-forest E and W
          "t.forest_n0e0s1w0", 
          "t.forest_n1e0s0w0", 
          "t.forest_n1e0s1w0" 
- 10,  5, "t.forest_n0e1s0w0",  ; forest E
+ 10,  5, "t.forest_n0e1s0w0",  # forest E
          "t.forest_n0e1s1w0", 
          "t.forest_n1e1s0w0", 
          "t.forest_n1e1s1w0" 
- 10,  6, "t.forest_n0e1s0w1",  ; forest E and W
+ 10,  6, "t.forest_n0e1s0w1",  # forest E and W
          "t.forest_n0e1s1w1", 
          "t.forest_n1e1s0w1", 
          "t.forest_n1e1s1w1" 
- 10,  7, "t.forest_n0e0s0w1",  ; forest W
+ 10,  7, "t.forest_n0e0s0w1",  # forest W
          "t.forest_n0e0s1w1", 
          "t.forest_n1e0s0w1", 
          "t.forest_n1e0s1w1" 
 
-; Mountains, and whether terrain to north, south, east, west 
-; is more mountains.
+# Mountains, and whether terrain to north, south, east, west 
+# is more mountains.
 
- 10,  8, "t.mountains_n0e0s0w0",  ; not-mountains E and W
+ 10,  8, "t.mountains_n0e0s0w0",  # not-mountains E and W
          "t.mountains_n0e0s1w0", 
          "t.mountains_n1e0s0w0", 
          "t.mountains_n1e0s1w0" 
- 10,  9, "t.mountains_n0e1s0w0",  ; mountains E
+ 10,  9, "t.mountains_n0e1s0w0",  # mountains E
          "t.mountains_n0e1s1w0", 
          "t.mountains_n1e1s0w0", 
          "t.mountains_n1e1s1w0" 
- 10, 10, "t.mountains_n0e1s0w1",  ; mountains E and W
+ 10, 10, "t.mountains_n0e1s0w1",  # mountains E and W
          "t.mountains_n0e1s1w1", 
          "t.mountains_n1e1s0w1", 
          "t.mountains_n1e1s1w1" 
- 10, 11, "t.mountains_n0e0s0w1",  ; mountains W
+ 10, 11, "t.mountains_n0e0s0w1",  # mountains W
          "t.mountains_n0e0s1w1", 
          "t.mountains_n1e0s0w1", 
          "t.mountains_n1e0s1w1" 
 
-; Darkness (unexplored) to north, south, east, west 
+# Darkness (unexplored) to north, south, east, west 
 
  13,  1, "tx.darkness_n1e0s0w0"
  13,  2, "tx.darkness_n0e1s0w0"
@@ -305,14 +305,14 @@ tiles = { "row", "column", "tag"
  13, 14, "tx.darkness_n0e1s1w1"
  13, 15, "tx.darkness_n1e1s1w1"
 
-; River outlets, river to north, south, east, west 
+# River outlets, river to north, south, east, west 
 
   8, 16, "tx.river_outlet_n"
   8, 17, "tx.river_outlet_w"
   8, 18, "tx.river_outlet_s"
   8, 19, "tx.river_outlet_e"
 
-; Denmark tiles, two rows:
+# Denmark tiles, two rows:
 
  10, 12, "tx.denmark_00"
  10, 13, "tx.denmark_01"
@@ -321,7 +321,7 @@ tiles = { "row", "column", "tag"
  10, 16, "tx.denmark_11"
  10, 17, "tx.denmark_12"
 
-; Terrain special resources:
+# Terrain special resources:
 
  11,  0, "ts.seals"
  11,  1, "ts.oasis"
@@ -351,7 +351,7 @@ tiles = { "row", "column", "tag"
   7, 18, "ts.silk"
   7, 19, "ts.wine"
 
-; Terrain improvements and similar:
+# Terrain improvements and similar:
 
  12,  7, "tx.farmland"
  12,  8, "tx.irrigation"
@@ -364,7 +364,7 @@ tiles = { "row", "column", "tag"
  13, 17, "tx.fog"
  13, 18, "tx.fallout"
 
-; Unit activity letters:  (note unit icons have just "u.")
+# Unit activity letters:  (note unit icons have just "u.")
 
   9, 18, "unit.auto_attack",
          "unit.auto_settler"
@@ -391,7 +391,7 @@ tiles = { "row", "column", "tag"
  18, 18, "unit.sleeping"
  18, 19, "unit.trade"
 
-; Unit hit-point bars: approx percent of hp remaining
+# Unit hit-point bars: approx percent of hp remaining
 
  16,  0, "unit.hp_100"
  16,  1, "unit.hp_90"
@@ -405,7 +405,7 @@ tiles = { "row", "column", "tag"
  16,  9, "unit.hp_10"
  16, 10, "unit.hp_0"
 
-; Numbers: city size:
+# Numbers: city size:
 
  14,  0, "city.size_0"
  14,  1, "city.size_1"
@@ -427,7 +427,7 @@ tiles = { "row", "column", "tag"
  14, 17, "city.size_80"
  14, 18, "city.size_90"
 
-; Numbers: city tile food/shields/trade y/g/b
+# Numbers: city tile food/shields/trade y/g/b
 
  17,  0, "city.t_food_0"
  17,  1, "city.t_food_1"
@@ -440,7 +440,7 @@ tiles = { "row", "column", "tag"
  17,  8, "city.t_food_8"
  17,  9, "city.t_food_9"
 
-; Veteran Levels: up to 9 military honors for experienced units
+# Veteran Levels: up to 9 military honors for experienced units
 
  17, 11, "unit.vet_1"
  17, 12, "unit.vet_2"
@@ -474,9 +474,9 @@ tiles = { "row", "column", "tag"
  15, 18, "city.t_trade_8"
  15, 19, "city.t_trade_9"
 
-; Unit upkeep in city dialog:
-; These should probably be handled differently and have
-; a different size...
+# Unit upkeep in city dialog:
+# These should probably be handled differently and have
+# a different size...
 
  16, 12, "upkeep.gold"
  16, 13, "upkeep.gold2"
@@ -486,9 +486,9 @@ tiles = { "row", "column", "tag"
  16, 18, "upkeep.unhappy2"
  16, 19, "upkeep.shield"
 
-; Misc:
+# Misc:
 
-  9, 17, "user.attention"	; Variously crosshair/red-square/arrows
+  9, 17, "user.attention"	# Variously crosshair/red-square/arrows
 
 }
 
