@@ -50,7 +50,7 @@ files =
   "seggil/tiles.spec",
   "misc/small.spec",
   "seggil/units.spec",
-  "misc/flags.spec",
+  "flags-28/flags-28.spec",
   "seggil/roads.spec",
   "misc/buildings.spec",
   "misc/space.spec",
