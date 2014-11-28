@@ -7,8 +7,8 @@ COMMON_CLIENT_FILES =      \
   isophex.tilespec         \
   isotrident.tilespec      \
   trident.tilespec         \
-  seggil.tilespec          \
   trident-26.tilespec      \
+  trident-28.tilespec      \
   trident_shields.tilespec \
   helpdata.txt             \
   stdsounds.soundspec
@@ -51,8 +51,8 @@ EXTRA_DIST =          \
   isophex.tilespec    \
   isotrident.tilespec \
   trident.tilespec    \
-  seggil.tileset      \
   trident-26.tileset       \
+  trident-28.tileset       \
   trident_shields.tilespec \
   helpdata.txt             \
   civ1.serv             \
@@ -74,7 +74,7 @@ EXTRA_DIST =          \
 
 if CLIENT
 CLIENTDATADIRS = misc \
-    flags isotrident trident seggil trident-26 isophex stdsounds
+    flags isotrident trident trident-26 trident-28 isophex stdsounds
 else
 CLIENTDATADIRS =
 endif
