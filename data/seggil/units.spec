@@ -1,13 +1,13 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
 
 artists = "
-    Gilles J. Seguin <segg.gill@gmail.com> size 26 from trident
+    Gilles J. Seguin <segg.gill@gmail.com> size 28 from trident
     Tatu Rissanen <tatu.rissanen@hut.fi>
 "
 

@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -22,7 +22,7 @@ dy = 28
 
 tiles = { "row", "column", "tag"
 
-; Unit activity letters:  (note unit icons have just "u.")
+# Unit activity letters:  (note unit icons have just "u.")
 
   4, 17, "unit.auto_attack",
          "unit.auto_settler"
