@@ -293,7 +293,7 @@ const char **get_tileset_list(void)
 ***********************************************************************/
 const char *get_default_tilespec_name(void)
 {
-    return "trident";
+    return "trident-26";
 #if 0
   if (isometric_view_supported()) {
     return "isotrident"; /* Do not i18n! --dwp */
