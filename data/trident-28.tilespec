@@ -5,7 +5,7 @@
 options = "+tilespec3"
 
 # A simple name for the tileset specified by this file:
-name = "Seggil"
+name = "trident-28"
 flags_directory = "flags-28"
 # TODO: add more overall information fields on tiles, 
 # eg, description, authors, colors, etc.
@@ -47,17 +47,17 @@ minimap_intro_file = "misc/radar"
 # low-color systems, and if there are any duplicate tags (lattermost
 # tag is used).
 files = 
-  "seggil/tiles.spec",
+  "trident-28/tiles.spec",
   "misc/small.spec",
-  "seggil/units.spec",
+  "trident-28/units.spec",
   "flags-28/flags-28.spec",
-  "seggil/roads.spec",
+  "trident-28/roads.spec",
   "misc/buildings.spec",
   "misc/space.spec",
 #  "misc/techs.spec",
   "misc/treaty.spec",
-  "seggil/cities.spec",
-  "seggil/explosions.spec"
+  "trident-28/cities.spec",
+  "trident-28/explosions.spec"
 
 
 # Terrain info - see README.graphics

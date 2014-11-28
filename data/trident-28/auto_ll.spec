@@ -11,7 +11,7 @@ artists = "
 "
 
 [file]
-gfx = "seggil/tiles"
+gfx = "trident-28/tiles"
 
 [grid_main]
 
