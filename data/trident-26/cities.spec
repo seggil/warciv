@@ -26,7 +26,7 @@ artists = "
 "
 
 [file]
-gfx = "gil-26/cities"
+gfx = "trident-26/cities"
 
 [grid_main]
 

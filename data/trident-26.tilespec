@@ -5,9 +5,9 @@
 options = "+tilespec3"
 
 # A simple name for the tileset specified by this file:
-name = "Gil-26"
+name = "tileset-26"
 flags_directory = "flags-26"
-# TODO: add more overall information fields on tiles, 
+# TODO: add more overall information fields on tiles,
 # eg, description, authors, colors, etc.
 
 # Basic tile sizes:
@@ -47,17 +47,17 @@ minimap_intro_file = "misc/radar"
 # low-color systems, and if there are any duplicate tags (lattermost
 # tag is used).
 files = 
-  "gil-26/tiles.spec",
+  "trident-26/tiles.spec",
   "misc/small.spec",
-  "gil-26/units.spec",
+  "trident-26/units.spec",
   "flags-26/flags-26.spec",
-  "gil-26/roads.spec",
+  "trident-26/roads.spec",
   "misc/buildings.spec",
   "misc/space.spec",
 #  "misc/techs.spec",
   "misc/treaty.spec",
-  "gil-26/cities.spec",
-  "gil-26/explosions.spec"
+  "trident-26/cities.spec",
+  "trident-26/explosions.spec"
 
 
 # Terrain info - see README.graphics
