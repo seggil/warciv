@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -22,8 +22,8 @@ dy = 32
 pixel_border = 1
 
 tiles = { "row", "column","tag"
-; Rivers (as special type), and whether north, south, east, west 
-; also has river or is ocean:
+# Rivers (as special type), and whether north, south, east, west 
+# also has river or is ocean:
 
  2,  0, "tx.s_river_n0e0s0w0"
  2,  1, "tx.s_river_n1e0s0w0"
@@ -42,7 +42,7 @@ tiles = { "row", "column","tag"
  3,  6, "tx.s_river_n0e1s1w1"
  3,  7, "tx.s_river_n1e1s1w1"
 
-; Rivers as overlay
+# Rivers as overlay
 
  2,  0, "t.t_river_n0s0e0w0"
  2,  1, "t.t_river_n1s0e0w0"
@@ -61,7 +61,7 @@ tiles = { "row", "column","tag"
  3,  6, "t.t_river_n0s1e1w1"
  3,  7, "t.t_river_n1s1e1w1"
 
-;forrests as overlay
+#forrests as overlay
 
  4,  0, "t.forest_n0e0s0w0"
  4,  1, "t.forest_n1e0s0w0"
@@ -80,7 +80,7 @@ tiles = { "row", "column","tag"
  5,  6, "t.forest_n0e1s1w1"
  5,  7, "t.forest_n1e1s1w1"
 
-;mountains as overlay
+#mountains as overlay
 
  6,  0, "t.mountains_n0e0s0w0"
  6,  1, "t.mountains_n1e0s0w0"
@@ -99,7 +99,7 @@ tiles = { "row", "column","tag"
  7,  6, "t.mountains_n0e1s1w1"
  7,  7, "t.mountains_n1e1s1w1"
 
-;hills as overlay
+#hills as overlay
 
  8,  0, "t.hills_n0e0s0w0"
  8,  1, "t.hills_n1e0s0w0"
@@ -118,7 +118,7 @@ tiles = { "row", "column","tag"
  9,  6, "t.hills_n0e1s1w1"
  9,  7, "t.hills_n1e1s1w1"
 
-;river outlets
+#river outlets
 
  10, 0, "tx.river_outlet_n"
  10, 1, "tx.river_outlet_e"
@@ -138,7 +138,7 @@ pixel_border = 1
 
 tiles = { "row", "column","tag"
 
-; ocean cell sprites.  See doc/README.graphics
+# ocean cell sprites.  See doc/README.graphics
  0, 0,  "t.ocean_cell_u000"
  0, 2,  "t.ocean_cell_u100"
  0, 4,  "t.ocean_cell_u010"

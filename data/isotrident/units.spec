@@ -1,7 +1,7 @@
 
 [spec]
 
-; Format and options of this spec file:
+# Format and options of this spec file:
 options = "+spec3"
 
 [info]
@@ -76,7 +76,7 @@ tiles = { "row", "column", "tag"
   2, 13, "u.awacs"
   2, 14, "u.worker"
 
-; Veteran Levels: up to 9 military honors for experienced units
+# Veteran Levels: up to 9 military honors for experienced units
 
   3, 0, "unit.vet_1"
   3, 1, "unit.vet_2"
