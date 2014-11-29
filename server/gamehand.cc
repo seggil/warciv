@@ -791,7 +791,7 @@ static const char *get_challenge_filename(connection_t *pconn)
   static char filename[MAX_LEN_PATH];
 
   my_snprintf(filename, sizeof(filename), "%s_%d_%d",
-      CHALLENGE_ROOT, srvarg.port, pconn->id);
+      CHALLENGE_ROOT, server_arg.port, pconn->id);
 
   return filename;
 }

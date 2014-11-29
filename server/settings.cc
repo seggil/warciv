@@ -1355,7 +1355,7 @@ struct settings_s settings[] = {
           GAME_MIN_MAXHOSTCONNECTIONS, GAME_MAX_MAXHOSTCONNECTIONS,
           GAME_DEFAULT_MAXHOSTCONNECTIONS)
 
-  GEN_BOOL("multilinechat", srvarg.allow_multi_line_chat, SSET_RULES_FLEXIBLE,
+  GEN_BOOL("multilinechat", server_arg.allow_multi_line_chat, SSET_RULES_FLEXIBLE,
            SSET_INTERNAL, SSET_RARE, SSET_SERVER_ONLY,
            N_("Multi line chat"),
            N_("0 - off\n"

@@ -716,16 +716,16 @@ static bool dnslookup_command(connection_t *caller, char *arg,
     return TRUE;
   }
   if (!strcmp(arg, "on")) {
-    srvarg.no_dns_lookup = FALSE;
+    server_arg.no_dns_lookup = FALSE;
   } else if (!strcmp(arg, "off")) {
-    srvarg.no_dns_lookup = TRUE;
+    server_arg.no_dns_lookup = TRUE;
   } else if (arg[0]) {
     cmd_reply(CMD_DNS_LOOKUP, caller, C_SYNTAX,
               _("The only valid arguments are \"on\" or \"off\"."));
     return FALSE;
   }
   cmd_reply(CMD_DNS_LOOKUP, caller, C_COMMENT, _("DNS lookup is %s."),
-            srvarg.no_dns_lookup ? _("disabled") : _("enabled"));
+            server_arg.no_dns_lookup ? _("disabled") : _("enabled"));
   return TRUE;
 }
 
@@ -739,10 +739,10 @@ static void reload_settings(void)
   /* FIXME: Ugly hack. Find a better way. */
   notify_enabled(FALSE);
 
-  if (srvarg.script_filename &&
-      !read_init_script(NULL, srvarg.script_filename)) {
+  if (server_arg.script_filename &&
+      !read_init_script(NULL, server_arg.script_filename)) {
     freelog(LOG_ERROR, _("Cannot load the script file '%s'"),
-            srvarg.script_filename);
+            server_arg.script_filename);
   }
   notify_enabled(TRUE);
 }
@@ -752,10 +752,10 @@ static void reload_settings(void)
 **************************************************************************/
 static void show_required_capabilities(connection_t *pconn)
 {
-  if (srvarg.required_cap[0] != '\0') {
+  if (server_arg.required_cap[0] != '\0') {
     cmd_reply(CMD_REQUIRE, pconn, C_COMMENT,
               _("Current required capabilities are '%s'"),
-              srvarg.required_cap);
+              server_arg.required_cap);
   } else {
     cmd_reply(CMD_REQUIRE, pconn, C_COMMENT,
               _("There is no current required capabilities"));
@@ -797,15 +797,15 @@ bool require_command(connection_t *caller, char *arg, bool check)
     return TRUE;
   }
 
-  srvarg.required_cap[0] = '\0';
+  server_arg.required_cap[0] = '\0';
   for (i = 0; i < ntokens; i++) {
-    cat_snprintf(srvarg.required_cap, sizeof(srvarg.required_cap),
+    cat_snprintf(server_arg.required_cap, sizeof(server_arg.required_cap),
                  "%s%s", i ? " " : "", cap[i]);
   }
 
-  if (srvarg.required_cap[0] != '\0') {
+  if (server_arg.required_cap[0] != '\0') {
     notify_conn(NULL, _("Server: Required capabilities set to '%s'"),
-                srvarg.required_cap);
+                server_arg.required_cap);
   } else {
     notify_conn(NULL, _("Server: Required capabilities have been cleared"));
   }
@@ -1161,7 +1161,7 @@ static bool metaserver_command(connection_t *caller, char *arg,
     return TRUE;
   }
   close_metaserver_connection(caller);
-  sz_strlcpy(srvarg.metaserver_addr, arg);
+  sz_strlcpy(server_arg.metaserver_addr, arg);
   notify_conn(NULL, _("Metaserver is now [%s]."), meta_addr_port());
   return TRUE;
 }
@@ -1172,7 +1172,7 @@ static bool metaserver_command(connection_t *caller, char *arg,
 static bool show_serverid(connection_t *caller, char *arg)
 {
   cmd_reply(CMD_SRVID, caller, C_COMMENT, _("Server id: %s"),
-            srvarg.serverid);
+            server_arg.serverid);
   return TRUE;
 }
 
@@ -1662,8 +1662,8 @@ static void write_init_script(char *script_filename)
             (game.info.skill_level == 3) ? "easy" :
             (game.info.skill_level == 5) ? "medium" :
             (game.info.skill_level < 10) ? "hard" : "experimental");
-    if (*srvarg.metaserver_addr != '\0' &&
-        ((0 != strcmp(srvarg.metaserver_addr, DEFAULT_META_SERVER_ADDR)))) {
+    if (*server_arg.metaserver_addr != '\0' &&
+        ((0 != strcmp(server_arg.metaserver_addr, DEFAULT_META_SERVER_ADDR)))) {
       fprintf(script_file, "metaserver %s\n", meta_addr_port());
     }
     if (0 !=
@@ -2331,7 +2331,7 @@ static bool stats_command(connection_t *caller,
   int i, recent[5], num_recent = ARRAY_SIZE(recent);
   struct string_list *username_matchs = NULL;
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     cmd_reply(CMD_STATS, caller, C_FAIL,
               _("Database communication has been disabled."));
     return FALSE;
@@ -3751,7 +3751,7 @@ static bool set_command(connection_t *caller,
   if (server_state == RUN_GAME_STATE
       && op->bool_value == &game.server.rated
       && game.server.wcdb.type == GAME_TYPE_SOLO
-      && (game.info.turn >= srvarg.wcdb.min_rated_turns
+      && (game.info.turn >= server_arg.wcdb.min_rated_turns
           || (game.server.rated == FALSE && sv->bool_value == TRUE))) {
     cmd_reply(CMD_SET, caller, C_REJECTED,
               _("Because this is a SOLO game, this setting may "
@@ -4637,7 +4637,7 @@ static void send_load_game_info(bool load_successful)
   struct packet_game_load packet;
   /* Clear everything to be safe. */
   memset(&packet, 0, sizeof(packet));
-  sz_strlcpy(packet.load_filename, srvarg.load_filename);
+  sz_strlcpy(packet.load_filename, server_arg.load_filename);
   packet.load_successful = load_successful;
   if (load_successful) {
     int i = 0;
@@ -4786,7 +4786,7 @@ static bool ratings_command(connection_t *caller,
   int type = GT_NUM_TYPES;
   struct rated_player list[game.info.nplayers];
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -4899,7 +4899,7 @@ static bool examine_command(connection_t *caller,
   struct wcdb_player_in_game_info *fpi;
   struct wcdb_team_in_game_info *fti;
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     cmd_reply(CMD_EXAMINE, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -5083,7 +5083,7 @@ static bool topten_command(connection_t *caller, char *arg, bool check)
   char buf[64], fmt[128];
   int i, cml_name;
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -5166,7 +5166,7 @@ static bool gamelist_command(connection_t *caller,
   int first = 0, last = 0;
   char *args[2];
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -5252,7 +5252,7 @@ static bool aka_command(connection_t *caller,
   char user[MAX_LEN_NAME];
   int i, nb, len;
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     cmd_reply(CMD_AKA, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
@@ -5348,16 +5348,16 @@ static bool wcdb_command(connection_t *caller, char *arg, bool check)
   if (ntokens <= 0) {
     cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("FCDB access: %s."),
-              srvarg.wcdb.enabled ? _("enabled") : _("disabled"));
+              server_arg.wcdb.enabled ? _("enabled") : _("disabled"));
     cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Minimum turns for rated game: %d."),
-              srvarg.wcdb.min_rated_turns);
+              server_arg.wcdb.min_rated_turns);
     cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Saving of encoded turn maps: %s."),
-              srvarg.wcdb.save_maps ? _("enabled") : _("disabled"));
+              server_arg.wcdb.save_maps ? _("enabled") : _("disabled"));
     cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Detailed /examine command output: %s."),
-              srvarg.wcdb.more_game_info ? _("enabled") : _("disabled"));
+              server_arg.wcdb.more_game_info ? _("enabled") : _("disabled"));
     free_tokens(args, ntokens);
     return TRUE;
   }
@@ -5373,11 +5373,11 @@ static bool wcdb_command(connection_t *caller, char *arg, bool check)
   }
 
   if (ind == WCDB_ON) {
-    srvarg.wcdb.enabled = TRUE;
+    server_arg.wcdb.enabled = TRUE;
     cmd_reply(CMD_WCDB, caller, C_OK, _("FCDB access enabled."));
 
   } else if (ind == WCDB_OFF) {
-    srvarg.wcdb.enabled = FALSE;
+    server_arg.wcdb.enabled = FALSE;
     cmd_reply(CMD_WCDB, caller, C_OK, _("FCDB access disabled."));
 
   } else if (ind == WCDB_MIN_RATED_TURNS) {
@@ -5395,7 +5395,7 @@ static bool wcdb_command(connection_t *caller, char *arg, bool check)
       return FALSE;
     }
 
-    srvarg.wcdb.min_rated_turns = n;
+    server_arg.wcdb.min_rated_turns = n;
     cmd_reply(CMD_WCDB, caller, C_OK,
               _("The minimum number of turns for a rated game has "
                 "been set to %d."), n);
@@ -5408,10 +5408,10 @@ static bool wcdb_command(connection_t *caller, char *arg, bool check)
     }
     if (0 == strcmp(args[1], "yes") || 0 == strcmp(args[1], "y")
         || 0 == strcmp(args[1], "on")) {
-      srvarg.wcdb.save_maps = TRUE;
+      server_arg.wcdb.save_maps = TRUE;
     } else if (0 == strcmp(args[1], "no") || 0 == strcmp(args[1], "n")
         || 0 == strcmp(args[1], "off")) {
-      srvarg.wcdb.save_maps = FALSE;
+      server_arg.wcdb.save_maps = FALSE;
     } else {
       cmd_reply(CMD_WCDB, caller, C_SYNTAX,
                 _("Invalid argument."));
@@ -5420,7 +5420,7 @@ static bool wcdb_command(connection_t *caller, char *arg, bool check)
     }
     cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Saving of encoded turn maps: %s."),
-              srvarg.wcdb.save_maps ? _("enabled") : _("disabled"));
+              server_arg.wcdb.save_maps ? _("enabled") : _("disabled"));
   } else if (ind == WCDB_MORE_GAME_INFO) {
     if (ntokens < 2) {
       cmd_reply(CMD_WCDB, caller, C_SYNTAX,
@@ -5430,10 +5430,10 @@ static bool wcdb_command(connection_t *caller, char *arg, bool check)
     }
     if (0 == strcmp(args[1], "yes") || 0 == strcmp(args[1], "y")
         || 0 == strcmp(args[1], "on")) {
-      srvarg.wcdb.more_game_info = TRUE;
+      server_arg.wcdb.more_game_info = TRUE;
     } else if (0 == strcmp(args[1], "no") || 0 == strcmp(args[1], "n")
         || 0 == strcmp(args[1], "off")) {
-      srvarg.wcdb.more_game_info = FALSE;
+      server_arg.wcdb.more_game_info = FALSE;
     } else {
       cmd_reply(CMD_WCDB, caller, C_SYNTAX,
                 _("Invalid argument."));
@@ -5442,7 +5442,7 @@ static bool wcdb_command(connection_t *caller, char *arg, bool check)
     }
     cmd_reply(CMD_WCDB, caller, C_COMMENT,
               _("Detailed /examine command output: %s."),
-              srvarg.wcdb.more_game_info ? _("enabled") : _("disabled"));
+              server_arg.wcdb.more_game_info ? _("enabled") : _("disabled"));
   }
 
 
@@ -5501,24 +5501,24 @@ static bool authdb_command(connection_t *caller, char *arg, bool check)
   if (match_result == M_PRE_EMPTY) {
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
               _("Authorization Database Parameters (%s):"),
-              srvarg.auth.enabled ? _("enabled") : _("disabled"));
+              server_arg.auth.enabled ? _("enabled") : _("disabled"));
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT, horiz_line);
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
               _("Host: \"%s\"\nUser: \"%s\"\nPassword: \"%s\"\n"
                 "Database: \"%s\"\nGuests: %s\nNew users: %s"),
               wcdb.host, wcdb.user, wcdb.password,
               wcdb.dbname,
-              srvarg.auth.allow_guests ? "allowed" : "not allowed",
-              srvarg.auth.allow_newusers ? "allowed" : "not allowed");
+              server_arg.auth.allow_guests ? "allowed" : "not allowed",
+              server_arg.auth.allow_newusers ? "allowed" : "not allowed");
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT, horiz_line);
     return TRUE;
   }
   if (ind == AUTHDB_ARG_ON) {
-    srvarg.auth.enabled = TRUE;
+    server_arg.auth.enabled = TRUE;
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT, "Authorization enabled.");
     return TRUE;
   } else if (ind == AUTHDB_ARG_OFF) {
-    srvarg.auth.enabled = FALSE;
+    server_arg.auth.enabled = FALSE;
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT, "Authorization disabled.");
     return TRUE;
   } else if (ind == AUTHDB_ARG_RELOAD) {
@@ -5546,12 +5546,12 @@ static bool authdb_command(connection_t *caller, char *arg, bool check)
     break;
   case AUTHDB_ARG_GUESTS:
     if (!strcmp(lastarg, "yes")) {
-      srvarg.auth.allow_guests = TRUE;
+      server_arg.auth.allow_guests = TRUE;
       cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                 _("Guests are now allowed."));
       return TRUE;
     } else if (!strcmp(lastarg, "no")) {
-      srvarg.auth.allow_guests = FALSE;
+      server_arg.auth.allow_guests = FALSE;
       cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                 _("Guests are now not allowed."));
       return TRUE;
@@ -5563,12 +5563,12 @@ static bool authdb_command(connection_t *caller, char *arg, bool check)
     break;
   case AUTHDB_ARG_NEWUSERS:
     if (!strcmp(lastarg, "yes")) {
-      srvarg.auth.allow_newusers = TRUE;
+      server_arg.auth.allow_newusers = TRUE;
       cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                 _("New users are now allowed."));
       return TRUE;
     } else if (!strcmp(lastarg, "no")) {
-      srvarg.auth.allow_newusers = FALSE;
+      server_arg.auth.allow_newusers = FALSE;
       cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                 _("New users are now not allowed."));
       return TRUE;
@@ -5596,7 +5596,7 @@ bool load_command(connection_t * caller, char *filename, bool check)
   char arg[strlen(filename) + 1];
 
   /* We make a local copy because the parameter might be a pointer to
-   * srvarg.load_filename, which we edit down below. */
+   * server_arg.load_filename, which we edit down below. */
   sz_strlcpy(arg, filename);
 
   if (arg[0] == '\0') {
@@ -5629,7 +5629,7 @@ bool load_command(connection_t * caller, char *filename, bool check)
   loadtimer = new_timer_start(TIMER_CPU, TIMER_ACTIVE);
   uloadtimer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
 
-  sz_strlcpy(srvarg.load_filename, arg);
+  sz_strlcpy(server_arg.load_filename, arg);
   game_load(&file);
   section_file_check_unused(&file, arg);
   section_file_free(&file);
@@ -5763,7 +5763,7 @@ static bool loadmap_command(connection_t *caller, char *str,
     return TRUE;
   }
 
-  sz_strlcpy(srvarg.load_filename, buf);
+  sz_strlcpy(server_arg.load_filename, buf);
 
   map_free();
   /* XXX Old code path had this, but is this necessary? */
@@ -6053,7 +6053,7 @@ static bool loadscenario_command(connection_t *caller, char *str,
 
   loadtimer = new_timer_start(TIMER_CPU, TIMER_ACTIVE);
   uloadtimer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
-  sz_strlcpy(srvarg.load_filename, buf);
+  sz_strlcpy(server_arg.load_filename, buf);
 
   /* NB If the scenario has 0 players, game_load will set
      game.info.nplayers to 0. So save the current players by
@@ -6610,7 +6610,7 @@ static bool end_command(connection_t *caller, char *str, bool check)
   if (ntokens > 0) {
     /* Mark players for victory. */
     for (i = 0; i < ntokens; i++) {
-      BV_SET(srvarg.draw,
+      BV_SET(server_arg.draw,
              find_player_by_name_prefix(arg[i], &plr_result)->player_no);
       declared_winner = TRUE;
     }
@@ -6619,7 +6619,7 @@ static bool end_command(connection_t *caller, char *str, bool check)
   game.server.wcdb.outcome = GAME_ENDED_BY_VOTE;
   if (declared_winner) {
     players_iterate(pplayer) {
-      if (BV_ISSET(srvarg.draw, pplayer->player_no)) {
+      if (BV_ISSET(server_arg.draw, pplayer->player_no)) {
         pplayer->result = PR_WIN;
         if (pplayer->team != TEAM_NONE) {
           players_iterate(pplayer_other) {
@@ -6726,7 +6726,7 @@ static bool check_settings_for_rated_game(void)
   int i;
   enum game_types type = game_determine_type();
 
-  if (!srvarg.wcdb.enabled || !srvarg.auth.enabled) {
+  if (!server_arg.wcdb.enabled || !server_arg.auth.enabled) {
     /* No sense in enforcing settings if we cannot update the
      * database or determine who logged in. */
 

@@ -83,11 +83,11 @@ bool can_control_a_player(connection_t *pconn, bool message)
   int ntokens = 0, i;
   bool ret = TRUE;
 
-  if (!strlen(srvarg.required_cap)) {
+  if (!strlen(server_arg.required_cap)) {
     return TRUE;
   }
 
-  ntokens = get_tokens(srvarg.required_cap, cap, 256, TOKEN_DELIMITERS);
+  ntokens = get_tokens(server_arg.required_cap, cap, 256, TOKEN_DELIMITERS);
 
   for (i = 0; i < ntokens; i++) {
     if (ret && !has_capability(cap[i], pconn->capability)) {
@@ -338,7 +338,7 @@ void establish_new_connection(connection_t *pconn)
    * challenge is disabled and there is no action list. */
   if (user_action_list_size(on_connect_user_actions) == 0
       && pconn->u.server.access_level == ALLOW_NONE
-      && srvarg.hack_request_disabled) {
+      && server_arg.hack_request_disabled) {
     freelog(LOG_NORMAL, _("Warning: Without an action list, connection %d "
                           "(%s) has been set to access level NONE."),
             pconn->id, pconn->username);
@@ -366,11 +366,11 @@ void establish_new_connection(connection_t *pconn)
     if (my_gethostname(hostname, sizeof(hostname)) == 0) {
       notify_conn(dest, _("Welcome to the %s %s Server running at %s port %d."),
                   warciv_name_version(), warclient_name_version(),
-                  hostname, srvarg.port);
+                  hostname, server_arg.port);
     } else {
       notify_conn(dest, _("Welcome to the %s %s Server at port %d."),
                   warciv_name_version(), warclient_name_version(),
-                  srvarg.port);
+                  server_arg.port);
     }
   } else {
     /* Though it is possible that maxlen will not be enough
@@ -631,7 +631,7 @@ bool handle_login_request(connection_t *pconn,
     }
   } connection_list_iterate_end;
 
-  if (srvarg.auth.enabled) {
+  if (server_arg.auth.enabled) {
     return authenticate_user(pconn, req->username);
   } else {
     sz_strlcpy(pconn->username, req->username);
@@ -947,7 +947,7 @@ static int generate_welcome_message(char *buf, int buf_len,
         }
         break;
       case 'p':
-        len = my_snprintf(out, rem, "%d", srvarg.port);
+        len = my_snprintf(out, rem, "%d", server_arg.port);
         break;
       case 'v':
         len = my_snprintf(out, rem, "%s %s", warciv_name_version(),

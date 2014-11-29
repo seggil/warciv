@@ -183,7 +183,7 @@ bool authenticate_user(connection_t *pconn, char *username)
 
   /* assign the client a unique guest name/reject if guests aren't allowed */
   if (is_guest_name(username)) {
-    if (srvarg.auth.allow_guests) {
+    if (server_arg.auth.allow_guests) {
 
       sz_strlcpy(tmpname, username);
       get_unique_guest_name(username);
@@ -210,7 +210,7 @@ bool authenticate_user(connection_t *pconn, char *username)
 
     switch (load_user(pconn)) {
     case AUTH_DB_ERROR:
-      if (srvarg.auth.allow_guests) {
+      if (server_arg.auth.allow_guests) {
         sz_strlcpy(tmpname, pconn->username);
         get_unique_guest_name(tmpname); /* don't pass pconn->username here */
         sz_strlcpy(pconn->username, tmpname);
@@ -244,7 +244,7 @@ bool authenticate_user(connection_t *pconn, char *username)
       break;
     case AUTH_DB_NOT_FOUND:
       /* we couldn't find the user, he is new */
-      if (srvarg.auth.allow_newusers) {
+      if (server_arg.auth.allow_newusers) {
         freelog(LOG_VERBOSE, "AUTH_DB_NOT_FOUND: "
                 "About to send authentification packet to %s", pconn->username);
         sz_strlcpy(buffer, _("Enter a new password (and remember it)."));
@@ -283,7 +283,7 @@ static void create_salt(connection_t *pconn)
     return;
   }
 
-  if (!srvarg.auth.salted) {
+  if (!server_arg.auth.salted) {
     pconn->u.server.salt = 0;
     return;
   }
@@ -540,7 +540,7 @@ static bool check_password(connection_t *pconn,
   char escaped_name[MAX_LEN_NAME * 2 + 1];
 
   /* do the password checking right here */
-  if (srvarg.auth.salted && has_salt(pconn)) {
+  if (server_arg.auth.salted && has_salt(pconn)) {
     create_salted_md5sum(password, passlen, pconn->u.server.salt, checksum);
   } else {
     create_md5sum(password, passlen, checksum);
@@ -590,7 +590,7 @@ static bool check_password(connection_t *pconn,
     }
 
     /* Create a new salt if this user doesn't have one. */
-    if (srvarg.auth.salted && !has_salt(pconn)) {
+    if (server_arg.auth.salted && !has_salt(pconn)) {
       create_salt(pconn);
       create_salted_md5sum(password, passlen, pconn->u.server.salt,
                            checksum);
@@ -641,7 +641,7 @@ static enum authdb_status load_user(connection_t *pconn)
   mysql_real_escape_string(sock, escaped_name, pconn->username,
                            strlen(pconn->username));
 
-  if (srvarg.auth.salted) {
+  if (server_arg.auth.salted) {
     /* select password and salt from the entry */
     my_snprintf(buffer, sizeof(buffer),
                 "select password, salt from %s where name = '%s'",
@@ -681,7 +681,7 @@ static enum authdb_status load_user(connection_t *pconn)
   row = mysql_fetch_row(res);
   mystrlcpy(pconn->u.server.password, row[0],
             sizeof(pconn->u.server.password));
-  if (srvarg.auth.salted) {
+  if (server_arg.auth.salted) {
     if (row[1] != NULL) {
       pconn->u.server.salt = atoi(row[1]);
     } else {
@@ -729,7 +729,7 @@ static bool save_user(connection_t *pconn)
                            strlen(pconn->username));
 
   passlen = strlen(pconn->u.server.password);
-  if (srvarg.auth.salted) {
+  if (server_arg.auth.salted) {
     create_salted_md5sum(pconn->u.server.password, passlen,
                          pconn->u.server.salt, checksum);
   } else {
@@ -740,7 +740,7 @@ static bool save_user(connection_t *pconn)
    * md5sum of the password (with salt if enabled), the creation time
    * in seconds, the accesstime also in seconds from 1970, the users
    * address (twice) and the logincount */
-  if (srvarg.auth.salted) {
+  if (server_arg.auth.salted) {
     my_snprintf(buffer, sizeof(buffer), "insert into %s values "
                 "(NULL, '%s', '%s', %d, NULL, unix_timestamp(), "
                 "unix_timestamp(), '%s', '%s', 0)",
@@ -792,7 +792,7 @@ static void wcdb_error(char *fmt, ...)
   va_end(ap);
   freelog(LOG_ERROR, "WCDB: %s", buf);
 
-  srvarg.wcdb.enabled = FALSE;
+  server_arg.wcdb.enabled = FALSE;
   freelog(LOG_ERROR, "WCDB: Disabling database updates because of errors.");
 
   wcdb_reset_escape_buffer(); /* Don't leave it for someone else! */
@@ -803,7 +803,7 @@ static void wcdb_error(char *fmt, ...)
 **************************************************************************/
 static bool wcdb_connect(MYSQL *mysql)
 {
-  if (!srvarg.auth.enabled) {
+  if (!server_arg.auth.enabled) {
     wcdb_error("Game database updating aborted because "
                "user authentication is disabled.");
     return FALSE;
@@ -970,7 +970,7 @@ static bool wcdb_insert_terrain_map(MYSQL *sock)
   static const char *INSERT_STMT
     = "INSERT INTO terrain_maps (game_id, map) VALUES (?, ?)";
 
-  if (!srvarg.wcdb.save_maps) {
+  if (!server_arg.wcdb.save_maps) {
     return TRUE;
   }
 
@@ -1098,7 +1098,7 @@ static bool wcdb_insert_turn_map(MYSQL *sock, int turn_id)
   static const char *INSERT_STMT
     = "INSERT INTO turn_maps (turn_id, map) VALUES (?, ?)";
 
-  if (!srvarg.wcdb.save_maps) {
+  if (!server_arg.wcdb.save_maps) {
     return TRUE;
   }
 
@@ -1568,7 +1568,7 @@ bool wcdb_record_game_start(void)
   char buf[1024], host[512];
   struct settings_s *op;
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     return TRUE;
   }
 
@@ -1596,7 +1596,7 @@ bool wcdb_record_game_start(void)
       "(host, port, version, patches, capabilities, "
       "ruleset, type)"
       "VALUES ('%s', '%d', '%s', '%s', '%s', '%s', '%s')",
-      host, srvarg.port, wcdb_escape(sock, VERSION_STRING),
+      host, server_arg.port, wcdb_escape(sock, VERSION_STRING),
       wcdb_escape(sock, get_meta_patches_string()),
       wcdb_escape(sock, our_capability),
       wcdb_escape(sock, game.server.rulesetdir),
@@ -1688,7 +1688,7 @@ bool wcdb_end_of_turn_update(void)
   char buf[4096];
   int turn_id, lux_income, num;
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     return TRUE;
   }
 
@@ -1874,7 +1874,7 @@ bool wcdb_record_game_end(void)
   MYSQL mysql, *sock = &mysql;
   char buf[1024];
 
-  if (!srvarg.wcdb.enabled) {
+  if (!server_arg.wcdb.enabled) {
     return TRUE;
   }
 
@@ -2009,13 +2009,13 @@ bool wcdb_load_player_ratings(int game_type, bool check_turns_played)
        * have been played in the game for the game to be rated
        * at all (if not, the function game_can_be_rated in
        * score.c will handle the check). */
-      if (rate_user && game.info.turn >= srvarg.wcdb.min_rated_turns
-          && most_turns < srvarg.wcdb.min_rated_turns) {
+      if (rate_user && game.info.turn >= server_arg.wcdb.min_rated_turns
+          && most_turns < server_arg.wcdb.min_rated_turns) {
         notify_conn(NULL, _("Server: User %s will not receive an updated "
                             "rating because not enough turns were played "
                             "(only played %d, which is less than the "
                             "minimum of %d)."),
-                    most_user, most_turns, srvarg.wcdb.min_rated_turns);
+                    most_user, most_turns, server_arg.wcdb.min_rated_turns);
         rate_user = FALSE;
       }
 
@@ -2579,7 +2579,7 @@ struct wcdb_game_info *wcdb_game_info_new(int id)
   res = NULL;
 
 
-  if (srvarg.wcdb.more_game_info) {
+  if (server_arg.wcdb.more_game_info) {
 
     /* Fetch the players' final scores. */
 
@@ -2654,7 +2654,7 @@ struct wcdb_game_info *wcdb_game_info_new(int id)
     mysql_free_result(res);
     res = NULL;
 
-  } /* srvarg.wcdb.more_game_info == TRUE */
+  } /* server_arg.wcdb.more_game_info == TRUE */
 
 
   /* Fetch information about the teams. */
@@ -3089,7 +3089,7 @@ void wcdb_aliaslist_free(struct wcdb_aliaslist *fal)
 }
 
 /**************************************************************************
-  Returns TRUE and sets srvarg.auth.salted if the auth database supports
+  Returns TRUE and sets server_arg.auth.salted if the auth database supports
   salted passwords. Otherwise, returns FALSE and a warning message is
   printed in the server console.
 **************************************************************************/
@@ -3115,15 +3115,15 @@ bool wcdb_check_salted_passwords(void)
         "the contrib diretory can be used to modify your current\n"
         "auth table to support password salt.\n",
         AUTH_TABLE, wcdb.dbname);
-    srvarg.auth.salted = FALSE;
+    server_arg.auth.salted = FALSE;
     return FALSE;
   }
 
-  srvarg.auth.salted = TRUE;
+  server_arg.auth.salted = TRUE;
   return TRUE;
 #endif /* HAVE_MYSQL */
 
-  srvarg.auth.salted = FALSE;
+  server_arg.auth.salted = FALSE;
   return FALSE;
 }
 

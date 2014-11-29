@@ -82,8 +82,8 @@ struct server_arguments {
 };
 
 void init_game_seed(void);
-void srv_init(void);
-void srv_main(void);
+void server_init(void);
+void server_main(void);
 void server_quit(void);
 
 void save_game_auto(void);
@@ -105,7 +105,7 @@ void server_free_player_maps(void);
 
 void check_for_full_turn_done(void);
 
-extern struct server_arguments srvarg;
+extern struct server_arguments server_arg;
 
 extern enum server_states server_state;
 extern bool nocity_send;

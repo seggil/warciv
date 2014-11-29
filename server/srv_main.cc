@@ -134,7 +134,7 @@ static void thaw_clients(void);
 bool is_server = TRUE;
 
 /* command-line arguments to server */
-struct server_arguments srvarg;
+struct server_arguments server_arg;
 
 /* server state information */
 enum server_states server_state = PRE_GAME_STATE;
@@ -199,53 +199,53 @@ void init_game_seed(void)
 /**************************************************************************
 ...
 **************************************************************************/
-void srv_init(void)
+void server_init(void)
 {
   /* NLS init */
   init_nls();
 
   /* init server arguments... */
 
-  srvarg.metaserver_no_send = DEFAULT_META_SERVER_NO_SEND;
-  sz_strlcpy(srvarg.metaserver_addr, DEFAULT_META_SERVER_ADDR);
-  srvarg.metaserver_fail_wait_time = DEFAULT_META_SERVER_FAIL_WAIT_TIME;
+  server_arg.metaserver_no_send = DEFAULT_META_SERVER_NO_SEND;
+  sz_strlcpy(server_arg.metaserver_addr, DEFAULT_META_SERVER_ADDR);
+  server_arg.metaserver_fail_wait_time = DEFAULT_META_SERVER_FAIL_WAIT_TIME;
   /* setup the hostname to send on metaserver posts */
-  if (my_gethostname(srvarg.metasendhost, sizeof(srvarg.metasendhost)) != 0) {
-          sz_strlcpy(srvarg.metasendhost, "unknown");
+  if (my_gethostname(server_arg.metasendhost, sizeof(server_arg.metasendhost)) != 0) {
+          sz_strlcpy(server_arg.metasendhost, "unknown");
   }
 
-  srvarg.bind_addr = NULL;
-  srvarg.port = DEFAULT_SOCK_PORT;
+  server_arg.bind_addr = NULL;
+  server_arg.port = DEFAULT_SOCK_PORT;
 
-  srvarg.loglevel = LOG_VERBOSE;
+  server_arg.loglevel = LOG_VERBOSE;
 
-  srvarg.log_filename = NULL;
-  srvarg.gamelog_filename = NULL;
-  srvarg.load_filename[0] = '\0';
-  srvarg.script_filename = NULL;
-  srvarg.saves_pathname = (char const *)"";
+  server_arg.log_filename = NULL;
+  server_arg.gamelog_filename = NULL;
+  server_arg.load_filename[0] = '\0';
+  server_arg.script_filename = NULL;
+  server_arg.saves_pathname = (char const *)"";
 
-  srvarg.quitidle = 60;
-  BV_CLR_ALL(srvarg.draw);
+  server_arg.quitidle = 60;
+  BV_CLR_ALL(server_arg.draw);
 
-  srvarg.auth.enabled = FALSE;
-  srvarg.auth.allow_guests = FALSE;
-  srvarg.auth.allow_newusers = FALSE;
-  srvarg.auth.salted = FALSE;
+  server_arg.auth.enabled = FALSE;
+  server_arg.auth.allow_guests = FALSE;
+  server_arg.auth.allow_newusers = FALSE;
+  server_arg.auth.salted = FALSE;
 
-  srvarg.wcdb.enabled = FALSE;
-  srvarg.wcdb.min_rated_turns = RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT;
-  srvarg.wcdb.save_maps = FALSE;
-  srvarg.wcdb.more_game_info = FALSE;
+  server_arg.wcdb.enabled = FALSE;
+  server_arg.wcdb.min_rated_turns = RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT;
+  server_arg.wcdb.save_maps = FALSE;
+  server_arg.wcdb.more_game_info = FALSE;
 
-  srvarg.no_dns_lookup = FALSE;
+  server_arg.no_dns_lookup = FALSE;
 
-  srvarg.required_cap[0] = '\0';
-  srvarg.allow_multi_line_chat = FALSE;
+  server_arg.required_cap[0] = '\0';
+  server_arg.allow_multi_line_chat = FALSE;
 
-  srvarg.save_ppm = FALSE;
+  server_arg.save_ppm = FALSE;
 
-  srvarg.hack_request_disabled = FALSE;
+  server_arg.hack_request_disabled = FALSE;
 
   background_functions = bgfc_list_new();
   bgfc_id_counter = 0;
@@ -856,9 +856,9 @@ void save_game(char *orig_filename)
     char tmpname[600];
 
     /* Ensure the saves directory exists. */
-    make_dir(srvarg.saves_pathname);
+    make_dir(server_arg.saves_pathname);
 
-    sz_strlcpy(tmpname, srvarg.saves_pathname);
+    sz_strlcpy(tmpname, server_arg.saves_pathname);
     if (tmpname[0] != '\0') {
       sz_strlcat(tmpname, "/");
     }
@@ -1760,18 +1760,18 @@ static void main_loop(void)
 /**************************************************************************
   Server initialization.
 **************************************************************************/
-void srv_main(void)
+void server_main(void)
 {
   /* make sure it's initialized */
   if (!has_been_srv_init) {
-    srv_init();
+    server_init();
   }
 
   mysrand(time(NULL));
   my_init_network();
 
-  con_log_init(srvarg.log_filename, srvarg.loglevel);
-  gamelog_init(srvarg.gamelog_filename);
+  con_log_init(server_arg.log_filename, server_arg.loglevel);
+  gamelog_init(server_arg.gamelog_filename);
   gamelog_set_level(GAMELOG_FULL);
   gamelog(GAMELOG_BEGIN);
 
@@ -1790,16 +1790,16 @@ void srv_main(void)
 
   server_open_socket();
 
-  if (!require_command(NULL, srvarg.required_cap, FALSE)) {
+  if (!require_command(NULL, server_arg.required_cap, FALSE)) {
     exit(EXIT_FAILURE);
   }
 
   /* load a saved game */
-  if (srvarg.load_filename[0] != '\0') {
-    (void) load_command(NULL, srvarg.load_filename, FALSE);
+  if (server_arg.load_filename[0] != '\0') {
+    (void) load_command(NULL, server_arg.load_filename, FALSE);
   }
 
-  if (!(srvarg.metaserver_no_send)) {
+  if (!(server_arg.metaserver_no_send)) {
     freelog(LOG_NORMAL, _("Sending info to metaserver [%s]"), meta_addr_port());
     server_open_meta();         /* open socket for meta server */
   }
@@ -1815,8 +1815,8 @@ void srv_main(void)
     settings_init();
 
     /* load a script file */
-    if (srvarg.script_filename
-        && !read_init_script(NULL, srvarg.script_filename)) {
+    if (server_arg.script_filename
+        && !read_init_script(NULL, server_arg.script_filename)) {
       exit(EXIT_FAILURE);
     }
 
@@ -1846,7 +1846,7 @@ void srv_main(void)
       (void) sniff_packets();
     }
 
-    if (game.info.timeout == -1 || srvarg.exit_on_end) {
+    if (game.info.timeout == -1 || server_arg.exit_on_end) {
       /* For autogames or if the -e option is specified, exit the server. */
       server_quit();
     }
@@ -2144,7 +2144,7 @@ void server_game_free(void)
 
   server_free_player_maps();
 
-  BV_CLR_ALL(srvarg.draw);
+  BV_CLR_ALL(server_arg.draw);
   if (game.server.ruleset_loaded) {
     ruleset_cache_free();
   }

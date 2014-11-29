@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 #endif
 
   /* initialize server */
-  srv_init();
+  server_init();
 
   /* parse command-line arguments... */
 
@@ -115,64 +115,64 @@ int main(int argc, char *argv[])
   inx = 1;
   while (inx < argc) {
     if ((option = get_option("--file", argv, &inx, argc))) {
-      sz_strlcpy(srvarg.load_filename, option);
+      sz_strlcpy(server_arg.load_filename, option);
     } else if (is_option("--help", argv[inx])) {
       showhelp = TRUE;
       break;
     } else if (is_option("--Hack-off", argv[inx])) {
-      srvarg.hack_request_disabled = TRUE;
+      server_arg.hack_request_disabled = TRUE;
     } else if ((option = get_option("--log", argv, &inx, argc)))
-      srvarg.log_filename = option;
+      server_arg.log_filename = option;
     else if ((option = get_option("--gamelog", argv, &inx, argc)))
-      srvarg.gamelog_filename = option;
+      server_arg.gamelog_filename = option;
     else if (is_option("--meta", argv[inx]))
-      srvarg.metaserver_no_send = FALSE;
+      server_arg.metaserver_no_send = FALSE;
     else if ((option = get_option("--Metaserver", argv, &inx, argc))) {
-      sz_strlcpy(srvarg.metaserver_addr, argv[inx]);
-      srvarg.metaserver_no_send = FALSE;      /* --Metaserver implies --meta */
+      sz_strlcpy(server_arg.metaserver_addr, argv[inx]);
+      server_arg.metaserver_no_send = FALSE;      /* --Metaserver implies --meta */
     } else if ((option = get_option("--xHost", argv, &inx, argc))) {
-            sz_strlcpy(srvarg.metasendhost, argv[inx]); /* -- hostname to send to metaserver */
+            sz_strlcpy(server_arg.metasendhost, argv[inx]); /* -- hostname to send to metaserver */
     } else if (is_option("--no-dns-lookup", argv[inx])) {
-      srvarg.no_dns_lookup = TRUE;
+      server_arg.no_dns_lookup = TRUE;
     } else if ((option = get_option("--port", argv, &inx, argc))) {
-      if (sscanf(option, "%d", &srvarg.port) != 1) {
+      if (sscanf(option, "%d", &server_arg.port) != 1) {
         showhelp = TRUE;
         break;
       }
     } else if ((option = get_option("--bind", argv, &inx, argc))) {
-      srvarg.bind_addr = option;
+      server_arg.bind_addr = option;
     } else if ((option = get_option("--read", argv, &inx, argc)))
-      srvarg.script_filename = option;
+      server_arg.script_filename = option;
     else if ((option = get_option("--quitidle", argv, &inx, argc))) {
-      if (sscanf(option, "%d", &srvarg.quitidle) != 1) {
+      if (sscanf(option, "%d", &server_arg.quitidle) != 1) {
         showhelp = TRUE;
         break;
       }
     } else if (is_option("--exit-on-end", argv[inx])) {
-      srvarg.exit_on_end = TRUE;
+      server_arg.exit_on_end = TRUE;
     } else if ((option = get_option("--debug", argv, &inx, argc))) {
-      srvarg.loglevel = log_parse_level_str(option);
-      if (srvarg.loglevel == -1) {
-        srvarg.loglevel = LOG_NORMAL;
+      server_arg.loglevel = log_parse_level_str(option);
+      if (server_arg.loglevel == -1) {
+        server_arg.loglevel = LOG_NORMAL;
         showhelp = TRUE;
         break;
       }
 #ifdef HAVE_MYSQL
     } else if (is_option("--auth", argv[inx])) {
-      srvarg.auth.enabled = TRUE;
+      server_arg.auth.enabled = TRUE;
     } else if (is_option("--Guests", argv[inx])) {
-      srvarg.auth.allow_guests = TRUE;
+      server_arg.auth.allow_guests = TRUE;
     } else if (is_option("--Newusers", argv[inx])) {
-      srvarg.auth.allow_newusers = TRUE;
+      server_arg.auth.allow_newusers = TRUE;
 #endif
     } else if (is_option("--Ppm", argv[inx])) {
-      srvarg.save_ppm = TRUE;
+      server_arg.save_ppm = TRUE;
     } else if ((option = get_option("--Serverid", argv, &inx, argc))) {
-      sz_strlcpy(srvarg.serverid, option);
+      sz_strlcpy(server_arg.serverid, option);
     } else if ((option = get_option("--saves", argv, &inx, argc))) {
-      srvarg.saves_pathname = option;
+      server_arg.saves_pathname = option;
     } else if ((option = get_option("--Require", argv, &inx, argc))) {
-      sz_strlcpy(srvarg.required_cap, option);
+      sz_strlcpy(server_arg.required_cap, option);
     } else if (is_option("--version", argv[inx]))
       showvers = TRUE;
     else {
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
 #endif
 
   /* have arguments, call the main server loop... */
-  srv_main();
+  server_main();
 
   /* Technically, we won't ever get here. We exit via server_quit. */
 
@@ -284,8 +284,8 @@ static void Mac_options(int argc)
 #define HARDCODED_OPT
   /*temporary hack since GetNewDialog() doesn't want to work*/
 #ifdef HARDCODED_OPT
-  srvarg.log_filename="log.out";
-  srvarg.loglevel=LOG_DEBUG;
+  server_arg.log_filename="log.out";
+  server_arg.loglevel=LOG_DEBUG;
 #else
   if (argc == 0)
   {
@@ -353,8 +353,8 @@ static void Mac_options(int argc)
         break;
         case 13:
           GetDItem(optptr, 13, &the_type, &the_handle, &the_rect);
-          srvarg.metaserver_no_send=GetCtlValue((ControlHandle)the_handle);
-          SetCtlValue((ControlHandle)the_handle, !srvarg.metaserver_no_send);
+          server_arg.metaserver_no_send=GetCtlValue((ControlHandle)the_handle);
+          SetCtlValue((ControlHandle)the_handle, !server_arg.metaserver_no_send);
         break;
         case 15:
         case 16:
@@ -369,30 +369,30 @@ static void Mac_options(int argc)
     }
     /*now, load the dialog items into the corect variables interpritation*/
     GetDItem( optptr, 4, &the_type, &the_handle, &the_rect);
-    GetIText( the_handle, (unsigned char *)srvarg.load_filename);
+    GetIText( the_handle, (unsigned char *)server_arg.load_filename);
     GetDItem( optptr, 6, &the_type, &the_handle, &the_rect);
-    GetIText( the_handle, (unsigned char *)srvarg.gamelog_filename);
+    GetIText( the_handle, (unsigned char *)server_arg.gamelog_filename);
     GetDItem( optptr, 8, &the_type, &the_handle, &the_rect);
-    GetIText( the_handle, (unsigned char *)srvarg.log_filename);
+    GetIText( the_handle, (unsigned char *)server_arg.log_filename);
     GetDItem( optptr, 12, &the_type, &the_handle, &the_rect);
     GetIText( the_handle, the_string);
-    sscanf(the_string, "%d", srvarg.port);
+    sscanf(the_string, "%d", server_arg.port);
     GetDItem( optptr, 10, &the_type, &the_handle, &the_rect);
-    GetIText( the_handle, (unsigned char *)srvarg.script_filename);
+    GetIText( the_handle, (unsigned char *)server_arg.script_filename);
     GetDItem(optptr, 15, &the_type, &the_handle, &the_rect);
     if(GetControlValue((ControlHandle)the_handle))
     {
-      srvarg.loglevel=LOG_FATAL;
+      server_arg.loglevel=LOG_FATAL;
     }
     GetDItem(optptr, 16, &the_type, &the_handle, &the_rect);
     if(GetControlValue((ControlHandle)the_handle))
     {
-      srvarg.loglevel=LOG_NORMAL;
+      server_arg.loglevel=LOG_NORMAL;
     }
     GetDItem(optptr, 17, &the_type, &the_handle, &the_rect);
     if(GetControlValue((ControlHandle)the_handle))
     {
-      srvarg.loglevel=LOG_VERBOSE;
+      server_arg.loglevel=LOG_VERBOSE;
     }
     DisposeDialog(optptr);/*get rid of the dialog after sorting out the options*/
     DisposePtr(storage);/*clean up the allocated memory*/

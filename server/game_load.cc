@@ -2175,7 +2175,7 @@ void game_load(struct section_file *file)
   set_meta_topic_string(secfile_lookup_str_default(file,
       default_meta_topic_string(), "game.metatopic"));
 
-  sz_strlcpy(srvarg.metaserver_addr,
+  sz_strlcpy(server_arg.metaserver_addr,
              secfile_lookup_str_default(file, DEFAULT_META_SERVER_ADDR,
                                         "game.metaserver"));
 

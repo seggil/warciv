@@ -279,7 +279,7 @@ void handle_chat_msg_req(connection_t *pconn, char *message)
 
   /* this loop to prevent players from sending multiple lines
    * which can be abused */
-  if(!srvarg.allow_multi_line_chat) {
+  if(!server_arg.allow_multi_line_chat) {
     for (cp = message; *cp != '\0' && cp < end; cp++) {
       if (*cp == '\n' || *cp == '\r') {
         *cp='\0';

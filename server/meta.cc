@@ -225,7 +225,7 @@ void set_user_meta_message_string(const char *string)
 *************************************************************************/
 char *meta_addr_port(void)
 {
-  return srvarg.metaserver_addr;
+  return server_arg.metaserver_addr;
 }
 
 /*************************************************************************
@@ -233,14 +233,14 @@ char *meta_addr_port(void)
 *************************************************************************/
 static void metaserver_failed(void)
 {
-  if (srvarg.metaserver_fail_wait_time <= 0) {
+  if (server_arg.metaserver_fail_wait_time <= 0) {
     freelog (LOG_VERBOSE, _("Not reporting to the metaserver in this "
                             "game."));
   } else {
     freelog (LOG_VERBOSE,
         _("Waiting for at least %d seconds before attempting to "
           "communicate with the metaserver again."),
-        srvarg.metaserver_fail_wait_time);
+        server_arg.metaserver_fail_wait_time);
     last_metaserver_fail = time(NULL);
   }
   con_flush();
@@ -285,8 +285,8 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
   astr_init(&content);
   astr_minsize(&content, 1024);
 
-  astr_append_printf(&content, "host=%s", my_url_encode(srvarg.metasendhost));
-  astr_append_printf(&content, "&port=%d", srvarg.port);
+  astr_append_printf(&content, "host=%s", my_url_encode(server_arg.metasendhost));
+  astr_append_printf(&content, "&port=%d", server_arg.port);
   astr_append_printf(&content, "&state=%s", my_url_encode(state));
 
   if (flag == META_GOODBYE) {
@@ -301,7 +301,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
     astr_append_printf(&content, "&topic=%s",
                        my_url_encode(get_meta_topic_string()));
     astr_append_printf(&content, "&serverid=%s",
-                       my_url_encode(srvarg.serverid));
+                       my_url_encode(server_arg.serverid));
     astr_append_printf(&content, "&message=%s",
                        my_url_encode(get_meta_message_string()));
 
@@ -557,9 +557,9 @@ void server_open_meta(void)
     metaserver_path = NULL;
   }
 
-  if (!(path = my_lookup_httpd(metaname, &metaport, srvarg.metaserver_addr))) {
+  if (!(path = my_lookup_httpd(metaname, &metaport, server_arg.metaserver_addr))) {
     freelog(LOG_ERROR, _("Metaserver: bad http server url: %s."),
-            srvarg.metaserver_addr);
+            server_arg.metaserver_addr);
     metaserver_failed();
     return;
   }
@@ -638,12 +638,12 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
   }
 
   if (!server_is_open
-      && !srvarg.metaserver_no_send
-      && srvarg.metaserver_fail_wait_time > 0
+      && !server_arg.metaserver_no_send
+      && server_arg.metaserver_fail_wait_time > 0
       && last_metaserver_fail > 0)
   {
     time_t now = time(NULL);
-    if (now - last_metaserver_fail > srvarg.metaserver_fail_wait_time) {
+    if (now - last_metaserver_fail > server_arg.metaserver_fail_wait_time) {
       freelog (LOG_VERBOSE,
          _("Reopening connection to metaserver after waiting for %d "
             "seconds since the last failure."),

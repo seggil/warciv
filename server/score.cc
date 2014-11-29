@@ -537,7 +537,7 @@ void save_ppm(void)
   int watercol[3] = {0,0,255}; /* blue */
   int landcol[3] =  {0,0,0};   /* black */
 
-  if (!srvarg.save_ppm) {
+  if (!server_arg.save_ppm) {
     return;
   }
 
@@ -546,9 +546,9 @@ void save_ppm(void)
               "%s%+05d.int.ppm", game.server.save_name, game.info.year);
 
   /* Ensure the saves directory exists. */
-  make_dir(srvarg.saves_pathname);
+  make_dir(server_arg.saves_pathname);
 
-  sz_strlcpy(tmpname, srvarg.saves_pathname);
+  sz_strlcpy(tmpname, server_arg.saves_pathname);
   if (tmpname[0] != '\0') {
     sz_strlcat(tmpname, "/");
   }
@@ -790,10 +790,10 @@ static bool game_can_be_rated(void)
     return FALSE;
   }
 
-  if (srvarg.wcdb.min_rated_turns > game.info.turn) {
+  if (server_arg.wcdb.min_rated_turns > game.info.turn) {
     notify_conn(NULL, _("Game: The game cannot be rated because not "
                         "enough turns (%d) have been played."),
-                srvarg.wcdb.min_rated_turns);
+                server_arg.wcdb.min_rated_turns);
     return FALSE;
   }
 
@@ -1409,7 +1409,7 @@ void score_evaluate_players(void)
   dump_groupings();
 #endif
 
-  if (!game.server.rated || !srvarg.wcdb.enabled || !srvarg.auth.enabled) {
+  if (!game.server.rated || !server_arg.wcdb.enabled || !server_arg.auth.enabled) {
     return;
   }
 

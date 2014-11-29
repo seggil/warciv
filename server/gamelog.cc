@@ -646,8 +646,8 @@ static void gamelog_status(char *buffer, int len) {
   count = 0;
   players_iterate(pplayer) {
     if (!is_barbarian(pplayer)) {
-      if ((BV_ISSET_ANY(srvarg.draw)
-           && BV_ISSET(srvarg.draw, pplayer->player_no))
+      if ((BV_ISSET_ANY(server_arg.draw)
+           && BV_ISSET(server_arg.draw, pplayer->player_no))
           || players_on_same_team(pplayer, highest_plr)) {
         /* We win a shared victory, so equal the score. */
         rank[count].value = highest;

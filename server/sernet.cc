@@ -448,8 +448,8 @@ static void really_close_connections(void)
 
     /* Reset settings. */
     settings_reset();
-    if (srvarg.script_filename) {
-      read_init_script(NULL, srvarg.script_filename);
+    if (server_arg.script_filename) {
+      read_init_script(NULL, server_arg.script_filename);
     }
     freelog(LOG_NORMAL, _("Settings reset because the server "
                           "became empty (setting 'emptyreset')."));
@@ -634,8 +634,8 @@ int sniff_packets(void)
 
     get_lanserver_announcement();
 
-    /* End server if no players for 'srvarg.quitidle' seconds. */
-    if (srvarg.quitidle != 0 && server_state != PRE_GAME_STATE) {
+    /* End server if no players for 'server_arg.quitidle' seconds. */
+    if (server_arg.quitidle != 0 && server_state != PRE_GAME_STATE) {
       static time_t last_noplayers = 0;
 
       if (game.est_connections != NULL
@@ -643,8 +643,8 @@ int sniff_packets(void)
         char buf[256];
 
         if (last_noplayers != 0) {
-          if (time(NULL) > last_noplayers + srvarg.quitidle) {
-            if (srvarg.exit_on_end) {
+          if (time(NULL) > last_noplayers + server_arg.quitidle) {
+            if (server_arg.exit_on_end) {
               save_game_auto();
             }
             my_snprintf(buf, sizeof(buf),
@@ -656,7 +656,7 @@ int sniff_packets(void)
             server_state = GAME_OVER_STATE;
             force_end_of_sniff = TRUE;
 
-            if (srvarg.exit_on_end) {
+            if (server_arg.exit_on_end) {
               /* No need for anything more; just quit. */
               /* XXX What about FCDB update? */
               server_quit();
@@ -667,7 +667,7 @@ int sniff_packets(void)
 
           my_snprintf(buf, sizeof(buf),
               _("Restarting in %d seconds for lack of players."),
-              srvarg.quitidle);
+              server_arg.quitidle);
           set_meta_message_string(buf);
           freelog(LOG_NORMAL, "%s", buf);
 
@@ -723,7 +723,7 @@ int sniff_packets(void)
     }
 
     /* if we've waited long enough after a failure, respond to the client */
-    if (srvarg.auth.enabled) {
+    if (server_arg.auth.enabled) {
       connection_list_iterate(game.all_connections, pconn) {
         if (pconn->u.server.status != AS_ESTABLISHED) {
           process_authentication_status(pconn);
@@ -1195,7 +1195,7 @@ static int server_accept_connection(int sockfd)
     return 0;
   }
 
-  if (!srvarg.no_dns_lookup) {
+  if (!server_arg.no_dns_lookup) {
     if (adns_is_available()) {
       freelog(LOG_DEBUG, "sac making adns request");
       pconn->u.server.adns_id = adns_reverse_lookup(&fromend,
@@ -1255,9 +1255,9 @@ int server_open_socket(void)
             mystrsocketerror(mysocketerrno()));
   }
 
-  if (!net_lookup_service(srvarg.bind_addr, srvarg.port, &src)) {
+  if (!net_lookup_service(server_arg.bind_addr, server_arg.port, &src)) {
     freelog(LOG_ERROR, _("Server: bad address: [%s:%d]."),
-            srvarg.bind_addr, srvarg.port);
+            server_arg.bind_addr, server_arg.port);
     exit(EXIT_FAILURE);
   }
 
@@ -1570,7 +1570,7 @@ static void send_lanserver_response(void)
 
    my_snprintf(players, sizeof(players), "%d",
                get_num_human_and_ai_players());
-  my_snprintf(port, sizeof(port), "%d", srvarg.port);
+  my_snprintf(port, sizeof(port), "%d", server_arg.port);
 
   dio_output_init(&dout, buffer, sizeof(buffer));
   dio_put_uint8(&dout, SERVER_LAN_VERSION);
