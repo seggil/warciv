@@ -123,7 +123,7 @@ static void ai_start_turn(void);
 static bool is_game_over(void);
 static void generate_ai_players(void);
 static void announce_ai_player(player_t *pplayer);
-static void srv_loop(void);
+static void server_loop(void);
 void server_free_final(void);
 
 static void freeze_clients(void);
@@ -1822,7 +1822,7 @@ void server_main(void)
 
     wcdb_check_salted_passwords();
 
-    srv_loop();
+    server_loop();
 
     send_game_state(game.game_connections, CLIENT_GAME_OVER_STATE);
     notify_conn(NULL, _("Game: The game is over..."));
@@ -1864,7 +1864,7 @@ void server_main(void)
 /**************************************************************************
   Server loop, run to set up one game.
 **************************************************************************/
-static void srv_loop(void)
+static void server_loop(void)
 {
   int i;
   bool start_nations;
