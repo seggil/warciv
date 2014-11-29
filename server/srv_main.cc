@@ -162,22 +162,22 @@ static unsigned char used_ids[8192]={0};
 static bool has_been_srv_init = FALSE;
 
 
-struct bgfc {
-  background_func bgfunc;
+struct backgroundfc_s {
+  background_func backgroundfunc;
   void *context;
   context_free_func ctxfree;
   int id;
 };
 
-#define SPECLIST_TAG bgfc
-#define SPECLIST_TYPE struct bgfc
+#define SPECLIST_TAG backgroundfc
+#define SPECLIST_TYPE struct backgroundfc_s
 #include "speclist.hh"
-#define bgfc_list_iterate(alist, ap) \
-    TYPED_LIST_ITERATE(struct bgfc, alist, ap)
-#define bgfc_list_iterate_end  LIST_ITERATE_END
+#define backgroundfc_list_iterate(alist, ap) \
+    TYPED_LIST_ITERATE(struct backgroundfc_s, alist, ap)
+#define backgroundfc_list_iterate_end  LIST_ITERATE_END
 
-static struct bgfc_list *background_functions;
-static int bgfc_id_counter;
+static struct backgroundfc_list *background_function_list;
+static int backgroundfc_id_counter;
 
 
 /**************************************************************************
@@ -247,8 +247,8 @@ void server_init(void)
 
   server_arg.hack_request_disabled = FALSE;
 
-  background_functions = bgfc_list_new();
-  bgfc_id_counter = 0;
+  background_function_list = backgroundfc_list_new();
+  backgroundfc_id_counter = 0;
 
   /* mark as initialized */
   has_been_srv_init = TRUE;
@@ -2170,19 +2170,19 @@ int register_background_function(background_func bf,
                                  void *context,
                                  context_free_func cff)
 {
-  struct bgfc *bc;
+  struct backgroundfc_s *bc;
 
   if (bf == NULL) {
     return 0;
   }
 
-  bc = (struct bgfc *)wc_malloc(sizeof(*bc));
-  bc->bgfunc = bf;
+  bc = (struct backgroundfc_s *)wc_malloc(sizeof(struct backgroundfc_s));
+  bc->backgroundfunc = bf;
   bc->context = context;
   bc->ctxfree = cff;
-  bc->id = ++bgfc_id_counter;
+  bc->id = ++backgroundfc_id_counter;
 
-  bgfc_list_append(background_functions, bc);
+  backgroundfc_list_append(background_function_list, bc);
 
   return bc->id;
 }
@@ -2190,7 +2190,7 @@ int register_background_function(background_func bf,
 /**************************************************************************
  ...
 **************************************************************************/
-static void bgfc_free(struct bgfc *bc)
+static void backgroundfc_free(struct backgroundfc_s *bc)
 {
   if (!bc) {
     return;
@@ -2209,18 +2209,18 @@ static void bgfc_free(struct bgfc *bc)
 **************************************************************************/
 void unregister_background_function(int id)
 {
-  struct bgfc *bc = NULL;
+  struct backgroundfc_s *bc = NULL;
 
-  bgfc_list_iterate(background_functions, p) {
+  backgroundfc_list_iterate(background_function_list, p) {
     if (p->id == id) {
       bc = p;
       break;
     }
-  } bgfc_list_iterate_end;
+  } backgroundfc_list_iterate_end;
 
   if (bc != NULL) {
-    bgfc_list_unlink(background_functions, bc);
-    bgfc_free(bc);
+    backgroundfc_list_unlink(background_function_list, bc);
+    backgroundfc_free(bc);
   }
 }
 
@@ -2229,24 +2229,24 @@ void unregister_background_function(int id)
 **************************************************************************/
 void execute_background_functions(void)
 {
-  struct bgfc_list *del;
+  struct backgroundfc_list *del;
 
-  del = bgfc_list_new();
+  del = backgroundfc_list_new();
 
-  bgfc_list_iterate(background_functions, bc) {
-    if (!bc || !bc->bgfunc) {
+  backgroundfc_list_iterate(background_function_list, bc) {
+    if (!bc || !bc->backgroundfunc) {
       continue;
     }
-    if (!bc->bgfunc(bc->context)) {
-      bgfc_list_append(del, bc);
+    if (!bc->backgroundfunc(bc->context)) {
+      backgroundfc_list_append(del, bc);
     }
-  } bgfc_list_iterate_end;
+  } backgroundfc_list_iterate_end;
 
-  bgfc_list_iterate(del, bc) {
-    bgfc_list_unlink(background_functions, bc);
-    bgfc_free(bc);
-  } bgfc_list_iterate_end;
+  backgroundfc_list_iterate(del, bc) {
+    backgroundfc_list_unlink(background_function_list, bc);
+    backgroundfc_free(bc);
+  } backgroundfc_list_iterate_end;
 
-  bgfc_list_unlink_all(del);
-  bgfc_list_free(del);
+  backgroundfc_list_unlink_all(del);
+  backgroundfc_list_free(del);
 }
