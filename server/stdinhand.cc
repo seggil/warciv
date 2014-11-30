@@ -8372,24 +8372,24 @@ static bool show_mutes(connection_t *caller)
 /**************************************************************************
   'list' arguments
 **************************************************************************/
-enum LIST_ARGS {
-  LIST_ACTIONLIST,
-  LIST_ALLOW,
-  LIST_CONNECTIONS,
-  LIST_CAPABILITIES,
-  LIST_IDLE,
-  LIST_IGNORE,
-  LIST_MAPS,
-  LIST_MUTES,
-  LIST_PLAYERS,
-  LIST_RULESETS,
-  LIST_SCENARIOS,
-  LIST_TEAMS,
-  LIST_VOTES,
+enum SHOW_ARGS {
+  SHOW_ACTIONLIST,
+  SHOW_ALLOW,
+  SHOW_CONNECTIONS,
+  SHOW_CAPABILITIES,
+  SHOW_IDLE,
+  SHOW_IGNORE,
+  SHOW_MAPS,
+  SHOW_MUTES,
+  SHOW_PLAYERS,
+  SHOW_RULESETS,
+  SHOW_SCENARIOS,
+  SHOW_TEAMS,
+  SHOW_VOTES,
 
-  LIST_ARG_NUM                  /* Must be last */
+  SHOW_ARG_NUM                  /* Must be last */
 };
-static const char *const list_args[] = {
+static const char *const show_args[] = {
   "actionlist",
   "allow",
   "connections",
@@ -8405,9 +8405,9 @@ static const char *const list_args[] = {
   "votes",
   NULL
 };
-static const char *listarg_accessor(int i)
+static const char *showarg_accessor(int i)
 {
-  return list_args[i];
+  return show_args[i];
 }
 
 /**************************************************************************
@@ -8418,8 +8418,8 @@ static bool show_list(connection_t *caller, char *arg)
   enum m_pre_result match_result;
   int ind;
   remove_leading_trailing_spaces(arg);
-  match_result = match_prefix(listarg_accessor,
-                              LIST_ARG_NUM, 0, mystrncasecmp, arg, &ind);
+  match_result = match_prefix(showarg_accessor,
+                              SHOW_ARG_NUM, 0, mystrncasecmp, arg, &ind);
   if (match_result > M_PRE_EMPTY) {
     cmd_reply(CMD_LIST, caller, C_SYNTAX,
               _("Bad list argument: '%s'.  Try '%shelp list'."),
@@ -8427,43 +8427,43 @@ static bool show_list(connection_t *caller, char *arg)
     return FALSE;
   }
   if (match_result == M_PRE_EMPTY) {
-    ind = LIST_PLAYERS;
+    ind = SHOW_PLAYERS;
   }
   switch (ind) {
-  case LIST_ACTIONLIST:
+  case SHOW_ACTIONLIST:
     show_actionlist(caller);
     return TRUE;
-  case LIST_ALLOW:
+  case SHOW_ALLOW:
     show_allow(caller);
     return TRUE;
-  case LIST_CONNECTIONS:
+  case SHOW_CONNECTIONS:
     show_connections(caller);
     return TRUE;
-  case LIST_CAPABILITIES:
+  case SHOW_CAPABILITIES:
     show_capabilities(caller);
     return TRUE;
-  case LIST_IDLE:
+  case SHOW_IDLE:
     show_idle(caller);
     return TRUE;
-  case LIST_IGNORE:
+  case SHOW_IGNORE:
     return show_ignore(caller);
-  case LIST_MAPS:
+  case SHOW_MAPS:
     return showmaplist_command(caller);
-  case LIST_MUTES:
+  case SHOW_MUTES:
     show_mutes(caller);
     return TRUE;
-  case LIST_PLAYERS:
+  case SHOW_PLAYERS:
     show_players(caller);
     return TRUE;
-  case LIST_RULESETS:
+  case SHOW_RULESETS:
     show_rulesets(caller);
     return TRUE;
-  case LIST_SCENARIOS:
+  case SHOW_SCENARIOS:
     return show_scenarios(caller);
-  case LIST_TEAMS:
+  case SHOW_TEAMS:
     show_teams(caller, FALSE);
     return TRUE;
-  case LIST_VOTES:
+  case SHOW_VOTES:
     show_votes(caller);
     return TRUE;
   default:
