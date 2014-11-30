@@ -43,7 +43,8 @@ enum sset_class {
  * Eg, not sent: seeds, saveturns, etc.
  */
 enum sset_to_client {
-  SSET_TO_CLIENT, SSET_SERVER_ONLY
+  SSET_TO_CLIENT,
+  SSET_SERVER_ONLY
 };
 
 /* Categories allow options to be usefully organized when presented to the user

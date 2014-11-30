@@ -252,7 +252,9 @@ static enum command_id command_named(const char *token,
 **************************************************************************/
 void stdinhand_init(void)
 {
-  int len[NUM_ALLOWS], max = 0, i;
+  int len[NUM_ALLOWS];
+  int max = 0;
+  int i;
 
   if (!mute_table) {
     mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
@@ -454,10 +456,17 @@ static void cmd_reply_line(enum command_id cmd,
                            const char *prefix,
                            const char *line)
 {
-  const char *cmdname = cmd < CMD_NUM
-      ? commands[cmd].name : cmd == CMD_AMBIGUOUS ? _("(ambiguous)")
-      : cmd == CMD_UNRECOGNIZED ? _("(unknown)")
-      : "(?!?)";                /* this case is a bug! */
+  const char *cmdname;
+  
+  if ( cmd < CMD_NUM ) {
+    cmdname = commands[cmd].name;
+  } else if ( cmd == CMD_AMBIGUOUS ) {
+    cmdname = _("(ambiguous)");
+  } else if ( cmd == CMD_UNRECOGNIZED ) {
+    cmdname = _("(unknown)");
+  } else {
+    cmdname = "(?!?)";  /* this case is a bug! */
+  }
 
   if (caller) {
     notify_conn(caller->self, "/%s: %s%s", cmdname, prefix, line);
@@ -489,11 +498,17 @@ static void vcmd_reply_prefix(enum command_id cmd,
 {
   char buf[4096];
   char *c0, *c1;
+  char *arg;
+
   my_vsnprintf(buf, sizeof(buf), format, ap);
   c0 = buf;
   while ((c1 = strstr(c0, "\n"))) {
     *c1 = '\0';
-    cmd_reply_line(cmd, caller, rfc_status, (c0 == buf ? "" : prefix), c0);
+    if (c0 == buf)
+      arg = '\0';
+    else
+      arg = (char*)prefix;
+    cmd_reply_line(cmd, caller, rfc_status, arg, c0);
     c0 = c1 + 1;
   }
   cmd_reply_line(cmd, caller, rfc_status, (c0 == buf ? "" : prefix), c0);
@@ -1606,7 +1621,8 @@ bool read_init_script(connection_t * caller, char *script_filename)
   interpret_tilde(real_filename, sizeof(real_filename), script_filename);
 
   if (is_reg_file_for_access(real_filename, FALSE)
-      && (script_file = fopen(real_filename, "r"))) {
+      && (script_file = fopen(real_filename, "r")))
+  {
     char buffer[MAX_LEN_CONSOLE_LINE];
     /* the size is set as to not overflow buffer in handle_stdin_input */
     while (fgets(buffer, MAX_LEN_CONSOLE_LINE - 1, script_file)) {
@@ -2042,7 +2058,10 @@ static void free_team_names(char **p, int n)
 static char **create_team_names(int n)
 {
   struct section_file sfile;
-  char buf[256], *sfilename, **team_names, **suggestions;
+  char buf[256];
+  char *sfilename;
+  char **team_names;
+  char **suggestions;
   int i, rand, dim;
 
   if (n <= 0) {
@@ -2501,8 +2520,12 @@ static int lookup_option(const char *name)
   }
   result = match_prefix(optname_accessor, SETTINGS_NUM, 0, mystrncasecmp,
                         name, &ind);
-  return ((result < M_PRE_AMBIGUOUS) ? ind :
-          (result == M_PRE_AMBIGUOUS) ? -2 : -1);
+  if (result < M_PRE_AMBIGUOUS)
+    return ind;
+  else if (result == M_PRE_AMBIGUOUS)
+    return -2;
+  else
+    return -1;
 }
 
 /**************************************************************************
@@ -7282,7 +7305,7 @@ static bool unban_command(connection_t *caller,
 *********************************************************************/
 static const char *allow_accessor(int i)
 {
-  return allows[i].name;
+  return allows[i].name; /* user_allow_behavior */
 }
 
 /*********************************************************************
@@ -8666,7 +8689,7 @@ static void show_actionlist(connection_t *caller)
 }
 
 /**************************************************************************
-  List what user behaviours are allowed (see /allow, /disallow).
+  List which user allow behaviours are allowed (see /allow, /disallow).
 **************************************************************************/
 static void show_allow(connection_t *caller)
 {
@@ -8833,8 +8856,12 @@ The valid arguments for the second argument to "cmdlevel":
 **************************************************************************/
 static const char *cmdlevel_arg2_accessor(int idx)
 {
-  return ((idx == 0) ? "first" :
-          (idx == 1) ? "new" : connection_name_accessor(idx - 2));
+  if (idx == 0)
+    return "first";
+  else if (idx == 1)
+    return "new";
+  else
+    return connection_name_accessor(idx - 2);
 }
 static char *cmdlevel_arg2_generator(const char *text, int state)
 {
@@ -8950,8 +8977,11 @@ static bool is_player(int start)
 {
   int i = 0;
   while (player_cmd[i] != -1) {
-    if (contains_str_before_start
-        (start, commands[player_cmd[i]].name, FALSE)) {
+    if (contains_str_before_start(
+            start,
+            commands[player_cmd[i]].name,
+            FALSE))
+    {
       return TRUE;
     }
     i++;
@@ -9128,19 +9158,23 @@ char **warciv_completion(char *text, int start, int end)
     matches = NULL;
   /* Don't automatically try to complete with filenames */
   rl_attempted_completion_over = 1;
-  return (matches);
+  return matches;
 }
 #endif /* HAVE_LIBREADLINE */
 
 /**************************************************************************
-  ...
+  copy at most "outlen" characters from string "in" to "out"
+  changing space to '_'
 **************************************************************************/
 static void make_safe_savename(char *out, int outlen, const char *in)
 {
   const char *limit;
 
   for (limit = out + outlen; *in && out < limit; in++) {
-    *out++ = (*in == ' ' ? '_' : *in);
+    if (*in == ' ')
+      *out++ = '_';
+    else
+      *out++ = *in;
   }
 }
 
