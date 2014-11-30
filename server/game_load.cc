@@ -2386,7 +2386,7 @@ void game_load(struct section_file *file)
 
   sz_strlcpy(game.server.demography, secfile_lookup_str_default(file,
       GAME_DEFAULT_DEMOGRAPHY, "game.demography"));
-  load_allow_state(file);
+  load_user_allow_behavior_state(file);
 
   game.info.spacerace = secfile_lookup_bool_default(file, game.info.spacerace,
                                                "game.spacerace");

@@ -1395,7 +1395,7 @@ void game_save(struct section_file *file)
   secfile_insert_int(file, game.server.revolution_length, "game.revolen");
   secfile_insert_int(file, game.server.occupychance, "game.occupychance");
   secfile_insert_str(file, game.server.demography, "game.demography");
-  save_allow_state(file);
+  save_user_allow_behavior_state(file);
   secfile_insert_int(file, game.ruleset_control.borders, "game.borders");
   secfile_insert_bool(file, game.ruleset_control.happyborders, "game.happyborders");
   secfile_insert_int(file, game.info.diplomacy, "game.diplomacy");

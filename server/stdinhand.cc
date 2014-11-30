@@ -9181,7 +9181,7 @@ static void make_safe_savename(char *out, int outlen, const char *in)
 /**************************************************************************
   ...
 **************************************************************************/
-void save_allow_state(struct section_file *file)
+void save_user_allow_behavior_state(struct section_file *file)
 {
   int uab;
   char name[32];
@@ -9203,7 +9203,7 @@ void save_allow_state(struct section_file *file)
 /**************************************************************************
   ...
 **************************************************************************/
-void load_allow_state(struct section_file *file)
+void load_user_allow_behavior_state(struct section_file *file)
 {
   int uab;
   char name[32];

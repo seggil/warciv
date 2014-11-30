@@ -68,8 +68,8 @@ enum user_allow_behavior {
 bool is_allowed(enum user_allow_behavior uab);
 
 struct section_file;
-void save_allow_state(struct section_file *file);
-void load_allow_state(struct section_file *file);
+void save_user_allow_behavior_state(struct section_file *file);
+void load_user_allow_behavior_state(struct section_file *file);
 
 #ifdef HAVE_LIBREADLINE
 #ifdef HAVE_NEWLIBREADLINE
