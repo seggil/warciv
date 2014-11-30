@@ -175,7 +175,7 @@ struct allow_entry {
 #define GEN_ALLOW(name, def) { name, def, def, "%s: %s" }
 
 /* NB: Must match enum user_allow_behavior in stdinhand.h. */
-static struct allow_entry allows[] = {
+static struct allow_entry user_allow_behavior_vec[] = {
   GEN_ALLOW("observe", TRUE),
   GEN_ALLOW("global observe", TRUE),
   GEN_ALLOW("player observe", TRUE),
@@ -252,7 +252,7 @@ static enum command_id command_named(const char *token,
 **************************************************************************/
 void stdinhand_init(void)
 {
-  int len[NUM_ALLOWS];
+  int len[NUM_USER_ALLOW_BEHAVIOR];
   int max = 0;
   int i;
 
@@ -267,16 +267,16 @@ void stdinhand_init(void)
     kick_table_by_user = hash_new(hash_fval_string2, hash_fcmp_string);
   }
 
-  for (i = 0; i < NUM_ALLOWS; i++) {
-    allows[i].allowed = allows[i].default_value;
-    len[i] = strlen(allows[i].name);
+  for (i = 0; i < NUM_USER_ALLOW_BEHAVIOR; i++) {
+    user_allow_behavior_vec[i].allowed = user_allow_behavior_vec[i].default_value;
+    len[i] = strlen(user_allow_behavior_vec[i].name);
     if (len[i] > max) {
       max = len[i];
     }
   }
 
-  for (i = 0; i < NUM_ALLOWS; i++) {
-    snprintf(allows[i].fmt, sizeof(allows[i].fmt),
+  for (i = 0; i < NUM_USER_ALLOW_BEHAVIOR; i++) {
+    snprintf(user_allow_behavior_vec[i].fmt, sizeof(user_allow_behavior_vec[i].fmt),
              "%%s:%%-%ds%%s", max - len[i] + 5);
   }
 }
@@ -1473,7 +1473,7 @@ static bool switch_command(connection_t *caller, char *str, bool check)
   struct unit_list *player2_units, *player1_units;
   unit_t *aunit;
 
-  if (!is_allowed(UAB_SWITCH)) {
+  if (!is_allowed(USER_ALLOW_BEHAVIOR_SWITCH)) {
     cmd_reply(CMD_SWITCH, caller, C_FAIL,
               _("Switching is not allowed in this game."));
     return FALSE;
@@ -3899,10 +3899,10 @@ static bool set_command(connection_t *caller,
 **************************************************************************/
 bool is_allowed(enum user_allow_behavior uab)
 {
-  if (!(0 <= uab && uab < NUM_ALLOWS)) {
+  if (!(0 <= uab && uab < NUM_USER_ALLOW_BEHAVIOR)) {
     return FALSE;
   }
-  return allows[uab].allowed;
+  return user_allow_behavior_vec[uab].allowed;
 }
 
 /**************************************************************************
@@ -3936,7 +3936,7 @@ bool is_allowed_to_attach(const player_t *pplayer,
     goto FAILED;
   }
 
-  if (pplayer && !pplayer->is_alive && !is_allowed(UAB_DEAD_ATTACH)) {
+  if (pplayer && !pplayer->is_alive && !is_allowed(USER_ALLOW_BEHAVIOR_DEAD_ATTACH)) {
     msg = _("Sorry, one can't attach to dead players in this game.");
     goto FAILED;
   }
@@ -3944,17 +3944,17 @@ bool is_allowed_to_attach(const player_t *pplayer,
   if (will_obs) {
     /* All observer cases. */
 
-    if (!is_allowed(UAB_OBSERVE)) {
+    if (!is_allowed(USER_ALLOW_BEHAVIOR_OBSERVE)) {
       msg = _("Sorry, one can't observe in this game.");
       goto FAILED;
     }
 
-    if (!pplayer && !is_allowed(UAB_GLOBAL_OBSERVE)) {
+    if (!pplayer && !is_allowed(USER_ALLOW_BEHAVIOR_GLOBAL_OBSERVE)) {
       msg = _("Sorry, one can't observe globally in this game.");
       goto FAILED;
     }
 
-    if (pplayer && !is_allowed(UAB_PLAYER_OBSERVE)) {
+    if (pplayer && !is_allowed(USER_ALLOW_BEHAVIOR_PLAYER_OBSERVE)) {
       msg = _("Sorry, one can't observe players in this game.");
       goto FAILED;
     }
@@ -3962,7 +3962,7 @@ bool is_allowed_to_attach(const player_t *pplayer,
   } else {
     /* All 'take' cases. */
 
-    if (!is_allowed(UAB_TAKE)) {
+    if (!is_allowed(USER_ALLOW_BEHAVIOR_TAKE)) {
       msg = _("Sorry, one can't take players in this game.");
       goto FAILED;
     }
@@ -3977,18 +3977,18 @@ bool is_allowed_to_attach(const player_t *pplayer,
 
     if (caller && 0 != strcmp(pplayer->username, ANON_USER_NAME)
         && 0 != strcmp(pplayer->username, caller->username)
-        && !is_allowed(UAB_OTHER_TAKE)) {
+        && !is_allowed(USER_ALLOW_BEHAVIOR_OTHER_TAKE)) {
       msg = _("Sorry, one can't take players originally controlled "
               "by another user in this game.");
       goto FAILED;
     }
 
-    if (pplayer->ai.control && !is_allowed(UAB_AI_TAKE)) {
+    if (pplayer->ai.control && !is_allowed(USER_ALLOW_BEHAVIOR_AI_TAKE)) {
       msg = _("Sorry, one can't take AI players in this game.");
       goto FAILED;
     }
 
-    if (pplayer->is_connected && !is_allowed(UAB_DISPLACE)) {
+    if (pplayer->is_connected && !is_allowed(USER_ALLOW_BEHAVIOR_DISPLACE)) {
       msg = _("Sorry, one can't take players already connected "
               "in this game.");
       goto FAILED;
@@ -7305,7 +7305,7 @@ static bool unban_command(connection_t *caller,
 *********************************************************************/
 static const char *allow_accessor(int i)
 {
-  return allows[i].name; /* user_allow_behavior */
+  return user_allow_behavior_vec[i].name; /* user_allow_behavior */
 }
 
 /*********************************************************************
@@ -7317,7 +7317,7 @@ static bool allow_command(connection_t *caller, const char *arg,
   enum m_pre_result result;
   int uab;
 
-  result = match_prefix(allow_accessor, NUM_ALLOWS,
+  result = match_prefix(allow_accessor, NUM_USER_ALLOW_BEHAVIOR,
                         0, mystrncasecmp, arg, &uab);
 
   if (result == M_PRE_AMBIGUOUS) {
@@ -7331,9 +7331,9 @@ static bool allow_command(connection_t *caller, const char *arg,
     return FALSE;
   }
 
-  if (allows[uab].allowed) {
+  if (user_allow_behavior_vec[uab].allowed) {
     cmd_reply(CMD_ALLOW, caller, C_FAIL,
-              _("\'%s\' is already allowed."), allows[uab].name);
+              _("\'%s\' is already allowed."), user_allow_behavior_vec[uab].name);
     return FALSE;
   }
 
@@ -7341,9 +7341,9 @@ static bool allow_command(connection_t *caller, const char *arg,
     return TRUE;
   }
 
-  allows[uab].allowed = TRUE;
+  user_allow_behavior_vec[uab].allowed = TRUE;
   notify_conn(NULL, _("Server: '%s' is now ALLOWED."),
-              allows[uab].name);
+              user_allow_behavior_vec[uab].name);
 
   return TRUE;
 }
@@ -7357,7 +7357,7 @@ static bool disallow_command(connection_t *caller,
   enum m_pre_result result;
   int uab;
 
-  result = match_prefix(allow_accessor, NUM_ALLOWS,
+  result = match_prefix(allow_accessor, NUM_USER_ALLOW_BEHAVIOR,
                         0, mystrncasecmp, arg, &uab);
 
   if (result == M_PRE_AMBIGUOUS) {
@@ -7371,9 +7371,9 @@ static bool disallow_command(connection_t *caller,
     return FALSE;
   }
 
-  if (!allows[uab].allowed) {
+  if (!user_allow_behavior_vec[uab].allowed) {
     cmd_reply(CMD_ALLOW, caller, C_FAIL,
-              _("\'%s\' is already disallowed."), allows[uab].name);
+              _("\'%s\' is already disallowed."), user_allow_behavior_vec[uab].name);
     return FALSE;
   }
 
@@ -7381,9 +7381,9 @@ static bool disallow_command(connection_t *caller,
     return TRUE;
   }
 
-  allows[uab].allowed = FALSE;
+  user_allow_behavior_vec[uab].allowed = FALSE;
   notify_conn(NULL, _("Server: '%s' is now NOT allowed."),
-              allows[uab].name);
+              user_allow_behavior_vec[uab].name);
 
   return TRUE;
 }
@@ -7400,7 +7400,7 @@ static bool pause_command(connection_t *caller, const char *arg,
     return FALSE;
   }
 
-  if (!is_allowed(UAB_PAUSE)) {
+  if (!is_allowed(USER_ALLOW_BEHAVIOR_PAUSE)) {
     cmd_reply(CMD_PAUSE, caller, C_REJECTED,
               _("Pausing is disabled. See /help allow."));
     return FALSE;
@@ -8697,9 +8697,12 @@ static void show_allow(connection_t *caller)
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, _("Current allow status:"));
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
-  for (i = 0; i < NUM_ALLOWS; i++) {
-    cmd_reply(CMD_LIST, caller, C_COMMENT, allows[i].fmt, allows[i].name,
-              " ", allows[i].allowed ? "allowed" : "disallowed");
+  for (i = 0; i < NUM_USER_ALLOW_BEHAVIOR; i++) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT,
+              user_allow_behavior_vec[i].fmt,
+              user_allow_behavior_vec[i].name,
+              " ",
+              user_allow_behavior_vec[i].allowed ? "allowed" : "disallowed");
   }
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
@@ -9190,9 +9193,10 @@ void save_user_allow_behavior_state(struct section_file *file)
     return;
   }
 
-  for (uab = 0; uab < NUM_ALLOWS; uab++) {
-    make_safe_savename(name, sizeof(name), allows[uab].name);
-    secfile_insert_bool(file, allows[uab].allowed,
+  for (uab = 0; uab < NUM_USER_ALLOW_BEHAVIOR; uab++) {
+    make_safe_savename(name, sizeof(name),
+                       user_allow_behavior_vec[uab].name);
+    secfile_insert_bool(file, user_allow_behavior_vec[uab].allowed,
                         "game.allow.%s", name);
   }
 
@@ -9213,11 +9217,12 @@ void load_user_allow_behavior_state(struct section_file *file)
     return;
   }
 
-  for (uab = 0; uab < NUM_ALLOWS; uab++) {
-    make_safe_savename(name, sizeof(name), allows[uab].name);
-    v = secfile_lookup_bool_default(file, allows[uab].allowed,
+  for (uab = 0; uab < NUM_USER_ALLOW_BEHAVIOR; uab++) {
+    make_safe_savename(name, sizeof(name),
+                       user_allow_behavior_vec[uab].name);
+    v = secfile_lookup_bool_default(file, user_allow_behavior_vec[uab].allowed,
                                     "game.allow.%s", name);
-    allows[uab].allowed = v;
+    user_allow_behavior_vec[uab].allowed = v;
   }
 
   /* FIXME: Load dummy value for compatibility. */
