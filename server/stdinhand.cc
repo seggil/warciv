@@ -7303,7 +7303,7 @@ static bool unban_command(connection_t *caller,
 /*********************************************************************
   String accessor for allow/disallow command arguments.
 *********************************************************************/
-static const char *allow_accessor(int i)
+static const char *user_allow_behavior_accessor(int i)
 {
   return user_allow_behavior_vec[i].name; /* user_allow_behavior */
 }
@@ -7317,7 +7317,7 @@ static bool allow_command(connection_t *caller, const char *arg,
   enum m_pre_result result;
   int uab;
 
-  result = match_prefix(allow_accessor, NUM_USER_ALLOW_BEHAVIOR,
+  result = match_prefix(user_allow_behavior_accessor, NUM_USER_ALLOW_BEHAVIOR,
                         0, mystrncasecmp, arg, &uab);
 
   if (result == M_PRE_AMBIGUOUS) {
@@ -7357,7 +7357,7 @@ static bool disallow_command(connection_t *caller,
   enum m_pre_result result;
   int uab;
 
-  result = match_prefix(allow_accessor, NUM_USER_ALLOW_BEHAVIOR,
+  result = match_prefix(user_allow_behavior_accessor, NUM_USER_ALLOW_BEHAVIOR,
                         0, mystrncasecmp, arg, &uab);
 
   if (result == M_PRE_AMBIGUOUS) {
