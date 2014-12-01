@@ -1414,11 +1414,13 @@ static void fill_island(int coast, long int *bucket,
       if ( ( i*3>k*2
              || is_terrain_near_tile(ptile, warm0)
              || is_terrain_near_tile(ptile, warm1)
-             || myrand(100)<50
+             || myrand(100) < 50
              || is_terrain_near_tile(ptile, cold0)
              || is_terrain_near_tile(ptile, cold1)
-             )
-           &&( !is_cardinally_adj_to_ocean(ptile) || myrand(100) < coast )) {
+           )
+           &&( ! is_cardinally_adj_to_ocean(ptile)
+               || myrand(100) < coast ))
+      {
         if (map_colatitude(ptile) < COLD_LEVEL) {
           map_set_terrain(ptile, (myrand(cold0_weight
                                         + cold1_weight) < cold0_weight)
@@ -1512,10 +1514,11 @@ static bool place_island(struct gen234_state *pstate)
   /* this helps a lot for maps with high landmass */
   for (yn = pstate->n, xn = pstate->w;
        yn < pstate->s && xn < pstate->e;
-       yn++, xn++) {
+       yn++, xn++)
+  {
     tile_t *tile0 = native_pos_to_tile(xn, yn);
     tile_t *tile1 = native_pos_to_tile(xn + ptile->nat_x - pstate->w,
-                                            yn + ptile->nat_y - pstate->n);
+                                       yn + ptile->nat_y - pstate->n);
 
     if (!tile0 || !tile1) {
       return FALSE;
@@ -1526,10 +1529,11 @@ static bool place_island(struct gen234_state *pstate)
   }
 
   for (yn = pstate->n; yn < pstate->s; yn++) {
-    for (xn = pstate->w; xn < pstate->e; xn++) {
+    for (xn = pstate->w; xn < pstate->e; xn++)
+    {
       tile_t *tile0 = native_pos_to_tile(xn, yn);
       tile_t *tile1 = native_pos_to_tile(xn + ptile->nat_x - pstate->w,
-                                              yn + ptile->nat_y - pstate->n);
+                                         yn + ptile->nat_y - pstate->n);
 
       if (!tile0 || !tile1) {
         return FALSE;
