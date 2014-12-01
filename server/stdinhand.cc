@@ -397,7 +397,7 @@ static bool may_use_nothing(connection_t *caller)
   if (!caller) {
     return FALSE; /* on the console, everything is allowed */
   }
-  return (caller->u.server.access_level == ALLOW_NONE);
+  return caller->u.server.access_level == ALLOW_NONE;
 }
 
 /**************************************************************************
@@ -1032,7 +1032,8 @@ static bool welcome_file_command(connection_t *caller,
               _("This command requires an argument."));
     return FALSE;
   }
-  if (!(f = fopen(arg, "r"))) {
+  f = fopen(arg, "r");
+  if ( ! f ) {
     cmd_reply(CMD_WELCOME_FILE, caller, C_GENFAIL,
               _("Could not open welcome file \"%s\" for reading: %s."),
               arg, mystrerror(myerrno()));
@@ -1366,7 +1367,8 @@ static bool create_ai_player(connection_t *caller, char *arg,
     return FALSE;
   }
 
-  if ((PNameStatus = test_player_name(arg)) == PNameEmpty) {
+  PNameStatus = test_player_name(arg);
+  if ( PNameStatus == PNameEmpty) {
     cmd_reply(CMD_CREATE, caller, C_SYNTAX, _("Can't use an empty name."));
     return FALSE;
   }
@@ -1381,12 +1383,14 @@ static bool create_ai_player(connection_t *caller, char *arg,
     cmd_reply(CMD_CREATE, caller, C_SYNTAX, _("That name is not allowed."));
     return FALSE;
   }
-  if ((pplayer = find_player_by_name(arg))) {
+  pplayer = find_player_by_name(arg);
+  if ( pplayer ) {
     cmd_reply(CMD_CREATE, caller, C_BOUNCE,
               _("A player already exists by that name."));
     return FALSE;
   }
-  if ((pplayer = find_player_by_user(arg))) {
+  pplayer = find_player_by_user(arg);
+  if (pplayer) {
     cmd_reply(CMD_CREATE, caller, C_BOUNCE,
               _("A user already exists by that name."));
     return FALSE;
@@ -1791,7 +1795,8 @@ static bool cmdlevel_command(connection_t *caller, char *str,
   }
 
   /* A level name was supplied; set the level */
-  if ((level = cmdlevel_named(arg[0])) == ALLOW_UNRECOGNIZED) {
+  level = cmdlevel_named(arg[0]);
+  if ( level == ALLOW_UNRECOGNIZED) {
     char buf[512];
     int i;
 
@@ -2375,7 +2380,8 @@ static bool stats_command(connection_t *caller,
 
   username_matchs = string_list_new();
 
-  if (!(fus = wcdb_user_stats_new(username, username_matchs))
+  fus = wcdb_user_stats_new(username, username_matchs);
+  if (! fus
       || !wcdb_get_recent_games(username, recent, &num_recent)) {
     cmd_reply(CMD_STATS, caller, C_FAIL,
               _("There was an error communicating with the database."));
@@ -2629,7 +2635,8 @@ static void show_help_option_list(connection_t *caller,
 **************************************************************************/
 static bool explain_option(connection_t *caller, char *str, bool check)
 {
-  char command[MAX_LEN_CONSOLE_LINE], *cptr_s, *cptr_d;
+  char command[MAX_LEN_CONSOLE_LINE];
+  char *cptr_s, *cptr_d;
   int cmd;
   for (cptr_s = str; *cptr_s != '\0' && !my_isalnum(*cptr_s); cptr_s++) {
     /* nothing */
@@ -2688,9 +2695,10 @@ void report_server_options(struct connection_list *dest, int which)
   buffer[0] = '\0';
   my_snprintf(title, sizeof(title), _("%-20svalue  (min , max)"),
               _("Option"));
-  caption =
-      (which ==
-       1) ? _("Server Options (initial)") : _("Server Options (ongoing)");
+  if (which == 1)
+    caption = _("Server Options (initial)");
+  else
+    caption = _("Server Options (ongoing)");
   for (c = 0; c < SSET_NUM_CATEGORIES; c++) {
     cat_snprintf(buffer, sizeof(buffer), "%s:\n", sset_category_names[c]);
     for (i = 0; settings[i].name; i++) {
@@ -2847,7 +2855,8 @@ void set_ai_level_direct(player_t *pplayer, int level)
   set_ai_level_directer(pplayer, level);
   cmd_reply(cmd_of_level(level), NULL, C_OK,
             _("Player '%s' now has AI skill level '%s'."),
-            pplayer->name, name_of_skill_level(level));
+            pplayer->name,
+            name_of_skill_level(level));
 }
 
 /******************************************************************
@@ -2869,10 +2878,12 @@ static bool set_ai_level(connection_t *caller, char *name,
       set_ai_level_directer(pplayer, level);
       cmd_reply(cmd_of_level(level), caller, C_OK,
                 _("Player '%s' now has AI skill level '%s'."),
-                pplayer->name, name_of_skill_level(level));
+                pplayer->name,
+                name_of_skill_level(level));
     } else {
       cmd_reply(cmd_of_level(level), caller, C_FAIL,
-                _("%s is not controlled by the AI."), pplayer->name);
+                _("%s is not controlled by the AI."),
+                pplayer->name);
       return FALSE;
     }
   } else if (match_result == M_PRE_EMPTY) {
@@ -2884,7 +2895,8 @@ static bool set_ai_level(connection_t *caller, char *name,
         set_ai_level_directer(pplayer, level);
         cmd_reply(cmd_of_level(level), caller, C_OK,
                   _("Player '%s' now has AI skill level '%s'."),
-                  pplayer->name, name_of_skill_level(level));
+                  pplayer->name,
+                  name_of_skill_level(level));
       }
     } players_iterate_end;
     game.info.skill_level = level;
@@ -2905,7 +2917,8 @@ static bool set_ai_level(connection_t *caller, char *name,
 static bool set_away(connection_t *caller, char *name, bool check)
 {
   if (caller == NULL) {
-    cmd_reply(CMD_AWAY, caller, C_FAIL, _("This command is client only."));
+    cmd_reply(CMD_AWAY, caller, C_FAIL,
+              _("This command is client only."));
     return FALSE;
   } else if (name && strlen(name) > 0) {
     notify_conn(caller->self, _("Usage: away"));
@@ -2961,7 +2974,8 @@ Only show options which the caller can SEE.
 static bool show_command(connection_t *caller, char *str, bool check)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
-  char command[MAX_LEN_CONSOLE_LINE], *cptr_s, *cptr_d;
+  char command[MAX_LEN_CONSOLE_LINE];
+  char *cptr_s, *cptr_d;
   int cmd, i, len1, len = 0;
   enum sset_level level = SSET_VITAL;
   size_t clen = 0;
@@ -2988,7 +3002,8 @@ static bool show_command(connection_t *caller, char *str, bool check)
       }
     }
     if (cmd == -1) {
-      cmd_reply(CMD_SHOW, caller, C_FAIL, _("Unknown option '%s'."),
+      cmd_reply(CMD_SHOW, caller, C_FAIL,
+                _("Unknown option '%s'."),
                 command);
       return FALSE;
     }
@@ -3183,7 +3198,8 @@ static bool team_command(connection_t *caller, char *str, bool check)
   if (ntokens == 1) {
     /* Remove from team */
     if (!check) {
-      cmd_reply(CMD_TEAM, caller, C_OK, _("Player %s is made teamless."),
+      cmd_reply(CMD_TEAM, caller, C_OK,
+                _("Player %s is made teamless."),
                 pplayer->name);
     }
     res = TRUE;
@@ -3198,14 +3214,17 @@ static bool team_command(connection_t *caller, char *str, bool check)
 
   if (is_barbarian(pplayer)) {
     /* This can happen if we change team settings on a loaded game. */
-    cmd_reply(CMD_TEAM, caller, C_SYNTAX, _("Cannot team a barbarian."));
+    cmd_reply(CMD_TEAM, caller, C_SYNTAX,
+              _("Cannot team a barbarian."));
     goto CLEANUP;
   }
 
   if (!check) {
     team_add_player(pplayer, arg[1]);
-    cmd_reply(CMD_TEAM, caller, C_OK, _("Player %s set to team %s."),
-              pplayer->name, get_team_name(pplayer->team));
+    cmd_reply(CMD_TEAM, caller, C_OK,
+              _("Player %s set to team %s."),
+              pplayer->name,
+              get_team_name(pplayer->team));
   }
   res = TRUE;
 
@@ -3444,7 +3463,8 @@ static bool cancel_vote_command(connection_t *caller, char *arg,
                   "the string \"all\"."));
       return FALSE;
     }
-    if (!(pvote = get_vote_by_caller(caller))) {
+    pvote = get_vote_by_caller(caller);
+    if ( !pvote ) {
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("You don't have any vote going on."));
       return FALSE;
@@ -3464,7 +3484,8 @@ static bool cancel_vote_command(connection_t *caller, char *arg,
       return FALSE;
     }
   } else if (sscanf(arg, "%d", &vote_no) == 1) {
-    if (!(pvote = get_vote_by_no(vote_no))) {
+    pvote = get_vote_by_no(vote_no);
+    if ( !pvote ) {
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("No such vote (%d)."), vote_no);
       return FALSE;
@@ -3621,7 +3642,8 @@ static bool debug_command(connection_t *caller, char *str, bool check)
       cmd_reply(CMD_DEBUG, caller, C_SYNTAX, _("Value 2 must be integer."));
       goto cleanup;
     }
-    if (!(punit = find_unit_by_id(id))) {
+    punit = find_unit_by_id(id);
+    if ( !punit ) {
       cmd_reply(CMD_DEBUG, caller, C_SYNTAX, _("Unit %d does not exist."),
                 id);
       goto cleanup;
@@ -3690,7 +3712,8 @@ static bool parse_set_arguments(const char *str, struct setting_value *sv)
 {
   const char *cptr_s;
   char *cptr_d;
-  char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE];
+  char command[MAX_LEN_CONSOLE_LINE];
+  char arg[MAX_LEN_CONSOLE_LINE];
   int val;
 
   memset(sv, 0, sizeof(struct setting_value));
@@ -4268,10 +4291,12 @@ static void process_observe_requests(void)
 static bool take_command(connection_t *caller, char *str, bool check)
 {
   int i = 0, ntokens = 0;
-  char buf[MAX_LEN_CONSOLE_LINE], *arg[2], msg[MAX_LEN_MSG];
+  char buf[MAX_LEN_CONSOLE_LINE];
+  char *arg[2];
+  char msg[MAX_LEN_MSG];
   bool is_newgame = (server_state == PRE_GAME_STATE ||
                      server_state == SELECT_RACES_STATE)
-      && game.server.is_new_game;
+                    && game.server.is_new_game;
   enum m_pre_result match_result;
   connection_t *pconn = NULL;
   player_t *pplayer = NULL;
@@ -4302,7 +4327,8 @@ static bool take_command(connection_t *caller, char *str, bool check)
     }
     i++;                        /* found a conn, now reference the second argument */
   }
-  if (!(pplayer = find_player_by_name_prefix(arg[i], &match_result))) {
+  pplayer = find_player_by_name_prefix(arg[i], &match_result);
+  if ( !pplayer ) {
     cmd_reply_no_such_player(CMD_TAKE, caller, arg[i], match_result);
     goto CLEANUP;
   }
@@ -4428,7 +4454,7 @@ static bool detach_command(connection_t *caller, char *str, bool check)
   player_t *pplayer = NULL;
   bool is_newgame = (server_state == PRE_GAME_STATE ||
                      server_state == SELECT_RACES_STATE)
-      && game.server.is_new_game;
+                    && game.server.is_new_game;
   bool one_obs_among_many = FALSE, res = FALSE;
   sz_strlcpy(buf, str);
   ntokens = get_tokens(buf, arg, 1, TOKEN_DELIMITERS);
@@ -4558,7 +4584,8 @@ CLEANUP:
 static bool attach_command(connection_t *caller, char *name, bool check)
 {
   int ntokens = 0;
-  char buf[MAX_LEN_CONSOLE_LINE], *arg[1];
+  char buf[MAX_LEN_CONSOLE_LINE];
+  char *arg[1];
   connection_t *pconn = NULL;
   enum m_pre_result match_result;
   bool res = FALSE;
@@ -5112,7 +5139,8 @@ static bool topten_command(connection_t *caller, char *arg, bool check)
     return FALSE;
   }
 
-  if ((type = parse_game_type(CMD_TOPTEN, caller, arg)) == -1) {
+  type = parse_game_type(CMD_TOPTEN, caller, arg);
+  if ( type == -1) {
     return FALSE;
   }
 
@@ -5124,7 +5152,8 @@ static bool topten_command(connection_t *caller, char *arg, bool check)
     type = game_determine_type();
   }
 
-  if (!(ftti = wcdb_topten_info_new(type))) {
+  ftti = wcdb_topten_info_new(type);
+  if ( !ftti ) {
     cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
               _("There was an error reading from the database."));
     return FALSE;
@@ -5228,7 +5257,8 @@ static bool gamelist_command(connection_t *caller,
     return TRUE;
   }
 
-  if (!(fgl = wcdb_gamelist_new(type, user, first, last))) {
+  fgl = wcdb_gamelist_new(type, user, first, last);
+  if ( !fgl ) {
     cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
               _("There was an error reading from the database."));
     return FALSE;
@@ -5294,7 +5324,8 @@ static bool aka_command(connection_t *caller,
     return TRUE;
   }
 
-  if (!(fal = wcdb_aliaslist_new(user))) {
+  fal = wcdb_aliaslist_new(user);
+  if ( !fal ) {
     cmd_reply(CMD_AKA, caller, C_GENFAIL,
               _("There was an error reading from the database."));
     return FALSE;
@@ -7654,7 +7685,8 @@ static struct user_action_list *load_action_list_v1(const char *filename)
   struct user_action *pua;
   int ver;
 
-  if (!(file = fopen(filename, "r"))) {
+  file = fopen(filename, "r");
+  if ( ! file ) {
     freelog(LOG_ERROR, "Could not open action list file %s: %s.",
             filename, mystrerror(myerrno()));
     return NULL;
@@ -7673,14 +7705,16 @@ static struct user_action_list *load_action_list_v1(const char *filename)
   action_list = user_action_list_new();
   while (fgets(line, sizeof(line), file)) {
     lc++;
-    if ((p = strchr(line, '#'))) {
+    p = strchr(line, '#');
+    if ( p ) {
       *p = 0;
     }
     remove_leading_trailing_spaces(line);
     if (strlen(line) <= 0) {
       continue;
     }
-    if (!(p = strchr(line, ' '))) {
+    p = strchr(line, ' ');
+    if ( !p ) {
       freelog(LOG_ERROR, "Syntax error on line %d of "
                          "action list file %s: action part of rule not "
                          "found.", lc, filename);
@@ -7735,7 +7769,8 @@ static struct user_action_list *load_action_list(const char *filename)
   char *p;
   int version;
 
-  if (!(file = fopen(filename, "r"))) {
+  file = fopen(filename, "r");
+  if ( !p ) {
     freelog(LOG_ERROR, "Could not open action list file %s: %s.",
             filename, mystrerror(myerrno()));
     return NULL;
@@ -7768,7 +7803,8 @@ static int save_action_list(const char *filename)
   FILE *file;
   int len = 0;
 
-  if (!(file = fopen(filename, "w"))) {
+  file = fopen(filename, "w");
+  if ( ! file ) {
     freelog(LOG_ERROR, "Could not save action list to %s because open"
             " failed: %s", filename, mystrerror(myerrno()));
     return -1;
@@ -7888,7 +7924,8 @@ static void show_help_command(connection_t *caller,
   }
 
   if ((cmd->game_level == ALLOW_CTRL || cmd->pregame_level == ALLOW_CTRL)
-      && (cmd->vote_flags > VCF_NONE || cmd->vote_percent > 0)) {
+      && (cmd->vote_flags > VCF_NONE || cmd->vote_percent > 0))
+  {
     char buf[1024];
     buf[0] = '\0';
 
@@ -8245,14 +8282,20 @@ static void show_teams(connection_t *caller, bool send_to_all)
         count++;
         listed[i] = TRUE;
         tc++;
-        cat_snprintf(buf2, sizeof(buf2), "<%s> ",
-                     pplayer->is_connected ? pplayer->username : pplayer->
-                     name);
+        if (pplayer->is_connected)
+          cat_snprintf(buf2, sizeof(buf2), "<%s> ",
+                       pplayer->username);
+        else
+          cat_snprintf(buf2, sizeof(buf2), "<%s> ",
+                       pplayer->name);
       }
     }
     if (teamid != -1) {
-      const char *teamname = teamid == TEAM_NONE
-          ? _("Unassigned") : get_team_name(teamid);
+      const char *teamname;
+      if ( teamid == TEAM_NONE )
+        teamname = _("Unassigned");
+      else
+        teamname = get_team_name(teamid);
       my_snprintf(buf, sizeof(buf), "%s (%d): %s", teamname, tc, buf2);
       if (send_to_all) {
         notify_conn(NULL, "Server:   %s", buf);
@@ -8272,7 +8315,9 @@ static void show_teams(connection_t *caller, bool send_to_all)
 **************************************************************************/
 static void show_rulesets(connection_t *caller)
 {
-  char **rulesets = get_rulesets_list(), *description, *p;
+  char **rulesets = get_rulesets_list();
+  char *description;
+  char *p;
   int i;
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of rulesets available:"));
@@ -8285,10 +8330,15 @@ static void show_rulesets(connection_t *caller)
     } else {
       p = NULL;
     }
-    cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s%s%s", i + 1, rulesets[i],
-              description ? ": " : "", description ? description : "");
+    if (description)
+      cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s%s%s", i + 1, rulesets[i],
+                ": ", description);
+    else
+      cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s%s%s", i + 1, rulesets[i],
+                "", "");
     for (description = p; description; description = p) {
-      if ((p = strchr(description, '\n'))) {
+      p = strchr(description, '\n');
+      if ( p ) {
         *p++ = '\0';
       }
       cmd_reply(CMD_LIST, caller, C_COMMENT, "%*s%s",
@@ -8886,7 +8936,7 @@ The valid first arguments to "list".
 **************************************************************************/
 static char *list_generator(const char *text, int state)
 {
-  return generic_generator(text, state, LIST_ARG_NUM, listarg_accessor);
+  return generic_generator(text, state, SHOW_ARG_NUM, showarg_accessor);
 }
 
 /**************************************************************************
