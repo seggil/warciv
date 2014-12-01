@@ -1483,7 +1483,7 @@ static void tile_draw_coastline(struct canvas *pcanvas,
 {
   Terrain_type_id t1 = map_get_terrain(ptile), t2;
 
-  if (!draw_coastline || draw_terrain || t1 == T_UNKNOWN) {
+  if (!draw_coastline || draw_terrain || t1 == OLD_TERRAIN_UNKNOWN) {
     return;
   }
 
@@ -1493,7 +1493,7 @@ static void tile_draw_coastline(struct canvas *pcanvas,
     if (get_tile_boundaries(dir, 0, 1,
                             &start_x, &start_y, &end_x, &end_y)) {
       t2 = map_get_terrain(adjc_tile);
-      if (t2 != T_UNKNOWN && (is_ocean(t1) ^ is_ocean(t2))) {
+      if (t2 != OLD_TERRAIN_UNKNOWN && (is_ocean(t1) ^ is_ocean(t2))) {
         canvas_put_line(pcanvas, COLOR_STD_OCEAN, LINE_NORMAL,
                         canvas_x + start_x, canvas_y + start_y,
                         end_x - start_x, end_y - start_y);

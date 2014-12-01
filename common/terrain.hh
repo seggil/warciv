@@ -64,14 +64,14 @@ enum tile_special_type {
    | static_cast<int>(S_AIRBASE)    \
    )
 
-#define T_NONE (-3) /* A special tag meaning no terrain type. */
-#define T_ANY (-2) /* A special tag that matches "any" terrain type. */
-#define T_UNKNOWN (-1) /* An unknown terrain. */
+#define OLD_TERRAIN_NONE (-3) /* A special tag meaning no terrain type. */
+#define OLD_TERRAIN_ANY (-2) /* A special tag that matches "any" terrain type. */
+#define OLD_TERRAIN_UNKNOWN (-1) /* An unknown terrain. */
 
 /* The first terrain value and number of base terrains.  This is used in
- * loops.  T_COUNT may eventually be turned into a variable. */
-#define T_FIRST 0
-#define T_COUNT (game.ruleset_control.terrain_count)
+ * loops.  OLD_TERRAIN_COUNT may eventually be turned into a variable. */
+#define OLD_TERRAIN_FIRST 0
+#define OLD_TERRAIN_COUNT (game.ruleset_control.terrain_count)
 
 /* A hard limit on the number of terrains; useful for static arrays. */
 #define MAX_NUM_TERRAINS MAX_NUM_ITEMS
@@ -139,7 +139,7 @@ int count_terrain_tag_near_tile(const tile_t *ptile,
 #define terrain_type_iterate(id)             \
 {                                            \
   Terrain_type_id id;                        \
-  for (id = T_FIRST; id < T_COUNT; id++) {
+  for (id = OLD_TERRAIN_FIRST; id < OLD_TERRAIN_COUNT; id++) {
 
 #define terrain_type_iterate_end             \
   }                                          \

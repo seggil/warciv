@@ -225,7 +225,7 @@ void global_warming(int effect)
     } else {
       new_ = get_tile_type(old)->warmer_drier_result;
     }
-    if (new_ != T_NONE && old != new_) {
+    if (new_ != OLD_TERRAIN_NONE && old != new_) {
       effect--;
       change_terrain(ptile, new_);
       update_tile_knowledge(ptile);
@@ -267,7 +267,7 @@ void nuclear_winter(int effect)
     } else {
       new_ = get_tile_type(old)->cooler_drier_result;
     }
-    if (new_ != T_NONE && old != new_) {
+    if (new_ != OLD_TERRAIN_NONE && old != new_) {
       effect--;
       change_terrain(ptile, new_);
       update_tile_knowledge(ptile);
@@ -1198,7 +1198,7 @@ static void player_tile_init(tile_t *ptile, player_t *pplayer)
   struct player_tile *plrtile =
     map_get_player_tile(ptile, pplayer);
 
-  plrtile->terrain = T_UNKNOWN;
+  plrtile->terrain = OLD_TERRAIN_UNKNOWN;
   plrtile->special = S_NO_SPECIAL;
   plrtile->city = NULL;
 

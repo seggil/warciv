@@ -185,7 +185,7 @@ static int evaluate_city_name_priority(tile_t *ptile,
     {
     priority *= mult_factor;
   }
-    for (type = T_FIRST; type < T_COUNT; type++)
+    for (type = OLD_TERRAIN_FIRST; type < OLD_TERRAIN_COUNT; type++)
     {
     /* Now we do the same for every available terrain. */
     goodness = is_terrain_near_tile(ptile, type) ?
@@ -2096,7 +2096,7 @@ void city_landlocked_sell_coastal_improvements(tile_t *ptile)
         }
 
         while (!is_ocean(improvement_types[impr].terr_gate[i])
-               && improvement_types[impr].terr_gate[i] != T_NONE) {
+               && improvement_types[impr].terr_gate[i] != OLD_TERRAIN_NONE) {
           i++;
         }
 

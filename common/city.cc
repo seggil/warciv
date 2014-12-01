@@ -326,7 +326,7 @@ bool city_has_terr_spec_gate(const city_t *pcity, Impr_Type_id id)
   spec_gate = impr->spec_gate;
   terr_gate = impr->terr_gate;
 
-  if (*spec_gate == S_NO_SPECIAL && *terr_gate == T_NONE) {
+  if (*spec_gate == S_NO_SPECIAL && *terr_gate == OLD_TERRAIN_NONE) {
     return TRUE;
   }
 
@@ -337,7 +337,7 @@ bool city_has_terr_spec_gate(const city_t *pcity, Impr_Type_id id)
     }
   }
 
-  for (; *terr_gate != T_NONE; terr_gate++) {
+  for (; *terr_gate != OLD_TERRAIN_NONE; terr_gate++) {
     if (pcity->common.tile->terrain == *terr_gate
         || is_terrain_near_tile(pcity->common.tile, *terr_gate)) {
       return TRUE;

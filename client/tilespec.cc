@@ -480,7 +480,7 @@ void tilespec_reread(const char *tileset_name)
     /* The ruleset data is not sent until this point. */
     return;
   }
-  for (id = T_FIRST; id < T_COUNT; id++) {
+  for (id = OLD_TERRAIN_FIRST; id < OLD_TERRAIN_COUNT; id++) {
     tilespec_setup_tile_type(id);
   }
   unit_type_iterate(id) {

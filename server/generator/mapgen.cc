@@ -46,9 +46,18 @@
 
 
 /* Old-style terrain enumeration: deprecated. */
-enum {
-  T_ARCTIC, T_DESERT, T_FOREST, T_GRASSLAND, T_HILLS, T_JUNGLE,
-  T_MOUNTAINS, T_OCEAN, T_PLAINS, T_SWAMP, T_TUNDRA,
+enum old_style_terrain {
+  OLD_TERRAIN_ARCTIC,
+  OLD_TERRAIN_DESERT,
+  OLD_TERRAIN_FOREST,
+  OLD_TERRAIN_GRASSLAND,
+  OLD_TERRAIN_HILLS,
+  OLD_TERRAIN_JUNGLE,
+  OLD_TERRAIN_MOUNTAINS,
+  OLD_TERRAIN_OCEAN,
+  OLD_TERRAIN_PLAINS,
+  OLD_TERRAIN_SWAMP,
+  OLD_TERRAIN_TUNDRA,
 };
 
 /* Wrappers for easy access.  They are a macros so they can be a lvalues.*/
@@ -259,10 +268,10 @@ static void make_relief(void)
       /* Randomly place hills and mountains on "high" tiles.  But don't
        * put hills near the poles (they're too green). */
       if (myrand(100) > 70 || tmap_is(ptile, TT_NHOT)) {
-        map_set_terrain(ptile, T_MOUNTAINS);
+        map_set_terrain(ptile, OLD_TERRAIN_MOUNTAINS);
         map_set_placed(ptile);
       } else {
-        map_set_terrain(ptile, T_HILLS);
+        map_set_terrain(ptile, OLD_TERRAIN_HILLS);
         map_set_placed(ptile);
       }
     }
@@ -281,7 +290,7 @@ static void make_polar(void)
         || (tmap_is(ptile, TT_COLD)
             && (myrand(10) > 7)
             && is_temperature_type_near(ptile, TT_FROZEN))) {
-      map_set_terrain(ptile, T_ARCTIC);
+      map_set_terrain(ptile, OLD_TERRAIN_ARCTIC);
     }
   } whole_map_iterate_end;
 }
@@ -317,7 +326,7 @@ static void make_polar_land(void)
          (myrand(10) > 7) &&
          is_temperature_type_near(ptile, TT_FROZEN) &&
          ok_for_separate_poles(ptile))) {
-      map_set_terrain(ptile, T_UNKNOWN);
+      map_set_terrain(ptile, OLD_TERRAIN_UNKNOWN);
       map_set_continent(ptile, 0);
     }
   } whole_map_iterate_end;
@@ -362,14 +371,14 @@ static void make_plain(tile_t *ptile, int *to_be_placed )
 {
   /* in cold place we get tundra instead */
   if (tmap_is(ptile, TT_FROZEN)) {
-    map_set_terrain(ptile, T_ARCTIC);
+    map_set_terrain(ptile, OLD_TERRAIN_ARCTIC);
   } else if (tmap_is(ptile, TT_COLD)) {
-    map_set_terrain(ptile, T_TUNDRA);
+    map_set_terrain(ptile, OLD_TERRAIN_TUNDRA);
   } else {
     if (myrand(100) > 50) {
-      map_set_terrain(ptile, T_GRASSLAND);
+      map_set_terrain(ptile, OLD_TERRAIN_GRASSLAND);
     } else {
-      map_set_terrain(ptile, T_PLAINS);
+      map_set_terrain(ptile, OLD_TERRAIN_PLAINS);
     }
   }
   map_set_placed(ptile);
@@ -444,15 +453,15 @@ static void make_terrains(void)
   /* the placement loop */
   do {
 
-    PLACE_ONE_TYPE(forests_count , plains_count, T_FOREST,
+    PLACE_ONE_TYPE(forests_count , plains_count, OLD_TERRAIN_FOREST,
                    WC_ALL, TT_NFROZEN, MC_NONE, 60);
-    PLACE_ONE_TYPE(jungles_count, forests_count , T_JUNGLE,
+    PLACE_ONE_TYPE(jungles_count, forests_count , OLD_TERRAIN_JUNGLE,
                    WC_ALL, TT_TROPICAL, MC_NONE, 50);
-    PLACE_ONE_TYPE(swamps_count, forests_count , T_SWAMP,
+    PLACE_ONE_TYPE(swamps_count, forests_count , OLD_TERRAIN_SWAMP,
                    WC_NDRY, TT_HOT, MC_LOW, 50);
-    PLACE_ONE_TYPE(deserts_count, alt_deserts_count , T_DESERT,
+    PLACE_ONE_TYPE(deserts_count, alt_deserts_count , OLD_TERRAIN_DESERT,
                    WC_DRY, TT_NFROZEN, MC_NLOW, 80);
-    PLACE_ONE_TYPE(alt_deserts_count, plains_count , T_DESERT,
+    PLACE_ONE_TYPE(alt_deserts_count, plains_count , OLD_TERRAIN_DESERT,
                    WC_ALL, TT_NFROZEN, MC_NLOW, 40);
 
   /* make the plains and tundras */
@@ -503,8 +512,8 @@ static int river_test_rivergrid(tile_t *ptile)
 *********************************************************************/
 static int river_test_highlands(tile_t *ptile)
 {
-  return (((map_get_terrain(ptile) == T_HILLS) ? 1 : 0) +
-          ((map_get_terrain(ptile) == T_MOUNTAINS) ? 2 : 0));
+  return (((map_get_terrain(ptile) == OLD_TERRAIN_HILLS) ? 1 : 0) +
+          ((map_get_terrain(ptile) == OLD_TERRAIN_MOUNTAINS) ? 2 : 0));
 }
 
 /*********************************************************************
@@ -528,8 +537,8 @@ static int river_test_adjacent_river(tile_t *ptile)
 *********************************************************************/
 static int river_test_adjacent_highlands(tile_t *ptile)
 {
-  return (count_terrain_near_tile(ptile, TRUE, TRUE, T_HILLS)
-          + 2 * count_terrain_near_tile(ptile, TRUE, TRUE, T_MOUNTAINS));
+  return (count_terrain_near_tile(ptile, TRUE, TRUE, OLD_TERRAIN_HILLS)
+          + 2 * count_terrain_near_tile(ptile, TRUE, TRUE, OLD_TERRAIN_MOUNTAINS));
 }
 
 /*********************************************************************
@@ -537,7 +546,7 @@ static int river_test_adjacent_highlands(tile_t *ptile)
 *********************************************************************/
 static int river_test_swamp(tile_t *ptile)
 {
-  return (map_get_terrain(ptile) != T_SWAMP) ? 1 : 0;
+  return (map_get_terrain(ptile) != OLD_TERRAIN_SWAMP) ? 1 : 0;
 }
 
 /*********************************************************************
@@ -545,7 +554,7 @@ static int river_test_swamp(tile_t *ptile)
 *********************************************************************/
 static int river_test_adjacent_swamp(tile_t *ptile)
 {
-  return 100 - count_terrain_near_tile(ptile, TRUE, TRUE, T_SWAMP);
+  return 100 - count_terrain_near_tile(ptile, TRUE, TRUE, OLD_TERRAIN_SWAMP);
 }
 
 /*********************************************************************
@@ -701,7 +710,7 @@ static bool make_river(tile_t *ptile)
     /* We arbitrarily make rivers end at the poles. */
     if (count_special_near_tile(ptile, TRUE, TRUE, S_RIVER) > 0
         || count_ocean_near_tile(ptile, TRUE, TRUE) > 0
-        || (map_get_terrain(ptile) == T_ARCTIC
+        || (map_get_terrain(ptile) == OLD_TERRAIN_ARCTIC
             && map_colatitude(ptile) < 0.8 * COLD_LEVEL)) {
 
       freelog(LOG_DEBUG,
@@ -850,28 +859,28 @@ static void make_rivers(void)
         /* Don't start a river on a tile that is surrounded by hills or
            mountains unless it is hard to find somewhere else to start
            it. */
-        && (count_terrain_near_tile(ptile, TRUE, TRUE, T_HILLS)
-            + count_terrain_near_tile(ptile, TRUE, TRUE, T_MOUNTAINS) < 90
+        && (count_terrain_near_tile(ptile, TRUE, TRUE, OLD_TERRAIN_HILLS)
+            + count_terrain_near_tile(ptile, TRUE, TRUE, OLD_TERRAIN_MOUNTAINS) < 90
             || iteration_counter >= RIVERS_MAXTRIES / 10 * 5)
 
         /* Don't start a river on hills unless it is hard to find
            somewhere else to start it. */
-        && (map_get_terrain(ptile) != T_HILLS
+        && (map_get_terrain(ptile) != OLD_TERRAIN_HILLS
             || iteration_counter >= RIVERS_MAXTRIES / 10 * 6)
 
         /* Don't start a river on mountains unless it is hard to find
            somewhere else to start it. */
-        && (map_get_terrain(ptile) != T_MOUNTAINS
+        && (map_get_terrain(ptile) != OLD_TERRAIN_MOUNTAINS
             || iteration_counter >= RIVERS_MAXTRIES / 10 * 7)
 
         /* Don't start a river on arctic unless it is hard to find
            somewhere else to start it. */
-        && (map_get_terrain(ptile) != T_ARCTIC
+        && (map_get_terrain(ptile) != OLD_TERRAIN_ARCTIC
             || iteration_counter >= RIVERS_MAXTRIES / 10 * 8)
 
         /* Don't start a river on desert unless it is hard to find
            somewhere else to start it. */
-        && (map_get_terrain(ptile) != T_DESERT
+        && (map_get_terrain(ptile) != OLD_TERRAIN_DESERT
             || iteration_counter >= RIVERS_MAXTRIES / 10 * 9)) {
 
       /* Reset river_map before making a new river. */
@@ -932,9 +941,9 @@ static void make_land(void)
   hmap_shore_level = (hmap_max_level * (100 - map.server.landpercent)) / 100;
   ini_hmap_low_level();
   whole_map_iterate(ptile) {
-    map_set_terrain(ptile, T_UNKNOWN); /* set as oceans count is used */
+    map_set_terrain(ptile, OLD_TERRAIN_UNKNOWN); /* set as oceans count is used */
     if (hmap(ptile) < hmap_shore_level) {
-      map_set_terrain(ptile, T_OCEAN);
+      map_set_terrain(ptile, OLD_TERRAIN_OCEAN);
     }
   } whole_map_iterate_end;
   if (HAS_POLES) {
@@ -963,7 +972,7 @@ static bool is_tiny_island(tile_t *ptile)
 {
   Terrain_type_id t = map_get_terrain(ptile);
 
-  if (is_ocean(t) || t == T_ARCTIC) {
+  if (is_ocean(t) || t == OLD_TERRAIN_ARCTIC) {
     /* The arctic check is needed for iso-maps: the poles may not have
      * any cardinally adjacent land tiles, but that's okay. */
     return FALSE;
@@ -985,7 +994,7 @@ static void remove_tiny_islands(void)
 {
   whole_map_iterate(ptile) {
     if (is_tiny_island(ptile)) {
-      map_set_terrain(ptile, T_OCEAN);
+      map_set_terrain(ptile, OLD_TERRAIN_OCEAN);
       map_clear_special(ptile, S_RIVER);
       map_set_continent(ptile, 0);
     }
@@ -999,7 +1008,7 @@ static void remove_tiny_islands(void)
 static void print_mapgen_map(void)
 {
   const int loglevel = LOG_DEBUG;
-  int terrain_count[T_COUNT];
+  int terrain_count[OLD_TERRAIN_COUNT];
   int total = 0;
 
   terrain_type_iterate(t) {
@@ -1009,7 +1018,7 @@ static void print_mapgen_map(void)
   whole_map_iterate(ptile) {
     Terrain_type_id t = map_get_terrain(ptile);
 
-    assert(t >= 0 && t < T_COUNT);
+    assert(t >= 0 && t < OLD_TERRAIN_COUNT);
     terrain_count[t]++;
     if (!is_ocean(t)) {
       total++;
@@ -1544,7 +1553,7 @@ static bool place_island(struct gen234_state *pstate)
           return i != 0;
         }
 
-        map_set_terrain(tile1, T_UNKNOWN);
+        map_set_terrain(tile1, OLD_TERRAIN_UNKNOWN);
         map_unset_placed(tile1);
 
         map_set_continent(tile1, pstate->isleindex);
@@ -1737,22 +1746,22 @@ static bool make_island(int islemass, int starters,
     mountbuck += mountain_pct * i;
     fill_island(20, &mountbuck,
                 3, 1, 3,1,
-                T_HILLS, T_MOUNTAINS, T_HILLS, T_MOUNTAINS,
+                OLD_TERRAIN_HILLS, OLD_TERRAIN_MOUNTAINS, OLD_TERRAIN_HILLS, OLD_TERRAIN_MOUNTAINS,
                 pstate);
     desertbuck += desert_pct * i;
     fill_island(40, &desertbuck,
                 1, 1, 1, 1,
-                T_DESERT, T_DESERT, T_DESERT, T_TUNDRA,
+                OLD_TERRAIN_DESERT, OLD_TERRAIN_DESERT, OLD_TERRAIN_DESERT, OLD_TERRAIN_TUNDRA,
                 pstate);
     forestbuck += forest_pct * i;
     fill_island(60, &forestbuck,
-                forest_pct, swamp_pct, forest_pct, swamp_pct,
-                T_FOREST, T_JUNGLE, T_FOREST, T_TUNDRA,
+                forest_percent, swamp_percent, forest_percent, swamp_percent,
+                OLD_TERRAIN_FOREST, OLD_TERRAIN_JUNGLE, OLD_TERRAIN_FOREST, OLD_TERRAIN_TUNDRA,
                 pstate);
     swampbuck += swamp_pct * i;
     fill_island(80, &swampbuck,
                 1, 1, 1, 1,
-                T_SWAMP, T_SWAMP, T_SWAMP, T_SWAMP,
+                OLD_TERRAIN_SWAMP, OLD_TERRAIN_SWAMP, OLD_TERRAIN_SWAMP, OLD_TERRAIN_SWAMP,
                 pstate);
 
     pstate->isleindex++;
@@ -1771,7 +1780,7 @@ static void initworld(struct gen234_state *pstate)
   create_tmap(FALSE);
 
   whole_map_iterate(ptile) {
-    map_set_terrain(ptile, T_OCEAN);
+    map_set_terrain(ptile, OLD_TERRAIN_OCEAN);
     map_set_continent(ptile, 0);
     map_set_placed(ptile); /* not a land tile */
     map_clear_all_specials(ptile);
@@ -2116,14 +2125,19 @@ So a dilate followed by an erode will result in the change of eliminating
 the center ocean.  In the map generator, the dilate/erode will remove small
 oceans and small bays, and the erode/dilate will remove small islands.
 
-The last step is to relace all temp land with T_GRASSLAND and all
-temp ocean with T_OCEAN and then let the standard map creation functions
+The last step is to relace all temp land with OLD_TERRAIN_GRASSLAND and all
+temp ocean with OLD_TERRAIN_OCEAN and then let the standard map creation functions
 create mountains, deserts etc.
 
 ****************************************************************************/
-enum gen6_terrain { T6_PERM_LAND = T_GRASSLAND, T6_TEMP_LAND = T_SWAMP,
-                    T6_PERM_OCEAN = T_OCEAN, T6_TEMP_OCEAN = T_ARCTIC,
-                    T6_ERODE_LAND = T_DESERT, T6_DILATE_LAND = T_JUNGLE};
+enum gen6_terrain {
+  T6_PERM_LAND = OLD_TERRAIN_GRASSLAND,
+  T6_TEMP_LAND = OLD_TERRAIN_SWAMP,
+  T6_PERM_OCEAN = OLD_TERRAIN_OCEAN,
+  T6_TEMP_OCEAN = OLD_TERRAIN_ARCTIC,
+  T6_ERODE_LAND = OLD_TERRAIN_DESERT,
+  T6_DILATE_LAND = OLD_TERRAIN_JUNGLE
+};
 
 /****************************************************************************
  returns true if the terrain is generator 6 ocean.
@@ -2479,11 +2493,11 @@ static bool mapgenerator67(bool make_roads)
   for (x = 0; x < map.info.xsize; x++) {
     for (y = 0; y < polar_height; y++) {
       int rand_num = myrand(9);
-      map_set_terrain(native_pos_to_tile(x, y), rand_num > 7 ? T_ARCTIC :
-                      (rand_num < 2 ? T_HILLS : T_TUNDRA));
+      map_set_terrain(native_pos_to_tile(x, y), rand_num > 7 ? OLD_TERRAIN_ARCTIC :
+                      (rand_num < 2 ? OLD_TERRAIN_HILLS : OLD_TERRAIN_TUNDRA));
       rand_num = myrand(9);
-      map_set_terrain(native_pos_to_tile(x, map.info.ysize - 1 - y), rand_num > 7 ? T_ARCTIC :
-                      (rand_num < 2 ? T_HILLS : T_TUNDRA));
+      map_set_terrain(native_pos_to_tile(x, map.info.ysize - 1 - y), rand_num > 7 ? OLD_TERRAIN_ARCTIC :
+                      (rand_num < 2 ? OLD_TERRAIN_HILLS : OLD_TERRAIN_TUNDRA));
     }
   }
 
@@ -2592,9 +2606,9 @@ static bool mapgenerator67(bool make_roads)
     for (y = polar_height; y < map.info.ysize - polar_height; y++) {
       int terrain = map_get_terrain(native_pos_to_tile(x, y));
       if (terrain == T6_TEMP_LAND) {
-        map_set_terrain(native_pos_to_tile(x, y), T_GRASSLAND);
+        map_set_terrain(native_pos_to_tile(x, y), OLD_TERRAIN_GRASSLAND);
       } else if(terrain == T6_TEMP_OCEAN) {
-        map_set_terrain(native_pos_to_tile(x, y), T_OCEAN);
+        map_set_terrain(native_pos_to_tile(x, y), OLD_TERRAIN_OCEAN);
       }
     }
   }
@@ -2804,17 +2818,17 @@ void terrain_chance_init(void)
   double wet_rate = (double)map.server.wetness * map.server.wetness / 500;
   double tropic_rate = (double)(temp_rate + wet_rate) / 2;
 
-  gen8_chance[T_ARCTIC] = 0;
-  gen8_chance[T_DESERT] = temp_rate;
-  gen8_chance[T_FOREST] = 22 - tropic_rate;
-  gen8_chance[T_GRASSLAND] = 0;
-  gen8_chance[T_HILLS] = 3 * steep_rate;
-  gen8_chance[T_JUNGLE] = tropic_rate;
-  gen8_chance[T_MOUNTAINS] = steep_rate;
-  gen8_chance[T_OCEAN] = 0;
-  gen8_chance[T_PLAINS] = 50 - temp_rate - tropic_rate - 2 * steep_rate;
-  gen8_chance[T_SWAMP] = tropic_rate;
-  gen8_chance[T_TUNDRA] = 0;
+  gen8_chance[OLD_TERRAIN_ARCTIC] = 0;
+  gen8_chance[OLD_TERRAIN_DESERT] = temp_rate;
+  gen8_chance[OLD_TERRAIN_FOREST] = 22 - tropic_rate;
+  gen8_chance[OLD_TERRAIN_GRASSLAND] = 0;
+  gen8_chance[OLD_TERRAIN_HILLS] = 3 * steep_rate;
+  gen8_chance[OLD_TERRAIN_JUNGLE] = tropic_rate;
+  gen8_chance[OLD_TERRAIN_MOUNTAINS] = steep_rate;
+  gen8_chance[OLD_TERRAIN_OCEAN] = 0;
+  gen8_chance[OLD_TERRAIN_PLAINS] = 50 - temp_rate - tropic_rate - 2 * steep_rate;
+  gen8_chance[OLD_TERRAIN_SWAMP] = tropic_rate;
+  gen8_chance[OLD_TERRAIN_TUNDRA] = 0;
 }
 
 /*************************************************************************
@@ -2850,7 +2864,7 @@ struct gen8_tile **create_tiles_buffer(int xsize, int ysize)
     for (y = 0; y < ysize; y++) {
       buffer[x][y].type = TYPE_UNASSIGNED;
       buffer[x][y].start_pos = 0;
-      buffer[x][y].terrain = T_OCEAN;
+      buffer[x][y].terrain = OLD_TERRAIN_OCEAN;
       buffer[x][y].spec = 0;
       buffer[x][y].river = FALSE;
     }
@@ -3078,7 +3092,7 @@ struct gen8_map *create_fair_island(int size, int startpos)
 
   /* Make terrain */
   for (i = 0; i < size; i++) {
-    temp->tiles[x[i]][y[i]].terrain = T_GRASSLAND;
+    temp->tiles[x[i]][y[i]].terrain = OLD_TERRAIN_GRASSLAND;
   }
   int j, c, n, tile;
   for (j = 0; j < gen8_terrain_num; j++) {
@@ -3095,7 +3109,7 @@ struct gen8_map *create_fair_island(int size, int startpos)
         break;
       }
       tile = myrand(size);
-      if (temp->tiles[x[tile]][y[tile]].terrain != T_GRASSLAND) {
+      if (temp->tiles[x[tile]][y[tile]].terrain != OLD_TERRAIN_GRASSLAND) {
         continue;
       }
       temp->tiles[x[tile]][y[tile]].terrain = j;
@@ -3183,11 +3197,11 @@ struct gen8_map *create_fair_island(int size, int startpos)
     tile = myrand(size);
     tx = x[tile];
     ty = y[tile];
-    if (temp->tiles[tx][ty].river || temp->tiles[tx][ty].terrain == T_OCEAN
-       || !(temp->tiles[tx-1][ty].terrain == T_OCEAN
-            || temp->tiles[tx+1][ty].terrain == T_OCEAN
-            || temp->tiles[tx][ty-1].terrain == T_OCEAN
-            || temp->tiles[tx][ty+1].terrain == T_OCEAN)
+    if (temp->tiles[tx][ty].river || temp->tiles[tx][ty].terrain == OLD_TERRAIN_OCEAN
+       || !(temp->tiles[tx-1][ty].terrain == OLD_TERRAIN_OCEAN
+            || temp->tiles[tx+1][ty].terrain == OLD_TERRAIN_OCEAN
+            || temp->tiles[tx][ty-1].terrain == OLD_TERRAIN_OCEAN
+            || temp->tiles[tx][ty+1].terrain == OLD_TERRAIN_OCEAN)
        || temp->tiles[tx-1][ty].river || temp->tiles[tx+1][ty].river
        || temp->tiles[tx][ty-1].river || temp->tiles[tx][ty+1].river) {
       continue;
@@ -3216,11 +3230,11 @@ struct gen8_map *create_fair_island(int size, int startpos)
           ny--;
           break;
       }
-      if (temp->tiles[nx][ny].river || temp->tiles[nx][ny].terrain == T_OCEAN
-         || temp->tiles[nx-1][ny].terrain == T_OCEAN
-         || temp->tiles[nx+1][ny].terrain == T_OCEAN
-         || temp->tiles[nx][ny-1].terrain == T_OCEAN
-         || temp->tiles[nx][ny+1].terrain == T_OCEAN
+      if (temp->tiles[nx][ny].river || temp->tiles[nx][ny].terrain == OLD_TERRAIN_OCEAN
+         || temp->tiles[nx-1][ny].terrain == OLD_TERRAIN_OCEAN
+         || temp->tiles[nx+1][ny].terrain == OLD_TERRAIN_OCEAN
+         || temp->tiles[nx][ny-1].terrain == OLD_TERRAIN_OCEAN
+         || temp->tiles[nx][ny+1].terrain == OLD_TERRAIN_OCEAN
          || temp->tiles[nx-1][ny].river + temp->tiles[nx+1][ny].river
             + temp->tiles[nx][ny-1].river + temp->tiles[nx][ny+1].river > 1) {
         continue;
@@ -3594,7 +3608,7 @@ static bool mapgenerator89(bool team_placement)
     create_tmap(FALSE);
 
     whole_map_iterate(ptile) {
-      map_set_terrain(ptile, T_OCEAN);
+      map_set_terrain(ptile, OLD_TERRAIN_OCEAN);
       map_set_continent(ptile, 0);
       map_set_placed(ptile);
       map_clear_all_specials(ptile);
@@ -3609,7 +3623,7 @@ static bool mapgenerator89(bool team_placement)
     for (x = 0; x < map.info.xsize; x++) {
       for (y = 0; y < map.info.ysize; y++) {
         tile_t *ptile = native_pos_to_tile(x, y);
-        if (map_get_terrain(ptile) != T_OCEAN) {
+        if (map_get_terrain(ptile) != OLD_TERRAIN_OCEAN) {
           i--;
           pmap->tiles[x][y].terrain = map_get_terrain(ptile);
           pmap->tiles[x][y].type = TYPE_LAND;

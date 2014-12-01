@@ -49,7 +49,7 @@ static const char * const help_type_names[] = {
   "Techs", "Terrain", "Governments", NULL
 };
 
-#define MAX_LAST (MAX(MAX(MAX(A_LAST,B_LAST),U_LAST),T_COUNT))
+#define MAX_LAST (MAX(MAX(MAX(A_LAST,B_LAST),U_LAST),OLD_TERRAIN_COUNT))
 
 #define SPECLIST_TAG help
 #define SPECLIST_TYPE struct help_item
@@ -107,7 +107,7 @@ static void insert_generated_table(const char* name, char* outbuf)
                       "Transform\n"));
     strcat(outbuf, "---------------------------------------------------"
            "------------\n");
-    for (i = T_FIRST; i < T_COUNT; i++) {
+    for (i = OLD_TERRAIN_FIRST; i < OLD_TERRAIN_COUNT; i++) {
       struct tile_type *ptype = get_tile_type(i);
 
       if (*(ptype->terrain_name) != '\0') {
@@ -118,15 +118,15 @@ static void insert_generated_table(const char* name, char* outbuf)
                 ptype->road_time,
                 ptype->irrigation_time,
                 ((ptype->irrigation_result == i
-                  || ptype->irrigation_result == T_NONE) ? ""
+                  || ptype->irrigation_result == OLD_TERRAIN_NONE) ? ""
                  : get_tile_type(ptype->irrigation_result)->terrain_name),
                 ptype->mining_time,
                 ((ptype->mining_result == i
-                  || ptype->mining_result == T_NONE) ? ""
+                  || ptype->mining_result == OLD_TERRAIN_NONE) ? ""
                  : get_tile_type(ptype->mining_result)->terrain_name),
                 ptype->transform_time,
                 ((ptype->transform_result == i
-                 || ptype->transform_result == T_NONE) ? ""
+                 || ptype->transform_result == OLD_TERRAIN_NONE) ? ""
                  : get_tile_type(ptype->transform_result)->terrain_name));
       }
     }
@@ -263,7 +263,7 @@ void boot_help_texts(void)
             }
           } tech_type_iterate_end;
         } else if (current_type == HELP_TERRAIN) {
-          for (i = T_FIRST; i < T_COUNT; i++) {
+          for (i = OLD_TERRAIN_FIRST; i < OLD_TERRAIN_COUNT; i++) {
             struct tile_type *ptype = get_tile_type(i);
 
             if (*(ptype->terrain_name) != '\0') {
@@ -571,7 +571,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
         //req_append(get_tech_name(get_player_ptr(), b->tech_req));
       }
 
-      for (i = 0; b->terr_gate[i] != T_NONE; i++) {
+      for (i = 0; b->terr_gate[i] != OLD_TERRAIN_NONE; i++) {
         terrain_name = get_terrain_name(b->terr_gate[i]);
         if (req_buf[0] != '\0')
           my_snprintf(req_buf + strlen(req_buf),
@@ -1120,7 +1120,7 @@ void helptext_terrain(char *buf, int i, const char *user_text)
 
   buf[0] = '\0';
 
-  if (i<0 || i>=T_COUNT)
+  if (i < 0 || i >= OLD_TERRAIN_COUNT)
     return;
   pt = get_tile_type(i);
 

@@ -6121,7 +6121,7 @@ static const char *get_tile_change_menu_text(tile_t *ptile,
   switch (activity) {
   case ACTIVITY_IRRIGATE:
     if (ptype->irrigation_result == ptile->terrain
-        || ptype->irrigation_result == T_NONE) {
+        || ptype->irrigation_result == OLD_TERRAIN_NONE) {
       assert(0);
     }
     map_irrigate_tile(ptile);
@@ -6129,7 +6129,7 @@ static const char *get_tile_change_menu_text(tile_t *ptile,
 
   case ACTIVITY_MINE:
     if (ptype->mining_result == ptile->terrain
-        || ptype->mining_result == T_NONE) {
+        || ptype->mining_result == OLD_TERRAIN_NONE) {
       assert(0);
     }
     map_mine_tile(ptile);
@@ -6137,7 +6137,7 @@ static const char *get_tile_change_menu_text(tile_t *ptile,
 
   case ACTIVITY_TRANSFORM:
     if (ptype->transform_result == ptile->terrain
-        || ptype->transform_result == T_NONE) {
+        || ptype->transform_result == OLD_TERRAIN_NONE) {
       assert(0);
     }
     map_transform_tile(ptile);
@@ -6394,7 +6394,7 @@ void update_menus(void)
 
     ttype = punit->tile->terrain;
     tinfo = get_tile_type(ttype);
-    if (tinfo->irrigation_result != T_NONE
+    if (tinfo->irrigation_result != OLD_TERRAIN_NONE
         && tinfo->irrigation_result != ttype) {
       my_snprintf(irrtext, sizeof(irrtext), irrfmt,
                   get_tile_change_menu_text(punit->tile,
@@ -6404,12 +6404,12 @@ void update_menus(void)
                                                TF_FARMLAND)) {
       sz_strlcpy(irrtext, _("Bu_ild Farmland"));
     }
-    if (tinfo->mining_result != T_NONE
+    if (tinfo->mining_result != OLD_TERRAIN_NONE
         && tinfo->mining_result != ttype) {
       my_snprintf(mintext, sizeof(mintext), minfmt,
                   get_tile_change_menu_text(punit->tile, ACTIVITY_MINE));
     }
-    if (tinfo->transform_result != T_NONE
+    if (tinfo->transform_result != OLD_TERRAIN_NONE
         && tinfo->transform_result != ttype) {
       my_snprintf(transtext, sizeof(transtext), transfmt,
                   get_tile_change_menu_text(punit->tile,

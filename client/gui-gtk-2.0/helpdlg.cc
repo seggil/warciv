@@ -1002,7 +1002,7 @@ static void help_update_terrain(const struct help_item *pitem,
 
   create_help_page(HELP_TERRAIN);
 
-  if (i < T_COUNT) {
+  if (i < OLD_TERRAIN_COUNT) {
     sprintf(buf, "%d/%d.%d",
             ptype->movement_cost,
             (int)(ptype->defense_bonus/10),
@@ -1062,7 +1062,7 @@ static void help_update_terrain(const struct help_item *pitem,
                 ptype->irrigation_food_incr,
                 ptype->irrigation_time);
       }
-    } else if (ptype->irrigation_result != T_NONE) {
+    } else if (ptype->irrigation_result != OLD_TERRAIN_NONE) {
       sprintf(buf, "%s / %d",
               get_tile_type(ptype->irrigation_result)->terrain_name,
               ptype->irrigation_time);
@@ -1076,14 +1076,14 @@ static void help_update_terrain(const struct help_item *pitem,
                 ptype->mining_shield_incr,
                 ptype->mining_time);
       }
-    } else if (ptype->mining_result != T_NONE) {
+    } else if (ptype->mining_result != OLD_TERRAIN_NONE) {
       sprintf(buf, "%s / %d",
               get_tile_type(ptype->mining_result)->terrain_name,
               ptype->mining_time);
     }
     gtk_label_set_text(GTK_LABEL(help_tlabel[3][1]), buf);
 
-    if (ptype->transform_result != T_NONE) {
+    if (ptype->transform_result != OLD_TERRAIN_NONE) {
       sprintf(buf, "%s / %d",
               get_tile_type(ptype->transform_result)->terrain_name,
                ptype->transform_time);

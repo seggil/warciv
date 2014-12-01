@@ -363,7 +363,7 @@ void map_init_topology(bool set_sizes)
 ***************************************************************/
 static void tile_init(tile_t *ptile)
 {
-  ptile->terrain = T_UNKNOWN;
+  ptile->terrain = OLD_TERRAIN_UNKNOWN;
   ptile->special = S_NO_SPECIAL;
   ptile->continent = 0;
   ptile->city = NULL;
@@ -716,7 +716,7 @@ bool is_safe_ocean(const tile_t *ptile)
 {
   adjc_iterate(ptile, tile1) {
     Terrain_type_id ter = map_get_terrain(tile1);
-    if (!terrain_has_tag(ter, TER_UNSAFE_COAST) && ter != T_UNKNOWN) {
+    if (!terrain_has_tag(ter, TER_UNSAFE_COAST) && ter != OLD_TERRAIN_UNKNOWN) {
       return TRUE;
     }
   } adjc_iterate_end;
@@ -1011,7 +1011,7 @@ void map_irrigate_tile(tile_t *ptile)
     } else {
       map_set_special(ptile, S_IRRIGATION);
     }
-  } else if (result != T_NONE) {
+  } else if (result != OLD_TERRAIN_NONE) {
     map_set_terrain(ptile, result);
     if (is_ocean(result)) {
       clear_infrastructure(ptile);
@@ -1038,7 +1038,7 @@ void map_mine_tile(tile_t *ptile)
 
   if (now == result) {
     map_set_special(ptile, S_MINE);
-  } else if (result != T_NONE) {
+  } else if (result != OLD_TERRAIN_NONE) {
     map_set_terrain(ptile, result);
     if (is_ocean(result)) {
       clear_infrastructure(ptile);
@@ -1092,7 +1092,7 @@ void map_transform_tile(tile_t *ptile)
   now = ptile->terrain;
   result = get_tile_type(now)->transform_result;
 
-  if (result != T_NONE) {
+  if (result != OLD_TERRAIN_NONE) {
     change_terrain(ptile, result);
   }
 }
@@ -1197,19 +1197,20 @@ static int tile_move_cost_ai(tile_t *tile0, tile_t *tile1,
                              int maxcost)
 {
   assert(!is_server
-         || (tile0->terrain != T_UNKNOWN && tile1->terrain != T_UNKNOWN));
+         || (tile0->terrain != OLD_TERRAIN_UNKNOWN
+             && tile1->terrain != OLD_TERRAIN_UNKNOWN));
 
   if (is_ocean(tile0->terrain) && is_ocean(tile1->terrain)) {
     return MOVE_COST_FOR_VALID_SEA_STEP;
   }
 
   if (is_ocean(tile0->terrain)
-      && (tile1->city || tile1->terrain == T_UNKNOWN)) {
+      && (tile1->city || tile1->terrain == OLD_TERRAIN_UNKNOWN)) {
     return MOVE_COST_FOR_VALID_SEA_STEP;
   }
 
   if (is_ocean(tile1->terrain)
-      && (tile0->city || tile0->terrain == T_UNKNOWN)) {
+      && (tile0->city || tile0->terrain == OLD_TERRAIN_UNKNOWN)) {
     return MOVE_COST_FOR_VALID_SEA_STEP;
   }
 

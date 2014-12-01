@@ -124,10 +124,10 @@
 ****************************************************************************/
 static char terrain2char(Terrain_type_id terr)
 {
-  if (terr == T_UNKNOWN) {
+  if (terr == OLD_TERRAIN_UNKNOWN) {
     return UNKNOWN_TERRAIN_IDENTIFIER;
   } else {
-    assert(terr >= T_FIRST && terr < T_COUNT);
+    assert(terr >= OLD_TERRAIN_FIRST && terr < OLD_TERRAIN_COUNT);
     return get_tile_type(terr)->identifier;
   }
 }

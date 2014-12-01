@@ -133,7 +133,7 @@ static int ascii_hex2bin(char ch, int halfbyte)
 static Terrain_type_id char2terrain(char ch)
 {
   if (ch == UNKNOWN_TERRAIN_IDENTIFIER) {
-    return T_UNKNOWN;
+    return OLD_TERRAIN_UNKNOWN;
   }
   freelog(LOG_DEBUG, _("looking for Terrain identifier '%c' "),ch);
   terrain_type_iterate(id) {

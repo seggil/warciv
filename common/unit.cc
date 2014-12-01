@@ -906,7 +906,7 @@ bool can_unit_do_activity_targeted_at(unit_t *punit,
         && ((ptile->terrain == type->mining_result
              && !tile_has_special(ptile, S_MINE))
             || (ptile->terrain != type->mining_result
-                && type->mining_result != T_NONE
+                && type->mining_result != OLD_TERRAIN_NONE
                 && (!is_ocean(ptile->terrain)
                     || is_ocean(type->mining_result)
                     || can_reclaim_ocean(ptile))
@@ -936,7 +936,7 @@ bool can_unit_do_activity_targeted_at(unit_t *punit,
         && ((ptile->terrain == type->irrigation_result
              && is_water_adjacent_to_tile(ptile))
             || (ptile->terrain != type->irrigation_result
-                && type->irrigation_result != T_NONE
+                && type->irrigation_result != OLD_TERRAIN_NONE
                 && (!is_ocean(ptile->terrain)
                     || is_ocean(type->irrigation_result)
                     || can_reclaim_ocean(ptile))
@@ -1027,7 +1027,7 @@ bool can_unit_do_activity_targeted_at(unit_t *punit,
 
   case ACTIVITY_TRANSFORM:
     return (terrain_control.may_transform
-            && type->transform_result != T_NONE
+            && type->transform_result != OLD_TERRAIN_NONE
             && ptile->terrain != type->transform_result
             && (!is_ocean(ptile->terrain)
                 || is_ocean(type->transform_result)
@@ -1618,7 +1618,7 @@ enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
   } else if (unit_types[type].move_type == SEA_MOVING) {
     /* 7) */
     if (!is_ocean(ptotile->terrain)
-        && ptotile->terrain != T_UNKNOWN
+        && ptotile->terrain != OLD_TERRAIN_UNKNOWN
         && (!is_allied_city_tile(ptotile, unit_owner)
             || !is_ocean_near_tile(ptotile))) {
       return MR_DESTINATION_OCCUPIED_BY_NON_ALLIED_CITY;

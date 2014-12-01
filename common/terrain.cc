@@ -35,10 +35,10 @@ struct tile_type *get_tile_type(Terrain_type_id type)
   /* HACK: return a dummy tile for out-of-range requests.  This is
    * designed specifically to fix this problem in 2.0. */
   static struct tile_type t_void;
-  if (type < 0 || type >= T_COUNT) {
 
+  if (type < 0 || type >= OLD_TERRAIN_COUNT) {
 #if 0 /* Currently this assertion triggers all the time. */
-    assert(type >= 0 && type < T_COUNT);
+    assert(type >= 0 && type < OLD_TERRAIN_COUNT);
 #endif
     return &t_void;
   }
@@ -46,19 +46,19 @@ struct tile_type *get_tile_type(Terrain_type_id type)
 }
 
 /****************************************************************************
-  Return the terrain type matching the name, or T_UNKNOWN if none matches.
+  Return the terrain type matching the name, or OLD_TERRAIN_UNKNOWN if none matches.
 ****************************************************************************/
 Terrain_type_id get_terrain_by_name(const char *name)
 {
   Terrain_type_id tt;
 
-  for (tt = T_FIRST; tt < T_COUNT; tt++) {
+  for (tt = OLD_TERRAIN_FIRST; tt < OLD_TERRAIN_COUNT; tt++) {
     if (0 == strcmp (tile_types[tt].terrain_name, name)) {
       return tt;
     }
   }
 
-  return T_UNKNOWN;
+  return OLD_TERRAIN_UNKNOWN;
 }
 
 /***************************************************************
@@ -104,7 +104,7 @@ enum terrain_tag_id terrain_tag_from_str(const char *s)
 ****************************************************************************/
 Terrain_type_id get_tag_terrain(enum terrain_tag_id tag)
 {
-  bool has_tag[T_COUNT];
+  bool has_tag[OLD_TERRAIN_COUNT];
   int count = 0;
 
   terrain_type_iterate(t) {
@@ -124,7 +124,7 @@ Terrain_type_id get_tag_terrain(enum terrain_tag_id tag)
   } terrain_type_iterate_end;
 
   die("Reached end of get_tag_terrain!");
-  return T_NONE;
+  return OLD_TERRAIN_NONE;
 }
 
 /****************************************************************************

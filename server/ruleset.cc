@@ -541,12 +541,12 @@ static Terrain_type_id lookup_terrain(char *name,
 
   if (*name == '\0' || (0 == strcmp(name, "none"))
       || (0 == strcmp(name, "no"))) {
-    return T_NONE;
+    return OLD_TERRAIN_NONE;
   } else if (0 == strcmp(name, "yes")) {
     return (tthis);
   }
 
-  for (i = T_FIRST; i < T_COUNT; i++) {
+  for (i = OLD_TERRAIN_FIRST; i < OLD_TERRAIN_COUNT; i++) {
     if (0 == strcmp(name, get_tile_type(i)->terrain_name)) {
       return i;
     }
@@ -555,7 +555,7 @@ static Terrain_type_id lookup_terrain(char *name,
   /* TRANS: message for an obscure ruleset error. */
   freelog(LOG_ERROR, _("Unknown terrain %s in entry %s."),
           name, get_tile_type(tthis)->terrain_name);
-  return T_NONE;
+  return OLD_TERRAIN_NONE;
 }
 
 /**************************************************************************
@@ -1289,7 +1289,7 @@ static void load_ruleset_buildings(struct section_file *file)
     k = 0;
     for (j = 0; j < count; j++) {
       b->terr_gate[k] = get_terrain_by_name(list[j]);
-      if (b->terr_gate[k] == T_UNKNOWN) {
+      if (b->terr_gate[k] == OLD_TERRAIN_UNKNOWN) {
         freelog(LOG_ERROR,
                 "for %s terr_gate[%d] couldn't match terrain \"%s\" (%s)",
                 b->name, j, list[j], filename);
@@ -1297,7 +1297,7 @@ static void load_ruleset_buildings(struct section_file *file)
         k++;
       }
     }
-    b->terr_gate[k] = T_NONE;
+    b->terr_gate[k] = OLD_TERRAIN_NONE;
     free(list);
 
     list = secfile_lookup_str_vec(file, &count, "%s.spec_gate", sec[i]);
@@ -1668,7 +1668,7 @@ static void load_ruleset_terrain(struct section_file *file)
                  secfile_lookup_str(file,"%s.graphic_alt", sec[i]));
 
       t->identifier = secfile_lookup_str(file, "%s.identifier", sec[i])[0];
-      for (j = T_FIRST; j < i; j++) {
+      for (j = OLD_TERRAIN_FIRST; j < i; j++) {
         if (t->identifier == get_tile_type(j)->identifier) {
           freelog(LOG_FATAL,
                   /* TRANS: message for an obscure ruleset error. */
@@ -2174,7 +2174,7 @@ static struct city_name* load_city_name_list(struct section_file *file,
      * a lot of ugly string handling...
      */
     memset(city_names[j].terrain, 0,
-           T_COUNT * sizeof(city_names[j].terrain[0]));
+           OLD_TERRAIN_COUNT * sizeof(city_names[j].terrain[0]));
     city_names[j].river = 0;
 
     if (name) {
@@ -2221,11 +2221,11 @@ static struct city_name* load_city_name_list(struct section_file *file,
             bool handled = FALSE;
             Terrain_type_id type;
 
-            for (type = T_FIRST; type < T_COUNT && !handled; type++) {
+            for (type = OLD_TERRAIN_FIRST; type < OLD_TERRAIN_COUNT && !handled; type++) {
               /*
                * Note that at this time (before a call to
                * translate_data_names) the terrain_name fields contains an
-               * untranslated string.  Note that name of T_RIVER_UNUSED is "".
+               * untranslated string.  Note that name of OLD_TERRAIN_RIVER_UNUSED is "".
                * However this is not a problem because we take care of rivers
                * separately.
                */
@@ -2953,7 +2953,7 @@ static void send_ruleset_buildings(struct connection_list *dest)
       packet.elem[packet.count] =  b->elem[packet.count]; \
     }
 
-    T(terr_gate, terr_gate_count, T_NONE);
+    T(terr_gate, terr_gate_count, OLD_TERRAIN_NONE);
     T(spec_gate, spec_gate_count, S_NO_SPECIAL);
     T(equiv_dupl, equiv_dupl_count, B_LAST);
     T(equiv_repl, equiv_repl_count, B_LAST);

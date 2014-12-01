@@ -354,7 +354,7 @@ static int ai_calc_irrigate(city_t *pcity, player_t *pplayer,
   struct tile_type *type = get_tile_type(old_terrain);
   Terrain_type_id new_terrain = type->irrigation_result;
 
-  if (old_terrain != new_terrain && new_terrain != T_NONE) {
+  if (old_terrain != new_terrain && new_terrain != OLD_TERRAIN_NONE) {
     /* Irrigation would change the terrain type, clearing the mine
      * in the process.  Calculate the benefit of doing so. */
     if (ptile->city && terrain_has_tag(new_terrain, TER_NO_CITIES)) {
@@ -418,7 +418,7 @@ static int ai_calc_mine(city_t *pcity,
   struct tile_type *type = get_tile_type(old_terrain);
   Terrain_type_id new_terrain = type->mining_result;
 
-  if (old_terrain != new_terrain && new_terrain != T_NONE) {
+  if (old_terrain != new_terrain && new_terrain != OLD_TERRAIN_NONE) {
     /* Mining would change the terrain type, clearing the irrigation
      * in the process.  Calculate the benefit of doing so. */
     if (ptile->city && terrain_has_tag(new_terrain, TER_NO_CITIES)) {
@@ -471,7 +471,7 @@ static int ai_calc_transform(city_t *pcity,
   struct tile_type *type = get_tile_type(old_terrain);
   Terrain_type_id new_terrain = type->transform_result;
 
-  if (old_terrain == new_terrain || new_terrain == T_NONE) {
+  if (old_terrain == new_terrain || new_terrain == OLD_TERRAIN_NONE) {
     return -1;
   }
 

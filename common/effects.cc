@@ -545,7 +545,7 @@ int parse_effect_requirement(Impr_Type_id source,
     break;
   case REQ_TERRAIN:
     data = get_terrain_by_name(req_value);
-    problem = (T_UNKNOWN == data);
+    problem = (OLD_TERRAIN_UNKNOWN == data);
     break;
   default:
     die("for %s: unimplemented requirement type '%d'",

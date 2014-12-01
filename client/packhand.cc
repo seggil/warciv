@@ -3170,7 +3170,7 @@ void handle_ruleset_building(struct packet_ruleset_building *p) /* 104 sc */
   for (i = 0; i < p->terr_gate_count; i++) {
     b->terr_gate[i] = p->terr_gate[i];
   }
-  b->terr_gate[p->terr_gate_count] = T_NONE;
+  b->terr_gate[p->terr_gate_count] = OLD_TERRAIN_NONE;
 
   //T(spec_gate, spec_gate_count, S_NO_SPECIAL);
   b->spec_gate = (enum tile_special_type *)wc_malloc(sizeof(*b->spec_gate) * (p->spec_gate_count + 1));
@@ -3210,7 +3210,7 @@ void handle_ruleset_building(struct packet_ruleset_building *p) /* 104 sc */
               "None" :
               improvement_types[b->bldg_req].name);
       freelog(LOG_DEBUG, "  terr_gate...");
-      for (inx = 0; b->terr_gate[inx] != T_NONE; inx++) {
+      for (inx = 0; b->terr_gate[inx] != OLD_TERRAIN_NONE; inx++) {
         freelog(LOG_DEBUG, "    %2d/%s",
                 b->terr_gate[inx], get_terrain_name(b->terr_gate[inx]));
       }
@@ -3471,7 +3471,7 @@ void handle_ruleset_terrain(struct packet_ruleset_terrain *p) /* 105 sc */
   printf("helptext=%s\n", p->helptext);
 # endif
 
-  if (p->id < T_FIRST || p->id >= T_COUNT) {
+  if (p->id < OLD_TERRAIN_FIRST || p->id >= OLD_TERRAIN_COUNT) {
     freelog(LOG_ERROR,
             "Received bad terrain id %d in handle_ruleset_terrain",
             p->id);
