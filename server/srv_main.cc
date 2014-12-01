@@ -899,7 +899,7 @@ void save_game_auto(void)
 **************************************************************************/
 void start_game(void)
 {
-  if(server_state!=PRE_GAME_STATE) {
+  if (server_state != PRE_GAME_STATE) {
     con_puts(C_SYNTAX, _("The game is already running."));
     return;
   }
@@ -908,7 +908,7 @@ void start_game(void)
 
   clear_all_votes(); /* prevent some problems about commands */
 
-  server_state=SELECT_RACES_STATE; /* loaded ??? */
+  server_state = SELECT_RACES_STATE; /* loaded ??? */
   force_end_of_sniff = TRUE;
 }
 
@@ -930,8 +930,11 @@ void handle_report_req(connection_t *pconn, enum report_type type)
 {
   struct connection_list *dest = pconn->self;
 
-  if (server_state != RUN_GAME_STATE && server_state != GAME_OVER_STATE
-      && type != REPORT_SERVER_OPTIONS1 && type != REPORT_SERVER_OPTIONS2) {
+  if ( server_state != RUN_GAME_STATE
+    && server_state != GAME_OVER_STATE
+    && type != REPORT_SERVER_OPTIONS1
+    && type != REPORT_SERVER_OPTIONS2)
+  {
     freelog(LOG_ERROR, "Got a report request %d before game start", type);
     return;
   }
@@ -1000,13 +1003,13 @@ int get_next_id_number(void)
 static bool packet_is_allowed_during_pause(int type)
 {
   return type != PACKET_UNIT_MOVE
-    && type != PACKET_UNIT_BUILD_CITY
-    && type != PACKET_UNIT_GOTO
-    && type != PACKET_UNIT_ORDERS
-    && type != PACKET_UNIT_AUTO
-    && type != PACKET_UNIT_PARADROP_TO
-    && type != PACKET_UNIT_NUKE
-    && type != PACKET_UNIT_AIRLIFT;
+      && type != PACKET_UNIT_BUILD_CITY
+      && type != PACKET_UNIT_GOTO
+      && type != PACKET_UNIT_ORDERS
+      && type != PACKET_UNIT_AUTO
+      && type != PACKET_UNIT_PARADROP_TO
+      && type != PACKET_UNIT_NUKE
+      && type != PACKET_UNIT_AIRLIFT;
 }
 
 /**************************************************************************
@@ -1018,7 +1021,7 @@ bool handle_packet_input(connection_t *pconn, void *packet, int type)
   player_t *pplayer;
 
   /* a NULL packet can be returned from receive_packet_goto_route() */
-  if (!packet)
+  if ( ! packet )
     return TRUE;
 
   /*
@@ -1078,7 +1081,7 @@ bool handle_packet_input(connection_t *pconn, void *packet, int type)
     return TRUE;
   }
 
-  if (!pconn->established) {
+  if ( ! pconn->established ) {
     freelog(LOG_ERROR, "Received game packet from unaccepted connection %s",
             conn_description(pconn));
     return TRUE;
@@ -1101,20 +1104,22 @@ bool handle_packet_input(connection_t *pconn, void *packet, int type)
 
   pplayer = pconn->player;
 
-  if (!pplayer && !pconn->observer
-      && type != PACKET_REPORT_REQ
-      && type != PACKET_CONN_PONG) {
+  if ( ! pplayer && !pconn->observer
+    && type != PACKET_REPORT_REQ
+    && type != PACKET_CONN_PONG)
+  {
     /* don't support these yet */
     freelog(LOG_ERROR, "Received packet from non-player connection %s",
             conn_description(pconn));
     return TRUE;
   }
 
-  if (server_state != RUN_GAME_STATE
-      && type != PACKET_NATION_SELECT_REQ
-      && type != PACKET_CONN_PONG
-      && type != PACKET_REPORT_REQ
-      && type != PACKET_VOTE_SUBMIT) {
+  if ( server_state != RUN_GAME_STATE
+    && type != PACKET_NATION_SELECT_REQ
+    && type != PACKET_CONN_PONG
+    && type != PACKET_REPORT_REQ
+    && type != PACKET_VOTE_SUBMIT)
+  {
     if (server_state == GAME_OVER_STATE) {
       /* This can happen by accident, so we don't want to print
          out lots of error messages. Ie, we use LOG_DEBUG. */
@@ -1132,8 +1137,9 @@ bool handle_packet_input(connection_t *pconn, void *packet, int type)
       pplayer->nturns_idle = 0;
     }
 
-    if ((!pplayer->is_alive || pconn->observer)
-       && !(type == PACKET_REPORT_REQ || type == PACKET_CONN_PONG)) {
+    if ( (!pplayer->is_alive || pconn->observer)
+         && !(type == PACKET_REPORT_REQ || type == PACKET_CONN_PONG) )
+    {
       freelog(LOG_ERROR, _("Got a packet of type %d from a "
                            "dead or observer player"), type);
       return TRUE;
