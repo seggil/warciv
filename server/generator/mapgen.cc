@@ -86,12 +86,12 @@ static int *river_map;
 
 /* These are the old parameters of terrains types in %
    TODO: they depend on the hardcoded terrains */
-static int forest_pct = 0;
-static int desert_pct = 0;
-static int swamp_pct = 0;
-static int mountain_pct = 0;
-static int jungle_pct = 0;
-static int river_pct = 0;
+static int forest_percent = 0;
+static int desert_percent = 0;
+static int swamp_percent = 0;
+static int mountain_percent = 0;
+static int jungle_percent = 0;
+static int river_percent = 0;
 
 /****************************************************************************
  * Conditions used mainly in rand_map_pos_characteristic()
@@ -111,7 +111,7 @@ typedef enum { WC_ALL = 200, WC_DRY, WC_NDRY } wetness_c;
 static int hmap_low_level = 0;
 #define ini_hmap_low_level() \
 { \
-hmap_low_level = (4 * swamp_pct  * \
+hmap_low_level = (4 * swamp_percent  * \
      (hmap_max_level - hmap_shore_level)) / 100 + hmap_shore_level; \
 }
 /* should be used after having hmap_low_level initialized */
@@ -440,11 +440,11 @@ static void make_terrains(void)
     }
   } whole_map_iterate_end;
 
-  forests_count = total * forest_pct / (100 - mountain_pct);
-  jungles_count = total * jungle_pct / (100 - mountain_pct);
+  forests_count = total * forest_percent / (100 - mountain_percent);
+  jungles_count = total * jungle_percent / (100 - mountain_percent);
 
-  deserts_count = total * desert_pct / (100 - mountain_pct);
-  swamps_count = total * swamp_pct  / (100 - mountain_pct);
+  deserts_count = total * desert_percent / (100 - mountain_percent);
+  swamps_count = total * swamp_percent  / (100 - mountain_percent);
 
   /* grassland, tundra,arctic and plains is counted in plains_count */
   plains_count = total - forests_count - deserts_count
@@ -808,8 +808,8 @@ static void make_rivers(void)
   /* Formula to make the river density similar om different sized maps. Avoids
      too few rivers on large maps and too many rivers on small maps. */
   int desirable_riverlength =
-    river_pct *
-      /* The size of the map (poles counted in river_pct). */
+    river_percent *
+      /* The size of the map (poles counted in river_percent). */
       map_num_tiles() *
       /* Rivers need to be on land only. */
       map.server.landpercent /
@@ -1235,22 +1235,22 @@ static void adjust_terrain_param(void)
   float factor = (100.0 - polar - map.server.steepness * 0.8 ) / 10000;
 
 
-  mountain_pct = factor * map.server.steepness * 90;
+  mountain_percent = factor * map.server.steepness * 90;
 
   /* 27 % if wetness == 50 & */
-  forest_pct = factor * (map.server.wetness * 40 + 700) ;
-  jungle_pct = forest_pct * (MAX_COLATITUDE - TROPICAL_LEVEL) /
+  forest_percent = factor * (map.server.wetness * 40 + 700) ;
+  jungle_percent = forest_percent * (MAX_COLATITUDE - TROPICAL_LEVEL) /
                (MAX_COLATITUDE * 2);
-  forest_pct -= jungle_pct;
+  forest_percent -= jungle_percent;
 
   /* 3 - 11 % */
-  river_pct = (100 - polar) * (3 + map.server.wetness / 12) / 100;
+  river_percent = (100 - polar) * (3 + map.server.wetness / 12) / 100;
 
   /* 6 %  if wetness == 50 && temperature == 50 */
-  swamp_pct = factor * MAX(0,
-                           (map.server.wetness * 9 - 150 + map.server.temperature * 6));
-  desert_pct =factor * MAX(0,
-                (map.server.temperature * 15 - 250 + (100 - map.server.wetness) * 10)) ;
+  swamp_percent = factor
+                  * MAX(0, (map.server.wetness * 9 - 150 + map.server.temperature * 6));
+  desert_percent = factor
+               * MAX(0, (map.server.temperature * 15 - 250 + (100 - map.server.wetness) * 10)) ;
 }
 
 /****************************************************************************
@@ -1678,7 +1678,7 @@ static bool make_island(int islemass, int starters,
     if (pstate->totalmass > 3000)
       freelog(LOG_NORMAL, _("High landmass - this may take a few seconds."));
 
-    i = river_pct + mountain_pct + desert_pct + forest_pct + swamp_pct;
+    i = river_percent + mountain_percent + desert_percent + forest_percent + swamp_percent;
     i = (i <= 90) ? 100 : i * 11 / 10;
     tilefactor = pstate->totalmass / i;
     riverbuck = -(long int) myrand(pstate->totalmass);
@@ -1740,25 +1740,25 @@ static bool make_island(int islemass, int starters,
 
     i *= tilefactor;
 
-    riverbuck += river_pct * i;
+    riverbuck += river_percent * i;
     fill_island_rivers(1, &riverbuck, pstate);
 
-    mountbuck += mountain_pct * i;
+    mountbuck += mountain_percent * i;
     fill_island(20, &mountbuck,
                 3, 1, 3,1,
                 OLD_TERRAIN_HILLS, OLD_TERRAIN_MOUNTAINS, OLD_TERRAIN_HILLS, OLD_TERRAIN_MOUNTAINS,
                 pstate);
-    desertbuck += desert_pct * i;
+    desertbuck += desert_percent * i;
     fill_island(40, &desertbuck,
                 1, 1, 1, 1,
                 OLD_TERRAIN_DESERT, OLD_TERRAIN_DESERT, OLD_TERRAIN_DESERT, OLD_TERRAIN_TUNDRA,
                 pstate);
-    forestbuck += forest_pct * i;
+    forestbuck += forest_percent * i;
     fill_island(60, &forestbuck,
                 forest_percent, swamp_percent, forest_percent, swamp_percent,
                 OLD_TERRAIN_FOREST, OLD_TERRAIN_JUNGLE, OLD_TERRAIN_FOREST, OLD_TERRAIN_TUNDRA,
                 pstate);
-    swampbuck += swamp_pct * i;
+    swampbuck += swamp_percent * i;
     fill_island(80, &swampbuck,
                 1, 1, 1, 1,
                 OLD_TERRAIN_SWAMP, OLD_TERRAIN_SWAMP, OLD_TERRAIN_SWAMP, OLD_TERRAIN_SWAMP,
