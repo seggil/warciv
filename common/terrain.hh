@@ -18,7 +18,10 @@
 #include "wc_types.hh"
 
 enum special_river_move {
-  RMV_NORMAL=0, RMV_FAST_STRICT=1, RMV_FAST_RELAXED=2, RMV_FAST_ALWAYS=3
+  RMV_NORMAL=0,
+  RMV_FAST_STRICT=1,
+  RMV_FAST_RELAXED=2,
+  RMV_FAST_ALWAYS=3
 };
 
 enum tile_special_type {
@@ -93,7 +96,9 @@ enum terrain_tag_id {
 #define TER_MAX 64 /* Changing this breaks network compatability. */
 
 enum known_type {
- TILE_UNKNOWN, TILE_KNOWN_FOGGED, TILE_KNOWN
+  TILE_UNKNOWN,
+  TILE_KNOWN_FOGGED,
+  TILE_KNOWN
 };
 
 BV_DEFINE(bv_terrain_tags, TER_MAX);
