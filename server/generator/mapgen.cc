@@ -2840,16 +2840,16 @@ void terrain_chance_init(void)
 *************************************************************************/
 void normalize_coord(struct gen8_map *pmap, int *x, int *y)
 {
-  while (* x < 0) {
+  while ( *x < 0) {
     *x += pmap->xsize;
   }
-  while (*x >= pmap->xsize) {
-    * x-= pmap->xsize;
+  while ( *x >= pmap->xsize) {
+    *x -= pmap->xsize;
   }
-  while (*y < 0) {
+  while ( *y < 0) {
     *y += pmap->ysize;
   }
-  while (*y >= pmap->ysize) {
+  while ( *y >= pmap->ysize) {
     *y -= pmap->ysize;
   }
 }
@@ -2860,7 +2860,7 @@ void normalize_coord(struct gen8_map *pmap, int *x, int *y)
 struct gen8_tile **create_tiles_buffer(int xsize, int ysize)
 {
   struct gen8_tile **buffer = static_cast<gen8_tile**>(
-      wc_malloc(sizeof(struct gen8_tile **) * xsize));
+      wc_malloc(sizeof(struct gen8_tile *) * xsize));
   int x, y;
 
   for (x = 0; x < xsize; x++) {
@@ -3014,8 +3014,10 @@ struct gen8_map *create_fair_island(int size, int startpos)
     size = ISLAND_SIZE_MAX;
   }
 
-  struct gen8_map *temp, *island;
-  int i, *x , *y, tx, ty, xmin, xmax, ymin, ymax, fantasy = (size * 2) / 5 + 1;
+  struct gen8_map *temp;
+  struct gen8_map *island;
+  int i, *x , *y, tx, ty, xmin, xmax, ymin, ymax;
+  int fantasy = (size * 2) / 5 + 1;
 
   /* Create an island of one tile */
   temp = create_map(size * 2 + 5, size * 2 + 5);
@@ -3128,8 +3130,10 @@ struct gen8_map *create_fair_island(int size, int startpos)
         if (temp->tiles[tx][ty].type != TYPE_UNASSIGNED) {
           continue;
         }
-        temp->tiles[tx][ty].type = startpos ? TYPE_ASSIGNED_SEA
-                                              : TYPE_UNASSIGNED_SEA;
+        if (startpos)
+          temp->tiles[tx][ty].type = TYPE_ASSIGNED_SEA;
+        else
+          temp->tiles[tx][ty].type = TYPE_UNASSIGNED_SEA;
         if (tx < xmin) {
           xmin = tx;
         } else if (tx > xmax) {
@@ -3201,20 +3205,25 @@ struct gen8_map *create_fair_island(int size, int startpos)
     tile = myrand(size);
     tx = x[tile];
     ty = y[tile];
-    if (temp->tiles[tx][ty].river || temp->tiles[tx][ty].terrain == OLD_TERRAIN_OCEAN
-       || !(temp->tiles[tx-1][ty].terrain == OLD_TERRAIN_OCEAN
-            || temp->tiles[tx+1][ty].terrain == OLD_TERRAIN_OCEAN
-            || temp->tiles[tx][ty-1].terrain == OLD_TERRAIN_OCEAN
-            || temp->tiles[tx][ty+1].terrain == OLD_TERRAIN_OCEAN)
-       || temp->tiles[tx-1][ty].river || temp->tiles[tx+1][ty].river
-       || temp->tiles[tx][ty-1].river || temp->tiles[tx][ty+1].river) {
+    if (temp->tiles[tx][ty].river)
+      continue;
+    if (temp->tiles[tx][ty].terrain == OLD_TERRAIN_OCEAN)
+      continue;
+    if (!(temp->tiles[tx-1][ty].terrain == OLD_TERRAIN_OCEAN
+          || temp->tiles[tx+1][ty].terrain == OLD_TERRAIN_OCEAN
+          || temp->tiles[tx][ty-1].terrain == OLD_TERRAIN_OCEAN
+          || temp->tiles[tx][ty+1].terrain == OLD_TERRAIN_OCEAN) )
+      continue;
+    if (temp->tiles[tx-1][ty].river || temp->tiles[tx+1][ty].river
+        || temp->tiles[tx][ty-1].river || temp->tiles[tx][ty+1].river) {
       continue;
     }
     temp->tiles[tx][ty].river = TRUE;
     c++;
     i = 0;
     while (c < n) {
-      int nx = tx, ny = ty;
+      int nx = tx;
+      int ny = ty;
       i++;
       if (i > 10000) {
         i = 0;
@@ -3234,13 +3243,15 @@ struct gen8_map *create_fair_island(int size, int startpos)
           ny--;
           break;
       }
-      if (temp->tiles[nx][ny].river || temp->tiles[nx][ny].terrain == OLD_TERRAIN_OCEAN
-         || temp->tiles[nx-1][ny].terrain == OLD_TERRAIN_OCEAN
-         || temp->tiles[nx+1][ny].terrain == OLD_TERRAIN_OCEAN
-         || temp->tiles[nx][ny-1].terrain == OLD_TERRAIN_OCEAN
-         || temp->tiles[nx][ny+1].terrain == OLD_TERRAIN_OCEAN
-         || temp->tiles[nx-1][ny].river + temp->tiles[nx+1][ny].river
-            + temp->tiles[nx][ny-1].river + temp->tiles[nx][ny+1].river > 1) {
+      if (temp->tiles[nx][ny].river
+          || temp->tiles[nx][ny].terrain == OLD_TERRAIN_OCEAN
+          || temp->tiles[nx-1][ny].terrain == OLD_TERRAIN_OCEAN
+          || temp->tiles[nx+1][ny].terrain == OLD_TERRAIN_OCEAN
+          || temp->tiles[nx][ny-1].terrain == OLD_TERRAIN_OCEAN
+          || temp->tiles[nx][ny+1].terrain == OLD_TERRAIN_OCEAN
+          || temp->tiles[nx-1][ny].river + temp->tiles[nx+1][ny].river
+             + temp->tiles[nx][ny-1].river + temp->tiles[nx][ny+1].river > 1)
+      {
         continue;
       }
       temp->tiles[nx][ny].river = TRUE;
