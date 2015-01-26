@@ -215,7 +215,7 @@ void auto_arrange_workers(city_t *pcity)
    * are on a different scale.  Later the ai may wish to adjust its
    * priorities - this should be done via a separate set of variables. */
   if (pcity->common.pop_size > 1) {
-    if (pcity->common.pop_size <= game.ruleset_control.notradesize) {
+    if ((int)pcity->common.pop_size <= game.ruleset_control.notradesize) {
       cmp.factor[CM_FOOD] = 15;
     } else {
       cmp.factor[CM_FOOD] = 10;
@@ -515,7 +515,7 @@ bool city_reduce_size(city_t *pcity, int pop_loss)
     return TRUE;
   }
 
-  if (pcity->common.pop_size <= pop_loss) {
+  if ((int)pcity->common.pop_size <= pop_loss) {
     remove_city(pcity);
     return FALSE;
   }
@@ -1205,7 +1205,7 @@ static bool city_build_unit(player_t *pplayer, city_t *pcity)
   }
   if (pcity->common.shield_stock
       >= unit_build_shield_cost(pcity->common.currently_building)) {
-    int pop_cost = unit_pop_value(pcity->common.currently_building);
+    unsigned int pop_cost = unit_pop_value(pcity->common.currently_building);
 
     /* Should we disband the city? -- Massimo */
     if (pcity->common.pop_size == pop_cost
@@ -1297,8 +1297,9 @@ static bool city_build_stuff(player_t *pplayer, city_t *pcity)
 **************************************************************************/
 static void check_pollution(city_t *pcity)
 {
-  int k=100;
-  if (pcity->common.pollution != 0 && myrand(100) <= pcity->common.pollution) {
+  int k = 100;
+  if (pcity->common.pollution != 0
+      && (int)myrand(100) <= pcity->common.pollution) {
     while (k > 0) {
       /* place pollution somewhere in city radius */
       int cx = myrand(CITY_MAP_SIZE);
@@ -1374,8 +1375,8 @@ int city_incite_cost(player_t *pplayer, city_t *pcity)
   }
 
   /* Buy back is cheap, conquered cities are also cheap */
-  if (pcity->common.owner != pcity->u.server.original) {
-    if (pplayer->player_no == pcity->u.server.original) {
+  if ((int)pcity->common.owner != pcity->u.server.original) {
+    if ((int)pplayer->player_no == pcity->u.server.original) {
       cost /= 2;            /* buy back: 50% price reduction */
     } else {
       cost = cost * 2 / 3;  /* buy conquered: 33% price reduction */
