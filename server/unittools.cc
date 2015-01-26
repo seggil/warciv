@@ -135,7 +135,7 @@ bool maybe_make_veteran(unit_t *punit)
     /* The modification is tacked on as a multiplier to the base chance.
      * For example with a base chance of 50% for green units and a modifier
      * of +50% the end chance is 75%. */
-    if (myrand(100) < game.ruleset_game.veteran_chance[punit->veteran] * mod / 100) {
+    if ((int)myrand(100) < game.ruleset_game.veteran_chance[punit->veteran] * mod / 100) {
       punit->veteran++;
       return TRUE;
     }
@@ -156,7 +156,7 @@ void unit_versus_unit(unit_t *attacker, unit_t *defender,
                       bool bombard)
 {
   int attackpower = get_total_attack_power(attacker,defender);
-  int defensepower = get_total_defense_power(attacker,defender);
+  unsigned int defensepower = get_total_defense_power(attacker,defender);
 
   int attack_firepower, defense_firepower;
   get_modified_firepower(attacker, defender,
@@ -166,8 +166,8 @@ void unit_versus_unit(unit_t *attacker, unit_t *defender,
           attackpower, defensepower, attack_firepower, defense_firepower);
 
   if (bombard) {
-    int i;
-    int rate = unit_type(attacker)->bombard_rate;
+    unsigned int i;
+    unsigned int rate = unit_type(attacker)->bombard_rate;
 
     for (i = 0; i < rate; i++) {
       if (myrand(attackpower+defensepower) >= defensepower) {
@@ -358,7 +358,7 @@ void player_restore_units(player_t *pplayer)
         /* Note if a trireme died on a TER_UNSAFE terrain, this would
          * erronously give the high seas message.  This is impossible
          * under the current rulesets. */
-        int loss_chance = unit_loss_pct(pplayer, punit->tile, punit);
+        unsigned int loss_chance = unit_loss_pct(pplayer, punit->tile, punit);
 
         if (myrand(100) < loss_chance) {
           notify_player_ex(pplayer, punit->tile, E_UNIT_LOST,
@@ -585,7 +585,7 @@ static bool maybe_settler_become_veteran(unit_t *punit)
     return FALSE;
   }
   if (unit_flag(punit, F_SETTLERS)
-      && myrand(100) < game.ruleset_game.work_veteran_chance[punit->veteran]) {
+      && (int)myrand(100) < game.ruleset_game.work_veteran_chance[punit->veteran]) {
     punit->veteran++;
     return TRUE;
   }
@@ -1169,13 +1169,13 @@ static void place_partisans(city_t *pcity, int count)
 void make_partisans(city_t *pcity)
 {
   player_t *pplayer;
-  int i, partisans;
+  unsigned int i, partisans;
 
   if (num_role_units(L_PARTISAN)==0)
     return;
   if (!tech_exists(game.server.u_partisan)
       || game.info.global_advances[game.server.u_partisan] == 0
-      || pcity->u.server.original != pcity->common.owner)
+      || pcity->u.server.original != (int)pcity->common.owner)
     return;
 
   if (!government_has_flag(get_gov_pcity(pcity), G_INSPIRES_PARTISANS))
@@ -2234,7 +2234,7 @@ bool try_move_unit(unit_t *punit, tile_t *dst_tile)
   if (game.server.fracmovestyle == 1) {
     /* Nothing, just fall through to the return. */
   } else {
-    if (myrand(1 + map_move_cost(punit, dst_tile)) > punit->moves_left
+    if ((int)myrand(1 + map_move_cost(punit, dst_tile)) > punit->moves_left
         && punit->moves_left < unit_move_rate(punit)) {
       punit->moves_left = 0;
       send_unit_info(unit_owner(punit), punit);
