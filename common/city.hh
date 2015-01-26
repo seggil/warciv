@@ -196,11 +196,11 @@ struct ai_city {
 
 struct city_common {
   int id;
-  int owner;
+  unsigned int owner;
   tile_t *tile;
   char name[MAX_LEN_NAME];
 
-  int pop_size;  /* the people */
+  unsigned int pop_size;  /* the people */
 
   /* How the citizens feel:
      people_*[0] is distribution before any of the modifiers below.
