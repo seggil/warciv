@@ -73,7 +73,7 @@ struct player_research {
    *  - A_FUTURE.
    * In addition A_NOINFO is allowed at the client for enemies.
    */
-  int researching;
+  unsigned int researching;
   int researching_cost;
   int changed_from;       /* if the player changed techs, which one
                              changed from */
@@ -134,7 +134,7 @@ struct player_ai {
    *  - any existing tech but not A_NONE or
    *  - A_UNSET.
    */
-  int tech_goal;
+  unsigned int tech_goal;
   int prev_gold;
   int maxbuycost;
   int est_upkeep;               /* estimated upkeep of buildings in cities */
@@ -187,7 +187,7 @@ struct attribute_block_s {
 };
 
 struct player_s {
-  int player_no;
+  unsigned int player_no;
   char name[MAX_LEN_NAME];
   char username[MAX_LEN_NAME];
   bool is_male;
@@ -364,7 +364,7 @@ bool gives_shared_vision(player_t *me, player_t *them);
 #define players_iterate(PI_player)                                            \
 {                                                                             \
   player_t *PI_player;                                                        \
-  int PI_p_itr;                                                               \
+  unsigned int PI_p_itr;                                                      \
   for (PI_p_itr = 0; PI_p_itr < game.info.nplayers; PI_p_itr++) {             \
     PI_player = get_player(PI_p_itr);
 
