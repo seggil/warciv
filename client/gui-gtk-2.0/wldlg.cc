@@ -130,7 +130,7 @@ static void update_tree_model(GObject *object)
   GtkListStore *store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(
       g_object_get_data(object, "tree_view"))));
   GtkTreeIter it;
-  int i;
+  unsigned int i;
 
 
   gtk_list_store_clear(store);
@@ -171,7 +171,7 @@ void reload_global_worklists(GtkWidget *widget, struct section_file *sf)
 {
   struct worklist *pwl, *temp_worklists =
       (struct worklist *) g_object_get_data(G_OBJECT(widget), "worklists");
-  int i;
+  unsigned int i;
 
   for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
     pwl = &temp_worklists[i];
@@ -188,7 +188,7 @@ void reset_global_worklists(GtkWidget *widget)
 {
   struct worklist *temp_worklists =
       (struct worklist *) g_object_get_data(G_OBJECT(widget), "worklists");
-  int i;
+  unsigned int i;
 
   for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
     init_worklist(&temp_worklists[i]);
@@ -203,7 +203,7 @@ static void worklist_new_callback(GtkButton *button, gpointer data)
 {
   struct worklist *pwl = NULL, *temp_worklists =
       (struct worklist *) g_object_get_data(G_OBJECT(data), "worklists");
-  int i;
+  unsigned int i;
 
   /* Find an emtpy worklist */
   for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
@@ -295,7 +295,7 @@ static void worklist_edit_callback(GtkButton *button, gpointer data)
 static void destroy_callback(GtkWidget *widget, gpointer data)
 {
   struct worklist *temp_worklists = (struct worklist *) data;
-  int i;
+  unsigned int i;
 
   for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
     popdown_worklist(&temp_worklists[i]);
@@ -609,7 +609,7 @@ static void menu_item_callback(GtkMenuItem *item, struct worklist_data *ptr)
 static void popup_add_menu(GtkMenuShell *menu, gpointer data)
 {
   struct worklist *pwl;
-  int i;
+  unsigned int i;
   GtkWidget *item;
 
   gtk_container_foreach(GTK_CONTAINER(menu),
@@ -1108,7 +1108,7 @@ static void cell_render_func(GtkTreeViewColumn *col, GtkCellRenderer *rend,
     gint column;
     char *row[4];
     char  buf[4][64];
-    int   i;
+    unsigned int   i;
     gboolean useless;
 
     pcity = (city_t **) data;
@@ -1142,7 +1142,7 @@ static void populate_view(GtkTreeView *view, city_t **ppcity,
   { N_("Type"), N_("Name"), N_("Info"), N_("Cost"), N_("Turns") };
 
   static bool titles_done;
-  gint i;
+  unsigned int i;
   GtkCellRenderer *rend;
   GtkTreeViewColumn *col;
 
@@ -1471,7 +1471,7 @@ void refresh_worklist(GtkWidget *editor)
   struct item items[U_LAST + B_LAST];
 
   bool selected, sens;
-  gint id;
+  city_cid id;
   GtkTreeIter it;
 
   GtkTreePath *path;
