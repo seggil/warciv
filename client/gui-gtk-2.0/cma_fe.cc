@@ -473,7 +473,7 @@ static void update_cma_preset_list(struct cma_dialog *pdialog)
 {
   char buf[BUFFER_SIZE];
   GtkTreeIter it;
-  int i;
+  unsigned int i;
 
   /* Fill preset list */
   gtk_list_store_clear(pdialog->store);
