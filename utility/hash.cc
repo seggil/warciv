@@ -184,8 +184,8 @@ static void zero_htable(struct hash_table *h)
 #endif
 
 #if !defined (get16bits)
-#define get16bits(d) ((((const uint8_t *)(d))[1] << UINT32_C(8))\
-                      +((const uint8_t *)(d))[0])
+#define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
+                       +(uint32_t)(((const uint8_t *)(d))[0]) )
 #endif
 static uint32_t SuperFastHash (const char *data, int len)
 {
@@ -213,7 +213,7 @@ static uint32_t SuperFastHash (const char *data, int len)
   case 3:
     hash += get16bits (data);
     hash ^= hash << 16;
-    hash ^= data[sizeof (uint16_t)] << 18;
+    hash ^= ((signed char)data[sizeof (uint16_t)]) << 18;
     hash += hash >> 11;
     break;
   case 2:
@@ -222,7 +222,7 @@ static uint32_t SuperFastHash (const char *data, int len)
     hash += hash >> 17;
     break;
   case 1:
-    hash += *data;
+    hash += (signed char)*data;
     hash ^= hash << 10;
     hash += hash >> 1;
   }
@@ -369,7 +369,11 @@ int hash_fcmp_string_ci (const void *vkey1, const void *vkey2)
 **************************************************************************/
 unsigned int hash_fval_keyval(const void *vkey, unsigned int num_buckets)
 {
+#ifdef _WIN64
+  unsigned long result = ((unsigned long long)vkey);
+#else
   unsigned long result = ((unsigned long)vkey);
+#endif
   return (result % num_buckets);
 }
 
