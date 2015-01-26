@@ -79,14 +79,16 @@ int map_colatitude(const tile_t *ptile)
      *
      * And now this is what we have - just one-quarter of the map.
      */
-    x = ((ntl_x > (NATURAL_WIDTH / 2 - 1)
-         ? NATURAL_WIDTH - 1.0 - (double)ntl_x
-         : (double)ntl_x)
-         / (NATURAL_WIDTH / 2 - 1));
-    y = ((ntl_y > (NATURAL_HEIGHT / 2 - 1)
-          ? NATURAL_HEIGHT - 1.0 - (double)ntl_y
-          : (double)ntl_y)
-         / (NATURAL_HEIGHT / 2 - 1));
+    if ( (unsigned)ntl_x > (NATURAL_WIDTH / 2 - 1) ) {
+       x = NATURAL_WIDTH - 1.0 - (double)ntl_x;
+    } else {
+       x = ntl_x / (NATURAL_WIDTH / 2.0 - 1.0);
+    }
+    if ( (unsigned)ntl_y > (NATURAL_HEIGHT / 2 - 1) ) {
+       y = NATURAL_HEIGHT - 1.0 - (double)ntl_y;
+    } else {
+       y = ntl_y / (NATURAL_HEIGHT / 2.0 - 1.0);
+    }
   } do_in_natural_pos_end;
 
   if (topo_has_flag(TF_WRAPX) && !topo_has_flag(TF_WRAPY)) {
