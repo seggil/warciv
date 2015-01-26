@@ -145,10 +145,10 @@ void *sbuf_malloc(struct sbuffer *sb, size_t size)
   sbuf_align(sb);
 
   /* check for space: */
-  if (size > (sb->size - sb->offset)) {
+  if ((int)size > (sb->size - sb->offset)) {
     sbuf_expand(sb);
     sbuf_align(sb);
-    assert(size <= (sb->size - sb->offset));
+    assert((int)size <= (sb->size - sb->offset));
   }
 
   ret = ADD_TO_POINTER(sb->buffer, sb->offset);
@@ -168,9 +168,9 @@ char *sbuf_strdup(struct sbuffer *sb, const char *str)
   assert(size <= (sb->size-sizeof(char*)));
 
   /* check for space: */
-  if (size > (sb->size - sb->offset)) {
+  if ((int)size > (sb->size - sb->offset)) {
     sbuf_expand(sb);
-    assert(size <= (sb->size - sb->offset));
+    assert((int)size <= (sb->size - sb->offset));
   }
   ret = (char*)ADD_TO_POINTER(sb->buffer, sb->offset);
   memcpy(ret, str, size);       /* includes null-terminator */
