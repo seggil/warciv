@@ -560,7 +560,7 @@ void map_free(void)
 ***************************************************************/
 enum tile_special_type get_special_by_name(const char * name)
 {
-  int i;
+  unsigned int i;
   int st = 1;
 
   for (i = 0; i < ARRAY_SIZE(tile_special_type_names); i++) {
@@ -578,7 +578,7 @@ enum tile_special_type get_special_by_name(const char * name)
 ***************************************************************/
 const char *get_special_name(enum tile_special_type type)
 {
-  int i;
+  unsigned int i;
   int shift = static_cast<int>(type);
 
   for (i = 0; i < ARRAY_SIZE(tile_special_type_names); i++) {
