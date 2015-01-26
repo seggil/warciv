@@ -49,14 +49,14 @@ typedef struct team_mapping_s {
 }team_mapping_t;
 
 team_mapping_t mapping[MAX_NUM_TEAMS+1];
-int mappings;
+unsigned int mappings;
 bool brute_force_found_solution = FALSE;
 int best_team_pos[MAX_NUM_PLAYERS];
 int team_pos[MAX_NUM_PLAYERS];
 
 int best_start_pos[MAX_NUM_PLAYERS];
 int best_score = 0;
-int repeat = 0;
+unsigned int repeat = 0;
 
 
 static time_t time_of_pause = 0;
@@ -85,7 +85,7 @@ static void init_game_id(void)
 {
   static const char chars[] =
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  int i;
+  unsigned int i;
 
   for (i = 0; i < sizeof(game.server.id) - 1; i++) {
     game.server.id[i] = chars[myrand(sizeof(chars) - 1)];
@@ -214,7 +214,7 @@ int calculate_team_distance(tile_t *ptile1, tile_t *ptile2)
 int calculate_score(int *start_pos)
 {
   int score = 0;
-  int x, y;
+  unsigned int x, y;
 
   for (x = 0; x < game.info.nplayers; x++ ) {
     for (y = x + 1; y < game.info.nplayers; y++ ) {
@@ -246,7 +246,7 @@ void swap_int(int *a, int *b)
 void shuffle_start_positions_by_iter(int *start_pos)
 {
   int tabtabu[game.info.nplayers][game.info.nplayers];
-  int i,x,y, found = 1;
+  unsigned int i, x, y, found = 1;
   int tmp;
   int score, best_local_score = 0, best_local_x = 0, best_local_y = 0;
 
@@ -339,10 +339,10 @@ int calculate_delta_score(int *start_pos, int depth)
 ****************************************************************************/
 void find_pos_by_brute_force(int *positions, int a)
 {
-  static int depth = 0;
+  static unsigned int depth = 0;
   static int score = 0;
   int tmpscore;
-  int i, p;
+  unsigned int i, p;
 
   assert(positions != NULL && a >= 0 && a < MAX_NUM_TEAMS + 1);
   /* Add team to pos [depth]. */
@@ -397,7 +397,7 @@ void clean_start_pos(int *positions)
 ****************************************************************************/
 void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
 {
-  int i;
+  unsigned int i;
 #ifndef NDEBUG
   bool error = FALSE;
 #endif
@@ -460,7 +460,7 @@ void calculate_team_mapping(void)
 ****************************************************************************/
 int get_team_mapping(Team_Type_id team)
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < mappings; i++) {
     if (mapping[i].team_id == team) {
@@ -476,7 +476,7 @@ int get_team_mapping(Team_Type_id team)
 ****************************************************************************/
 void shuffle_start_positions(int *start_pos)
 {
-  int i;
+  unsigned int i;
   player_t *pplayer;
   assert(start_pos != NULL);
 
@@ -493,7 +493,7 @@ void shuffle_start_positions(int *start_pos)
   best_score = calculate_score(best_team_pos);
   freelog(LOG_VERBOSE, "Current best score is %d.", best_score);
 
-  if (game.info.nplayers <= game.server.bruteforcethreshold) {
+  if ((int)game.info.nplayers <= game.server.bruteforcethreshold) {
     /* Brute force for small number of players. */
     notify_conn(NULL, _("Using brute force team placement algorithm?"));
     freelog(LOG_VERBOSE, "Using brute force algorithm?");
@@ -528,7 +528,7 @@ void init_new_game(void)
   const int NO_START_POS = -1;
   int start_pos[game.info.nplayers];
   bool pos_used[map.server.num_start_positions];
-  int i, num_used = 0;
+  unsigned int i, num_used = 0;
 
   init_game_id();
 
@@ -604,7 +604,7 @@ void init_new_game(void)
 
   /* Place all other units. */
   players_iterate(pplayer) {
-    int i, x, y;
+    unsigned int i, x, y;
     tile_t *ptile;
     struct civ_map::civ_map_server::start_position p =
         map.server.start_positions[start_pos[pplayer->player_no]];
@@ -645,7 +645,7 @@ void send_start_turn_to_clients(void)
 void send_year_to_clients(int year)
 {
   struct packet_new_year apacket;
-  int i;
+  unsigned int i;
 
   for(i=0; i<game.info.nplayers; i++) {
     player_t *pplayer = &game.players[i];
