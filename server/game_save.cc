@@ -76,7 +76,7 @@
                       GET_XY_CHAR, SECFILE_INSERT_LINE)                     \
 {                                                                           \
   char line[map.info.xsize + 1];                                            \
-  int _nat_x, _nat_y;                                                       \
+  unsigned int _nat_x, _nat_y;                                              \
                                                                             \
   for (_nat_y = 0; _nat_y < map.info.ysize; _nat_y++) {                     \
     for (_nat_x = 0; _nat_x < map.info.xsize; _nat_x++) {                   \
@@ -207,7 +207,7 @@ static char *quote_block(const void *const data, int length)
 ***************************************************************/
 static void map_save(struct section_file *file)
 {
-  int i;
+  unsigned int i;
 
   /* map.xsize and map.ysize (saved as map.width and map.height)
    * are now always saved in game_save()
@@ -1265,7 +1265,7 @@ static void calc_unit_ordering(void)
 ***************************************************************/
 void game_save(struct section_file *file)
 {
-  int i;
+  unsigned int i;
   int version;
   char options[512];
   char temp[B_LAST+1];
