@@ -73,7 +73,7 @@ static struct hash_table *net_lookup_service_table = NULL;
 static int adns_request_id = 0;
 static struct hash_table *adns_request_table = NULL;
 
-#define NET_LOOKUP_CTX_MEMORY_GUARD 0xfeedface
+static const int NET_LOOKUP_CTX_MEMORY_GUARD = 0xfeedface;
 
 /* used by net_lookup_service_async */
 struct net_lookup_ctx {
@@ -86,7 +86,7 @@ struct net_lookup_ctx {
   int req_id;
 };
 
-#define ADNS_CTX_MEMORY_GUARD 0xba11cafe
+static const int ADNS_CTX_MEMORY_GUARD = 0xba11cafe;
 
 /* used by adns functions */
 struct adns_ctx {
@@ -565,7 +565,7 @@ int net_lookup_service_async(const char *name, int port,
 int my_readsocket(int sock, void *buf, size_t size)
 {
 #ifdef WIN32_NATIVE
-  return recv(sock, buf, size, 0);
+  return recv(sock, (char*)buf, size, 0);
 #else
   return read(sock, buf, size);
 #endif
@@ -577,7 +577,7 @@ int my_readsocket(int sock, void *buf, size_t size)
 int my_writesocket(int sock, const void *buf, size_t size)
 {
 #ifdef WIN32_NATIVE
-  return send(sock, buf, size, 0);
+  return send(sock, (const char*)buf, size, 0);
 #else
   return send(sock, buf, size, MSG_NOSIGNAL);
 #endif
@@ -698,7 +698,7 @@ int my_set_nonblock(int sockfd)
     return -1;
   }
 #elif defined (WIN32_NATIVE)
-  long one = 1;
+  long unsigned one = 1;
   if (SOCKET_ERROR == ioctlsocket(sockfd, FIONBIO, &one)) {
     freelog(LOG_ERROR, _("ioctlsocket failed: %s"),
             mystrsocketerror(mysocketerrno()));
@@ -786,7 +786,7 @@ fz_FILE *my_querysocket(int sock, void *buf, size_t size)
 #else
   {
     char tmp[4096];
-    int n;
+    unsigned int n;
 
     fp = my_tmpfile();
 
