@@ -1196,7 +1196,7 @@ static void create_and_append_settings_page(struct city_dialog *pdialog)
              &new_citizens_label_done);
 
   group = NULL;
-  for (i = 0; i < ARRAY_SIZE(new_citizens_label); i++) {
+  for (i = 0; i < (int)ARRAY_SIZE(new_citizens_label); i++) {
     button = gtk_radio_button_new_with_mnemonic(group, new_citizens_label[i]);
     pdialog->misc.new_citizens_radio[i] = button;
     gtk_container_add(GTK_CONTAINER(vbox2), button);
@@ -1215,7 +1215,7 @@ static void create_and_append_settings_page(struct city_dialog *pdialog)
   vbox2 = gtk_vbox_new(TRUE, 0);
   gtk_container_add(GTK_CONTAINER(frame), vbox2);
 
-  for (i = 0; i < ARRAY_SIZE(city_opts_label) - 1; i++) {
+  for (i = 0; i < (int)ARRAY_SIZE(city_opts_label) - 1; i++) {
     button = gtk_check_button_new_with_mnemonic(city_opts_label[i]);
     pdialog->misc.city_opts[i] = button;
     gtk_container_add(GTK_CONTAINER(vbox2), button);
@@ -1237,7 +1237,7 @@ static void create_and_append_settings_page(struct city_dialog *pdialog)
              &misc_whichtab_label_done);
 
   group = NULL;
-  for (i = 0; i < ARRAY_SIZE(misc_whichtab_label); i++) {
+  for (i = 0; i < (int)ARRAY_SIZE(misc_whichtab_label); i++) {
     button = gtk_radio_button_new_with_mnemonic(group, misc_whichtab_label[i]);
     pdialog->misc.whichtab_radio[i] = button;
     gtk_container_add(GTK_CONTAINER(vbox2), button);
@@ -1485,7 +1485,8 @@ static void city_dialog_update_title(struct city_dialog *pdialog)
 *****************************************************************/
 static void city_dialog_update_citizens(struct city_dialog *pdialog)
 {
-  int i, width;
+  unsigned int i;
+  int width;
   city_t *pcity = pdialog->pcity;
   struct citizen_type citizens[MAX_CITY_SIZE];
 
@@ -2083,7 +2084,7 @@ static city_t *get_reachable_city(city_t *pcity, int dir)
       i = game.info.nplayers - 1;
     }
   } else {
-    int i = pcity->common.owner;
+    unsigned int i = pcity->common.owner;
     while (TRUE) {
       for (; i < game.info.nplayers; i++) {
         city_list_iterate(get_player(i)->cities, acity) {
