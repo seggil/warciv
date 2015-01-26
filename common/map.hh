@@ -43,9 +43,10 @@ enum tile_hilite {
                        ((ptile) ? (ptile)->y : -1)
 
 struct tile_s {
-  const int x, y;               /* Cartesian (map) coordinates of the tile. */
-  const int nat_x, nat_y;       /* Native coordinates of the tile. */
-  const int index;              /* Index coordinate of the tile. */
+  const int x, y;                   /* Cartesian (map) coordinates of the tile. */
+  const unsigned int nat_x;
+  const unsigned int nat_y;         /* Native coordinates of the tile. */
+  const int index;                  /* Index coordinate of the tile. */
   Terrain_type_id terrain;
   enum tile_special_type special;
   city_t *city;
@@ -186,7 +187,7 @@ struct civ_map {
     int temperature;
     int wetness;
     int steepness;
-    int num_start_positions;
+    unsigned int num_start_positions;
     bool have_specials;
     bool have_huts;
     bool have_rivers_overlay;   /* only applies if !have_specials */
@@ -617,9 +618,9 @@ extern struct terrain_misc terrain_control;
 /* Iterate over all positions on the globe. */
 #define whole_map_iterate(ptile)                                            \
 {                                                                           \
-  int _index; /* We use index positions for cache efficiency. */            \
+  unsigned int _index; /* We use index positions for cache efficiency. */  \
   for (_index = 0; _index < MAX_MAP_INDEX; _index++) {                      \
-    tile_t *ptile = map.board + _index;                                \
+    tile_t *ptile = map.board + _index;                                     \
 
 #define whole_map_iterate_end                                               \
   }                                                                         \
@@ -743,8 +744,13 @@ static inline bool is_border_tile(const tile_t *ptile, int dist)
   /* HACK: An iso-map compresses the value in the X direction but not in
    * the Y direction.  Hence (x+1,y) is 1 tile away while (x,y+2) is also
    * one tile away. */
-  int xdist = dist;
-  int ydist = (MAP_IS_ISOMETRIC ? (2 * dist) : dist);
+  unsigned int xdist = dist;
+  unsigned int ydist;
+
+  if (MAP_IS_ISOMETRIC)
+    ydist = 2 * dist;
+  else 
+    ydist = dist;
 
   return (ptile->nat_x < xdist
           || ptile->nat_y < ydist
