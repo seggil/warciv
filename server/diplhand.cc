@@ -116,7 +116,7 @@ void handle_diplomacy_accept_treaty_req(player_t *pplayer,
 
   if (!pplayer
       || !is_valid_player_id(counterpart)
-      || pplayer->player_no == counterpart) {
+      || (int)pplayer->player_no == counterpart) {
     return;
   }
 
@@ -557,7 +557,7 @@ void handle_diplomacy_remove_clause_req(player_t *pplayer,
 
   if (!pplayer
       || !is_valid_player_id(counterpart)
-      || pplayer->player_no == counterpart
+      || (int)pplayer->player_no == counterpart
       || !is_valid_player_id(giver)) {
     return;
   }
@@ -599,7 +599,7 @@ void handle_diplomacy_create_clause_req(player_t *pplayer,
 
   if (!pplayer
       || !is_valid_player_id(counterpart)
-      || pplayer->player_no == counterpart
+      || (int)pplayer->player_no == counterpart
       || !is_valid_player_id(giver)) {
     return;
   }
@@ -677,7 +677,7 @@ void handle_diplomacy_cancel_meeting_req(player_t *pplayer,
 {
   if (!pplayer
       || !is_valid_player_id(counterpart)
-      || pplayer->player_no == counterpart) {
+      || (int)pplayer->player_no == counterpart) {
     return;
   }
 
@@ -694,7 +694,7 @@ void handle_diplomacy_init_meeting_req(player_t *pplayer,
 
   if (!pplayer
       || !is_valid_player_id(counterpart)
-      || pplayer->player_no == counterpart) {
+      || (int)pplayer->player_no == counterpart) {
     return;
   }
 
