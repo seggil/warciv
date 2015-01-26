@@ -440,7 +440,7 @@ static void create_advances_list(player_t *pplayer,
                                  player_t *pvictim)
 {
   GtkWidget *sw, *label, *vbox, *view;
-  int i;
+  unsigned int i;
   GtkListStore *store;
   GtkCellRenderer *rend;
   GtkTreeViewColumn *col;
@@ -1512,7 +1512,7 @@ void popup_unit_select_dialog(tile_t *ptile)
       G_TYPE_STRING,
       G_TYPE_STRING
     };
-    int i;
+    unsigned int i;
 
 
     shell = gtk_dialog_new_with_buttons(_("Unit selection"),
