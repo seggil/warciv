@@ -377,7 +377,7 @@ void *get_packet_from_connection(connection_t *pconn,
   }
 #endif
 
-  if ((unsigned)whole_packet_len > pconn->buffer->ndata) {
+  if (whole_packet_len > pconn->buffer->ndata) {
     return NULL;                /* not all data has been read */
   }
 
@@ -412,7 +412,7 @@ void *get_packet_from_connection(connection_t *pconn,
      */
     memmove(buffer->data, buffer->data + whole_packet_len, buffer->ndata);
 
-    if (buffer->ndata + decompressed_size > buffer->nsize) {
+    if (buffer->ndata + decompressed_size > (unsigned int)buffer->nsize) {
       buffer->nsize += decompressed_size;
       buffer->data = (unsigned char*)wc_realloc(buffer->data, buffer->nsize);
     }
