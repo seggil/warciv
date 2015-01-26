@@ -608,12 +608,12 @@ static void load_ruleset_techs(struct section_file *file)
 {
   char **sec;
   struct advance *a;
-  int num_techs; /* number of techs in the ruleset (means without A_NONE)*/
-  int i;
+  unsigned int num_techs; /* number of techs in the ruleset (means without A_NONE)*/
+  unsigned int i;
   const char *filename = secfile_filename(file);
 
   check_ruleset_capabilities(file, RULESET_CAPSTR_TECHS, filename);
-  sec = secfile_get_secnames_prefix(file, "advance_", &num_techs);
+  sec = secfile_get_secnames_prefix(file, "advance_", (int*)&num_techs);
 
   /* Initialize dummy tech A_NONE */
   advances[A_NONE].req[0] = A_NONE;
@@ -623,9 +623,9 @@ static void load_ruleset_techs(struct section_file *file)
 
   a = &advances[A_FIRST];
 
-  for( i=0; i<num_techs; i++ ) {
+  for( i = 0; i < num_techs; i++ ) {
     char *sval, **slist;
-    int j,ival,nval;
+    int j, ival, nval;
 
     a->req[0] = lookup_tech(file, sec[i], "req1", FALSE, filename, a->name);
     a->req[1] = lookup_tech(file, sec[i], "req2", FALSE, filename, a->name);
@@ -684,7 +684,7 @@ restart:
   for (i = A_FIRST; i < A_FIRST + num_techs; i++) {
     a = &advances[i];
     if (a->root_req != A_LAST && tech_exists(i)) {
-      int j;
+      unsigned int j;
       bool out_of_order = FALSE;
 
       /* Now find any tech depending on this technology and update it's
