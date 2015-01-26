@@ -255,12 +255,13 @@ int get_tokens_full(const char *str,
                     const char *delimiterset,
                     bool fill_last)
 {
-  int token = 0;
+  unsigned int token = 0;
 
   assert(str != NULL);
 
-  for(;;) {
-    size_t len, padlength = 0;
+  for (;;) {
+    size_t len;
+    size_t padlength = 0;
 
     /* skip leading delimiters */
     str += strspn(str, delimiterset);
@@ -368,7 +369,7 @@ const char *big_int_to_text(unsigned int mantissa, unsigned int exponent)
     *(--ptr) = '0' + dig;
 
     cnt++;
-    if (mantissa != 0 && cnt == *grp) {
+    if (mantissa != 0 && cnt == (unsigned int)*grp) {
       /* Reached count of digits in group: insert separator and reset count. */
       cnt = 0;
       if (*grp == CHAR_MAX) {
@@ -734,7 +735,7 @@ char *user_home_dir(void)
       freelog(LOG_VERBOSE, "HOME is %s", home_dir);
     } else {
 #ifdef WIN32_NATIVE
-      home_dir = wc_malloc(PATH_MAX);
+      home_dir = (char*)wc_malloc(PATH_MAX);
       if (!getcwd(home_dir, PATH_MAX)) {
         free(home_dir);
         home_dir = NULL;
@@ -1269,47 +1270,48 @@ void init_nls(void)
 #ifdef WIN32_NATIVE
   /* set LANG by hand if it is not set */
   if (!getenv("LANG")) {
-    char *langname = NULL;
+    char langname[3];
+    langname[0] = '\0';
 
     switch (PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()))) {
     case LANG_SPANISH:
-      langname = "es";
+      strcpy(langname,"es");
       break;
     case LANG_GERMAN:
-      langname = "de";
+      strcpy(langname,"de");
       break;
     case LANG_ENGLISH:
-      langname = "en";
+      strcpy(langname,"en");
       break;
     case LANG_FRENCH:
-      langname = "fr";
+      strcpy(langname,"fr");
       break;
     case LANG_DUTCH:
-      langname = "nl";
+      strcpy(langname,"nl");
       break;
     case LANG_POLISH:
-      langname = "pl";
+      strcpy(langname,"pl");
       break;
     case LANG_HUNGARIAN:
-      langname = "hu";
+      strcpy(langname,"hu");
       break;
     case LANG_NORWEGIAN:
-      langname = "no";
+      strcpy(langname,"no");
       break;
     case LANG_JAPANESE:
-      langname = "ja";
+      strcpy(langname,"ja");
       break;
     case LANG_PORTUGUESE:
-      langname = "pt";
+      strcpy(langname,"pt");
       break;
     case LANG_ROMANIAN:
-      langname = "ro";
+      strcpy(langname,"ro");
       break;
     case LANG_RUSSIAN:
-      langname = "ru";
+      strcpy(langname,"ru");
       break;
     }
-    if (langname) {
+    if (strlen(langname) == 0) {
       static char envstr[40];
 
       my_snprintf(envstr, sizeof(envstr), "LANG=%s", langname);
@@ -1435,8 +1437,8 @@ enum m_pre_result match_prefix_full(m_pre_accessor_fn_t accessor_fn,
                                     int max_matches,
                                     int *pnum_matches)
 {
-  int i;
-  int len;
+  unsigned int i;
+  unsigned int len;
   int nmatches;
 
   len = strlen(prefix);
@@ -1448,7 +1450,7 @@ enum m_pre_result match_prefix_full(m_pre_accessor_fn_t accessor_fn,
   }
 
   nmatches = 0;
-  for(i=0; i<n_names; i++) {
+  for(i = 0; i < n_names; i++) {
     const char *name = accessor_fn(i);
     if (cmp_fn(name, prefix, len)==0) {
       if (strlen(name) == len) {
@@ -1757,7 +1759,7 @@ void string_vector_reserve(struct string_vector *psv, size_t reserve)
 void string_vector_store(struct string_vector *psv,
                          const char *const *vec, size_t size)
 {
-  if (size == -1) {
+  if (size == (size_t)-1) {
     string_vector_remove_all(psv);
     for (; *vec; vec++) {
       string_vector_append(psv, *vec);
