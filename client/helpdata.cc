@@ -928,8 +928,8 @@ void helptext_unit(char *buf, int i, const char *user_text)
   }
   if (utype->fuel > 0) {
     char allowed_units[10][64];
-    int num_allowed_units = 0;
-    int j, n;
+    unsigned int num_allowed_units = 0;
+    unsigned int j, n;
     struct astring astr;
 
     astr_init(&astr);
