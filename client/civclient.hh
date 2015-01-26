@@ -65,6 +65,6 @@ void client_game_free(void);
 void ui_exit(void);
 
 player_t *get_player_ptr(void);
-int get_player_idx(void);
+unsigned int get_player_idx(void);
 
 #endif  /* WC_CLIENT_CIVCLIENT_H */
