@@ -196,7 +196,8 @@ static bool filter_starters(const tile_t *ptile, const void *data)
 bool create_start_positions(enum start_mode mode)
 {
   tile_t *ptile;
-  int k, sum;
+  int k;
+  unsigned int sum;
   struct start_filter_data data;
   int tile_value_aux[MAX_MAP_INDEX], tile_value[MAX_MAP_INDEX];
   int min_goodies_per_player = 2000;
@@ -272,16 +273,16 @@ bool create_start_positions(enum start_mode mode)
 
   /* If we can't place starters according to the first choice, change the
    * choice. */
-  if (mode == MT_SINGLE && map.num_continents < game.info.nplayers + 3) {
+  if (mode == MT_SINGLE && (unsigned)map.num_continents < game.info.nplayers + 3) {
     mode = MT_2or3;
   }
 
-  if (mode == MT_2or3 && map.num_continents < game.info.nplayers / 2 + 4) {
+  if (mode == MT_2or3 && (unsigned)map.num_continents < game.info.nplayers / 2 + 4) {
     mode = MT_VARIABLE;
   }
 
   if (mode == MT_ALL
-      && (islands[1].goodies < game.info.nplayers * min_goodies_per_player
+      && ((unsigned)islands[1].goodies < game.info.nplayers * min_goodies_per_player
           || islands[1].goodies < total_goodies * (0.5 + 0.8 * efactor)
           / (1 + efactor))) {
     mode = MT_VARIABLE;
@@ -364,7 +365,7 @@ bool create_start_positions(enum start_mode mode)
                                wc_realloc(map.server.start_positions,
                                           game.info.nplayers
                                           * sizeof(*map.server.start_positions));
-  while (data.count < game.info.nplayers) {
+  while ((unsigned int)data.count < game.info.nplayers) {
     if ((ptile = rand_map_pos_filtered(&data, is_valid_start_pos))) {
       islands[islands_index[(int) map_get_continent(ptile)]].starters--;
       map.server.start_positions[data.count].tile = ptile;
