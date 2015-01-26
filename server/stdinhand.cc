@@ -1361,7 +1361,7 @@ static bool create_ai_player(connection_t *caller, char *arg,
 
   /* game.info.max_players is a limit on the number of non-observer players.
    * MAX_NUM_PLAYERS is a limit on all players. */
-  if (game.info.nplayers >= game.info.max_players) {
+  if ((int)game.info.nplayers >= game.info.max_players) {
     cmd_reply(CMD_CREATE, caller, C_FAIL,
               _("Can't add more players, server is full."));
     return FALSE;
@@ -2119,7 +2119,8 @@ static bool autoteam_command(connection_t *caller, char *str,
   const int maxp = MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS;
   player_t *players[maxp];
   player_t *tmp;
-  int n, i, t, r, count = 0;
+  unsigned int n, i, t, r;
+  unsigned int count = 0;
   char **team_names = NULL;
 
   if (server_state != PRE_GAME_STATE || !game.server.is_new_game) {
@@ -4636,7 +4637,7 @@ static bool attach_command(connection_t *caller, char *name, bool check)
   }
 
   /* Check maxplayers */
-  if (game.info.nplayers >= game.info.max_players
+  if ((int)game.info.nplayers >= game.info.max_players
       || game.info.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS) {
     cmd_reply(CMD_ATTACH, caller, C_FAIL,
               _("Can't add more players, server is full."));
@@ -6212,8 +6213,10 @@ static bool set_rulesetdir(connection_t *caller, char *str, bool check)
 **************************************************************************/
 static void cut_comment(char *str)
 {
-  int i;
-  bool in_single_quotes = FALSE, in_double_quotes = FALSE;
+  unsigned int i;
+  bool in_single_quotes = FALSE;
+  bool in_double_quotes = FALSE;
+
   freelog(LOG_DEBUG, "cut_comment(str='%s')", str);
   for (i = 0; i < strlen(str); i++) {
     if (str[i] == '"' && !in_single_quotes) {
@@ -6777,7 +6780,7 @@ static bool check_settings_for_rated_game(void)
 
   struct settings_s *op;
   bool ok = TRUE, checked = FALSE;
-  int i;
+  unsigned int i;
   enum game_types type = game_determine_type();
 
   if (!server_arg.wcdb.enabled || !server_arg.auth.enabled) {
@@ -6920,7 +6923,8 @@ static bool check_settings_for_rated_game(void)
 **************************************************************************/
 static bool start_command(connection_t *caller, char *name, bool check)
 {
-  int started = 0, notstarted = 0;
+  unsigned int started = 0;
+  unsigned int notstarted = 0;
   static int failed_rated_start = 0;
   const int MAX_FAILED_RATED_STARTS = 3;
   enum game_types type = GAME_TYPE_NUM;
@@ -6931,7 +6935,7 @@ static bool start_command(connection_t *caller, char *name, bool check)
     /* Sanity check scenario */
     if (game.server.is_new_game && !check) {
       if (map.server.num_start_positions > 0
-          && game.info.max_players > map.server.num_start_positions) {
+          && game.info.max_players > (int)map.server.num_start_positions) {
         /* If we load a pre-generated map (i.e., a scenario) it is possible
          * to increase the number of players beyond the number supported by
          * the scenario.  The solution is a hack: cut the extra players
@@ -6941,10 +6945,10 @@ static bool start_command(connection_t *caller, char *name, bool check)
                 game.info.max_players, map.server.num_start_positions);
         game.info.max_players = map.server.num_start_positions;
       }
-      if (game.info.nplayers > game.info.max_players) {
+      if ((int)game.info.nplayers > game.info.max_players) {
         /* Because of the way player ids are renumbered during
            server_remove_player() this is correct */
-        while (game.info.nplayers > game.info.max_players) {
+        while ((int)game.info.nplayers > game.info.max_players) {
           /* This may erronously remove observer players sometimes.  This
            * is a bug but non-fatal. */
           server_remove_player(get_player(game.info.max_players));
@@ -6958,7 +6962,7 @@ static bool start_command(connection_t *caller, char *name, bool check)
       }
     }
     /* check min_players */
-    if (game.info.nplayers < game.info.min_players) {
+    if ((int)game.info.nplayers < game.info.min_players) {
       cmd_reply(CMD_START_GAME, caller, C_FAIL,
                 _("Not enough players, game will not start."));
       return FALSE;
@@ -7770,7 +7774,7 @@ static struct user_action_list *load_action_list(const char *filename)
   int version;
 
   file = fopen(filename, "r");
-  if ( !p ) {
+  if ( ! file ) {
     freelog(LOG_ERROR, "Could not open action list file %s: %s.",
             filename, mystrerror(myerrno()));
     return NULL;
@@ -8183,7 +8187,7 @@ static void show_idle(connection_t *caller)
   char timebuf[128];
   time_t idle, now = time(NULL);
   bool first = TRUE;
-  int i;
+  unsigned int i;
 
   if (size == 0 || (size == 1 && caller)) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, "Nobody is idle.");
@@ -8256,7 +8260,9 @@ static bool show_ignore(connection_t *caller)
 static void show_teams(connection_t *caller, bool send_to_all)
 {
   bool listed[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
-  int i, teamid = -1, count = 0, tc = 0;
+  unsigned int i;
+  int teamid = -1;
+  unsigned int count = 0, tc = 0;
   player_t *pplayer;
   char buf[1024], buf2[1024];
   memset(listed, 0, sizeof(bool) * (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS));
