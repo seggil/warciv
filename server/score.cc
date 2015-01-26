@@ -520,7 +520,7 @@ void save_ppm(void)
   char filename[600];
   char tmpname[600];
   FILE *fp;
-  int i, j;
+  unsigned int i, j;
 
   /* the colors for each player. these were selected to give
    * the most differentiation between all players. YMMV. */
