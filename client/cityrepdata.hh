@@ -54,7 +54,7 @@ extern struct city_report_spec city_report_specs[];
    (well, the details are exposed now too, but still keep
    this "clean" interface...)
 */
-int num_city_report_spec(void);
+unsigned int num_city_report_spec(void);
 bool *city_report_spec_show_ptr(int i);
 const char *city_report_spec_tagname(int i);
 
