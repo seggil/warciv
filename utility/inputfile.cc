@@ -94,7 +94,7 @@ struct inputfile {
                                    have not yet read in the current line */
   struct astring copy_line;     /* original cur_line (sometimes insert nulls
                                    in cur_line for processing) */
-  int cur_line_pos;             /* position in current line */
+  size_t cur_line_pos;          /* position in current line */
   int line_num;                 /* line number from file in cur_line */
   struct astring token;         /* data returned to user */
   struct astring partial;       /* used in accumulating multi-line strings;
@@ -549,12 +549,17 @@ void inf_log(struct inputfile *inf, int loglevel, const char *message)
   if (message) {
     freelog(loglevel, "%s", message);
   }
-  freelog(loglevel, "  file \"%s\", line %d, pos %d%s",
+  freelog(loglevel,
+#ifdef _WIN64
+          "file \"%s\", line %d, pos %Lu%s",
+#else
+          "file \"%s\", line %d, pos %lu%s",
+#endif
           inf_filename(inf), inf->line_num, inf->cur_line_pos,
           (inf->at_eof ? ", EOF" : ""));
   if (inf->cur_line.str && inf->cur_line.n > 0) {
     freelog(loglevel, "  looking at: '%s'",
-            inf->cur_line.str+inf->cur_line_pos);
+            inf->cur_line.str + inf->cur_line_pos);
   }
   if (inf->copy_line.str && inf->copy_line.n > 0) {
     freelog(loglevel, "  original line: '%s'", inf->copy_line.str);
