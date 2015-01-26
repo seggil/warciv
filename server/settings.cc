@@ -114,7 +114,7 @@ static bool startunits_callback(const char *value, const char **error_string)
 *************************************************************************/
 static bool maxplayers_callback(int value, const char **error_string)
 {
-  if (value < game.info.nplayers) {
+  if (value < (int)game.info.nplayers) {
     *error_string =_("Number of players is higher than requested value; "
                      "Keeping old value.");
     return FALSE;
