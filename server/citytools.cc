@@ -747,7 +747,7 @@ city_t *find_closest_owned_city(player_t *pplayer, tile_t *ptile,
 **************************************************************************/
 static void raze_city(city_t *pcity)
 {
-  int razechance = game.server.razechance;
+  unsigned int razechance = game.server.razechance;
 
   /* We don't use city_remove_improvement here as the global effects
      stuff has already been handled by transfer_city */
@@ -1209,7 +1209,7 @@ void handle_unit_enter_city(unit_t *punit, city_t *pcity)
 
   if (is_capital(pcity)
       && city_list_size(cplayer->cities) >= game.server.civilwarsize
-      && game.info.nplayers < game.ruleset_control.playable_nation_count
+      && (int)game.info.nplayers < game.ruleset_control.playable_nation_count
       && game.server.civilwarsize < GAME_MAX_CIVILWARSIZE
       && get_num_human_and_ai_players() < MAX_NUM_PLAYERS
       && civil_war_triggered(cplayer)) {
@@ -1238,7 +1238,7 @@ void handle_unit_enter_city(unit_t *punit, city_t *pcity)
   pplayer->economic.gold += coins;
   cplayer->economic.gold -= coins;
   send_player_info(cplayer, cplayer);
-  if (pcity->u.server.original != pplayer->player_no) {
+  if (pcity->u.server.original != (int)pplayer->player_no) {
     notify_player_ex(pplayer, pcity->common.tile, E_UNIT_WIN_ATT,
                      _("Game: You conquer %s, your lootings accumulate"
                        " to %d gold!"),
