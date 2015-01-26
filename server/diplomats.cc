@@ -435,7 +435,7 @@ void diplomat_bribe(player_t *pplayer, unit_t *pdiplomat,
   pplayer->economic.gold -= total_cost;
 
   /* Check if the Diplomat/Spy succeeds with his/her task. */
-  if (myrand(100) >= game.server.diplbribechance) {
+  if ((int)myrand(100) >= game.server.diplbribechance) {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_FAILED,
                      _("Game: Your %s was caught in the attempt"
                        " of bribing enemy unit(s) along with %d gold!"),
@@ -578,12 +578,13 @@ void diplomat_get_tech(player_t *pplayer, unit_t *pdiplomat,
   } else {
     /* Determine difficulty. */
     count = 1;
-    if (technology < game.ruleset_control.num_tech_types) count++;
+    if (technology < (int)game.ruleset_control.num_tech_types)
+      count++;
     count += pcity->u.server.steal;
     freelog (LOG_DEBUG, "steal-tech: difficulty: %d", count);
     /* Determine success or failure. */
     while (count > 0) {
-      if (myrand (100) >= game.server.diplchance) {
+      if ((int)myrand (100) >= game.server.diplchance) {
         break;
       }
       count--;
@@ -635,7 +636,7 @@ void diplomat_get_tech(player_t *pplayer, unit_t *pdiplomat,
       freelog (LOG_DEBUG, "steal-tech: nothing to steal");
       return;
     }
-  } else if (technology >= game.ruleset_control.num_tech_types) {
+  } else if (technology >= (int)game.ruleset_control.num_tech_types) {
     /* Pick first available tech to steal. */
     target = -1;
     tech_type_iterate(index) {
@@ -809,7 +810,7 @@ void diplomat_incite(player_t *pplayer, unit_t *pdiplomat,
   freelog(LOG_DEBUG, "incite: infiltrated");
 
   /* Check if the Diplomat/Spy succeeds with his/her task. */
-  if (myrand(100) >= game.server.diplincitechance) {
+  if ((int)myrand(100) >= game.server.diplincitechance) {
     notify_player_ex(pplayer, pcity->common.tile, E_MY_DIPLOMAT_FAILED,
                      _("Game: Your %s was caught in the attempt"
                        " of inciting a revolt along with %d gold!"),
@@ -901,8 +902,12 @@ void diplomat_sabotage(player_t *pplayer, unit_t *pdiplomat,
   int count, which, target;
   const char *prod;
   /* Twice as difficult if target is specified. */
-  int success_prob = (improvement >= B_LAST ? game.server.diplchance
-                      : game.server.diplchance / 2);
+  unsigned int success_prob;
+
+  if (improvement >= B_LAST )
+    success_prob = game.server.diplchance;
+  else
+    success_prob = game.server.diplchance / 2;
 
   /* Fetch target city's player.  Sanity checks. */
   if (!pcity)
@@ -1052,7 +1057,7 @@ void diplomat_sabotage(player_t *pplayer, unit_t *pdiplomat,
                      get_nation_name_plural(pplayer->nation));
     freelog (LOG_DEBUG, "sabotage: sabotaged production");
   } else {
-    int vulnerability;
+    unsigned int vulnerability;
 
     /* Sabotage a city improvement. */
 
@@ -1270,7 +1275,7 @@ static void diplomat_escape(player_t *pplayer, unit_t *pdiplomat,
                             const city_t *pcity)
 {
   tile_t *ptile;
-  int escapechance;
+  unsigned int escapechance;
   bool vet;
   city_t *spy_city;
 
@@ -1350,7 +1355,7 @@ static void maybe_cause_incident(enum diplomat_actions action, player_t *offende
   }
 
   if (!pplayers_at_war(offender, victim_player) &&
-      (myrand(GAME_MAX_REPUTATION) - offender->reputation >
+      ((int)myrand(GAME_MAX_REPUTATION) - offender->reputation >
        GAME_MAX_REPUTATION/2 - victim_player->reputation)) {
     enum diplstate_type ds = pplayer_get_diplstate(offender, victim_player)->type;
     int punishment = 0;
