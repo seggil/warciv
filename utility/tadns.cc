@@ -79,7 +79,7 @@
 
 struct dns;
 
-#define QUERY_MEMORY_GUARD 0xbedabb1e
+static const int QUERY_MEMORY_GUARD = 0xbedabb1e;
 
 /* User query. Holds mapping from application-level ID to DNS transaction id,
  * and user defined callback function.
@@ -173,12 +173,19 @@ static int getdnsip(struct dns *dns)
   long int err;
   DWORD tlen;
   HKEY hKey, hSub;
-  char subkey[512], value[128], *key =
-    "SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces";
+  char subkey[512];
+  unsigned char value[128];
+  char key[] = "SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces";
 
   err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &hKey);
   if ( err != ERROR_SUCCESS) {
-    freelog(LOG_ERROR, "Cannot open registry key %s: %d", key, err);
+    freelog(LOG_ERROR,
+#ifdef _WIN64
+            "Cannot open registry key %s: %ld",
+#else
+            "Cannot open registry key %s: %d",
+#endif
+            key, err);
   } else {
     for (i = 0, tlen =  sizeof(subkey);
          RegEnumKeyEx(hKey, i, subkey, &tlen, NULL, NULL, NULL, NULL) ==
@@ -192,7 +199,7 @@ static int getdnsip(struct dns *dns)
               || RegQueryValueEx(hSub, "DhcpNameServer", 0,
                                  &type, value, &len) == ERROR_SUCCESS))
         {
-          dns->sa.sin_addr.s_addr = inet_addr(value);
+          dns->sa.sin_addr.s_addr = inet_addr((const char*)value);
           ret = 0;
           RegCloseKey(hSub);
           break;
@@ -519,9 +526,13 @@ static void parse_udp(struct dns *dns)
     if (q->expire < 0) {
       q->expire = (time_t) INT_MAX;
     }
-    freelog(LOG_DEBUG, "pu got ttl=%u, set expire=%ld",
+    freelog(LOG_DEBUG,
+#ifdef _WIN64
+            "pu got ttl=%u, set expire=%Ld",
+#else
+            "pu got ttl=%u, set expire=%ld",
+#endif
             ttl, q->expire);
-
     if (q->qtype == DNS_MX_RECORD) {
       /* Skip 2 byte preference field */
       fetch((const unsigned char *) (dns->buf),
@@ -816,13 +827,18 @@ void dns_check_expired(struct dns *dns)
   struct query *query;
 
   now = time(NULL);
-  freelog(LOG_DEBUG, "dce dns_check_expired dns=%p now=%lu", dns, now);
+  freelog(LOG_DEBUG, "dce dns_check_expired dns=%p now=%lld", dns, (long long int)now);
 
   /* Cleanup expired active queries */
   hash_values_iterate(dns->active, value) {
     query = (struct query*)value;
     if (query->expire < now) {
-      freelog(LOG_DEBUG, "dce active query timeout tid=%x expire=%lu",
+      freelog(LOG_DEBUG,
+#ifdef _WIN64
+              "dce active query timeout tid=%x expire=%Lu",
+#else
+              "dce active query timeout tid=%x expire=%lu",
+#endif
               query->tid, query->expire);
       query->addrlen = 0;
       call_user(dns, query);
@@ -833,7 +849,12 @@ void dns_check_expired(struct dns *dns)
   /* Cleanup cached queries */
   hash_kv_iterate(dns->cache, char *, name, struct query *, query) {
     if (query->expire < now) {
-      freelog(LOG_DEBUG, "dce query expired in cache tid=%x expire=%lu "
+      freelog(LOG_DEBUG,
+#ifdef _WIN64
+              "dce query expired in cache tid=%x expire=%Lu "
+#else
+              "dce query expired in cache tid=%x expire=%lu "
+#endif
               "(name \"%s\")", query->tid, query->expire, name);
       destroy_query(dns, query);
     }
