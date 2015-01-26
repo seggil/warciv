@@ -348,7 +348,7 @@ static void gui_dialog_switch_page_handler(GtkNotebook *notebook,
                                            guint num,
                                            struct gui_dialog *dlg)
 {
-  gint n;
+  guint n;
 
   n = gtk_notebook_page_num(GTK_NOTEBOOK(dlg->v.tab.notebook), dlg->vbox);
 
