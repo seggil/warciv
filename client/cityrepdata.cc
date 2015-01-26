@@ -486,7 +486,7 @@ const int num_report_cols = ARRAY_SIZE(city_report_specs);
 /******************************************************************
 Some simple wrappers:
 ******************************************************************/
-int num_city_report_spec(void)
+unsigned int num_city_report_spec(void)
 {
   return NUM_CREPORT_COLS;
 }
