@@ -1418,7 +1418,7 @@ void handle_conn_pong(connection_t *pconn)
 static void send_ping_times_to_all(void)
 {
   struct packet_conn_ping_info packet;
-  int i;
+  unsigned int i;
 
   i = 0;
   connection_list_iterate(game.game_connections, pconn) {
@@ -1439,7 +1439,7 @@ static void send_ping_times_to_all(void)
     assert(i < ARRAY_SIZE(packet.conn_id));
     packet.conn_id[i] = pconn->id;
     packet.ping_time[i] = pconn->ping_time;
-    if (i < packet.old_connections) {
+    if ((int)i < packet.old_connections) {
       packet.old_conn_id[i] = pconn->id;
       packet.old_ping_time[i] = pconn->ping_time;
     }
@@ -1583,7 +1583,7 @@ static void send_lanserver_response(void)
   size = dio_output_used(&dout);
 
   /* Sending packet to client with the information gathered above. */
-  if (sendto(socksend, buffer, size, 0, &addr.sockaddr, sizeof(addr)) < 0) {
+  if (sendto(socksend, (char*)buffer, size, 0, &addr.sockaddr, sizeof(addr)) < 0) {
     freelog(LOG_ERROR, "sendto failed: %s",
             mystrsocketerror(mysocketerrno()));
     return;
