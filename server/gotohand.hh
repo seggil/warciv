@@ -51,7 +51,7 @@ struct move_cost_map {
   unsigned char *cost;
   unsigned char *seacost;
   unsigned char *vector;
-  int size;
+  unsigned int size;
 
   city_t *warcity; /* so we know what we're dealing with here */
   unit_t *warunit; /* so we know what we're dealing with here */
