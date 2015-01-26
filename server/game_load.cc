@@ -57,7 +57,7 @@
 #define LOAD_MAP_DATA(ch, nat_y, ptile,                             \
                       SECFILE_LOOKUP_LINE, SET_XY_CHAR)             \
 {                                                                   \
-  int _nat_x, _nat_y;                                               \
+  unsigned int _nat_x, _nat_y;                                      \
                                                                     \
   bool _warning_printed = FALSE;                                    \
   for (_nat_y = 0; _nat_y < map.info.ysize; _nat_y++) {             \
@@ -455,13 +455,13 @@ static const char* old_unit_type_name(int id)
   }
   /* Different rulesets had different unit names. */
   if (strcmp(game.server.rulesetdir, "civ1") == 0) {
-    if (id >= ARRAY_SIZE(old_civ1_unit_types)) {
+    if (id >= (int)ARRAY_SIZE(old_civ1_unit_types)) {
       freelog(LOG_ERROR, _("Wrong unit type id value (%d)"), id);
       exit(EXIT_FAILURE);
     }
     return old_civ1_unit_types[id];
   } else {
-    if (id >= ARRAY_SIZE(old_default_unit_types)) {
+    if (id >= (int)ARRAY_SIZE(old_default_unit_types)) {
       freelog(LOG_ERROR, _("Wrong unit type id value (%d)"), id);
       exit(EXIT_FAILURE);
     }
@@ -475,7 +475,7 @@ static const char* old_unit_type_name(int id)
 static const char* old_impr_type_name(int id)
 {
   /* before 1.15.0 improvement types used to be saved by id */
-  if (id < 0 || id >= ARRAY_SIZE(old_impr_types)) {
+  if (id < 0 || id >= (int)ARRAY_SIZE(old_impr_types)) {
     freelog(LOG_ERROR, _("Wrong improvement type id value (%d)"), id);
     exit(EXIT_FAILURE);
   }
@@ -950,7 +950,7 @@ static void map_startpos_load(struct section_file *file)
 
 
   if (map.server.num_start_positions
-      && map.server.num_start_positions < game.info.max_players) {
+      && (int)map.server.num_start_positions < game.info.max_players) {
     freelog(LOG_VERBOSE,
             _("Number of starts (%d) are lower than max_players (%d),"
               " lowering max_players."),
@@ -1060,13 +1060,13 @@ static const char* old_government_name(int id)
   }
   /* Different rulesets had different governments. */
   if (strcmp(game.server.rulesetdir, "civ2") == 0) {
-    if (id >= ARRAY_SIZE(old_civ2_governments)) {
+    if (id >= (int)ARRAY_SIZE(old_civ2_governments)) {
       freelog(LOG_ERROR, _("Wrong government type id value (%d)"), id);
       exit(EXIT_FAILURE);
     }
     return old_civ2_governments[id];
   } else {
-    if (id >= ARRAY_SIZE(old_default_governments)) {
+    if (id >= (int)ARRAY_SIZE(old_default_governments)) {
       freelog(LOG_ERROR, _("Wrong government type id value (%d)"), id);
       exit(EXIT_FAILURE);
     }
@@ -1092,7 +1092,7 @@ static const char* old_tech_name(int id)
     return "A_UNSET";
   }
 
-  if (id < 0 || id >= ARRAY_SIZE(old_default_techs)) {
+  if (id < 0 || id >= (int)ARRAY_SIZE(old_default_techs)) {
     freelog(LOG_ERROR, _("Wrong tech type id value (%d)"), id);
     exit(EXIT_FAILURE);
   }
@@ -1159,7 +1159,9 @@ static void player_load(player_t *plr, int plrno,
                         char** technology_order,
                         int technology_order_size)
 {
-  int i, j, k, x, y, ncities, c_s;
+  unsigned int i;
+  int j, k, x, y, c_s;
+  unsigned int ncities;
   const char *p;
   const char *name;
   char *savefile_options = secfile_lookup_str(file, "savefile.options");
@@ -1204,7 +1206,7 @@ static void player_load(player_t *plr, int plrno,
         "filipino", "estonian", "latvian", "boer", "silesian", "singaporean",
         "chilean", "catalan", "croatian", "slovenian", "serbian", "barbarian",
       };
-      int index = secfile_lookup_int(file, "player%d.race", plrno);
+      unsigned int index = secfile_lookup_int(file, "player%d.race", plrno);
 
       if (index >= 0 && index < ARRAY_SIZE(name_order)) {
         p = name_order[index];
@@ -1419,7 +1421,7 @@ static void player_load(player_t *plr, int plrno,
 
   plr->reputation=secfile_lookup_int_default(file, GAME_DEFAULT_REPUTATION,
                                              "player%d.reputation", plrno);
-  for (i=0; i < game.info.nplayers; i++) {
+  for (i = 0; i < game.info.nplayers; i++) {
     plr->diplstates[i].type = (diplstate_type)
       secfile_lookup_int_default(file, DIPLSTATE_WAR,
                                  "player%d.diplstate%d.type", plrno, i);
@@ -2127,7 +2129,8 @@ static void check_city(city_t *pcity)
 ***************************************************************/
 void game_load(struct section_file *file)
 {
-  int i, k, id;
+  unsigned int i;
+  int k, id;
   enum server_states tmp_server_state;
   char *savefile_options;
   const char *string;
