@@ -22,7 +22,8 @@ Freeciv - Copyright (C) 2004 - The Freeciv Project
 #include <time.h>
 
 #ifdef WIN32_NATIVE
-#include <windows.h>
+# include <winsock2.h>
+# include <windows.h>
 #endif
 
 #ifdef HAVE_SYS_TYPES_H
@@ -412,7 +413,7 @@ static void randomize_string(char *str, size_t n)
 {
   const char chars[] =
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  int i;
+  unsigned int i;
 
   for (i = 0; i < n - 1; i++) {
     str[i] = chars[myrand(sizeof(chars) - 1)];
