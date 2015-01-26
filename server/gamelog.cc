@@ -571,7 +571,7 @@ void gamelog(int level, ...)
   case GAMELOG_MAP:
     /* this is big, so it's special */
     {
-      int nat_x, nat_y, i = 0;
+      unsigned int nat_x, nat_y, i = 0;
       char *mapline = (char*)wc_malloc(((map.info.xsize + 1) * map.info.ysize) + 1);
 
       for (nat_y = 0; nat_y < map.info.ysize; nat_y++) {
