@@ -41,7 +41,7 @@ int cmafec_preset_get_index_of_parameter(const struct cm_parameter
                                          *const parameter);
 char *cmafec_preset_get_descr(int index);
 const struct cm_parameter *cmafec_preset_get_parameter(int index);
-int cmafec_preset_num(void);
+unsigned int cmafec_preset_num(void);
 
 void create_default_cma_presets(void);
 
