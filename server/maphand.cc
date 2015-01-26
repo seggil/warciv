@@ -1104,7 +1104,7 @@ static bool bg_map_know_and_see_all_one_iter(void *vc)
   count = 0;
 
   connection_list_do_buffer(pplayer->connections);
-  while (context->index < MAX_MAP_INDEX) {
+  while (context->index < (int)MAX_MAP_INDEX) {
     ptile = index_to_tile(context->index);
     if (ptile == NULL) {
       break;
