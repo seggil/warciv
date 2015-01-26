@@ -90,7 +90,7 @@ player_t *shuffled_player(int i);
 #define shuffled_players_iterate(pplayer)                                   \
 {                                                                           \
   player_t *pplayer;                                                        \
-  int i;                                                                    \
+  unsigned int i;                                                           \
   for (i = 0; i < game.info.nplayers; i++) {                                \
     pplayer = shuffled_player(i);                                           \
     {
