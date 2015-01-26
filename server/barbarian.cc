@@ -198,9 +198,10 @@ static bool is_free_sea(tile_t *ptile, player_t *who)
 bool unleash_barbarians(tile_t *ptile)
 {
   player_t *barbarians;
-  int unit, unit_cnt, land_cnt = 0, sea_cnt = 0;
+  int unit, land_cnt = 0, sea_cnt = 0;
+  unsigned int unit_cnt;
   int boat;
-  int i, me;
+  unsigned int i, me;
   tile_t *utile = NULL;
   bool alive = TRUE;     /* explorer survived */
 
@@ -338,7 +339,9 @@ static tile_t *find_empty_tile_nearby(tile_t *ptile)
 static void try_summon_barbarians(void)
 {
   tile_t *ptile, *utile;
-  int i, boat, cap, dist, unit;
+  unsigned int i;
+  int boat, dist, unit;
+  unsigned int cap;
   int uprise = 1;
   int superbarb = 0;
   struct city_s *pc;
@@ -384,7 +387,7 @@ static void try_summon_barbarians(void)
   if ((int)myrand(UPRISE_CIV_MORE) >
            (int)city_list_size(victim->cities) -
                 UPRISE_CIV_SIZE/(game.server.barbarianrate-1)
-      || myrand(100) > get_gov_pcity(pc)->civil_war) {
+      || (int)myrand(100) > get_gov_pcity(pc)->civil_war) {
     return;
   }
   freelog(LOG_DEBUG, "Barbarians are willing to fight");
