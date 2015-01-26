@@ -74,7 +74,7 @@ int NORMAL_TILE_WIDTH;
 int NORMAL_TILE_HEIGHT;
 int UNIT_TILE_WIDTH;
 int UNIT_TILE_HEIGHT;
-int SMALL_TILE_WIDTH;
+unsigned int SMALL_TILE_WIDTH;
 int SMALL_TILE_HEIGHT;
 
 int OVERVIEW_TILE_SIZE = 2;
@@ -1922,7 +1922,7 @@ static struct Sprite *get_city_sprite(city_t *pcity)
   style = get_city_style(pcity);    /* get style and match the best tile */
                                     /* based on city size                */
   for( size=0; size < city_styles[style].tiles_num; size++)
-    if( pcity->common.pop_size < city_styles[style].tresh[size])
+    if( (int)pcity->common.pop_size < city_styles[style].tresh[size])
       break;
 
   if (is_isometric) {
@@ -3025,7 +3025,7 @@ enum color_std get_player_color(player_t *pplayer)
 ***********************************************************************/
 static void classic_player_colors_init(void)
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < ARRAY_SIZE(player_color); i++) {
     player_color[i] = static_cast<color_std>(COLOR_STD_RACE0 + (i % PLAYER_COLORS_NUM));
@@ -3115,7 +3115,8 @@ static enum color_std classic_overview_tile_color(tile_t *ptile)
 ***********************************************************************/
 static void team_player_colors_init(void)
 {
-  int i, n = 0;
+  unsigned int i;
+  int n = 0;
 
   /* Give team colors */
   team_iterate(pteam) {
