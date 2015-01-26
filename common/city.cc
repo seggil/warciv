@@ -1115,7 +1115,7 @@ static int best_value(const void *a, const void *b)
 **************************************************************************/
 static int max_tile_trade(const city_t *pcity)
 {
-  int i, total;
+  unsigned int i, total;
   int tile_trade[CITY_MAP_SIZE * CITY_MAP_SIZE];
   size_t size = 0;
   bool is_celebrating = base_city_celebrating(pcity);
@@ -1136,7 +1136,7 @@ static int max_tile_trade(const city_t *pcity)
 
   qsort(tile_trade, size, sizeof(*tile_trade), best_value);
 
-  for (i = 0; i < pcity->common.pop_size && i < size; i++) {
+  for (i = 0; i < (unsigned int)pcity->common.pop_size && i < size; i++) {
     total += tile_trade[i];
   }
 
@@ -2359,7 +2359,7 @@ int city_corruption(const city_t *pcity, int trade)
   city_t *capital;
   int dist;
   unsigned int val;
-  int trade_penalty;
+  unsigned int trade_penalty;
   int notradesize = MIN(game.ruleset_control.notradesize,
                         game.ruleset_control.fulltradesize);
   int fulltradesize = MAX(game.ruleset_control.notradesize,
@@ -2396,7 +2396,7 @@ int city_corruption(const city_t *pcity, int trade)
   val = trade * MAX(dist, 1) * g->corruption_level;
   val -= (val * get_city_bonus(pcity, EFFECT_TYPE_CORRUPT_PCT)) / 100;
   val /= 100 * 100; /* Level is a % multiplied by 100 */
-  val = CLIP(trade_penalty, val, trade);
+  val = CLIP(trade_penalty, val, (unsigned int)trade);
   return val;
 }
 
@@ -2408,7 +2408,7 @@ int city_waste(const city_t *pcity, int shields)
   struct government *g = get_gov_pcity(pcity);
   city_t *capital;
   int dist;
-  int shield_penalty = 0;
+  unsigned int shield_penalty = 0;
   unsigned int val;
 
   if (g->waste_level == 0) {
@@ -2432,7 +2432,7 @@ int city_waste(const city_t *pcity, int shields)
 
   val -= (val * get_city_bonus(pcity, EFFECT_TYPE_WASTE_PCT)) / 100;
 
-  val = CLIP(shield_penalty, val, shields);
+  val = CLIP(shield_penalty, val, (unsigned int)shields);
   return val;
 }
 
