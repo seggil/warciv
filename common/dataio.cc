@@ -587,8 +587,8 @@ void dio_get_string(struct data_in *din, char *dest, size_t max_dest_size)
 void dio_get_bit_string(struct data_in *din, char *dest,
                         size_t max_dest_size)
 {
-  int npack = 0;                /* number claimed in packet */
-  int i;                        /* iterate the bytes */
+  unsigned int npack = 0;       /* number claimed in packet */
+  unsigned int i;               /* iterate the bytes */
 
   assert(dest != NULL && max_dest_size > 0);
 
@@ -597,7 +597,7 @@ void dio_get_bit_string(struct data_in *din, char *dest,
     return;
   }
 
-  dio_get_uint16(din, &npack);
+  dio_get_uint16(din, (int*)&npack);
   if (npack >= max_dest_size) {
       freelog(LOG_NORMAL, "Have size for %lu, got %d",
               (unsigned long)max_dest_size, npack);
