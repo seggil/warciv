@@ -118,7 +118,7 @@ static void update_players_menu(void)
 
   if (gtk_tree_selection_get_selected(players_selection, &model, &it)) {
     player_t *plr;
-    gint plrno;
+    unsigned int plrno;
 
     gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
     plr = get_player(plrno);
@@ -214,7 +214,7 @@ static gboolean button_press_callback(GtkTreeView *view, GdkEventButton *ev)
 static void create_store(void)
 {
   GType model_types[num_player_dlg_columns + 3];
-  int i;
+  unsigned int i;
 
   for (i = 0; i < num_player_dlg_columns; i++) {
     switch (player_dlg_columns[i].type) {
@@ -262,7 +262,7 @@ static void toggle_view(GtkCheckMenuItem* item, gpointer data)
 **************************************************************************/
 static GtkWidget* create_show_menu(void)
 {
-  int i;
+  unsigned int i;
   GtkWidget *menu = gtk_menu_new();
 
   for (i = 1; i < num_player_dlg_columns; i++) {
@@ -287,7 +287,7 @@ static GtkWidget* create_show_menu(void)
 **************************************************************************/
 void create_players_dialog(void)
 {
-  int i;
+  unsigned int i;
   GtkWidget *sep, *sw;
   GtkWidget *menubar, *menu, *item;
 
@@ -503,7 +503,7 @@ static void build_row(GtkTreeIter *it, int i)
   GdkPixbuf *pixbuf;
   gint style;
   gint weight;
-  int k;
+  unsigned int k;
 
   for (k = 0; k < num_player_dlg_columns; k++) {
     struct player_dlg_column* pcol = &player_dlg_columns[k];
@@ -574,7 +574,7 @@ void update_players_dialog(void)
 
   if (players_dialog_shell && !is_plrdlg_frozen()) {
     gboolean exists[game.info.nplayers];
-    gint i;
+    unsigned int i;
     GtkTreeIter it, it_next;
 
     for (i = 0; i < game.info.nplayers; i++) {
@@ -778,7 +778,7 @@ static void players_ai_skill_callback(GtkMenuItem *item, gpointer data)
 **************************************************************************/
 static void update_views(void)
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < num_player_dlg_columns; i++) {
     struct player_dlg_column *pcol = &player_dlg_columns[i];
