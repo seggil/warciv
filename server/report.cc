@@ -673,13 +673,14 @@ static void dem_line_item(char *outptr, size_t out_size,
 *************************************************************************/
 bool is_valid_demography(const char *demography, const char **error_string)
 {
-  int len = strlen(demography), i;
+  unsigned int len = strlen(demography);
+  unsigned int i;
 
   /* We check each character individually to see if it's valid.  This
    * does not check for duplicate entries. */
   for (i = 0; i < len; i++) {
     bool found = FALSE;
-    int j;
+    unsigned int j;
 
     /* See if the character is a valid column label. */
     for (j = 0; j < ARRAY_SIZE(coltable); j++) {
@@ -936,11 +937,11 @@ static void log_civ_score(void)
   };
 
   enum { SL_CREATE, SL_APPEND, SL_UNSPEC } oper = SL_UNSPEC;
-  int i;
+  unsigned int i;
   char id[MAX_ID_LEN];
 
   if (!player_name_ptrs[0]) {
-    int i;
+    unsigned int i;
 
     for (i = 0; i < ARRAY_SIZE(player_names); i++) {
       player_name_ptrs[i] = player_names[i];
@@ -1101,7 +1102,7 @@ void make_history_report(void)
 **************************************************************************/
 void report_progress_scores(void)
 {
-  int i, j = 0;
+  unsigned int i, j = 0;
   char buffer[4096];
   struct player_score_entry size[game.info.nplayers];
 
