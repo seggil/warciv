@@ -400,7 +400,7 @@ int my_vsnprintf(char *str, size_t n, const char *format, va_list ap)
    * be bugs.  */
 
   assert(str != NULL);
-  assert(n>0);
+  //assert(n>0);
   assert(format != NULL);
 
 #ifdef HAVE_WORKING_VSNPRINTF
@@ -408,7 +408,7 @@ int my_vsnprintf(char *str, size_t n, const char *format, va_list ap)
   str[n - 1] = 0;
 
   /* Convert C99 return value to C89.  */
-  if (r >= n)
+  if (r >= (int)n)
     return -1;
 
   return r;
