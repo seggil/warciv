@@ -84,8 +84,8 @@ static GtkWidget *help_tlabel[4][5];
 
 static bool help_advances[A_LAST];
 
-static GPtrArray *help_history;
-static int        help_history_pos;
+static GPtrArray   *help_history;
+static unsigned int help_history_pos;
 
 
 static const char *help_ilabel_name[6] =
@@ -866,7 +866,7 @@ static char *my_chomp(char *str, size_t len)
 **************************************************************************/
 static void help_update_tech(const struct help_item *pitem, char *title, int i)
 {
-  int j;
+  unsigned int j;
   GtkWidget *w, *hbox;
   char *buf = &long_buffer[0];
 
@@ -909,7 +909,7 @@ static void help_update_tech(const struct help_item *pitem, char *title, int i)
     gtk_widget_show(w);
 
     impr_type_iterate(j) {
-      if(i==improvement_types[j].tech_req) {
+      if (i == (int)improvement_types[j].tech_req) {
         hbox = gtk_hbox_new(FALSE, 0);
         gtk_container_add(GTK_CONTAINER(help_vbox), hbox);
         w = gtk_label_new(_("Allows"));
@@ -919,7 +919,7 @@ static void help_update_tech(const struct help_item *pitem, char *title, int i)
         gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
         gtk_widget_show_all(hbox);
       }
-      if(i==improvement_types[j].obsolete_by) {
+      if (i == (int)improvement_types[j].obsolete_by) {
         hbox = gtk_hbox_new(FALSE, 0);
         gtk_container_add(GTK_CONTAINER(help_vbox), hbox);
         w = gtk_label_new(_("Obsoletes"));
@@ -932,7 +932,7 @@ static void help_update_tech(const struct help_item *pitem, char *title, int i)
     } impr_type_iterate_end;
 
     unit_type_iterate(j) {
-      if(i!=get_unit_type(j)->tech_requirement) continue;
+      if (i != get_unit_type(j)->tech_requirement) continue;
       hbox = gtk_hbox_new(FALSE, 0);
       gtk_container_add(GTK_CONTAINER(help_vbox), hbox);
       w = gtk_label_new(_("Allows"));
@@ -943,8 +943,8 @@ static void help_update_tech(const struct help_item *pitem, char *title, int i)
     } unit_type_iterate_end;
 
     for (j = 0; j < game.ruleset_control.num_tech_types; j++) {
-      if(i==advances[j].req[0]) {
-        if(advances[j].req[1]==A_NONE) {
+      if (i == (int)advances[j].req[0]) {
+        if (advances[j].req[1] == A_NONE) {
           hbox = gtk_hbox_new(FALSE, 0);
           gtk_container_add(GTK_CONTAINER(help_vbox), hbox);
           w = gtk_label_new(_("Allows"));
@@ -970,7 +970,7 @@ static void help_update_tech(const struct help_item *pitem, char *title, int i)
           gtk_widget_show_all(hbox);
         }
       }
-      if(i==advances[j].req[1]) {
+      if (i == (int)advances[j].req[1]) {
         hbox = gtk_hbox_new(FALSE, 0);
         gtk_container_add(GTK_CONTAINER(help_vbox), hbox);
         w = gtk_label_new(_("Allows"));
