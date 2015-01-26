@@ -109,7 +109,7 @@ static struct server_list *lan_servers;
 static union my_sockaddr server_addr;
 bool server_has_extglobalinfo = FALSE;
 
-#define ASYNC_SLIST_CTX_MEMORY_GUARD 0xadebac1e
+static const int ASYNC_SLIST_CTX_MEMORY_GUARD = 0xadebac1e;
 
 /* used by create_server_list_async */
 struct async_slist_ctx {
@@ -490,22 +490,22 @@ static char *win_uname()
 
   switch (osvi.dwPlatformId) {
   case VER_PLATFORM_WIN32s:
-    osname = "Win32s";
+    osname = (char *)"Win32s";
     break;
 
   case VER_PLATFORM_WIN32_WINDOWS:
-    osname = "Win32";
+    osname = (char *)"Win32";
 
     if (osvi.dwMajorVersion == 4) {
       switch (osvi.dwMinorVersion) {
       case 0:
-        osname = "Win95";
+        osname = (char *)"Win95";
         break;
       case 10:
-        osname = "Win98";
+        osname = (char *)"Win98";
         break;
       case 90:
-        osname = "WinME";
+        osname = (char *)"WinME";
         break;
       default:
         break;
@@ -514,18 +514,18 @@ static char *win_uname()
     break;
 
   case VER_PLATFORM_WIN32_NT:
-    osname = "WinNT";
+    osname = (char *)"WinNT";
 
     if (osvi.dwMajorVersion == 5) {
       switch (osvi.dwMinorVersion) {
       case 0:
-        osname = "Win2000";
+        osname = (char *)"Win2000";
         break;
       case 1:
-        osname = "WinXP";
+        osname = (char *)"WinXP";
         break;
       case 2:
-        osname = "WinServer2003";
+        osname = (char *)"WinServer2003";
         break;
       default:
         break;
@@ -535,7 +535,7 @@ static char *win_uname()
     if (osvi.dwMajorVersion == 6) {
       switch (osvi.dwMinorVersion) {
       case 0:
-        osname = "WinVista";
+        osname = (char*)"WinVista";
         break;
       default:
         break;
@@ -858,7 +858,8 @@ static void process_metaserver_response(struct async_slist_ctx *ctx)
   fz_FILE *f;
   char errbuf[256];
   char *newbuf;
-  int i, j, newsize = 0;
+  int i, j;
+  unsigned int newsize = 0;
 
   freelog(LOG_DEBUG, "pmr process_metaserver_response ctx=%p", ctx);
 
@@ -1396,7 +1397,7 @@ int begin_lanserver_scan(void)
   union my_sockaddr addr;
   struct data_out dout;
   int sock, opt = 1;
-  unsigned char buffer[MAX_LEN_PACKET];
+  char buffer[MAX_LEN_PACKET];
   struct ip_mreq mreq;
   const char *group;
   unsigned char ttl;
