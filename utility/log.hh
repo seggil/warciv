@@ -14,6 +14,7 @@
 #define WC_UTILITY_LOG_H
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "shared.hh"            /* bool type and wc__attribute */
 
@@ -57,10 +58,15 @@ void log_init(const char *filename, int initial_level,
 void log_set_level(int level);
 void log_set_callback(log_callback_fn callback);
 
+#ifdef _WIN64
+void real_freelog(int level, const char *file, int line,
+                  const char *fncname, const char *message, ...)
+                  wc__attribute((__format__ (__MINGW_PRINTF_FORMAT, 5, 6)));
+#else
 void real_freelog(int level, const char *file, int line,
                   const char *fncname, const char *message, ...)
                   wc__attribute((__format__ (__printf__, 5, 6)));
-
+#endif
 void vreal_freelog(int level, const char *message, va_list ap);
 
 
