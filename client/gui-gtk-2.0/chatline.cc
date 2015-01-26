@@ -2763,8 +2763,8 @@ static const char *get_player_or_user_name(int id)
 {
   size_t size = connection_list_size(game.all_connections);
 
-  return id >= size ? get_player(id - size)->name
-                    : connection_list_get(game.all_connections, id)->username;
+  return id >= (int)size ? get_player(id - size)->name
+                         : connection_list_get(game.all_connections, id)->username;
 }
 
 /**************************************************************************
