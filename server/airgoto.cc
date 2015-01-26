@@ -99,7 +99,7 @@ static void add_refuel_point(tile_t *ptile,
                              enum refuel_type type, int turns,
                              int moves_left, bool start)
 {
-  int pos;
+  unsigned int pos;
 
   if (start) {
     pos = 0;
@@ -134,7 +134,7 @@ static void add_refuel_point(tile_t *ptile,
  ******************************************************************/
 static struct refuel *get_refuel_by_index(int i)
 {
-  if (i < 0 || i >= refuels.list_size) {
+  if (i < 0 || i >= (int)refuels.list_size) {
     return NULL;
   }
 
@@ -271,7 +271,7 @@ struct refuel *refuel_iterate_next(struct pqueue *rp_list)
  ************************************************************************/
 void refuel_iterate_process(struct pqueue *rp_list, struct refuel *pfrom)
 {
-  int k;
+  unsigned int k;
   int max_moves
     = (pfrom->type == FUEL_START ? pfrom->moves_left : refuels.max_moves);
 
