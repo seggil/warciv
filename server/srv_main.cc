@@ -265,7 +265,8 @@ void server_init(void)
 **************************************************************************/
 static bool is_game_over(void)
 {
-  int barbs = 0, alive = 0;
+  unsigned int barbs = 0;
+  unsigned int alive = 0;
   bool all_allied;
   player_t *victor = NULL;
 
@@ -313,7 +314,7 @@ static bool is_game_over(void)
 
   /* quit if we have team victory */
   team_iterate(pteam) {
-    if (team_count_members_alive(pteam->id) == alive) {
+    if (team_count_members_alive(pteam->id) == (int)alive) {
       notify_conn_ex(game.est_connections, NULL, E_GAME_END,
                      _("Team victory to %s"), get_team_name(pteam->id));
       gamelog(GAMELOG_JUDGE, GL_TEAMWIN, pteam);
@@ -466,7 +467,7 @@ static void update_environmental_upset(enum tile_special_type cause,
                                        int *current, int *accum, int *level,
                                        void (*upset_action_fn)(int))
 {
-  int count;
+  unsigned int count;
 
   count = 0;
   whole_map_iterate(ptile) {
@@ -481,7 +482,7 @@ static void update_environmental_upset(enum tile_special_type cause,
     *accum = 0;
   } else {
     *accum -= *level;
-    if (myrand(200) <= *accum) {
+    if ((int)myrand(200) <= *accum) {
       upset_action_fn((map.info.xsize / 10) + (map.info.ysize / 10)
                       + ((*accum) * 5));
       *accum = 0;
@@ -1450,14 +1451,15 @@ static void generate_ai_players(void)
   Nation_Type_id nation;
   char player_name[MAX_LEN_NAME];
   player_t *pplayer;
-  int i, old_nplayers;
+  unsigned int i;
+  unsigned int old_nplayers;
   char* common_class;
 
   /* Select nations for AI players generated with server
    * 'create <name>' command
    */
   common_class = find_common_class();
-  for (i=0; i<game.info.nplayers; i++) {
+  for (i = 0; i < game.info.nplayers; i++) {
     pplayer = &game.players[i];
 
     if (pplayer->nation != NO_NATION_SELECTED) {
@@ -1872,7 +1874,7 @@ void server_main(void)
 **************************************************************************/
 static void server_loop(void)
 {
-  int i;
+  unsigned int i;
   bool start_nations;
 
   freelog(LOG_NORMAL, _("Now accepting new client connections."));
@@ -1912,7 +1914,7 @@ MAIN_START_PLAYERS:
   }
 
   if (start_nations) {
-    for (i = 0; i < game.ruleset_control.nation_count; i++) {
+    for (i = 0; i < (unsigned int)game.ruleset_control.nation_count; i++) {
       nations_available[i] = FALSE;
     }
     for (i = 0; i < map.server.num_start_positions; i++) {
@@ -1920,7 +1922,7 @@ MAIN_START_PLAYERS:
     }
 
   } else {
-    for (i = 0; i < game.ruleset_control.nation_count; i++) {
+    for (i = 0; i < (unsigned int)game.ruleset_control.nation_count; i++) {
       nations_available[i] = TRUE;
     }
   }
