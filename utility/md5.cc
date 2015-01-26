@@ -270,9 +270,9 @@ void md5_process_bytes(const void *buffer, size_t len, struct md5_ctx *ctx)
 /* To check alignment gcc has an appropriate operator.  Other
    compilers don't.  */
 #if __GNUC__ >= 2
-#define UNALIGNED_P(p) (((md5_uintptr) p) % __alignof__ (md5_uint32) != 0)
+# define UNALIGNED_P(p) (((md5_uintptr) p) % __alignof__ (md5_uint32) != 0)
 #else
-#define UNALIGNED_P(p) (((md5_uintptr) p) % sizeof (md5_uint32) != 0)
+# define UNALIGNED_P(p) (((md5_uintptr) p) % sizeof (md5_uint32) != 0)
 #endif
     if (UNALIGNED_P(buffer))
       while (len > 64) {
