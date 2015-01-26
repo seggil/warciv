@@ -104,7 +104,7 @@ static void recreate_sell_menu(void);
 struct sell_data {
   int count;
   int gold;
-  int cid;
+  city_cid cid;
 };
 static GtkWidget *city_center_command, *city_popup_command, *city_buy_command;
 static GtkWidget *city_change_command, *city_clear_worklist_command;
@@ -216,7 +216,7 @@ void popdown_city_report_dialog(void)
 /****************************************************************
 ...
 *****************************************************************/
-typedef bool (*TestCityFunc)(city_t *, gint);
+typedef bool (*TestCityFunc)(city_t *, city_cid);
 
 /****************************************************************
 ...
@@ -269,7 +269,7 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
 
     data = (city_t **)g_ptr_array_free(selected, FALSE);
     city_cids_used = collect_city_cids1(cids, data, num_selected, append_units,
-                              append_wonders, TRUE, test_func);
+                                        append_wonders, TRUE, test_func);
     g_free(data);
   } else {
     city_cids_used = collect_city_cids1(cids, NULL, 0, append_units,
@@ -282,7 +282,8 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
     row[i] = buf[i];
   }
 
-  g_object_set_data(G_OBJECT(menu), "warciv_test_func", (gpointer)test_func);
+  g_object_set_data(G_OBJECT(menu), "warciv_test_func",
+                    (gpointer)test_func);
   g_object_set_data(G_OBJECT(menu), "warciv_city_operation",
                     GINT_TO_POINTER(city_operation));
 
@@ -633,7 +634,7 @@ static void select_cma_callback(GtkWidget * w, gpointer data)
 static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
 {
   GtkWidget *menu;
-  int i;
+  unsigned int i;
   struct cm_parameter parameter;
   GtkWidget *w;
 
@@ -653,7 +654,6 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), w);
       g_signal_connect(w, "activate", G_CALLBACK(select_cma_callback),
                        GINT_TO_POINTER(i));
-      assert(GPOINTER_TO_INT(GINT_TO_POINTER(i)) == i);
     }
   } else {
     /* search for a "none" */
@@ -730,7 +730,7 @@ static void append_worklist_to_menu_item(GtkMenuItem *parent_item,
 {
   struct worklist *pwl;
   GtkWidget *menu, *item;
-  int i;
+  unsigned int i;
   bool sensitive = FALSE;
 
   menu = gtk_menu_new();
@@ -1728,7 +1728,7 @@ void popup_change_cma(void)
 *****************************************************************/
 static void popup_change_menu(GtkMenuShell *menu, gpointer data)
 {
-  int n;
+  city_cid n;
 
   n = gtk_tree_selection_count_selected_rows(city_selection);
 
