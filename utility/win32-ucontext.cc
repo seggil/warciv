@@ -1,21 +1,21 @@
 /*
- *      win32-ucontext: Unix ucontext_t operations on Windows platforms
- *      Copyright(C) 2007 Panagiotis E. Hadjidoukas
+ *      win32/64-ucontext: Unix ucontext_t operations on Windows platforms
+ *      Copyright(C) 2007-2014 Panagiotis E. Hadjidoukas
  *
- *      Contact Email: phadjido@cs.uoi.gr, xdoukas@ceid.upatras.gr
+ *      Contact Email: phadjido@gmail.com, xdoukas@ceid.upatras.gr
  *
- *      win32-ucontext is free software; you can redistribute it and/or
+ *      win32/64-ucontext is free software; you can redistribute it and/or
  *      modify it under the terms of the GNU Lesser General Public
  *      License as published by the Free Software Foundation; either
  *      version 2 of the License, or (at your option) any later version.
  *
- *      win32-ucontext is distributed in the hope that it will be useful,
+ *      win32/64-ucontext is distributed in the hope that it will be useful,
  *      but WITHOUT ANY WARRANTY; without even the implied warranty of
  *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *      Lesser General Public License for more details.
  *
  *      You should have received a copy of the GNU Lesser General Public
- *      License along with QueueUserAPCEx in the file COPYING.LIB;
+ *      License along with win32/64-ucontext in the file COPYING.LIB;
  *      if not, write to the Free Software Foundation, Inc.,
  *      59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
@@ -45,7 +45,6 @@ int setcontext(const ucontext_t *ucp)
 
   /* Restore the full machine context (already set) */
   ret = SetThreadContext(GetCurrentThread(), &ucp->uc_mcontext);
-
   return (ret == 0) ? -1: 0;
 }
 
@@ -59,7 +58,7 @@ int makecontext(ucontext_t *ucp, void (*func)(), int argc, ...)
   sp = (char *) (size_t) ucp->uc_stack.ss_sp + ucp->uc_stack.ss_size;
 
   /* Reserve stack space for the arguments (maximum possible: argc*(8 bytes per argument)) */
-  sp -= argc*8;
+  sp -= argc * 8;
 
   if ( sp < (char *)ucp->uc_stack.ss_sp) {
     /* errno = ENOMEM;*/
@@ -67,18 +66,22 @@ int makecontext(ucontext_t *ucp, void (*func)(), int argc, ...)
   }
 
   /* Set the instruction and the stack pointer */
-  ucp->uc_mcontext.Eip = (unsigned long) func;
-  ucp->uc_mcontext.Esp = (unsigned long) sp - 4;
-
+#if defined(_X86_)
+  ucp->uc_mcontext.Eip = (unsigned long long) func;
+  ucp->uc_mcontext.Esp = (unsigned long long) (sp - 4);
+#else
+  ucp->uc_mcontext.Rip = (unsigned long long) func;
+  ucp->uc_mcontext.Rsp = (unsigned long long) (sp - 40);
+#endif
   /* Save/Restore the full machine context */
   ucp->uc_mcontext.ContextFlags = CONTEXT_FULL;
 
   /* Copy the arguments */
-  va_start (ap, argc);
-  for (i=0; i<argc; i++) {
+  va_start(ap, argc);
+  for (i = 0; i<argc; i++) {
     memcpy(sp, ap, 8);
-    ap +=8;
-    sp +=8;
+    ap += 8;
+    sp += 8;
   }
   va_end(ap);
 
@@ -95,11 +98,9 @@ int swapcontext(ucontext_t *oucp, const ucontext_t *ucp)
   }
 
   ret = getcontext(oucp);
-
   if (ret == 0) {
     ret = setcontext(ucp);
   }
-
   return ret;
 }
 
