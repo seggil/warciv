@@ -491,7 +491,7 @@ void pf_destroy_map(struct path_finding_map *pf_map)
 
   /* Danger-related structs */
   if (pf_map->d_lattice) {
-    int i;
+    unsigned int i;
 
     /* Need to clean up the dangling danger_sements */
     for (i = 0; i < MAX_MAP_INDEX; i++) {
