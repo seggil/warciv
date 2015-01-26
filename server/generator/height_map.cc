@@ -71,12 +71,12 @@ void renormalize_hmap_poles(void)
  **********************************************************************/
 void make_random_hmap(int smooth)
 {
-  int i = 0;
+  unsigned int i = 0;
   height_map = (int*)wc_malloc (sizeof(int) * MAX_MAP_INDEX);
 
   INITIALIZE_ARRAY(height_map, MAX_MAP_INDEX, myrand(1000 * smooth) );
 
-  for (; i < smooth; i++) {
+  for (; i < (unsigned)smooth; i++) {
     smooth_int_map(height_map, TRUE);
   }
 
@@ -91,8 +91,8 @@ void make_random_hmap(int smooth)
 static void gen5rec(int step, int x0, int y0, int x1, int y1)
 {
   int val[2][2];
-  int x1wrap = x1; /* to wrap correctly */
-  int y1wrap = y1;
+  unsigned int x1wrap = x1; /* to wrap correctly */
+  unsigned int y1wrap = y1;
 
   /* All x and y values are native. */
 
@@ -101,10 +101,10 @@ static void gen5rec(int step, int x0, int y0, int x1, int y1)
     return;
   }
 
-  if (x1 == map.info.xsize) {
+  if ((unsigned)x1 == map.info.xsize) {
     x1wrap = 0;
   }
-  if (y1 == map.info.ysize) {
+  if ((unsigned)y1 == map.info.ysize) {
     y1wrap = 0;
   }
 
