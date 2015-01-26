@@ -50,7 +50,7 @@ static const char *flag_names[] = {
 ...
 **************************************************************************/
 enum tech_state get_invention(const player_t *pplayer,
-                              Tech_Type_id tech)
+                              enum tech_state tech)
 {
   assert(tech >= 0);
 
@@ -615,7 +615,7 @@ const char *get_tech_name(player_t *pplayer, Tech_Type_id tech)
     if (!future) {
       future = string_vector_new();
     }
-    if (string_vector_size(future) <= pplayer->future_tech) {
+    if ((int)string_vector_size(future) <= pplayer->future_tech) {
       string_vector_reserve(future, pplayer->future_tech + 1);
     }
     if (!string_vector_get(future, pplayer->future_tech)) {
