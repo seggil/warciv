@@ -53,7 +53,7 @@ void center_on_something(void);
  * unit_type_id of (city_cid - B_LAST).
  */
 
-typedef int city_cid;    /* city compound id */
+typedef unsigned int city_cid;    /* city compound id */
 city_cid city_cid_encode(bool is_unit, int id);
 city_cid city_cid_encode_from_city(city_t *pcity);
 void     city_cid_decode(city_cid cid, bool *is_unit, int *id);
@@ -95,14 +95,14 @@ struct item {
   int section;
 };
 
-void name_and_sort_items(int *pcity_cids, int num_cids,
+void name_and_sort_items(city_cid *pcity_cids, int num_cids,
                          struct item *items,
                          bool show_cost, city_t *pcity);
 int collect_city_cids1(city_cid * dest_city_cids,
                        city_t **selected_cities,
                        int num_selected_cities, bool append_units,
                        bool append_wonders, bool change_prod,
-                       bool (*test_func) (city_t *, int));
+                       bool (*test_func) (city_t *, city_cid));
 int collect_city_cids2(city_cid *dest_city_cids);
 int collect_city_cids3(city_cid *dest_city_cids);
 int collect_city_cids4(city_cid *dest_city_cids,
