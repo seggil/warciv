@@ -406,15 +406,15 @@ void handle_chat_msg_req(connection_t *pconn, char *message)
       if (*(quotes + 1) != ':') {
         quotes = NULL;
         (void) mystrlcpy(name, message,
-                         MIN(sizeof(name), cp - message + 1));
+                         MIN((int)sizeof(name), cp - message + 1));
       } else {
         cp = quotes + 1;
         (void) mystrlcpy(name, message + 1,
-                         MIN(sizeof(name), quotes - message));
+                         MIN((int)sizeof(name), quotes - message));
       }
     } else {
       (void) mystrlcpy(name, message,
-                       MIN(sizeof(name), cp - message + 1));
+                       MIN((int)sizeof(name), cp - message + 1));
     }
 
     double_colon = (*(cp+1) == ':');
