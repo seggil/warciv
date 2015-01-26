@@ -409,7 +409,7 @@ struct player_dlg_column player_dlg_columns[] = {
   {FALSE, COL_RIGHT_TEXT, CF_COMMON, N_("Ping"), get_ping_time_text, NULL, NULL, "ping"}
 };
 
-const int num_player_dlg_columns = ARRAY_SIZE(player_dlg_columns);
+const unsigned int num_player_dlg_columns = ARRAY_SIZE(player_dlg_columns);
 
 /******************************************************************
  ...
@@ -424,7 +424,7 @@ int player_dlg_default_sort_column(void)
 ****************************************************************************/
 void init_player_dlg_common()
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < num_player_dlg_columns; i++) {
     player_dlg_columns[i].title = Q_(player_dlg_columns[i].title);
