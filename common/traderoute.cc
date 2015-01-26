@@ -22,7 +22,7 @@
 #  include <ucontext.h>
 #else
 #  ifdef WIN32_NATIVE
-#    include "win32-ucontext.h"
+#    include "win32-ucontext.hh"
 #  endif /* WIN32_NATIVE */
 #endif /* HAVE_UCONTEXT_H */
 
@@ -485,13 +485,14 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
     bool *trade_routes;
   } cities[size];
   struct precalc_city *pc1, *pc2;
-  int i, j, total = 0;
+  unsigned int i, j;
+  int total = 0;
 
   if (game.traderoute_info.maxtraderoutes == 0) {
     return 0;
   }
 
-  assert(size >= tile_list_size(ptlist));
+  assert((int)size >= tile_list_size(ptlist));
 
   /* Initialize */
   i = 0;
@@ -565,7 +566,7 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
            */
           if (pc1->free_slots == 0) {
             struct precalc_city *pc3;
-            int k;
+            unsigned int k;
 
             for (k = 0, pc3 = cities; k < size; k++, pc3++) {
               if (pc1->trade_routes[k]) {
@@ -649,7 +650,8 @@ static struct trade_route *add_trade_route_in_planning(
 void recursive_calculate_trade_planning(
     struct trade_planning_calculation *pcalc, int start_city, int start_trade)
 {
-  int i = 0, j = 0;
+  unsigned int i = 0;
+  unsigned int j = 0;
   struct trade_city *tcity1, *tcity2;
 
   for (i = start_city; i < pcalc->size; i++) {
@@ -670,7 +672,9 @@ void recursive_calculate_trade_planning(
       continue;
     }
 
-    for (j = i == start_city ? start_trade : i + 1; j < pcalc->size; j++) {
+    for (j = i == (unsigned int)start_city ? start_trade : i + 1;
+         j < pcalc->size; j++)
+    {
       tcity2 = &pcalc->tcities[j];
 
 #ifdef ASYNC_TRADE_PLANNING
@@ -772,7 +776,7 @@ struct trade_planning_calculation *trade_planning_calculation_new(
   struct pf_parameter *pparameter = get_caravan_parameter(pplayer, NULL);
   struct path_finding_map *map;
   struct pf_position pos;
-  int i, j;
+  unsigned int i, j;
 
   /* Initialize */
   pcalc = static_cast<trade_planning_calculation*>(
@@ -900,7 +904,7 @@ struct trade_planning_calculation *trade_planning_calculation_new(
           if (tcity1->free_slots == 0) {
             struct trade_city *tcity3;
             struct trade_route *p_tr;
-            int k;
+            unsigned int k;
 
             for (k = 0; k < pcalc->size; k++) {
               tcity3 = &pcalc->tcities[k];
@@ -944,7 +948,7 @@ void trade_planning_calculation_destroy(
 {
   assert(NULL != pcalc);
 
-  int i, j;
+  unsigned int i, j;
 
   /* Avoid recursive calls */
   if (pcalc->destroying) {
@@ -969,7 +973,7 @@ void trade_planning_calculation_destroy(
   free(pcalc->interrupted_point.uc_stack.ss_sp);
 #endif
 
-  for (i = 0; i < pcalc->ctconf.trade_routes_num; i++) {
+  for (i = 0; i < (unsigned int)pcalc->ctconf.trade_routes_num; i++) {
     free(pcalc->ctlist[i]);
   }
   free(pcalc->ctlist);
@@ -1205,7 +1209,7 @@ void game_remove_all_trade_routes(void)
 ****************************************************************************/
 void check_removed_city(const city_t *pcity)
 {
-  int i;
+  unsigned int i;
 
   tp_calc_list_iterate(pcalc) {
     for (i = 0; i < pcalc->size; i++) {
