@@ -308,10 +308,10 @@ static void create_salted_md5sum(const char *password, int passlen,
 {
   const int SALT_LEN = sizeof(int);
   char buf[MAX_LEN_PASSWORD + SALT_LEN + 64];
-  int rem;
+  unsigned int rem;
 
   memcpy(buf, &salt, SALT_LEN);
-  rem = MIN(passlen, sizeof(buf) - SALT_LEN);
+  rem = MIN(passlen, (int)sizeof(buf) - SALT_LEN);
   memcpy(buf + SALT_LEN, password, rem);
   create_md5sum(buf, SALT_LEN + rem, dest);
 }
@@ -472,7 +472,8 @@ void get_unique_guest_name(char *name)
 **************************************************************************/
 static bool is_good_password(const char *password, char *msg)
 {
-  int i, num_caps = 0, num_nums = 0;
+  unsigned int i;
+  int num_caps = 0, num_nums = 0;
 
   /* check password length */
   if (strlen(password) < MIN_PASSWORD_LEN) {
