@@ -308,7 +308,7 @@ extern int NORMAL_TILE_WIDTH;
 extern int NORMAL_TILE_HEIGHT;
 extern int UNIT_TILE_WIDTH;
 extern int UNIT_TILE_HEIGHT;
-extern int SMALL_TILE_WIDTH;
+extern unsigned int SMALL_TILE_WIDTH;
 extern int SMALL_TILE_HEIGHT;
 
 /* The overview tile width and height are defined in terms of the base
