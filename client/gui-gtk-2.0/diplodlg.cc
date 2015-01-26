@@ -273,7 +273,7 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
   /* Advances. */
   {
     bool flag;
-    int i;
+    unsigned int i;
 
     menu = gtk_menu_new();
 
@@ -704,7 +704,9 @@ static void update_diplomacy_dialog(struct Diplomacy_dialog *pdialog)
 static void diplomacy_dialog_tech_callback(GtkWidget *w, gpointer data)
 {
   size_t choice = GPOINTER_TO_UINT(data);
-  int giver = (choice >> 24) & 0xff, dest = (choice >> 16) & 0xff, other;
+  unsigned int giver = (choice >> 24) & 0xff;
+  int dest = (choice >> 16) & 0xff;
+  int other;
   int tech = choice & 0xffff;
 
   if (giver == get_player_idx()) {
@@ -723,7 +725,10 @@ static void diplomacy_dialog_tech_callback(GtkWidget *w, gpointer data)
 static void diplomacy_dialog_all_tech_callback(GtkWidget *w, gpointer data)
 {
   size_t choice = GPOINTER_TO_UINT(data);
-  int giver = (choice >> 8) & 0xff, dest = choice & 0xff, other, i;
+  unsigned int giver = (choice >> 8) & 0xff;
+  int dest = choice & 0xff;
+  int other;
+  unsigned int i;
 
   if (giver == get_player_idx()) {
     other = dest;
@@ -749,7 +754,9 @@ Callback for trading cities
 static void diplomacy_dialog_city_callback(GtkWidget * w, gpointer data)
 {
   size_t choice = GPOINTER_TO_UINT(data);
-  int giver = (choice >> 24) & 0xff, dest = (choice >> 16) & 0xff, other;
+  unsigned int giver = (choice >> 24) & 0xff;
+  int dest = (choice >> 16) & 0xff;
+  int other;
   int city = choice & 0xffff;
 
   if (giver == get_player_idx()) {
