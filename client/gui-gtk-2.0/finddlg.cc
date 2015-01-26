@@ -128,7 +128,7 @@ void popup_find_dialog(void)
 **************************************************************************/
 static void update_find_dialog(GtkListStore *store)
 {
-  int i;
+  unsigned int i;
   GtkTreeIter it;
 
   gtk_list_store_clear(store);
