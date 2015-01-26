@@ -1160,8 +1160,8 @@ enum known_type map_get_known(const tile_t *ptile,
 ****************************************************************************/
 static const char *int_to_string(int n, int min_size)
 {
-  int size;
-  int i, j;
+  unsigned int size;
+  unsigned int i, j;
   int n2;
   double reste;
   static char buf[16];
