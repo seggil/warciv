@@ -198,7 +198,7 @@ static gboolean quit_dialog_callback(void);
 
 static guint chatline_scroll_callback_id = 0;
 
-#define NET_INPUT_CTX_MEMORY_GUARD 0xfece5ace
+static const int NET_INPUT_CTX_MEMORY_GUARD = 0xfece5ace;
 
 /* used by add_net_input_callback and related functions */
 struct net_input_ctx {
