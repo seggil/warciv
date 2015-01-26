@@ -49,7 +49,7 @@ struct player_dlg_column {
 };
 
 extern struct player_dlg_column player_dlg_columns[];
-extern const int num_player_dlg_columns;
+extern const unsigned int num_player_dlg_columns;
 
 void init_player_dlg_common(void);
 int player_dlg_default_sort_column(void);
