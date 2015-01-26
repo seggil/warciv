@@ -49,7 +49,7 @@ static bool my_has_capability(const char *cap, const char *capstr,
     if (*capstr == '+') {
       capstr++;
     }
-    if ((next-capstr == cap_len) && strncmp(cap, capstr, cap_len)==0) {
+    if ((next - capstr == (int)cap_len) && strncmp(cap, capstr, cap_len)==0) {
       return TRUE;
     }
     if (*next == '\0') {
