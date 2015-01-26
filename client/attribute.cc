@@ -208,9 +208,10 @@ static enum attribute_serial serialize_hash( struct hash_table *hash,
   Check everything!
 *****************************************************************************/
 static enum attribute_serial unserialize_hash( struct hash_table *hash,
-                                        void *data, size_t data_length )
+                                               void *data, size_t data_length )
 {
-  int entries, i, dummy;
+  int entries, i;
+  int dummy;
   struct data_in din;
 
   hash_delete_all_entries(hash);
@@ -235,7 +236,7 @@ static enum attribute_serial unserialize_hash( struct hash_table *hash,
   }
   dio_get_uint32(&din, &entries);
   dio_get_uint32(&din, &dummy);
-  if (dummy != data_length) {
+  if (dummy != (int)data_length) {
     freelog(LOG_VERBOSE,
             "attribute.c unserialize_hash() preamble,"
             " uint32 %u != %u data_length",
@@ -264,7 +265,7 @@ static enum attribute_serial unserialize_hash( struct hash_table *hash,
       free(pkey);
       return A_SERIAL_FAIL;
     }
-    if (value_length > dio_input_remaining(&din)) {
+    if (value_length > (int)dio_input_remaining(&din)) {
       freelog(LOG_VERBOSE,
               "attribute.c unserialize_hash()"
               " uint32 %u value_length > %u input_remaining",
@@ -460,7 +461,7 @@ size_t attribute_get(int key, int id, int x, int y, size_t max_data_length,
   dio_input_init(&din, pvalue, 0xffffffff);
   dio_get_uint32(&din, &length);
 
-  if (length <= max_data_length) {
+  if (length <= (int)max_data_length) {
     dio_get_memory(&din, data, length);
   }
 
