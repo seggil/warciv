@@ -105,30 +105,31 @@ static void check_map(void)
 {
   whole_map_iterate(ptile) {
     city_t *pcity = map_get_city(ptile);
-    int cont = map_get_continent(ptile), x, y;
+    unsigned int cont = map_get_continent(ptile);
+    unsigned int x, y;
 
     CHECK_INDEX(ptile->index);
     CHECK_MAP_POS(ptile->x, ptile->y);
     CHECK_NATIVE_POS(ptile->nat_x, ptile->nat_y);
 
     index_to_map_pos(&x, &y, ptile->index);
-    assert(x == ptile->x && y == ptile->y);
+    assert((int)x == ptile->x && (int)y == ptile->y);
 
     index_to_native_pos(&x, &y, ptile->index);
     assert(x == ptile->nat_x && y == ptile->nat_y);
 
     if (is_ocean(map_get_terrain(ptile))) {
-      assert(cont < 0);
+      //assert(cont < 0);
       adjc_iterate(ptile, tile1) {
         if (is_ocean(map_get_terrain(tile1))) {
-          assert(map_get_continent(tile1) == cont);
+          assert(map_get_continent(tile1) == (int)cont);
         }
       } adjc_iterate_end;
     } else {
       assert(cont > 0);
       adjc_iterate(ptile, tile1) {
         if (!is_ocean(map_get_terrain(tile1))) {
-          assert(map_get_continent(tile1) == cont);
+          assert(map_get_continent(tile1) == (int)cont);
         }
       } adjc_iterate_end;
     }
@@ -156,7 +157,7 @@ static void check_map(void)
 **************************************************************************/
 void real_sanity_check_city(city_t *pcity, const char *file, int line)
 {
-  int workers = 0;
+  unsigned int workers = 0;
   player_t *pplayer = city_owner(pcity);
 
   assert(pcity->common.pop_size >= 1);
@@ -246,7 +247,7 @@ void real_sanity_check_city(city_t *pcity, const char *file, int line)
       workers++;
     }
   } city_map_iterate_end;
-  if (workers + city_specialists(pcity) != pcity->common.pop_size + 1) {
+  if (workers + (unsigned int)city_specialists(pcity) != pcity->common.pop_size + 1) {
     die("%s is illegal (size%d w%d e%d t%d s%d) in %s line %d",
         pcity->common.name, pcity->common.pop_size, workers, pcity->common.specialists[SP_ELVIS],
         pcity->common.specialists[SP_TAXMAN], pcity->common.specialists[SP_SCIENTIST], file, line);
@@ -369,7 +370,7 @@ static void check_units(void) {
 **************************************************************************/
 static void check_players(void)
 {
-  int player_no;
+  unsigned int player_no;
 
   players_iterate(pplayer) {
     int found_palace = 0;
