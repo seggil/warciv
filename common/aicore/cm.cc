@@ -447,7 +447,7 @@ static int cm_tile_type_vector_find_equivalent(
                                 const struct cm_tile_type_vector *vec,
                                 const struct cm_tile_type     *ptype)
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < vec->size; i++) {
     if (cm_tile_type_equal(vec->p[i], ptype)) {
@@ -493,7 +493,7 @@ static const struct cm_tile_type *cm_tile_type_get(const struct cm_state *cmstat
 {
   /* Sanity check the index. */
   assert(type >= 0);
-  assert(type < cmstate->lattice.size);
+  assert(type < (int)cmstate->lattice.size);
   return cmstate->lattice.p[type];
 }
 
@@ -506,7 +506,7 @@ static const struct cm_tile_type *cm_tile_type_get(const struct cm_state *cmstat
 static const struct cm_tile *cm_tile_get(const struct cm_tile_type *ptype, int j)
 {
   assert(j >= 0);
-  assert(j < ptype->tiles.size);
+  assert(j < (int)ptype->tiles.size);
   return &ptype->tiles.p[j];
 }
 
@@ -987,7 +987,7 @@ static void init_specialist_lattice_nodes(struct cm_tile_type_vector *lattice,
 ****************************************************************************/
 static void top_sort_lattice(struct cm_tile_type_vector *lattice)
 {
-  int i;
+  unsigned int i;
   bool marked[lattice->size];
   bool will_mark[lattice->size];
   struct cm_tile_type_vector vectors[2];
@@ -1085,7 +1085,7 @@ static void top_sort_lattice(struct cm_tile_type_vector *lattice)
 static void clean_lattice(struct cm_tile_type_vector *lattice,
                           const city_t *pcity)
 {
-  int i, j; /* i is the index we read, j is the index we write */
+  unsigned int i, j; /* i is the index we read, j is the index we write */
   struct cm_tile_type_vector tofree;
   bool forced_loop = FALSE;
 
@@ -1109,7 +1109,7 @@ static void clean_lattice(struct cm_tile_type_vector *lattice,
     } else {
       /* Remove links to children that are being removed. */
 
-      int ci, cj; /* 'c' for 'child'; read from ci, write to cj */
+      unsigned int ci, cj; /* 'c' for 'child'; read from ci, write to cj */
 
       lattice->p[j] = ptype;
       lattice->p[j]->lattice_index = j;
@@ -1142,7 +1142,7 @@ static double estimate_fitness(const struct cm_state *cmstate,
 static void sort_lattice_by_fitness(const struct cm_state *cmstate,
                                     struct cm_tile_type_vector *lattice)
 {
-  int i;
+  unsigned int i;
 
   /* compute fitness */
   tile_type_vector_iterate(lattice, ptype) {
@@ -1350,7 +1350,7 @@ static int next_choice(struct cm_state *cmstate, int oldchoice)
     const struct cm_tile_type *ptype = cm_tile_type_get(cmstate, newchoice);
 
     if(!ptype->is_specialist
-       && (cmstate->current.worker_counts[newchoice] == cm_tile_vector_size(&ptype->tiles)))
+       && (cmstate->current.worker_counts[newchoice] == (int)cm_tile_vector_size(&ptype->tiles)))
     {
       /* we've already used all these tiles */
       continue;
