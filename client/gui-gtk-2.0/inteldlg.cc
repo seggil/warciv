@@ -150,7 +150,7 @@ static struct intel_dialog *create_intel_dialog(player_t *p)
   GtkCellRenderer *rend;
   GtkTreeViewColumn *col;
 
-  int i;
+  unsigned int i;
 
   pdialog = (struct intel_dialog*)wc_malloc(sizeof(*pdialog));
   pdialog->pplayer = p;
@@ -292,7 +292,7 @@ void update_intel_dialog(player_t *p)
   if (pdialog) {
     GtkTreeIter diplstates[DIPLSTATE_LAST];
     char buf[64];
-    int i;
+    unsigned int i;
 
     /* window title. */
     my_snprintf(buf, sizeof(buf),
@@ -334,15 +334,15 @@ void update_intel_dialog(player_t *p)
     /* techs tab. */
     gtk_list_store_clear(pdialog->techs);
 
-    for(i = A_FIRST; i<game.ruleset_control.num_tech_types; i++)
+    for(i = A_FIRST; i < game.ruleset_control.num_tech_types; i++)
       if (get_invention(p, i) == TECH_KNOWN) {
         GtkTreeIter it;
 
         gtk_list_store_append(pdialog->techs, &it);
 
-        gtk_list_store_set(pdialog->techs, &it,
-                           0, get_player_ptr()
-                            && get_invention(get_player_ptr(), i) != TECH_KNOWN,
+        gtk_list_store_set(pdialog->techs, &it, 0,
+                           get_player_ptr()
+                           && get_invention(get_player_ptr(), i) != TECH_KNOWN,
                            1, get_tech_name(p, i),
                            -1);
       }
