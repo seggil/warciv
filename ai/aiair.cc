@@ -222,7 +222,7 @@ static bool ai_find_strategic_airbase(unit_t *punit,
 {
   struct refuel *airbase;
   struct pqueue *airbase_iterator;
-  int turns_to_dest = 0;
+  unsigned int turns_to_dest = 0;
   int best_worth = 0;
   bool found = FALSE;
 
