@@ -389,7 +389,8 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
 void get_city_citizen_types(city_t *pcity, int index,
                             struct citizen_type *citizens)
 {
-  int i = 0, n;
+  unsigned int i = 0;
+  int n;
   assert(index >= 0 && index < 5);
 
   for (n = 0; n < pcity->common.people_happy[index]; n++, i++) {
@@ -424,7 +425,7 @@ void city_rotate_specialist(city_t *pcity, int citizen_index)
   Specialist_type_id from;
   int to;
 
-  if (citizen_index < 0 || citizen_index >= pcity->common.pop_size) {
+  if (citizen_index < 0 || citizen_index >= (int)pcity->common.pop_size) {
     return;
   }
 
