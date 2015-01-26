@@ -356,7 +356,7 @@ void improvement_status_init(Impr_Status * improvements, size_t elements)
    */
   Impr_Type_id i;
 
-  for (i = 0; i < elements; i++) {
+  for (i = 0; i < (int)elements; i++) {
     improvements[i] = I_NONE;
   }
 }
