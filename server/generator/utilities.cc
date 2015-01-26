@@ -129,8 +129,10 @@ void adjust_int_map_filtered(int *int_map, int int_map_max, void *data,
   }
 
   {
-    int const size = 1 + maxval - minval;
-    int i, count = 0, frequencies[size];
+    unsigned int const size = 1 + maxval - minval;
+    unsigned int i;
+    int count = 0;
+    unsigned int  frequencies[size];
 
     INITIALIZE_ARRAY(frequencies, size, 0);
 
