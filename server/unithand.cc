@@ -908,13 +908,12 @@ static void handle_unit_attack_request(unit_t *punit, unit_t *pdefender)
    * multiple defenders and unstacked combat). Note that this could mean
    * capturing (or destroying) a city. */
 
-  if (pwinner == punit && myrand(100) < game.server.occupychance &&
-      !is_non_allied_unit_tile(def_tile,
-                               unit_owner(punit))) {
-
+  if (pwinner == punit
+      && (int)myrand(100) < game.server.occupychance
+      && !is_non_allied_unit_tile(def_tile,
+                                  unit_owner(punit))) {
     /* Hack: make sure the unit has enough moves_left for the move to succeed,
        and adjust moves_left to afterward (if successful). */
-
     int old_moves = punit->moves_left;
     int full_moves = unit_move_rate(punit);
     punit->moves_left = full_moves;
