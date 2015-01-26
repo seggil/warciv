@@ -75,8 +75,8 @@ static inline void SPECVEC_FOO(_vector_init) (SPECVEC_VECTOR *tthis)
 static inline void SPECVEC_FOO(_vector_reserve) (SPECVEC_VECTOR *tthis,
                                                  int size)
 {
-  if (size > tthis->size_alloc) {
-    int new_size = MAX(size, tthis->size_alloc * 2);
+  if (size > (int)tthis->size_alloc) {
+    int new_size = MAX(size, (int)(tthis->size_alloc * 2));
 
     tthis->p = (SPECVEC_TYPE *)wc_realloc(tthis->p, new_size * sizeof(*tthis->p));
     tthis->size_alloc = new_size;
@@ -94,7 +94,7 @@ static inline SPECVEC_TYPE *SPECVEC_FOO(_vector_get) (SPECVEC_VECTOR *tthis,
 {
   if (index == -1 && tthis->size > 0) {
     return tthis->p + tthis->size - 1;
-  } else if (index >= 0 && index < tthis->size) {
+  } else if (index >= 0 && index < (int)tthis->size) {
     return tthis->p + index;
   } else {
     return NULL;
@@ -127,7 +127,7 @@ static inline void SPECVEC_FOO(_vector_append) (SPECVEC_VECTOR *tthis,
 
 
 #define TYPED_VECTOR_ITERATE(atype, vector, var) {      \
-  int myiter;                                           \
+  unsigned int myiter;                                  \
   atype *var;                                           \
   for (myiter = 0; myiter < (vector)->size; myiter++) { \
     var = &(vector)->p[myiter];                         \
