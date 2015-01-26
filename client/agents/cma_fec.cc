@@ -149,7 +149,7 @@ void cmafec_preset_remove(int index)
 {
   struct cma_preset *ppreset;
 
-  assert(index >= 0 && index < cmafec_preset_num());
+  assert(index >= 0 && index < (int)cmafec_preset_num());
 
   ppreset = preset_list_get(preset_list, index);
   preset_list_unlink(preset_list, ppreset);
@@ -167,7 +167,7 @@ char *cmafec_preset_get_descr(int index)
 {
   struct cma_preset *ppreset;
 
-  assert(index >= 0 && index < cmafec_preset_num());
+  assert(index >= 0 && index < (int)cmafec_preset_num());
 
   ppreset = preset_list_get(preset_list, index);
   return ppreset->descr;
@@ -180,7 +180,7 @@ const struct cm_parameter *cmafec_preset_get_parameter(int index)
 {
   struct cma_preset *ppreset;
 
-  assert(index >= 0 && index < cmafec_preset_num());
+  assert(index >= 0 && index < (int)cmafec_preset_num());
 
   ppreset = preset_list_get(preset_list, index);
   return &ppreset->parameter;
@@ -207,7 +207,7 @@ int cmafec_preset_get_index_of_parameter(const struct cm_parameter
 /**************************************************************************
  Returns the total number of presets.
 **************************************************************************/
-int cmafec_preset_num(void)
+unsigned int cmafec_preset_num(void)
 {
   return preset_list_size(preset_list);
 }
