@@ -16,6 +16,7 @@
 #endif
 
 #ifdef WIN32_NATIVE
+#  include <winsock2.h>
 #  include <windows.h>    /* LoadLibrary() */
 #endif
 
@@ -831,7 +832,7 @@ player_t *get_player_ptr(void)
 /**************************************************************************
   Return the id of the player that the client is controlling or observing.
 **************************************************************************/
-int get_player_idx(void)
+unsigned int get_player_idx(void)
 {
   return aconnection.player ? aconnection.player->player_no : -1;
 }
