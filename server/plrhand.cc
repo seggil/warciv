@@ -246,7 +246,7 @@ void kill_player(player_t *pplayer) {
   palace = game.server.savepalace;
   game.server.savepalace = FALSE; /* moving it around is dumb */
   city_list_iterate(pplayer->cities, pcity) {
-    if ((pcity->u.server.original != pplayer->player_no)
+    if ((pcity->u.server.original != (int)pplayer->player_no)
         && (get_player(pcity->u.server.original)->is_alive)) {
       /* Transfer city to original owner, kill all its units outside of
          a radius of 3, give verbose messages of every unit transferred,
@@ -325,7 +325,7 @@ void found_new_tech(player_t *plr, int tech_found, bool was_discovery,
 
   /* got_tech allows us to change research without applying techpenalty
    * (without loosing bulbs) */
-  if (tech_found == plr->research.researching) {
+  if (tech_found == (int)plr->research.researching) {
     plr->got_tech = TRUE;
   }
 
@@ -339,7 +339,7 @@ void found_new_tech(player_t *plr, int tech_found, bool was_discovery,
     /* Alert the owners of any wonders that have been made obsolete */
     impr_type_iterate(id) {
       if (game.info.global_wonders[id] != 0 && is_wonder(id) &&
-          improvement_types[id].obsolete_by == tech_found &&
+          (int)improvement_types[id].obsolete_by == tech_found &&
           (pcity = find_city_by_id(game.info.global_wonders[id]))) {
         notify_player_ex(city_owner(pcity), NULL, E_WONDER_OBSOLETE,
                          _("Game: Discovery of %s OBSOLETES %s in %s!"),
@@ -383,11 +383,11 @@ void found_new_tech(player_t *plr, int tech_found, bool was_discovery,
     unit_list_iterate_end;
   }
 
-  if (tech_found == plr->ai.tech_goal) {
+  if (tech_found == (int)plr->ai.tech_goal) {
     plr->ai.tech_goal = A_UNSET;
   }
 
-  if (tech_found == plr->research.researching && next_tech == A_NONE) {
+  if (tech_found == (int)plr->research.researching && next_tech == A_NONE) {
     /* try to pick new tech to research */
     Tech_Type_id next_tech = choose_goal_tech(plr);
 
@@ -433,7 +433,7 @@ void found_new_tech(player_t *plr, int tech_found, bool was_discovery,
                          get_tech_name(plr, tech_found));
       }
     }
-  } else if (tech_found == plr->research.researching && next_tech > A_NONE) {
+  } else if (tech_found == (int)plr->research.researching && next_tech > A_NONE) {
     /* Next target already determined. We always save bulbs. */
     plr->research.researching = next_tech;
   }
@@ -516,7 +516,7 @@ Player has researched a new technology
 **************************************************************************/
 static void tech_researched(player_t *plr)
 {
-  int tech = plr->research.researching;
+  unsigned int tech = plr->research.researching;
 
   /* plr will be notified when new tech is chosen */
 
@@ -670,7 +670,7 @@ void choose_random_tech(player_t *plr)
 **************************************************************************/
 void choose_tech(player_t *plr, int tech)
 {
-  if (plr->research.researching == tech) {
+  if ((int)plr->research.researching == tech) {
     return;
   }
 
@@ -704,7 +704,7 @@ void choose_tech(player_t *plr, int tech)
 **************************************************************************/
 void choose_tech_goal(player_t *plr, int tech)
 {
-  if (plr->ai.tech_goal != tech) {
+  if ((int)plr->ai.tech_goal != tech) {
     notify_player(plr, _("Game: Technology goal is %s."),
                   get_tech_name(plr, tech));
     plr->ai.tech_goal = tech;
@@ -1298,7 +1298,7 @@ repeat_break_treaty:
                      _("Game: Your reputation is now %s."),
                      reputation_text(pplayer->reputation));
     if (has_senate && pplayer->revolution_finishes < 0) {
-      if (myrand(GAME_MAX_REPUTATION) > pplayer->reputation) {
+      if ((int)myrand(GAME_MAX_REPUTATION) > pplayer->reputation) {
         notify_player_ex(pplayer, NULL, E_ANARCHY,
                          _("Game: The senate decides to dissolve "
                          "rather than support your actions any longer."));
@@ -1633,7 +1633,7 @@ static void package_player_info(player_t *plr,
                                 player_t *receiver,
                                 enum plr_info_level min_info_level)
 {
-  int i;
+  unsigned int i;
   enum plr_info_level info_level;
 
   if (receiver) {
@@ -1915,25 +1915,25 @@ void maybe_make_contact(tile_t *ptile, player_t *pplayer)
   To be used only by shuffle_players() and shuffled_player() below:
 **************************************************************************/
 static player_t *shuffled_plr[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
-static int shuffled_nplayers = 0;
+static unsigned int shuffled_nplayers = 0;
 
 /**************************************************************************
   Shuffle or reshuffle the player order, storing in static variables above.
 **************************************************************************/
 void shuffle_players(void)
 {
-  int i, pos;
+  unsigned int i, pos;
   player_t *tmp_plr;
 
   freelog(LOG_DEBUG, "shuffling %d players", game.info.nplayers);
 
   /* Initialize array in unshuffled order: */
-  for(i=0; i<game.info.nplayers; i++) {
+  for (i = 0; i < game.info.nplayers; i++) {
     shuffled_plr[i] = &game.players[i];
   }
 
   /* Now shuffle them: */
-  for(i=0; i<game.info.nplayers-1; i++) {
+  for (i = 0; i < game.info.nplayers-1; i++) {
     /* for each run: shuffled[ <i ] is already shuffled [Kero+dwp] */
     pos = i + myrand(game.info.nplayers-i);
     tmp_plr = shuffled_plr[i];
@@ -1957,7 +1957,7 @@ void shuffle_players(void)
 **************************************************************************/
 void set_shuffled_players(int *shuffled_players)
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < game.info.nplayers; i++) {
     shuffled_plr[i] = get_player(shuffled_players[i]);
@@ -1976,7 +1976,7 @@ void set_shuffled_players(int *shuffled_players)
 **************************************************************************/
 player_t *shuffled_player(int i)
 {
-  assert(i>=0 && i<game.info.nplayers);
+  assert(i>=0 && i < (int)game.info.nplayers);
 
   if (shuffled_nplayers == 0) {
     return &game.players[i];
@@ -1987,7 +1987,7 @@ player_t *shuffled_player(int i)
             game.info.nplayers, shuffled_nplayers);
     return &game.players[i];    /* ?? */
   }
-  if (i < shuffled_nplayers) {
+  if (i < (int)shuffled_nplayers) {
     return shuffled_plr[i];
   } else {
     return &game.players[i];
