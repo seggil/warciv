@@ -366,7 +366,7 @@ struct effect_type_vector *get_building_effect_types(Impr_Type_id id)
 **************************************************************************/
 enum effect_req_type effect_req_type_from_str(const char *str)
 {
-  int req_type;
+  unsigned int req_type;
 
   assert(ARRAY_SIZE(req_type_names) == REQ_LAST);
 
@@ -442,7 +442,7 @@ int find_effect_group_id(const char *name)
 **************************************************************************/
 void ruleset_cache_init(void)
 {
-  int i, j;
+  unsigned int i, j;
 
   assert(ARRAY_SIZE(req_type_names) == REQ_LAST);
   assert(groups == NULL);
@@ -469,7 +469,7 @@ void ruleset_cache_init(void)
 **************************************************************************/
 void ruleset_cache_free(void)
 {
-  int i, j;
+  unsigned int i, j;
 
   if (groups == NULL) {
     return;
