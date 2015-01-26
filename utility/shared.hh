@@ -142,7 +142,7 @@ typedef unsigned int wc_bool;
 ****************************************************************************/
 #define INITIALIZE_ARRAY(array, size, value)                                \
   {                                                                         \
-    int _ini_index;                                                         \
+    unsigned int _ini_index;                                                \
                                                                             \
     for (_ini_index = 0; _ini_index < (size); _ini_index++) {               \
       (array)[_ini_index] = (value);                                        \
@@ -311,12 +311,20 @@ long get_file_size (const char *pathname);
 
 typedef void (*data_free_func_t) (void *data);
 
-#define PTR_TO_INT(p) ((int)(long)(p))
-#define INT_TO_PTR(i) ((void *)(long)(i))
-#define PTR_TO_UINT16_T(p) ((uint16_t)(long)(p))
-#define UINT16_T_TO_PTR(i) ((void *)(long)(i))
-#define PTR_TO_UINT32_T(p) ((uint32_t)(long)(p))
-#define UINT32_T_TO_PTR(i) ((void *)(long)(i))
+#ifdef _WIN64 
+# define PTR_TO_INT(p) ((int)(long long)(p))
+# define PTR_TO_UINT16_T(p) ((uint16_t)(long long)(p))
+# define PTR_TO_UINT32_T(p) ((uint32_t)(long long)(p))
+# define INT_TO_PTR(i) ((void *)(long long)(i))
+# define UINT16_T_TO_PTR(i) ((void *)(long long)(i))
+# define UINT32_T_TO_PTR(i) ((void *)(long long)(i))
+#else
+# define PTR_TO_INT(p) ((int)(long)(p))
+# define PTR_TO_UINT16_T(p) ((uint16_t)(long)(p))
+# define INT_TO_PTR(i) ((void *)(long)(i))
+# define UINT16_T_TO_PTR(i) ((void *)(long)(i))
+# define UINT32_T_TO_PTR(i) ((void *)(long)(i))
+#endif
 
 /* String vector. */
 struct string_vector;
