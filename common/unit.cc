@@ -1654,9 +1654,9 @@ enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
   to know more.  The AI code uses base_trireme_loss_pct and
   base_unsafe_terrain_loss_pct directly.
 **************************************************************************/
-int unit_loss_pct(player_t *pplayer,
-                  const tile_t *ptile,
-                  unit_t *punit)
+unsigned int unit_loss_pct(player_t *pplayer,
+                           const tile_t *ptile,
+                           unit_t *punit)
 {
   int loss_pct = 0;
 
