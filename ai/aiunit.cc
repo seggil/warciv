@@ -105,7 +105,7 @@ Unit_Type_id simple_ai_types[U_LAST];
 static void ai_airlift(player_t *pplayer)
 {
   struct city_s *most_needed;
-  int comparison;
+  unsigned int comparison;
   unit_t *transported;
 
   do {
@@ -337,7 +337,7 @@ static bool stay_and_defend(unit_t *punit)
   struct city_s *pcity = map_get_city(punit->tile);
   bool has_defense = FALSE;
   int mydef;
-  int units = -2; /* WAG for grave danger threshold, seems to work */
+  unsigned int units = -2; /* WAG for grave danger threshold, seems to work */
 
   if (!pcity) {
     return FALSE;
@@ -1064,7 +1064,7 @@ static void ai_military_findjob(player_t *pplayer, unit_t *punit)
          && unit_def_rating_basic(punit) > unit_def_rating_basic(aunit))
         || (acity && acity->common.owner == punit->owner
             && acity->u.server.ai.urgency != 0
-            && acity->u.server.ai.danger > assess_defense_quadratic(acity))) {
+            && (int)acity->u.server.ai.danger > assess_defense_quadratic(acity))) {
       assert(punit->ai.ai_role == AIUNIT_ESCORT);
       return;
     } else {
