@@ -389,6 +389,7 @@ static bool section_file_read_dup(struct section_file *sf,
   struct sbuffer *sb;
   const char *tok;
   int i;
+  unsigned int u;
   struct astring base_name = ASTRING_INIT;    /* for table or single entry */
   struct astring entry_name = ASTRING_INIT;
   struct astring_vector columns;    /* astrings for column headings */
@@ -558,8 +559,8 @@ static bool section_file_read_dup(struct section_file *sf,
 
   astr_free(&base_name);
   astr_free(&entry_name);
-  for (i = 0; i < astring_vector_size(&columns); i++) {
-    astr_free(&columns.p[i]);
+  for (u = 0; u < astring_vector_size(&columns); u++) {
+    astr_free(&columns.p[u]);
   }
   astring_vector_free(&columns);
 
@@ -1243,7 +1244,7 @@ section_file_lookup_internal(struct section_file *my_section_file,
   char sec_name[MAX_LEN_BUFFER];
   char ent_name[MAX_LEN_BUFFER];
   char mod_fullpath[2*MAX_LEN_BUFFER];
-  int len;
+  unsigned int len;
   struct entry *result;
   struct section *psection;
 
@@ -1252,7 +1253,7 @@ section_file_lookup_internal(struct section_file *my_section_file,
   /* treat "sec.foo,0" as "sec.foo": */
   len = strlen(fullpath);
   if(len>2 && fullpath[len-2]==',' && fullpath[len-1]=='0') {
-    assert(len<sizeof(mod_fullpath));
+    assert(len < sizeof(mod_fullpath));
     strcpy(mod_fullpath, fullpath);
     fullpath = mod_fullpath;    /* reassign local pointer 'fullpath' */
     fullpath[len-2] = '\0';
@@ -1273,7 +1274,7 @@ section_file_lookup_internal(struct section_file *my_section_file,
   }
 
   (void) mystrlcpy(sec_name, fullpath,
-                   MIN(pdelim - fullpath + 1, sizeof(sec_name)));
+                   MIN(pdelim - fullpath + 1, (unsigned int)sizeof(sec_name)));
   sz_strlcpy(ent_name, pdelim+1);
 
   psection = find_section_by_name(my_section_file, sec_name);
@@ -1314,7 +1315,7 @@ section_file_insert_internal(struct section_file *my_section_file,
     exit(EXIT_FAILURE);
   }
   (void) mystrlcpy(sec_name, fullpath,
-                   MIN(pdelim - fullpath + 1, sizeof(sec_name)));
+                   MIN(pdelim - fullpath + 1, (unsigned int)sizeof(sec_name)));
   sz_strlcpy(ent_name, pdelim+1);
   my_section_file->num_entries++;
 
