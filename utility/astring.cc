@@ -69,7 +69,7 @@ void astr_init(struct astring *astr)
 ***********************************************************************/
 void astr_minsize(struct astring *astr, size_t n)
 {
-  int n1;
+  size_t n1;
   bool was_null = (astr->n == 0);
 
   assert(astr != NULL);
@@ -115,7 +115,7 @@ static void vadd(struct astring *astr, const char *format, va_list ap)
   char buf[1024];
 
   nb = my_vsnprintf(buf, sizeof(buf), format, ap);
-  if (nb == -1) {
+  if (nb == (size_t)-1) {
     die("Formatted string bigger than %lu bytes",
         (unsigned long)sizeof(buf));
   }
