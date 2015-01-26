@@ -1140,7 +1140,7 @@ GtkWidget *create_network_page(void)
   };
   static bool titles_done;
 
-  int i;
+  unsigned int i;
 
   intl_slist(ARRAY_SIZE(titles), titles, &titles_done);
 
