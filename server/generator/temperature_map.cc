@@ -71,7 +71,7 @@ void destroy_tmap(void)
  ***************************************************************************/
 void create_tmap(bool real)
 {
-  int i;
+  unsigned int i;
 
   /* if map is defined this is not changed */
   /* TO DO load if from scenario game with tmap */
