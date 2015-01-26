@@ -214,7 +214,7 @@ void create_science_dialog(bool make_modal)
 {
   GtkWidget *frame, *hbox;
   GtkCellRenderer *renderer;
-  int i;
+  unsigned int i;
 
   gui_dialog_new_full(&science_dialog_shell, GTK_NOTEBOOK(top_notebook), 5);
   gui_dialog_set_title(science_dialog_shell, _("Science"));
@@ -491,7 +491,8 @@ void science_dialog_update(void)
     return;
   }
 
-  int i, j;
+  unsigned int i;
+  int j;
   char format[512], text[512];
   GList *sorting_list = NULL, *it;
   gdouble pct;
@@ -578,7 +579,7 @@ void science_dialog_update(void)
   /* sort the list and build from it the menu */
   sorting_list = g_list_sort(sorting_list, cmp_func);
   for (i = 0; i < g_list_length(sorting_list); i++) {
-    gint tech = GPOINTER_TO_INT(g_list_nth_data(sorting_list, i));
+    guint tech = GPOINTER_TO_INT(g_list_nth_data(sorting_list, i));
 
     science_list_add(reachable_techs, &iter, tech);
     if (tech == pplayer->research.researching
@@ -627,7 +628,7 @@ void science_dialog_update(void)
   /* sort the list and build from it the menu */
   sorting_list = g_list_sort(sorting_list, cmp_func);
   for (it = g_list_first(sorting_list); it; it = g_list_next(it)) {
-    gint tech = GPOINTER_TO_INT(g_list_nth_data(it, 0));
+    guint tech = GPOINTER_TO_UINT(g_list_nth_data(it, 0));
 
     science_list_add(reachable_goals, &iter, tech);
     if (tech == pplayer->ai.tech_goal) {
