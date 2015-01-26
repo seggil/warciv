@@ -18,7 +18,7 @@
 #include "wc_types.hh"
 #include "nation.hh" /* Nation_Type_id */
 
-typedef int Tech_Type_id;
+typedef unsigned int Tech_Type_id;
 /*
   Above typedef replaces old "enum tech_type_id"; see comments about
   Unit_Type_id in unit.h, since mainly apply here too, except don't
