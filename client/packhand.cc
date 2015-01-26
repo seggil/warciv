@@ -845,7 +845,7 @@ void handle_city_info(struct packet_city_info *packet) /* 21 sc */
 static void handle_city_packet_common(city_t *pcity, bool is_new,
                                       bool popup, bool investigate)
 {
-  int i;
+  unsigned int i;
 
   if (is_new) {
     pcity->u.client.info_units_supported = unit_list_new();
@@ -2076,7 +2076,7 @@ void start_revolution(void)
 **************************************************************************/
 void handle_player_info(struct packet_player_info *pinfo) /* 39 sc */
 {
-  int i;
+  unsigned int i;
   bool poptechup, new_tech = FALSE;
   char msg[MAX_LEN_MSG];
   player_t *pplayer = &game.players[pinfo->playerno];
@@ -3051,7 +3051,7 @@ void handle_ruleset_tech(struct packet_ruleset_tech *p) /* 99 sc */
   printf(" graphic_str=%s", p->graphic_str);
   printf(" graphic_alt=%s\n", p->graphic_alt);
 # endif
-  if(p->id < 0 || p->id >= game.ruleset_control.num_tech_types || p->id >= A_LAST) {
+  if(p->id < 0 || p->id >= (int)game.ruleset_control.num_tech_types || p->id >= A_LAST) {
     freelog(LOG_ERROR, "Received bad advance id %d in handle_ruleset_tech()",
             p->id);
     return;
