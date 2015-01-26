@@ -123,7 +123,7 @@ struct unit_ai {
 struct unit_s {
   Unit_Type_id type;
   int id;
-  int owner;
+  unsigned int owner;
   tile_t *tile;
   int homecity;
   int moves_left;
@@ -304,8 +304,8 @@ unit_t *is_non_allied_unit_tile(const tile_t *ptile,
 unit_t *is_non_attack_unit_tile(const tile_t *ptile,
                                      player_t *pplayer);
 
-int unit_loss_pct(player_t *pplayer, const tile_t *ptile,
-                  unit_t *punit);
+unsigned int unit_loss_pct(player_t *pplayer, const tile_t *ptile,
+                           unit_t *punit);
 int base_trireme_loss_pct(player_t *pplayer, unit_t *punit);
 int base_unsafe_terrain_loss_pct(player_t *pplayer,
                                  unit_t *punit);
