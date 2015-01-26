@@ -35,10 +35,11 @@
 #  include "../config.hh"
 #endif
 
+#include <stdio.h>
 #include <assert.h>
 
-#include "log.hh"
 #include "shared.hh"             /* TRUE, FALSE */
+#include "log.hh"
 
 #include "rand.hh"
 
