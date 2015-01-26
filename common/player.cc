@@ -577,8 +577,10 @@ the "ai_fuzzy(pplayer," part, and read the previous example as:
 **************************************************************************/
 bool ai_fuzzy(player_t *pplayer, bool normal_decision)
 {
-  if (!pplayer->ai.control || pplayer->ai.fuzzy == 0) return normal_decision;
-  if (myrand(1000) >= pplayer->ai.fuzzy) return normal_decision;
+  if (!pplayer->ai.control || pplayer->ai.fuzzy == 0)
+    return normal_decision;
+  if ( (int)myrand(1000) >= pplayer->ai.fuzzy)
+    return normal_decision;
   return !normal_decision;
 }
 
