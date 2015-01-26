@@ -452,7 +452,8 @@ void do_trade_planning_precalculation(void)
 {
   char buf[1024], message[1024];
   size_t size = tile_list_size(trade_cities);
-  int free_slots[size], total, i;
+  int free_slots[size], total;
+  unsigned int i;
   bool first = TRUE;
 
   total = trade_planning_precalculation(trade_cities, size, free_slots);
@@ -1061,7 +1062,7 @@ static void toggle_worker_free(struct toggle_worker *ptw)
 **************************************************************************/
 static void sort_cities(struct toggle_city *cities, size_t size)
 {
-  int i, j;
+  unsigned int i, j;
 
   for (i = 0; i < size; i++) {
     for (j = 0; j < i; j++) {
@@ -1095,7 +1096,7 @@ static bool can_steal_tile_to_cities(struct toggle_city *cities, size_t size,
                                      tile_t *ptile)
 {
   struct toggle_city *tcity;
-  int i, j;
+  unsigned int i, j;
 
   for (i = 0; i < size; i++) {
     tcity = &cities[i];
@@ -1146,7 +1147,7 @@ static void fill_worked_tiles(struct toggle_city *cities,
   city_t *pcity = tcity->pcity;
   bool is_celebrating = base_city_celebrating(pcity);
   struct worked_tile *pwtile;
-  int i;
+  unsigned int i;
 
   assert(vec < size);
 
@@ -1193,7 +1194,7 @@ static void fill_worked_tiles(struct toggle_city *cities,
 static bool city_is_in_list(struct toggle_city *cities, size_t size,
                             city_t *pcity)
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < size; i++) {
     if (cities[i].pcity == pcity) {
@@ -1209,7 +1210,7 @@ static bool city_is_in_list(struct toggle_city *cities, size_t size,
 static bool tile_is_in_list(struct worked_tile *tiles, size_t size,
                             int cx, int cy)
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < size; i++) {
     if (tiles[i].cx == cx && tiles[i].cy == cy) {
@@ -1228,7 +1229,8 @@ static void city_set_specialists(struct toggle_city *cities, size_t size,
   struct toggle_city *tcity = &cities[vec];
   city_t *pcity = tcity->pcity;
   tile_t *ptile;
-  int i, cx, cy;
+  unsigned int i;
+  int cx, cy;
 
   /* Check tiles used by others cities. */
   for (i = 0; i < tcity->tiles_num && i < tcity->pcity->common.pop_size; i++) {
@@ -1264,7 +1266,7 @@ static void city_set_workers(struct toggle_city *tcity,
 {
   city_t *pcity = tcity->pcity;
   struct worked_tile *pwtile;
-  int i;
+  unsigned int i;
 
   for (i = 0; i < tcity->tiles_num && i < tcity->pcity->common.pop_size; i++) {
     pwtile = &tcity->tiles[i];
@@ -1285,7 +1287,8 @@ static struct toggle_worker_list *apply_trade_workers(city_t *pcity1,
   struct toggle_city cities[size];
   struct toggle_worker_list *plist = toggle_worker_list_new();
   city_t *ocity;
-  int i = 0, player_idx = get_player_idx();
+  unsigned int i = 0;
+  unsigned int player_idx = get_player_idx();
 
   assert(server_has_extglobalinfo == FALSE);
 
