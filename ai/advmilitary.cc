@@ -409,12 +409,12 @@ static void ai_reevaluate_building(city_t *pcity, int *value,
     return;
   }
 
-  *value = MAX(*value, 100 + MAX(0, urgency)); /* default */
+  *value = MAX(*value, 100 + (int)MAX(0, urgency)); /* default */
 
-  if (urgency > 0 && danger > defense * 2) {
+  if (urgency > 0 && danger > (unsigned int)defense * 2) {
     *value += 100;
-  } else if (defense != 0 && danger > defense) {
-    *value = MAX(danger * 100 / defense, *value);
+  } else if (defense != 0 && (int)danger > defense) {
+    *value = MAX((int)danger * 100 / defense, *value);
   }
 }
 
@@ -1242,7 +1242,7 @@ void military_advisor_choose_build(player_t *pplayer, city_t *pcity,
 
   /* Otherwise no need to defend yet */
   if (pcity->u.server.ai.danger != 0) {
-    int num_defenders = unit_list_size(ptile->units);
+    unsigned int num_defenders = unit_list_size(ptile->units);
     int land_id, sea_id, air_id;
 
     /* First determine the danger.  It is measured in percents of our
