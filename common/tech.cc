@@ -50,7 +50,7 @@ static const char *flag_names[] = {
 ...
 **************************************************************************/
 enum tech_state get_invention(const player_t *pplayer,
-                              enum tech_state tech)
+                              Tech_Type_id tech)
 {
   assert(tech >= 0);
 

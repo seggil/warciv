@@ -1008,7 +1008,7 @@ void helptext_tech(char *buf, int i, const char *user_text)
   assert(buf&&user_text);
   strcpy(buf, user_text);
 
-  if (get_player_ptr() && get_invention(get_player_ptr(), i) != TECH_KNOWN) {
+  if (get_player_ptr() && get_invention(get_player_ptr(), (Tech_Type_id)i) != TECH_KNOWN) {
     if (get_invention(get_player_ptr(), i) == TECH_REACHABLE) {
       sprintf(buf + strlen(buf),
               _("If we would now start with %s we would need %d bulbs."),

@@ -737,7 +737,7 @@ static int my_cmp(const void *p1, const void *p2)
  section 3: other units
  section 4: wonders
 **************************************************************************/
-void name_and_sort_items(int *pcids, int num_cids, struct item *items,
+void name_and_sort_items(city_cid *pcids, int num_cids, struct item *items,
                          bool show_cost, city_t *pcity)
 {
   int i;
@@ -790,7 +790,7 @@ void name_and_sort_items(int *pcids, int num_cids, struct item *items,
 int collect_city_cids1(city_cid *dest_cids, city_t **selected_cities,
                        int num_selected_cities, bool append_units,
                        bool append_wonders, bool change_prod,
-                       bool(*test_func) (city_t *, int))
+                       bool(*test_func) (city_t *, city_cid))
 {
   city_cid first = append_units ? B_LAST : 0;
   city_cid last = (append_units
