@@ -14,7 +14,6 @@
 #define WC_COMMON_EVENTS_H
 
 enum event_type {
-  E_NOEVENT /* = -1 */,
   E_CITY_CANTBUILD,
   E_CITY_LOST,
   E_CITY_LOVE,
@@ -112,7 +111,8 @@ enum event_type {
    * to the events array in client/options.c using GEN_EV and to
    * data/stdsounds.spec.
    */
-  E_LAST
+  E_LAST,
+  E_NOEVENT  = ~0
 };
 
 #endif  /* WC_COMMON_EVENTS_H */

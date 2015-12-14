@@ -1350,7 +1350,7 @@ static struct events_s {
  * Maps from enum event_type to indexes of events[]. Set by
  * init_messages_where.
  */
-static int event_to_index[E_LAST];
+static unsigned int event_to_index[E_LAST];
 
 static void save_cma_preset(struct section_file *file, char *name,
                             const struct cm_parameter *const pparam,
@@ -1419,10 +1419,11 @@ void init_messages_where(void)
 {
   unsigned int i;
 
-  for (i = 0; i < ARRAY_SIZE(event_to_index); i++) {
+  for (i = 0; i < E_LAST; i++) {
     event_to_index[i] = 0;
   }
 
+  // last element of array is events[i].event == E_NOEVENT
   for (i = 0;; i++) {
     unsigned int j;
 
