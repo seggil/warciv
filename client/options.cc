@@ -1820,8 +1820,8 @@ void load_general_options(void)
   if (num == -1) {
     create_default_cma_presets();
   } else {
-    for (i = num - 1; i >= 0; i--) {
-      load_cma_preset(&sf, i);
+    for (i = num; i > 0; i--) {
+      load_cma_preset(&sf, i - 1);
     }
   }
 
