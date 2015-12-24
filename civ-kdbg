@@ -4,7 +4,11 @@ BUILDDIR=`dirname $0`
 
 # Use cd + pwd instead of manual concatentation in case of absolute paths
 BUILDDATA=$(cd $BUILDDIR/data ; pwd)
-SRCDATA=$(cd $BUILDDIR ; cd ./data ; pwd)
+if [ -f $BUILDDIR/data/Makefile.am ] ; then
+  SRCDATA=$(cd $BUILDDIR ; cd ./data ; pwd)
+else
+  SRCDATA=$(cd $BUILDDIR ; cd ../data ; pwd)
+fi
 
 if [ "x$WARCIV_PATH" = "x" ] ; then
   WARCIV_PATH=".:data:~/.warciv"
