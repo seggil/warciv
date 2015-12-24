@@ -417,10 +417,10 @@ static inline tile_t *base_native_pos_to_tile(int nat_x, int nat_y)
 
   /* Wrap in X and Y directions, as needed. */
   if (topo_has_flag(TF_WRAPX)) {
-    nat_x = WC_WRAP(nat_x, map.info.xsize);
+    nat_x = WC_WRAP(nat_x, (int)(map.info.xsize));
   }
   if (topo_has_flag(TF_WRAPY)) {
-    nat_y = WC_WRAP(nat_y, map.info.ysize);
+    nat_y = WC_WRAP(nat_y, (int)(map.info.ysize));
   }
 
   return map.board + native_pos_to_index(nat_x, nat_y);
@@ -1271,11 +1271,12 @@ void reset_move_costs(tile_t *ptile)
 ***************************************************************/
 void initialize_move_costs(void)
 {
-  int maxcost = 72; /* should be big enough without being TOO big */
+  int maxcost = 72; /* should be big enough without being TOO big range is -128..127 */
 
   whole_map_iterate(ptile) {
     /* trying to move off the screen is the default */
-    memset(ptile->move_cost, maxcost, sizeof(ptile->move_cost));
+    memset(ptile->move_cost, maxcost, DIR8_COUNT);
+
 
     adjc_dir_iterate(ptile, tile1, dir) {
       ptile->move_cost[dir] = tile_move_cost_ai(ptile, tile1, maxcost);
@@ -1541,11 +1542,11 @@ void base_map_distance_vector(int *dx, int *dy,
     *dy = y1 - y0;
     if (topo_has_flag(TF_WRAPX)) {
       /* Wrap dx to be in [-map.info.xsize/2, map.info.xsize/2). */
-      *dx = WC_WRAP(*dx + map.info.xsize / 2, map.info.xsize) - map.info.xsize / 2;
+      *dx = WC_WRAP(*dx + map.info.xsize / 2, (int)(map.info.xsize)) - map.info.xsize / 2;
     }
     if (topo_has_flag(TF_WRAPY)) {
       /* Wrap dy to be in [-map.info.ysize/2, map.info.ysize/2). */
-      *dy = WC_WRAP(*dy + map.info.ysize / 2, map.info.ysize) - map.info.ysize / 2;
+      *dy = WC_WRAP(*dy + map.info.ysize / 2, (int)(map.info.ysize)) - map.info.ysize / 2;
     }
 
     /* Convert the native delta vector back to a pair of map positions. */

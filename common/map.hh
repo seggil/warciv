@@ -43,9 +43,10 @@ enum tile_hilite {
                        ((ptile) ? (ptile)->y : -1)
 
 struct tile_s {
-  const int x, y;                   /* Cartesian (map) coordinates of the tile. */
-  const unsigned int nat_x;
-  const unsigned int nat_y;         /* Native coordinates of the tile. */
+  const int x;
+  const int y;                      /* Cartesian (map) coordinates of the tile. */
+  const int nat_x;
+  const int nat_y;                  /* Native coordinates of the tile. */
   const int index;                  /* Index coordinate of the tile. */
   Terrain_type_id terrain;
   enum tile_special_type special;
@@ -187,7 +188,7 @@ struct civ_map {
     int temperature;
     int wetness;
     int steepness;
-    unsigned int num_start_positions;
+    int num_start_positions;
     bool have_specials;
     bool have_huts;
     bool have_rivers_overlay;   /* only applies if !have_specials */
@@ -618,7 +619,7 @@ extern struct terrain_misc terrain_control;
 /* Iterate over all positions on the globe. */
 #define whole_map_iterate(ptile)                                            \
 {                                                                           \
-  unsigned int _index; /* We use index positions for cache efficiency. */  \
+  int _index; /* We use index positions for cache efficiency. */            \
   for (_index = 0; _index < MAX_MAP_INDEX; _index++) {                      \
     tile_t *ptile = map.board + _index;                                     \
 
@@ -744,8 +745,8 @@ static inline bool is_border_tile(const tile_t *ptile, int dist)
   /* HACK: An iso-map compresses the value in the X direction but not in
    * the Y direction.  Hence (x+1,y) is 1 tile away while (x,y+2) is also
    * one tile away. */
-  unsigned int xdist = dist;
-  unsigned int ydist;
+  int xdist = dist;
+  int ydist;
 
   if (MAP_IS_ISOMETRIC)
     ydist = 2 * dist;

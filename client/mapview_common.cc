@@ -376,10 +376,10 @@ static void normalize_gui_pos(int *gui_x, int *gui_y)
    * doesn't necessarily do. */
   MAP_TO_NATIVE_POS(&nat_x, &nat_y, map_x, map_y);
   if (topo_has_flag(TF_WRAPX)) {
-    nat_x = WC_WRAP(nat_x, map.info.xsize);
+    nat_x = WC_WRAP(nat_x, (int)(map.info.xsize));
   }
   if (topo_has_flag(TF_WRAPY)) {
-    nat_y = WC_WRAP(nat_y, map.info.ysize);
+    nat_y = WC_WRAP(nat_y, (int)(map.info.ysize));
   }
   NATIVE_TO_MAP_POS(&map_x, &map_y, nat_x, nat_y);
 
