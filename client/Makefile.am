@@ -103,7 +103,7 @@ civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
 	trade.c	\
 	trade.h
 
-civclient_LDFLAGS = @CLIENT_LDFLAGS@
+civclient_LDFLAGS = @CLIENT_LDFLAGS@ -lm
 fc_civclient_libs =	../utility/libcivutility.a	\
 			../common/libcivcommon.a	\
 			../common/aicore/libaicore.a	\
