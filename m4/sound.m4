@@ -54,10 +54,10 @@ AC_DEFUN([FC_CHECK_SOUND],[
 
  if test "x$USE_SOUND_ALSA" = "xyes"; then
   dnl Add ALSA support to client
-  AM_ALSA_SUPPORT(ALSA=yes, ALSA=no)
-  if test "x$ALSA" != "xno"; then
+  AM_PATH_ALSA([],ALSA=yes, ALSA=no)
+  if test "x$ALSA" = "xyes"; then
     SOUND_CFLAGS="$SOUND_CFLAGS $ALSA_CFLAGS"
-    SOUND_LIBS="$SOUND_LIBS $ALSA_LIB"
+    SOUND_LIBS="$SOUND_LIBS $ALSA_LIB -laudiofile"
     AC_DEFINE(ALSA, 1, [ALSA support])
     AC_MSG_CHECKING(building ALSA support)
     AC_MSG_RESULT(yes)
