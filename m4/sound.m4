@@ -1,19 +1,43 @@
 AC_DEFUN([FC_CHECK_SOUND],[
- AC_ARG_ENABLE(esd,
-   [  --disable-esd           Do not try to use Esound],
-   USE_SOUND=no, USE_SOUND_ESD=yes)
+ AC_ARG_ENABLE([esd],
+   AS_HELP_STRING([--disable-esd],
+                  [Do not try to use Esound]),
+   [case "${enableval}" in
+     yes) USE_SOUND_ESD=yes ;;
+     no)  USE_SOUND_ESD=no ;;
+     *)   AC_MSG_ERROR(bad value ${enableval} for --disable-esd) ;;
+   esac],
+   [USE_SOUND_ESD=no])
 
- AC_ARG_ENABLE(sdl-mixer,
-   [  --disable-sdl-mixer     Do not try to use the SDL mixer],
-   USE_SOUND=no, USE_SOUND_SDL=yes)
+ AC_ARG_ENABLE([sdl-mixer],
+   AS_HELP_STRING([--enable-sdl-mixer],
+                  [Try to use the SDL mixer(default)]),
+   [case "${enableval}" in
+     yes) USE_SOUND_SDL=yes ;;
+     no)  USE_SOUND_ESD=no ;;
+     *)   AC_MSG_ERROR(bad value ${enableval} for --disable-sdl-mixer) ;;
+   esac],
+   [USE_SOUND_SDL=yes])
 
- AC_ARG_ENABLE(alsa,
-   [  --disable-alsa          Do not try to use ALSA],
-   USE_SOUND=no, USE_SOUND_ALSA=yes)
+ AC_ARG_ENABLE([alsa],
+   AS_HELP_STRING([--disable-alsa],
+                  [Do not try to use ALSA]),
+   [case "${enableval}" in
+     yes) USE_SOUND_ALSA=yes ;;
+     no)  USE_SOUND_ESD=no ;;
+     *)   AC_MSG_ERROR(bad value ${enableval} for --disable-alsa) ;;
+   esac],
+   [USE_SOUND_ALSA=no])
 
- AC_ARG_ENABLE(winmm,
-   [  --disable-winmm         Do not try to use WinMM for sound],
-   USE_SOUND=no, USE_SOUND_WINMM=yes)
+ AC_ARG_ENABLE([winmm],
+   AS_HELP_STRING([--disable-winmm],
+                  [Do not try to use WinMM for sound]),
+   [case "${enableval}" in
+     yes) USE_SOUND_WINMM=yes ;;
+     no)  USE_SOUND_ESD=no ;;
+     *)   AC_MSG_ERROR(bad value ${enableval} for --disable-winmm) ;;
+   esac],
+   [USE_SOUND_WINMM=no])
 
  if test "x$USE_SOUND_ESD" = "xyes"; then
   dnl Add esound support to client
