@@ -13,12 +13,18 @@ AC_DEFUN([AM_PATH_SDL],
 [dnl 
 dnl Get the cflags and libraries from the sdl-config script
 dnl
-AC_ARG_WITH(sdl-prefix,[  --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)],
-            sdl_prefix="$withval", sdl_prefix="")
-AC_ARG_WITH(sdl-exec-prefix,[  --with-sdl-exec-prefix=PFX Exec prefix where SDL is installed (optional)],
+AC_ARG_WITH([sdl-prefix],
+            AS_HELP_STRING([--with-sdl-prefix=PFX],
+                           [Prefix where SDL is installed (optional)]),
+            [sdl_prefix="$withval"], [sdl_prefix=""])
+AC_ARG_WITH([sdl-exec-prefix],
+            AS_HELP_STRING([--with-sdl-exec-prefix=PFX],
+                           [Exec prefix where SDL is installed (optional)]),
             sdl_exec_prefix="$withval", sdl_exec_prefix="")
-AC_ARG_ENABLE(sdltest, [  --disable-sdltest       Do not try to compile and run a test SDL program],
-		    , enable_sdltest=yes)
+AC_ARG_ENABLE([sdltest],
+              AS_HELP_STRING([--disable-sdltest],
+              [Do not try to compile and run a test SDL program]),
+              , enable_sdltest=yes)
 
   if test x$sdl_exec_prefix != x ; then
     sdl_args="$sdl_args --exec-prefix=$sdl_exec_prefix"
@@ -70,19 +76,17 @@ dnl
 #include <string.h>
 #include "SDL.h"
 
-char*
+static char*
 my_strdup (char *str)
 {
   char *new_str;
   
-  if (str)
-    {
+  if (str) {
       new_str = (char *)malloc ((strlen (str) + 1) * sizeof(char));
       strcpy (new_str, str);
-    }
-  else
+  } else {
     new_str = NULL;
-  
+  }
   return new_str;
 }
 
@@ -101,24 +105,26 @@ int main (int argc, char *argv[])
   if (sscanf(tmp_version, "%d.%d.%d", &major, &minor, &micro) != 3) {
      printf("%s, bad version string\n", "$min_sdl_version");
      exit(1);
-   }
+  }
 
-   if (($sdl_major_version > major) ||
-      (($sdl_major_version == major) && ($sdl_minor_version > minor)) ||
-      (($sdl_major_version == major) && ($sdl_minor_version == minor) && ($sdl_micro_version >= micro)))
-    {
+  if (($sdl_major_version > major)
+      || (($sdl_major_version == major) && ($sdl_minor_version > minor))
+      || (($sdl_major_version == major) && ($sdl_minor_version == minor) && ($sdl_micro_version >= micro)))
+  {
       return 0;
-    }
+  }
   else
-    {
-      printf("\n*** 'sdl-config --version' returned %d.%d.%d, but the minimum version\n", $sdl_major_version, $sdl_minor_version, $sdl_micro_version);
-      printf("*** of SDL required is %d.%d.%d. If sdl-config is correct, then it is\n", major, minor, micro);
+  {
+      printf("\n*** 'sdl-config --version' returned %d.%d.%d, but the minimum version\n",
+             $sdl_major_version, $sdl_minor_version, $sdl_micro_version);
+      printf("*** of SDL required is %d.%d.%d. If sdl-config is correct, then it is\n",
+             major, minor, micro);
       printf("*** best to upgrade to the required version.\n");
       printf("*** If sdl-config was wrong, set the environment variable SDL_CONFIG\n");
       printf("*** to point to the correct copy of sdl-config, and remove the file\n");
       printf("*** config.cache before re-running configure\n");
       return 1;
-    }
+  }
 }
 
 ],, no_sdl=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
