@@ -18,7 +18,7 @@ BUILDDIR=`pwd`
 
 FC_USE_NLS=yes
 FC_HELP=no
-FC_RUN_CONFIGURE=yes
+FC_RUN_CONFIGURE=no
 
 # Leave out NLS checks
 for NAME in $@ ; do
