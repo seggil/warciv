@@ -17,8 +17,6 @@
 
 #include "wc_types.hh"        /* city_t, tile and unit */
 
-void send_chat(const char *message);
-
 void chatline_common_init(void);
 
 void append_output_window(const char *astring);

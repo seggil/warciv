@@ -1466,7 +1466,7 @@ static void set_options(GtkWidget *w)
       bool active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
       sz_strlcat(buffer, active ? "1" : "0");
     }
-    send_chat(buffer);
+    dsend_packet_chat_msg_req(&aconnection, buffer);
   }
 
   /* using the linked list, work backwards and check the previous widget */

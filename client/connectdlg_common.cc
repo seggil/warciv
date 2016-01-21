@@ -151,7 +151,7 @@ void client_kill_server(bool force)
        * Another potential problem is because this function is called atexit
        * it could potentially be called when we're connected to an unowned
        * server.  In this case we don't want to kill it. */
-      send_chat("/quit");
+      dsend_packet_chat_msg_req(&aconnection, "/quit");
 #ifdef WIN32_NATIVE
       server_process = INVALID_HANDLE_VALUE;
       loghandle = INVALID_HANDLE_VALUE;
@@ -379,10 +379,10 @@ void client_send_initial_commands(void)
   char buf[512];
 
   /* Send new game defaults. */
-  send_chat("/set aifill 5");
+  dsend_packet_chat_msg_req(&aconnection, "/set aifill 5");
 
   my_snprintf(buf, sizeof(buf), "/%s", skill_level_names[0]);
-  send_chat(buf);
+  dsend_packet_chat_msg_req(&aconnection, buf);
 
   /* We set the topology to match the view.
    *
@@ -403,7 +403,7 @@ void client_send_initial_commands(void)
               (TF_WRAPX
                | ((is_isometric && hex_height == 0) ? TF_ISO : 0)
                | ((hex_width != 0 || hex_height != 0) ? TF_HEX : 0)));
-  send_chat(buf);
+  dsend_packet_chat_msg_req(&aconnection, buf);
 }
 
 /*************************************************************************
@@ -521,12 +521,12 @@ void send_start_saved_game(void)
 {
   char buf[MAX_LEN_MSG];
 
-  send_chat("/set timeout 0");
-  send_chat("/set autotoggle 1");
+  dsend_packet_chat_msg_req(&aconnection, "/set timeout 0");
+  dsend_packet_chat_msg_req(&aconnection, "/set autotoggle 1");
   my_snprintf(buf, sizeof(buf), "/take \"%s\" \"%s\"",
               default_user_name, player_name);
-  send_chat(buf);
-  send_chat("/start");
+  dsend_packet_chat_msg_req(&aconnection, buf);
+  dsend_packet_chat_msg_req(&aconnection, "/start");
 }
 
 /****************************************************************
@@ -542,5 +542,5 @@ void send_save_game(char *filename)
     my_snprintf(message, MAX_LEN_MSG, "/save");
   }
 
-  send_chat(message);
+  dsend_packet_chat_msg_req(&aconnection, message);
 }

@@ -1261,7 +1261,7 @@ static void request_more_time_callback(void)
   char buf[256];
   my_snprintf(buf, sizeof(buf), "/set timeout %d --- I need more time!",
               new_timeout);
-  send_chat(buf);
+  dsend_packet_chat_msg_req(&aconnection, buf);
 }
 
 /**************************************************************************
@@ -1269,7 +1269,7 @@ static void request_more_time_callback(void)
 **************************************************************************/
 static void request_pause_callback(void)
 {
-  send_chat("/set timeout 600 --- I need a pause!");
+  dsend_packet_chat_msg_req(&aconnection, "/set timeout 600 --- I need a pause!");
 }
 
 /**************************************************************************

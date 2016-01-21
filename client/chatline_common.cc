@@ -57,14 +57,6 @@ void chatline_common_init(void)
   remains = remaining_list_new();
 }
 
-/**************************************************************************
-  Send the message as a chat to the server.
-**************************************************************************/
-void send_chat(const char *message)
-{
-  dsend_packet_chat_msg_req(&aconnection, message);
-}
-
 static int frozen_level = 0;
 
 /**************************************************************************

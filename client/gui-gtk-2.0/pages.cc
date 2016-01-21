@@ -1387,7 +1387,7 @@ static void ai_skill_callback(GtkWidget *w, gpointer data)
   name = skill_level_names[GPOINTER_TO_UINT(data)];
 
   my_snprintf(buf, sizeof(buf), "/%s", name);
-  send_chat(buf);
+  dsend_packet_chat_msg_req(&aconnection, buf);
 }
 
 /**************************************************************************
@@ -1402,8 +1402,8 @@ static void ai_fill_callback(GtkWidget *w, gpointer data)
   }
 
   my_snprintf(buf, sizeof(buf), "/set aifill %d",
-      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w)));
-  send_chat(buf);
+              gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w)));
+  dsend_packet_chat_msg_req(&aconnection, buf);
 }
 
 /**************************************************************************
@@ -1428,7 +1428,7 @@ static void start_export_callback(GtkWidget *w, gpointer data)
 static void start_start_callback(GtkWidget *w, gpointer data)
 {
   really_close_connection_dialog();
-  send_chat("/start");
+  dsend_packet_chat_msg_req(&aconnection, "/start");
 }
 
 /**************************************************************************
@@ -1696,7 +1696,7 @@ static void load_callback(void)
     char message[MAX_LEN_MSG];
 
     my_snprintf(message, sizeof(message), "/load %s", filename);
-    send_chat(message);
+    dsend_packet_chat_msg_req(&aconnection, message);
   }
 }
 
@@ -1835,7 +1835,7 @@ static void scenario_callback(void)
     char message[MAX_LEN_MSG];
 
     my_snprintf(message, sizeof(message), "/load %s", filename);
-    send_chat(message);
+    dsend_packet_chat_msg_req(&aconnection, message);
   }
 }
 
@@ -2024,11 +2024,11 @@ static void update_nation_page(struct packet_game_load *packet)
     char message[MAX_LEN_MSG];
 
     my_snprintf(message, sizeof(message), "/create %s", default_user_name);
-    send_chat(message);
+    dsend_packet_chat_msg_req(&aconnection, message);
     my_snprintf(message, sizeof(message), "/ai %s", default_user_name);
-    send_chat(message);
+    dsend_packet_chat_msg_req(&aconnection, message);
     my_snprintf(message, sizeof(message), "/take \"%s\"", default_user_name);
-    send_chat(message);
+    dsend_packet_chat_msg_req(&aconnection, message);
 
     /* create a false entry */
     gtk_list_store_append(nation_store, &iter);

@@ -84,7 +84,7 @@ static void filesel_response_callback(GtkWidget *w, gint id, gpointer data)
       char message[MAX_LEN_MSG];
 
       my_snprintf(message, sizeof(message), "/load %s", filename);
-      send_chat(message);
+      dsend_packet_chat_msg_req(&aconnection, message);
     }
 
     g_free(filename);

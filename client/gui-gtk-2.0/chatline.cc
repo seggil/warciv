@@ -170,9 +170,9 @@ void inputline_return(GtkEntry *w, gpointer data)
     if (allied_chat_only && is_public_message(theinput)) {
       char buf[1024];
       my_snprintf(buf, sizeof(buf), ". %s", theinput);
-      send_chat(buf);
+      dsend_packet_chat_msg_req(&aconnection, buf);
     } else {
-      send_chat(theinput);
+      dsend_packet_chat_msg_req(&aconnection, theinput);
     }
 
     assert(history_list != NULL);

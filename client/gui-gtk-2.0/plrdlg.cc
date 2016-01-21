@@ -748,7 +748,7 @@ static void players_ai_toggle_callback(GtkMenuItem *item, gpointer data)
     gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
 
     my_snprintf(buf, sizeof(buf), "/aitoggle %s", get_player(plrno)->name);
-    send_chat(buf);
+    dsend_packet_chat_msg_req(&aconnection, buf);
   }
 }
 
@@ -767,9 +767,9 @@ static void players_ai_skill_callback(GtkMenuItem *item, gpointer data)
     gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
 
     my_snprintf(buf, sizeof(buf), "/%s %s",
-        skill_level_names[GPOINTER_TO_UINT(data)],
-        get_player(plrno)->name);
-    send_chat(buf);
+                skill_level_names[GPOINTER_TO_UINT(data)],
+                get_player(plrno)->name);
+    dsend_packet_chat_msg_req(&aconnection, buf);
   }
 }
 
