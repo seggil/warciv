@@ -384,7 +384,7 @@ if test x$client != xno; then
   fi
 
   dnl Check for sound support, sets SOUND_CFLAGS, SOUND_LIBS, ESD, SDL & WINMM
-  WC_CHECK_SOUND()
+  WC_CHECK_SOUND
 
   gui_sources="gui-$client"
 fi

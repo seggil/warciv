@@ -58,8 +58,8 @@ AC_DEFUN([WC_CHECK_SOUND],[
 
  if test "x$USE_SOUND_ALSA" = "xyes"; then
   dnl Add ALSA support to client
-  AM_ALSA_SUPPORT(ALSA=yes, ALSA=no)
-  if test "x$ALSA" != "xno"; then
+  AM_PATH_ALSA([],ALSA=yes, ALSA=no)
+  if test "x$ALSA" != "xyes"; then
     SOUND_CFLAGS="$SOUND_CFLAGS $ALSA_CFLAGS"
     SOUND_LIBS="$SOUND_LIBS $ALSA_LIB"
     AC_DEFINE(ALSA, 1, [ALSA support])
