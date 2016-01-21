@@ -76,7 +76,7 @@ dnl
 #include <string.h>
 #include "SDL.h"
 
-char*
+static char*
 my_strdup (char *str)
 {
   char *new_str;
