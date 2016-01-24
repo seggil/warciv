@@ -438,7 +438,14 @@ tile_t *map_pos_to_tile(int map_x, int map_y)
   }
 
   /* Normalization is best done in native coordinates. */
-  MAP_TO_NATIVE_POS(&nat_x, &nat_y, map_x, map_y);
+  //MAP_TO_NATIVE_POS(&nat_x, &nat_y, map_x, map_y);
+  if (MAP_IS_ISOMETRIC) {
+    nat_y = map_x + map_y - map.info.xsize;
+    nat_x = (2 * map_x - nat_y - (nat_y & 1)) / 2;
+  } else {
+    nat_x = map_x;
+    nat_y = map_y;
+  }
   return base_native_pos_to_tile(nat_x, nat_y);
 }
 
@@ -1277,11 +1284,66 @@ void initialize_move_costs(void)
     /* trying to move off the screen is the default */
     memset(ptile->move_cost, maxcost, DIR8_COUNT);
 
-
-    adjc_dir_iterate(ptile, tile1, dir) {
-      ptile->move_cost[dir] = tile_move_cost_ai(ptile, tile1, maxcost);
+    if (MAP_IS_ISOMETRIC) {
+      //adjc_dir_iterate(ptile, ptile1, dir) {
+      adjc_dirlist_iterate(ptile, ptile1, dir,
+                           map.valid_dirs, map.num_valid_dirs)
+      {
+        ptile->move_cost[dir] = tile_move_cost_ai(ptile, ptile1, maxcost);
+      }
+      adjc_dir_iterate_end;
+    } else {
+      int x = ptile->x;
+      int y = ptile->y;
+      int x1, y1;
+      enum direction8 dir;
+      tile_t *ptile1;
+      for ( dir = DIR8_NORTHWEST; dir <= 7;
+            dir = (direction8)(dir + 1))
+      {
+      //for (x1 = x-1; x1 <= x+1; x1++) {
+        //for (y1 = y-1; y1 <= y+1; y1++) {
+          switch(dir) {
+          case DIR8_NORTHWEST:
+            x1 = x - 1;
+            y1 = y - 1; break;
+          case DIR8_NORTH:
+            x1 = x;
+            y1 = y - 1; break;
+          case DIR8_NORTHEAST:
+            x1 = x + 1;
+            y1 = y - 1; break;
+          case DIR8_WEST:
+            x1 = x - 1;
+            y1 = y; break;
+          case DIR8_EAST:
+            x1 = x + 1;
+            y1 = y; break;
+          case DIR8_SOUTHWEST:
+            x1 = x - 1;
+            y1 = y + 1; break;
+          case DIR8_SOUTH:
+            x1 = x;
+            y1 = y + 1; break;
+          case DIR8_SOUTHEAST:
+            x1 = x + 1;
+            y1 = y + 1; break;
+          default:
+            printf("bad direction should not occur in %s\n", __FUNCTION__);
+          }
+          if ( x1 == x && y1 == y ) {
+            continue;
+          } else if ( x1 < 0 || y1 < 0 ) {
+              continue;
+          } else if ( x1 >= map.info.xsize || y1 >= map.info.ysize ) {
+            continue;
+          } else {
+            ptile1 = map.board + map_pos_to_index(x1, y1);
+            ptile->move_cost[dir] = tile_move_cost_ai(ptile, ptile1, maxcost);
+          }
+        //}
+      }
     }
-    adjc_dir_iterate_end;
   } whole_map_iterate_end;
 }
 
@@ -1489,9 +1551,9 @@ bool normalize_map_pos(int *x, int *y)
   if (ptile) {
     *x = ptile->x;
     *y = ptile->y;
-    return TRUE;
+    return true;
   } else {
-    return FALSE;
+    return false;
   }
 }
 
