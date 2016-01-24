@@ -1186,8 +1186,12 @@ static const char *int_to_string(int n, int min_size)
   }
   assert(size < sizeof(buf));
 
-  for (i = 0; i < min_size - size; i++) {
-    buf[i] = ' ';   /* Complete with spaces */
+  if ( min_size > size ) {
+    for (i = 0; i < min_size - size; i++) {
+      buf[i] = ' ';   /* Complete with spaces */
+    }
+  } else {
+    i = 0;
   }
 
   if ( n == 0 ) {   // for "n" equal zero, special case
