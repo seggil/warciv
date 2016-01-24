@@ -572,15 +572,16 @@ extern struct terrain_misc terrain_control;
 #define adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,                \
                              dirlist, dircount)                             \
 {                                                                           \
-  const tile_t *_center_tile = (center_tile);                          \
-  tile_t *itr_tile;                                                    \
+  const tile_t *_center_tile = (center_tile);                               \
+  tile_t *itr_tile;                                                         \
   int _dir_index, _x_itr, _y_itr;                                           \
   enum direction8 dir_itr;                                                  \
   bool _is_border = is_border_tile(_center_tile, 1);                        \
                                                                             \
   for (_dir_index = 0; _dir_index < (dircount); _dir_index++) {             \
     dir_itr = dirlist[_dir_index];                                          \
-    DIRSTEP(_x_itr, _y_itr, dir_itr);                                       \
+    _x_itr = DIR_DX[(dir_itr)];                                             \
+    _y_itr = DIR_DY[(dir_itr)];                                             \
     _x_itr += _center_tile->x;                                              \
     _y_itr += _center_tile->y;                                              \
     if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
@@ -597,8 +598,8 @@ extern struct terrain_misc terrain_control;
                                   dirlist, dircount)                        \
 {                                                                           \
   enum direction8 dir_itr;                                                  \
-  const tile_t *_center_tile = (center_tile);                          \
-  /*tile_t *itr_tile;*/                                                \
+  const tile_t *_center_tile = (center_tile);                               \
+  /*tile_t *itr_tile;*/                                                     \
   int _dir_index, _x_itr, _y_itr;                                           \
   bool _is_border = is_border_tile(_center_tile, 1);                        \
                                                                             \
