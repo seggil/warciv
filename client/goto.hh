@@ -28,7 +28,7 @@ void goto_add_waypoint(void);
 bool goto_pop_waypoint(void);
 
 void draw_line(tile_t *dest_tile);
-bool is_drawn_line(tile_t *dest_tile, int dir);
+bool is_drawn_line(tile_t *dest_tile, direction8 dir);
 
 bool is_endpoint(tile_t *ptile);
 

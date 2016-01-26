@@ -1055,12 +1055,12 @@ static unsigned char *get_drawn_char(tile_t *ptile, enum direction8 dir)
 
   tile1 = mapstep(ptile, dir);
 
-  if (dir >= 4) {
+  if (dir >= DIR8_EAST) {
     ptile = tile1;
-    dir = (direction8)DIR_REVERSE(dir);
+    dir = (direction8)(7 - dir);
   }
 
-  return &DRAWN(ptile, dir);
+  return &goto_map.tiles[ptile->index].drawn[dir];
 }
 
 /**************************************************************************
@@ -1113,13 +1113,15 @@ static void decrement_drawn(tile_t *src_tile, enum direction8 dir)
   Return TRUE if there is a line drawn from (x,y) in the given direction.
   This is used by mapview to determine whether to draw a goto line.
 ****************************************************************************/
-bool is_drawn_line(tile_t *ptile, int dir)
+bool is_drawn_line(tile_t *ptile, direction8 dir)
 {
+  unsigned char *pchar;
   if (!mapstep(ptile, (direction8)dir)) {
     return 0;
   }
 
-  return (*get_drawn_char(ptile, (direction8)dir) != 0);
+  pchar = get_drawn_char(ptile, dir);
+  return *pchar != 0;
 }
 
 /**************************************************************************
