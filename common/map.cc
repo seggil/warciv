@@ -393,9 +393,8 @@ tile_t *mapstep(const tile_t *ptile, enum direction8 dir)
     return NULL;
   }
 
-  DIRSTEP(x, y, dir);
-  x += ptile->x;
-  y += ptile->y;
+  x = ptile->x + DIR_DX[dir];
+  y = ptile->y + DIR_DY[dir];
 
   return map_pos_to_tile(x, y);
 }
@@ -423,7 +422,7 @@ static inline tile_t *base_native_pos_to_tile(int nat_x, int nat_y)
     nat_y = WC_WRAP(nat_y, (int)(map.info.ysize));
   }
 
-  return map.board + native_pos_to_index(nat_x, nat_y);
+  return map.board + nat_x + nat_y * map.info.xsize;
 }
 
 /****************************************************************************

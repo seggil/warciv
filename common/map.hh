@@ -343,16 +343,11 @@ static inline int map_pos_to_index(int map_x, int map_y);
    index_to_native_pos(pmap_x, pmap_y, index),  \
    NATIVE_TO_MAP_POS(pmap_x, pmap_y, *(pmap_x), *(pmap_y)))
 
-#define DIRSTEP(dest_x, dest_y, dir)    \
-(    (dest_x) = DIR_DX[(dir)],          \
-     (dest_y) = DIR_DY[(dir)])
-
 /*
  * Steps from the tile in the given direction, yielding a new tile (or NULL).
  *
- * Direct calls to DIR_DXY should be avoided and DIRSTEP should be
- * used. But to allow dest and src to be the same, as in
- *    MAPSTEP(x, y, x, y, dir)
+ * Direct calls to DIR_DX and DIR_DY should be avoided
+ * But to allow dest and src to be the same, as in MAPSTEP(x, y, x, y, dir)
  * we bend this rule here.
  */
 tile_t *mapstep(const tile_t *ptile, enum direction8 dir);
@@ -580,10 +575,8 @@ extern struct terrain_misc terrain_control;
                                                                             \
   for (_dir_index = 0; _dir_index < (dircount); _dir_index++) {             \
     dir_itr = dirlist[_dir_index];                                          \
-    _x_itr = DIR_DX[(dir_itr)];                                             \
-    _y_itr = DIR_DY[(dir_itr)];                                             \
-    _x_itr += _center_tile->x;                                              \
-    _y_itr += _center_tile->y;                                              \
+    _x_itr = _center_tile->x + DIR_DX[dir_itr];                             \
+    _y_itr = _center_tile->y + DIR_DY[dir_itr];                             \
     if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
       continue;                                                             \
     }                                                                       \
@@ -605,9 +598,8 @@ extern struct terrain_misc terrain_control;
                                                                             \
   for (_dir_index = 0; _dir_index < (dircount); _dir_index++) {             \
     dir_itr = dirlist[_dir_index];                                          \
-    DIRSTEP(_x_itr, _y_itr, dir_itr);                                       \
-    _x_itr += _center_tile->x;                                              \
-    _y_itr += _center_tile->y;                                              \
+    _x_itr = _center_tile->x + DIR_DX[dir_itr];                             \
+    _y_itr = _center_tile->y + DIR_DY[dir_itr];                             \
     if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
       continue;                                                             \
     }
