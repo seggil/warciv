@@ -405,11 +405,18 @@ Return 1 if x,y is inside any of the player's city radii.
 bool player_in_city_radius(player_t *pplayer, tile_t *ptile)
 {
   city_t *pcity;
-  map_city_radius_iterate(ptile, ptile1) {
-    pcity = map_get_city(ptile1);
-    if (pcity && (pcity->common.owner == pplayer->player_no))
-      return TRUE;
-  } map_city_radius_iterate_end;
+  //map_city_radius_iterate(ptile, ptile1) {
+  //city_map_checked_iterate(ptile, cx, cy, ptile1) {
+  city_map_iterate_outwards(cx, cy)
+    tile_t *ptile1;
+    ptile1 = base_city_map_to_map(const_cast<tile_t*>(ptile), cx, cy);
+    if (ptile1) {
+      pcity = map_get_city(ptile1);
+      if (pcity && (pcity->common.owner == pplayer->player_no))
+        return TRUE;
+    }
+  /* } map_city_radius_iterate_end */;
+  }} /* city_map_checked_iterate_end; */
   return FALSE;
 }
 
