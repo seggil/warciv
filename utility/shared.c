@@ -41,6 +41,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <lmcons.h>	/* UNLEN */
+#include <shlobj.h>
 #endif
 
 #include "astring.h"
@@ -728,12 +729,36 @@ char *user_home_dir(void)
       home_dir = mystrdup(env);	        /* never free()d */
       freelog(LOG_VERBOSE, "HOME is %s", home_dir);
     } else {
+
 #ifdef WIN32_NATIVE
-      home_dir = fc_malloc(PATH_MAX);
-      if (!getcwd(home_dir, PATH_MAX)) {
-	free(home_dir);
-	home_dir = NULL;
-	freelog(LOG_ERROR, "Could not find home directory (HOME is not set)");
+
+      /* some documentation at: 
+       * http://justcheckingonall.wordpress.com/2008/05/16/find-shell-folders-win32/
+       * http://archives.seul.org/or/cvs/Oct-2004/msg00082.html */
+
+      LPITEMIDLIST pidl;
+      LPMALLOC pMalloc;
+      
+      if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_APPDATA, &pidl))) {
+        
+        home_dir = fc_malloc(PATH_MAX);
+        
+        if (!SUCCEEDED(SHGetPathFromIDList(pidl, home_dir))) {
+          free(home_dir);
+          home_dir = NULL;
+          freelog(LOG_ERROR,
+            "Could not find home directory (SHGetPathFromIDList() failed)");
+        }
+        
+        SHGetMalloc(&pMalloc);
+        if (pMalloc) {
+          pMalloc->lpVtbl->Free(pMalloc, pidl);
+          pMalloc->lpVtbl->Release(pMalloc);
+        }
+
+      } else {
+        freelog(LOG_ERROR,
+          "Could not find home directory (SHGetSpecialFolderLocation() failed)");
       }
 #else
       freelog(LOG_ERROR, "Could not find home directory (HOME is not set)");
@@ -1606,9 +1631,15 @@ bool path_is_absolute(const char *filename)
     return FALSE;
   }
 
+#ifdef WIN32_NATIVE
+  if (strchr(filename, ':')) {
+    return TRUE;
+  }
+#else
   if (filename[0] == '/') {
     return TRUE;
   }
+#endif  
 
   return FALSE;
 }

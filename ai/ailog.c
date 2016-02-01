@@ -71,11 +71,10 @@ void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
   my_vsnprintf(buffer2, sizeof(buffer2), msg, ap);
   va_end(ap);
 
-  cat_snprintf(buffer, sizeof(buffer), "%s", buffer2);
   if (pplayer->debug) {
-    notify_conn(game.est_connections, "%s", buffer);
+    notify_conn(game.est_connections, "%s%s", buffer, buffer2);
   }
-  freelog(minlevel, "%s", buffer);
+  freelog(minlevel, "%s%s", buffer, buffer2);
 }
 
 /**************************************************************************
@@ -105,11 +104,10 @@ void CITY_LOG(int level, struct city *pcity, const char *msg, ...)
   my_vsnprintf(buffer2, sizeof(buffer2), msg, ap);
   va_end(ap);
 
-  cat_snprintf(buffer, sizeof(buffer), "%s", buffer2);
   if (pcity->server.debug) {
-    notify_conn(game.est_connections, "%s", buffer);
+    notify_conn(game.est_connections, "%s%s", buffer, buffer2);
   }
-  freelog(minlevel, "%s", buffer);
+  freelog(minlevel, "%s%s", buffer, buffer2);
 }
 
 /**************************************************************************
@@ -161,11 +159,10 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
   my_vsnprintf(buffer2, sizeof(buffer2), msg, ap);
   va_end(ap);
 
-  cat_snprintf(buffer, sizeof(buffer), "%s", buffer2);
   if (punit->debug || messwin) {
-    notify_conn(game.est_connections, "%s", buffer);
+    notify_conn(game.est_connections, "%s%s", buffer, buffer2);
   }
-  freelog(minlevel, "%s", buffer);
+  freelog(minlevel, "%s%s", buffer, buffer2);
 }
 
 /**************************************************************************
@@ -205,9 +202,8 @@ void BODYGUARD_LOG(int level, struct unit *punit, const char *msg)
               unit_owner(punit)->name, unit_type(punit)->name,
               punit->id, punit->tile->x, punit->tile->y,
 	      s, id, ptile->x, ptile->y);
-  cat_snprintf(buffer, sizeof(buffer), "%s", msg);
   if (punit->debug) {
-    notify_conn(game.est_connections, "%s", buffer);
+    notify_conn(game.est_connections, "%s%s", buffer, msg);
   }
-  freelog(minlevel, "%s", buffer);
+  freelog(minlevel, "%s%s", buffer, msg);
 }

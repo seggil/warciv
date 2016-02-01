@@ -379,6 +379,14 @@ void *get_packet_from_connection(struct connection *pc,
   }
 
 #ifdef USE_COMPRESSION
+  if (whole_packet_len < header_size) {
+    freelog(LOG_ERROR, "The packet size is reported to be less than "
+            "header alone. The connection will be closed now.");
+    call_close_socket_callback(pc, ES_DECODING_ERROR);
+
+    return NULL;
+  }
+
   if (compressed_packet) {
     uLong compressed_size = whole_packet_len - header_size;
     /* 

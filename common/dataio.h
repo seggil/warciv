@@ -22,8 +22,9 @@ struct data_in {
   const void *src;
   size_t src_size, current;
   bool too_short;		/* set to 1 if try to read past end */
+  bool bad_boolean;		/* set to 1 if received bad boolean */
   bool bad_string;		/* set to 1 if received too-long string */
-  bool bad_bit_string;		/* set to 1 if received bad bit-string */
+  bool bad_bit_string;	/* set to 1 if received bad bit-string */
 };
 
 struct data_out {
@@ -52,27 +53,27 @@ size_t dio_input_remaining(struct data_in *din);
 
 /* gets */
 
-void dio_get_uint8(struct data_in *din, int *dest);
-void dio_get_uint16(struct data_in *din, int *dest);
-void dio_get_uint32(struct data_in *din, int *dest);
+bool dio_get_uint8(struct data_in *din, int *dest);
+bool dio_get_uint16(struct data_in *din, int *dest);
+bool dio_get_uint32(struct data_in *din, int *dest);
 
-void dio_get_sint8(struct data_in *din, int *dest);
-void dio_get_sint16(struct data_in *din, int *dest);
+bool dio_get_sint8(struct data_in *din, int *dest);
+bool dio_get_sint16(struct data_in *din, int *dest);
 #define dio_get_sint32(d,v) dio_get_uint32(d,v)
 
 
-void dio_get_bool8(struct data_in *din, bool *dest);
-void dio_get_bool32(struct data_in *din, bool *dest);
-void dio_get_memory(struct data_in *din, void *dest, size_t dest_size);
-void dio_get_string(struct data_in *din, char *dest, size_t max_dest_size);
-void dio_get_bit_string(struct data_in *din, char *dest,
+bool dio_get_bool8(struct data_in *din, bool *dest);
+bool dio_get_bool32(struct data_in *din, bool *dest);
+bool dio_get_memory(struct data_in *din, void *dest, size_t dest_size);
+bool dio_get_string(struct data_in *din, char *dest, size_t max_dest_size);
+bool dio_get_bit_string(struct data_in *din, char *dest,
 			size_t max_dest_size);
-void dio_get_tech_list(struct data_in *din, int *dest);
-void dio_get_worklist(struct data_in *din, struct worklist *pwl);
-void dio_get_diplstate(struct data_in *din, struct player_diplstate *pds);
+bool dio_get_tech_list(struct data_in *din, int *dest);
+bool dio_get_worklist(struct data_in *din, struct worklist *pwl);
+bool dio_get_diplstate(struct data_in *din, struct player_diplstate *pds);
 
-void dio_get_uint8_vec8(struct data_in *din, int **values, int stop_value);
-void dio_get_uint16_vec8(struct data_in *din, int **values, int stop_value);
+bool dio_get_uint8_vec8(struct data_in *din, int **values, int stop_value);
+bool dio_get_uint16_vec8(struct data_in *din, int **values, int stop_value);
 
 /* Should be a function but we need some macro magic. */
 #define DIO_BV_GET(pdin, bv) \

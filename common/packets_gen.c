@@ -3763,11 +3763,13 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
     for (;;) {
       int i;
     
-      dio_get_uint8(&din, &i);
-      if(i == 255) {
+      if (!dio_get_uint8(&din, &i)) {
         break;
       }
-      if(i > A_LAST) {
+      if (i == 255) {
+        break;
+      }
+      if (i > A_LAST) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: ignoring intra array diff");
       } else {
         {
@@ -3784,11 +3786,13 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
     for (;;) {
       int i;
     
-      dio_get_uint8(&din, &i);
-      if(i == 255) {
+      if (!dio_get_uint8(&din, &i)) {
         break;
       }
-      if(i > B_LAST) {
+      if (i == 255) {
+        break;
+      }
+      if (i > B_LAST) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: ignoring intra array diff");
       } else {
         {
