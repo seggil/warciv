@@ -21,7 +21,7 @@ Description: Civilization turn based strategy game (server files)
  Warclient is modpack Freeciv that enhances the client's control
  of units and cities.  This makes control faster, which is good for
  multiplayer war games. Pepclient feature are added and enhances that.
- See http://freeciv.freeforums.org/.
+ See http://gna.org/projects/freeciv-warclient.
  .
  This is the Freeciv game server.
 
@@ -36,7 +36,7 @@ Description: Civilization turn based strategy game (GTK+ client)
  Warclient is modpack Freeciv that enhances the client's control
  of units and cities.  This makes control faster, which is good for
  multiplayer war games. Pepclient feature are added and enhances that.
- See http://freeciv.freeforums.org/
+ See http://gna.org/projects/freeciv-warclient
  .
  This is the GTK+ version of the Freeciv client.
 
@@ -52,6 +52,6 @@ Description: Civilization turn based strategy game (game data)
  Warclient is modpack Freeciv that enhances the client's control
  of units and cities.  This makes control faster, which is good for
  multiplayer war games. Pepclient feature are added and enhances that.
- See http://freeciv.freeforums.org/
+ See http://gna.org/projects/freeciv-warclient
  .
  These are the common data files for Freeciv.

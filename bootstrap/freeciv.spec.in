@@ -60,7 +60,7 @@ games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
-See http://freeciv.freeforums.org/.
+See http://gna.org/projects/freeciv-warclient.
 
 %description common
 Freeciv is a free turn-based multiplayer strategy game, in which each 
@@ -74,7 +74,7 @@ games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
-See http://freeciv.freeforums.org/.
+See http://gna.org/projects/freeciv-warclient.
 
 This package contains files common for client ans server.
 
@@ -90,7 +90,7 @@ games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
-See http://freeciv.freeforums.org/.
+See http://gna.org/projects/freeciv-warclient.
 
 This package contains Freeciv server.
 
@@ -106,7 +106,7 @@ games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
-See http://freeciv.freeforums.org/.
+See http://gna.org/projects/freeciv-warclient.
 
 This package contains Freeciv client common files.
 
@@ -122,7 +122,7 @@ games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
-See http://freeciv.freeforums.org/.
+See http://gna.org/projects/freeciv-warclient.
 
 This package contains Freeciv client with Gtk2 interface (default
 Freeciv GUI).

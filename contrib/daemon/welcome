@@ -6,11 +6,11 @@ The local time is %t.
   This makes control faster, which is good for multiplayer war games.
      WARCLIENT modpack is available on Windows and Linux OS. See Warclient site :
  
-                        *****************************************
-                        *                                                       *
-                        *   http://freeciv.freeforums.org/    *
-                        *                                                       *
-                        *****************************************
+                        **************************************************
+                        *                                                *
+                        *   http://gna.org/projects/freeciv-warclient/   *
+                        *                                                *
+                        **************************************************
  
                                        WARNING
  
@@ -24,7 +24,7 @@ The local time is %t.
  
  ********************************************************************************
  For all OS, you can also follow instruction describe in :
- http://freeciv.freeforums.org/
+ http://freeciv.wikia.com/wiki/Warclient
  and install yourself warclient but seems we have to do :(
  
  For downloading latest sources :
@@ -35,7 +35,7 @@ The local time is %t.
  For downloading latest warclient for windows :
  
  ********************************************************************************
- http://download.gna.org/freeciv-warclient/Pepclient02.0.9+0.9.5Devel-setup.exe
+ http://download.gna.org/freeciv-warclient/
  
  For Debian Packages read: http://download.gna.org/freeciv-warclient/
 
@@ -59,30 +59,14 @@ The local time is %t.
  
                                WHAT IS USEFULL TO KNOW                  
  
-     Message to specific player : "<playername>:<your message>"
-     Message to yours allies    : ". <your message>"
-     Spectate a player          : /obs <player>
+     Message to specific player                : "<playername>:<your message>"
+     Message to yours allies                   : ". <your message>"
+     Spectate a player                         : /obs <player>
+     To see the list of the available commands : /help commands
                   
      N.B.: Remove brackets <> :)
- 
-                       COMMANDS' LIST (need / before)
- 
-    addaction        endgame         metatopic       start       
-    aitoggle         experimental    normal          take         
-    authdb           explain         novice          team       
-    autoteam         firstlevel      observe         timeoutincrease      
-    away             hard            quit            unban      
-    ban              help            read            unignore       
-    clearactionlist  ignore          remove          unloadmap       
-    cmdlevel         list            rfcstyle        vote        
-    create           load            rulesetdir      wall      
-    cut              loadactionlist  save            wfile      
-    debug            loadmap         saveactionlist  wmessage       
-    delaction        metaconnection  score           write                
-    detach           metamessage     serverid       
-    dnslookup        metapatches     set      
-    easy             metaserver      show       
- 
+
+     FULL LIST OF COMMANDS IS AVAILABLE BY TYPING "/help commands"
      SYNOPSIS AND DESCRIPTION ARE AVAILABLE BY TYPING "/help <command>"
 
 Be nice and have fun,
