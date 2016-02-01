@@ -417,6 +417,7 @@ bool ai_unit_make_homecity(struct unit *punit, struct city *pcity)
 static void ai_unit_bodyguard_move(int unitid, struct tile *ptile)
 {
   struct unit *bodyguard = find_unit_by_id(unitid);
+#ifndef NDEBUG
   struct unit *punit;
   struct player *pplayer;
 
@@ -428,6 +429,7 @@ static void ai_unit_bodyguard_move(int unitid, struct tile *ptile)
 
   assert(punit->ai.bodyguard == bodyguard->id);
   assert(bodyguard->ai.charge == punit->id);
+#endif /* NDEBUG */
 
   if (!is_tiles_adjacent(ptile, bodyguard->tile)) {
     return;

@@ -457,12 +457,15 @@ returns the actual length of the unquoted block.
 static int unquote_block(const char *const quoted_, void *dest,
 			 int dest_length)
 {
-  int i, length, parsed, tmp;
+  int i, length, tmp;
   char *endptr;
   const char *quoted = quoted_;
 
-  parsed = sscanf(quoted, "%d", &length);
-  assert(parsed == 1);
+#ifdef NDEBUG
+  sscanf(quoted, "%d", &length);
+#else
+  assert(1 == sscanf(quoted, "%d", &length));
+#endif
 
   assert(length <= dest_length);
   quoted = strchr(quoted, ':');
@@ -2324,7 +2327,6 @@ static void player_load(struct player *plr, int plrno,
     plr->attribute_block.length = 0;
   } else if (0 < plr->attribute_block.length) {
     int part_nr, parts;
-    size_t actual_length;
     size_t quoted_length;
     char *quoted;
 
@@ -2362,11 +2364,14 @@ static void player_load(struct player *plr, int plrno,
       assert(0);
     }
 
-    actual_length =
-	unquote_block(quoted,
-		      plr->attribute_block.data,
-		      plr->attribute_block.length);
-    assert(actual_length == plr->attribute_block.length);
+#ifdef NDEBUG
+    unquote_block(quoted, plr->attribute_block.data,
+                  plr->attribute_block.length);
+#else
+    assert(plr->attribute_block.length
+           == unquote_block(quoted, plr->attribute_block.data,
+                            plr->attribute_block.length));
+#endif
     free(quoted);
   }
 

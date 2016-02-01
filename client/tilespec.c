@@ -1351,14 +1351,14 @@ static void tilespec_lookup_sprite_tags(void)
     for (i = 0; i < num_valid_tileset_dirs; i++) {
       enum direction8 dir = valid_tileset_dirs[i];
 
-      if (!is_cardinal_tileset_dir(dir)) {
-	my_snprintf(buffer, sizeof(buffer), "r.c_road_%s",
-		    dir_get_tileset_name(dir));
-	SET_SPRITE_OPT(road.corner[dir], buffer);
+      if (0 >= dir && 8 > dir && !is_cardinal_tileset_dir(dir)) {
+        my_snprintf(buffer, sizeof(buffer), "r.c_road_%s",
+                    dir_get_tileset_name(dir));
+        SET_SPRITE_OPT(road.corner[dir], buffer);
 
-	my_snprintf(buffer, sizeof(buffer), "r.c_rail_%s",
-		    dir_get_tileset_name(dir));
-	SET_SPRITE_OPT(rail.corner[dir], buffer);
+        my_snprintf(buffer, sizeof(buffer), "r.c_rail_%s",
+                    dir_get_tileset_name(dir));
+        SET_SPRITE_OPT(rail.corner[dir], buffer);
       }
     }
   }

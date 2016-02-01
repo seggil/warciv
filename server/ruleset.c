@@ -1592,14 +1592,12 @@ static void load_terrain_names(struct section_file *file)
 **************************************************************************/
 static void load_ruleset_terrain(struct section_file *file)
 {
-  const char *datafile_options;
   int nval;
   char **sec;
   int j;
   const char *filename = secfile_filename(file);
 
-  datafile_options
-    = check_ruleset_capabilities(file, RULESET_CAPSTR_TERRAIN, filename);
+  (void)check_ruleset_capabilities(file, RULESET_CAPSTR_TERRAIN, filename);
 
   /* options */
   terrain_control.may_road =

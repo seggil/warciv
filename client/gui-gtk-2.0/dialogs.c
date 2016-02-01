@@ -1244,11 +1244,9 @@ GtkWidget *popup_message_dialog(GtkWindow *parent, const gchar *dialogname,
   GtkWidget *dshell;
   va_list args;
   gchar *name;
-  int i;
 
   dshell = message_dialog_start(parent, dialogname, text);
-  
-  i = 0;
+
   va_start(args, text);
 
   while ((name = va_arg(args, gchar *))) {
@@ -1491,7 +1489,7 @@ void popup_unit_select_dialog(struct tile *ptile)
   if (!unit_select_dialog_shell) {
     GtkTreeStore *store;
     GtkWidget *shell, *view, *sw, *hbox;
-    GtkWidget *ready_cmd, *sentry_cmd, *close_cmd;
+    GtkWidget *ready_cmd, *sentry_cmd;
     GtkWidget *select_cmd, *add_to_focus_cmd;
 
     static const char *titles[NUM_UNIT_SELECT_COLUMNS] = {
@@ -1608,9 +1606,8 @@ void popup_unit_select_dialog(struct tile *ptile)
       GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
       add_to_focus_cmd, TRUE);
 
-    close_cmd =
     gtk_dialog_add_button(GTK_DIALOG(shell),
-      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+                          GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 
     gtk_dialog_set_default_response(GTK_DIALOG(shell), GTK_RESPONSE_CLOSE);
 

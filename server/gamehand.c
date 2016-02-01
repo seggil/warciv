@@ -398,7 +398,9 @@ void clean_start_pos(int *positions)
 void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
 {
   int i;
+#ifndef NDEBUG
   bool error = FALSE;
+#endif
   Team_Type_id team_id;
 
   freelog(LOG_VERBOSE, "entry");
@@ -407,21 +409,25 @@ void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
     assert(best_team_pos[i] >= 0 && best_team_pos[i] < MAX_NUM_TEAMS+1);
     team_id = mapping[best_team_pos[i]].team_id;
     freelog(LOG_VERBOSE, "Assigning position %d to team index %d, team_id %d.",
-	    i, best_team_pos[i], mapping[best_team_pos[i]].team_id);
+            i, best_team_pos[i], mapping[best_team_pos[i]].team_id);
+#ifndef NDEBUG
     error = TRUE;
+#endif
     players_iterate(pplayer) {
       if (pplayer->team == team_id && pplayer->team_placement_flag == FALSE) {
-	freelog(LOG_VERBOSE, "Assigning position %d to player %d",
-		i, pplayer->player_no);
-	pplayer->team_placement_flag = TRUE;
-	best_start_pos[pplayer->player_no] = i;
-	error = FALSE;
-	break;
+        freelog(LOG_VERBOSE, "Assigning position %d to player %d",
+                i, pplayer->player_no);
+        pplayer->team_placement_flag = TRUE;
+        best_start_pos[pplayer->player_no] = i;
+#ifndef NDEBUG
+        error = FALSE;
+#endif
+        break;
       }
     } players_iterate_end
     assert(!error);
   }
-  freelog(LOG_VERBOSE, "exit");    
+  freelog(LOG_VERBOSE, "exit");
 }
 
 /****************************************************************************

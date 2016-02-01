@@ -308,14 +308,16 @@ static void unmute_conn_by_mi(struct muteinfo *mi)
 **************************************************************************/
 void stdinhand_turn(void)
 {
-  hash_kv_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+  hash_values_iterate(mute_table, value) {
+    struct muteinfo *mi = value;
+
     if (mi->turns_left > 0) {
       mi->turns_left--;
       if (mi->turns_left == 0) {
         unmute_conn_by_mi(mi);
       }
     }
-  } hash_kv_iterate_end;
+  } hash_values_iterate_end;
 
   conn_list_iterate(game.est_connections, pconn) {
     if (pconn->server.observe_requested
@@ -337,26 +339,28 @@ void stdinhand_turn(void)
 void stdinhand_free(void)
 {
   if (mute_table) {
-    hash_kv_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+    hash_values_iterate(mute_table, value) {
+      struct muteinfo *mi = value;
+
       free(mi->addr);
       free(mi);
-    } hash_kv_iterate_end;
+    } hash_values_iterate_end;
     hash_free(mute_table);
     mute_table = NULL;
   }
 
   if (kick_table_by_addr) {
-    hash_kv_iterate(kick_table_by_addr, void *, key, struct kickinfo *, ki) {
-      kickinfo_free(ki);
-    } hash_kv_iterate_end;
+    hash_values_iterate(kick_table_by_addr, ki) {
+      kickinfo_free((struct kickinfo *)ki);
+    } hash_values_iterate_end;
     hash_free(kick_table_by_addr);
     kick_table_by_addr = NULL;
   }
 
   if (kick_table_by_user) {
-    hash_kv_iterate(kick_table_by_user, void *, key, struct kickinfo *, ki) {
-      kickinfo_free(ki);
-    } hash_kv_iterate_end;
+    hash_values_iterate(kick_table_by_user, ki) {
+      kickinfo_free((struct kickinfo *)ki);
+    } hash_values_iterate_end;
     hash_free(kick_table_by_user);
     kick_table_by_user = NULL;
   }
@@ -3652,7 +3656,6 @@ static bool parse_set_arguments(const char *str, struct setting_value *sv)
   char *cptr_d;
   char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE];
   int val;
-  struct settings_s *op;
 
   memset(sv, 0, sizeof(struct setting_value));
 
@@ -3682,7 +3685,6 @@ static bool parse_set_arguments(const char *str, struct setting_value *sv)
   if (sv->setting_idx < 0) {
     return FALSE;
   }
-  op = &settings[sv->setting_idx];
 
   sz_strlcpy(sv->string_value, arg);
   if (sscanf(arg, "%d", &val) == 1) {
@@ -7704,6 +7706,11 @@ static struct user_action_list *load_action_list(const char *filename)
 
   p = fgets(line, sizeof(line), file);
   fclose(file);
+  if (NULL == p) {
+    freelog(LOG_ERROR, "Could not get the first line of file \"%s\".",
+            filename);
+    return NULL;
+  }
   version = get_action_list_file_version(line);
   if (version == 0) {
     return load_action_list_v0(filename);
@@ -8310,7 +8317,9 @@ static bool show_mutes(struct connection *caller)
   cmd_reply(CMD_LIST, caller, C_COMMENT, "%-32s %s",
             _("Username / Address"), _("Turns left"));
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
-  hash_kv_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+  hash_values_iterate(mute_table, value) {
+    struct muteinfo *mi = value;
+
     pconn = find_conn_by_id(mi->conn_id);
     if (mi->turns_left > 0) {
       cmd_reply(CMD_LIST, caller, C_COMMENT, _("%-32s %d"),
@@ -8319,7 +8328,7 @@ static bool show_mutes(struct connection *caller)
       cmd_reply(CMD_LIST, caller, C_COMMENT, _("%-32s forever"),
                 pconn ? pconn->username : mi->addr);
     }
-  } hash_kv_iterate_end;
+  } hash_values_iterate_end;
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
   return TRUE;
 }

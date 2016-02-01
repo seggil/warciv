@@ -1064,7 +1064,9 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
   map_city_radius_iterate(pcity->tile, ptile) {
     struct city *acity = ptile->worked;
     int city_map_x, city_map_y;
+#ifndef NDEBUG
     bool is_valid;
+#endif
 
     if (acity && acity != pcity && acity->owner == pcity->owner)  {
       if (same_pos(acity->tile, ptile)) {
@@ -1073,8 +1075,12 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
       }
       freelog(LOG_DEBUG, "%s taking over %s's square in (%d, %d)",
               pcity->name, acity->name, ptile->x, ptile->y);
+#ifdef NDEBUG
+      map_to_city_map(&city_map_x, &city_map_y, acity, ptile);
+#else
       is_valid = map_to_city_map(&city_map_x, &city_map_y, acity, ptile);
       assert(is_valid);
+#endif
       server_remove_worker_city(acity, city_map_x, city_map_y);
       acity->specialists[SP_ELVIS]++;
       if (!city_list_find_id(minilist, acity->id)) {

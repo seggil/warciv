@@ -367,7 +367,6 @@ void improvement_status_init(Impr_Status * improvements, size_t elements)
 **************************************************************************/
 bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id)
 {
-  struct impr_type *impr;
   bool space_part = FALSE;
 
   /* This also checks if tech req is Never */
@@ -378,8 +377,6 @@ bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id)
   if (!player_knows_improvement_tech(p, id)) {
     return FALSE;
   }
-
-  impr = get_improvement_type(id);
 
   /* Check for space part construction.  This assumes that space parts have
    * no other effects. */

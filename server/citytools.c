@@ -1914,12 +1914,14 @@ server_remove_worker_city()
 update_city_tile_status()
 **************************************************************************/
 static void server_set_tile_city(struct city *pcity, int city_x, int city_y,
-				 enum city_tile_type type)
+                                 enum city_tile_type type)
 {
+#ifndef NDEBUG
   enum city_tile_type current;
   assert(is_valid_city_coords(city_x, city_y));
   current = pcity->city_map[city_x][city_y];
   assert(current != type);
+#endif
 
   set_worker_city(pcity, city_x, city_y, type);
   pcity->server.synced = FALSE;
@@ -1932,12 +1934,14 @@ static void server_set_tile_city(struct city *pcity, int city_x, int city_y,
       struct city *pcity2 = map_get_city(tile1);
 
       if (pcity2 && pcity2 != pcity) {
-	int city_x2, city_y2;
-	bool is_valid;
+        int city_x2, city_y2;
 
-	is_valid = map_to_city_map(&city_x2, &city_y2, pcity2, ptile);
-	assert(is_valid);
-	update_city_tile_status(pcity2, city_x2, city_y2);
+#ifdef NDEBUG
+        map_to_city_map(&city_x2, &city_y2, pcity2, ptile);
+#else
+        assert(map_to_city_map(&city_x2, &city_y2, pcity2, ptile));
+#endif /* NDEBUG */
+        update_city_tile_status(pcity2, city_x2, city_y2);
       }
     } map_city_radius_iterate_end;
   }
