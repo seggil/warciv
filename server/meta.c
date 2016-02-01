@@ -251,7 +251,7 @@ static void metaserver_failed(void)
 static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
 {
   struct astring headers, content;
-  int available_players = 0, len;
+  int available_players, human_players, len;
   char buf[512], *ret, nation[128];
   const char *type, *state;
 
@@ -303,6 +303,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
       astr_append(&content, "&dropplrs=1");
     } else {
       available_players = 0;
+      human_players = 0;
 
       players_iterate(plr) {
         struct connection *pconn;
@@ -316,6 +317,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
           type = "A.I.";
         } else {
           type = "Human";
+          human_players++;
         }
 
         astr_append_printf(&content, "&plu[]=%s",
@@ -373,6 +375,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
       } conn_list_iterate_end;
 
       astr_append_printf(&content, "&available=%d", available_players);
+      astr_append_printf(&content, "&humans=%d", human_players);
     }
 
     /* send some variables: should be listed in inverted order
