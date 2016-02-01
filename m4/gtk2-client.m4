@@ -10,7 +10,7 @@ AC_DEFUN([FC_GTK2_CLIENT],
       [
         client="gtk-2.0"
         CLIENT_CFLAGS="$GTK_CFLAGS"
-        CLIENT_LIBS="$GTK_LIBS -lm"
+        CLIENT_LIBS="$GTK_LIBS"
         if test x"$MINGW32" = "xyes"; then
           dnl Required to compile gtk2 on Windows platform
           CFLAGS="$CFLAGS -mms-bitfields"
