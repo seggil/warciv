@@ -50,7 +50,7 @@ gint gtk_tree_selection_get_row(GtkTreeSelection *selection);
 void gtk_tree_view_focus(GtkTreeView *view);
 void setup_dialog(GtkWidget *shell, GtkWidget *parent);
 
-
+ GtkWidget *gtk_aux_menu_bar_new(void);
 
 enum gui_dialog_type {
   GUI_DIALOG_WINDOW,

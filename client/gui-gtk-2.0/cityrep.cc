@@ -803,7 +803,7 @@ static GtkWidget *create_city_report_menubar(void)
 {
   GtkWidget *menubar, *item;
 
-  menubar = gtk_menu_bar_new();
+  menubar = gtk_aux_menu_bar_new();
 
   item = gtk_menu_item_new_with_label(_("CMA"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);

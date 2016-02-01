@@ -375,7 +375,7 @@ void create_players_dialog(void)
                                  GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
   gtk_container_add(GTK_CONTAINER(sw), players_list);
 
-  menubar = gtk_menu_bar_new();
+  menubar = gtk_aux_menu_bar_new();
   gtk_box_pack_start(GTK_BOX(players_dialog_shell->vbox), menubar,
                      FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(players_dialog_shell->vbox), sw,
