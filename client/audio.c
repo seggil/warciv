@@ -210,7 +210,11 @@ static void audio_set_plugin(char *plugin_name, size_t size)
 {
   if (*plugin_name == '\0' || !audio_select_plugin(plugin_name)) {
     mystrlcpy(plugin_name, "none", size);
+#ifdef NDEBUG
+    audio_select_plugin(plugin_name);
+#else
     assert(audio_select_plugin(plugin_name)); /* Must always work! */
+#endif
   }
 
   if (strcmp(plugin_name, "none") == 0) {
