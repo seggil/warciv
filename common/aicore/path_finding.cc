@@ -204,7 +204,7 @@ static void init_node(struct path_finding_map *pf_map, struct path_finding_node 
                                     params);
   } else {
     /* The default */
-    node->behavior = TB_NORMAL;
+    node->behavior = tile_behavior::NORMAL;
   }
 
   if (params->get_zoc) {
@@ -323,7 +323,7 @@ bool pf_next(struct path_finding_map *pf_map)
   pf_map->status[pf_map->tile->index] = NS_PROCESSED;
 
   /* There is no exit from DONT_LEAVE tiles! */
-  if (node->behavior != TB_DONT_LEAVE) {
+  if (node->behavior != tile_behavior::DONT_LEAVE) {
 
     /* Processing Stage */
     /* The previous position is contained in {x,y} fields of map */
@@ -345,7 +345,7 @@ bool pf_next(struct path_finding_map *pf_map)
       }
 
       /* Can we enter this tile at all? */
-      if (node1->behavior == TB_IGNORE) {
+      if (node1->behavior == tile_behavior::IGNORE) {
         continue;
       }
 
@@ -890,7 +890,7 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
   struct danger_node *d_node = &pf_map->d_lattice[pf_map->tile->index];
 
   /* There is no exit from DONT_LEAVE tiles! */
-  if (node->behavior != TB_DONT_LEAVE) {
+  if (node->behavior != tile_behavior::DONT_LEAVE) {
     /* Cost at xy but taking into account waiting */
     int loc_cost
         = (pf_map->status[pf_map->tile->index] != NS_WAITING ? node->cost
@@ -918,7 +918,7 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
       }
 
       /* Can we enter this tile at all? */
-      if (node1->behavior == TB_IGNORE) {
+      if (node1->behavior == tile_behavior::IGNORE) {
         continue;
       }
 

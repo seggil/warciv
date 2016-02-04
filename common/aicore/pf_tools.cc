@@ -367,9 +367,9 @@ static enum tile_behavior dont_cross_ocean(const tile_t *ptile,
                                            struct pf_parameter *param)
 {
   if (is_ocean(ptile->terrain)) {
-    return TB_DONT_LEAVE;
+    return tile_behavior::DONT_LEAVE;
   }
-  return TB_NORMAL;
+  return tile_behavior::NORMAL;
 }
 
 /**********************************************************************
@@ -384,9 +384,9 @@ enum tile_behavior no_fights_or_unknown(const tile_t *ptile,
       || is_non_allied_unit_tile(ptile, param->owner)
       || is_non_allied_city_tile(ptile, param->owner)) {
     /* Can't attack */
-    return TB_IGNORE;
+    return tile_behavior::IGNORE;
   }
-  return TB_NORMAL;
+  return tile_behavior::NORMAL;
 }
 
 /**********************************************************************
@@ -398,9 +398,9 @@ enum tile_behavior no_fights(const tile_t *ptile, enum known_type known,
   if (is_non_allied_unit_tile(ptile, param->owner)
       || is_non_allied_city_tile(ptile, param->owner)) {
     /* Can't attack */
-    return TB_IGNORE;
+    return tile_behavior::IGNORE;
   }
-  return TB_NORMAL;
+  return tile_behavior::NORMAL;
 }
 
 

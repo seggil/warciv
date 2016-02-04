@@ -333,8 +333,8 @@ bool goto_pop_waypoint(void)
 }
 
 /**********************************************************************
-  PF callback to get the path with the minimal number of steps (out of
-  all shortest paths).
+  path_finding callback to get the path with the minimal number of steps
+  (out of all shortest paths).
 ***********************************************************************/
 static int get_EC(const tile_t *ptile, enum known_type known,
                   struct pf_parameter *param)
@@ -343,8 +343,8 @@ static int get_EC(const tile_t *ptile, enum known_type known,
 }
 
 /**********************************************************************
-  PF callback to prohibit going into the unknown.  Also makes sure we
-  don't plan our route through enemy city/tile.
+  path_finding callback to prohibit going into the unknown.  Also makes
+  sure we don't plan our route through enemy city/tile.
 ***********************************************************************/
 static enum tile_behavior get_TB_aggr(const tile_t *ptile,
                                       enum known_type known,
@@ -352,19 +352,19 @@ static enum tile_behavior get_TB_aggr(const tile_t *ptile,
 {
   if (known == TILE_UNKNOWN) {
     if (!goto_into_unknown) {
-      return TB_IGNORE;
+      return tile_behavior::IGNORE;
     }
   } else if (is_non_allied_unit_tile(ptile, param->owner)
              || is_non_allied_city_tile(ptile, param->owner)) {
     /* Can attack but can't count on going through */
-    return TB_DONT_LEAVE;
+    return tile_behavior::DONT_LEAVE;
   }
-  return TB_NORMAL;
+  return tile_behavior::NORMAL;
 }
 
 /**********************************************************************
-  PF callback for caravans. Caravans doesn't go into the unknown and
-  don't attack enemy units but enter enemy cities.
+  path_finding callback for caravans. Caravans doesn't go into the
+  unknown and don't attack enemy units but enter enemy cities.
 ***********************************************************************/
 static enum tile_behavior get_TB_caravan(const tile_t *ptile,
                                          enum known_type known,
@@ -372,19 +372,19 @@ static enum tile_behavior get_TB_caravan(const tile_t *ptile,
 {
   if (known == TILE_UNKNOWN) {
     if (!goto_into_unknown) {
-      return TB_IGNORE;
+      return tile_behavior::IGNORE;
     }
   } else if (is_non_allied_city_tile(ptile, param->owner)) {
     /* F_TRADE_ROUTE units can travel to, but not through, enemy cities.
      * FIXME: F_HELP_WONDER units cannot.  */
-    return TB_DONT_LEAVE;
+    return tile_behavior::DONT_LEAVE;
   } else if (is_non_allied_unit_tile(ptile, param->owner)) {
     /* Note this must be below the city check. */
-    return TB_IGNORE;
+    return tile_behavior::IGNORE;
   }
 
   /* Includes empty, allied, or allied-city tiles. */
-  return TB_NORMAL;
+  return tile_behavior::NORMAL;
 }
 
 /****************************************************************************
@@ -644,14 +644,14 @@ static enum tile_behavior no_fights_or_unknown_goto(const tile_t *ptile,
 {
   if (known == TILE_UNKNOWN && goto_into_unknown) {
     /* Special case allowing goto into the unknown. */
-    return TB_NORMAL;
+    return tile_behavior::NORMAL;
   }
 
   return no_fights_or_unknown(ptile, known, p);
 }
 
 /**********************************************************************
-  Fill the PF parameter with the correct client-goto values.
+  Fill the pf_parameter with the correct client-goto values.
 ***********************************************************************/
 static void fill_client_goto_parameter(unit_t *punit,
                                        struct pf_parameter *parameter)
@@ -888,7 +888,8 @@ void send_goto_path(unit_t *punit, struct pf_path *path,
 void send_patrol_route(unit_t *punit)
 {
   int i;
-  struct pf_path *path = NULL, *return_path;
+  struct pf_path *path = NULL,
+                 *return_path;
   struct pf_parameter parameter = goto_map.template_;
   struct path_finding_map *map;
 

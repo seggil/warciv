@@ -242,11 +242,11 @@
 /* ========================= Structures =============================== */
 
 /* Specifies the way path-finding will treat a tile. */
-enum tile_behavior {
-  TB_IGNORE,                    /* This one will be ignored */
-  TB_DONT_LEAVE,                /* Paths can lead _to_ such tile,
-                                 * but are not allowed to go _through_ */
-  TB_NORMAL                     /* Well, normal */
+enum class tile_behavior {
+  IGNORE,                    /* This one will be ignored */
+  DONT_LEAVE,                /* Paths can lead _to_ such tile,
+                              * but are not allowed to go _through_ */
+  NORMAL                     /* Well, normal */
 };
 
 /* Specifies how total_MC, turn and moves_left fields in the positions
