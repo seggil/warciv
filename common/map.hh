@@ -279,6 +279,14 @@ void reset_move_costs(tile_t *ptile);
       *(pnat_x) = (2 * (map_x) - *(pnat_y) - (*(pnat_y) & 1)) / 2)          \
    : (*(pnat_x) = (map_x), *(pnat_y) = (map_y)))
 
+#define ISO_NATIVE_TO_MAP_POS(pmap_x, pmap_y, nat_x, nat_y)                 \
+   (*(pmap_x) = ((nat_y) + ((nat_y) & 1)) / 2 + (nat_x),                    \
+    *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize))
+
+#define ISO_MAP_TO_NATIVE_POS(pnat_x, pnat_y, map_x, map_y)                 \
+   (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                         \
+    *(pnat_x) = (2 * (map_x) - *(pnat_y) - (*(pnat_y) & 1)) / 2))
+
 #define NATURAL_TO_MAP_POS(pmap_x, pmap_y, nat_x, nat_y)                    \
   (MAP_IS_ISOMETRIC                                                         \
    ? (*(pmap_x) = ((nat_y) + (nat_x)) / 2,                                  \
