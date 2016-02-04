@@ -915,9 +915,9 @@ bool can_unit_do_connect(unit_t *punit, enum unit_activity activity)
     case ACTIVITY_ROAD:
       return terrain_control.may_road
         && unit_flag(punit, F_SETTLERS)
-        && (tile_has_special(punit->tile, S_ROAD)
+        && (tile_has_alteration(punit->tile, S_ROAD)
             || (ttype->road_time != 0
-                && (!tile_has_special(punit->tile, S_RIVER)
+                && (!tile_has_alteration(punit->tile, S_RIVER)
                     || player_knows_techs_with_flag(pplayer, TF_BRIDGE))));
     case ACTIVITY_RAILROAD:
       /* There is no check for existing road/rail; the connect is allowed
@@ -931,7 +931,7 @@ bool can_unit_do_connect(unit_t *punit, enum unit_activity activity)
        * never to transform tiles. */
       return (terrain_control.may_irrigate
               && unit_flag(punit, F_SETTLERS)
-              && (tile_has_special(punit->tile, S_IRRIGATION)
+              && (tile_has_alteration(punit->tile, S_IRRIGATION)
                   || (terrain == ttype->irrigation_result
                       && is_water_adjacent_to_tile(punit->tile)
                       && !is_activity_on_tile(punit->tile, ACTIVITY_MINE))));
@@ -1185,7 +1185,7 @@ void request_new_unit_activity(unit_t *punit, enum unit_activity act)
 **************************************************************************/
 void request_new_unit_activity_targeted(unit_t *punit,
                                         enum unit_activity act,
-                                        enum tile_special_type tgt)
+                                        enum tile_alteration_type tgt)
 {
   dsend_packet_unit_change_activity(&aconnection, punit->id, act, tgt);
 }
@@ -1432,13 +1432,13 @@ void request_unit_sleep(unit_t *punit)
 void request_unit_pillage(unit_t *punit)
 {
   tile_t *ptile = punit->tile;
-  enum tile_special_type pspresent = get_tile_infrastructure_set(ptile);
-  enum tile_special_type psworking =
+  enum tile_alteration_type pspresent = get_tile_infrastructure_set(ptile);
+  enum tile_alteration_type psworking =
          get_unit_tile_pillage_set(punit->tile);
-  enum tile_special_type what =
-         get_preferred_pillage( static_cast<tile_special_type>(
+  enum tile_alteration_type what =
+         get_preferred_pillage( static_cast<tile_alteration_type>(
              (int)pspresent & (int)(~psworking)));
-  enum tile_special_type would = static_cast<tile_special_type>(
+  enum tile_alteration_type would = static_cast<tile_alteration_type>(
          (int)what | (int)map_get_infrastructure_prerequisite(what));
 
   if (punit->activity != ACTIVITY_PILLAGE &&
@@ -1447,7 +1447,8 @@ void request_unit_pillage(unit_t *punit)
         && ((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
       punit->is_new = FALSE;
       popup_pillage_dialog(punit,
-                           static_cast<tile_special_type>((int)pspresent & (int)(~psworking)));
+                           static_cast<tile_alteration_type>(
+                               (int)pspresent & (int)(~psworking)));
     } else {
       punit->is_new = FALSE;
       request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, what);

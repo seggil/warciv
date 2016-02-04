@@ -186,8 +186,8 @@ struct effect {
       Tech_Type_id tech;                        /* requirement tech */
       int gov;                                  /* requirement government */
       Impr_Type_id building;                    /* requirement building */
-      enum tile_special_type special;           /* requirement special */
-      Terrain_type_id terrain;                  //* requirement terrain type */
+      enum tile_alteration_type special;        /* requirement alteration */
+      Terrain_type_id terrain;                  /* requirement terrain type */
     } value;                                    /* requirement value */
   } req;
 };

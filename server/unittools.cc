@@ -422,7 +422,7 @@ void player_restore_units(player_t *pplayer)
       /* 7) Automatically refuel air units in cities, airbases, and
        *    transporters (carriers). */
       if (map_get_city(punit->tile)
-          || map_has_special(punit->tile, S_AIRBASE)
+          || map_has_alteration(punit->tile, S_AIRBASE)
           || punit->transported_by != -1) {
         punit->fuel=unit_type(punit)->fuel;
       }
@@ -465,7 +465,7 @@ static void unit_restore_hitpoints(player_t *pplayer, unit_t *punit)
 
   if(is_heli_unit(punit)) {
     city_t *pcity = map_get_city(punit->tile);
-    if(!pcity && !map_has_special(punit->tile, S_AIRBASE)
+    if(!pcity && !map_has_alteration(punit->tile, S_AIRBASE)
        && punit->transported_by == -1) {
       punit->hp-=unit_type(punit)->hp/10;
     }
@@ -563,7 +563,7 @@ static int total_activity (tile_t *ptile, enum unit_activity act)
   for a given task and target.
 **************************************************************************/
 static int total_activity_targeted(tile_t *ptile, enum unit_activity act,
-                                   enum tile_special_type tgt)
+                                   enum tile_alteration_type tgt)
 {
   int total = 0;
 
@@ -643,12 +643,12 @@ static void update_unit_activity(unit_t *punit)
   if (activity==ACTIVITY_PILLAGE) {
     if (punit->activity_target == S_NO_SPECIAL) { /* case for old save files */
       if (punit->activity_count >= 1) {
-        enum tile_special_type what =
+        enum tile_alteration_type what =
           get_preferred_pillage(
                get_tile_infrastructure_set(punit->tile));
 
         if (what != S_NO_SPECIAL) {
-          map_clear_special(punit->tile, what);
+          map_clear_alteration(punit->tile, what);
           update_tile_knowledge(punit->tile);
           set_unit_activity(punit, ACTIVITY_IDLE);
           check_adjacent_units = TRUE;
@@ -677,9 +677,9 @@ static void update_unit_activity(unit_t *punit)
     }
     else if (total_activity_targeted(punit->tile, ACTIVITY_PILLAGE,
                                      punit->activity_target) >= 1) {
-      enum tile_special_type what_pillaged = punit->activity_target;
+      enum tile_alteration_type what_pillaged = punit->activity_target;
 
-      map_clear_special(punit->tile, what_pillaged);
+      map_clear_alteration(punit->tile, what_pillaged);
       unit_list_iterate (punit->tile->units, punit2) {
         if ((punit2->activity == ACTIVITY_PILLAGE) &&
             (punit2->activity_target == what_pillaged)) {
@@ -714,7 +714,7 @@ static void update_unit_activity(unit_t *punit)
   if (activity == ACTIVITY_POLLUTION) {
     if (total_activity (punit->tile, ACTIVITY_POLLUTION)
         >= map_clean_pollution_time(punit->tile)) {
-      map_clear_special(punit->tile, S_POLLUTION);
+      map_clear_alteration(punit->tile, S_POLLUTION);
       unit_activity_done = TRUE;
     }
   }
@@ -722,7 +722,7 @@ static void update_unit_activity(unit_t *punit)
   if (activity == ACTIVITY_FALLOUT) {
     if (total_activity (punit->tile, ACTIVITY_FALLOUT)
         >= map_clean_fallout_time(punit->tile)) {
-      map_clear_special(punit->tile, S_FALLOUT);
+      map_clear_alteration(punit->tile, S_FALLOUT);
       unit_activity_done = TRUE;
     }
   }
@@ -730,7 +730,7 @@ static void update_unit_activity(unit_t *punit)
   if (activity == ACTIVITY_FORTRESS) {
     if (total_activity (punit->tile, ACTIVITY_FORTRESS)
         >= map_build_fortress_time(punit->tile)) {
-      map_set_special(punit->tile, S_FORTRESS);
+      map_set_alteration(punit->tile, S_FORTRESS);
       unit_activity_done = TRUE;
       /* watchtower becomes effective */
       unit_list_iterate(ptile->units, punit) {
@@ -754,7 +754,7 @@ static void update_unit_activity(unit_t *punit)
   if (activity == ACTIVITY_AIRBASE) {
     if (total_activity (punit->tile, ACTIVITY_AIRBASE)
         >= map_build_airbase_time(punit->tile)) {
-      map_set_special(punit->tile, S_AIRBASE);
+      map_set_alteration(punit->tile, S_AIRBASE);
       unit_activity_done = TRUE;
     }
   }
@@ -773,7 +773,7 @@ static void update_unit_activity(unit_t *punit)
     if (total_activity (punit->tile, ACTIVITY_ROAD)
         + total_activity (punit->tile, ACTIVITY_RAILROAD) >=
         map_build_road_time(punit->tile)) {
-      map_set_special(punit->tile, S_ROAD);
+      map_set_alteration(punit->tile, S_ROAD);
       unit_activity_done = TRUE;
     }
   }
@@ -781,7 +781,7 @@ static void update_unit_activity(unit_t *punit)
   if (activity == ACTIVITY_RAILROAD) {
     if (total_activity (punit->tile, ACTIVITY_RAILROAD)
         >= map_build_rail_time(punit->tile)) {
-      map_set_special(punit->tile, S_RAILROAD);
+      map_set_alteration(punit->tile, S_RAILROAD);
       unit_activity_done = TRUE;
     }
   }
@@ -1217,7 +1217,7 @@ bool enemies_at(unit_t *punit, tile_t *ptile)
 
   /* Calculate how well we can defend at (x,y) */
   db = get_tile_type(map_get_terrain(ptile))->defense_bonus;
-  if (map_has_special(ptile, S_RIVER))
+  if (map_has_alteration(ptile, S_RIVER))
     db += (db * terrain_control.river_defense_bonus) / 100;
   d = unit_def_rating_basic_sq(punit) * db;
 
@@ -1401,7 +1401,7 @@ bool is_airunit_refuel_point(tile_t *ptile, player_t *pplayer,
 
   if ((is_allied_city_tile(ptile, pplayer)
        && !is_non_allied_unit_tile(ptile, pplayer))
-      || (contains_special(plrtile->special, S_AIRBASE)
+      || (contains_alteration(plrtile->alteration, S_AIRBASE)
           && !is_non_allied_unit_tile(ptile, pplayer)))
     return TRUE;
 
@@ -1443,7 +1443,7 @@ void upgrade_unit(unit_t *punit, Unit_Type_id to_unit, bool is_free)
   }
 
   /* save old vision range */
-  if (map_has_special(punit->tile, S_FORTRESS)
+  if (map_has_alteration(punit->tile, S_FORTRESS)
       && unit_profits_of_watchtower(punit))
     range = get_watchtower_vision(punit);
   else
@@ -1465,7 +1465,7 @@ void upgrade_unit(unit_t *punit, Unit_Type_id to_unit, bool is_free)
    * later, so tiles that are within vision range both before and
    * after are not even temporarily marked fogged. */
 
-  if (map_has_special(punit->tile, S_FORTRESS)
+  if (map_has_alteration(punit->tile, S_FORTRESS)
       && unit_profits_of_watchtower(punit))
     unfog_area(pplayer, punit->tile, get_watchtower_vision(punit));
   else
@@ -1547,7 +1547,7 @@ unit_t *create_unit_full(player_t *pplayer, tile_t *ptile,
     send_city_info(pplayer, pcity);
   }
 
-  if (map_has_special(ptile, S_FORTRESS)
+  if (map_has_alteration(ptile, S_FORTRESS)
       && unit_profits_of_watchtower(punit)) {
     unfog_area(pplayer, punit->tile, get_watchtower_vision(punit));
   } else {
@@ -2189,13 +2189,13 @@ static void do_nuke_tile(player_t *pplayer, tile_t *ptile)
 
   if (!is_ocean(map_get_terrain(ptile)) && myrand(2) == 1) {
     if (game.ruleset_game.nuke_contamination == CONTAMINATION_POLLUTION) {
-      if (!map_has_special(ptile, S_POLLUTION)) {
-        map_set_special(ptile, S_POLLUTION);
+      if (!map_has_alteration(ptile, S_POLLUTION)) {
+        map_set_alteration(ptile, S_POLLUTION);
         update_tile_knowledge(ptile);
       }
     } else {
-      if (!map_has_special(ptile, S_FALLOUT)) {
-        map_set_special(ptile, S_FALLOUT);
+      if (!map_has_alteration(ptile, S_FALLOUT)) {
+        map_set_alteration(ptile, S_FALLOUT);
         update_tile_knowledge(ptile);
       }
     }
@@ -2492,7 +2492,7 @@ static bool unit_enter_hut(unit_t *punit)
     return ok;
   }
 
-  map_clear_special(punit->tile, S_HUT);
+  map_clear_alteration(punit->tile, S_HUT);
   update_tile_knowledge(punit->tile);
 
   if (game.ruleset_game.hut_overflight==OVERFLIGHT_FRIGHTEN && is_air_unit(punit)) {
@@ -2594,7 +2594,7 @@ static bool wakeup_neighbor_sentries(unit_t *punit)
       enum unit_move_type move_type = unit_type(penemy)->move_type;
       Terrain_type_id terrain = map_get_terrain(ptile);
 
-      if (map_has_special(ptile, S_FORTRESS)
+      if (map_has_alteration(ptile, S_FORTRESS)
           && unit_profits_of_watchtower(penemy))
         range = get_watchtower_vision(penemy);
       else
@@ -2702,10 +2702,10 @@ static void handle_unit_move_consequences(unit_t *punit,
     if (homecity) {
       if ((game.ruleset_control.happyborders > 0 && src_tile->owner != dst_tile->owner)
           ||
-          (map_has_special(dst_tile, S_FORTRESS)
+          (map_has_alteration(dst_tile, S_FORTRESS)
            && is_friendly_city_near(unit_owner(punit), dst_tile))
           ||
-          (map_has_special(src_tile, S_FORTRESS)
+          (map_has_alteration(src_tile, S_FORTRESS)
            && is_friendly_city_near(unit_owner(punit), src_tile))) {
         refresh_homecity = TRUE;
       }
@@ -2826,7 +2826,7 @@ bool move_unit(unit_t *punit, tile_t *pdesttile, int move_cost)
 
   /* Enhance vision if unit steps into a fortress */
   if (unit_profits_of_watchtower(punit)
-      && tile_has_special(pdesttile, S_FORTRESS)) {
+      && tile_has_alteration(pdesttile, S_FORTRESS)) {
     unfog_area(pplayer, pdesttile, get_watchtower_vision(punit));
   } else {
     unfog_area(pplayer, pdesttile, unit_type(punit)->vision_range);
@@ -2910,7 +2910,7 @@ bool move_unit(unit_t *punit, tile_t *pdesttile, int move_cost)
   reveal_hidden_units(pplayer, pdesttile);
 
   if (unit_profits_of_watchtower(punit)
-      && tile_has_special(psrctile, S_FORTRESS)) {
+      && tile_has_alteration(psrctile, S_FORTRESS)) {
     fog_area(pplayer, psrctile, get_watchtower_vision(punit));
   } else {
     fog_area(pplayer, psrctile, unit_type(punit)->vision_range);
@@ -2948,7 +2948,7 @@ bool move_unit(unit_t *punit, tile_t *pdesttile, int move_cost)
      * being moved at a time (e.g., bounce unit) and they are not done in the
      * right order.  This is probably not a bug. */
 
-    if (map_has_special(pdesttile, S_HUT)) {
+    if (map_has_alteration(pdesttile, S_HUT)) {
       return unit_enter_hut(punit);
     } else {
       return TRUE;
@@ -2987,7 +2987,7 @@ static bool maybe_cancel_patrol_due_to_enemy(unit_t *punit)
   int range;
   player_t *pplayer = unit_owner(punit);
 
-  if (map_has_special(punit->tile, S_FORTRESS)
+  if (map_has_alteration(punit->tile, S_FORTRESS)
       && unit_profits_of_watchtower(punit))
     range = get_watchtower_vision(punit);
   else

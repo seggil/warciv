@@ -2648,9 +2648,9 @@ void handle_tile_info(struct packet_tile_info *packet) /* 14 sc */
     tile_changed = TRUE;
     ptile->terrain = packet->type;
   }
-  if (ptile->special != packet->special) { /*add-on*/
+  if (ptile->alteration != packet->alteration) { /*add-on*/
     tile_changed = TRUE;
-    ptile->special = packet->special;
+    ptile->alteration = packet->alteration;
   }
   if (packet->owner == MAP_TILE_OWNER_NULL) {
     if (ptile->owner) {
@@ -3172,12 +3172,13 @@ void handle_ruleset_building(struct packet_ruleset_building *p) /* 104 sc */
   }
   b->terr_gate[p->terr_gate_count] = OLD_TERRAIN_NONE;
 
-  //T(spec_gate, spec_gate_count, S_NO_SPECIAL);
-  b->spec_gate = (enum tile_special_type *)wc_malloc(sizeof(*b->spec_gate) * (p->spec_gate_count + 1));
+  //T(alteration_gate, alteration_gate_count, S_NO_SPECIAL);
+  b->alteration_gate = (enum tile_alteration_type *)
+                       wc_malloc(sizeof(*b->alteration_gate) * (p->spec_gate_count + 1));
   for (i = 0; i < p->spec_gate_count; i++) {
-    b->spec_gate[i] = p->spec_gate[i];
+    b->alteration_gate[i] = p->alteration_gate[i];
   }
-  b->spec_gate[p->spec_gate_count] = S_NO_SPECIAL;
+  b->alteration_gate[p->spec_gate_count] = S_NO_SPECIAL;
 
   //T(equiv_dupl, equiv_dupl_count, B_LAST);
   b->equiv_dupl = (Impr_Type_id *)wc_malloc(sizeof(*b->equiv_dupl) * (p->equiv_dupl_count + 1));

@@ -648,7 +648,7 @@ static void load_player_units(player_t *plr, int plrno,
     punit->activity_count = secfile_lookup_int(file,
                                                "player%d.u%d.activity_count",
                                                plrno, i);
-    punit->activity_target = (tile_special_type)
+    punit->activity_target = (tile_alteration_type)
         secfile_lookup_int_default(file, (int) S_NO_SPECIAL,
                                    "player%d.u%d.activity_target", plrno, i);
 
@@ -796,7 +796,7 @@ static void load_player_units(player_t *plr, int plrno,
 
     /* allocate the unit's contribution to fog of war */
     if (unit_profits_of_watchtower(punit)
-        && map_has_special(punit->tile, S_FORTRESS)) {
+        && map_has_alteration(punit->tile, S_FORTRESS)) {
       unfog_area(unit_owner(punit), punit->tile,
                  get_watchtower_vision(punit));
     } else {
@@ -981,16 +981,16 @@ static void map_load(struct section_file *file)
   /* get 4-bit segments of 16-bit "special" field. */
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str(file, "map.l%03d", nat_y),
-                ptile->special = (tile_special_type)ascii_hex2bin(ch, 0));
+                ptile->alteration = (tile_alteration_type)ascii_hex2bin(ch, 0));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str(file, "map.u%03d", nat_y),
-                ptile->special = (tile_special_type)(ptile->special | ascii_hex2bin(ch, 1)));
+                ptile->alteration = (tile_alteration_type)(ptile->alteration | ascii_hex2bin(ch, 1)));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str_default(file, NULL, "map.n%03d", nat_y),
-                ptile->special = (tile_special_type)(ptile->special | ascii_hex2bin(ch, 2)));
+                ptile->alteration = (tile_alteration_type)(ptile->alteration | ascii_hex2bin(ch, 2)));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str_default(file, NULL, "map.f%03d", nat_y),
-                ptile->special = (tile_special_type)(ptile->special | ascii_hex2bin(ch, 3)));
+                ptile->alteration = (tile_alteration_type)(ptile->alteration | ascii_hex2bin(ch, 3)));
 
   if (secfile_lookup_bool_default(file, TRUE, "game.save_known")) {
 
@@ -1043,8 +1043,8 @@ static void map_rivers_overlay_load(struct section_file *file)
      and extract the rivers overlay from them. */
   LOAD_MAP_DATA(ch, line, ptile,
                 secfile_lookup_str_default(file, NULL, "map.n%03d", line),
-                ptile->special = (tile_special_type)
-                    (ptile->special | (ascii_hex2bin(ch, 2) & S_RIVER)));
+                ptile->alteration = (tile_alteration_type)
+                    (ptile->alteration | (ascii_hex2bin(ch, 2) & S_RIVER)));
   map.server.have_rivers_overlay = TRUE;
 }
 
@@ -1968,21 +1968,21 @@ static void player_map_load(player_t *plr, int plrno,
     LOAD_MAP_DATA(ch, nat_y, ptile,
                   secfile_lookup_str(file, "player%d.map_l%03d",
                                      plrno, nat_y),
-                  map_get_player_tile(ptile, plr)->special =
-                      static_cast<tile_special_type>(ascii_hex2bin(ch, 0)));
+                  map_get_player_tile(ptile, plr)->alteration =
+                      static_cast<tile_alteration_type>(ascii_hex2bin(ch, 0)));
     LOAD_MAP_DATA(ch, nat_y, ptile,
                   secfile_lookup_str(file, "player%d.map_u%03d",
                                      plrno, nat_y),
-                  map_get_player_tile(ptile, plr)->special =
-                      static_cast<tile_special_type>(
-                          map_get_player_tile(ptile, plr)->special
+                  map_get_player_tile(ptile, plr)->alteration =
+                      static_cast<tile_alteration_type>(
+                          map_get_player_tile(ptile, plr)->alteration
                           | ascii_hex2bin(ch, 1)));
     LOAD_MAP_DATA(ch, nat_y, ptile,
                   secfile_lookup_str_default
                   (file, NULL, "player%d.map_n%03d", plrno, nat_y),
-                  map_get_player_tile(ptile, plr)->special =
-                      static_cast<tile_special_type>(
-                          map_get_player_tile(ptile, plr)->special
+                  map_get_player_tile(ptile, plr)->alteration =
+                      static_cast<tile_alteration_type>(
+                          map_get_player_tile(ptile, plr)->alteration
                           | ascii_hex2bin(ch, 2)));
 
     /* get 4-bit segments of 16-bit "updated" field */
@@ -2811,19 +2811,19 @@ bool game_loadmap(struct section_file *file)
   /* get 4-bit segments of 16-bit "special" field. */
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str(file, "map.l%03d", nat_y),
-                ptile->special = (tile_special_type)ascii_hex2bin(ch, 0));
+                ptile->alteration = (tile_alteration_type)ascii_hex2bin(ch, 0));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str(file, "map.u%03d", nat_y),
-                ptile->special = static_cast<tile_special_type>(
-                    ptile->special | ascii_hex2bin(ch, 1)));
+                ptile->alteration = static_cast<tile_alteration_type>(
+                    ptile->alteration | ascii_hex2bin(ch, 1)));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str_default(file, NULL, "map.n%03d", nat_y),
-                ptile->special = static_cast<tile_special_type>(
-                    ptile->special | ascii_hex2bin(ch, 2)));
+                ptile->alteration = static_cast<tile_alteration_type>(
+                    ptile->alteration | ascii_hex2bin(ch, 2)));
   LOAD_MAP_DATA(ch, nat_y, ptile,
                 secfile_lookup_str_default(file, NULL, "map.f%03d", nat_y),
-                ptile->special = static_cast<tile_special_type>(
-                    ptile->special | ascii_hex2bin(ch, 3)));
+                ptile->alteration = static_cast<tile_alteration_type>(
+                    ptile->alteration | ascii_hex2bin(ch, 3)));
 
   return TRUE;
 }

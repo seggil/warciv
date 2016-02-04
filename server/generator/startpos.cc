@@ -44,7 +44,7 @@ static int *islands_index;
 static int get_tile_value(tile_t *ptile)
 {
   Terrain_type_id old_terrain;
-  enum tile_special_type old_special;
+  enum tile_alteration_type old_alteration;
   int value, irrig_bonus, mine_bonus;
 
   /* Give one point for each food / shield / trade produced. */
@@ -53,24 +53,24 @@ static int get_tile_value(tile_t *ptile)
            + get_trade_tile(ptile));
 
   old_terrain = ptile->terrain;
-  old_special = ptile->special;
+  old_alteration = ptile->alteration;
 
-  map_set_special(ptile, S_ROAD);
+  map_set_alteration(ptile, S_ROAD);
   map_irrigate_tile(ptile);
   irrig_bonus = (get_food_tile(ptile)
                  + get_shields_tile(ptile)
                  + get_trade_tile(ptile)) - value;
 
   ptile->terrain = old_terrain;
-  ptile->special = old_special;
-  map_set_special(ptile, S_ROAD);
+  ptile->alteration = old_alteration;
+  map_set_alteration(ptile, S_ROAD);
   map_mine_tile(ptile);
   mine_bonus = (get_food_tile(ptile)
                 + get_shields_tile(ptile)
                 + get_trade_tile(ptile)) - value;
 
   ptile->terrain = old_terrain;
-  ptile->special = old_special;
+  ptile->alteration = old_alteration;
 
   value += MAX(0, MAX(mine_bonus, irrig_bonus)) / 2;
 
@@ -114,7 +114,7 @@ static bool is_valid_start_pos(const tile_t *ptile, const void *dataptr)
   }
 
   /* Don't start on a hut. */
-  if (map_has_special(ptile, S_HUT)) {
+  if (map_has_alteration(ptile, S_HUT)) {
     return FALSE;
   }
 

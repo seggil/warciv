@@ -559,7 +559,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
       int i;
       const char *tech_name = get_tech_name(get_player_ptr(), b->tech_req);
       const char *terrain_name;
-      const char *special_name;
+      const char *alteration_name;
 
       if (b->tech_req != A_NONE) {
         if (req_buf[0] != '\0')
@@ -581,14 +581,14 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
           sz_strlcpy(req_buf, terrain_name);
         //req_append(get_terrain_name(b->terr_gate[i]));
       }
-      for (i = 0; b->spec_gate[i] != S_NO_SPECIAL; i++) {
-        special_name = get_special_name(b->spec_gate[i]);
+      for (i = 0; b->alteration_gate[i] != S_NO_SPECIAL; i++) {
+        alteration_name = get_special_name(b->alteration_gate[i]);
         if (req_buf[0] != '\0')
           my_snprintf(req_buf + strlen(req_buf),
                       sizeof(req_buf) - strlen(req_buf),
-                      ", %s", special_name);
+                      ", %s", alteration_name);
         else
-          sz_strlcpy(req_buf, special_name);
+          sz_strlcpy(req_buf, alteration_name);
         //req_append(get_special_name(b->spec_gate[i]));
       }
 

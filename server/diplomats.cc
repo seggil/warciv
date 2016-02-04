@@ -1160,8 +1160,8 @@ static bool diplomat_success_vs_defender(unit_t *pattacker,
     def = def * (100 + get_city_bonus(pdefender_tile->city,
                                       EFFECT_TYPE_SPY_RESISTANT)) / 100;
   } else {
-    if (tile_has_special(pdefender_tile, S_FORTRESS)
-        || tile_has_special(pdefender_tile, S_AIRBASE)) {
+    if (tile_has_alteration(pdefender_tile, S_FORTRESS)
+        || tile_has_alteration(pdefender_tile, S_AIRBASE)) {
       def = (def * 5) / 4;/* +25% */
     }
   }
@@ -1460,7 +1460,7 @@ int unit_bribe_cost(unit_t *punit)
     cost = 2 * shield_cost + (shield_cost * shield_cost) / 20;
     /* Multiply by veterancy, veteran unit = *1.5 cost. */
     cost = (int)(cost * (1 + (float)punit->veteran / 2));
-    if (map_has_special(punit->tile, S_FORTRESS) && !pcity) {
+    if (map_has_alteration(punit->tile, S_FORTRESS) && !pcity) {
       /* Multiply by fort defence factor. */
       cost *= (terrain_control.fortress_defense_bonus) / 100;
     }

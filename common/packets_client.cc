@@ -1542,7 +1542,7 @@ receive_packet_tile_info_100(
     int readin;
 
     dio_get_uint16(&din, &readin);
-    real_packet->special = static_cast<tile_special_type>(readin);
+    real_packet->alteration = static_cast<tile_alteration_type>(readin);
 #   ifdef REPLAY_2
     printf(" special=%u", readin);
 #   endif
@@ -8443,7 +8443,7 @@ receive_packet_unit_info_100(
     int readin;
 
     dio_get_uint16(&din, &readin);
-    real_packet->activity_target = static_cast<tile_special_type>(readin);
+    real_packet->activity_target = static_cast<tile_alteration_type>(readin);
 #   ifdef REPLAY_2
     printf(" activity_target=%u", readin);
 #   endif
@@ -8819,7 +8819,7 @@ receive_packet_unit_info_101(
     int readin;
 
     dio_get_uint16(&din, &readin);
-    real_packet->activity_target = static_cast<tile_special_type>(readin);
+    real_packet->activity_target = static_cast<tile_alteration_type>(readin);
 #   ifdef REPLAY_2
     printf(" activity_target=%u", readin);
 #   endif
@@ -12048,7 +12048,7 @@ int dsend_packet_unit_change_activity(
          connection_t *pconn,
          int unit_id,
          enum unit_activity activity,
-         enum tile_special_type activity_target)
+         enum tile_alteration_type activity_target)
 {
   struct packet_unit_change_activity packet, *real_packet = &packet;
 
@@ -17264,7 +17264,7 @@ receive_packet_ruleset_building_100(
       int readin;
 
       dio_get_uint16(&din, &readin);
-      real_packet->spec_gate[i] = static_cast<tile_special_type>(readin);
+      real_packet->alteration_gate[i] = static_cast<tile_alteration_type>(readin);
 #     ifdef REPLAY_2
       printf(" %u", readin);
 #     endif

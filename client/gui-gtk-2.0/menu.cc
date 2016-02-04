@@ -6113,7 +6113,7 @@ static const char *get_tile_change_menu_text(tile_t *ptile,
                                              enum unit_activity activity)
 {
   Terrain_type_id old_terrain = ptile->terrain;
-  enum tile_special_type old_special = ptile->special;
+  enum tile_alteration_type old_alteration = ptile->alteration;
   struct tile_type *ptype = get_tile_type(ptile->terrain);
   const char *text;
 
@@ -6152,7 +6152,7 @@ static const char *get_tile_change_menu_text(tile_t *ptile,
 
   /* Restore the original state of the tile. */
   ptile->terrain = old_terrain;
-  ptile->special = old_special;
+  ptile->alteration = old_alteration;
   reset_move_costs(ptile);
 
   return text;
@@ -6378,7 +6378,7 @@ void update_menus(void)
                   "ORDER_ROAD",
                   _("Make Trade _Route"));
     } else if (unit_flag(punit, F_SETTLERS)) {
-      if (map_has_special(punit->tile, S_ROAD)) {
+      if (map_has_alteration(punit->tile, S_ROAD)) {
         roadtext = _("Build _Railroad");
         road_activity=ACTIVITY_RAILROAD;
       } else {
@@ -6399,7 +6399,7 @@ void update_menus(void)
       my_snprintf(irrtext, sizeof(irrtext), irrfmt,
                   get_tile_change_menu_text(punit->tile,
                                             ACTIVITY_IRRIGATE));
-    } else if (map_has_special(punit->tile, S_IRRIGATION)
+    } else if (map_has_alteration(punit->tile, S_IRRIGATION)
                && player_knows_techs_with_flag(get_player_ptr(),
                                                TF_FARMLAND)) {
       sz_strlcpy(irrtext, _("Bu_ild Farmland"));

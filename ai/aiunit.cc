@@ -649,7 +649,7 @@ static int ai_rampage_want(unit_t *punit, tile_t *ptile)
     }
 
     /* ...or tiny pleasant hut here! */
-    if (map_has_special(ptile, S_HUT) && !is_barbarian(pplayer)) {
+    if (map_has_alteration(ptile, S_HUT) && !is_barbarian(pplayer)) {
 
       return -RAMPAGE_HUT_OR_BETTER;
     }
@@ -855,7 +855,7 @@ bool find_beachhead(unit_t *punit, tile_t *dest_tile,
       if (ok > 0) {
         /* accessible beachhead with zoc-ok water tile nearby */
         ok = get_tile_type(t)->defense_bonus;
-        if (map_has_special(tile1, S_RIVER))
+        if (map_has_alteration(tile1, S_RIVER))
           ok += (ok * terrain_control.river_defense_bonus) / 100;
         if (get_tile_type(t)->movement_cost * SINGLE_MOVE <
             unit_move_rate(punit))

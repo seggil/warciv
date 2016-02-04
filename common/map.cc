@@ -56,9 +56,9 @@ const int DIR_DX[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 const int DIR_DY[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 
 /* Names of specials.
- * (These must correspond to enum tile_special_type in terrain.h.)
+ * (These must correspond to enum tile_alteration_type in terrain.h.)
  */
-static const char *tile_special_type_names[] =
+static const char *tile_alteration_type_names[] =
 {
   N_("Special1"),
   N_("Road"),
@@ -76,12 +76,12 @@ static const char *tile_special_type_names[] =
 };
 
 /****************************************************************************
-  Return a bitfield of the specials on the tile that are infrastructure.
+  Return a bitfield of the alterations on the tile that are infrastructure.
 ****************************************************************************/
-enum tile_special_type get_tile_infrastructure_set(const tile_t *ptile)
+enum tile_alteration_type get_tile_infrastructure_set(const tile_t *ptile)
 {
-  return static_cast<tile_special_type>(
-             static_cast<int>(ptile->special)
+  return static_cast<tile_alteration_type>(
+             static_cast<int>(ptile->alteration)
              & (  static_cast<int>(S_ROAD)
                 | static_cast<int>(S_RAILROAD)
                 | static_cast<int>(S_IRRIGATION)
@@ -106,13 +106,13 @@ const char *map_get_tile_info_text(const tile_t *ptile)
   struct tile_type *ptype = get_tile_type(ptile->terrain);
 
   sz_strlcpy(s, ptype->terrain_name);
-  if (tile_has_special(ptile, S_RIVER)) {
+  if (tile_has_alteration(ptile, S_RIVER)) {
     sz_strlcat(s, "/");
     sz_strlcat(s, get_special_name(S_RIVER));
   }
 
   first = TRUE;
-  if (tile_has_special(ptile, S_SPECIAL_1)) {
+  if (tile_has_alteration(ptile, S_SPECIAL_1)) {
     if (first) {
       first = FALSE;
       sz_strlcat(s, " (");
@@ -121,7 +121,7 @@ const char *map_get_tile_info_text(const tile_t *ptile)
     }
     sz_strlcat(s, ptype->special_1_name);
   }
-  if (tile_has_special(ptile, S_SPECIAL_2)) {
+  if (tile_has_alteration(ptile, S_SPECIAL_2)) {
     if (first) {
       first = FALSE;
       sz_strlcat(s, " (");
@@ -135,7 +135,7 @@ const char *map_get_tile_info_text(const tile_t *ptile)
   }
 
   first = TRUE;
-  if (tile_has_special(ptile, S_POLLUTION)) {
+  if (tile_has_alteration(ptile, S_POLLUTION)) {
     if (first) {
       first = FALSE;
       sz_strlcat(s, " [");
@@ -144,7 +144,7 @@ const char *map_get_tile_info_text(const tile_t *ptile)
     }
     sz_strlcat(s, get_special_name(S_POLLUTION));
   }
-  if (tile_has_special(ptile, S_FALLOUT)) {
+  if (tile_has_alteration(ptile, S_FALLOUT)) {
     if (first) {
       first = FALSE;
       sz_strlcat(s, " [");
@@ -364,7 +364,7 @@ void map_init_topology(bool set_sizes)
 static void tile_init(tile_t *ptile)
 {
   ptile->terrain = OLD_TERRAIN_UNKNOWN;
-  ptile->special = S_NO_SPECIAL;
+  ptile->alteration = S_NO_SPECIAL;
   ptile->continent = 0;
   ptile->city = NULL;
   ptile->units = unit_list_new();
@@ -564,14 +564,14 @@ void map_free(void)
 /***************************************************************
 ...
 ***************************************************************/
-enum tile_special_type get_special_by_name(const char * name)
+enum tile_alteration_type get_alteration_by_name(const char * name)
 {
   unsigned int i;
   int st = 1;
 
-  for (i = 0; i < ARRAY_SIZE(tile_special_type_names); i++) {
-    if (0 == strcmp(name, tile_special_type_names[i]))
-      return static_cast<tile_special_type>(st);
+  for (i = 0; i < ARRAY_SIZE(tile_alteration_type_names); i++) {
+    if (0 == strcmp(name, tile_alteration_type_names[i]))
+      return static_cast<tile_alteration_type>(st);
 
     st <<= 1;
   }
@@ -582,14 +582,14 @@ enum tile_special_type get_special_by_name(const char * name)
 /***************************************************************
 ...
 ***************************************************************/
-const char *get_special_name(enum tile_special_type type)
+const char *get_special_name(enum tile_alteration_type type)
 {
   unsigned int i;
   int shift = static_cast<int>(type);
 
-  for (i = 0; i < ARRAY_SIZE(tile_special_type_names); i++) {
+  for (i = 0; i < ARRAY_SIZE(tile_alteration_type_names); i++) {
     if ((shift & 0x1) == 1) {
-      return _(tile_special_type_names[i]);
+      return _(tile_alteration_type_names[i]);
     }
     shift >>= 1;
   }
@@ -750,9 +750,9 @@ bool is_sea_usable(const tile_t *ptile)
 ***************************************************************/
 int get_tile_food_base(const tile_t *ptile)
 {
-  if (tile_has_special(ptile, S_SPECIAL_1))
+  if (tile_has_alteration(ptile, S_SPECIAL_1))
     return get_tile_type(ptile->terrain)->food_special_1;
-  else if (tile_has_special(ptile, S_SPECIAL_2))
+  else if (tile_has_alteration(ptile, S_SPECIAL_2))
     return get_tile_type(ptile->terrain)->food_special_2;
   else
     return get_tile_type(ptile->terrain)->food;
@@ -763,9 +763,9 @@ int get_tile_food_base(const tile_t *ptile)
 ***************************************************************/
 int get_tile_shield_base(const tile_t *ptile)
 {
-  if (tile_has_special(ptile, S_SPECIAL_1))
+  if (tile_has_alteration(ptile, S_SPECIAL_1))
     return get_tile_type(ptile->terrain)->shield_special_1;
-  else if(tile_has_special(ptile, S_SPECIAL_2))
+  else if (tile_has_alteration(ptile, S_SPECIAL_2))
     return get_tile_type(ptile->terrain)->shield_special_2;
   else
     return get_tile_type(ptile->terrain)->shield;
@@ -776,9 +776,9 @@ int get_tile_shield_base(const tile_t *ptile)
 ***************************************************************/
 int get_tile_trade_base(const tile_t *ptile)
 {
-  if (tile_has_special(ptile, S_SPECIAL_1))
+  if (tile_has_alteration(ptile, S_SPECIAL_1))
     return get_tile_type(ptile->terrain)->trade_special_1;
-  else if (tile_has_special(ptile, S_SPECIAL_2))
+  else if (tile_has_alteration(ptile, S_SPECIAL_2))
     return get_tile_type(ptile->terrain)->trade_special_2;
   else
     return get_tile_type(ptile->terrain)->trade;
@@ -789,7 +789,7 @@ int get_tile_trade_base(const tile_t *ptile)
   eg: "Mine"
   eg: "Road/Farmland"
 ***************************************************************/
-const char *map_get_infrastructure_text(enum tile_special_type spe)
+const char *map_get_infrastructure_text(enum tile_alteration_type alter)
 {
   static char s[64];
   char *p;
@@ -797,24 +797,24 @@ const char *map_get_infrastructure_text(enum tile_special_type spe)
   s[0] = '\0';
 
   /* Since railroad requires road, Road/Railroad is redundant */
-  if (contains_special(spe, S_RAILROAD))
+  if (contains_alteration(alter, S_RAILROAD))
     cat_snprintf(s, sizeof(s), "%s/", _("Railroad"));
-  else if (contains_special(spe, S_ROAD))
+  else if (contains_alteration(alter, S_ROAD))
     cat_snprintf(s, sizeof(s), "%s/", _("Road"));
 
   /* Likewise for farmland on irrigation */
-  if (contains_special(spe, S_FARMLAND))
+  if (contains_alteration(alter, S_FARMLAND))
     cat_snprintf(s, sizeof(s), "%s/", _("Farmland"));
-  else if (contains_special(spe, S_IRRIGATION))
+  else if (contains_alteration(alter, S_IRRIGATION))
     cat_snprintf(s, sizeof(s), "%s/", _("Irrigation"));
 
-  if (contains_special(spe, S_MINE))
+  if (contains_alteration(alter, S_MINE))
     cat_snprintf(s, sizeof(s), "%s/", _("Mine"));
 
-  if (contains_special(spe, S_FORTRESS))
+  if (contains_alteration(alter, S_FORTRESS))
     cat_snprintf(s, sizeof(s), "%s/", _("Fortress"));
 
-  if (contains_special(spe, S_AIRBASE))
+  if (contains_alteration(alter, S_AIRBASE))
     cat_snprintf(s, sizeof(s), "%s/", _("Airbase"));
 
   p = s + strlen(s) - 1;
@@ -827,15 +827,15 @@ const char *map_get_infrastructure_text(enum tile_special_type spe)
 /****************************************************************************
   Return the prerequesites needed before building the given infrastructure.
 ****************************************************************************/
-enum tile_special_type map_get_infrastructure_prerequisite(enum tile_special_type spe)
+enum tile_alteration_type map_get_infrastructure_prerequisite(enum tile_alteration_type alter)
 {
-  enum tile_special_type prereq = S_NO_SPECIAL;
+  enum tile_alteration_type prereq = S_NO_SPECIAL;
 
-  if (contains_special(spe, S_RAILROAD)) {
+  if (contains_alteration(alter, S_RAILROAD)) {
     prereq = S_ROAD;
   }
-  if (contains_special(spe, S_FARMLAND)) {
-    prereq = static_cast<tile_special_type>(static_cast<int>(prereq) | static_cast<int>(S_IRRIGATION));
+  if (contains_alteration(alter, S_FARMLAND)) {
+    prereq = static_cast<tile_alteration_type>(static_cast<int>(prereq) | static_cast<int>(S_IRRIGATION));
   }
 
   return prereq;
@@ -844,21 +844,21 @@ enum tile_special_type map_get_infrastructure_prerequisite(enum tile_special_typ
 /***************************************************************
 ...
 ***************************************************************/
-enum tile_special_type get_preferred_pillage(enum tile_special_type pset)
+enum tile_alteration_type get_preferred_pillage(enum tile_alteration_type pset)
 {
-  if (contains_special(pset, S_FARMLAND))
+  if (contains_alteration(pset, S_FARMLAND))
     return S_FARMLAND;
-  if (contains_special(pset, S_IRRIGATION))
+  if (contains_alteration(pset, S_IRRIGATION))
     return S_IRRIGATION;
-  if (contains_special(pset, S_MINE))
+  if (contains_alteration(pset, S_MINE))
     return S_MINE;
-  if (contains_special(pset, S_FORTRESS))
+  if (contains_alteration(pset, S_FORTRESS))
     return S_FORTRESS;
-  if (contains_special(pset, S_AIRBASE))
+  if (contains_alteration(pset, S_AIRBASE))
     return S_AIRBASE;
-  if (contains_special(pset, S_RAILROAD))
+  if (contains_alteration(pset, S_RAILROAD))
     return S_RAILROAD;
-  if (contains_special(pset, S_ROAD))
+  if (contains_alteration(pset, S_ROAD))
     return S_ROAD;
   return S_NO_SPECIAL;
 }
@@ -869,14 +869,14 @@ enum tile_special_type get_preferred_pillage(enum tile_special_type pset)
 bool is_water_adjacent_to_tile(const tile_t *ptile)
 {
   if (is_ocean(ptile->terrain)
-      || tile_has_special(ptile, S_RIVER)
-      || tile_has_special(ptile, S_IRRIGATION))
+      || tile_has_alteration(ptile, S_RIVER)
+      || tile_has_alteration(ptile, S_IRRIGATION))
     return TRUE;
 
   cardinal_adjc_iterate(ptile, tile1) {
     if (is_ocean(tile1->terrain)
-        || tile_has_special(tile1, S_RIVER)
-        || tile_has_special(tile1, S_IRRIGATION))
+        || tile_has_alteration(tile1, S_RIVER)
+        || tile_has_alteration(tile1, S_IRRIGATION))
       return TRUE;
   } cardinal_adjc_iterate_end;
 
@@ -989,7 +989,7 @@ int map_activity_time(enum unit_activity activity, const tile_t *ptile)
 ***************************************************************/
 static void clear_infrastructure(tile_t *ptile)
 {
-  map_clear_special(ptile, S_INFRASTRUCTURE_MASK);
+  map_clear_alteration(ptile, S_INFRASTRUCTURE_MASK);
 }
 
 /***************************************************************
@@ -997,7 +997,7 @@ static void clear_infrastructure(tile_t *ptile)
 ***************************************************************/
 static void clear_dirtiness(tile_t *ptile)
 {
-  map_clear_special(ptile, static_cast<tile_special_type>
+  map_clear_alteration(ptile, static_cast<tile_alteration_type>
       (static_cast<int>(S_POLLUTION) | static_cast<int>(S_FALLOUT)));
 }
 
@@ -1012,10 +1012,10 @@ void map_irrigate_tile(tile_t *ptile)
   result = get_tile_type(now)->irrigation_result;
 
   if (now == result) {
-    if (map_has_special(ptile, S_IRRIGATION)) {
-      map_set_special(ptile, S_FARMLAND);
+    if (map_has_alteration(ptile, S_IRRIGATION)) {
+      map_set_alteration(ptile, S_FARMLAND);
     } else {
-      map_set_special(ptile, S_IRRIGATION);
+      map_set_alteration(ptile, S_IRRIGATION);
     }
   } else if (result != OLD_TERRAIN_NONE) {
     map_set_terrain(ptile, result);
@@ -1025,11 +1025,11 @@ void map_irrigate_tile(tile_t *ptile)
 
       /* FIXME: When rest of code can handle
        * rivers in oceans, don't clear this! */
-      map_clear_special(ptile, S_RIVER);
+      map_clear_alteration(ptile, S_RIVER);
     }
     reset_move_costs(ptile);
   }
-  map_clear_special(ptile, S_MINE);
+  map_clear_alteration(ptile, S_MINE);
 }
 
 /***************************************************************
@@ -1043,7 +1043,7 @@ void map_mine_tile(tile_t *ptile)
   result = get_tile_type(now)->mining_result;
 
   if (now == result) {
-    map_set_special(ptile, S_MINE);
+    map_set_alteration(ptile, S_MINE);
   } else if (result != OLD_TERRAIN_NONE) {
     map_set_terrain(ptile, result);
     if (is_ocean(result)) {
@@ -1052,12 +1052,12 @@ void map_mine_tile(tile_t *ptile)
 
       /* FIXME: When rest of code can handle
        * rivers in oceans, don't clear this! */
-      map_clear_special(ptile, S_RIVER);
+      map_clear_alteration(ptile, S_RIVER);
     }
     reset_move_costs(ptile);
   }
-  map_clear_special(ptile, S_FARMLAND);
-  map_clear_special(ptile, S_IRRIGATION);
+  map_clear_alteration(ptile, S_FARMLAND);
+  map_clear_alteration(ptile, S_IRRIGATION);
 }
 
 /***************************************************************
@@ -1069,7 +1069,7 @@ void change_terrain(tile_t *ptile, Terrain_type_id type)
   if (is_ocean(type)) {
     clear_infrastructure(ptile);
     clear_dirtiness(ptile);
-    map_clear_special(ptile, S_RIVER);  /* FIXME: When rest of code can handle
+    map_clear_alteration(ptile, S_RIVER);  /* FIXME: When rest of code can handle
                                            rivers in oceans, don't clear this! */
   }
 
@@ -1081,10 +1081,10 @@ void change_terrain(tile_t *ptile, Terrain_type_id type)
      future ruleset expansion. -GJW) */
 
   if (get_tile_type(type)->mining_result != type)
-    map_clear_special(ptile, S_MINE);
+    map_clear_alteration(ptile, S_MINE);
 
   if (get_tile_type(type)->irrigation_result != type)
-    map_clear_special(ptile, static_cast<tile_special_type>
+    map_clear_alteration(ptile, static_cast<tile_alteration_type>
         (static_cast<int>(S_FARMLAND) | static_cast<int>(S_IRRIGATION)));
 }
 
@@ -1152,15 +1152,15 @@ static int tile_move_cost_ptrs(unit_t *punit,
   }
   if (punit && !is_ground_unit(punit))
     return SINGLE_MOVE;
-  if (tile_has_special(t1, S_RAILROAD) && tile_has_special(t2, S_RAILROAD))
+  if (tile_has_alteration(t1, S_RAILROAD) && tile_has_alteration(t2, S_RAILROAD))
     return MOVE_COST_RAIL;
 /* return (unit_move_rate(punit)/RAIL_MAX) */
   if (punit && unit_flag(punit, F_IGTER))
     return SINGLE_MOVE/3;
-  if (tile_has_special(t1, S_ROAD) && tile_has_special(t2, S_ROAD))
+  if (tile_has_alteration(t1, S_ROAD) && tile_has_alteration(t2, S_ROAD))
     return MOVE_COST_ROAD;
 
-  if (tile_has_special(t1, S_RIVER) && tile_has_special(t2, S_RIVER)) {
+  if (tile_has_alteration(t1, S_RIVER) && tile_has_alteration(t2, S_RIVER)) {
     cardinal_move = is_move_cardinal(t1, t2);
     switch (terrain_control.river_move_mode) {
     case RMV_NORMAL:
@@ -1413,42 +1413,42 @@ void map_set_terrain(tile_t *ptile, Terrain_type_id ter)
 /***************************************************************
 ...
 ***************************************************************/
-enum tile_special_type map_get_special(const tile_t *ptile)
+enum tile_alteration_type map_get_alteration(const tile_t *ptile)
 {
-  return ptile->special;
+  return ptile->alteration;
 }
 
 /***************************************************************
  Returns TRUE iff the given special is found at the given map
  position.
 ***************************************************************/
-bool map_has_special(const tile_t *ptile, enum tile_special_type special)
+bool map_has_alteration(const tile_t *ptile, enum tile_alteration_type alteration)
 {
-  return contains_special(ptile->special, special);
+  return contains_alteration(ptile->alteration, alteration);
 }
 
 /***************************************************************
- Returns TRUE iff the given tile has the given special.
+ Returns TRUE iff the given tile has the given alteration.
 ***************************************************************/
-bool tile_has_special(const tile_t *ptile,
-                      enum tile_special_type special)
+bool tile_has_alteration(const tile_t *ptile,
+                         enum tile_alteration_type alteration)
 {
-  return contains_special(ptile->special, special);
+  return contains_alteration(ptile->alteration, alteration);
 }
 
 /***************************************************************
  Returns TRUE iff the given special is found in the given set.
 ***************************************************************/
-bool contains_special(enum tile_special_type set,
-                      enum tile_special_type to_test_for)
+bool contains_alteration(enum tile_alteration_type set,
+                         enum tile_alteration_type to_test_for)
 {
-  enum tile_special_type masked = static_cast<tile_special_type>
+  enum tile_alteration_type masked = static_cast<tile_alteration_type>
           (static_cast<int>(set) & static_cast<int>(to_test_for));
 
   assert(0 == static_cast<int>(S_NO_SPECIAL));
 
   /*
-   * contains_special should only be called with one S_* in
+   * contains_alteration should only be called with one S_* in
    * to_test_for.
    */
   assert(masked == S_NO_SPECIAL || masked == to_test_for);
@@ -1459,12 +1459,12 @@ bool contains_special(enum tile_special_type set,
 /***************************************************************
 ...
 ***************************************************************/
-void map_set_special(tile_t *ptile, enum tile_special_type spe)
+void map_set_alteration(tile_t *ptile, enum tile_alteration_type alter)
 {
-   ptile->special = static_cast<tile_special_type>
-       (static_cast<int>(ptile->special) | static_cast<int>(spe));
+   ptile->alteration = static_cast<tile_alteration_type>
+       (static_cast<int>(ptile->alteration) | static_cast<int>(alter));
 
-  if (contains_special(spe, S_ROAD) || contains_special(spe, S_RAILROAD)) {
+  if (contains_alteration(alter, S_ROAD) || contains_alteration(alter, S_RAILROAD)) {
     reset_move_costs(ptile);
   }
 }
@@ -1472,22 +1472,22 @@ void map_set_special(tile_t *ptile, enum tile_special_type spe)
 /***************************************************************
 ...
 ***************************************************************/
-void map_clear_special(tile_t *ptile, enum tile_special_type spe)
+void map_clear_alteration(tile_t *ptile, enum tile_alteration_type alter)
 {
-  ptile->special = static_cast<tile_special_type>
-      (static_cast<int>(ptile->special) & static_cast<int>(~spe));
+  ptile->alteration = static_cast<tile_alteration_type>
+      (static_cast<int>(ptile->alteration) & static_cast<int>(~alter));
 
-  if (contains_special(spe, S_ROAD) || contains_special(spe, S_RAILROAD)) {
+  if (contains_alteration(alter, S_ROAD) || contains_alteration(alter, S_RAILROAD)) {
     reset_move_costs(ptile);
   }
 }
 
 /***************************************************************
-  Remove any specials which may exist at these map co-ordinates.
+  Remove any alterations which may exist at these map co-ordinates.
 ***************************************************************/
-void map_clear_all_specials(tile_t *ptile)
+void map_clear_all_alterations(tile_t *ptile)
 {
-  ptile->special = S_NO_SPECIAL;
+  ptile->alteration = S_NO_SPECIAL;
 }
 
 /***************************************************************

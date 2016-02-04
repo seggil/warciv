@@ -779,7 +779,7 @@ bool can_unit_paradrop(unit_t *punit)
   if(punit->moves_left < utype->paratroopers_mr_req)
     return FALSE;
 
-  if (tile_has_special(punit->tile, S_AIRBASE)) {
+  if (tile_has_alteration(punit->tile, S_AIRBASE)) {
     return TRUE;
   }
 
@@ -814,7 +814,7 @@ Check if the unit's current activity is actually legal.
 bool can_unit_continue_current_activity(unit_t *punit)
 {
   enum unit_activity current = punit->activity;
-  enum tile_special_type target = punit->activity_target;
+  enum tile_alteration_type target = punit->activity_target;
   enum unit_activity current2 =
               (current == ACTIVITY_FORTIFIED) ? ACTIVITY_FORTIFYING : current;
   bool result;
@@ -844,7 +844,7 @@ bool can_unit_do_activity(unit_t *punit, enum unit_activity activity)
 **************************************************************************/
 bool can_unit_do_activity_targeted(unit_t *punit,
                                    enum unit_activity activity,
-                                   enum tile_special_type target)
+                                   enum tile_alteration_type target)
 {
   if (!punit) {
     return FALSE;
@@ -864,7 +864,7 @@ bool can_unit_do_activity_targeted(unit_t *punit,
 **************************************************************************/
 bool can_unit_do_activity_targeted_at(unit_t *punit,
                                       enum unit_activity activity,
-                                      enum tile_special_type target,
+                                      enum tile_alteration_type target,
                                       const tile_t *ptile)
 {
   player_t *pplayer;
@@ -884,18 +884,18 @@ bool can_unit_do_activity_targeted_at(unit_t *punit,
 
   case ACTIVITY_POLLUTION:
     return (unit_flag(punit, F_SETTLERS)
-            && tile_has_special(ptile, S_POLLUTION));
+            && tile_has_alteration(ptile, S_POLLUTION));
 
   case ACTIVITY_FALLOUT:
     return (unit_flag(punit, F_SETTLERS)
-            && tile_has_special(ptile, S_FALLOUT));
+            && tile_has_alteration(ptile, S_FALLOUT));
 
   case ACTIVITY_ROAD:
     return (terrain_control.may_road
             && unit_flag(punit, F_SETTLERS)
-            && !tile_has_special(ptile, S_ROAD)
+            && !tile_has_alteration(ptile, S_ROAD)
             && type->road_time != 0
-            && (!tile_has_special(ptile, S_RIVER)
+            && (!tile_has_alteration(ptile, S_RIVER)
                 || player_knows_techs_with_flag(pplayer, TF_BRIDGE)));
 
   case ACTIVITY_MINE:
@@ -904,7 +904,7 @@ bool can_unit_do_activity_targeted_at(unit_t *punit,
     if (terrain_control.may_mine
         && unit_flag(punit, F_SETTLERS)
         && ((ptile->terrain == type->mining_result
-             && !tile_has_special(ptile, S_MINE))
+             && !tile_has_alteration(ptile, S_MINE))
             || (ptile->terrain != type->mining_result
                 && type->mining_result != OLD_TERRAIN_NONE
                 && (!is_ocean(ptile->terrain)
@@ -930,8 +930,8 @@ bool can_unit_do_activity_targeted_at(unit_t *punit,
      * *Do* allow it if they're transforming - the irrigation may survive */
     if (terrain_control.may_irrigate
         && unit_flag(punit, F_SETTLERS)
-        && (!tile_has_special(ptile, S_IRRIGATION)
-            || (!tile_has_special(ptile, S_FARMLAND)
+        && (!tile_has_alteration(ptile, S_IRRIGATION)
+            || (!tile_has_alteration(ptile, S_FARMLAND)
                 && player_knows_techs_with_flag(pplayer, TF_FARMLAND)))
         && ((ptile->terrain == type->irrigation_result
              && is_water_adjacent_to_tile(ptile))
@@ -968,13 +968,13 @@ bool can_unit_do_activity_targeted_at(unit_t *punit,
     return (unit_flag(punit, F_SETTLERS)
             && !map_get_city(ptile)
             && player_knows_techs_with_flag(pplayer, TF_FORTRESS)
-            && !tile_has_special(ptile, S_FORTRESS)
+            && !tile_has_alteration(ptile, S_FORTRESS)
             && !is_ocean(ptile->terrain));
 
   case ACTIVITY_AIRBASE:
     return (unit_flag(punit, F_AIRBASE)
             && player_knows_techs_with_flag(pplayer, TF_AIRBASE)
-            && !tile_has_special(ptile, S_AIRBASE)
+            && !tile_has_alteration(ptile, S_AIRBASE)
             && !is_ocean(ptile->terrain));
 
   case ACTIVITY_SENTRY:
@@ -989,19 +989,19 @@ bool can_unit_do_activity_targeted_at(unit_t *punit,
     /* if the tile has road, the terrain must be ok.. */
     return (terrain_control.may_road
             && unit_flag(punit, F_SETTLERS)
-            && tile_has_special(ptile, S_ROAD)
-            && !tile_has_special(ptile, S_RAILROAD)
+            && tile_has_alteration(ptile, S_ROAD)
+            && !tile_has_alteration(ptile, S_RAILROAD)
             && player_knows_techs_with_flag(pplayer, TF_RAILROAD));
 
   case ACTIVITY_PILLAGE:
     {
-      enum tile_special_type pspresent = get_tile_infrastructure_set(ptile);
-      enum tile_special_type psworking;
+      enum tile_alteration_type pspresent = get_tile_infrastructure_set(ptile);
+      enum tile_alteration_type psworking;
 
       if (pspresent != S_NO_SPECIAL && is_ground_unit(punit)) {
         psworking = get_unit_tile_pillage_set(ptile);
-        if (ptile->city && (contains_special(target, S_ROAD)
-                            || contains_special(target, S_RAILROAD))) {
+        if (ptile->city && (contains_alteration(target, S_ROAD)
+                            || contains_alteration(target, S_RAILROAD))) {
           return FALSE;
         }
         if (target == S_NO_SPECIAL) {
@@ -1077,7 +1077,7 @@ void set_unit_activity(unit_t *punit, enum unit_activity new_activity)
 **************************************************************************/
 void set_unit_activity_targeted(unit_t *punit,
                                 enum unit_activity new_activity,
-                                enum tile_special_type new_target)
+                                enum tile_alteration_type new_target)
 {
   set_unit_activity(punit, new_activity);
   punit->activity_target = new_target;
@@ -1099,13 +1099,13 @@ bool is_unit_activity_on_tile(enum unit_activity activity,
 /**************************************************************************
 ...
 **************************************************************************/
-enum tile_special_type get_unit_tile_pillage_set(const tile_t *ptile)
+enum tile_alteration_type get_unit_tile_pillage_set(const tile_t *ptile)
 {
-  enum tile_special_type tgt_ret = S_NO_SPECIAL;
+  enum tile_alteration_type tgt_ret = S_NO_SPECIAL;
 
   unit_list_iterate(ptile->units, punit)
     if (punit->activity == ACTIVITY_PILLAGE)
-      tgt_ret = static_cast<tile_special_type>(
+      tgt_ret = static_cast<tile_alteration_type>(
           static_cast<int>(tgt_ret) | static_cast<int>(punit->activity_target));
   unit_list_iterate_end;
   return tgt_ret;
@@ -1541,7 +1541,7 @@ bool can_unit_survive_at_tile(unit_t *punit, const tile_t *ptile)
     return TRUE;
   case AIR_MOVING:
   case HELI_MOVING:
-    return tile_has_special(punit->tile, S_AIRBASE);
+    return tile_has_alteration(punit->tile, S_AIRBASE);
   }
   die("Invalid move type");
   return TRUE;
@@ -1726,7 +1726,7 @@ bool unit_being_aggressive(unit_t *punit)
     return FALSE;
   }
   if (is_ground_unit(punit) &&
-      map_has_special(punit->tile, S_FORTRESS))
+      map_has_alteration(punit->tile, S_FORTRESS))
     return !is_unit_near_a_friendly_city (punit);
 
   return TRUE;

@@ -198,7 +198,7 @@ Used only in global_warming() and nuclear_winter() below.
 **************************************************************************/
 static bool is_terrain_ecologically_wet(tile_t *ptile)
 {
-  return (map_has_special(ptile, S_RIVER)
+  return (map_has_alteration(ptile, S_RIVER)
           || is_ocean_near_tile(ptile)
           || is_special_near_tile(ptile, S_RIVER));
 }
@@ -318,7 +318,7 @@ void upgrade_city_rails(player_t *pplayer, bool discovery)
   }
 
   city_list_iterate(pplayer->cities, pcity) {
-    map_set_special(pcity->common.tile, S_RAILROAD);
+    map_set_alteration(pcity->common.tile, S_RAILROAD);
     update_tile_knowledge(pcity->common.tile);
   }
   city_list_iterate_end;
@@ -478,7 +478,7 @@ void send_tile_info(struct connection_list *dest, tile_t *ptile)
     if (!pplayer || map_is_known_and_seen(ptile, pplayer)) {
       info.known = TILE_KNOWN;
       info.type = ptile->terrain;
-      info.special = ptile->special;
+      info.alteration = ptile->alteration;
       info.continent = ptile->continent;
       send_packet_tile_info(pconn, &info);
     } else if (pplayer && map_is_known(ptile, pplayer)
@@ -487,7 +487,7 @@ void send_tile_info(struct connection_list *dest, tile_t *ptile)
       struct player_tile *plrtile = map_get_player_tile(ptile, pplayer);
       info.known = TILE_KNOWN_FOGGED;
       info.type = plrtile->terrain;
-      info.special = plrtile->special;
+      info.alteration = plrtile->alteration;
       info.continent = ptile->continent;
       send_packet_tile_info(pconn, &info);
     }
@@ -522,7 +522,7 @@ static void send_tile_info_always(player_t *pplayer, struct connection_list *des
     /* Observer sees all. */
     info.known=TILE_KNOWN;
     info.type = ptile->terrain;
-    info.special = ptile->special;
+    info.alteration = ptile->alteration;
     info.continent = ptile->continent;
   } else if (map_is_known(ptile, pplayer)) {
     if (map_get_seen(ptile, pplayer) != 0) {
@@ -534,13 +534,13 @@ static void send_tile_info_always(player_t *pplayer, struct connection_list *des
     }
     plrtile = map_get_player_tile(ptile, pplayer);
     info.type = plrtile->terrain;
-    info.special = plrtile->special;
+    info.alteration = plrtile->alteration;
     info.continent = ptile->continent;
   } else {
     /* Unknown (the client needs these sometimes to draw correctly). */
     info.known = TILE_UNKNOWN;
     info.type = ptile->terrain;
-    info.special = ptile->special;
+    info.alteration = ptile->alteration;
     info.continent = ptile->continent;
   }
   lsend_packet_tile_info(dest, &info);
@@ -859,7 +859,7 @@ void remove_unit_sight_points(unit_t *punit)
   freelog(LOG_DEBUG, "Removing unit sight points at  %i,%i",
           TILE_XY(punit->tile));
 
-  if (map_has_special(punit->tile, S_FORTRESS)
+  if (map_has_alteration(punit->tile, S_FORTRESS)
       && unit_profits_of_watchtower(punit))
     fog_area(pplayer, ptile, get_watchtower_vision(punit));
   else
@@ -1199,7 +1199,7 @@ static void player_tile_init(tile_t *ptile, player_t *pplayer)
     map_get_player_tile(ptile, pplayer);
 
   plrtile->terrain = OLD_TERRAIN_UNKNOWN;
-  plrtile->special = S_NO_SPECIAL;
+  plrtile->alteration = S_NO_SPECIAL;
   plrtile->city = NULL;
 
   plrtile->seen = 0;
@@ -1238,9 +1238,9 @@ bool update_player_tile_knowledge(player_t *pplayer, tile_t *ptile)
   struct player_tile *plrtile = map_get_player_tile(ptile, pplayer);
 
   if (plrtile->terrain != ptile->terrain
-      || plrtile->special != ptile->special) {
+      || plrtile->alteration != ptile->alteration) {
     plrtile->terrain = ptile->terrain;
-    plrtile->special = ptile->special;
+    plrtile->alteration = ptile->alteration;
     return TRUE;
   }
   return FALSE;
@@ -1304,7 +1304,7 @@ static void really_give_tile_info_from_player_to_player(player_t *pfrom,
       /* Update and send tile knowledge */
       map_set_known(ptile, pdest);
       dest_tile->terrain = from_tile->terrain;
-      dest_tile->special = from_tile->special;
+      dest_tile->alteration = from_tile->alteration;
       dest_tile->last_updated = from_tile->last_updated;
       send_tile_info_always(pdest, pdest->connections, ptile);
 
@@ -1573,17 +1573,17 @@ void disable_fog_of_war(void)
 static void ocean_to_land_fix_rivers(tile_t *ptile)
 {
   /* clear the river if it exists */
-  map_clear_special(ptile, S_RIVER);
+  map_clear_alteration(ptile, S_RIVER);
 
   cardinal_adjc_iterate(ptile, tile1) {
-    if (map_has_special(tile1, S_RIVER)) {
+    if (map_has_alteration(tile1, S_RIVER)) {
       bool ocean_near = FALSE;
       cardinal_adjc_iterate(tile1, tile2) {
         if (is_ocean(map_get_terrain(tile2)))
           ocean_near = TRUE;
       } cardinal_adjc_iterate_end;
       if (!ocean_near) {
-        map_set_special(ptile, S_RIVER);
+        map_set_alteration(ptile, S_RIVER);
         return;
       }
     }

@@ -235,7 +235,7 @@ const char *popup_info_text(tile_t *ptile)
 
   add_line(_("Terrain: %s"),  map_get_tile_info_text(ptile));
   add_line(_("Food/Prod/Trade: %s"), map_get_tile_fpt_text(ptile));
-  if (tile_has_special(ptile, S_HUT)) {
+  if (tile_has_alteration(ptile, S_HUT)) {
     add_line(_("Minor Tribe Village"));
   }
   if (game.ruleset_control.borders > 0 && !pcity) {
@@ -331,7 +331,7 @@ const char *popup_info_text(tile_t *ptile)
   }
   if (get_tile_infrastructure_set(ptile)) {
     add_line(_("Infrastructure: %s"),
-             map_get_infrastructure_text(ptile->special));
+             map_get_infrastructure_text(ptile->alteration));
   }
   activity_text = concat_tile_activity_text(ptile);
   if (strlen(activity_text) > 0) {
@@ -638,7 +638,7 @@ const char *get_unit_info_label_text2(unit_t *punit)
 
     add_line("%s", map_get_tile_info_text(punit->tile));
     if (infrastructure) {
-      add_line("%s", map_get_infrastructure_text((tile_special_type)infrastructure));
+      add_line("%s", map_get_infrastructure_text((tile_alteration_type)infrastructure));
     } else {
       add_line(" ");
     }

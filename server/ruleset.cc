@@ -1301,19 +1301,19 @@ static void load_ruleset_buildings(struct section_file *file)
     free(list);
 
     list = secfile_lookup_str_vec(file, &count, "%s.spec_gate", sec[i]);
-    b->spec_gate = (tile_special_type*)wc_malloc((count + 1) * sizeof(b->spec_gate[0]));
+    b->alteration_gate = (tile_alteration_type*)wc_malloc((count + 1) * sizeof(b->alteration_gate[0]));
     k = 0;
     for (j = 0; j < count; j++) {
-      b->spec_gate[k] = get_special_by_name(list[j]);
-      if (b->spec_gate[k] == S_NO_SPECIAL) {
+      b->alteration_gate[k] = get_alteration_by_name(list[j]);
+      if (b->alteration_gate[k] == S_NO_SPECIAL) {
         freelog(LOG_ERROR,
-                "for %s spec_gate[%d] couldn't match special \"%s\" (%s)",
+                "for %s alteration_gate[%d] couldn't match alteration \"%s\" (%s)",
                 b->name, j, list[j], filename);
       } else {
         k++;
       }
     }
-    b->spec_gate[k] = S_NO_SPECIAL;
+    b->alteration_gate[k] = S_NO_SPECIAL;
     free(list);
 
     item = secfile_lookup_str(file, "%s.equiv_range", sec[i]);
@@ -2954,7 +2954,7 @@ static void send_ruleset_buildings(struct connection_list *dest)
     }
 
     T(terr_gate, terr_gate_count, OLD_TERRAIN_NONE);
-    T(spec_gate, spec_gate_count, S_NO_SPECIAL);
+    T(alteration_gate, spec_gate_count, S_NO_SPECIAL);
     T(equiv_dupl, equiv_dupl_count, B_LAST);
     T(equiv_repl, equiv_repl_count, B_LAST);
 #undef T

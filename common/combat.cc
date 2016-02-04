@@ -90,7 +90,7 @@ bool can_unit_attack_unit_at_tile(unit_t *punit, unit_t *pdefender,
 
   /* 2. Only fighters can attack planes, except in city or airbase attacks */
   if (!unit_flag(punit, F_FIGHTER) && is_air_unit(pdefender)
-      && !(pcity || map_has_special(dest_tile, S_AIRBASE))) {
+      && !(pcity || map_has_alteration(dest_tile, S_AIRBASE))) {
     return FALSE;
   }
 
@@ -317,7 +317,7 @@ bool unit_really_ignores_citywalls(unit_t *punit)
 **************************************************************************/
 bool unit_on_fortress(unit_t *punit)
 {
-  return map_has_special(punit->tile, S_FORTRESS);
+  return map_has_alteration(punit->tile, S_FORTRESS);
 }
 
 /**************************************************************************
@@ -390,7 +390,7 @@ int get_defense_power(unit_t *punit)
 
         if(should_unit_type_get_terrain_bonus(punit->type)) {
   db = get_tile_type(punit->tile->terrain)->defense_bonus;
-  if (map_has_special(punit->tile, S_RIVER)) {
+  if (map_has_alteration(punit->tile, S_RIVER)) {
     db += (db * terrain_control.river_defense_bonus) / 100;
   }
           power = (power * db)/ POWER_FACTOR;
@@ -463,7 +463,7 @@ static int defense_multiplication(Unit_Type_id att_type,
     }
   }
 
-  if (map_has_special(ptile, S_FORTRESS) && !pcity && is_ground_unittype(def_type)) {
+  if (map_has_alteration(ptile, S_FORTRESS) && !pcity && is_ground_unittype(def_type)) {
     defensepower +=
         (defensepower * terrain_control.fortress_defense_bonus) / 100;
   }
@@ -495,7 +495,7 @@ int get_virtual_defense_power(Unit_Type_id att_type, Unit_Type_id def_type,
 
   if(should_unit_type_get_terrain_bonus(def_type)) {
   db = get_tile_type(t)->defense_bonus;
-  if (map_has_special(ptile, S_RIVER)) {
+  if (map_has_alteration(ptile, S_RIVER)) {
     db += (db * terrain_control.river_defense_bonus) / 100;
   }
   defensepower *= db;
@@ -639,7 +639,7 @@ unit_t *get_attacker(unit_t *defender, const tile_t *ptile)
 bool is_stack_vulnerable(const tile_t *ptile)
 {
   return !(ptile->city != NULL
-           || map_has_special(ptile, S_FORTRESS)
-           || map_has_special(ptile, S_AIRBASE)
+           || map_has_alteration(ptile, S_FORTRESS)
+           || map_has_alteration(ptile, S_AIRBASE)
            || !game.ruleset_game.killstack);
 }

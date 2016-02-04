@@ -540,7 +540,7 @@ int parse_effect_requirement(Impr_Type_id source,
     problem = (B_LAST == data);
     break;
   case REQ_SPECIAL:
-    data = get_special_by_name(req_value);
+    data = get_alteration_by_name(req_value);
     problem = (S_NO_SPECIAL == data);
     break;
   case REQ_TERRAIN:
@@ -595,7 +595,7 @@ void ruleset_cache_add(Impr_Type_id source, enum effect_type effect_type,
     peffect->req.value.building = req_value;
     break;
   case REQ_SPECIAL:
-    peffect->req.value.special = static_cast<tile_special_type>(req_value);
+    peffect->req.value.special = static_cast<tile_alteration_type>(req_value);
     break;
   case REQ_TERRAIN:
     peffect->req.value.terrain = req_value;
@@ -1057,8 +1057,8 @@ static bool are_effect_reqs_active(enum target_type target,
     break;
   case REQ_SPECIAL:
     /* The requirement is filled if the tile has the special. */
-    return target_tile && tile_has_special(target_tile,
-                                           peffect->req.value.special);
+    return target_tile && tile_has_alteration(target_tile,
+                                              peffect->req.value.special);
     break;
   case REQ_TERRAIN:
     /* The requirement is filled if the tile has the terrain. */

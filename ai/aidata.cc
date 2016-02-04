@@ -283,7 +283,7 @@ void ai_data_turn_init(player_t *pplayer)
       /* we don't need more explaining, we got the point */
       continue;
     }
-    if (map_has_special(ptile, S_HUT)
+    if (map_has_alteration(ptile, S_HUT)
         && (!ai_handicap(pplayer, H_HUTS)
              || map_is_known(ptile, pplayer))) {
       ai->explore.land_done = FALSE;

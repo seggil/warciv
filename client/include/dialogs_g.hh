@@ -17,7 +17,7 @@
 
 #include "wc_types.hh"
 #include "nation.hh"             /* Nation_Type_id */
-#include "terrain.hh"            /* enum tile_special_type */
+#include "terrain.hh"            /* enum tile_alteration_type */
 
 struct packet_nations_selected_info;
 
@@ -42,7 +42,7 @@ void popup_incite_dialog(city_t *pcity, int cost);
 void popup_bribe_dialog(unit_t *punit, int cost);
 void popup_sabotage_dialog(city_t *pcity);
 void popup_pillage_dialog(unit_t *punit,
-                          enum tile_special_type may_pillage);
+                          enum tile_alteration_type may_pillage);
 
 void popup_trade_planning_calculation_info(void);
 void popdown_trade_planning_calculation_info(void);

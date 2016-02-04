@@ -1313,8 +1313,8 @@ static void check_pollution(city_t *pcity)
       }
 
       if (!terrain_has_tag(map_get_terrain(ptile), TER_NO_POLLUTION)
-          && !map_has_special(ptile, S_POLLUTION)) {
-        map_set_special(ptile, S_POLLUTION);
+          && !map_has_alteration(ptile, S_POLLUTION)) {
+        map_set_alteration(ptile, S_POLLUTION);
         update_tile_knowledge(ptile);
         notify_player_ex(city_owner(pcity), pcity->common.tile,
                          E_POLLUTION, _("Game: Pollution near %s."),

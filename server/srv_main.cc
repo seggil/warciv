@@ -463,7 +463,7 @@ static void do_have_embassies_effect(void)
 /**************************************************************************
 ...
 **************************************************************************/
-static void update_environmental_upset(enum tile_special_type cause,
+static void update_environmental_upset(enum tile_alteration_type cause,
                                        int *current, int *accum, int *level,
                                        void (*upset_action_fn)(int))
 {
@@ -471,7 +471,7 @@ static void update_environmental_upset(enum tile_special_type cause,
 
   count = 0;
   whole_map_iterate(ptile) {
-    if (map_has_special(ptile, cause)) {
+    if (map_has_alteration(ptile, cause)) {
       count++;
     }
   } whole_map_iterate_end;

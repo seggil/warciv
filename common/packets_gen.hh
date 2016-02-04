@@ -98,7 +98,7 @@ struct packet_tile_info { /* 14 */
   int y;
   Terrain_type_id type;
   int known;
-  enum tile_special_type special;
+  enum tile_alteration_type alteration;
   int owner;
   Continent_id continent;
   char spec_sprite[MAX_LEN_NAME];
@@ -413,7 +413,7 @@ struct packet_unit_info { /* 49 */
   int air_patrol_x;
   int air_patrol_y;
   enum unit_activity activity;
-  enum tile_special_type activity_target;
+  enum tile_alteration_type activity_target;
   bool has_orders;
   int orders_length;
   int orders_index;
@@ -557,7 +557,7 @@ struct packet_unit_diplomat_popup_dialog { /* 71 */
 struct packet_unit_change_activity { /* 72 */
   int unit_id;
   enum unit_activity activity;
-  enum tile_special_type activity_target;
+  enum tile_alteration_type activity_target;
 };
 
 struct packet_diplomacy_init_meeting_req { /* 73 */
@@ -918,7 +918,7 @@ struct packet_ruleset_building { /* 104 */
   int terr_gate_count;
   Terrain_type_id terr_gate[255];
   int spec_gate_count;
-  enum tile_special_type spec_gate[255];
+  enum tile_alteration_type alteration_gate[255];
   int equiv_dupl_count;
   Impr_Type_id equiv_dupl[255];
   int equiv_repl_count;
@@ -1632,7 +1632,7 @@ void dlsend_packet_unit_diplomat_popup_dialog(struct connection_list *dest, int 
 
 struct packet_unit_change_activity *receive_packet_unit_change_activity(connection_t *pconn, enum packet_type type);
 int send_packet_unit_change_activity(connection_t *pconn, const struct packet_unit_change_activity *packet);
-int dsend_packet_unit_change_activity(connection_t *pconn, int unit_id, enum unit_activity activity, enum tile_special_type activity_target);
+int dsend_packet_unit_change_activity(connection_t *pconn, int unit_id, enum unit_activity activity, enum tile_alteration_type activity_target);
 
 struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_req(connection_t *pconn, enum packet_type type);
 int send_packet_diplomacy_init_meeting_req(connection_t *pconn, const struct packet_diplomacy_init_meeting_req *packet);

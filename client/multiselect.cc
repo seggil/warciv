@@ -1378,7 +1378,7 @@ void request_execute_delayed_goto(tile_t *ptile, int dg)
         /*Road/Rail pillage */
         send_goto_unit(punit, dgd->ptile);
         request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE,
-                                           static_cast<tile_special_type>(S_ROAD | S_RAILROAD));
+                                           static_cast<tile_alteration_type>(S_ROAD | S_RAILROAD));
         punit->is_new = FALSE;
         break;
       case DGT_ROAD:

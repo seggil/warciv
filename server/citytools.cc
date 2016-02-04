@@ -175,8 +175,8 @@ static int evaluate_city_name_priority(tile_t *ptile,
    * we _only_ multiplied (or divided), then cities that had more
    * terrain labels would have their priorities hurt (or helped).
    */
-  goodness = map_has_special(ptile, S_RIVER) ?
-              city_name->river : -city_name->river;
+  goodness = map_has_alteration(ptile, S_RIVER) ?
+               city_name->river : -city_name->river;
     if (goodness > 0)
     {
     priority /= mult_factor;
@@ -921,14 +921,14 @@ void transfer_city(player_t *ptaker, city_t *pcity,
   remove_obsolete_buildings_city(pcity, TRUE);
   if (terrain_control.may_road
       && player_knows_techs_with_flag (ptaker, TF_RAILROAD)
-      && !map_has_special(pcity->common.tile, S_RAILROAD)) {
+      && !map_has_alteration(pcity->common.tile, S_RAILROAD)) {
     notify_player(ptaker,
                   _("Game: The people in %s are stunned by your"
                     " technological insight!\n"
                     "      Workers spontaneously gather and upgrade"
                     " the city with railroads."),
                   pcity->common.name);
-    map_set_special(pcity->common.tile, S_RAILROAD);
+    map_set_alteration(pcity->common.tile, S_RAILROAD);
     update_tile_knowledge(pcity->common.tile);
   }
   map_fog_pseudo_city_area(pgiver, pcity->common.tile);
@@ -953,10 +953,10 @@ void create_city(player_t *pplayer, tile_t *ptile,
 
   freelog(LOG_DEBUG, "Creating city %s", name);
   if (terrain_control.may_road) {
-    map_set_special(ptile, S_ROAD);
+    map_set_alteration(ptile, S_ROAD);
 
     if (player_knows_techs_with_flag(pplayer, TF_RAILROAD)) {
-      map_set_special(ptile, S_RAILROAD);
+      map_set_alteration(ptile, S_RAILROAD);
       update_tile_knowledge(ptile);
     }
   }
@@ -1016,7 +1016,7 @@ void create_city(player_t *pplayer, tile_t *ptile,
   city_refresh(pcity);
 
   /* Put vision back to normal, if fortress acted as a watchtower */
-  if (map_has_special(ptile, S_FORTRESS)) {
+  if (map_has_alteration(ptile, S_FORTRESS)) {
     unit_list_iterate((ptile)->units, punit) {
       player_t *owner = unit_owner(punit);
 
@@ -1026,7 +1026,7 @@ void create_city(player_t *pplayer, tile_t *ptile,
       }
     } unit_list_iterate_end;
   }
-  map_clear_special(ptile, S_FORTRESS);
+  map_clear_alteration(ptile, S_FORTRESS);
   update_tile_knowledge(ptile);
 
   reset_move_costs(ptile);

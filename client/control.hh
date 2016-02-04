@@ -145,7 +145,7 @@ void request_move_unit_direction(unit_t *punit, int dir);
 void request_new_unit_activity(unit_t *punit, enum unit_activity act);
 void request_new_unit_activity_targeted(unit_t *punit,
                                         enum unit_activity act,
-                                        enum tile_special_type tgt);
+                                        enum tile_alteration_type tgt);
 void request_unit_load(unit_t *pcargo, unit_t *ptransporter);
 void request_unit_unload(unit_t *pcargo);
 void request_unit_auto(unit_t *punit);

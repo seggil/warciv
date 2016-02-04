@@ -2364,7 +2364,7 @@ static int send_packet_tile_info_100(
     BV_SET(fields, 1);
   }
 
-  differ = (old->special != real_packet->special);
+  differ = (old->alteration != real_packet->alteration);
   if (differ) {
     different++;
     BV_SET(fields, 2);
@@ -2403,7 +2403,7 @@ static int send_packet_tile_info_100(
     dio_put_uint8(&dout, real_packet->known);
   }
   if (BV_ISSET(fields, 2)) {
-    dio_put_uint16(&dout, real_packet->special);
+    dio_put_uint16(&dout, real_packet->alteration);
   }
   if (BV_ISSET(fields, 3)) {
     dio_put_uint8(&dout, real_packet->owner);
@@ -12136,7 +12136,7 @@ receive_packet_unit_change_activity_100(
     int readin;
 
     dio_get_uint16(&din, &readin);
-    real_packet->activity_target = static_cast<tile_special_type>(readin);
+    real_packet->activity_target = static_cast<tile_alteration_type>(readin);
   }
 
   clone = static_cast<packet_unit_change_activity*>(wc_malloc(sizeof(*clone)));
@@ -17581,7 +17581,7 @@ static int send_packet_ruleset_building_100(
       if(!differ) {
         int i;
         for (i = 0; i < real_packet->spec_gate_count; i++) {
-          if (old->spec_gate[i] != real_packet->spec_gate[i]) {
+          if (old->alteration_gate[i] != real_packet->alteration_gate[i]) {
             differ = TRUE;
             break;
           }
@@ -17713,7 +17713,7 @@ static int send_packet_ruleset_building_100(
       int i;
 
       for (i = 0; i < real_packet->spec_gate_count; i++) {
-        dio_put_uint16(&dout, real_packet->spec_gate[i]);
+        dio_put_uint16(&dout, real_packet->alteration_gate[i]);
       }
     }
   }

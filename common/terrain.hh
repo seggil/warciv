@@ -24,7 +24,7 @@ enum special_river_move {
   RMV_FAST_ALWAYS=3
 };
 
-enum tile_special_type {
+enum tile_alteration_type {
   S_NO_SPECIAL =    0,
   S_SPECIAL_1  =    1,
   S_ROAD       =    2,
@@ -57,7 +57,7 @@ enum tile_special_type {
   | S_FALLOUT)
 
 #define S_INFRASTRUCTURE_MASK \
-  static_cast<tile_special_type>    \
+  static_cast<tile_alteration_type>    \
    ( static_cast<int>(S_ROAD)       \
    | static_cast<int>(S_RAILROAD)   \
    | static_cast<int>(S_IRRIGATION) \
@@ -121,10 +121,10 @@ int count_terrain_near_tile(const tile_t *ptile,
 
 /* Functions to operate on a terrain special. */
 bool is_special_near_tile(const tile_t *ptile,
-                          enum tile_special_type spe);
+                          enum tile_alteration_type spe);
 int count_special_near_tile(const tile_t *ptile,
                             bool cardinal_only, bool percentage,
-                            enum tile_special_type spe);
+                            enum tile_alteration_type spe);
 
 /* Functions to operate on a terrain tag. */
 bool is_terrain_tag_near_tile(const tile_t *ptile,

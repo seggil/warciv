@@ -255,24 +255,24 @@ static void map_save(struct section_file *file)
 
       /* bits 8-11 of special flags field */
       SAVE_NORMAL_MAP_DATA(ptile, file, "map.n%03d",
-                           bin2ascii_hex(ptile->special, 2));
+                           bin2ascii_hex(ptile->alteration, 2));
     }
     return;
   }
 
   /* put 4-bit segments of 12-bit "special flags" field */
   SAVE_NORMAL_MAP_DATA(ptile, file, "map.l%03d",
-                       bin2ascii_hex(ptile->special, 0));
+                       bin2ascii_hex(ptile->alteration, 0));
   SAVE_NORMAL_MAP_DATA(ptile, file, "map.u%03d",
-                       bin2ascii_hex(ptile->special, 1));
+                       bin2ascii_hex(ptile->alteration, 1));
   SAVE_NORMAL_MAP_DATA(ptile, file, "map.n%03d",
-                       bin2ascii_hex(ptile->special, 2));
+                       bin2ascii_hex(ptile->alteration, 2));
 
   secfile_insert_bool(file, game.server.save_options.save_known, "game.save_known");
   if (game.server.save_options.save_known) {
     /* put the top 4 bits (bits 12-15) of special flags */
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.f%03d",
-                         bin2ascii_hex(ptile->special, 3));
+                         bin2ascii_hex(ptile->alteration, 3));
 
     /* put 4-bit segments of the 32-bit "known" field */
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.a%03d",
@@ -1095,13 +1095,13 @@ static void player_save(player_t *plr, int plrno,
     /* put 4-bit segments of 12-bit "special flags" field */
     SAVE_PLAYER_MAP_DATA(ptile, file,"player%d.map_l%03d", plrno,
                          bin2ascii_hex(map_get_player_tile(ptile, plr)->
-                                       special, 0));
+                                       alteration, 0));
     SAVE_PLAYER_MAP_DATA(ptile, file, "player%d.map_u%03d", plrno,
                          bin2ascii_hex(map_get_player_tile(ptile, plr)->
-                                       special, 1));
+                                       alteration, 1));
     SAVE_PLAYER_MAP_DATA(ptile, file, "player%d.map_n%03d", plrno,
                          bin2ascii_hex(map_get_player_tile(ptile, plr)->
-                                       special, 2));
+                                       alteration, 2));
 
     /* put 4-bit segments of 16-bit "updated" field */
     SAVE_PLAYER_MAP_DATA(ptile, file,"player%d.map_ua%03d", plrno,

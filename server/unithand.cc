@@ -61,10 +61,8 @@ static void city_add_unit(player_t *pplayer, unit_t *punit);
 static void city_build(player_t *pplayer, unit_t *punit,
                        char *name);
 static void handle_unit_activity_request_targeted(unit_t *punit,
-                                                  enum unit_activity
-                                                  new_activity,
-                                                  enum tile_special_type
-                                                  new_target);
+                                                  enum unit_activity new_activity,
+                                                  enum tile_alteration_type new_target);
 static bool base_handle_unit_establish_trade(player_t *pplayer, int unit_id, city_t *pcity_dest);
 static void how_to_declare_war(player_t *pplayer);
 static bool unit_bombard(unit_t *punit, tile_t *ptile);
@@ -527,7 +525,7 @@ void handle_unit_build_city(player_t *pplayer, int unit_id, char *name)
 **************************************************************************/
 void handle_unit_change_activity(player_t *pplayer, int unit_id,
                                  enum unit_activity activity,
-                                 enum tile_special_type activity_target)
+                                 enum tile_alteration_type activity_target)
 {
   unit_t *punit = player_find_unit_by_id(pplayer, unit_id);
 
@@ -695,7 +693,7 @@ static bool unit_bombard(unit_t *punit, tile_t *ptile)
     }
 
     if (!is_air_unit(pdefender)
-        || (pcity || map_has_special(ptile, S_AIRBASE))) {
+        || (pcity || map_has_alteration(ptile, S_AIRBASE))) {
       see_combat(punit, pdefender);
 
       unit_versus_unit(punit, pdefender, TRUE);
@@ -1313,14 +1311,14 @@ void handle_unit_auto(player_t *pplayer, int unit_id)
 **************************************************************************/
 static void handle_unit_activity_dependencies(unit_t *punit,
                                 enum unit_activity old_activity,
-                                enum tile_special_type old_target)
+                                enum tile_alteration_type old_target)
 {
   switch (punit->activity) {
   case ACTIVITY_IDLE:
     switch (old_activity) {
     case ACTIVITY_PILLAGE:
       {
-        enum tile_special_type prereq =
+        enum tile_alteration_type prereq =
           map_get_infrastructure_prerequisite(old_target);
         if (prereq != S_NO_SPECIAL) {
           unit_list_iterate (punit->tile->units, punit2)
@@ -1360,7 +1358,7 @@ void handle_unit_activity_request(unit_t *punit,
 {
   if (can_unit_do_activity(punit, new_activity)) {
     enum unit_activity old_activity = punit->activity;
-    enum tile_special_type old_target = punit->activity_target;
+    enum tile_alteration_type old_target = punit->activity_target;
 
     if (punit->ptr) {
       trade_free_unit(punit);
@@ -1376,14 +1374,12 @@ void handle_unit_activity_request(unit_t *punit,
 ...
 **************************************************************************/
 static void handle_unit_activity_request_targeted(unit_t *punit,
-                                                  enum unit_activity
-                                                  new_activity,
-                                                  enum tile_special_type
-                                                  new_target)
+                                                  enum unit_activity new_activity,
+                                                  enum tile_alteration_type new_target)
 {
   if (can_unit_do_activity_targeted(punit, new_activity, new_target)) {
     enum unit_activity old_activity = punit->activity;
-    enum tile_special_type old_target = punit->activity_target;
+    enum tile_alteration_type old_target = punit->activity_target;
 
     if (punit->ptr) {
       trade_free_unit(punit);

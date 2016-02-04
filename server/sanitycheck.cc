@@ -39,18 +39,18 @@ static void check_specials(void)
 {
   whole_map_iterate(ptile) {
     Terrain_type_id terrain = map_get_terrain(ptile);
-    enum tile_special_type special = map_get_special(ptile);
+    enum tile_alteration_type alteration = map_get_alteration(ptile);
 
-    if (contains_special(special, S_RAILROAD))
-      assert(contains_special(special, S_ROAD));
-    if (contains_special(special, S_FARMLAND))
-      assert(contains_special(special, S_IRRIGATION));
-    if (contains_special(special, S_SPECIAL_1))
-      assert(!contains_special(special,  S_SPECIAL_2));
+    if (contains_alteration(alteration, S_RAILROAD))
+      assert(contains_alteration(alteration, S_ROAD));
+    if (contains_alteration(alteration, S_FARMLAND))
+      assert(contains_alteration(alteration, S_IRRIGATION));
+    if (contains_alteration(alteration, S_SPECIAL_1))
+      assert(!contains_alteration(alteration,  S_SPECIAL_2));
 
-    if (contains_special(special, S_MINE))
+    if (contains_alteration(alteration, S_MINE))
       assert(get_tile_type(terrain)->mining_result == terrain);
-    if (contains_special(special, S_IRRIGATION))
+    if (contains_alteration(alteration, S_IRRIGATION))
       assert(get_tile_type(terrain)->irrigation_result == terrain);
 
     assert(terrain >= OLD_TERRAIN_FIRST && terrain < OLD_TERRAIN_COUNT);

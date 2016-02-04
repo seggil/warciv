@@ -230,12 +230,12 @@ static int ai_calc_pollution(city_t *pcity, int city_x, int city_y,
 {
   int goodness;
 
-  if (!map_has_special(ptile, S_POLLUTION)) {
+  if (!map_has_alteration(ptile, S_POLLUTION)) {
     return -1;
   }
-  map_clear_special(ptile, S_POLLUTION);
+  map_clear_alteration(ptile, S_POLLUTION);
   goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
-  map_set_special(ptile, S_POLLUTION);
+  map_set_alteration(ptile, S_POLLUTION);
 
   /* FIXME: need a better way to guarantee pollution is cleaned up. */
   goodness = (goodness + best + 50) * 2;
@@ -260,12 +260,12 @@ static int ai_calc_fallout(city_t *pcity, player_t *pplayer,
 {
   int goodness;
 
-  if (!map_has_special(ptile, S_FALLOUT)) {
+  if (!map_has_alteration(ptile, S_FALLOUT)) {
     return -1;
   }
-  map_clear_special(ptile, S_FALLOUT);
+  map_clear_alteration(ptile, S_FALLOUT);
   goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
-  map_set_special(ptile, S_FALLOUT);
+  map_set_alteration(ptile, S_FALLOUT);
 
   /* FIXME: need a better way to guarantee fallout is cleaned up. */
   if (!pplayer->ai.control) {
@@ -286,7 +286,7 @@ static int ai_calc_fallout(city_t *pcity, player_t *pplayer,
 static bool is_wet(player_t *pplayer, tile_t *ptile)
 {
   Terrain_type_id terrain;
-  enum tile_special_type special;
+  enum tile_alteration_type alteration;
 
   /* FIXME: this should check a handicap. */
   if (!pplayer->ai.control && !map_is_known(ptile, pplayer)) {
@@ -299,9 +299,9 @@ static bool is_wet(player_t *pplayer, tile_t *ptile)
     return TRUE;
   }
 
-  special = map_get_special(ptile);
-  if (contains_special(special, S_RIVER)
-      || contains_special(special, S_IRRIGATION)) {
+  alteration = map_get_alteration(ptile);
+  if (contains_alteration(alteration, S_RIVER)
+      || contains_alteration(alteration, S_IRRIGATION)) {
     return TRUE;
   }
 
@@ -350,7 +350,7 @@ static int ai_calc_irrigate(city_t *pcity, player_t *pplayer,
 {
   int goodness;
   Terrain_type_id old_terrain = ptile->terrain;
-  enum tile_special_type old_special = ptile->special;
+  enum tile_alteration_type old_alteration = ptile->alteration;
   struct tile_type *type = get_tile_type(old_terrain);
   Terrain_type_id new_terrain = type->irrigation_result;
 
@@ -361,35 +361,35 @@ static int ai_calc_irrigate(city_t *pcity, player_t *pplayer,
       return -1;
     }
     ptile->terrain = new_terrain;
-    map_clear_special(ptile, S_MINE);
+    map_clear_alteration(ptile, S_MINE);
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
     ptile->terrain = old_terrain;
-    ptile->special = old_special;
+    ptile->alteration = old_alteration;
     return goodness;
   } else if (old_terrain == new_terrain
-             && !tile_has_special(ptile, S_IRRIGATION)
+             && !tile_has_alteration(ptile, S_IRRIGATION)
              && is_wet_or_is_wet_cardinal_around(pplayer, ptile)) {
     /* The tile is currently unirrigated; irrigating it would put an
      * S_IRRIGATE on it replacing any S_MINE already there.  Calculate
      * the benefit of doing so. */
-    map_clear_special(ptile, S_MINE);
-    map_set_special(ptile, S_IRRIGATION);
+    map_clear_alteration(ptile, S_MINE);
+    map_set_alteration(ptile, S_IRRIGATION);
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
-    ptile->special = old_special;
+    ptile->alteration = old_alteration;
     assert(ptile->terrain == old_terrain);
     return goodness;
   } else if (old_terrain == new_terrain
-             && tile_has_special(ptile, S_IRRIGATION)
-             && !tile_has_special(ptile, S_FARMLAND)
+             && tile_has_alteration(ptile, S_IRRIGATION)
+             && !tile_has_alteration(ptile, S_FARMLAND)
              && player_knows_techs_with_flag(pplayer, TF_FARMLAND)
              && is_wet_or_is_wet_cardinal_around(pplayer, ptile)) {
     /* The tile is currently irrigated; irrigating it more puts an
      * S_FARMLAND on it.  Calculate the benefit of doing so. */
-    assert(!tile_has_special(ptile, S_MINE));
-    map_set_special(ptile, S_FARMLAND);
+    assert(!tile_has_alteration(ptile, S_MINE));
+    map_set_alteration(ptile, S_FARMLAND);
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
-    map_clear_special(ptile, S_FARMLAND);
-    assert(ptile->terrain == old_terrain && ptile->special == old_special);
+    map_clear_alteration(ptile, S_FARMLAND);
+    assert(ptile->terrain == old_terrain && ptile->alteration == old_alteration);
     return goodness;
   } else {
     return -1;
@@ -414,7 +414,7 @@ static int ai_calc_mine(city_t *pcity,
 {
   int goodness;
   Terrain_type_id old_terrain = ptile->terrain;
-  enum tile_special_type old_special = ptile->special;
+  enum tile_alteration_type old_alteration = ptile->alteration;
   struct tile_type *type = get_tile_type(old_terrain);
   Terrain_type_id new_terrain = type->mining_result;
 
@@ -425,22 +425,22 @@ static int ai_calc_mine(city_t *pcity,
       return -1;
     }
     ptile->terrain = new_terrain;
-    map_clear_special(ptile, S_IRRIGATION);
-    map_clear_special(ptile, S_FARMLAND);
+    map_clear_alteration(ptile, S_IRRIGATION);
+    map_clear_alteration(ptile, S_FARMLAND);
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
     ptile->terrain = old_terrain;
-    ptile->special = old_special;
+    ptile->alteration = old_alteration;
     return goodness;
   } else if (old_terrain == new_terrain
-             && !tile_has_special(ptile, S_MINE)) {
+             && !tile_has_alteration(ptile, S_MINE)) {
     /* The tile is currently unmined; mining it would put an S_MINE on it
      * replacing any S_IRRIGATION/S_FARMLAND already there.  Calculate
      * the benefit of doing so. */
-    map_clear_special(ptile, S_IRRIGATION);
-    map_clear_special(ptile, S_FARMLAND);
-    map_set_special(ptile, S_MINE);
+    map_clear_alteration(ptile, S_IRRIGATION);
+    map_clear_alteration(ptile, S_FARMLAND);
+    map_set_alteration(ptile, S_MINE);
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
-    ptile->special = old_special;
+    ptile->alteration = old_alteration;
     assert(ptile->terrain == old_terrain);
     return goodness;
   } else {
@@ -467,7 +467,7 @@ static int ai_calc_transform(city_t *pcity,
 {
   int goodness;
   Terrain_type_id old_terrain = ptile->terrain;
-  enum tile_special_type old_special = ptile->special;
+  enum tile_alteration_type old_alteration = ptile->alteration;
   struct tile_type *type = get_tile_type(old_terrain);
   Terrain_type_id new_terrain = type->transform_result;
 
@@ -493,17 +493,17 @@ static int ai_calc_transform(city_t *pcity,
   ptile->terrain = new_terrain;
 
   if (get_tile_type(new_terrain)->mining_result != new_terrain) {
-    map_clear_special(ptile, S_MINE);
+    map_clear_alteration(ptile, S_MINE);
   }
   if (get_tile_type(new_terrain)->irrigation_result != new_terrain) {
-    map_clear_special(ptile, S_FARMLAND);
-    map_clear_special(ptile, S_IRRIGATION);
+    map_clear_alteration(ptile, S_FARMLAND);
+    map_clear_alteration(ptile, S_IRRIGATION);
   }
 
   goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
 
   ptile->terrain = old_terrain;
-  ptile->special = old_special;
+  ptile->alteration = old_alteration;
 
   return goodness;
 }
@@ -516,14 +516,14 @@ static int ai_calc_transform(city_t *pcity,
 
   "special" must be either S_ROAD or S_RAILROAD.
 **************************************************************************/
-static int road_bonus(tile_t *ptile, enum tile_special_type special)
+static int road_bonus(tile_t *ptile, enum tile_alteration_type alteration)
 {
   int bonus = 0, i;
   bool has_road[12], is_slow[12];
   int dx[12] = {-1,  0,  1, -1, 1, -1, 0, 1,  0, -2, 2, 0};
   int dy[12] = {-1, -1, -1,  0, 0,  1, 1, 1, -2,  0, 0, 2};
 
-  assert(special == S_ROAD || special == S_RAILROAD);
+  assert(alteration == S_ROAD || alteration == S_RAILROAD);
 
   for (i = 0; i < 12; i++) {
     tile_t *tile1 = map_pos_to_tile(ptile->x + dx[i], ptile->y + dy[i]);
@@ -534,7 +534,7 @@ static int road_bonus(tile_t *ptile, enum tile_special_type special)
     } else {
       struct tile_type *ptype = get_tile_type(tile1->terrain);
 
-      has_road[i] = tile_has_special(tile1, special);
+      has_road[i] = tile_has_alteration(tile1, alteration);
 
       /* If TRUE, this value indicates that this tile does not need
        * a road connector.  This is set for terrains which cannot have
@@ -653,18 +653,18 @@ static int ai_calc_road(city_t *pcity, player_t *pplayer,
   int goodness;
 
   if (!is_ocean(ptile->terrain)
-      && (!tile_has_special(ptile, S_RIVER)
+      && (!tile_has_alteration(ptile, S_RIVER)
           || player_knows_techs_with_flag(pplayer, TF_BRIDGE))
-      && !tile_has_special(ptile, S_ROAD)) {
+      && !tile_has_alteration(ptile, S_ROAD)) {
 
-    /* HACK: calling map_set_special here will have side effects, so we
+    /* HACK: calling map_set_alteration here will have side effects, so we
      * have to set it manually. */
-    assert((ptile->special & S_ROAD) == 0);
-    ptile->special = static_cast<tile_special_type>(ptile->special | S_ROAD);
+    assert((ptile->alteration & S_ROAD) == 0);
+    ptile->alteration = static_cast<tile_alteration_type>(ptile->alteration | S_ROAD);
 
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
 
-    ptile->special = static_cast<tile_special_type>(ptile->special & ~S_ROAD);
+    ptile->alteration = static_cast<tile_alteration_type>(ptile->alteration & ~S_ROAD);
 
     return goodness;
   } else {
@@ -693,21 +693,21 @@ static int ai_calc_railroad(city_t *pcity, player_t *pplayer,
                             tile_t *ptile)
 {
   int goodness;
-  enum tile_special_type old_special;
+  enum tile_alteration_type old_alteration;
 
   if (!is_ocean(ptile->terrain)
       && player_knows_techs_with_flag(pplayer, TF_RAILROAD)
-      && !tile_has_special(ptile, S_RAILROAD)) {
-    old_special = ptile->special;
+      && !tile_has_alteration(ptile, S_RAILROAD)) {
+    old_alteration = ptile->alteration;
 
-    /* HACK: calling map_set_special here will have side effects, so we
+    /* HACK: calling map_set_alteration here will have side effects, so we
      * have to set it manually. */
-    ptile->special = static_cast<tile_special_type>(
-        ptile->special | (S_ROAD | S_RAILROAD));
+    ptile->alteration = static_cast<tile_alteration_type>(
+        ptile->alteration | (S_ROAD | S_RAILROAD));
 
     goodness = city_tile_value(pcity, city_x, city_y, 0, 0);
 
-    ptile->special = old_special;
+    ptile->alteration = old_alteration;
 
     return goodness;
   } else {
@@ -950,7 +950,7 @@ static int evaluate_improvements(unit_t *punit,
                                 &best_newv, &best_oldv, best_act, best_tile,
                                 ptile);
 
-        if (!map_has_special(ptile, S_ROAD)) {
+        if (!map_has_alteration(ptile, S_ROAD)) {
           time = mv_turns
             + get_turns_for_activity_at(punit, ACTIVITY_ROAD, ptile);
           consider_settler_action(pplayer, ACTIVITY_ROAD,
@@ -971,7 +971,7 @@ static int evaluate_improvements(unit_t *punit,
                                     best_act, best_tile,
                                     ptile);
           }
-        } else if (!map_has_special(ptile, S_RAILROAD)
+        } else if (!map_has_alteration(ptile, S_RAILROAD)
                    && can_rr) {
           time = mv_turns
             + get_turns_for_activity_at(punit, ACTIVITY_RAILROAD, ptile);
@@ -984,7 +984,7 @@ static int evaluate_improvements(unit_t *punit,
                                   ptile);
         } /* end S_ROAD else */
 
-        if (map_has_special(ptile, S_POLLUTION)) {
+        if (map_has_alteration(ptile, S_POLLUTION)) {
           time = mv_turns
             + get_turns_for_activity_at(punit, ACTIVITY_POLLUTION, ptile);
           consider_settler_action(pplayer, ACTIVITY_POLLUTION,
@@ -996,7 +996,7 @@ static int evaluate_improvements(unit_t *punit,
                                   ptile);
         }
 
-        if (map_has_special(ptile, S_FALLOUT)) {
+        if (map_has_alteration(ptile, S_FALLOUT)) {
           time = mv_turns
             + get_turns_for_activity_at(punit, ACTIVITY_FALLOUT, ptile);
           consider_settler_action(pplayer, ACTIVITY_FALLOUT,
@@ -1223,7 +1223,7 @@ void initialize_infrastructure_cache(player_t *pplayer)
                              city_x, city_y, ptile) {
 #ifndef NDEBUG
       Terrain_type_id old_terrain = ptile->terrain;
-      enum tile_special_type old_special = ptile->special;
+      enum tile_alteration_type old_alteration = ptile->alteration;
 #endif
 
       pcity->u.server.ai.detox[city_x][city_y]
@@ -1246,7 +1246,7 @@ void initialize_infrastructure_cache(player_t *pplayer)
         ai_calc_railroad(pcity, pplayer, city_x, city_y, ptile);
 
       /* Make sure nothing was accidentally changed by these calculations. */
-      assert(old_terrain == ptile->terrain && old_special == ptile->special);
+      assert(old_terrain == ptile->terrain && old_alteration == ptile->alteration);
     } city_map_checked_iterate_end;
   } city_list_iterate_end;
 }

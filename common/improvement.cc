@@ -91,8 +91,8 @@ static void improvement_free(Impr_Type_id id)
   free(p->terr_gate);
   p->terr_gate = NULL;
 
-  free(p->spec_gate);
-  p->spec_gate = NULL;
+  free(p->alteration_gate);
+  p->alteration_gate = NULL;
 
   free(p->equiv_dupl);
   p->equiv_dupl = NULL;

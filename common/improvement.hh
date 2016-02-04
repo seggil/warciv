@@ -64,8 +64,8 @@ struct impr_type {
   char graphic_alt[MAX_LEN_NAME];       /* city icon of improv. */
   Tech_Type_id tech_req;                /* A_LAST = never; A_NONE = always */
   Impr_Type_id bldg_req;                /* B_LAST = none required */
-  Terrain_type_id *terr_gate;   /* list; T_NONE terminated */
-  enum tile_special_type *spec_gate;    /* list; S_NO_SPECIAL terminated */
+  Terrain_type_id *terr_gate;           /* list; T_NONE terminated */
+  enum tile_alteration_type *alteration_gate; /* list; S_NO_SPECIAL terminated */
   enum impr_range equiv_range;
   Impr_Type_id *equiv_dupl;             /* list; B_LAST terminated */
   Impr_Type_id *equiv_repl;             /* list; B_LAST terminated */

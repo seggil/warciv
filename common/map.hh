@@ -49,7 +49,7 @@ struct tile_s {
   const int nat_y;                  /* Native coordinates of the tile. */
   const int index;                  /* Index coordinate of the tile. */
   Terrain_type_id terrain;
-  enum tile_special_type special;
+  enum tile_alteration_type alteration;
   city_t *city;
   struct unit_list *units;
   Continent_id continent;
@@ -361,11 +361,11 @@ void map_set_owner(tile_t *ptile, player_t *pplayer);
 city_t *map_get_city(const tile_t *ptile);
 void map_set_city(tile_t *ptile, city_t *pcity);
 Terrain_type_id map_get_terrain(const tile_t *ptile);
-enum tile_special_type map_get_special(const tile_t *ptile);
+enum tile_alteration_type map_get_alteration(const tile_t *ptile);
 void map_set_terrain(tile_t *ptile, Terrain_type_id ter);
-void map_set_special(tile_t *ptile, enum tile_special_type spe);
-void map_clear_special(tile_t *ptile, enum tile_special_type spe);
-void map_clear_all_specials(tile_t *ptile);
+void map_set_alteration(tile_t *ptile, enum tile_alteration_type spe);
+void map_clear_alteration(tile_t *ptile, enum tile_alteration_type spe);
+void map_clear_all_alterations(tile_t *ptile);
 
 bool is_real_map_pos(int x, int y);
 bool is_normal_map_pos(int x, int y);
@@ -374,13 +374,13 @@ bool is_normal_map_pos(int x, int y);
 enum known_type map_get_known(const tile_t *ptile,
                               player_t *pplayer);
 
-/* special testing */
-bool map_has_special(const tile_t *ptile,
-                     enum tile_special_type to_test_for);
-bool tile_has_special(const tile_t *ptile,
-                      enum tile_special_type to_test_for);
-bool contains_special(enum tile_special_type all,
-                      enum tile_special_type to_test_for);
+/* alteration testing */
+bool map_has_alteration(const tile_t *ptile,
+                        enum tile_alteration_type to_test_for);
+bool tile_has_alteration(const tile_t *ptile,
+                         enum tile_alteration_type to_test_for);
+bool contains_alteration(enum tile_alteration_type all,
+                         enum tile_alteration_type to_test_for);
 
 
 bool is_singular_tile(const tile_t *ptile, int dist);
@@ -395,26 +395,26 @@ int map_num_tiles(void);
 tile_t *rand_neighbour(const tile_t *ptile);
 tile_t *rand_map_pos(void);
 tile_t *rand_map_pos_filtered(void *data,
-                                   bool (*filter)(const tile_t *ptile,
-                                                  const void *data));
+                              bool (*filter)(const tile_t *ptile,
+                                             const void *data));
 
 bool is_water_adjacent_to_tile(const tile_t *ptile);
 bool is_tiles_adjacent(const tile_t *ptile0, const tile_t *ptile1);
 bool is_move_cardinal(const tile_t *src_tile,
                       const tile_t *dst_tile);
 int map_move_cost(unit_t *punit, const tile_t *ptile);
-enum tile_special_type get_special_by_name(const char * name);
-const char *get_special_name(enum tile_special_type type);
+enum tile_alteration_type get_alteration_by_name(const char * name);
+const char *get_special_name(enum tile_alteration_type type);
 bool is_safe_ocean(const tile_t *ptile);
 bool is_cardinally_adj_to_ocean(const tile_t *ptile);
 bool is_sea_usable(const tile_t *ptile);
 int get_tile_food_base(const tile_t *ptile);
 int get_tile_shield_base(const tile_t *ptile);
 int get_tile_trade_base(const tile_t *ptile);
-enum tile_special_type get_tile_infrastructure_set(const tile_t *ptile);
-const char *map_get_infrastructure_text(enum tile_special_type spe);
-enum tile_special_type map_get_infrastructure_prerequisite(enum tile_special_type spe);
-enum tile_special_type get_preferred_pillage(enum tile_special_type pset);
+enum tile_alteration_type get_tile_infrastructure_set(const tile_t *ptile);
+const char *map_get_infrastructure_text(enum tile_alteration_type later);
+enum tile_alteration_type map_get_infrastructure_prerequisite(enum tile_alteration_type alter);
+enum tile_alteration_type get_preferred_pillage(enum tile_alteration_type pset);
 
 void map_irrigate_tile(tile_t *ptile);
 void map_mine_tile(tile_t *ptile);

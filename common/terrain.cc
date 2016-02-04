@@ -203,10 +203,10 @@ int count_terrain_near_tile(const tile_t *ptile,
 /****************************************************************************
   Returns TRUE iff any tile adjacent to (map_x,map_y) has the given special.
 ****************************************************************************/
-bool is_special_near_tile(const tile_t *ptile, enum tile_special_type spe)
+bool is_special_near_tile(const tile_t *ptile, enum tile_alteration_type alter)
 {
   adjc_iterate(ptile, adjc_tile) {
-    if (map_has_special(adjc_tile, spe)) {
+    if (map_has_alteration(adjc_tile, alter)) {
       return TRUE;
     }
   } adjc_iterate_end;
@@ -219,12 +219,12 @@ bool is_special_near_tile(const tile_t *ptile, enum tile_special_type spe)
 ****************************************************************************/
 int count_special_near_tile(const tile_t *ptile,
                             bool cardinal_only, bool percentage,
-                            enum tile_special_type spe)
+                            enum tile_alteration_type alter)
 {
   int count = 0, total = 0;
 
   variable_adjc_iterate(ptile, adjc_tile, cardinal_only) {
-    if (map_has_special(adjc_tile, spe)) {
+    if (map_has_alteration(adjc_tile, alter)) {
       count++;
     }
     total++;

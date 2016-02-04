@@ -16,7 +16,7 @@
 #include "mem.hh"                /* unit_list_iterate_safe */
 
 #include "wc_types.hh"
-#include "terrain.hh"            /* enum tile_special_type */
+#include "terrain.hh"            /* enum tile_alteration_type */
 #include "unittype.hh"
 
 struct unit_order;
@@ -145,7 +145,7 @@ struct unit_s {
    * fractional values in some cases). */
   int activity_count;
 
-  enum tile_special_type activity_target;
+  enum tile_alteration_type activity_target;
   enum unit_focus_status focus_status;
   int ord_map, ord_city;
   /* ord_map and ord_city are the order index of this unit in tile.units
@@ -245,15 +245,15 @@ bool can_unit_continue_current_activity(unit_t *punit);
 bool can_unit_do_activity(unit_t *punit, enum unit_activity activity);
 bool can_unit_do_activity_targeted(unit_t *punit,
                                    enum unit_activity activity,
-                                   enum tile_special_type target);
+                                   enum tile_alteration_type target);
 bool can_unit_do_activity_targeted_at(unit_t *punit,
                                       enum unit_activity activity,
-                                      enum tile_special_type target,
+                                      enum tile_alteration_type target,
                                       const tile_t *ptile);
 void set_unit_activity(unit_t *punit, enum unit_activity new_activity);
 void set_unit_activity_targeted(unit_t *punit,
                                 enum unit_activity new_activity,
-                                enum tile_special_type new_target);
+                                enum tile_alteration_type new_target);
 int get_activity_rate(unit_t *punit);
 int get_activity_rate_this_turn(unit_t *punit);
 int get_turns_for_activity_at(unit_t *punit,
@@ -262,7 +262,7 @@ int get_turns_for_activity_at(unit_t *punit,
 bool can_unit_do_auto(unit_t *punit);
 bool is_unit_activity_on_tile(enum unit_activity activity,
                               const tile_t *ptile);
-enum tile_special_type get_unit_tile_pillage_set(const tile_t *ptile);
+enum tile_alteration_type get_unit_tile_pillage_set(const tile_t *ptile);
 bool is_attack_unit(unit_t *punit);
 bool is_military_unit(unit_t *punit);           /* !set !dip !cara */
 bool is_diplomat_unit(unit_t *punit);

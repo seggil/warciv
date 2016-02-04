@@ -59,7 +59,8 @@ void handle_unit_airlift(player_t *pplayer, int unit_id, int city_id);
 void handle_unit_bribe_inq(connection_t *pconn, int unit_id);
 void handle_unit_type_upgrade(player_t *pplayer, Unit_Type_id type);
 void handle_unit_diplomat_action(player_t *pplayer, int diplomat_id, enum diplomat_actions action_type, int target_id, int value);
-void handle_unit_change_activity(player_t *pplayer, int unit_id, enum unit_activity activity, enum tile_special_type activity_target);
+void handle_unit_change_activity(player_t *pplayer, int unit_id, enum unit_activity activity,
+                                 enum tile_alteration_type activity_target);
 void handle_diplomacy_init_meeting_req(player_t *pplayer, int counterpart);
 void handle_diplomacy_cancel_meeting_req(player_t *pplayer, int counterpart);
 void handle_diplomacy_create_clause_req(player_t *pplayer, int counterpart, int giver, enum clause_type type, int value);

@@ -520,7 +520,7 @@ bool ai_unit_move(unit_t *punit, tile_t *ptile)
   }
 
   /* barbarians shouldn't enter huts */
-  if (is_barbarian(pplayer) && tile_has_special(ptile, S_HUT)) {
+  if (is_barbarian(pplayer) && tile_has_alteration(ptile, S_HUT)) {
     return FALSE;
   }
 

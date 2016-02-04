@@ -169,7 +169,7 @@ static tile_t *get_from_mapqueue(void)
   freelog(LOG_DEBUG, "trying get");
   while (lowest_cost < MAXCOST) {
     if (lowest_cost > highest_cost)
-      return FALSE;
+      return NULL;
     our_array = cost_lookup[lowest_cost].first_array;
     if (!our_array) {
       lowest_cost++;
@@ -1063,7 +1063,7 @@ static int find_a_direction(unit_t *punit,
 
       if (num_of_allied_units == 0) {
         fitness[dir] = rating_of_unit;
-      } else if (pcity || tile_has_special(ptile, S_FORTRESS)) {
+      } else if (pcity || tile_has_alteration(ptile, S_FORTRESS)) {
         fitness[dir] = MAX(rating_of_unit, rating_of_ally);
       } else if (rating_of_unit <= rating_of_ally) {
         fitness[dir] = rating_of_ally * (num_of_allied_units /
@@ -1082,7 +1082,7 @@ static int find_a_direction(unit_t *punit,
      * In case we change directions next turn, roads and railroads are
      * nice.
      */
-    if (tile_has_special(ptile, S_ROAD) || tile_has_special(ptile, S_RAILROAD)) {
+    if (tile_has_alteration(ptile, S_ROAD) || tile_has_alteration(ptile, S_RAILROAD)) {
       fitness[dir] += 10;
     }
 

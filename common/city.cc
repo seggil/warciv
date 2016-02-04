@@ -313,26 +313,26 @@ player_t *city_owner(const city_t *pcity)
 
 /**************************************************************************
  Returns 1 if the given city is next to or on one of the given building's
- terr_gate (terrain) or spec_gate (specials), or if the building has no
- terrain/special requirements.
+ terr_gate (terrain) or alteration_gate (alterations), or if the building
+ has no terrain/alteration requirements.
 **************************************************************************/
 bool city_has_terr_spec_gate(const city_t *pcity, Impr_Type_id id)
 {
   struct impr_type *impr;
   Terrain_type_id *terr_gate;
-  enum tile_special_type *spec_gate;
+  enum tile_alteration_type *alteration_gate;
 
   impr = get_improvement_type(id);
-  spec_gate = impr->spec_gate;
+  alteration_gate = impr->alteration_gate;
   terr_gate = impr->terr_gate;
 
-  if (*spec_gate == S_NO_SPECIAL && *terr_gate == OLD_TERRAIN_NONE) {
+  if (*alteration_gate == S_NO_SPECIAL && *terr_gate == OLD_TERRAIN_NONE) {
     return TRUE;
   }
 
-  for (;*spec_gate!=S_NO_SPECIAL;spec_gate++) {
-    if (map_has_special(pcity->common.tile, *spec_gate) ||
-        is_special_near_tile(pcity->common.tile, *spec_gate)) {
+  for (;*alteration_gate!=S_NO_SPECIAL;alteration_gate++) {
+    if (map_has_alteration(pcity->common.tile, *alteration_gate) ||
+        is_special_near_tile(pcity->common.tile, *alteration_gate)) {
       return TRUE;
     }
   }
@@ -537,23 +537,23 @@ static int base_get_shields_tile(const tile_t *ptile,
                                  const city_t *pcity,
                                  int city_x, int city_y, bool is_celebrating)
 {
-  enum tile_special_type spec_t = map_get_special(ptile);
+  enum tile_alteration_type spec_t = map_get_alteration(ptile);
   Terrain_type_id tile_t = ptile->terrain;
   int s;
 
-  if (contains_special(spec_t, S_SPECIAL_1)) {
+  if (contains_alteration(spec_t, S_SPECIAL_1)) {
     s = get_tile_type(tile_t)->shield_special_1;
-  } else if (contains_special(spec_t, S_SPECIAL_2)) {
+  } else if (contains_alteration(spec_t, S_SPECIAL_2)) {
     s = get_tile_type(tile_t)->shield_special_2;
   } else {
     s = get_tile_type(tile_t)->shield;
   }
 
-  if (contains_special(spec_t, S_MINE)) {
+  if (contains_alteration(spec_t, S_MINE)) {
     s += get_tile_type(tile_t)->mining_shield_incr;
   }
 
-  if (contains_special(spec_t, S_RAILROAD)) {
+  if (contains_alteration(spec_t, S_RAILROAD)) {
     s += (s * terrain_control.rail_shield_bonus) / 100;
   }
 
@@ -577,12 +577,12 @@ static int base_get_shields_tile(const tile_t *ptile,
     }
   }
 
-  if (contains_special(spec_t, S_POLLUTION)) {
+  if (contains_alteration(spec_t, S_POLLUTION)) {
     /* The shields here are icky */
     s -= (s * terrain_control.pollution_shield_penalty) / 100;
   }
 
-  if (contains_special(spec_t, S_FALLOUT)) {
+  if (contains_alteration(spec_t, S_FALLOUT)) {
     s -= (s * terrain_control.fallout_shield_penalty) / 100;
   }
 
@@ -642,27 +642,27 @@ static int base_get_trade_tile(const tile_t *ptile,
                                const city_t *pcity,
                                int city_x, int city_y, bool is_celebrating)
 {
-  enum tile_special_type spec_t = map_get_special(ptile);
+  enum tile_alteration_type spec_t = map_get_alteration(ptile);
   Terrain_type_id tile_t = ptile->terrain;
   int t;
 
-  if (contains_special(spec_t, S_SPECIAL_1)) {
+  if (contains_alteration(spec_t, S_SPECIAL_1)) {
     t = get_tile_type(tile_t)->trade_special_1;
-  } else if (contains_special(spec_t, S_SPECIAL_2)) {
+  } else if (contains_alteration(spec_t, S_SPECIAL_2)) {
     t = get_tile_type(tile_t)->trade_special_2;
   } else {
     t = get_tile_type(tile_t)->trade;
   }
 
-  if (contains_special(spec_t, S_RIVER) && !is_ocean(tile_t)) {
+  if (contains_alteration(spec_t, S_RIVER) && !is_ocean(tile_t)) {
     t += terrain_control.river_trade_incr;
   }
 
-  if (contains_special(spec_t, S_ROAD)) {
+  if (contains_alteration(spec_t, S_ROAD)) {
     t += get_tile_type(tile_t)->road_trade_incr;
   }
 
-  if (contains_special(spec_t, S_RAILROAD)) {
+  if (contains_alteration(spec_t, S_RAILROAD)) {
     t += (t * terrain_control.rail_trade_bonus) / 100;
   }
 
@@ -688,12 +688,12 @@ static int base_get_trade_tile(const tile_t *ptile,
     }
   }
 
-  if (contains_special(spec_t, S_POLLUTION)) {
+  if (contains_alteration(spec_t, S_POLLUTION)) {
     /* The trade here is dirty */
     t -= (t * terrain_control.pollution_trade_penalty) / 100;
   }
 
-  if (contains_special(spec_t, S_FALLOUT)) {
+  if (contains_alteration(spec_t, S_FALLOUT)) {
     t -= (t * terrain_control.fallout_trade_penalty) / 100;
   }
 
@@ -751,7 +751,7 @@ static int base_get_food_tile(const tile_t *ptile,
                               const city_t *pcity,
                               int city_x, int city_y, bool is_celebrating)
 {
-  const enum tile_special_type spec_t = map_get_special(ptile);
+  const enum tile_alteration_type spec_t = map_get_alteration(ptile);
   const Terrain_type_id tile_type_ = ptile->terrain;
   struct tile_type *type = get_tile_type(tile_type_);
   tile_t tile = {
@@ -766,35 +766,35 @@ static int base_get_food_tile(const tile_t *ptile,
 
   /* create dummy tile which has the city center bonuses. */
   tile.terrain = tile_type_;
-  tile.special = spec_t;
+  tile.alteration = spec_t;
 
   if (auto_water) {
     /* The center tile is auto-irrigated. */
-    tile.special = static_cast<tile_special_type>(
-                       static_cast<int>(S_IRRIGATION) | static_cast<int>(tile.special)
+    tile.alteration = static_cast<tile_alteration_type>(
+                        static_cast<int>(S_IRRIGATION) | static_cast<int>(tile.alteration)
                    );
 
     if (player_knows_techs_with_flag(city_owner(pcity), TF_FARMLAND)) {
-      tile.special = static_cast<tile_special_type>(
-                       static_cast<int>(S_FARMLAND) | static_cast<int>(tile.special)
+      tile.alteration = static_cast<tile_alteration_type>(
+                          static_cast<int>(S_FARMLAND) | static_cast<int>(tile.alteration)
                      );
 
     }
   }
 
-  if (contains_special(tile.special, S_SPECIAL_1)) {
+  if (contains_alteration(tile.alteration, S_SPECIAL_1)) {
     f = type->food_special_1;
-  } else if (contains_special(tile.special, S_SPECIAL_2)) {
+  } else if (contains_alteration(tile.alteration, S_SPECIAL_2)) {
     f = type->food_special_2;
   } else {
     f = type->food;
   }
 
-  if (contains_special(tile.special, S_IRRIGATION)) {
+  if (contains_alteration(tile.alteration, S_IRRIGATION)) {
     f += type->irrigation_food_incr;
   }
 
-  if (contains_special(tile.special, S_RAILROAD)) {
+  if (contains_alteration(tile.alteration, S_RAILROAD)) {
     f += (f * terrain_control.rail_food_bonus) / 100;
   }
 
@@ -817,11 +817,11 @@ static int base_get_food_tile(const tile_t *ptile,
     }
   }
 
-  if (contains_special(tile.special, S_POLLUTION)) {
+  if (contains_alteration(tile.alteration, S_POLLUTION)) {
     /* The food here is yucky */
     f -= (f * terrain_control.pollution_food_penalty) / 100;
   }
-  if (contains_special(tile.special, S_FALLOUT)) {
+  if (contains_alteration(tile.alteration, S_FALLOUT)) {
     f -= (f * terrain_control.fallout_food_penalty) / 100;
   }
 

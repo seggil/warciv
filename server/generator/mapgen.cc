@@ -849,7 +849,7 @@ static void make_rivers(void)
         !is_ocean(map_get_terrain(ptile))
 
         /* Don't start a river on river. */
-        && !map_has_special(ptile, S_RIVER)
+        && !map_has_alteration(ptile, S_RIVER)
 
         /* Don't start a river on a tile is surrounded by > 1 river +
            ocean tile. */
@@ -904,7 +904,7 @@ static void make_rivers(void)
               t = get_tag_terrain(TER_CAN_HAVE_RIVER);
               map_set_terrain(tile1, t);
             }
-            map_set_special(tile1, S_RIVER);
+            map_set_alteration(tile1, S_RIVER);
             current_riverlength++;
             map_set_placed(tile1);
             freelog(LOG_DEBUG, "Applied a river to (%d, %d).",
@@ -995,7 +995,7 @@ static void remove_tiny_islands(void)
   whole_map_iterate(ptile) {
     if (is_tiny_island(ptile)) {
       map_set_terrain(ptile, OLD_TERRAIN_OCEAN);
-      map_clear_special(ptile, S_RIVER);
+      map_clear_alteration(ptile, S_RIVER);
       map_set_continent(ptile, 0);
     }
   } whole_map_iterate_end;
@@ -1288,7 +1288,7 @@ static void make_huts(int number)
         map_set_placed(ptile); /* not good for a hut */
       } else {
         number--;
-        map_set_special(ptile, S_HUT);
+        map_set_alteration(ptile, S_HUT);
         set_placed_near_pos(ptile, 3);
       }
     }
@@ -1303,8 +1303,8 @@ static void make_huts(int number)
 static bool is_special_close(tile_t *ptile)
 {
   square_iterate(ptile, 1, tile1) {
-    if (map_has_special(tile1, S_SPECIAL_1)
-        || map_has_special(tile1, S_SPECIAL_2)) {
+    if (map_has_alteration(tile1, S_SPECIAL_1)
+        || map_has_alteration(tile1, S_SPECIAL_2)) {
       return TRUE;
     }
   } square_iterate_end;
@@ -1327,18 +1327,18 @@ static void add_specials(int prob)
       if (get_tile_type(ttype)->special_1_name[0] != '\0'
           && (get_tile_type(ttype)->special_2_name[0] == '\0'
               || ((int)myrand(100) < 50))) {
-        map_set_special(ptile, S_SPECIAL_1);
+        map_set_alteration(ptile, S_SPECIAL_1);
       } else if (get_tile_type(ttype)->special_2_name[0] != '\0') {
-        map_set_special(ptile, S_SPECIAL_2);
+        map_set_alteration(ptile, S_SPECIAL_2);
       }
     } else if (is_ocean(ttype) && near_safe_tiles(ptile)
                && (int)myrand(1000) < prob && !is_special_close(ptile)) {
       if (get_tile_type(ttype)->special_1_name[0] != '\0'
           && (get_tile_type(ttype)->special_2_name[0] == '\0'
               || (myrand(100) < 50))) {
-        map_set_special(ptile, S_SPECIAL_1);
+        map_set_alteration(ptile, S_SPECIAL_1);
       } else if (get_tile_type(ttype)->special_2_name[0] != '\0') {
-        map_set_special(ptile, S_SPECIAL_2);
+        map_set_alteration(ptile, S_SPECIAL_2);
       }
     }
   } whole_map_iterate_end;
@@ -1482,7 +1482,7 @@ static void fill_island_rivers(int coast, long int *bucket,
         if (is_water_adjacent_to_tile(ptile)
             && count_ocean_near_tile(ptile, FALSE, TRUE) < 50
             && count_special_near_tile(ptile, FALSE, TRUE, S_RIVER) < 35) {
-          map_set_special(ptile, S_RIVER);
+          map_set_alteration(ptile, S_RIVER);
           i--;
         }
       }
@@ -1799,7 +1799,7 @@ static void initworld(struct gen234_state *pstate)
     map_set_terrain(ptile, OLD_TERRAIN_OCEAN);
     map_set_continent(ptile, 0);
     map_set_placed(ptile); /* not a land tile */
-    map_clear_all_specials(ptile);
+    map_clear_all_alterations(ptile);
     map_set_owner(ptile, NULL);
   } whole_map_iterate_end;
 
@@ -2654,16 +2654,16 @@ static bool mapgenerator67(bool make_roads)
       y = polar_height - 1;
       if (map_build_road_time(native_pos_to_tile(x, y - 1))
           < map_build_road_time(native_pos_to_tile(x, y))) {
-        map_set_special(native_pos_to_tile(x, y - 1), S_ROAD);
+        map_set_alteration(native_pos_to_tile(x, y - 1), S_ROAD);
       } else {
-        map_set_special(native_pos_to_tile(x, y), S_ROAD);
+        map_set_alteration(native_pos_to_tile(x, y), S_ROAD);
       }
       y = map.info.ysize - polar_height;
       if (map_build_road_time(native_pos_to_tile(x, y + 1))
           < map_build_road_time(native_pos_to_tile(x, y))) {
-        map_set_special(native_pos_to_tile(x, y + 1), S_ROAD);
+        map_set_alteration(native_pos_to_tile(x, y + 1), S_ROAD);
       } else {
-        map_set_special(native_pos_to_tile(x, y), S_ROAD);
+        map_set_alteration(native_pos_to_tile(x, y), S_ROAD);
       }
     }
   } /* make_roads */
@@ -2685,7 +2685,7 @@ static bool mapgenerator67(bool make_roads)
           min_build = map_build_road_time(native_pos_to_tile(x, y));
         }
       }
-      map_set_special(native_pos_to_tile(best_x, y), S_ROAD);
+      map_set_alteration(native_pos_to_tile(best_x, y), S_ROAD);
       last_x = best_x;
     }
   }
@@ -3653,7 +3653,7 @@ static bool mapgenerator89(bool team_placement)
       map_set_terrain(ptile, OLD_TERRAIN_OCEAN);
       map_set_continent(ptile, 0);
       map_set_placed(ptile);
-      map_clear_all_specials(ptile);
+      map_clear_all_alterations(ptile);
       map_set_owner(ptile, NULL);
     } whole_map_iterate_end;
 
@@ -3865,13 +3865,13 @@ static bool mapgenerator89(bool team_placement)
       tile_t *ptile = native_pos_to_tile(x, y);
       map_set_terrain(ptile, pmap->tiles[x][y].terrain);
       if (pmap->tiles[x][y].spec == 1) {
-        map_set_special(ptile, S_SPECIAL_1);
+        map_set_alteration(ptile, S_SPECIAL_1);
       }
       if (pmap->tiles[x][y].spec == 2) {
-        map_set_special(ptile, S_SPECIAL_2);
+        map_set_alteration(ptile, S_SPECIAL_2);
       }
       if (pmap->tiles[x][y].river) {
-        map_set_special(ptile, S_RIVER);
+        map_set_alteration(ptile, S_RIVER);
       }
     }
   }

@@ -180,7 +180,7 @@ static int explorer_desirable(tile_t *ptile,
   if ((unit_flag(punit, F_TRIREME) &&
        is_likely_trireme_loss(pplayer, ptile))
       || map_get_city(ptile)
-      || (is_barbarian(pplayer) && map_has_special(ptile, S_HUT))) {
+      || (is_barbarian(pplayer) && map_has_alteration(ptile, S_HUT))) {
     return 0;
   }
 
@@ -230,7 +230,7 @@ static int explorer_desirable(tile_t *ptile,
 
   if ((!pplayer->ai.control || !ai_handicap(pplayer, H_HUTS))
       && map_is_known(ptile, pplayer)
-      && map_has_special(ptile, S_HUT)) {
+      && map_has_alteration(ptile, S_HUT)) {
     /* we want to explore huts whenever we can,
      * even if doing so will not uncover any tiles. */
     desirable += HUT_SCORE;

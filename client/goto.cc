@@ -405,12 +405,12 @@ static int get_activity_time(const tile_t *ptile,
     if (ttype->irrigation_time == 0) {
       return -1;
     }
-    if (map_has_special(ptile, S_MINE)) {
+    if (map_has_alteration(ptile, S_MINE)) {
       /* Don't overwrite mines. */
       return -1;
     }
 
-    if (tile_has_special(ptile, S_IRRIGATION)) {
+    if (tile_has_alteration(ptile, S_IRRIGATION)) {
       break;
     }
 
@@ -418,9 +418,9 @@ static int get_activity_time(const tile_t *ptile,
     break;
   case ACTIVITY_RAILROAD:
   case ACTIVITY_ROAD:
-    if (!tile_has_special(ptile, S_ROAD)) {
+    if (!tile_has_alteration(ptile, S_ROAD)) {
       if (ttype->road_time == 0
-          || (tile_has_special(ptile, S_RIVER)
+          || (tile_has_alteration(ptile, S_RIVER)
               && !player_knows_techs_with_flag(pplayer, TF_BRIDGE))) {
         /* 0 means road is impossible here (??) */
         return -1;
@@ -428,7 +428,7 @@ static int get_activity_time(const tile_t *ptile,
       activity_mc += ttype->road_time;
     }
     if (connect_activity == ACTIVITY_ROAD
-        || tile_has_special(ptile, S_RAILROAD)) {
+        || tile_has_alteration(ptile, S_RAILROAD)) {
       break;
     }
     activity_mc += ttype->rail_time;
@@ -502,11 +502,11 @@ static int get_connect_road(const tile_t *src_tile, enum direction8 dir,
 
   /* Special cases: get_MC function doesn't know that we would have built
    * a road (railroad) on src tile by that time */
-  if (map_has_special(dest_tile, S_ROAD)) {
+  if (map_has_alteration(dest_tile, S_ROAD)) {
     move_cost = MOVE_COST_ROAD;
   }
   if (connect_activity == ACTIVITY_RAILROAD
-      && map_has_special(dest_tile, S_RAILROAD)) {
+      && map_has_alteration(dest_tile, S_RAILROAD)) {
     move_cost = MOVE_COST_RAIL;
   }
 
@@ -947,7 +947,7 @@ void send_connect_route(unit_t *punit, enum unit_activity activity)
   for (i = 0; i < path->length; i++) {
     switch (activity) {
     case ACTIVITY_IRRIGATE:
-      if (!map_has_special(old_tile, S_IRRIGATION)) {
+      if (!map_has_alteration(old_tile, S_IRRIGATION)) {
         /* Assume the unit can irrigate or we wouldn't be here. */
         p.orders[p.length] = ORDER_ACTIVITY;
         p.activity[p.length] = ACTIVITY_IRRIGATE;
@@ -956,14 +956,14 @@ void send_connect_route(unit_t *punit, enum unit_activity activity)
       break;
     case ACTIVITY_ROAD:
     case ACTIVITY_RAILROAD:
-      if (!map_has_special(old_tile, S_ROAD)) {
+      if (!map_has_alteration(old_tile, S_ROAD)) {
         /* Assume the unit can build the road or we wouldn't be here. */
         p.orders[p.length] = ORDER_ACTIVITY;
         p.activity[p.length] = ACTIVITY_ROAD;
         p.length++;
       }
       if (activity == ACTIVITY_RAILROAD) {
-        if (!map_has_special(old_tile, S_RAILROAD)) {
+        if (!map_has_alteration(old_tile, S_RAILROAD)) {
           /* Assume the unit can build the rail or we wouldn't be here. */
           p.orders[p.length] = ORDER_ACTIVITY;
           p.activity[p.length] = ACTIVITY_RAILROAD;

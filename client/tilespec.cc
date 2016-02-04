@@ -1983,33 +1983,33 @@ static struct Sprite *get_city_occupied_sprite(city_t *pcity)
   Assemble some data that is used in building the tile sprite arrays.
     (map_x, map_y) : the (normalized) map position
   The values we fill in:
-    ter_type       : the terrain type of the tile
-    tspecial       : all specials the tile has
-    ter_type_near  : terrain types of all adjacent terrain
-    tspecial_near  : specials of all adjacent terrain
+    ter_type         : the terrain type of the tile
+    talteration      : all alterations the tile has
+    ter_type_near    : terrain types of all adjacent terrain
+    talteration_near : alterations of all adjacent terrain
 **************************************************************************/
 static void build_tile_data(tile_t *ptile,
                             Terrain_type_id *ter_type,
-                            enum tile_special_type *tspecial,
+                            enum tile_alteration_type *talteration,
                             Terrain_type_id *ter_type_near,
-                            enum tile_special_type *tspecial_near)
+                            enum tile_alteration_type *talteration_near)
 {
   int /*enum direction8*/ dir;
 
-  *tspecial = map_get_special(ptile);
-  *ter_type = map_get_terrain(ptile);
+  *talteration = map_get_alteration(ptile);
+  *ter_type    = map_get_terrain(ptile);
 
   /* Loop over all adjacent tiles.  We should have an iterator for this. */
   for (dir = 0; dir < 8; dir++) {
     tile_t *tile1 = mapstep(ptile, (direction8)dir);
 
     if (tile1 && tile_get_known(tile1) != TILE_UNKNOWN) {
-      tspecial_near[dir] = map_get_special(tile1);
+      talteration_near[dir] = map_get_alteration(tile1);
       ter_type_near[dir] = map_get_terrain(tile1);
     } else {
       /* We draw the edges of the (known) map as if the same terrain just
        * continued off the edge of the map. */
-      tspecial_near[dir] = S_NO_SPECIAL;
+      talteration_near[dir] = S_NO_SPECIAL;
       ter_type_near[dir] = *ter_type;
     }
   }
@@ -2233,13 +2233,16 @@ static int fill_rail_corner_sprites(struct drawn_sprite *sprs,
   Fill all road and rail sprites into the sprite array.
 **************************************************************************/
 static int fill_road_rail_sprite_array(struct drawn_sprite *sprs,
-                                       enum tile_special_type tspecial,
-                                       enum tile_special_type *tspecial_near,
+                                       enum tile_alteration_type talteration,
+                                       enum tile_alteration_type *talteration_near,
                                        city_t *pcity)
 {
   struct drawn_sprite *saved_sprs = sprs;
   bool road, road_near[8], rail, rail_near[8];
-  bool draw_road[8], draw_single_road, draw_rail[8], draw_single_rail;
+  bool draw_road[8],
+       draw_single_road,
+       draw_rail[8],
+       draw_single_rail;
   int /* enum direction8 */ dir;
 
   if (!draw_roads_rails) {
@@ -2252,14 +2255,14 @@ static int fill_road_rail_sprite_array(struct drawn_sprite *sprs,
    * whether road/rail is to be drawn in that direction.  draw_single_road
    * and draw_single_rail store whether we need an isolated road/rail to be
    * drawn. */
-  road = contains_special(tspecial, S_ROAD);
-  rail = contains_special(tspecial, S_RAILROAD);
+  road = contains_alteration(talteration, S_ROAD);
+  rail = contains_alteration(talteration, S_RAILROAD);
   draw_single_road = road && (!pcity || !draw_cities) && !rail;
   draw_single_rail = rail && (!pcity || !draw_cities);
   for (dir = 0; dir < 8; dir++) {
     /* Check if there is adjacent road/rail. */
-    road_near[dir] = contains_special(tspecial_near[dir], S_ROAD);
-    rail_near[dir] = contains_special(tspecial_near[dir], S_RAILROAD);
+    road_near[dir] = contains_alteration(talteration_near[dir], S_ROAD);
+    rail_near[dir] = contains_alteration(talteration_near[dir], S_RAILROAD);
 
     /* Draw rail/road if there is a connection from this tile to the
      * adjacent tile.  But don't draw road if there is also a rail
@@ -2418,7 +2421,7 @@ static int fill_road_rail_sprite_array(struct drawn_sprite *sprs,
   either farmland or irrigation (the two are considered interchangable for
   this).
 **************************************************************************/
-static int get_irrigation_index(enum tile_special_type *tspecial_near)
+static int get_irrigation_index(enum tile_alteration_type *talteration_near)
 {
   int tileno = 0, i;
 
@@ -2426,7 +2429,7 @@ static int get_irrigation_index(enum tile_special_type *tspecial_near)
     enum direction8 dir = cardinal_tileset_dirs[i];
 
     /* A tile with S_FARMLAND will also have S_IRRIGATION set. */
-    if (contains_special(tspecial_near[dir], S_IRRIGATION)) {
+    if (contains_alteration(talteration_near[dir], S_IRRIGATION)) {
       tileno |= 1 << i;
     }
   }
@@ -2438,24 +2441,24 @@ static int get_irrigation_index(enum tile_special_type *tspecial_near)
   Fill in the farmland/irrigation sprite for the tile.
 **************************************************************************/
 static int fill_irrigation_sprite_array(struct drawn_sprite *sprs,
-                                        enum tile_special_type tspecial,
-                                        enum tile_special_type *tspecial_near,
+                                        enum tile_alteration_type talteration,
+                                        enum tile_alteration_type *talteration_near,
                                         city_t *pcity)
 {
   struct drawn_sprite *saved_sprs = sprs;
 
   /* Tiles with S_FARMLAND also have S_IRRIGATION set. */
-  assert(!contains_special(tspecial, S_FARMLAND)
-         || contains_special(tspecial, S_IRRIGATION));
+  assert(!contains_alteration(talteration, S_FARMLAND)
+         || contains_alteration(talteration, S_IRRIGATION));
 
   /* We don't draw the irrigation if there's a city (it just gets overdrawn
    * anyway, and ends up looking bad). */
   if (draw_irrigation
-      && contains_special(tspecial, S_IRRIGATION)
+      && contains_alteration(talteration, S_IRRIGATION)
       && !(pcity && draw_cities)) {
-    int index = get_irrigation_index(tspecial_near);
+    int index = get_irrigation_index(talteration_near);
 
-    if (contains_special(tspecial, S_FARMLAND)) {
+    if (contains_alteration(talteration, S_FARMLAND)) {
       ADD_SPRITE_SIMPLE(sprites.tx.farmland[index]);
     } else {
       ADD_SPRITE_SIMPLE(sprites.tx.irrigation[index]);
@@ -2705,7 +2708,8 @@ int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
                       bool citymode)
 {
   Terrain_type_id ttype, ttype_near[8];
-  enum tile_special_type tspecial = S_NO_SPECIAL, tspecial_near[8];
+  enum tile_alteration_type talteration = S_NO_SPECIAL,
+                            talteration_near[8];
   int tileno, dir;
   unit_t *pfocus = get_unit_in_focus();
   struct drawn_sprite *save_sprs = sprs;
@@ -2735,22 +2739,22 @@ int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
   /* Terrain and specials. */
   if (ptile) {
     build_tile_data(ptile,
-                    &ttype, &tspecial, ttype_near, tspecial_near);
+                    &ttype, &talteration, ttype_near, talteration_near);
 
     sprs += fill_terrain_sprite_array(sprs, ptile, ttype_near);
 
     if (is_ocean(ttype) && draw_terrain) {
       for (dir = 0; dir < 4; dir++) {
-        if (contains_special(tspecial_near[DIR4_TO_DIR8[dir]], S_RIVER)) {
+        if (contains_alteration(talteration_near[DIR4_TO_DIR8[dir]], S_RIVER)) {
           ADD_SPRITE_SIMPLE(sprites.tx.river_outlet[dir]);
         }
       }
     }
 
-    sprs += fill_irrigation_sprite_array(sprs, tspecial, tspecial_near,
+    sprs += fill_irrigation_sprite_array(sprs, talteration, talteration_near,
                                          pcity);
 
-    if (draw_terrain && contains_special(tspecial, S_RIVER)) {
+    if (draw_terrain && contains_alteration(talteration, S_RIVER)) {
       int i;
 
       /* Draw rivers on top of irrigation. */
@@ -2758,7 +2762,7 @@ int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
       for (i = 0; i < num_cardinal_tileset_dirs; i++) {
         enum direction8 dir = cardinal_tileset_dirs[i];
 
-        if (contains_special(tspecial_near[dir], S_RIVER)
+        if (contains_alteration(talteration_near[dir], S_RIVER)
             || is_ocean(ttype_near[dir])) {
           tileno |= 1 << i;
         }
@@ -2767,27 +2771,27 @@ int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
     }
 
     sprs += fill_road_rail_sprite_array(sprs,
-                                        tspecial, tspecial_near, pcity);
+                                        talteration, talteration_near, pcity);
 
     if (draw_specials) {
-      if (contains_special(tspecial, S_SPECIAL_1)) {
+      if (contains_alteration(talteration, S_SPECIAL_1)) {
         ADD_SPRITE_SIMPLE(sprites.terrain[ttype]->special[0]);
-      } else if (contains_special(tspecial, S_SPECIAL_2)) {
+      } else if (contains_alteration(talteration, S_SPECIAL_2)) {
         ADD_SPRITE_SIMPLE(sprites.terrain[ttype]->special[1]);
       }
     }
 
-    if (draw_fortress_airbase && contains_special(tspecial, S_FORTRESS)
+    if (draw_fortress_airbase && contains_alteration(talteration, S_FORTRESS)
         && sprites.tx.fortress_back) {
       ADD_SPRITE_FULL(sprites.tx.fortress_back);
     }
 
-    if (draw_mines && contains_special(tspecial, S_MINE)
+    if (draw_mines && contains_alteration(talteration, S_MINE)
         && sprites.terrain[ttype]->mine) {
       ADD_SPRITE_SIMPLE(sprites.terrain[ttype]->mine);
     }
 
-    if (draw_specials && contains_special(tspecial, S_HUT)) {
+    if (draw_specials && contains_alteration(talteration, S_HUT)) {
       ADD_SPRITE_SIMPLE(sprites.tx.village);
     }
   }
@@ -2821,14 +2825,14 @@ int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
   }
 
   if (ptile) {
-    if (draw_fortress_airbase && contains_special(tspecial, S_AIRBASE)) {
+    if (draw_fortress_airbase && contains_alteration(talteration, S_AIRBASE)) {
       ADD_SPRITE_FULL(sprites.tx.airbase);
     }
 
-    if (draw_pollution && contains_special(tspecial, S_POLLUTION)) {
+    if (draw_pollution && contains_alteration(talteration, S_POLLUTION)) {
       ADD_SPRITE_SIMPLE(sprites.tx.pollution);
     }
-    if (draw_pollution && contains_special(tspecial, S_FALLOUT)) {
+    if (draw_pollution && contains_alteration(talteration, S_FALLOUT)) {
       ADD_SPRITE_SIMPLE(sprites.tx.fallout);
     }
   }
@@ -2858,7 +2862,7 @@ int fill_sprite_array(struct drawn_sprite *sprs, tile_t *ptile,
 
   if (ptile) {
     if (is_isometric && draw_fortress_airbase
-        && contains_special(tspecial, S_FORTRESS)) {
+        && contains_alteration(talteration, S_FORTRESS)) {
       /* Draw fortress front in iso-view (non-iso view only has a fortress
        * back). */
       ADD_SPRITE_FULL(sprites.tx.fortress);

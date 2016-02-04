@@ -1077,7 +1077,7 @@ static void pillage_callback(GtkWidget *w, gpointer data)
     if (punit) {
       request_new_unit_activity_targeted(punit,
                                          ACTIVITY_PILLAGE,
-                                         (tile_special_type)GPOINTER_TO_INT(data));
+                                         (tile_alteration_type)GPOINTER_TO_INT(data));
     }
   }
 }
@@ -1094,7 +1094,7 @@ static void pillage_destroy_callback(GtkWidget *w, gpointer data)
 ...
 *****************************************************************/
 void popup_pillage_dialog(unit_t *punit,
-                          enum tile_special_type may_pillage)
+                          enum tile_alteration_type may_pillage)
 {
   GtkWidget *shl;
 
@@ -1107,12 +1107,12 @@ void popup_pillage_dialog(unit_t *punit,
                                _("Select what to pillage:"));
 
     while (may_pillage != S_NO_SPECIAL) {
-      enum tile_special_type what = get_preferred_pillage(may_pillage);
+      enum tile_alteration_type what = get_preferred_pillage(may_pillage);
 
       message_dialog_add(shl, map_get_infrastructure_text(what),
                          G_CALLBACK(pillage_callback), GINT_TO_POINTER(what));
 
-      may_pillage = static_cast<tile_special_type>(
+      may_pillage = static_cast<tile_alteration_type>(
           may_pillage & (~(what | map_get_infrastructure_prerequisite(what))));
     }
 
