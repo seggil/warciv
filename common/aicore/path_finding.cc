@@ -32,7 +32,6 @@
 /* Since speed is quite important to us and alloccation of large arrays is
  * slow, we try to pack info in the smallest types possible */
 typedef unsigned short mapindex_t;
-typedef unsigned char utiny_t;
 
 /* ===================== Internal structures ====================== */
 /*
@@ -51,13 +50,13 @@ typedef unsigned char utiny_t;
 struct path_finding_node {
   int cost;                     /* total Move Cost */
   int extra_cost;               /* total Extra Cost */
-  utiny_t dir_to_here;          /* direction from which we came */
+  direction8 dir_to_here;       /* direction from which we came */
 
   /* Cached values */
   int           extra_tile;     /* Extra Cost */
-  utiny_t       node_known_type;
+  known_type    node_known_type;
   tile_behavior behavior;
-  utiny_t       zoc_number;     /* 1 if allied, 2 if my zoc, 0 otherwise */
+  unsigned char zoc_number;     /* 1 if allied, 2 if my zoc, 0 otherwise */
 };
 
 /*
@@ -97,7 +96,7 @@ struct path_finding_map {
                                  * processed yet (NS_NEW), sorted by their
                                  * total_CC*/
   struct path_finding_node *lattice;      /* Lattice of nodes */
-  utiny_t *status;              /* Array of node statuses
+  pf_node_status *status;       /* Array of node statuses
                                  * (enum pf_node_status really) */
   struct pqueue *danger_queue;  /* Dangerous positions go there */
   struct danger_node *d_lattice;        /* Lattice with danger stuff */
@@ -256,7 +255,7 @@ static bool jumbo_iterate_map(struct path_finding_map *pf_map)
 
   adjc_dir_iterate(pf_map->tile, tile1, dir) {
     struct path_finding_node *node1 = &pf_map->lattice[tile1->index];
-    utiny_t *status = &pf_map->status[tile1->index];
+    pf_node_status *status = &pf_map->status[tile1->index];
     int priority;
 
 
@@ -334,7 +333,7 @@ bool pf_next(struct path_finding_map *pf_map)
     adjc_dir_iterate(pf_map->tile, tile1, dir) {
       mapindex_t index1 = tile1->index;
       struct path_finding_node *node1 = &pf_map->lattice[index1];
-      utiny_t *status = &pf_map->status[index1];
+      pf_node_status *status = &pf_map->status[index1];
       int cost;
       int extra = 0;
 
@@ -430,7 +429,7 @@ static struct path_finding_map *create_map(bool with_danger)
   pf_map->lattice = static_cast<path_finding_node*>(
       wc_malloc(sizeof(struct path_finding_node) * MAX_MAP_INDEX));
   pf_map->queue = pq_create(INITIAL_QUEUE_SIZE);
-  pf_map->status = static_cast<utiny_t*>(
+  pf_map->status = static_cast<pf_node_status*>(
       wc_calloc(MAX_MAP_INDEX, sizeof(*(pf_map->status))));
 
   if (with_danger) {
@@ -571,7 +570,7 @@ bool pf_get_position(struct path_finding_map *pf_map, tile_t *ptile,
                      struct pf_position *pos)
 {
   mapindex_t index = ptile->index;
-  utiny_t status = pf_map->status[index];
+  pf_node_status status = pf_map->status[index];
 
   if (status == NS_PROCESSED || same_pos(ptile, pf_map->tile)) {
     /* We already reached (x,y) */
@@ -677,7 +676,7 @@ struct pf_path *pf_next_get_path(const struct path_finding_map *pf_map)
 struct pf_path *pf_get_path(struct path_finding_map *pf_map, tile_t *ptile)
 {
   mapindex_t index = ptile->index;
-  utiny_t status = pf_map->status[index];
+  pf_node_status status = pf_map->status[index];
 
   if (pf_map->params->is_pos_dangerous) {
     /* It's very different in the presence of danger */
@@ -1210,7 +1209,7 @@ static struct pf_path *danger_get_path(struct path_finding_map *pf_map,
                                        tile_t *ptile)
 {
   mapindex_t index = ptile->index;
-  utiny_t status = pf_map->status[index];
+  pf_node_status status = pf_map->status[index];
   struct danger_node *d_node = &pf_map->d_lattice[index];
 
   if (d_node->is_dangerous) {
