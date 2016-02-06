@@ -37,10 +37,10 @@ typedef unsigned short mapindex_t;
 /*
  * Some comments on implementation:
  * 1. cost (aka total_MC) is sum of MCs altered to fit to the turn_mode
- * see adjust_cost
+ *    see adjust_cost
  * 2. dir_to_here is for backtracking along the tree of shortest paths
  * 3. node_known_type, behavior, zoc_number and extra_tile are all cached
- * values.
+ *    values.
  * It is possible to shove them into a separate array which is allocated
  * only if a corresponding option in the parameter is set.  A less drastic
  * measure would be to pack the first three into one byte.  All of there are
@@ -75,15 +75,14 @@ struct danger_node {
                                  * need to remeber costs and stuff */
 };
 
-enum pf_node_status {
-  NS_UNINIT = 0,                /* memory is calloced, hence zero
-                                 * means uninitialised */
-  NS_NEW,                       /* the optimal route isn't found yet */
-  NS_WAITING,                   /* the optimal route is found,
-                                 * considering waiting */
-  NS_PROCESSED                  /* the optimal route is found */
+enum class pf_node_status {
+  UNINIT = 0,                /* memory is calloced, hence zero
+                              * means uninitialised */
+  NEW,                       /* the optimal route isn't found yet */
+  WAITING,                   /* the optimal route is found,
+                              * considering waiting */
+  PROCESSED                  /* the optimal route is found */
 };
-
 
 /*
  * The map structure itself.  (x, y) is the current position of the iteration
@@ -93,7 +92,7 @@ struct path_finding_map {
   tile_t *tile;                 /* The current position */
   struct pf_parameter *params;  /* Initial parameters */
   struct pqueue *queue;         /* Queue of nodes we have reached but not
-                                 * processed yet (NS_NEW), sorted by their
+                                 * processed yet (pf_node_status::NEW), sorted by their
                                  * total_CC*/
   struct path_finding_node *lattice;      /* Lattice of nodes */
   pf_node_status *status;       /* Array of node statuses
@@ -248,7 +247,7 @@ static bool jumbo_iterate_map(struct path_finding_map *pf_map)
   struct path_finding_node *node = &pf_map->lattice[pf_map->tile->index];
   mapindex_t index;
 
-  pf_map->status[pf_map->tile->index] = NS_PROCESSED;
+  pf_map->status[pf_map->tile->index] = pf_node_status::PROCESSED;
 
   /* Processing Stage */
   /* The previous position is contained in {x,y} fields of map */
@@ -259,12 +258,12 @@ static bool jumbo_iterate_map(struct path_finding_map *pf_map)
     int priority;
 
 
-    if (*status == NS_PROCESSED) {
+    if (*status == pf_node_status::PROCESSED) {
       /* This gives 15% speedup */
       continue;
     }
 
-    if (*status == NS_UNINIT) {
+    if (*status == pf_node_status::UNINIT) {
       node1->cost = -1;
     }
 
@@ -277,7 +276,7 @@ static bool jumbo_iterate_map(struct path_finding_map *pf_map)
     if (priority >= 0) {
       /* We found a better route to xy1, record it
        * (the costs are recorded already) */
-      *status = NS_NEW;
+      *status = pf_node_status::NEW;
       node1->dir_to_here = dir;
       pq_insert(pf_map->queue, tile1->index, -priority);
     }
@@ -291,7 +290,7 @@ static bool jumbo_iterate_map(struct path_finding_map *pf_map)
     if (!removed) {
       return false;
     }
-    if (pf_map->status[index] == NS_NEW) {
+    if (pf_map->status[index] == pf_node_status::NEW) {
       break;
     }
     /* If the node has already been processed, get the next one. */
@@ -322,7 +321,7 @@ bool pf_next(struct path_finding_map *pf_map)
     return jumbo_iterate_map(pf_map);
   }
 
-  pf_map->status[pf_map->tile->index] = NS_PROCESSED;
+  pf_map->status[pf_map->tile->index] = pf_node_status::PROCESSED;
 
   /* There is no exit from DONT_LEAVE tiles! */
   if (node->behavior != tile_behavior::DONT_LEAVE) {
@@ -337,12 +336,12 @@ bool pf_next(struct path_finding_map *pf_map)
       int cost;
       int extra = 0;
 
-      if (*status == NS_PROCESSED) {
+      if (*status == pf_node_status::PROCESSED) {
         /* This gives 15% speedup */
         continue;
       }
 
-      if (*status == NS_UNINIT) {
+      if (*status == pf_node_status::UNINIT) {
         init_node(pf_map, node1, tile1);
       }
 
@@ -386,10 +385,10 @@ bool pf_next(struct path_finding_map *pf_map)
       {
         int cost_of_path = get_total_CC(pf_map, cost, extra);
 
-        if (*status == NS_UNINIT
+        if (*status == pf_node_status::UNINIT
             || cost_of_path < get_total_CC(pf_map, node1->cost,
                                            node1->extra_cost)) {
-          *status = NS_NEW;
+          *status = pf_node_status::NEW;
           node1->extra_cost = extra;
           node1->cost = cost;
           node1->dir_to_here = dir;
@@ -407,7 +406,7 @@ bool pf_next(struct path_finding_map *pf_map)
     if (!removed) {
       return false;
     }
-    if (pf_map->status[index] == NS_NEW) {
+    if (pf_map->status[index] == pf_node_status::NEW) {
       /* Discard if this node has already been processed */
       break;
     }
@@ -524,7 +523,7 @@ static void fill_position(const struct path_finding_map *pf_map, tile_t *ptile,
   struct path_finding_node *node = &pf_map->lattice[index];
 
   /* Debug period only!  Please remove after PF is settled */
-  if (pf_map->status[index] != NS_PROCESSED
+  if (pf_map->status[index] != pf_node_status::PROCESSED
       && !same_pos(ptile, pf_map->tile)) {
     die("pf_construct_path to an unreached destination");
     return;
@@ -572,7 +571,7 @@ bool pf_get_position(struct path_finding_map *pf_map, tile_t *ptile,
   mapindex_t index = ptile->index;
   pf_node_status status = pf_map->status[index];
 
-  if (status == NS_PROCESSED || same_pos(ptile, pf_map->tile)) {
+  if (status == pf_node_status::PROCESSED || same_pos(ptile, pf_map->tile)) {
     /* We already reached (x,y) */
     fill_position(pf_map, ptile, pos);
     return true;
@@ -604,7 +603,7 @@ static struct pf_path* construct_path(const struct path_finding_map *pf_map,
 
   /* Debug period only!  Please remove after PF is settled */
   assert(!pf_map->params->is_pos_dangerous);
-  if (pf_map->status[index] != NS_PROCESSED
+  if (pf_map->status[index] != pf_node_status::PROCESSED
       && !same_pos(dest_tile, pf_map->tile)) {
     die("construct_path to an unreached destination");
     return NULL;
@@ -683,7 +682,7 @@ struct pf_path *pf_get_path(struct path_finding_map *pf_map, tile_t *ptile)
     return danger_get_path(pf_map, ptile);
   }
 
-  if (status == NS_PROCESSED || same_pos(ptile, pf_map->tile)) {
+  if (status == pf_node_status::PROCESSED || same_pos(ptile, pf_map->tile)) {
     /* We already reached (x,y) */
     return construct_path(pf_map, ptile);
   }
@@ -863,27 +862,28 @@ static int danger_adjust_cost(const struct path_finding_map *pf_map, int cost,
   Primary method for iterative path-finding in presence of danger
   Notes:
   1. Whenever the path-finding stumbles upon a dangerous
-  location, it goes into a sub-Dijkstra which processes _only_
-  dangerous locations, by means of a separate queue.  When this
-  sub-Dijkstra reaches a safe location, it records the segment of
-  the path going across the dangerous terrain.
+     location, it goes into a sub-Dijkstra which processes _only_
+     dangerous locations, by means of a separate queue.  When this
+     sub-Dijkstra reaches a safe location, it records the segment of
+     the path going across the dangerous terrain.
   2. Waiting is realised by inserting the (safe) tile back into
-  the queue with a lower priority P.  This tile might pop back
-  sooner than P, because there might be several copies of it in
-  the queue already.  But that does not seem to present any
-  problems.
-  3. For some purposes, NS_WAITING is just another flavour of NS_PROCESSED,
-  since the path to a NS_WAITING tile has already been found.
+     the queue with a lower priority P.  This tile might pop back
+     sooner than P, because there might be several copies of it in
+     the queue already.  But that does not seem to present any
+     problems.
+  3. For some purposes, pf_node_status::WAITING is just another flavour of
+     pf_node_status::PROCESSED, since the path to a pf_node_status::WAITING
+     tile has already been found.
   4. The code is arranged so that if the turn-mode is TM_WORST_TIME, a
-  cavalry with non-full MP will get to a safe mountain tile only after
-  waiting.  This waiting, although realised through NS_WAITING, is
-  different from waiting before going into the danger area, so it will not
-  be marked as "waiting" on the resulting paths.
+     cavalry with non-full MP will get to a safe mountain tile only after
+     waiting.  This waiting, although realised through pf_node_status::WAITING, is
+     different from waiting before going into the danger area, so it will not
+     be marked as "waiting" on the resulting paths.
   5. This algorithm cannot guarantee the best safe segments across
-  dangerous region.  However it will find a safe segment if there
-  is one.  To gurantee the best (in terms of total_CC) safe segments
-  across danger, supply get_EC which returns small extra on
-  dangerous tiles.
+     dangerous region.  However it will find a safe segment if there
+     is one.  To gurantee the best (in terms of total_CC) safe segments
+     across danger, supply get_EC which returns small extra on
+     dangerous tiles.
 ******************************************************************/
 static bool danger_iterate_map(struct path_finding_map *pf_map)
 {
@@ -910,14 +910,14 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
       int extra = 0;
 
       /* Dangerous tiles can be updated even after being processed */
-      if ((pf_map->status[index1] == NS_PROCESSED
-           || pf_map->status[index1] == NS_WAITING)
+      if ((pf_map->status[index1] == pf_node_status::PROCESSED
+           || pf_map->status[index1] == pf_node_status::WAITING)
           && !d_node1->is_dangerous) {
         continue;
       }
 
       /* Initialise target tile if necessary */
-      if (pf_map->status[index1] == NS_UNINIT) {
+      if (pf_map->status[index1] == pf_node_status::UNINIT) {
         init_node(pf_map, node1, tile1);
         init_danger_node(pf_map, d_node1, node1, tile1);
       }
@@ -960,10 +960,11 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
       }
 
       /* Update costs and add to queue, if this is a better route to xy1 */
-      if (!d_node1->is_dangerous) {
+      if (!d_node1->is_dangerous)
+      {
         int cost_of_path = get_total_CC(pf_map, cost, extra);
 
-        if (pf_map->status[index1] == NS_UNINIT
+        if (pf_map->status[index1] == pf_node_status::UNINIT
             || (cost_of_path
                 < get_total_CC(pf_map, node1->cost, node1->extra_cost))) {
           node1->extra_cost = extra;
@@ -982,48 +983,49 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
              * "real" waiting */
             d_node1->waited = false;
           }
-          pf_map->status[index1] = NS_NEW;
+          pf_map->status[index1] = pf_node_status::NEW;
           pq_insert(pf_map->queue, index1, -cost_of_path);
         }
-      } else {
+      }
+      else
+      {
         /* The procedure is slightly different for dangerous nodes */
         /* We will update costs if:
          * 1: we are here for the first time
          * 2: we can possibly go further across dangerous area or
          * 3: we can have lower extra and will not
          *    overwrite anything useful */
-        if (pf_map->status[index1] == NS_UNINIT
+        if (pf_map->status[index1] == pf_node_status::UNINIT
             || (get_moves_left(pf_map, cost)
                 > get_moves_left(pf_map, node1->cost))
             || (get_total_CC(pf_map, cost, extra)
                 < get_total_CC(pf_map, node1->cost, node1->extra_cost)
-                && pf_map->status[index1] == NS_PROCESSED)) {
+                && pf_map->status[index1] == pf_node_status::PROCESSED)) {
           node1->extra_cost = extra;
           node1->cost = cost;
           node1->dir_to_here = dir;
-          pf_map->status[index1] = NS_NEW;
+          pf_map->status[index1] = pf_node_status::NEW;
           d_node1->waited = (pf_map->status[pf_map->tile->index]
-                             == NS_WAITING);
+                             == pf_node_status::WAITING);
           /* Extra costs of all nodes in danger_queue are equal! */
           pq_insert(pf_map->danger_queue, index1, -cost);
         }
       }
-    }
-    adjc_dir_iterate_end;
-  }
+    } adjc_dir_iterate_end;
+ }
 
   if (!d_node->is_dangerous
-      && pf_map->status[pf_map->tile->index] != NS_WAITING
+      && pf_map->status[pf_map->tile->index] != pf_node_status::WAITING
       && (get_moves_left(pf_map, node->cost)
           < pf_map->params->move_rate)) {
     /* Consider waiting at this node.
      * To do it, put it back into queue. */
-    pf_map->status[pf_map->tile->index] = NS_WAITING;
+    pf_map->status[pf_map->tile->index] = pf_node_status::WAITING;
     pq_insert(pf_map->queue, pf_map->tile->index,
               -get_total_CC(pf_map, get_moves_left(pf_map, node->cost)
                             + node->cost, node->extra_cost));
   } else {
-    pf_map->status[pf_map->tile->index] = NS_PROCESSED;
+    pf_map->status[pf_map->tile->index] = pf_node_status::PROCESSED;
   }
 
   /* Get the next nearest node */
@@ -1035,14 +1037,14 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
       if (!pq_remove(pf_map->queue, &index)) {
         return false;
       }
-    } while (pf_map->status[index] == NS_PROCESSED);
+    } while (pf_map->status[index] == pf_node_status::PROCESSED);
   }
 
-  assert(pf_map->status[pf_map->tile->index] != NS_UNINIT);
+  assert(pf_map->status[pf_map->tile->index] != pf_node_status::UNINIT);
 
   pf_map->tile = index_to_tile(index);
 
-  if (pf_map->status[index] == NS_WAITING) {
+  if (pf_map->status[index] == pf_node_status::WAITING) {
     /* We've already returned this node once, skip it */
     freelog(LOG_DEBUG, "Considering waiting at (%d, %d)",
             pf_map->tile->x, pf_map->tile->y);
@@ -1218,7 +1220,8 @@ static struct pf_path *danger_get_path(struct path_finding_map *pf_map,
     return NULL;
   }
 
-  if (status == NS_PROCESSED || status == NS_WAITING
+  if (status == pf_node_status::PROCESSED
+      || status == pf_node_status::WAITING
       || same_pos(ptile, pf_map->tile)) {
     /* We already reached (x,y) */
     return danger_construct_path(pf_map, ptile);
