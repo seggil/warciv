@@ -131,8 +131,11 @@ static int get_turn(const struct path_finding_map *pf_map, int cost)
 static int get_moves_left(const struct path_finding_map *pf_map, int cost)
 {
   /* Cost may be negative; see get_turn(). */
-  return (cost < 0 ? pf_map->params->move_rate - cost
-          : pf_map->params->move_rate - (cost % pf_map->params->move_rate));
+  if (cost < 0) {
+    return pf_map->params->move_rate - cost;
+  } else {
+    return pf_map->params->move_rate - (cost % pf_map->params->move_rate);
+  }
 }
 
 /********************************************************************
@@ -892,10 +895,13 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
   /* There is no exit from DONT_LEAVE tiles! */
   if (node->behavior != tile_behavior::DONT_LEAVE) {
     /* Cost at xy but taking into account waiting */
-    int loc_cost
-        = (pf_map->status[pf_map->tile->index] != NS_WAITING ? node->cost
-           : node->cost + get_moves_left(pf_map, node->cost));
+    int loc_cost;
 
+    if (pf_map->status[pf_map->tile->index] != pf_node_status::WAITING) {
+      loc_cost = node->cost;
+    } else {
+      loc_cost = node->cost + get_moves_left(pf_map, node->cost);
+    }
     /* The previous position is contained in {x,y} fields of map */
     adjc_dir_iterate(pf_map->tile, tile1, dir) {
       mapindex_t index1 = tile1->index;
