@@ -467,10 +467,10 @@ struct path_finding_map *pf_create_map(const struct pf_parameter *const paramete
    * need to subtract this value before we return cost to the user.  Note
    * that cost may be negative if moves_left_initially > move_rate
    * (see get_turn()). */
-  pf_map->lattice[pf_map->tile->index].cost = pf_map->params->move_rate
-      - pf_map->params->moves_left_initially;
+  pf_map->lattice[pf_map->tile->index].cost =
+      pf_map->params->move_rate - pf_map->params->moves_left_initially;
   pf_map->lattice[pf_map->tile->index].extra_cost = 0;
-  pf_map->lattice[pf_map->tile->index].dir_to_here = -1;
+  pf_map->lattice[pf_map->tile->index].dir_to_here = (enum direction8)-1;
   if (pf_map->params->is_pos_dangerous) {
     /* The starting point is safe */
     pf_map->d_lattice[pf_map->tile->index].is_dangerous = false;
@@ -545,7 +545,7 @@ static void fill_position(const struct path_finding_map *pf_map, tile_t *ptile,
     die("unknown TC");
   }
 
-  pos->dir_to_here = static_cast<direction8>(node->dir_to_here);
+  pos->dir_to_here = node->dir_to_here;
   /* This field does not apply */
   pos->dir_to_next_pos = static_cast<direction8>(-1);
 }
@@ -622,7 +622,7 @@ static struct pf_path* construct_path(const struct path_finding_map *pf_map,
       break;
     }
 
-    dir_next = static_cast<direction8>(node->dir_to_here);
+    dir_next = node->dir_to_here;
 
     ptile = mapstep(ptile,
                     static_cast<direction8>(DIR_REVERSE(dir_next)));
@@ -643,7 +643,7 @@ static struct pf_path* construct_path(const struct path_finding_map *pf_map,
     /* fill_position doesn't set direction */
     path->positions[i].dir_to_next_pos = dir_next;
 
-    dir_next = static_cast<direction8>(node->dir_to_here);
+    dir_next = node->dir_to_here;
 
     if (i > 0) {
       /* Step further back, if we haven't finished yet */
@@ -1095,7 +1095,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
 
     if (!d_node->is_dangerous) {
       /* We are in the normal node and dir_to_here field is valid */
-      dir_next = static_cast<direction8>(node->dir_to_here);
+      dir_next = node->dir_to_here;
       /* d_node->danger_segment is the indicator of what lies ahead
        * if it's non-NULL, we are entering a danger segment,
        * if it's NULL, we are not on one so danger_seg should be NULL */
@@ -1180,7 +1180,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
     /* 4: Calculate the next direction */
     if (!d_node->is_dangerous) {
       /* We are in the normal node and dir_to_here field is valid */
-      dir_next = static_cast<direction8>(node->dir_to_here);
+      dir_next = node->dir_to_here;
       /* d_node->danger_segment is the indicator of what lies ahead
        * if it's non-NULL, we are entering a danger segment,
        * if it's NULL, we are not on one so danger_seg should be NULL */
