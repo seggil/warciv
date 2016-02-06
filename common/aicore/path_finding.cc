@@ -287,7 +287,7 @@ static bool jumbo_iterate_map(struct path_finding_map *pf_map)
     bool removed = pq_remove(pf_map->queue, &index);
 
     if (!removed) {
-      return FALSE;
+      return false;
     }
     if (pf_map->status[index] == NS_NEW) {
       break;
@@ -297,7 +297,7 @@ static bool jumbo_iterate_map(struct path_finding_map *pf_map)
 
   pf_map->tile = index_to_tile(index);
 
-  return TRUE;
+  return true;
 }
 
 /*****************************************************************
@@ -403,7 +403,7 @@ bool pf_next(struct path_finding_map *pf_map)
     bool removed = pq_remove(pf_map->queue, &index);
 
     if (!removed) {
-      return FALSE;
+      return false;
     }
     if (pf_map->status[index] == NS_NEW) {
       /* Discard if this node has already been processed */
@@ -413,7 +413,7 @@ bool pf_next(struct path_finding_map *pf_map)
 
   pf_map->tile = index_to_tile(index);
 
-  return TRUE;
+  return true;
 }
 
 /******************************************************************
@@ -472,7 +472,7 @@ struct path_finding_map *pf_create_map(const struct pf_parameter *const paramete
   pf_map->lattice[pf_map->tile->index].dir_to_here = -1;
   if (pf_map->params->is_pos_dangerous) {
     /* The starting point is safe */
-    pf_map->d_lattice[pf_map->tile->index].is_dangerous = FALSE;
+    pf_map->d_lattice[pf_map->tile->index].is_dangerous = false;
   }
 
   return pf_map;
@@ -573,18 +573,18 @@ bool pf_get_position(struct path_finding_map *pf_map, tile_t *ptile,
   if (status == NS_PROCESSED || same_pos(ptile, pf_map->tile)) {
     /* We already reached (x,y) */
     fill_position(pf_map, ptile, pos);
-    return TRUE;
+    return true;
   }
 
   while (pf_next(pf_map)) {
     if (same_pos(ptile, pf_map->tile)) {
       /* That's the one */
       fill_position(pf_map, ptile, pos);
-      return TRUE;
+      return true;
     }
   }
 
-  return FALSE;
+  return false;
 }
 
 /*******************************************************************
@@ -975,7 +975,7 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
             }
             /* We don't consider waiting to get to a safe tile as
              * "real" waiting */
-            d_node1->waited = FALSE;
+            d_node1->waited = false;
           }
           pf_map->status[index1] = NS_NEW;
           pq_insert(pf_map->queue, index1, -cost_of_path);
@@ -1028,7 +1028,7 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
     /* No dangerous nodes to process, go for a safe one */
     do {
       if (!pq_remove(pf_map->queue, &index)) {
-        return FALSE;
+        return false;
       }
     } while (pf_map->status[index] == NS_PROCESSED);
   }
@@ -1049,7 +1049,7 @@ static bool danger_iterate_map(struct path_finding_map *pf_map)
     return danger_iterate_map(pf_map);
   } else {
     /* Just return it */
-    return TRUE;
+    return true;
   }
 }
 
@@ -1065,7 +1065,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
   enum direction8 dir_next = static_cast<direction8>(-1);
   struct danger_node::pf_danger_pos *danger_seg = NULL;      /* For danger segments */
   int segment_index = -1;                       /* For danger segments */
-  bool waited = FALSE;
+  bool waited = false;
   struct path_finding_node *node = &pf_map->lattice[ptile->index];
   struct danger_node *d_node = &pf_map->d_lattice[ptile->index];
   int length = 1;
@@ -1115,10 +1115,10 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
   iter_tile = ptile;
   node = &pf_map->lattice[ptile->index];
   d_node = &pf_map->d_lattice[ptile->index];
-  waited = FALSE;
+  waited = false;
 
   for (i = length - 1; i >= 0; i--) {
-    bool old_waited = FALSE;
+    bool old_waited = false;
 
     /* 1: Deal with waiting */
     if (!d_node->is_dangerous) {
@@ -1135,7 +1135,7 @@ static struct pf_path *danger_construct_path(const struct path_finding_map *pf_m
         path->positions[i].dir_to_next_pos = dir_next;
         /* Set old_waited so that we record -1 as a direction at the step
          * we were going to wait */
-        old_waited = TRUE;
+        old_waited = true;
         i--;
       }
       /* Update "waited" (d_node->waited means "waited to get here") */
