@@ -225,7 +225,7 @@ void set_turn_done_button_state(bool state)
 **************************************************************************/
 gboolean button_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
-  printf("%s\n", __FUNCTION__);
+  //printf("%s\n", __FUNCTION__);
   if (ev->button == 1 || ev->button == 3) {
     release_goto_button(ev->x, ev->y);
   }

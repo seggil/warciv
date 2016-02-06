@@ -96,7 +96,7 @@ void anchor_selection_rectangle(int canvas_x, int canvas_y)
   rec_canvas_center_tile = get_center_tile_mapcanvas();
   rect_tile = ptile;
   rect_w = rect_h = 0;
-  printf("%s canvas_x=%d canvas_y=%d\n",__FUNCTION__, canvas_x, canvas_y);
+  //printf("%s canvas_x=%d canvas_y=%d\n",__FUNCTION__, canvas_x, canvas_y);
 }
 
 /**************************************************************************

@@ -1486,7 +1486,7 @@ void draw_selection_rectangle(int canvas_x, int canvas_y, int w, int h)
 {
   GdkPoint points[5];
 
-  printf("%s %d %d %d %d\n", __FUNCTION__, canvas_x, canvas_y, w, h);
+  //printf("%s %d %d %d %d\n", __FUNCTION__, canvas_x, canvas_y, w, h);
   gdk_gc_set_foreground(civ_gc, colors_standard[COLOR_STD_YELLOW]);
 
   /* gdk_draw_rectangle() must start top-left.. */
