@@ -12,12 +12,12 @@ AM_CPPFLAGS = \
    -I$(srcdir)/../gui-gtk \
    @CLIENT_CFLAGS@
 
-libagents_a_SOURCES = 	\
-	agents.cc	\
-	agents.hh	\
-	cma_core.cc 	\
-	cma_core.hh 	\
-	cma_fec.cc	\
-	cma_fec.hh	\
-	sha.cc           \
-	sha.hh
+libagents_a_SOURCES = \
+ agents.cc   \
+ agents.hh   \
+ cma_core.cc \
+ cma_core.hh \
+ cma_fec.cc  \
+ cma_fec.hh  \
+ sha.cc      \
+ sha.hh

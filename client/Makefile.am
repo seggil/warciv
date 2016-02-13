@@ -61,62 +61,62 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/utility \
     -I$(top_srcdir)/common \
     -I../intl @SOUND_CFLAGS@
-AM_CXXFLAGS = -std=gnu++11
+
 ## Above, note -I../intl instead of -I$(top_srdir/intl) is deliberate.
 
 civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
-	attribute.hh	\
-	attribute.cc	\
-	audio.cc         \
-	audio.hh         \
-	audio_none.cc    \
-	audio_none.hh	\
-	citydlg_common.cc \
-	citydlg_common.hc \
-	cityrepdata.cc	\
-	cityrepdata.hh	\
-	civclient.cc	\
-	civclient.hh	\
-	chatline_common.cc \
-	chatline_common.hh \
-	connectdlg_common.cc \
-	connectdlg_common.hh \
-	climisc.cc	\
-	climisc.hh	\
-	climap.cc	\
-	climap.hh	\
-	clinet.cc	\
-	clinet.hh	\
-	control.cc	\
-	control.hh	\
-	goto.cc		\
-	goto.hh		\
-	helpdata.cc	\
-	helpdata.hh	\
-	mapctrl_common.cc \
-	mapctrl_common.hh \
-	mapview_common.cc \
-	mapview_common.hh \
-	messagewin_common.cc \
-	messagewin_common.hh \
-	multiselect.cc	\
-	multiselect.hh	\
-	options.cc	\
-	options.h	\
-	packhand.cc	\
-	packhand.hh	\
-	packhand_gen.cc	\
-	packhand_gen.hh	\
-	plrdlg_common.cc \
-	plrdlg_common.hh \
-	repodlgs_common.cc \
-	repodlgs_common.hh \
-	text.cc	\
-	text.hh	\
-	tilespec.cc	\
-	tilespec.hh	\
-	trade.cc	\
-	trade.hh
+ attribute.hh      \
+ attribute.cc      \
+ audio.cc          \
+ audio.hh          \
+ audio_none.cc     \
+ audio_none.hh     \
+ citydlg_common.cc \
+ citydlg_common.hc \
+ cityrepdata.cc    \
+ cityrepdata.hh    \
+ civclient.cc      \
+ civclient.hh      \
+ chatline_common.cc   \
+ chatline_common.hh   \
+ connectdlg_common.cc \
+ connectdlg_common.hh \
+ climisc.cc      \
+ climisc.hh      \
+ climap.cc       \
+ climap.hh       \
+ clinet.cc       \
+ clinet.hh       \
+ control.cc      \
+ control.hh      \
+ goto.cc         \
+ goto.hh         \
+ helpdata.cc     \
+ helpdata.hh     \
+ mapctrl_common.cc \
+ mapctrl_common.hh \
+ mapview_common.cc \
+ mapview_common.hh \
+ messagewin_common.cc \
+ messagewin_common.hh \
+ multiselect.cc  \
+ multiselect.hh  \
+ options.cc      \
+ options.h       \
+ packhand.cc     \
+ packhand.hh     \
+ packhand_gen.cc \
+ packhand_gen.hh    \
+ plrdlg_common.cc   \
+ plrdlg_common.hh   \
+ repodlgs_common.cc \
+ repodlgs_common.hh \
+ text.cc \
+ text.hh \
+ tilespec.cc  \
+ tilespec.hh  \
+ trade.cc     \
+ trade.hh
 
 civclient_LDFLAGS = @CLIENT_LDFLAGS@
 wc_civclient_libs =	../utility/libcivutility.a	\
