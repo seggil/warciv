@@ -1417,7 +1417,7 @@ unsigned int get_default_messages_where(enum event_type type)
 *****************************************************************/
 void init_messages_where(void)
 {
-  unsigned int i;
+  int i;
 
   for (i = 0; i < E_LAST; i++) {
     event_to_index[i] = 0;
@@ -1425,7 +1425,7 @@ void init_messages_where(void)
 
   // last element of array is events[i].event == E_NOEVENT
   for (i = 0;; i++) {
-    unsigned int j;
+    int j;
 
     if (events[i].event == E_NOEVENT) {
       break;
@@ -1453,7 +1453,7 @@ void init_messages_where(void)
 *****************************************************************/
 void client_options_init(void)
 {
-  unsigned int i;
+  int i;
 
   client_options_iterate(op) {
     switch (op->type) {
@@ -1752,8 +1752,7 @@ void load_general_options(void)
 {
   struct section_file sf;
   const char *name;
-  unsigned int i;
-  int num;
+  int i, num;
   view_option *v;
 
   name = option_file_name();
@@ -1841,7 +1840,7 @@ void load_general_options(void)
 *****************************************************************/
 void check_ruleset_specific_options(void)
 {
-  unsigned int i;
+  int i;
 
   /* Check if the worklists match the ruleset options. */
   for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
@@ -1858,7 +1857,7 @@ void save_options(void)
   const char *name = option_file_name();
   char output_buffer[256];
   view_option *v;
-  unsigned int i;
+  int i;
 
   if (!name) {
     append_output_window(_("Save failed, cannot find a filename."));

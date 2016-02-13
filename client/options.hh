@@ -119,7 +119,7 @@ extern struct client_option client_options[];
 
 #define client_options_iterate(op)            \
 {                                             \
-  unsigned int _i;                            \
+  int _i;                                     \
   struct client_option *op;                         \
   for (_i = 0; _i < client_options_size; _i++) {   \
     op = &client_options[_i];                      \
