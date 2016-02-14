@@ -116,7 +116,7 @@ struct packet_game_info { /* 15 */
   int end_year;
   int min_players;
   int max_players;
-  unsigned int nplayers;
+  int nplayers;
   int player_idx;
   int globalwarming;
   int heating;
@@ -138,8 +138,8 @@ struct packet_game_info { /* 15 */
 };
 
 struct packet_map_info { /* 16 */
-  unsigned int xsize;
-  unsigned int ysize;
+  int xsize;
+  int ysize;
   int topology_id;
 };
 
@@ -166,7 +166,7 @@ struct packet_city_remove { /* 20 */
 
 struct packet_city_info { /* 21 */
   int id;
-  unsigned int owner;
+  int owner;
   int x;
   int y;
   char name[MAX_LEN_NAME];
@@ -217,7 +217,7 @@ struct packet_city_info { /* 21 */
 
 struct packet_city_short_info { /* 22 */
   int id;
-  unsigned int owner;
+  int owner;
   int x;
   int y;
   char name[MAX_LEN_NAME];
@@ -333,10 +333,10 @@ struct packet_player_info { /* 39 */
   int bulbs_last_turn;
   int bulbs_researched;
   int techs_researched;
-  unsigned int researching;
+  int researching;
   int researching_cost;
   int future_tech;
-  unsigned int tech_goal;
+  int tech_goal;
   bool is_connected;
   int revolution_finishes;
   bool ai;
@@ -387,7 +387,7 @@ struct packet_unit_remove { /* 48 */
 
 struct packet_unit_info { /* 49 */
   int id;
-  unsigned int owner;
+  int owner;
   int x;
   int y;
   int homecity;
@@ -426,7 +426,7 @@ struct packet_unit_info { /* 49 */
 
 struct packet_unit_short_info { /* 50 */
   int id;
-  unsigned int owner;
+  int owner;
   int x;
   int y;
   Unit_Type_id type;
@@ -973,7 +973,7 @@ struct packet_ruleset_control { /* 106 */
   int fulltradesize;
   int num_unit_types;
   int num_impr_types;
-  unsigned int num_tech_types;
+  int num_tech_types;
   int rtech_cathedral_plus;
   int rtech_cathedral_minus;
   int rtech_colosseum_plus;
