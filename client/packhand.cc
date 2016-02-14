@@ -4375,7 +4375,7 @@ void handle_city_manager_param(struct packet_city_manager_param *packet)/* 145 c
 **************************************************************************/
 void handle_city_no_manager_param(int city_id) /* 146 cs sc */
 {
-  city_t *pcity = find_city_by_id(city_id);
+  city_t *pcity;
 
 # if REPLAY
   printf("CITY_NO_MANAGER_PARAM city_id=%d\n", city_id); /* done */
