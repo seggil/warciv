@@ -198,7 +198,7 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
   tile_t *center_tile;
   tile_t *ptile;
 
-  printf("%s ", __FUNCTION__);
+  //printf("%s ", __FUNCTION__);
   ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
 
   /*  Did mouse pointer move beyond the current tile's
@@ -206,7 +206,7 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
    */
   if (rect_w == 0 && rect_h == 0 && ptile == rect_tile) {
     rectangle_selection_state = 2;
-    printf("2\n");
+    //printf("2\n");
     rect_tile = ptile;
     return;
   }
@@ -275,10 +275,10 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
   /* It is currently drawn only to the screen, not backing store */
   if (rect_w == 0 && rect_h == 0) {
     rectangle_selection_state = 2;
-    printf("2\n");
+    //printf("2\n");
   } else {
     rectangle_selection_state = 1;
-    printf("1\n");
+    //printf("1\n");
   }
   draw_selection_rectangle(canvas_x, canvas_y, rect_w, rect_h);
   rect_corner_x = canvas_x;
