@@ -112,7 +112,7 @@ enum event_type {
    * data/stdsounds.spec.
    */
   E_LAST,
-  E_NOEVENT  = ~0
+  E_NOEVENT = ~0
 };
 
 #endif  /* WC_COMMON_EVENTS_H */
