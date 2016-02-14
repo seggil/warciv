@@ -1261,12 +1261,82 @@ void reset_move_costs(tile_t *ptile)
   /* trying to move off the screen is the default */
   memset(ptile->move_cost, maxcost, sizeof(ptile->move_cost));
 
-  adjc_dir_iterate(ptile, tile1, dir) {
-    ptile->move_cost[dir] = tile_move_cost_ai(ptile, tile1, maxcost);
-    /* reverse: not at all obfuscated now --dwp */
-    tile1->move_cost[DIR_REVERSE(dir)] =
-        tile_move_cost_ai(tile1, ptile, maxcost);
-  } adjc_dir_iterate_end;
+  if (MAP_IS_ISOMETRIC) {
+    adjc_dir_iterate(ptile, tile1, dir)
+      ptile->move_cost[dir] = tile_move_cost_ai(ptile, tile1, maxcost);
+      /* reverse: not at all obfuscated now --dwp */
+      tile1->move_cost[DIR_REVERSE(dir)] =
+          tile_move_cost_ai(tile1, ptile, maxcost);
+    adjc_dir_iterate_end;
+  }
+  else
+  {
+    int x = ptile->x;
+    int y = ptile->y;
+    int x1, y1;
+    enum direction8 dir;
+    tile_t *ptile1;
+    for ( dir = DIR8_NORTHWEST; dir <= 7;
+          dir = (direction8)(dir + 1))
+    {
+    //for (x1 = x-1; x1 <= x+1; x1++) {
+      //for (y1 = y-1; y1 <= y+1; y1++) {
+      switch(dir) {
+      case DIR8_NORTHWEST:
+        x1 = x - 1;
+        y1 = y - 1; break;
+      case DIR8_NORTH:
+        x1 = x;
+        y1 = y - 1; break;
+      case DIR8_NORTHEAST:
+        x1 = x + 1;
+        y1 = y - 1; break;
+      case DIR8_WEST:
+        x1 = x - 1;
+        y1 = y; break;
+      case DIR8_EAST:
+        x1 = x + 1;
+        y1 = y; break;
+      case DIR8_SOUTHWEST:
+        x1 = x - 1;
+        y1 = y + 1; break;
+      case DIR8_SOUTH:
+        x1 = x;
+        y1 = y + 1; break;
+      case DIR8_SOUTHEAST:
+        x1 = x + 1;
+        y1 = y + 1; break;
+      default:
+        printf("bad direction should not occur in %s\n", __FUNCTION__);
+      }
+
+      if ( x1 == x && y1 == y ) {
+        continue;
+      }
+
+      if ( x1 < 0 || x1 >= map.info.xsize ) {
+        if ( topo_has_flag(TF_WRAPX) ) {
+          x1 = WC_WRAP(x1, map.info.xsize);
+        } else {
+          continue;
+        }
+      }
+
+      if ( y1 < 0 || y1 >= map.info.ysize ) {
+        if ( topo_has_flag(TF_WRAPY) ) {
+          y1 = WC_WRAP(y1, map.info.ysize);
+        } else {
+          continue;
+        }
+      }
+
+      ptile1 = map.board + map_pos_to_index(x1, y1);
+      ptile->move_cost[dir] = tile_move_cost_ai(ptile, ptile1, maxcost);
+      /* reverse: not at all obfuscated now --dwp */
+      ptile1->move_cost[DIR_REVERSE(dir)] =
+           tile_move_cost_ai(ptile1, ptile, maxcost);
+    }
+  }
   debug_log_move_costs("Reset move costs for", ptile);
 }
 
@@ -1302,45 +1372,57 @@ void initialize_move_costs(void)
       {
       //for (x1 = x-1; x1 <= x+1; x1++) {
         //for (y1 = y-1; y1 <= y+1; y1++) {
-          switch(dir) {
-          case DIR8_NORTHWEST:
-            x1 = x - 1;
-            y1 = y - 1; break;
-          case DIR8_NORTH:
-            x1 = x;
-            y1 = y - 1; break;
-          case DIR8_NORTHEAST:
-            x1 = x + 1;
-            y1 = y - 1; break;
-          case DIR8_WEST:
-            x1 = x - 1;
-            y1 = y; break;
-          case DIR8_EAST:
-            x1 = x + 1;
-            y1 = y; break;
-          case DIR8_SOUTHWEST:
-            x1 = x - 1;
-            y1 = y + 1; break;
-          case DIR8_SOUTH:
-            x1 = x;
-            y1 = y + 1; break;
-          case DIR8_SOUTHEAST:
-            x1 = x + 1;
-            y1 = y + 1; break;
-          default:
-            printf("bad direction should not occur in %s\n", __FUNCTION__);
-          }
-          if ( x1 == x && y1 == y ) {
-            continue;
-          } else if ( x1 < 0 || y1 < 0 ) {
-              continue;
-          } else if ( x1 >= map.info.xsize || y1 >= map.info.ysize ) {
-            continue;
-          } else {
-            ptile1 = map.board + map_pos_to_index(x1, y1);
-            ptile->move_cost[dir] = tile_move_cost_ai(ptile, ptile1, maxcost);
-          }
-        //}
+        switch(dir) {
+        case DIR8_NORTHWEST:
+          x1 = x - 1;
+          y1 = y - 1; break;
+        case DIR8_NORTH:
+          x1 = x;
+          y1 = y - 1; break;
+        case DIR8_NORTHEAST:
+          x1 = x + 1;
+          y1 = y - 1; break;
+        case DIR8_WEST:
+          x1 = x - 1;
+          y1 = y; break;
+        case DIR8_EAST:
+          x1 = x + 1;
+          y1 = y; break;
+        case DIR8_SOUTHWEST:
+          x1 = x - 1;
+          y1 = y + 1; break;
+        case DIR8_SOUTH:
+          x1 = x;
+          y1 = y + 1; break;
+        case DIR8_SOUTHEAST:
+          x1 = x + 1;
+          y1 = y + 1; break;
+        default:
+          printf("bad direction should not occur in %s\n", __FUNCTION__);
+        }
+
+      if ( x1 == x && y1 == y ) {
+        continue;
+      }
+
+      if ( x1 < 0 || x1 >= map.info.xsize ) {
+        if ( topo_has_flag(TF_WRAPX) ) {
+          x1 = WC_WRAP(x1, map.info.xsize);
+        } else {
+          continue;
+        }
+      }
+
+      if ( y1 < 0 || y1 >= map.info.ysize ) {
+        if ( topo_has_flag(TF_WRAPY) ) {
+          y1 = WC_WRAP(y1, map.info.ysize);
+        } else {
+          continue;
+        }
+      }
+
+      ptile1 = map.board + map_pos_to_index(x1, y1);
+      ptile->move_cost[dir] = tile_move_cost_ai(ptile, ptile1, maxcost);
       }
     }
   } whole_map_iterate_end;

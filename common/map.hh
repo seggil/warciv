@@ -751,7 +751,7 @@ static inline bool is_border_tile(const tile_t *ptile, int dist)
 
   if (MAP_IS_ISOMETRIC)
     ydist = 2 * dist;
-  else 
+  else
     ydist = dist;
 
   return (ptile->nat_x < xdist
