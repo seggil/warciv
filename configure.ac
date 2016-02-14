@@ -9,7 +9,7 @@ dnl Initialize with some random file to ensure the source is here.
 AC_CONFIG_SRCDIR([common/game.cc])
 AC_CONFIG_AUX_DIR(bootstrap) # This can't be quoted or automake will fail
 AM_CONFIG_HEADER(config.hh)
-AC_CONFIG_MACRO_DIR(m4)
+AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 AC_GNU_SOURCE
 
